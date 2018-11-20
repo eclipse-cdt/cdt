@@ -30,8 +30,8 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 
 	@Override
 	public IEnumerator[] getEnumerators() {
-		IEnumerator[] result = ((IEnumeration)rbinding).getEnumerators();
-		for (int i= 0; i < result.length; i++)
+		IEnumerator[] result = ((IEnumeration) rbinding).getEnumerators();
+		for (int i = 0; i < result.length; i++)
 			result[i] = (IEnumerator) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		return result;
 	}
@@ -40,14 +40,18 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 	public boolean isSameType(IType type) {
 		return ((IEnumeration) rbinding).isSameType(type);
 	}
-	
+
 	@Override
-	public Object clone() { fail(); return null; }
+	public Object clone() {
+		fail();
+		return null;
+	}
 
 	@Override
 	public String toString() {
 		return getName();
 	}
+
 	@Override
 	public long getMinValue() {
 		return ((IEnumeration) rbinding).getMinValue();
@@ -65,7 +69,7 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 
 	@Override
 	public IType getFixedType() {
-		return ((ICPPEnumeration)rbinding).getFixedType();
+		return ((ICPPEnumeration) rbinding).getFixedType();
 	}
 
 	@Override

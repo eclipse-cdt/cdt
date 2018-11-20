@@ -73,13 +73,23 @@ import junit.framework.TestSuite;
 public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCPPBindingResolutionBugs {
-		public SingleProject() { setStrategy(new SinglePDOMTestStrategy(true)); }
-		public static TestSuite suite() { return suite(SingleProject.class); }
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
 
 	public static class ProjectWithDepProj extends IndexCPPBindingResolutionBugs {
-		public ProjectWithDepProj() { setStrategy(new ReferencedProject(true)); }
-		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
+		public ProjectWithDepProj() {
+			setStrategy(new ReferencedProject(true));
+		}
+
+		public static TestSuite suite() {
+			return suite(ProjectWithDepProj.class);
+		}
 	}
 
 	public static void addTests(TestSuite suite) {
@@ -104,18 +114,18 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// FUNC() {}
 	// FUNC2(1) {}
 	public void test_208558() throws Exception {
-		IIndex index= getIndex();
+		IIndex index = getIndex();
 
-		IIndexMacro[] macrosA= index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, npm());
-		IIndexMacro[] macrosB= index.findMacros("FUNC".toCharArray(), IndexFilter.ALL, npm());
-		IIndexMacro[] macrosC= index.findMacros("FUNC2".toCharArray(), IndexFilter.ALL, npm());
+		IIndexMacro[] macrosA = index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, npm());
+		IIndexMacro[] macrosB = index.findMacros("FUNC".toCharArray(), IndexFilter.ALL, npm());
+		IIndexMacro[] macrosC = index.findMacros("FUNC2".toCharArray(), IndexFilter.ALL, npm());
 
 		assertEquals(1, macrosA.length);
 		assertEquals(1, macrosB.length);
 		assertEquals(1, macrosC.length);
-		IIndexMacro obj= macrosA[0];
-		IIndexMacro func= macrosB[0];
-		IIndexMacro func2= macrosC[0];
+		IIndexMacro obj = macrosA[0];
+		IIndexMacro func = macrosB[0];
+		IIndexMacro func2 = macrosC[0];
 
 		assertEquals("OBJ", new String(obj.getName()));
 		assertEquals("FUNC", new String(func.getName()));
@@ -135,12 +145,12 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertEquals(1, func2.getParameterList().length);
 		assertEquals("A", new String(func2.getParameterList()[0]));
 
-		IIndexBinding[] bindings= index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
+		IIndexBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
 		assertEquals(3, bindings.length);
 
-		IIndexBinding foo= index.findBindings("foo".toCharArray(), IndexFilter.ALL, npm())[0];
-		IIndexBinding bar= index.findBindings("bar".toCharArray(), IndexFilter.ALL, npm())[0];
-		IIndexBinding baz= index.findBindings("baz".toCharArray(), IndexFilter.ALL, npm())[0];
+		IIndexBinding foo = index.findBindings("foo".toCharArray(), IndexFilter.ALL, npm())[0];
+		IIndexBinding bar = index.findBindings("bar".toCharArray(), IndexFilter.ALL, npm())[0];
+		IIndexBinding baz = index.findBindings("baz".toCharArray(), IndexFilter.ALL, npm())[0];
 
 		assertEquals("foo", foo.getName());
 		assertEquals("bar", bar.getName());
@@ -161,7 +171,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	    testTemplate(testFile);
 	//	}
 	public void test_207320() {
-		IBinding b0= getBindingFromASTName("testTemplate(", 12);
+		IBinding b0 = getBindingFromASTName("testTemplate(", 12);
 		assertInstance(b0, ICPPFunction.class);
 		assertInstance(b0, ICPPTemplateInstance.class);
 	}
@@ -197,53 +207,54 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//          testCall( /*8*/ global_cBaseRef);
 	//		}
 	public void test_206187() throws Exception {
-		IBinding b1= getBindingFromASTName("testCall( /*1*/", 8);
-		IBinding b2= getBindingFromASTName("testCall( /*2*/", 8);
-		IBinding b3= getBindingFromASTName("testCall( /*3*/", 8);
-		IBinding b4= getBindingFromASTName("testCall( /*4*/", 8);
-		IBinding b5= getBindingFromASTName("testCall( /*5*/", 8);
-		IBinding b6= getBindingFromASTName("testCall( /*6*/", 8);
-		IBinding b7= getBindingFromASTName("testCall( /*7*/", 8);
-		IBinding b8= getBindingFromASTName("testCall( /*8*/", 8);
+		IBinding b1 = getBindingFromASTName("testCall( /*1*/", 8);
+		IBinding b2 = getBindingFromASTName("testCall( /*2*/", 8);
+		IBinding b3 = getBindingFromASTName("testCall( /*3*/", 8);
+		IBinding b4 = getBindingFromASTName("testCall( /*4*/", 8);
+		IBinding b5 = getBindingFromASTName("testCall( /*5*/", 8);
+		IBinding b6 = getBindingFromASTName("testCall( /*6*/", 8);
+		IBinding b7 = getBindingFromASTName("testCall( /*7*/", 8);
+		IBinding b8 = getBindingFromASTName("testCall( /*8*/", 8);
 	}
 
 	// template<typename T1>
-    // class A {};
-    //
-    // template<typename T2>
-    // class B : public A<T2> {};
-    //
-    // class C {};
-    //
-    // B<C> b;
+	// class A {};
+	//
+	// template<typename T2>
+	// class B : public A<T2> {};
+	//
+	// class C {};
+	//
+	// B<C> b;
 
-    // void foo() {C c; B<int> b;}
-    public void test_188274() throws Exception {
-        IBinding b0= getBindingFromASTName("C", 1);
-        IBinding b1= getBindingFromASTName("B", 1);
-        assertInstance(b0, ICPPClassType.class);
-        assertInstance(b1, ICPPClassType.class);
-        assertInstance(b1, ICPPClassTemplate.class);
-        assertInstance(b1, ICPPInstanceCache.class);
+	// void foo() {C c; B<int> b;}
+	public void test_188274() throws Exception {
+		IBinding b0 = getBindingFromASTName("C", 1);
+		IBinding b1 = getBindingFromASTName("B", 1);
+		assertInstance(b0, ICPPClassType.class);
+		assertInstance(b1, ICPPClassType.class);
+		assertInstance(b1, ICPPClassTemplate.class);
+		assertInstance(b1, ICPPInstanceCache.class);
 
-        ICPPInstanceCache ct= (ICPPInstanceCache) b1;
-        ICPPSpecialization inst= ct.getInstance(new ICPPTemplateArgument[]{new CPPTemplateTypeArgument((IType)b0)});
-        assertInstance(inst, ICPPClassType.class);
-        ICPPClassType c2t= (ICPPClassType) inst;
-        ICPPBase[] bases= c2t.getBases();
-        assertEquals(1, bases.length);
-        assertInstance(bases[0].getBaseClass(), ICPPClassType.class);
-    }
+		ICPPInstanceCache ct = (ICPPInstanceCache) b1;
+		ICPPSpecialization inst = ct
+				.getInstance(new ICPPTemplateArgument[] { new CPPTemplateTypeArgument((IType) b0) });
+		assertInstance(inst, ICPPClassType.class);
+		ICPPClassType c2t = (ICPPClassType) inst;
+		ICPPBase[] bases = c2t.getBases();
+		assertEquals(1, bases.length);
+		assertInstance(bases[0].getBaseClass(), ICPPClassType.class);
+	}
 
 	// namespace ns {class A{};}
 
 	// ns::A a;
 	// class B {};
 	public void test_188324() throws Exception {
-		IASTName name= findName("B", 1);
-		IBinding b0= getBindingFromASTName("ns::A", 2);
+		IASTName name = findName("B", 1);
+		IBinding b0 = getBindingFromASTName("ns::A", 2);
 		assertInstance(b0, ICPPNamespace.class);
-		ICPPNamespace ns= (ICPPNamespace) b0;
+		ICPPNamespace ns = (ICPPNamespace) b0;
 		assertEquals(0, ns.getNamespaceScope().getBindings(name, false, false).length);
 	}
 
@@ -257,9 +268,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// Bug 185828 reports a StackOverflowException is thrown before we get here.
 		// That the SOE is thrown is detected in BaseTestCase via an Error IStatus
 
-		IBinding b0= getBindingFromASTName("C<int>", 1);
-		IBinding b1= getBindingFromASTName("C<int>", 6);
-		IBinding b2= getProblemFromASTName("unresolvable", 12);
+		IBinding b0 = getBindingFromASTName("C<int>", 1);
+		IBinding b1 = getBindingFromASTName("C<int>", 6);
+		IBinding b2 = getProblemFromASTName("unresolvable", 12);
 
 		assertInstance(b0, ICPPClassType.class);
 		assertInstance(b0, ICPPClassTemplate.class);
@@ -285,10 +296,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//		MyClass* cls= new MyClass();
 	//	}
 	public void test_184216() throws Exception {
-		IBinding b0= getBindingFromASTName("MyClass*", 7);
+		IBinding b0 = getBindingFromASTName("MyClass*", 7);
 		assertInstance(b0, ICPPClassType.class);
-		ICPPClassType ct= (ICPPClassType) b0;
-		ICPPMethod[] ms= ct.getDeclaredMethods(); // 184216 reports CCE thrown
+		ICPPClassType ct = (ICPPClassType) b0;
+		ICPPMethod[] ms = ct.getDeclaredMethods(); // 184216 reports CCE thrown
 		assertEquals(2, ms.length);
 		assertInstance(ms[0], ICPPTemplateDefinition.class);
 		assertInstance(ms[1], ICPPTemplateDefinition.class);
@@ -383,21 +394,21 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//    }
 	// }
 	public void test_176708_CCE() throws Exception {
-		IBinding binding= getBindingFromASTName("Y {", 1);
+		IBinding binding = getBindingFromASTName("Y {", 1);
 		assertTrue(binding instanceof ICPPNamespace);
-		ICPPNamespace adapted= (ICPPNamespace) strategy.getIndex().adaptBinding(binding);
-		IASTName name= findName("Ambiguity problem", 9);
+		ICPPNamespace adapted = (ICPPNamespace) strategy.getIndex().adaptBinding(binding);
+		IASTName name = findName("Ambiguity problem", 9);
 		assertNotNull(name);
-		IBinding binding2= adapted.getNamespaceScope().getBinding(name, true);
+		IBinding binding2 = adapted.getNamespaceScope().getBinding(name, true);
 	}
 
 	// namespace X {int i;}
 
 	// int a= X::i;
 	public void test_176708_NPE() throws Exception {
-		IBinding binding= getBindingFromASTName("i;", 1);
+		IBinding binding = getBindingFromASTName("i;", 1);
 		assertTrue(binding instanceof ICPPVariable);
-		IScope scope= binding.getScope();
+		IScope scope = binding.getScope();
 	}
 
 	//	template<class T, class U, class V>
@@ -406,12 +417,12 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	template<>
 	//	class A<int, bool, double> {};
 	public void test_180784() throws Exception {
-		IBinding b0= getBindingFromASTName("A<int, bool, double> {};", 20);
+		IBinding b0 = getBindingFromASTName("A<int, bool, double> {};", 20);
 		assertInstance(b0, ICPPSpecialization.class);
-		ICPPSpecialization s= (ICPPSpecialization) b0;
-		IBinding b1= s.getSpecializedBinding();
+		ICPPSpecialization s = (ICPPSpecialization) b0;
+		IBinding b1 = s.getSpecializedBinding();
 		assertInstance(b1, ICPPClassTemplate.class);
-		ICPPClassTemplate t= (ICPPClassTemplate) b1;
+		ICPPClassTemplate t = (ICPPClassTemplate) b1;
 		ICPPTemplateParameter[] ps = t.getTemplateParameters();
 		assertNotNull(ps);
 		assertEquals(3, ps.length);
@@ -438,8 +449,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public void test_180948() throws Exception {
 		// Main check occurs in BaseTestCase - that no ClassCastException
 		// is thrown during indexing
-		IBinding b0= getBindingFromASTName("id(*", 2);
-		IBinding b1= getBindingFromASTName("id(6", 2);
+		IBinding b0 = getBindingFromASTName("id(*", 2);
+		IBinding b1 = getBindingFromASTName("id(6", 2);
 	}
 
 	// void func1(void);
@@ -471,73 +482,73 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertTrue(b0 instanceof ICPPField);
 	}
 
-    // typedef struct {
-    //    int utm;
-    // } usertype;
-    // void func(usertype t);
+	// typedef struct {
+	//    int utm;
+	// } usertype;
+	// void func(usertype t);
 
-    // void test() {
+	// void test() {
 	//    usertype ut;
 	//    func(ut);
-    // }
-    public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
+	// }
+	public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
 		IBinding b0 = getBindingFromASTName("func(", 4);
 		assertTrue(b0 instanceof IFunction);
-		IFunction f= (IFunction) b0;
-		IParameter[] pars= f.getParameters();
+		IFunction f = (IFunction) b0;
+		IParameter[] pars = f.getParameters();
 		assertEquals(1, pars.length);
-		IType type= pars[0].getType();
+		IType type = pars[0].getType();
 		assertTrue(type instanceof ITypedef);
-		type= ((ITypedef) type).getType();
+		type = ((ITypedef) type).getType();
 		assertTrue(type instanceof ICPPClassType);
-    }
+	}
 
-    // typedef enum {
-    //    eItem
-    // } userEnum;
-    // void func(userEnum t);
+	// typedef enum {
+	//    eItem
+	// } userEnum;
+	// void func(userEnum t);
 
-    // void test() {
+	// void test() {
 	//    userEnum ut;
 	//    func(ut);
-    // }
-    public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
+	// }
+	public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
 		IBinding b0 = getBindingFromASTName("func(", 4);
 		assertTrue(b0 instanceof IFunction);
-		IFunction f= (IFunction) b0;
-		IParameter[] pars= f.getParameters();
+		IFunction f = (IFunction) b0;
+		IParameter[] pars = f.getParameters();
 		assertEquals(1, pars.length);
-		IType type= pars[0].getType();
+		IType type = pars[0].getType();
 		assertTrue(type instanceof ITypedef);
-		type= ((ITypedef) type).getType();
+		type = ((ITypedef) type).getType();
 		assertTrue(type instanceof IEnumeration);
-    }
+	}
 
-    // // no header needed
+	// // no header needed
 
-    // typedef class {
-    //    int member;
-    // } t_class;
-    // typedef struct {
-    //    int member;
-    // } t_struct;
-    // typedef union {
-    //    int member;
-    // } t_union;
-    // typedef enum {
-    //    ei
-    // } t_enum;
+	// typedef class {
+	//    int member;
+	// } t_class;
+	// typedef struct {
+	//    int member;
+	// } t_struct;
+	// typedef union {
+	//    int member;
+	// } t_union;
+	// typedef enum {
+	//    ei
+	// } t_enum;
 	public void testIsSameAnonymousType_193962() throws DOMException {
 		// class
 		IBinding tdAST = getBindingFromASTName("t_class;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
-		IBinding tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		IBinding tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		IType tAST= ((ITypedef) tdAST).getType();
-		IType tIndex= ((ITypedef) tdIndex).getType();
+		IType tAST = ((ITypedef) tdAST).getType();
+		IType tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -546,13 +557,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// struct
 		tdAST = getBindingFromASTName("t_struct;", 8);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -561,13 +572,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// union
 		tdAST = getBindingFromASTName("t_union;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -576,46 +587,46 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// enum
 		tdAST = getBindingFromASTName("t_enum;", 6);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof IEnumeration);
 		assertTrue(tIndex instanceof IEnumeration);
 		assertTrue(tAST.isSameType(tIndex));
 		assertTrue(tIndex.isSameType(tAST));
 	}
 
-    // // no header needed
+	// // no header needed
 
 	// namespace ns {
-    // typedef class {
-    //    int member;
-    // } t_class;
-    // typedef struct {
-    //    int member;
-    // } t_struct;
-    // typedef union {
-    //    int member;
-    // } t_union;
-    // typedef enum {
-    //    ei
-    // } t_enum;
+	// typedef class {
+	//    int member;
+	// } t_class;
+	// typedef struct {
+	//    int member;
+	// } t_struct;
+	// typedef union {
+	//    int member;
+	// } t_union;
+	// typedef enum {
+	//    ei
+	// } t_enum;
 	// };
 	public void testIsSameNestedAnonymousType_193962() throws DOMException {
 		// class
 		IBinding tdAST = getBindingFromASTName("t_class;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
-		IBinding tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		IBinding tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		IType tAST= ((ITypedef) tdAST).getType();
-		IType tIndex= ((ITypedef) tdIndex).getType();
+		IType tAST = ((ITypedef) tdAST).getType();
+		IType tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -624,13 +635,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// struct
 		tdAST = getBindingFromASTName("t_struct;", 8);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -639,13 +650,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// union
 		tdAST = getBindingFromASTName("t_union;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -654,13 +665,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// enum
 		tdAST = getBindingFromASTName("t_enum;", 6);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof IEnumeration);
 		assertTrue(tIndex instanceof IEnumeration);
 		assertTrue(tAST.isSameType(tIndex));
@@ -710,8 +721,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
 		assertTrue(b instanceof IField);
-		IField f= (IField) b;
-		IScope outer= f.getCompositeTypeOwner().getScope();
+		IField f = (IField) b;
+		IScope outer = f.getCompositeTypeOwner().getScope();
 		assertTrue(outer instanceof ICPPClassScope);
 		assertEquals("outer", outer.getScopeName().toString());
 	}
@@ -734,8 +745,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
 		assertTrue(b instanceof IField);
-		IField f= (IField) b;
-		IScope outer= f.getCompositeTypeOwner().getScope();
+		IField f = (IField) b;
+		IScope outer = f.getCompositeTypeOwner().getScope();
 		assertTrue(outer instanceof ICPPClassScope);
 		assertEquals("outer", outer.getScopeName().toString());
 
@@ -753,8 +764,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public void testUsingDirective_216527() throws Exception {
 		IBinding b = getBindingFromASTName("v=", 1);
 		assertTrue(b instanceof IVariable);
-		IVariable v= (IVariable) b;
-		IScope scope= v.getScope();
+		IVariable v = (IVariable) b;
+		IScope scope = v.getScope();
 		assertTrue(scope instanceof ICPPNamespaceScope);
 		assertEquals("ns", scope.getScopeName().toString());
 	}
@@ -776,15 +787,15 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public void testNamespaceComposition_200673() throws Exception {
 		IBinding a = getBindingFromASTName("a=", 1);
 		assertTrue(a instanceof IVariable);
-		IVariable v= (IVariable) a;
-		IScope scope= v.getScope();
+		IVariable v = (IVariable) a;
+		IScope scope = v.getScope();
 		assertTrue(scope instanceof ICPPNamespaceScope);
 		assertEquals("NSA", scope.getScopeName().toString());
 
 		IBinding b = getBindingFromASTName("b;", 1);
 		assertTrue(b instanceof IVariable);
-		v= (IVariable) b;
-		scope= v.getScope();
+		v = (IVariable) b;
+		scope = v.getScope();
 		assertTrue(scope instanceof ICPPNamespaceScope);
 		assertEquals("NSB", scope.getScopeName().toString());
 	}
@@ -793,7 +804,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	// namespace N {using namespace N::M;}
 	// using namespace N;
-    // void test() {x;}
+	// void test() {x;}
 	public void testEndlessLoopWithUsingDeclaration_209813() throws DOMException {
 		getProblemFromASTName("x;", 1);
 	}
@@ -803,70 +814,78 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// void test(MyClass* ptr);
 	// class MyClass;
 	public void testClassRedeclarationAfterReference_229571() throws Exception {
-		IBinding cl= getBindingFromASTName("MyClass;", 7);
-		IFunction fn= getBindingFromASTName("test(", 4, IFunction.class);
-		IType type= fn.getType().getParameterTypes()[0];
+		IBinding cl = getBindingFromASTName("MyClass;", 7);
+		IFunction fn = getBindingFromASTName("test(", 4, IFunction.class);
+		IType type = fn.getType().getParameterTypes()[0];
 		assertInstance(type, IPointerType.class);
-		type= ((IPointerType) type).getType();
+		type = ((IPointerType) type).getType();
 		assertInstance(cl, IType.class);
 		assertSameType(type, (IType) cl);
 	}
 
-    // class A {
-    // public:
-    //    void foo() const volatile;
-    //    void foo() volatile;
-    //    void foo() const;
-    //    void foo();
-    //    void bar() const volatile;
-    //    void bar() volatile;
-    //    void bar() const;
-    //    void bar();
-    // };
+	// class A {
+	// public:
+	//    void foo() const volatile;
+	//    void foo() volatile;
+	//    void foo() const;
+	//    void foo();
+	//    void bar() const volatile;
+	//    void bar() volatile;
+	//    void bar() const;
+	//    void bar();
+	// };
 
-    // void A::foo() const volatile { bar();/*1*/ }
-    // void A::foo() volatile       { bar();/*2*/ }
-    // void A::foo() const          { bar();/*3*/ }
-    // void A::foo()                { bar();/*4*/ }
-    // void test() {
-    //   A a;
-    //   const A ca;
-    //   volatile A va;
-    //   const volatile A cva;
-    //   cva.bar();/*5*/
-    //   va.bar();/*6*/
-    //   ca.bar();/*7*/
-    //   a.bar();/*8*/
-    // }
-    public void testMemberFunctionDisambiguationByCVness_238409() throws Exception {
-    	ICPPMethod bar_cv= getBindingFromASTName("bar();/*1*/", 3, ICPPMethod.class);
-    	ICPPMethod bar_v=  getBindingFromASTName("bar();/*2*/", 3, ICPPMethod.class);
-    	ICPPMethod bar_c=  getBindingFromASTName("bar();/*3*/", 3, ICPPMethod.class);
-    	ICPPMethod bar=    getBindingFromASTName("bar();/*4*/", 3, ICPPMethod.class);
-    	ICPPFunctionType bar_cv_ft= bar_cv.getType();
-    	ICPPFunctionType bar_v_ft=  bar_v.getType();
-    	ICPPFunctionType bar_c_ft=  bar_c.getType();
-    	ICPPFunctionType bar_ft=    bar.getType();
+	// void A::foo() const volatile { bar();/*1*/ }
+	// void A::foo() volatile       { bar();/*2*/ }
+	// void A::foo() const          { bar();/*3*/ }
+	// void A::foo()                { bar();/*4*/ }
+	// void test() {
+	//   A a;
+	//   const A ca;
+	//   volatile A va;
+	//   const volatile A cva;
+	//   cva.bar();/*5*/
+	//   va.bar();/*6*/
+	//   ca.bar();/*7*/
+	//   a.bar();/*8*/
+	// }
+	public void testMemberFunctionDisambiguationByCVness_238409() throws Exception {
+		ICPPMethod bar_cv = getBindingFromASTName("bar();/*1*/", 3, ICPPMethod.class);
+		ICPPMethod bar_v = getBindingFromASTName("bar();/*2*/", 3, ICPPMethod.class);
+		ICPPMethod bar_c = getBindingFromASTName("bar();/*3*/", 3, ICPPMethod.class);
+		ICPPMethod bar = getBindingFromASTName("bar();/*4*/", 3, ICPPMethod.class);
+		ICPPFunctionType bar_cv_ft = bar_cv.getType();
+		ICPPFunctionType bar_v_ft = bar_v.getType();
+		ICPPFunctionType bar_c_ft = bar_c.getType();
+		ICPPFunctionType bar_ft = bar.getType();
 
-    	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
-    	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());
-    	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
-    	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
+		assertTrue(bar_cv_ft.isConst());
+		assertTrue(bar_cv_ft.isVolatile());
+		assertTrue(!bar_v_ft.isConst());
+		assertTrue(bar_v_ft.isVolatile());
+		assertTrue(bar_c_ft.isConst());
+		assertTrue(!bar_c_ft.isVolatile());
+		assertTrue(!bar_ft.isConst());
+		assertTrue(!bar_ft.isVolatile());
 
-    	bar_cv= getBindingFromASTName("bar();/*5*/", 3, ICPPMethod.class);
-    	bar_v=  getBindingFromASTName("bar();/*6*/", 3, ICPPMethod.class);
-    	bar_c=  getBindingFromASTName("bar();/*7*/", 3, ICPPMethod.class);
-    	bar=    getBindingFromASTName("bar();/*8*/", 3, ICPPMethod.class);
-    	bar_cv_ft= bar_cv.getType();
-    	bar_v_ft=  bar_v.getType();
-    	bar_c_ft=  bar_c.getType();
-    	bar_ft=    bar.getType();
+		bar_cv = getBindingFromASTName("bar();/*5*/", 3, ICPPMethod.class);
+		bar_v = getBindingFromASTName("bar();/*6*/", 3, ICPPMethod.class);
+		bar_c = getBindingFromASTName("bar();/*7*/", 3, ICPPMethod.class);
+		bar = getBindingFromASTName("bar();/*8*/", 3, ICPPMethod.class);
+		bar_cv_ft = bar_cv.getType();
+		bar_v_ft = bar_v.getType();
+		bar_c_ft = bar_c.getType();
+		bar_ft = bar.getType();
 
-    	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
-    	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());
-    	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
-    	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
-    }
+		assertTrue(bar_cv_ft.isConst());
+		assertTrue(bar_cv_ft.isVolatile());
+		assertTrue(!bar_v_ft.isConst());
+		assertTrue(bar_v_ft.isVolatile());
+		assertTrue(bar_c_ft.isConst());
+		assertTrue(!bar_c_ft.isVolatile());
+		assertTrue(!bar_ft.isConst());
+		assertTrue(!bar_ft.isVolatile());
+	}
 
 	//	typedef char t[12];
 	//	void test1(char *);
@@ -880,9 +899,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	   test3(x); // problem binding here
 	//	}
 	public void testAdjustmentOfParameterTypes_239975() throws Exception {
-    	getBindingFromASTName("test1(x)", 5, ICPPFunction.class);
-    	getBindingFromASTName("test2(x)", 5, ICPPFunction.class);
-    	getBindingFromASTName("test3(x)", 5, ICPPFunction.class);
+		getBindingFromASTName("test1(x)", 5, ICPPFunction.class);
+		getBindingFromASTName("test2(x)", 5, ICPPFunction.class);
+		getBindingFromASTName("test3(x)", 5, ICPPFunction.class);
 	}
 
 	// class A {
@@ -951,99 +970,107 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// Container<char>::CT<int> espect;
 	public void testClassTypes_98171() throws Exception {
 		// regular class
-		ICPPClassType ct= getBindingFromASTName("C", 1);
-		assertBindings(new String[] {"B"}, ct.getBases());
-		assertBindings(new String[] {"n", "m", "B", "C"}, ct.getAllDeclaredMethods());
-		assertBindings(new String[] {"C", "C"}, ct.getConstructors());
-		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"n", "C"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"f", "g"}, ct.getFields());
-		assertBindings(new String[] {"m", "n", "C", "C", "~C", "B", "B", "~B", "operator =", "operator ="}, ct.getMethods());
-		assertBindings(new String[] {"O"}, ct.getNestedClasses());
+		ICPPClassType ct = getBindingFromASTName("C", 1);
+		assertBindings(new String[] { "B" }, ct.getBases());
+		assertBindings(new String[] { "n", "m", "B", "C" }, ct.getAllDeclaredMethods());
+		assertBindings(new String[] { "C", "C" }, ct.getConstructors());
+		assertBindings(new String[] { "g" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "n", "C" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "f", "g" }, ct.getFields());
+		assertBindings(new String[] { "m", "n", "C", "C", "~C", "B", "B", "~B", "operator =", "operator =" },
+				ct.getMethods());
+		assertBindings(new String[] { "O" }, ct.getNestedClasses());
 
 		// class template
-		ct= getBindingFromASTName("CT<int>", 2);
+		ct = getBindingFromASTName("CT<int>", 2);
 		assertInstance(ct, ICPPClassTemplate.class);
-		assertBindings(new String[] {"B"}, ct.getBases());
-		assertBindings(new String[] {"n", "m", "B", "CT"}, ct.getAllDeclaredMethods());
-		assertBindings(new String[] {"CT", "CT"}, ct.getConstructors());
-		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"n", "CT"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"f", "g"}, ct.getFields());
-		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ct.getMethods());
-		assertBindings(new String[] {"O"}, ct.getNestedClasses());
+		assertBindings(new String[] { "B" }, ct.getBases());
+		assertBindings(new String[] { "n", "m", "B", "CT" }, ct.getAllDeclaredMethods());
+		assertBindings(new String[] { "CT", "CT" }, ct.getConstructors());
+		assertBindings(new String[] { "g" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "n", "CT" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "f", "g" }, ct.getFields());
+		assertBindings(new String[] { "m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator =" },
+				ct.getMethods());
+		assertBindings(new String[] { "O" }, ct.getNestedClasses());
 
 		// class template instance
-		ct= getBindingFromASTName("CT<int>", 7);
+		ct = getBindingFromASTName("CT<int>", 7);
 		assertInstance(ct, ICPPTemplateInstance.class);
-		assertBindings(new String[] {"B"}, ct.getBases());
-		assertBindings(new String[] {"n", "m", "B", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
-		assertBindings(new String[] {"CT", "CT"}, ct.getConstructors());
-		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"n", "CT"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct));
-		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
-		assertBindings(new String[] {"O"}, ct.getNestedClasses());
+		assertBindings(new String[] { "B" }, ct.getBases());
+		assertBindings(new String[] { "n", "m", "B", "CT" }, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] { "CT", "CT" }, ct.getConstructors());
+		assertBindings(new String[] { "g" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "n", "CT" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "f", "g" }, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] { "m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator =" },
+				ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] { "O" }, ct.getNestedClasses());
 
 		// explicit class template instance
-		ct= getBindingFromASTName("CT<char>", 8);
+		ct = getBindingFromASTName("CT<char>", 8);
 		assertInstance(ct, ICPPTemplateInstance.class);
-		assertBindings(new String[] {"A"}, ct.getBases());
-		assertBindings(new String[] {"o", "l", "A", "CT", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
-		assertBindings(new String[] {"CT", "CT", "CT"}, ct.getConstructors());
-		assertBindings(new String[] {"h"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"o", "CT", "CT"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct));
-		assertBindings(new String[] {"l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
-		assertBindings(new String[] {"P"}, ct.getNestedClasses());
+		assertBindings(new String[] { "A" }, ct.getBases());
+		assertBindings(new String[] { "o", "l", "A", "CT", "CT" }, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] { "CT", "CT", "CT" }, ct.getConstructors());
+		assertBindings(new String[] { "h" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "o", "CT", "CT" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "e", "h" }, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] { "l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator =" },
+				ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] { "P" }, ct.getNestedClasses());
 
 		// class specialization
-		ct= getBindingFromASTName("C spec", 1);
+		ct = getBindingFromASTName("C spec", 1);
 		assertInstance(ct, ICPPClassSpecialization.class);
-		assertBindings(new String[] {"B"}, ct.getBases());
-		assertBindings(new String[] {"n", "m", "B", "C"}, ClassTypeHelper.getAllDeclaredMethods(ct));
-		assertBindings(new String[] {"C", "C"}, ct.getConstructors());
-		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"n", "C"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct));
-		assertBindings(new String[] {"m", "n", "C", "C", "~C", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
-		assertBindings(new String[] {"O"}, ct.getNestedClasses());
+		assertBindings(new String[] { "B" }, ct.getBases());
+		assertBindings(new String[] { "n", "m", "B", "C" }, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] { "C", "C" }, ct.getConstructors());
+		assertBindings(new String[] { "g" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "n", "C" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "f", "g" }, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] { "m", "n", "C", "C", "~C", "B", "B", "~B", "operator =", "operator =" },
+				ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] { "O" }, ct.getNestedClasses());
 
 		// class template specialization
-		ct= getBindingFromASTName("CT<int> spect", 2);
+		ct = getBindingFromASTName("CT<int> spect", 2);
 		assertInstance(ct, ICPPClassTemplate.class, ICPPClassSpecialization.class);
-		assertBindings(new String[] {"B"}, ct.getBases());
-		assertBindings(new String[] {"n", "m", "B", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
-		assertBindings(new String[] {"CT", "CT"}, ct.getConstructors());
-		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"n", "CT"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct));
-		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
-		assertBindings(new String[] {"O"}, ct.getNestedClasses());
+		assertBindings(new String[] { "B" }, ct.getBases());
+		assertBindings(new String[] { "n", "m", "B", "CT" }, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] { "CT", "CT" }, ct.getConstructors());
+		assertBindings(new String[] { "g" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "n", "CT" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "f", "g" }, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] { "m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator =" },
+				ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] { "O" }, ct.getNestedClasses());
 
 		// explicit class specialization
-		ct= getBindingFromASTName("C espec", 1);
+		ct = getBindingFromASTName("C espec", 1);
 		assertInstance(ct, ICPPClassSpecialization.class);
-		assertBindings(new String[] {"A"}, ct.getBases());
-		assertBindings(new String[] {"o", "l", "A", "C", "C"}, ClassTypeHelper.getAllDeclaredMethods(ct));
-		assertBindings(new String[] {"C", "C", "C"}, ct.getConstructors());
-		assertBindings(new String[] {"h"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"o", "C", "C"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct));
-		assertBindings(new String[] {"l", "o", "C", "C", "C", "~C", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
-		assertBindings(new String[] {"P"}, ct.getNestedClasses());
+		assertBindings(new String[] { "A" }, ct.getBases());
+		assertBindings(new String[] { "o", "l", "A", "C", "C" }, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] { "C", "C", "C" }, ct.getConstructors());
+		assertBindings(new String[] { "h" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "o", "C", "C" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "e", "h" }, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] { "l", "o", "C", "C", "C", "~C", "A", "A", "~A", "operator =", "operator =" },
+				ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] { "P" }, ct.getNestedClasses());
 
 		// explicit class template specialization
-		ct= getBindingFromASTName("CT<int> espect", 7);
+		ct = getBindingFromASTName("CT<int> espect", 7);
 		assertInstance(ct, ICPPTemplateInstance.class);
-		assertBindings(new String[] {"A"}, ct.getBases());
-		assertBindings(new String[] {"o", "l", "A", "CT", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
-		assertBindings(new String[] {"CT", "CT", "CT"}, ct.getConstructors());
-		assertBindings(new String[] {"h"}, ct.getDeclaredFields());
-		assertBindings(new String[] {"o", "CT", "CT"}, ct.getDeclaredMethods());
-		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct));
-		assertBindings(new String[] {"l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
-		assertBindings(new String[] {"P"}, ct.getNestedClasses());
+		assertBindings(new String[] { "A" }, ct.getBases());
+		assertBindings(new String[] { "o", "l", "A", "CT", "CT" }, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] { "CT", "CT", "CT" }, ct.getConstructors());
+		assertBindings(new String[] { "h" }, ct.getDeclaredFields());
+		assertBindings(new String[] { "o", "CT", "CT" }, ct.getDeclaredMethods());
+		assertBindings(new String[] { "e", "h" }, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] { "l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator =" },
+				ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] { "P" }, ct.getNestedClasses());
 	}
 
 	//	void func(const int* x) {}
@@ -1053,7 +1080,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//		func(q);
 	//	}
 	public void testOverloadedFunctionFromIndex_256240() throws Exception {
-    	getBindingFromASTName("func(q", 4, ICPPFunction.class);
+		getBindingFromASTName("func(q", 4, ICPPFunction.class);
 	}
 
 	//	class A {
@@ -1065,7 +1092,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	//	void A::B::m() {}
 	public void testNestedClasses_259683() throws Exception {
-    	getBindingFromASTName("A::B::m", 7, ICPPMethod.class);
+		getBindingFromASTName("A::B::m", 7, ICPPMethod.class);
 	}
 
 	//	namespace ns {
@@ -1085,21 +1112,21 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//		}
 	//	}
 	public void testLookupScopeForConversionNames_267221() throws Exception {
-    	getBindingFromASTName("operator S *", 12, ICPPMethod.class);
+		getBindingFromASTName("operator S *", 12, ICPPMethod.class);
 	}
 
 	private void assertBindings(String[] expected, ICPPBase[] bases) throws DOMException {
-		IBinding[] bindings= new IBinding[bases.length];
+		IBinding[] bindings = new IBinding[bases.length];
 		for (int i = 0; i < bindings.length; i++) {
-			bindings[i]= bases[i].getBaseClass();
+			bindings[i] = bases[i].getBaseClass();
 		}
 		assertBindings(expected, bindings);
 	}
 
 	private void assertBindings(String[] expected, IBinding[] binding) {
-		String[] actual= new String[binding.length];
+		String[] actual = new String[binding.length];
 		for (int i = 0; i < actual.length; i++) {
-			actual[i]= binding[i].getName();
+			actual[i] = binding[i].getName();
 		}
 		Arrays.sort(actual);
 		Arrays.sort(expected);
@@ -1107,15 +1134,15 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	}
 
 	private String toString(String[] actual) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append('{');
-		boolean isFirst= true;
+		boolean isFirst = true;
 		for (String val : actual) {
 			if (!isFirst) {
 				buf.append(',');
 			}
 			buf.append(val);
-			isFirst= false;
+			isFirst = false;
 		}
 		buf.append('}');
 		return buf.toString();
@@ -1134,7 +1161,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//      useBase(x.d);
 	//	}
 	public void testLateDefinitionOfInheritance_292749() throws Exception {
-    	getBindingFromFirstIdentifier("useBase(x.d)", ICPPFunction.class);
+		getBindingFromFirstIdentifier("useBase(x.d)", ICPPFunction.class);
 	}
 
 	// namespace one {
@@ -1144,7 +1171,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// }
 	// namespace two {
 	//   using one::fx;
-    // }
+	// }
 
 	// void test() {
 	//    two::fx();
@@ -1152,9 +1179,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//    two::fx(1,1);
 	// }
 	public void testUsingDeclaration_300019() throws Exception {
-    	getBindingFromASTName("fx();", 2, ICPPFunction.class);
-    	getBindingFromASTName("fx(1);", 2, ICPPFunction.class);
-    	getBindingFromASTName("fx(1,1);", 2, ICPPFunction.class);
+		getBindingFromASTName("fx();", 2, ICPPFunction.class);
+		getBindingFromASTName("fx(1);", 2, ICPPFunction.class);
+		getBindingFromASTName("fx(1,1);", 2, ICPPFunction.class);
 	}
 
 	//	struct YetAnotherTest {
@@ -1173,7 +1200,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	  arr[0].member=0;
 	//	}
 	public void testElaboratedTypeSpecifier_303739() throws Exception {
-    	getBindingFromASTName("member=0", -2, ICPPField.class);
+		getBindingFromASTName("member=0", -2, ICPPField.class);
 	}
 
 	//	typedef int xxx::* MBR_PTR;
@@ -1182,10 +1209,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//		MBR_PTR x;
 	//	}
 	public void testProblemInIndexBinding_317146() throws Exception {
-    	ITypedef td= getBindingFromASTName("MBR_PTR", 0, ITypedef.class);
-    	ICPPPointerToMemberType ptrMbr= (ICPPPointerToMemberType) td.getType();
-    	IType t= ptrMbr.getMemberOfClass();
-    	assertInstance(t, ISemanticProblem.class);
+		ITypedef td = getBindingFromASTName("MBR_PTR", 0, ITypedef.class);
+		ICPPPointerToMemberType ptrMbr = (ICPPPointerToMemberType) td.getType();
+		IType t = ptrMbr.getMemberOfClass();
+		assertInstance(t, ISemanticProblem.class);
 	}
 
 	//	void f255(
@@ -1257,10 +1284,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//     f(c16); f(c32);
 	// }
 	public void testChar16_319186() throws Exception {
-		IFunction f= getBindingFromASTName("f(c16)", 1);
+		IFunction f = getBindingFromASTName("f(c16)", 1);
 		assertEquals("char16_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
 
-		f= getBindingFromASTName("f(c32)", 1);
+		f = getBindingFromASTName("f(c32)", 1);
 		assertEquals("char32_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
 	}
 
@@ -1280,9 +1307,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	  Type x;
 	//	}
 	public void test_326778() throws Exception {
-		IVariable v= getBindingFromASTName("var", 0);
-		IFunction f= getBindingFromASTName("fun", 0);
-		ITypedef t= getBindingFromASTName("Type", 0);
+		IVariable v = getBindingFromASTName("var", 0);
+		IFunction f = getBindingFromASTName("fun", 0);
+		ITypedef t = getBindingFromASTName("Type", 0);
 	}
 
 	//	struct base {
@@ -1302,11 +1329,11 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	  }
 	//	};
 	public void test_356982() throws Exception {
-		IASTName name= findName("+ ", 1);
+		IASTName name = findName("+ ", 1);
 		assertTrue(name instanceof IASTImplicitName);
 		assertEquals("base", name.resolveBinding().getOwner().getName());
 
-		name= findName("- ", 1);
+		name = findName("- ", 1);
 		assertTrue(name instanceof IASTImplicitName);
 		assertEquals("base", name.resolveBinding().getOwner().getName());
 	}

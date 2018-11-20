@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
@@ -31,12 +30,14 @@ public class ElementCache<T> extends OverflowingLRUCache<IOpenable, T> {
 	public ElementCache(int size) {
 		super(size);
 	}
+
 	/**
 	 * Constructs a new element cache of the given size.
 	 */
 	public ElementCache(int size, int overflow) {
 		super(size, overflow);
 	}
+
 	/**
 	 * Returns true if the element is successfully closed and
 	 * removed from the cache, otherwise false.
@@ -57,11 +58,12 @@ public class ElementCache<T> extends OverflowingLRUCache<IOpenable, T> {
 			return false;
 		}
 	}
-		/**
-		 * Returns a new instance of the receiver.
-		 */
-		@Override
-		protected OverflowingLRUCache<IOpenable, T> newInstance(int size, int overflow) {
-			return new ElementCache<T>(size, overflow);
-		}
+
+	/**
+	 * Returns a new instance of the receiver.
+	 */
+	@Override
+	protected OverflowingLRUCache<IOpenable, T> newInstance(int size, int overflow) {
+		return new ElementCache<T>(size, overflow);
+	}
 }

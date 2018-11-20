@@ -40,7 +40,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ManagedBuildDependencyCalculatorTests extends TestCase {
-	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/")).getAbsolutePath());
+	private IPath resourcesLocation = new Path(
+			CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/")).getAbsolutePath());
 
 	public ManagedBuildDependencyCalculatorTests(String name) {
 		super(name);
@@ -55,52 +56,54 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		return suite;
 	}
 
-	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
+	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip) {
 		ArrayList<IProject> projectList = null;
 		if (containsZip) {
 			File testDir = CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/" + projName));
-			if(testDir == null) {
+			if (testDir == null) {
 				fail("Test project directory " + projName + " is missing.");
 				return null;
 			}
 
-			File projectZips[] = testDir.listFiles(new FileFilter(){
+			File projectZips[] = testDir.listFiles(new FileFilter() {
 				@Override
-				public boolean accept(File pathname){
-					if(pathname.isDirectory())
+				public boolean accept(File pathname) {
+					if (pathname.isDirectory())
 						return false;
 					return true;
 				}
 			});
 
 			projectList = new ArrayList<IProject>(projectZips.length);
-			for(int i = 0; i < projectZips.length; i++){
-				try{
+			for (int i = 0; i < projectZips.length; i++) {
+				try {
 					String projectName = projectZips[i].getName();
-					if(!projectName.endsWith(".zip"))
+					if (!projectName.endsWith(".zip"))
 						continue;
 
-					projectName = projectName.substring(0,projectName.length()-".zip".length());
-					if(projectName.length() == 0)
+					projectName = projectName.substring(0, projectName.length() - ".zip".length());
+					if (projectName.length() == 0)
 						continue;
-					IProject project = ManagedBuildTestHelper.createProject(projectName, projectZips[i], location, projectTypeId);
-					if(project != null)
+					IProject project = ManagedBuildTestHelper.createProject(projectName, projectZips[i], location,
+							projectTypeId);
+					if (project != null)
 						projectList.add(project);
-				}
-				catch(Exception e){
+				} catch (Exception e) {
 				}
 			}
-			if(projectList.size() == 0) {
-				fail("No projects found in test project directory " + testDir.getName() + ".  The .zip file may be missing or corrupt.");
+			if (projectList.size() == 0) {
+				fail("No projects found in test project directory " + testDir.getName()
+						+ ".  The .zip file may be missing or corrupt.");
 				return null;
 			}
 		} else {
-			try{
+			try {
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
-				if(project != null)
+				if (project != null)
 					projectList = new ArrayList<IProject>(1);
-					projectList.add(project);
-			} catch(Exception e){}
+				projectList.add(project);
+			} catch (Exception e) {
+			}
 		}
 
 		return projectList.toArray(new IProject[projectList.size()]);
@@ -109,11 +112,12 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	private IProject[] createProjects(String projName, IPath location, String projectTypeId, boolean containsZip) {
 
 		//  In case the projects need to be updated...
-		IOverwriteQuery queryALL = new IOverwriteQuery(){
+		IOverwriteQuery queryALL = new IOverwriteQuery() {
 			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
-			}};
+			}
+		};
 
 		UpdateManagedProjectManager.setBackupFileOverwriteQuery(queryALL);
 		UpdateManagedProjectManager.setUpdateProjectQuery(queryALL);
@@ -123,11 +127,11 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	}
 
 	private void buildProjectsWorker(IProject projects[], IPath[] files, boolean compareBenchmark) {
-		if(projects == null || projects.length == 0)
+		if (projects == null || projects.length == 0)
 			return;
 
 		boolean succeeded = true;
-		for (int i = 0; i < projects.length; i++){
+		for (int i = 0; i < projects.length; i++) {
 			IProject curProject = projects[i];
 
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
@@ -136,16 +140,15 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
 			assertTrue(isCompatible);
 
-			if (isCompatible){
+			if (isCompatible) {
 				// Build the project in order to generate the makefiles
-				try{
-					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
-				}
-				catch(CoreException e){
+				try {
+					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+				} catch (CoreException e) {
 					fail(e.getStatus().getMessage());
-				}
-				catch(OperationCanceledException e){
-					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
+				} catch (OperationCanceledException e) {
+					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: "
+							+ e.getMessage());
 				}
 
 				//compare the generated makefiles to their benchmarks
@@ -156,7 +159,8 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 						if (compareBenchmark) {
 							IPath benchmarkLocationBase = resourcesLocation.append(curProject.getName());
 							IPath buildLocation = curProject.getLocation().append(buildDir);
-							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files, benchmarkLocationBase);
+							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files,
+									benchmarkLocationBase);
 						} else {
 							succeeded = ManagedBuildTestHelper.verifyFilesDoNotExist(curProject, buildDir, files);
 						}
@@ -165,7 +169,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 			}
 		}
 
-		if (succeeded) {	//  Otherwise leave the projects around for comparison
+		if (succeeded) { //  Otherwise leave the projects around for comparison
 			for (int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
 		}
@@ -176,68 +180,47 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		buildProjectsWorker(projects, files, true);
 	}
 
-
 	/* (non-Javadoc)
 	 * test for dependency calculation as a side-effect of compilation
 	 */
-	public void test1DepCalc2(){
-		IPath[] makefiles = {
-				 Path.fromOSString("makefile"),
-				 Path.fromOSString("objects.mk"),
-				 Path.fromOSString("sources.mk"),
-				 Path.fromOSString("subdir.mk"),
-				 //  This file is different using Cygwin vs GCC
-				 //Path.fromOSString("main.d"),
-				 Path.fromOSString("Sources/subdir.mk"),
-				 Path.fromOSString("Sources/func1.d"),
-				 Path.fromOSString("Sources/func2.d"),
-				 Path.fromOSString("Sources/func4.d"),
-				 Path.fromOSString("Sources/sub sources/func 3.d"),
-				 Path.fromOSString("Sources/sub sources/subdir.mk")};
+	public void test1DepCalc2() {
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
+				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				//  This file is different using Cygwin vs GCC
+				//Path.fromOSString("main.d"),
+				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
+				Path.fromOSString("Sources/func2.d"), Path.fromOSString("Sources/func4.d"),
+				Path.fromOSString("Sources/sub sources/func 3.d"), Path.fromOSString("Sources/sub sources/subdir.mk") };
 		IProject[] projects = createProjects("test1DepCalc2", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 
-
 	/* (non-Javadoc)
 	 * test for dependency calculation using Echo, a 2nd conmpilation step, and post-processing
 	 */
-	public void test1DepCalc3(){
-		IPath[] makefiles = {
-				 Path.fromOSString("makefile"),
-				 Path.fromOSString("objects.mk"),
-				 Path.fromOSString("sources.mk"),
-				 Path.fromOSString("subdir.mk"),
-				 //  This file is different using Cygwin vs GCC
-				 //Path.fromOSString("main.d"),
-				 Path.fromOSString("Sources/subdir.mk"),
-				 Path.fromOSString("Sources/func1.d"),
-				 Path.fromOSString("Sources/func2.d"),
-				 Path.fromOSString("Sources/func4.d"),
-				 Path.fromOSString("Sources/sub sources/func 3.d"),
-				 Path.fromOSString("Sources/sub sources/subdir.mk")};
+	public void test1DepCalc3() {
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
+				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				//  This file is different using Cygwin vs GCC
+				//Path.fromOSString("main.d"),
+				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
+				Path.fromOSString("Sources/func2.d"), Path.fromOSString("Sources/func4.d"),
+				Path.fromOSString("Sources/sub sources/func 3.d"), Path.fromOSString("Sources/sub sources/subdir.mk") };
 		IProject[] projects = createProjects("test1DepCalc3", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 
-
 	/* (non-Javadoc)
 	 * test for dependency calculation that uses a separate, pre-build, step to generate dependency files
 	 */
-	public void test1DepCalcPreBuild(){
-		IPath[] makefiles = {
-				 Path.fromOSString("makefile"),
-				 Path.fromOSString("objects.mk"),
-				 Path.fromOSString("sources.mk"),
-				 Path.fromOSString("subdir.mk"),
-				 //  This file is different using Cygwin vs GCC
-				 //Path.fromOSString("main.d"),
-				 Path.fromOSString("Sources/subdir.mk"),
-				 Path.fromOSString("Sources/func1.d"),
-				 Path.fromOSString("Sources/func2.d"),
-				 Path.fromOSString("Sources/func4.d"),
-				 Path.fromOSString("Sources/sub sources/func 3.d"),
-				 Path.fromOSString("Sources/sub sources/subdir.mk")};
+	public void test1DepCalcPreBuild() {
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
+				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				//  This file is different using Cygwin vs GCC
+				//Path.fromOSString("main.d"),
+				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
+				Path.fromOSString("Sources/func2.d"), Path.fromOSString("Sources/func4.d"),
+				Path.fromOSString("Sources/sub sources/func 3.d"), Path.fromOSString("Sources/sub sources/subdir.mk") };
 		IProject[] projects = createProjects("test1DepCalcPreBuild", null, null, true);
 		buildProjects(projects, makefiles);
 	}

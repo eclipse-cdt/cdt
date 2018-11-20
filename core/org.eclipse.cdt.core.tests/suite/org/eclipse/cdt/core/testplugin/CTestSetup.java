@@ -16,10 +16,8 @@ package org.eclipse.cdt.core.testplugin;
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 
-
-
 public class CTestSetup extends TestSetup {
-	
+
 	/**
 	 * @deprecated
 	 * Not needed anymore. No added value
@@ -27,8 +25,8 @@ public class CTestSetup extends TestSetup {
 	@Deprecated
 	public CTestSetup(Test test) {
 		super(test);
-	}	
-	
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 	}
@@ -36,8 +34,5 @@ public class CTestSetup extends TestSetup {
 	@Override
 	protected void tearDown() throws Exception {
 	}
-	
 
-	
-	
 }

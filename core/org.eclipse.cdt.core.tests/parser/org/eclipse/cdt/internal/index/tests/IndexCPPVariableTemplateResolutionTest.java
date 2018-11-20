@@ -86,8 +86,8 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 	public void testExplicitVariableInstance() {
 		checkBindings();
 		ICPPVariableTemplate pi = getBindingFromASTName("pi", 0);
-		ICPPVariableInstance piOfInt =
-				getBindingFromASTName("pi<int>", 0, ICPPVariableInstance.class, IIndexBinding.class);
+		ICPPVariableInstance piOfInt = getBindingFromASTName("pi<int>", 0, ICPPVariableInstance.class,
+				IIndexBinding.class);
 
 		assertEquals(pi, piOfInt.getSpecializedBinding());
 	}
@@ -101,8 +101,8 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 	public void testExplicitFieldInstance() {
 		checkBindings();
 		ICPPFieldTemplate pi = getBindingFromASTName("pi", 0);
-		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0,
-				ICPPVariableInstance.class, ICPPField.class, IIndexBinding.class);
+		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0, ICPPVariableInstance.class,
+				ICPPField.class, IIndexBinding.class);
 
 		assertEquals(pi, piOfDouble.getSpecializedBinding());
 	}
@@ -114,8 +114,8 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 	public void testVariableSpecialization() {
 		checkBindings();
 		ICPPVariableTemplate pi = getBindingFromASTName("pi", 0);
-		ICPPVariableInstance piOfInt =
-				getBindingFromASTName("pi<int>", 0, ICPPVariableInstance.class, IIndexBinding.class);
+		ICPPVariableInstance piOfInt = getBindingFromASTName("pi<int>", 0, ICPPVariableInstance.class,
+				IIndexBinding.class);
 
 		assertEquals(pi, piOfInt.getSpecializedBinding());
 	}
@@ -129,8 +129,8 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 	public void testFieldSpecialization() {
 		checkBindings();
 		ICPPFieldTemplate pi = getBindingFromASTName("pi", 0);
-		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0,
-				ICPPVariableInstance.class, ICPPField.class, IIndexBinding.class);
+		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0, ICPPVariableInstance.class,
+				ICPPField.class, IIndexBinding.class);
 
 		assertEquals(pi, piOfDouble.getSpecializedBinding());
 	}
@@ -142,8 +142,8 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 	// template<> constexpr double S::pi<double> = 4;
 	public void testFieldSpecializationInRef() {
 		checkBindings();
-		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0,
-				ICPPVariableInstance.class, ICPPField.class);
+		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0, ICPPVariableInstance.class,
+				ICPPField.class);
 	}
 
 	// template<typename T, int I> T c = T(I);
@@ -154,11 +154,10 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 		checkBindings();
 		ICPPVariableTemplate c = getBindingFromASTName("c", 0);
 
-		ICPPVariableInstance cOfFloat = getBindingFromASTName("c<float, 100>", 0,
-				ICPPVariableInstance.class);
+		ICPPVariableInstance cOfFloat = getBindingFromASTName("c<float, 100>", 0, ICPPVariableInstance.class);
 
-		assertInstance(cOfFloat.getSpecializedBinding(),
-				ICPPVariableTemplatePartialSpecialization.class, IIndexBinding.class);
+		assertInstance(cOfFloat.getSpecializedBinding(), ICPPVariableTemplatePartialSpecialization.class,
+				IIndexBinding.class);
 
 		assertEquals(c,
 				((ICPPVariableTemplatePartialSpecialization) cOfFloat.getSpecializedBinding()).getPrimaryTemplate());
@@ -172,11 +171,10 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 		checkBindings();
 		ICPPVariableTemplate c = getBindingFromASTName("c", 0);
 
-		ICPPVariableInstance cOfIntPtr = getBindingFromASTName("c<int*>", 0,
-				ICPPVariableInstance.class);
+		ICPPVariableInstance cOfIntPtr = getBindingFromASTName("c<int*>", 0, ICPPVariableInstance.class);
 
-		assertInstance(cOfIntPtr.getSpecializedBinding(),
-				ICPPVariableTemplatePartialSpecialization.class, IIndexBinding.class);
+		assertInstance(cOfIntPtr.getSpecializedBinding(), ICPPVariableTemplatePartialSpecialization.class,
+				IIndexBinding.class);
 
 		assertEquals(c,
 				((ICPPVariableTemplatePartialSpecialization) cOfIntPtr.getSpecializedBinding()).getPrimaryTemplate());
@@ -192,16 +190,16 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 		checkBindings();
 		ICPPVariableTemplate c = getBindingFromASTName("c", 0);
 
-		ICPPVariableInstance cOfIntPtr = getBindingFromASTName("c<float, 100>", 0,
-				ICPPVariableInstance.class, ICPPField.class);
+		ICPPVariableInstance cOfIntPtr = getBindingFromASTName("c<float, 100>", 0, ICPPVariableInstance.class,
+				ICPPField.class);
 
-		assertInstance(cOfIntPtr.getSpecializedBinding(),
-				ICPPVariableTemplatePartialSpecialization.class, IIndexBinding.class, ICPPField.class);
+		assertInstance(cOfIntPtr.getSpecializedBinding(), ICPPVariableTemplatePartialSpecialization.class,
+				IIndexBinding.class, ICPPField.class);
 
-		assertEquals(c.getClass(),
-				((ICPPVariableTemplatePartialSpecialization) cOfIntPtr.getSpecializedBinding()).getPrimaryTemplate().getClass());
+		assertEquals(c.getClass(), ((ICPPVariableTemplatePartialSpecialization) cOfIntPtr.getSpecializedBinding())
+				.getPrimaryTemplate().getClass());
 	}
-	
+
 	//  template <typename T>
 	//  constexpr bool templ = true;
 

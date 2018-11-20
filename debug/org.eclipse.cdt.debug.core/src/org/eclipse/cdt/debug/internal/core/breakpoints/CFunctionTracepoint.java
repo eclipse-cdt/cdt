@@ -39,22 +39,23 @@ public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctio
 	/**
 	 * Constructor for CFunctionTracepoint.
 	 */
-	public CFunctionTracepoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public CFunctionTracepoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	/**
-     * Returns the type of marker associated with this type of breakpoints
-     */
-    public String getMarkerType() {
-        return C_FUNCTION_TRACEPOINT_MARKER;
-    }
+	 * Returns the type of marker associated with this type of breakpoints
+	 */
+	public String getMarkerType() {
+		return C_FUNCTION_TRACEPOINT_MARKER;
+	}
 
 	/*(non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		return MessageFormat.format( BreakpointMessages.getString( "CFunctionTracepoint.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		return MessageFormat.format(BreakpointMessages.getString("CFunctionTracepoint.0"), //$NON-NLS-1$
+				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 }

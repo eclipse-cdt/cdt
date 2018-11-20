@@ -37,12 +37,13 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
  * (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=246846). It will be removed.
  */
 @Deprecated
-public final class TaskTagRule extends WordRule implements IPropertyChangeParticipant {	
+public final class TaskTagRule extends WordRule implements IPropertyChangeParticipant {
 	private static class TaskTagDetector implements IWordDetector {
 		@Override
 		public boolean isWordStart(char c) {
 			return Character.isLetter(c);
 		}
+
 		@Override
 		public boolean isWordPart(char c) {
 			return Character.isLetter(c);
@@ -58,11 +59,11 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	 * expected by TaskTagRule
 	 */
 	public static String getTaskWords(IPreferenceStore preferenceStore, Preferences corePreferences) {
-		String result= null;
+		String result = null;
 		if (preferenceStore.contains(CCorePreferenceConstants.TODO_TASK_TAGS)) {
-			result= preferenceStore.getString(CCorePreferenceConstants.TODO_TASK_TAGS);
+			result = preferenceStore.getString(CCorePreferenceConstants.TODO_TASK_TAGS);
 		} else if (corePreferences != null) {
-			result= corePreferences.getString(CCorePreferenceConstants.TODO_TASK_TAGS);
+			result = corePreferences.getString(CCorePreferenceConstants.TODO_TASK_TAGS);
 		}
 		return result;
 	}
@@ -76,8 +77,8 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	 */
 	public TaskTagRule(IToken token, String taskWords) {
 		super(new TaskTagDetector(), Token.UNDEFINED);
-		fToken= token;
-		if( taskWords!= null) {
+		fToken = token;
+		if (taskWords != null) {
 			addTaskTags(taskWords);
 		}
 	}
@@ -95,8 +96,8 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	 * @param value a comma delimited list of words to recognize as task tags
 	 */
 	public void addTaskTags(String value) {
-		String[] tasks= value.split(","); //$NON-NLS-1$
-		for (int i= 0; i < tasks.length; i++) {
+		String[] tasks = value.split(","); //$NON-NLS-1$
+		for (int i = 0; i < tasks.length; i++) {
 			if (tasks[i].length() > 0) {
 				addWord(tasks[i], fToken);
 			}
@@ -117,7 +118,7 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(CCorePreferenceConstants.TODO_TASK_TAGS)) {
-			Object value= event.getNewValue();
+			Object value = event.getNewValue();
 
 			if (value instanceof String) {
 				clearTaskTags();

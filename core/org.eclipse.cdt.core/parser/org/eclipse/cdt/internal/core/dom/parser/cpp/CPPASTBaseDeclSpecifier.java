@@ -22,150 +22,150 @@ import org.eclipse.cdt.internal.core.model.ASTStringUtil;
  * Base for all C++ declaration specifiers.
  */
 public abstract class CPPASTBaseDeclSpecifier extends CPPASTAttributeOwner implements ICPPASTDeclSpecifier {
-    private boolean isConst;
-    private boolean isConstexpr;
-    private boolean isExplicit;
-    private boolean isFriend;
-    private boolean isInline;
-    private boolean isRestrict;
-    private boolean isThreadLocal;
-    private boolean isVirtual;
-    private boolean isVolatile;
-    private int storageClass;
+	private boolean isConst;
+	private boolean isConstexpr;
+	private boolean isExplicit;
+	private boolean isFriend;
+	private boolean isInline;
+	private boolean isRestrict;
+	private boolean isThreadLocal;
+	private boolean isVirtual;
+	private boolean isVolatile;
+	private int storageClass;
 
-    @Override
+	@Override
 	public final boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public final void setConst(boolean value) {
-        assertNotFrozen();
-        isConst = value;
-    }
+		assertNotFrozen();
+		isConst = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isConstexpr() {
-        return isConstexpr;
-    }
+		return isConstexpr;
+	}
 
-    @Override
+	@Override
 	public final void setConstexpr(boolean value) {
-        assertNotFrozen();
-        isConstexpr = value;
-    }
+		assertNotFrozen();
+		isConstexpr = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isFriend() {
-        return isFriend;
-    }
+		return isFriend;
+	}
 
-    @Override
+	@Override
 	public final void setFriend(boolean value) {
-        assertNotFrozen();
-        isFriend = value;
-    }
+		assertNotFrozen();
+		isFriend = value;
+	}
 
-    @Override
+	@Override
 	public final int getStorageClass() {
-        return storageClass;
-    }
+		return storageClass;
+	}
 
-    @Override
+	@Override
 	public final void setStorageClass(int storageClass) {
-        assertNotFrozen();
-        this.storageClass = storageClass;
-    }
+		assertNotFrozen();
+		this.storageClass = storageClass;
+	}
 
-    @Override
+	@Override
 	public final boolean isThreadLocal() {
-        return isThreadLocal;
-    }
+		return isThreadLocal;
+	}
 
-    @Override
+	@Override
 	public final void setThreadLocal(boolean value) {
-        assertNotFrozen();
-        isThreadLocal = value;
-    }
+		assertNotFrozen();
+		isThreadLocal = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public final void setVolatile(boolean value) {
-        assertNotFrozen();
-        isVolatile = value;
-    }
+		assertNotFrozen();
+		isVolatile = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isRestrict() {
-        return isRestrict;
-    }
+		return isRestrict;
+	}
 
-    @Override
+	@Override
 	public final void setRestrict(boolean value) {
-        assertNotFrozen();
-        isRestrict = value;
-    }
+		assertNotFrozen();
+		isRestrict = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isInline() {
-        return isInline;
-    }
+		return isInline;
+	}
 
-    @Override
+	@Override
 	public final void setInline(boolean value) {
-        assertNotFrozen();
-        this.isInline = value;
-    }
+		assertNotFrozen();
+		this.isInline = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isVirtual() {
-        return isVirtual;
-    }
+		return isVirtual;
+	}
 
-    @Override
+	@Override
 	public final void setVirtual(boolean value) {
-        assertNotFrozen();
-        isVirtual = value;
-    }
+		assertNotFrozen();
+		isVirtual = value;
+	}
 
-    @Override
+	@Override
 	public final boolean isExplicit() {
-        return isExplicit;
-    }
+		return isExplicit;
+	}
 
-    @Override
+	@Override
 	public final void setExplicit(boolean value) {
-        assertNotFrozen();
-        this.isExplicit = value;
-    }
+		assertNotFrozen();
+		this.isExplicit = value;
+	}
 
-    @Deprecated
-    @Override
-    public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
-    	return null;
-    }
+	@Deprecated
+	@Override
+	public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
+		return null;
+	}
 
-    @Deprecated
-    @Override
-    public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
-    }
+	@Deprecated
+	@Override
+	public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
+	}
 
 	protected <T extends CPPASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
 		CPPASTBaseDeclSpecifier target = copy;
-    	target.isExplicit = isExplicit;
-    	target.isFriend = isFriend;
-    	target.isInline = isInline;
-    	target.isConst = isConst;
-    	target.isConstexpr = isConstexpr;
-    	target.isRestrict= isRestrict;
-    	target.isThreadLocal = isThreadLocal;
-    	target.isVolatile = isVolatile;
-    	target.storageClass = storageClass;
-    	target.isVirtual = isVirtual;
+		target.isExplicit = isExplicit;
+		target.isFriend = isFriend;
+		target.isInline = isInline;
+		target.isConst = isConst;
+		target.isConstexpr = isConstexpr;
+		target.isRestrict = isRestrict;
+		target.isThreadLocal = isThreadLocal;
+		target.isVolatile = isVolatile;
+		target.storageClass = storageClass;
+		target.isVirtual = isVirtual;
 		return super.copy(copy, style);
 	}
 
@@ -174,6 +174,6 @@ public abstract class CPPASTBaseDeclSpecifier extends CPPASTAttributeOwner imple
 	 */
 	@Override
 	public String toString() {
-    	return ASTStringUtil.getSignatureString(this, null);
-    }
+		return ASTStringUtil.getSignatureString(this, null);
+	}
 }

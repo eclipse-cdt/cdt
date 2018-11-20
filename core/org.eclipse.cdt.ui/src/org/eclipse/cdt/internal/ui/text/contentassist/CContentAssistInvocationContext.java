@@ -55,7 +55,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 
-
 /**
  * Describes the context of a content assist invocation in a C/C++ editor.
  * <p>
@@ -95,12 +94,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				// from the invocation offset, we are proposing completions for a name
 				// that's not right under the cursor, and so we just want to show 
 				// context information.
-				fIsContextInformationStyle= true;
+				fIsContextInformationStyle = true;
 			}
 			fAdjustedParseOffset = result;
 			return result;
 		}
-		
+
 		private int doCalculate() {
 			if (fIsCompletion) {
 				return guessCompletionPosition(getInvocationOffset());
@@ -118,31 +117,30 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		if (completionName.getSimpleID().length > 0) {
 			return null;
 		}
-		if (completionName.getParent() instanceof IASTIdExpression &&
-			completionName.getParent().getParent() instanceof IASTInitializerList) {
+		if (completionName.getParent() instanceof IASTIdExpression
+				&& completionName.getParent().getParent() instanceof IASTInitializerList) {
 			IASTNode initList = completionName.getParent().getParent();
-			if (initList.getParent() instanceof IASTDeclarator &&
-				initList.getParent().getParent() instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) completionName.getParent().getParent()
-						.getParent().getParent();
+			if (initList.getParent() instanceof IASTDeclarator
+					&& initList.getParent().getParent() instanceof IASTSimpleDeclaration) {
+				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) completionName.getParent().getParent().getParent()
+						.getParent();
 				if (decl.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
 					return ((IASTNamedTypeSpecifier) decl.getDeclSpecifier()).getName();
-				}			
+				}
 			} else if (initList.getParent() instanceof ICPPASTSimpleTypeConstructorExpression) {
-				ICPPASTSimpleTypeConstructorExpression expr = 
-						(ICPPASTSimpleTypeConstructorExpression) initList.getParent();
+				ICPPASTSimpleTypeConstructorExpression expr = (ICPPASTSimpleTypeConstructorExpression) initList
+						.getParent();
 				if (expr.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
 					return ((IASTNamedTypeSpecifier) expr.getDeclSpecifier()).getName();
 				}
 			} else if (initList.getParent() instanceof ICPPASTConstructorChainInitializer) {
-				ICPPASTConstructorChainInitializer ctorInit = 
-						(ICPPASTConstructorChainInitializer) initList.getParent();
+				ICPPASTConstructorChainInitializer ctorInit = (ICPPASTConstructorChainInitializer) initList.getParent();
 				return ctorInit.getMemberInitializerId();
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Choose a better completion node based on information in the AST.
 	 * 
@@ -191,7 +189,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			} catch (ExpansionOverlapsBoundaryException e) {
 			}
 			if (newCompletionToken != null) {
-				ASTCompletionNode newCompletionNode = new ASTCompletionNode(newCompletionToken, 
+				ASTCompletionNode newCompletionNode = new ASTCompletionNode(newCompletionToken,
 						existing.getTranslationUnit());
 				newCompletionNode.addName(newCompletionName);
 				return newCompletionNode;
@@ -199,7 +197,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 		return null;
 	}
-	
+
 	private final Lazy<IASTCompletionNode> fCN = new Lazy<IASTCompletionNode>() {
 		@Override
 		protected IASTCompletionNode calculateValue() {
@@ -207,7 +205,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			if (offset < 0)
 				return null;
 
-			ICProject proj= getProject();
+			ICProject proj = getProject();
 			if (proj == null)
 				return null;
 
@@ -215,8 +213,9 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				if (fIndex != null)
 					throw new IllegalStateException("The method should not be called multiple times."); //$NON-NLS-1$
 
-				IIndexManager manager= CCorePlugin.getIndexManager();
-				fIndex = manager.getIndex(proj, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
+				IIndexManager manager = CCorePlugin.getIndexManager();
+				fIndex = manager.getIndex(proj,
+						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
 
 				try {
 					fIndex.acquireReadLock();
@@ -224,8 +223,10 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 					fIndex = null;
 				}
 
-				boolean parseNonIndexed= CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
-				int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS : ITranslationUnit.AST_SKIP_ALL_HEADERS;
+				boolean parseNonIndexed = CUIPlugin.getDefault().getPreferenceStore()
+						.getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
+				int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS
+						: ITranslationUnit.AST_SKIP_ALL_HEADERS;
 				flags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 
 				IASTCompletionNode result = fTU.value().getCompletionNode(fIndex, flags, offset);
@@ -242,8 +243,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 						if (adjusted.getNames().length > 0) {
 							// Make a corresponding adjustment to the parse offset.
 							IASTFileLocation adjustedLocation = adjusted.getNames()[0].getFileLocation();
-							fAdjustedParseOffset = adjustedLocation.getNodeOffset() + 
-									adjustedLocation.getNodeLength();
+							fAdjustedParseOffset = adjustedLocation.getNodeOffset() + adjustedLocation.getNodeLength();
 						}
 					}
 				}
@@ -319,7 +319,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			// Before that, there may be any number of "namespace::" token pairs.
 			while (token == Symbols.TokenDOUBLECOLON) {
 				token = tokenStream.previousToken();
-				if (token == Symbols.TokenUSING) {  // there could also be a leading "::" for global namespace
+				if (token == Symbols.TokenUSING) { // there could also be a leading "::" for global namespace
 					return true;
 				} else if (token != Symbols.TokenIDENT) {
 					return false;
@@ -343,8 +343,8 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			return token == Symbols.TokenSEMICOLON;
 		}
 	};
-	
-	private final Lazy<Boolean> followedByOpeningParen = new Lazy<Boolean>() {		
+
+	private final Lazy<Boolean> followedByOpeningParen = new Lazy<Boolean>() {
 		@Override
 		protected Boolean calculateValue() {
 			final IDocument doc = getDocument();
@@ -381,14 +381,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * @param editor the editor that content assist is invoked in
 	 * @param isAutoActivated indicates whether content assist was auto-activated
 	 */
-	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor,
-			boolean isCompletion, boolean isAutoActivated) {
+	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor, boolean isCompletion,
+			boolean isAutoActivated) {
 		super(viewer, offset);
 		Assert.isNotNull(editor);
-		fEditor= editor;
-		fIsCompletion= isCompletion;
-		fIsContextInformationStyle= !isCompletion;
-		fIsAutoActivated= isAutoActivated;
+		fEditor = editor;
+		fIsCompletion = isCompletion;
+		fIsContextInformationStyle = !isCompletion;
+		fIsAutoActivated = isAutoActivated;
 		fTU = new Lazy<ITranslationUnit>() {
 			@Override
 			protected ITranslationUnit calculateValue() {
@@ -396,7 +396,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			}
 		};
 	}
-	
+
 	/**
 	 * Creates a new context.
 	 * 
@@ -404,18 +404,18 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	public CContentAssistInvocationContext(final ITranslationUnit unit, boolean isCompletion) {
 		super();
-		fTU= new Lazy<ITranslationUnit>() {
+		fTU = new Lazy<ITranslationUnit>() {
 			@Override
 			protected ITranslationUnit calculateValue() {
 				return unit;
 			}
 		};
-		fEditor= null;
-		fIsCompletion= isCompletion;
-		fIsContextInformationStyle= !isCompletion;
-		fIsAutoActivated= false;
+		fEditor = null;
+		fIsCompletion = isCompletion;
+		fIsContextInformationStyle = !isCompletion;
+		fIsAutoActivated = false;
 	}
-	
+
 	/**
 	 * Returns the translation unit that content assist is invoked in, <code>null</code> if there
 	 * is none.
@@ -427,7 +427,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		assertNotDisposed();
 		return fTU.value();
 	}
-	
+
 	/**
 	 * Returns the project of the translation unit that content assist is invoked in,
 	 * <code>null</code> if none.
@@ -437,17 +437,17 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	@Override
 	public ICProject getProject() {
 		assertNotDisposed();
-		ITranslationUnit unit= getTranslationUnit();
+		ITranslationUnit unit = getTranslationUnit();
 		return unit == null ? null : unit.getCProject();
 	}
-		
+
 	@Override
 	public IASTCompletionNode getCompletionNode() {
 		assertNotDisposed();
 		// For scalability.
 		if (fEditor != null && fEditor instanceof CEditor) {
 			CEditor editor = (CEditor) fEditor;
-			
+
 			// Check to make sure we should attempt local parsing completions... for remote projects
 			// we should not do this.
 			if (!editor.shouldProcessLocalParsingCompletions()) {
@@ -464,13 +464,13 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 		return fCN.value();
 	}
-	
+
 	@Override
 	public int getParseOffset() {
 		assertNotDisposed();
 		return fParseOffset.value();
 	}
-	
+
 	public int getAdjustedParseOffset() {
 		assertNotDisposed();
 		return fAdjustedParseOffset;
@@ -484,7 +484,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		assertNotDisposed();
 		return fContextInfoPosition.value();
 	}
-	
+
 	/**
 	 * Try to find a sensible completion position backwards in case the given offset
 	 * is inside a function call argument list or in template arguments.
@@ -494,46 +494,51 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	protected int guessCompletionPosition(int contextPosition) {
 		assertNotDisposed();
-		CHeuristicScanner scanner= new CHeuristicScanner(getDocument());
-		int bound= Math.max(-1, contextPosition - 200);
-		
-		int pos= scanner.findNonWhitespaceBackward(contextPosition - 1, bound);
-		if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
-		
-		int token= scanner.previousToken(pos, bound);
-		
+		CHeuristicScanner scanner = new CHeuristicScanner(getDocument());
+		int bound = Math.max(-1, contextPosition - 200);
+
+		int pos = scanner.findNonWhitespaceBackward(contextPosition - 1, bound);
+		if (pos == CHeuristicScanner.NOT_FOUND)
+			return contextPosition;
+
+		int token = scanner.previousToken(pos, bound);
+
 		if (token == Symbols.TokenCOMMA) {
 			int openingParenthesisPos = scanner.findOpeningPeer(pos, bound, '(', ')');
 			int openingAngleBracketPos = scanner.findOpeningPeer(pos, bound, '<', '>');
 			pos = Math.max(openingParenthesisPos, openingAngleBracketPos);
-			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
-			
+			if (pos == CHeuristicScanner.NOT_FOUND)
+				return contextPosition;
+
 			token = scanner.previousToken(pos, bound);
 		}
-		
+
 		if (token == Symbols.TokenLPAREN || token == Symbols.TokenLESSTHAN) {
-			pos= scanner.findNonWhitespaceBackward(pos - 1, bound);
-			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
-			
-			token= scanner.previousToken(pos, bound);
-			
+			pos = scanner.findNonWhitespaceBackward(pos - 1, bound);
+			if (pos == CHeuristicScanner.NOT_FOUND)
+				return contextPosition;
+
+			token = scanner.previousToken(pos, bound);
+
 			if (token == Symbols.TokenGREATERTHAN) {
 				// skip template arguments
-				pos= scanner.findOpeningPeer(pos - 1, '<', '>');
-				if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
-				pos= scanner.findNonWhitespaceBackward(pos - 1, bound);
-				if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
-				token= scanner.previousToken(pos, bound);
+				pos = scanner.findOpeningPeer(pos - 1, '<', '>');
+				if (pos == CHeuristicScanner.NOT_FOUND)
+					return contextPosition;
+				pos = scanner.findNonWhitespaceBackward(pos - 1, bound);
+				if (pos == CHeuristicScanner.NOT_FOUND)
+					return contextPosition;
+				token = scanner.previousToken(pos, bound);
 			}
-			
+
 			if (token == Symbols.TokenIDENT) {
 				return pos + 1;
 			}
 		}
-		
+
 		return contextPosition;
 	}
-	
+
 	/**
 	 * Try to find the smallest offset inside the opening parenthesis of a function call
 	 * argument list.
@@ -543,31 +548,31 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	protected int guessContextInformationPosition() {
 		assertNotDisposed();
-		final int contextPosition= getInvocationOffset();
-		
-		CHeuristicScanner scanner= new CHeuristicScanner(getDocument());
-		int bound= Math.max(-1, contextPosition - 200);
-		
+		final int contextPosition = getInvocationOffset();
+
+		CHeuristicScanner scanner = new CHeuristicScanner(getDocument());
+		int bound = Math.max(-1, contextPosition - 200);
+
 		// try the innermost scope of parentheses that looks like a method call
-		int pos= contextPosition - 1;
+		int pos = contextPosition - 1;
 		do {
-			int paren= scanner.findOpeningPeer(pos, bound, '(', ')');
-			int angle= scanner.findOpeningPeer(pos, bound, '<', '>');
+			int paren = scanner.findOpeningPeer(pos, bound, '(', ')');
+			int angle = scanner.findOpeningPeer(pos, bound, '<', '>');
 			int nearestPeer = Math.max(paren, angle);
 			if (nearestPeer == CHeuristicScanner.NOT_FOUND)
 				break;
-			int token= scanner.previousToken(nearestPeer - 1, bound);
+			int token = scanner.previousToken(nearestPeer - 1, bound);
 			// next token must be a method name (identifier) or the closing angle of a
 			// constructor call of a template type.
 			if (token == Symbols.TokenIDENT || token == Symbols.TokenGREATERTHAN) {
 				return nearestPeer + 1;
 			}
-			pos= nearestPeer - 1;
+			pos = nearestPeer - 1;
 		} while (true);
-		
+
 		return -1;
 	}
-	
+
 	/**
 	 * Get the editor content assist is invoked in.
 	 * 
@@ -584,7 +589,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		assertNotDisposed();
 		return fIsContextInformationStyle;
 	}
-	
+
 	public boolean isAutoActivated() {
 		assertNotDisposed();
 		return fIsAutoActivated;
@@ -618,8 +623,8 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		assertNotDisposed();
 		return followedBySemicolon.value();
 	}
-	
-	public boolean isFollowedByOpeningParen() {		
+
+	public boolean isFollowedByOpeningParen() {
 		assertNotDisposed();
 		return followedByOpeningParen.value();
 	}

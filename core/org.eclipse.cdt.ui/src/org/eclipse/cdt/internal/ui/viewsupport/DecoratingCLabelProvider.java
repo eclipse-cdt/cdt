@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.ui.PlatformUI;
 
 public class DecoratingCLabelProvider extends ColoringLabelProvider {
-	
+
 	/**
 	 * Decorating label provider for C/C++. Combines a CUILabelProvider
 	 * with problem and override indicator with the workbench decorator (label
@@ -37,7 +37,8 @@ public class DecoratingCLabelProvider extends ColoringLabelProvider {
 	 * @param errorTick show error ticks
 	 */
 	public DecoratingCLabelProvider(CUILabelProvider labelProvider, boolean errorTick) {
-		super(labelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator(), DecorationContext.DEFAULT_CONTEXT);
+		super(labelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator(),
+				DecorationContext.DEFAULT_CONTEXT);
 		if (errorTick) {
 			labelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
 		}

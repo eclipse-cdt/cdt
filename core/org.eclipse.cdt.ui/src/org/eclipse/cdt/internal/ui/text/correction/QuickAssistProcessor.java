@@ -57,63 +57,64 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 		IStatus status = ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(),
 				ASTProvider.WAIT_ACTIVE_ONLY, new NullProgressMonitor(), new ASTRunnable() {
 
-			@Override
-			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-				IASTNodeSelector selector= astRoot.getNodeSelector(null);
-				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());
+					@Override
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+						IASTNodeSelector selector = astRoot.getNodeSelector(null);
+						IASTName name = selector.findEnclosingName(context.getSelectionOffset(),
+								context.getSelectionLength());
 
-				// Activate the proposal only if a simple name is selected.
-				if (name != null && name == name.getLastName()) {
-					IBinding binding= name.resolveBinding();
-					if (binding != null) {
-						return Status.OK_STATUS;
+						// Activate the proposal only if a simple name is selected.
+						if (name != null && name == name.getLastName()) {
+							IBinding binding = name.resolveBinding();
+							if (binding != null) {
+								return Status.OK_STATUS;
+							}
+						}
+						return Status.CANCEL_STATUS;
 					}
-				}
-				return Status.CANCEL_STATUS;
-			}
-		});
+				});
 		return status.isOK();
 	}
 
 	@Override
 	public ICCompletionProposal[] getAssists(final IInvocationContext context,
 			final IProblemLocation[] problemLocations) throws CoreException {
-		final ArrayList<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>();
+		final ArrayList<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
 
 		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_ACTIVE_ONLY,
-				new NullProgressMonitor(),
-				new ASTRunnable() {
+				new NullProgressMonitor(), new ASTRunnable() {
 
-			@Override
-			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-				if (astRoot == null) {
-					return Status.CANCEL_STATUS;
-				}
-				
-				IASTNodeSelector selector= astRoot.getNodeSelector(null);
-				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());
+					@Override
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+						if (astRoot == null) {
+							return Status.CANCEL_STATUS;
+						}
 
-				// Activate the proposal only if a simple name is selected.
-				if (name != null && name == name.getLastName()) {
-					IBinding binding= name.resolveBinding();
-					if (binding != null) {
-						boolean noErrorsAtLocation= noErrorsAtLocation(problemLocations);
-						
-						// Quick assists that show up also if there is an error/warning
-						getRenameLocalProposals(context, problemLocations, noErrorsAtLocation, proposals);
-						getRenameRefactoringProposal(context, problemLocations, noErrorsAtLocation, proposals);
+						IASTNodeSelector selector = astRoot.getNodeSelector(null);
+						IASTName name = selector.findEnclosingName(context.getSelectionOffset(),
+								context.getSelectionLength());
+
+						// Activate the proposal only if a simple name is selected.
+						if (name != null && name == name.getLastName()) {
+							IBinding binding = name.resolveBinding();
+							if (binding != null) {
+								boolean noErrorsAtLocation = noErrorsAtLocation(problemLocations);
+
+								// Quick assists that show up also if there is an error/warning
+								getRenameLocalProposals(context, problemLocations, noErrorsAtLocation, proposals);
+								getRenameRefactoringProposal(context, problemLocations, noErrorsAtLocation, proposals);
+							}
+						}
+						return Status.OK_STATUS;
 					}
-				}
-				return Status.OK_STATUS;
-			}
-		});
-		
+				});
+
 		return proposals.isEmpty() ? null : proposals.toArray(new ICCompletionProposal[proposals.size()]);
 	}
 
 	private boolean noErrorsAtLocation(IProblemLocation[] locations) {
 		if (locations != null) {
-			for (int i= 0; i < locations.length; i++) {
+			for (int i = 0; i < locations.length; i++) {
 				if (locations[i].isError()) {
 					return false;
 				}
@@ -121,28 +122,27 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 		}
 		return true;
 	}
-	
+
 	private static void getRenameLocalProposals(IInvocationContext context, IProblemLocation[] locations,
 			boolean noErrorsAtLocation, Collection<ICCompletionProposal> proposals) {
-		LinkedNamesAssistProposal proposal= new LinkedNamesAssistProposal(context.getTranslationUnit());
+		LinkedNamesAssistProposal proposal = new LinkedNamesAssistProposal(context.getTranslationUnit());
 		if (!noErrorsAtLocation) {
 			proposal.setRelevance(1);
 		}
-		
+
 		proposals.add(proposal);
 	}
 
 	private static boolean getRenameRefactoringProposal(IInvocationContext context, IProblemLocation[] locations,
-			boolean noErrorsAtLocation, Collection<ICCompletionProposal> proposals)
-			throws CoreException {
-		IEditorPart editor= CUIPlugin.getActivePage().getActiveEditor();
+			boolean noErrorsAtLocation, Collection<ICCompletionProposal> proposals) throws CoreException {
+		IEditorPart editor = CUIPlugin.getActivePage().getActiveEditor();
 		if (!(editor instanceof CEditor))
 			return false;
 
 		if (proposals == null) {
 			return true;
 		}
-		RenameRefactoringProposal proposal= new RenameRefactoringProposal((CEditor) editor);
+		RenameRefactoringProposal proposal = new RenameRefactoringProposal((CEditor) editor);
 		if (!noErrorsAtLocation) {
 			proposal.setRelevance(1);
 		}

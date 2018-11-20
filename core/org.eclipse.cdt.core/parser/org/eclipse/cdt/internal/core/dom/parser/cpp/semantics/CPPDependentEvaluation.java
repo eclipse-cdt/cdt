@@ -108,8 +108,8 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	 * This code is similar to CPPTemplates.instantiateArguments(), but applies to evaluations
 	 * rather than template arguments.
 	 */
-	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(
-			ICPPEvaluation[] subexpressions, InstantiationContext context, int maxDepth) {
+	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(ICPPEvaluation[] subexpressions,
+			InstantiationContext context, int maxDepth) {
 		ICPPEvaluation[] result = subexpressions;
 		int resultShift = 0;
 		for (int i = 0; i < subexpressions.length; i++) {

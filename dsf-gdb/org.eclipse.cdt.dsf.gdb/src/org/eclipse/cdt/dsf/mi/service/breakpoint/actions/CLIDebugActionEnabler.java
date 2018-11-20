@@ -71,11 +71,10 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 	}
 
 	private void executeSingleCommand(String str) {
-        // Do not use the interpreter-exec for stepping operation the UI will fall out of step.
-        // Also, do not use "interpreter-exec console" for MI commands.
+		// Do not use the interpreter-exec for stepping operation the UI will fall out of step.
+		// Also, do not use "interpreter-exec console" for MI commands.
 		ICommand<MIInfo> cmd;
-		if (!isMIOperation(str) &&
-				!CLIEventProcessor.isSteppingOperation(str)) {
+		if (!isMIOperation(str) && !CLIEventProcessor.isSteppingOperation(str)) {
 			cmd = new MIInterpreterExecConsole<>(fContext, str);
 		} else {
 			cmd = new CLICommand<>(fContext, str);
@@ -89,8 +88,7 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 					commandControl.queueCommand(cmd, new ImmediateDataRequestMonitor<>());
 				} else {
 					// Should not happen, so log the situation but then ignore it
-					GdbPlugin.log(new Status(
-							IStatus.INFO, GdbPlugin.PLUGIN_ID, 
+					GdbPlugin.log(new Status(IStatus.INFO, GdbPlugin.PLUGIN_ID,
 							"Unable to find service to execute breakpoint command")); //$NON-NLS-1$
 				}
 			}

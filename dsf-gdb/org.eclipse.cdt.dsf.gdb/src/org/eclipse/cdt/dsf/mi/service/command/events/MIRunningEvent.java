@@ -18,45 +18,44 @@ package org.eclipse.cdt.dsf.mi.service.command.events;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 
-
 /**
  *
  *  ^running
  */
 @Immutable
 public class MIRunningEvent extends MIEvent<IExecutionDMContext> {
-    public static final int CONTINUE = 0;
-    public static final int NEXT = 1;
-    public static final int NEXTI = 2;
-    public static final int STEP = 3;
-    public static final int STEPI = 4;
-    public static final int FINISH = 5;
-    public static final int UNTIL = 6;
-    public static final int RETURN = 7;
+	public static final int CONTINUE = 0;
+	public static final int NEXT = 1;
+	public static final int NEXTI = 2;
+	public static final int STEP = 3;
+	public static final int STEPI = 4;
+	public static final int FINISH = 5;
+	public static final int UNTIL = 6;
+	public static final int RETURN = 7;
 
-    final private int type;
-    final private int threadId;
+	final private int type;
+	final private int threadId;
 
-    public MIRunningEvent(IExecutionDMContext ctx, int token, int t) {
-        this(ctx, token, t, -1);
-    }
+	public MIRunningEvent(IExecutionDMContext ctx, int token, int t) {
+		this(ctx, token, t, -1);
+	}
 
-    public MIRunningEvent(IExecutionDMContext ctx, int token, int t, int threadId) {
-    	super(ctx, token, null);
-    	type = t;
-    	this.threadId = threadId;
-    }
+	public MIRunningEvent(IExecutionDMContext ctx, int token, int t, int threadId) {
+		super(ctx, token, null);
+		type = t;
+		this.threadId = threadId;
+	}
 
-    public int getType() {
-    	return type;
-    }
+	public int getType() {
+		return type;
+	}
 
-    public int getThreadId() {
-        return threadId;
-    }
+	public int getThreadId() {
+		return threadId;
+	}
 
-    @Override
-    public String toString() {
-    	return "Running"; //$NON-NLS-1$
-    }
+	@Override
+	public String toString() {
+		return "Running"; //$NON-NLS-1$
+	}
 }

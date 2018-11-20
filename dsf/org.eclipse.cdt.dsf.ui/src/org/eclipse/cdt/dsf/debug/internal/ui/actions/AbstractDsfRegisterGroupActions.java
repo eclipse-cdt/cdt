@@ -176,24 +176,25 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	protected void addRegisterGroup(final IWorkbenchPart part, final IStructuredSelection selection) {
 		try {
-		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
-		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
+			final SelectionDMContext selectionContext = new SelectionDMContext(selection);
+			selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
 
-			@Override
-			public void run() {
-				final IRegisters2 registersService;
-				try {
-					registersService = selectionContext.resolveService();
-				} catch (CoreException e) {
-					failed(e);
-					return;
+				@Override
+				public void run() {
+					final IRegisters2 registersService;
+					try {
+						registersService = selectionContext.resolveService();
+					} catch (CoreException e) {
+						failed(e);
+						return;
+					}
+
+					// continue to process
+					processAddRegisterGroup(part.getSite().getShell(), selectionContext,
+							resolveSelectedRegisters(selection), registersService);
 				}
+			});
 
-				// continue to process
-				processAddRegisterGroup(part.getSite().getShell(), selectionContext,
-						resolveSelectedRegisters(selection), registersService);
-			}});
-		
 		} catch (DebugException e) {
 		}
 	}
@@ -234,27 +235,26 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	protected void editRegisterGroup(final IWorkbenchPart part, IStructuredSelection selection) {
 		try {
-		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
-		
-		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
-			@Override
-			public void run() {
-				// Create a services tracker
-				final IRegisters2 registersService;
-				try {
-					registersService = selectionContext.resolveService();
-				} catch (CoreException e) {
-					failed(e);
-					return;
+			final SelectionDMContext selectionContext = new SelectionDMContext(selection);
+
+			selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					// Create a services tracker
+					final IRegisters2 registersService;
+					try {
+						registersService = selectionContext.resolveService();
+					} catch (CoreException e) {
+						failed(e);
+						return;
+					}
+
+					processEditRegisterGroup(part.getSite().getShell(), selectionContext, registersService);
 				}
-				
-				processEditRegisterGroup(part.getSite().getShell(), selectionContext,
-						registersService);
-			}
-			
-		});
-	} catch (DebugException e) {
-	}
+
+			});
+		} catch (DebugException e) {
+		}
 	}
 
 	protected boolean canEditRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
@@ -304,24 +304,25 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	 */
 	protected void removeRegisterGroups(IWorkbenchPart part, IStructuredSelection selection) {
 		try {
-		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
-		
-		final IRegisterGroupDMContext[] groups = resolveSelectedGroups(selection);
-		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
-			@Override
-			public void run() {
-				IRegisters2 registersService;
-				try {
-					registersService = selectionContext.resolveService();
-				} catch (CoreException e) {
-					failed(e);
-					return;
-				}
+			final SelectionDMContext selectionContext = new SelectionDMContext(selection);
 
-				registersService.removeRegisterGroups(groups, new RequestMonitor(registersService.getExecutor(), null) {
-				});
-			}			
-		});
+			final IRegisterGroupDMContext[] groups = resolveSelectedGroups(selection);
+			selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					IRegisters2 registersService;
+					try {
+						registersService = selectionContext.resolveService();
+					} catch (CoreException e) {
+						failed(e);
+						return;
+					}
+
+					registersService.removeRegisterGroups(groups,
+							new RequestMonitor(registersService.getExecutor(), null) {
+							});
+				}
+			});
 		} catch (DebugException e) {
 		}
 	}
@@ -337,13 +338,13 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 			// No DM context present or group registers service found in the selection
 			return false;
 		}
-		
+
 		//resolve the selected groups
 		final IRegisterGroupDMContext[] groups = resolveSelectedGroups(selection);
-		if (groups == null || groups.length < 1){
+		if (groups == null || groups.length < 1) {
 			return false;
 		}
-		
+
 		//Prepare to Query the service and check if the selected groups can be removed
 		Query<Boolean> query = new Query<Boolean>() {
 			@Override
@@ -357,11 +358,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 					rm.done();
 					return;
 				}
-				
+
 				regService.canRemoveRegisterGroups(groups, rm);
 			}
 		};
-		
+
 		//Execute the query
 		selectionContext.fsession.getExecutor().execute(query);
 
@@ -371,7 +372,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
 		}
-		
+
 		// No positive answer from the service
 		return false;
 	}
@@ -399,7 +400,8 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 					}
 
 					// no success handler needed
-					registersService.restoreDefaultGroups(null, new RequestMonitor(registersService.getExecutor(), null));
+					registersService.restoreDefaultGroups(null,
+							new RequestMonitor(registersService.getExecutor(), null));
 				}
 			});
 		} catch (DebugException e) {
@@ -418,7 +420,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 			// No DM context present or group registers service found in the selection
 			return false;
 		}
-		
+
 		//Prepare to Query the service
 		Query<Boolean> query = new Query<Boolean>() {
 			@Override
@@ -432,11 +434,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 					rm.done();
 					return;
 				}
-				
+
 				regService.canRestoreDefaultGroups(selectionContext.fcontext, rm);
 			}
 		};
-		
+
 		//Execute the query
 		selectionContext.fsession.getExecutor().execute(query);
 
@@ -446,100 +448,106 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
 		}
-		
+
 		// No positive answer from the service
 		return false;
 	}
 
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
-	private void processAddRegisterGroup(final Shell shell, final SelectionDMContext selectionContext, final IRegisterDMContext[] selectedRegisters,
-			final IRegisters2 regServiceManager) {
+	private void processAddRegisterGroup(final Shell shell, final SelectionDMContext selectionContext,
+			final IRegisterDMContext[] selectedRegisters, final IRegisters2 regServiceManager) {
 
 		final DsfSession session = selectionContext.fsession;
 		final DsfExecutor executor = session.getExecutor();
 
-		final IContainerDMContext contDmc = DMContexts.getAncestorOfType(selectionContext.fcontext, IContainerDMContext.class);
+		final IContainerDMContext contDmc = DMContexts.getAncestorOfType(selectionContext.fcontext,
+				IContainerDMContext.class);
 		// Using the container context to get all existing registers from the target instead of a limited set of registers for a selected group 
-		regServiceManager.getRegisters(contDmc, new DataRequestMonitor<IRegisterDMContext[]>(
-				executor, null) {
-			
+		regServiceManager.getRegisters(contDmc, new DataRequestMonitor<IRegisterDMContext[]>(executor, null) {
+
 			@Override
 			protected void handleSuccess() {
 				// Get Register Contexts
 				final IRegisterDMContext[] rootRegisters = getData();
-				
+
 				if (rootRegisters.length < 1) {
 					//The target is expected to have registers, an error has happened !
 					assert false;
 					noRegisterGroupFoundErr("Add Register Group", this); //$NON-NLS-1$
 					return;
 				}
-				
+
 				//Find the root register group, containing all the registers associated to a target, from any of the root registers
-				final IRegisterGroupDMContext rootGroupDmc = DMContexts.getAncestorOfType(rootRegisters[0], IRegisterGroupDMContext.class);
+				final IRegisterGroupDMContext rootGroupDmc = DMContexts.getAncestorOfType(rootRegisters[0],
+						IRegisterGroupDMContext.class);
 
 				// Get data for all available registers
-				getRegistersData(rootRegisters, regServiceManager, new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
-					@Override
-					protected void handleSuccess() {
-						final IRegisterDMData[] rootRegistersData = getData();
-						
-						getRegistersData(selectedRegisters, regServiceManager, new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
+				getRegistersData(rootRegisters, regServiceManager,
+						new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
 							@Override
 							protected void handleSuccess() {
-								// Get data for all selected registers i.e. selected for the new group
-								final IRegisterDMData[] selectedRegistersData = getData();
-								
-								//Need the root group name to build register descriptors 
-								regServiceManager.getRegisterGroupData(rootGroupDmc,
-										new DataRequestMonitor<IRegisterGroupDMData>(executor, null) {
+								final IRegisterDMData[] rootRegistersData = getData();
+
+								getRegistersData(selectedRegisters, regServiceManager,
+										new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
 											@Override
 											protected void handleSuccess() {
-												final IRegisterGroupDMData rootGroupData = getData();
-												// request for the next unused group name to propose it to the user
-												proposeGroupName(rootRegisters, regServiceManager, new DataRequestMonitor<String>(executor, null) {
+												// Get data for all selected registers i.e. selected for the new group
+												final IRegisterDMData[] selectedRegistersData = getData();
+
+												//Need the root group name to build register descriptors 
+												regServiceManager.getRegisterGroupData(rootGroupDmc,
+														new DataRequestMonitor<IRegisterGroupDMData>(executor, null) {
 															@Override
 															protected void handleSuccess() {
-																String proposedGroupName = getData();
-
-																String rootGroupName = (rootGroupData == null) ? BLANK_STRING
-																		: rootGroupData.getName();
-																// Create the Register descriptors
-																DialogRegisterProvider descriptors = buildDescriptors(
-																		rootGroupName, rootRegisters,
-																		rootRegistersData,
-																		selectedRegistersData);
-																// Create Dialog Resolve selection to DSF
-																// Registers
-																getDialogSelection(
-																		shell,
-																		proposedGroupName,
-																		descriptors.getAllRegisters(),
-																		descriptors.getcheckedRegisters(),
-																		new DataRequestMonitor<IRegisterGroupDescriptor>(
-																				executor, null) {
+																final IRegisterGroupDMData rootGroupData = getData();
+																// request for the next unused group name to propose it to the user
+																proposeGroupName(rootRegisters, regServiceManager,
+																		new DataRequestMonitor<String>(executor, null) {
 																			@Override
 																			protected void handleSuccess() {
-																				try {
-																					addRegisterGroup(
-																							regServiceManager,
-																							getData(), contDmc);
-																				} catch (CoreException e) {
-																					failed(e);
-																				}
-																			};
+																				String proposedGroupName = getData();
+
+																				String rootGroupName = (rootGroupData == null)
+																						? BLANK_STRING
+																						: rootGroupData.getName();
+																				// Create the Register descriptors
+																				DialogRegisterProvider descriptors = buildDescriptors(
+																						rootGroupName, rootRegisters,
+																						rootRegistersData,
+																						selectedRegistersData);
+																				// Create Dialog Resolve selection to DSF
+																				// Registers
+																				getDialogSelection(shell,
+																						proposedGroupName,
+																						descriptors.getAllRegisters(),
+																						descriptors
+																								.getcheckedRegisters(),
+																						new DataRequestMonitor<IRegisterGroupDescriptor>(
+																								executor, null) {
+																							@Override
+																							protected void handleSuccess() {
+																								try {
+																									addRegisterGroup(
+																											regServiceManager,
+																											getData(),
+																											contDmc);
+																								} catch (CoreException e) {
+																									failed(e);
+																								}
+																							};
+																						});
+																			}
 																		});
+
 															}
 														});
-
 											}
 										});
 							}
 						});
-					}
-				});
 			}
-			
+
 		});
 	}
 
@@ -552,53 +560,57 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 		rm.done();
 	}
 
-	private void proposeGroupName(IRegisterDMContext[] registers, final IRegisters2 regServiceManager, final DataRequestMonitor<String> rm) {
-		assert(registers != null && registers.length > 0);
-		
+	private void proposeGroupName(IRegisterDMContext[] registers, final IRegisters2 regServiceManager,
+			final DataRequestMonitor<String> rm) {
+		assert (registers != null && registers.length > 0);
+
 		final DsfExecutor executor = regServiceManager.getExecutor();
 		if (registers != null && registers.length > 0) {
 			//First get all register group contexts, any register context can be used to resolve the container context
-			regServiceManager.getRegisterGroups(registers[0], new DataRequestMonitor<IRegisterGroupDMContext[]>(executor, null) {
-				@Override
-				protected void handleSuccess() {
-					IRegisterGroupDMContext[] groupsCtx = getData();
-					assert (groupsCtx != null); 
-
-					final IRegisterGroupDMData[] groupsData = new IRegisterGroupDMData[groupsCtx.length];
-					
-					final CountingRequestMonitor crm = new CountingRequestMonitor(executor, rm) {
+			regServiceManager.getRegisterGroups(registers[0],
+					new DataRequestMonitor<IRegisterGroupDMContext[]>(executor, null) {
 						@Override
-						protected void handleCompleted() {
-							//GroupsData is resolved now
-							//Select an unused name
-							String unusedGroupName = Messages.ProposeGroupNameRoot + (resolveGroupNameWaterMark(groupsData) + 1);
-							rm.setData(unusedGroupName);
-							rm.done();
-						}
-					};
-					
-					//Resolve all register group data
-					for (int i=0; i < groupsCtx.length; i++) { 
-						final int index = i;
-						regServiceManager.getRegisterGroupData(groupsCtx[index], new DataRequestMonitor<IRegisterGroupDMData>(executor, crm){
-							@Override
-							protected void handleSuccess() {
-								groupsData[index] = getData();
-								crm.done();
+						protected void handleSuccess() {
+							IRegisterGroupDMContext[] groupsCtx = getData();
+							assert (groupsCtx != null);
+
+							final IRegisterGroupDMData[] groupsData = new IRegisterGroupDMData[groupsCtx.length];
+
+							final CountingRequestMonitor crm = new CountingRequestMonitor(executor, rm) {
+								@Override
+								protected void handleCompleted() {
+									//GroupsData is resolved now
+									//Select an unused name
+									String unusedGroupName = Messages.ProposeGroupNameRoot
+											+ (resolveGroupNameWaterMark(groupsData) + 1);
+									rm.setData(unusedGroupName);
+									rm.done();
+								}
+							};
+
+							//Resolve all register group data
+							for (int i = 0; i < groupsCtx.length; i++) {
+								final int index = i;
+								regServiceManager.getRegisterGroupData(groupsCtx[index],
+										new DataRequestMonitor<IRegisterGroupDMData>(executor, crm) {
+											@Override
+											protected void handleSuccess() {
+												groupsData[index] = getData();
+												crm.done();
+											}
+										});
 							}
-						});
-					}
-					
-	                crm.setDoneCount(groupsCtx.length);
-				}
-			});
+
+							crm.setDoneCount(groupsCtx.length);
+						}
+					});
 		} else {
 			//Should not happen
 			rm.setData(Messages.DefaultRegistersGroupName);
 			rm.done();
 		}
 	}
-	
+
 	// Adjust water mark suffix used to suggest register group names
 	private Integer resolveGroupNameWaterMark(IRegisterGroupDMData[] groupsData) {
 		// check only for this name pattern
@@ -623,14 +635,15 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 					// Quite unlikely and only causing a possibility to
 					// propose a group name that already exists.
 				}
-			}	
+			}
 		}
-		
+
 		return Integer.valueOf(water_mark);
 	}
-	
+
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
-	private void processEditRegisterGroup(final Shell shell, final SelectionDMContext selectionContext, final IRegisters2 regServiceManager) {
+	private void processEditRegisterGroup(final Shell shell, final SelectionDMContext selectionContext,
+			final IRegisters2 regServiceManager) {
 
 		final DsfSession session = selectionContext.fsession;
 		final DsfExecutor executor = session.getExecutor();
@@ -646,94 +659,110 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 					protected void handleSuccess() {
 						// Get children Register Contexts
 						final IRegisterDMContext[] childRegisters = getData();
-						
-						final IContainerDMContext contDmc = DMContexts.getAncestorOfType(selectionContext.fcontext, IContainerDMContext.class);
+
+						final IContainerDMContext contDmc = DMContexts.getAncestorOfType(selectionContext.fcontext,
+								IContainerDMContext.class);
 						// Using the container context to get all existing registers from the target instead of a limited set of registers for a selected group 
 						// This is needed to populate the dialog with all available registers to pick from
-						regServiceManager.getRegisters(contDmc, new DataRequestMonitor<IRegisterDMContext[]>(
-								executor, null) {
-							@Override
-							protected void handleSuccess() {
-								final IRegisterDMContext[] rootRegisters = getData();
-								
-								if (rootRegisters.length < 1) {
-									//The target is expected to have a root register group and associated registers, an error has happened !
-									assert false;
-									noRegisterGroupFoundErr("Edit Register Group", this); //$NON-NLS-1$
-									return;
-								}
-								
-								// We need to resolve the names for all root registers
-								getRegistersData(rootRegisters, regServiceManager, new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
+						regServiceManager.getRegisters(contDmc,
+								new DataRequestMonitor<IRegisterDMContext[]>(executor, null) {
 									@Override
 									protected void handleSuccess() {
-										final IRegisterDMData[] rootRegistersData = getData();
+										final IRegisterDMContext[] rootRegisters = getData();
 
-										getRegistersData(childRegisters, regServiceManager, new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
-											@Override
-											protected void handleSuccess() {
-												// Get register data for all selected registers i.e. selected for the new group
-												final IRegisterDMData[] childRegisterData = getData();
+										if (rootRegisters.length < 1) {
+											//The target is expected to have a root register group and associated registers, an error has happened !
+											assert false;
+											noRegisterGroupFoundErr("Edit Register Group", this); //$NON-NLS-1$
+											return;
+										}
 
-												// Need to get the parent group name. Used on the register descriptors
-												final IRegisterGroupDMContext rootGroupDmc = DMContexts.getAncestorOfType(rootRegisters[0], IRegisterGroupDMContext.class);
-												regServiceManager.getRegisterGroupData(rootGroupDmc,
-														new DataRequestMonitor<IRegisterGroupDMData>(
-																executor, null) {
-															@Override
-															protected void handleSuccess() {
-																IRegisterGroupDMData rootGroupData = getData();
-																final String rootGroupName = (rootGroupData == null) ? BLANK_STRING
-																		: rootGroupData.getName();
-																
-																regServiceManager.getRegisterGroupData(groupDmc,
-																		new DataRequestMonitor<IRegisterGroupDMData>(
-																				executor, null) {
-																			@Override
-																			protected void handleSuccess() {
-																				// Resolve the name of the selected group being edited
-																				String selGroupName = getData().getName();
-																				// Create the Register descriptors to
-																				// access all children registers
-																				DialogRegisterProvider descriptors = buildDescriptors(
-																						rootGroupName, rootRegisters,
-																						rootRegistersData,
-																						childRegisterData);
+										// We need to resolve the names for all root registers
+										getRegistersData(rootRegisters, regServiceManager,
+												new DataRequestMonitor<IRegisterDMData[]>(executor, null) {
+													@Override
+													protected void handleSuccess() {
+														final IRegisterDMData[] rootRegistersData = getData();
 
-																				// Create Dialog to Resolve new user
-																				// selection of group name and registers
-																				getDialogSelection(
-																						shell,
-																						selGroupName,
-																						descriptors.getAllRegisters(),
-																						descriptors
-																								.getcheckedRegisters(),
-																						new DataRequestMonitor<IRegisterGroupDescriptor>(
-																								executor, null) {
-																							@Override
-																							protected void handleSuccess() {
-																								try {
-																									editRegisterGroup(
-																											groupDmc,
-																											regServiceManager,
-																											getData());
-																								} catch (CoreException e) {
-																									failed(e);
-																								}
-																							};
-																						});
-																			}
-																		});
-															};
+														getRegistersData(childRegisters, regServiceManager,
+																new DataRequestMonitor<IRegisterDMData[]>(executor,
+																		null) {
+																	@Override
+																	protected void handleSuccess() {
+																		// Get register data for all selected registers i.e. selected for the new group
+																		final IRegisterDMData[] childRegisterData = getData();
 
-														});
-											}
-										});
+																		// Need to get the parent group name. Used on the register descriptors
+																		final IRegisterGroupDMContext rootGroupDmc = DMContexts
+																				.getAncestorOfType(rootRegisters[0],
+																						IRegisterGroupDMContext.class);
+																		regServiceManager.getRegisterGroupData(
+																				rootGroupDmc,
+																				new DataRequestMonitor<IRegisterGroupDMData>(
+																						executor, null) {
+																					@Override
+																					protected void handleSuccess() {
+																						IRegisterGroupDMData rootGroupData = getData();
+																						final String rootGroupName = (rootGroupData == null)
+																								? BLANK_STRING
+																								: rootGroupData
+																										.getName();
 
+																						regServiceManager
+																								.getRegisterGroupData(
+																										groupDmc,
+																										new DataRequestMonitor<IRegisterGroupDMData>(
+																												executor,
+																												null) {
+																											@Override
+																											protected void handleSuccess() {
+																												// Resolve the name of the selected group being edited
+																												String selGroupName = getData()
+																														.getName();
+																												// Create the Register descriptors to
+																												// access all children registers
+																												DialogRegisterProvider descriptors = buildDescriptors(
+																														rootGroupName,
+																														rootRegisters,
+																														rootRegistersData,
+																														childRegisterData);
+
+																												// Create Dialog to Resolve new user
+																												// selection of group name and registers
+																												getDialogSelection(
+																														shell,
+																														selGroupName,
+																														descriptors
+																																.getAllRegisters(),
+																														descriptors
+																																.getcheckedRegisters(),
+																														new DataRequestMonitor<IRegisterGroupDescriptor>(
+																																executor,
+																																null) {
+																															@Override
+																															protected void handleSuccess() {
+																																try {
+																																	editRegisterGroup(
+																																			groupDmc,
+																																			regServiceManager,
+																																			getData());
+																																} catch (CoreException e) {
+																																	failed(e);
+																																}
+																															};
+																														});
+																											}
+																										});
+																					};
+
+																				});
+																	}
+																});
+
+													}
+												});
 									}
 								});
-							}
-						});
 					}
 				});
 	}
@@ -799,9 +828,8 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	}
 
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
-	private void getDialogSelection(Shell shell, String originalGroupName,
-			IRegisterDescriptor[] allRegisters, IRegisterDescriptor[] checkedRegisters,
-			DataRequestMonitor<IRegisterGroupDescriptor> rm) {
+	private void getDialogSelection(Shell shell, String originalGroupName, IRegisterDescriptor[] allRegisters,
+			IRegisterDescriptor[] checkedRegisters, DataRequestMonitor<IRegisterGroupDescriptor> rm) {
 		RegisterGroupDialogRunnable dialog = new RegisterGroupDialogRunnable(shell, originalGroupName, allRegisters,
 				checkedRegisters, rm);
 		shell.getDisplay().asyncExec(dialog);
@@ -885,24 +913,24 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	}
 
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
-	private void addRegisterGroup(IRegisters2 regServiceManager,
-			IRegisterGroupDescriptor groupDescriptor, IContainerDMContext contDmc) throws CoreException {
+	private void addRegisterGroup(IRegisters2 regServiceManager, IRegisterGroupDescriptor groupDescriptor,
+			IContainerDMContext contDmc) throws CoreException {
 		IRegisterDescriptor[] selectedRegisters = groupDescriptor.getChildren();
 		if (selectedRegisters != null) {
 			String groupName = groupDescriptor.getName();
 			// Register the addition of the group and notify the change
 			IRegisterDMContext[] registers = getRegisterContexts(selectedRegisters);
-			regServiceManager.addRegisterGroup(contDmc, groupName, registers, new RequestMonitor(
-					regServiceManager.getSession().getExecutor(), null) {
-				@Override
-				protected void handleCompleted() {
-					if (getStatus() != null && getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-						// This user request is not supported, notify the user
-						notifyUser(getStatus().getMessage());
-					}
+			regServiceManager.addRegisterGroup(contDmc, groupName, registers,
+					new RequestMonitor(regServiceManager.getSession().getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (getStatus() != null && getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
+								// This user request is not supported, notify the user
+								notifyUser(getStatus().getMessage());
+							}
 
-				};
-			});
+						};
+					});
 		}
 	}
 
@@ -915,15 +943,15 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 			// Register the addition of the group and notify the change
 			regServiceManager.editRegisterGroup(group, groupName, getRegisterContexts(selectedRegisters),
 					new RequestMonitor(regServiceManager.getSession().getExecutor(), null) {
-				@Override
-				protected void handleCompleted() {
-					if (getStatus() != null && getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-						// This user request is not supported, notify the user
-						notifyUser(getStatus().getMessage());
-					}
-					
-				};
-			});
+						@Override
+						protected void handleCompleted() {
+							if (getStatus() != null && getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
+								// This user request is not supported, notify the user
+								notifyUser(getStatus().getMessage());
+							}
+
+						};
+					});
 		}
 	}
 
@@ -934,13 +962,14 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	}
 
 	private void notifyUser(final String message) {
-		
+
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
 				Shell parent = DsfUIPlugin.getActiveWorkbenchShell();
 				if (parent != null) {
-					MessageDialog.openInformation(parent, Messages.Information, Messages.RegisterGroupInfo + ": " + message); //$NON-NLS-1$
+					MessageDialog.openInformation(parent, Messages.Information,
+							Messages.RegisterGroupInfo + ": " + message); //$NON-NLS-1$
 				}
 			}
 		};
@@ -948,47 +977,47 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 		Display.getDefault().asyncExec(runnable);
 	}
 
-    /**
-     * @return true - OK to restore
-     */
-    private boolean restoreConfirmed() {
-    	ConfirmRestoreDialog restoreDialog = new ConfirmRestoreDialog();
+	/**
+	 * @return true - OK to restore
+	 */
+	private boolean restoreConfirmed() {
+		ConfirmRestoreDialog restoreDialog = new ConfirmRestoreDialog();
 		Display.getDefault().syncExec(restoreDialog);
 
-        return restoreDialog.fRestore;
-    }
-	
-    private class ConfirmRestoreDialog implements Runnable {
+		return restoreDialog.fRestore;
+	}
 
-    	private Boolean fRestore = false;
-    	
+	private class ConfirmRestoreDialog implements Runnable {
+
+		private Boolean fRestore = false;
+
 		@Override
 		public void run() {
 			Shell parent = DsfUIPlugin.getActiveWorkbenchShell();
 			if (parent != null) {
-		    	
-	            String title = Messages.RegisterGroupConfirmRestoreTitle;
-	            String message = Messages.RegisterGroupConfirmRestoreMessage;
-	            String[] buttonLabels = new String[]{Messages.RegisterGroupRestore, Messages.RegisterGroupRestoreCancel,
-	            };
-	            MessageDialog dialog = new MessageDialog(parent, title, null, message, MessageDialog.QUESTION,
-	                    buttonLabels, 0);
-	            int res = dialog.open();
-	            if (res == 0) { // RESTORE
-	            	fRestore = true;
-	            } else if (res == 1) { // CANCEL
-	            	fRestore = false;
-	            }
-			}			
+
+				String title = Messages.RegisterGroupConfirmRestoreTitle;
+				String message = Messages.RegisterGroupConfirmRestoreMessage;
+				String[] buttonLabels = new String[] { Messages.RegisterGroupRestore,
+						Messages.RegisterGroupRestoreCancel, };
+				MessageDialog dialog = new MessageDialog(parent, title, null, message, MessageDialog.QUESTION,
+						buttonLabels, 0);
+				int res = dialog.open();
+				if (res == 0) { // RESTORE
+					fRestore = true;
+				} else if (res == 1) { // CANCEL
+					fRestore = false;
+				}
+			}
 		}
-    	
-    }
-    
-	
-	private void getRegistersData(IRegisterDMContext[] regDMCs, IRegisters2 regService, final DataRequestMonitor<IRegisterDMData[]> rm) {
+
+	}
+
+	private void getRegistersData(IRegisterDMContext[] regDMCs, IRegisters2 regService,
+			final DataRequestMonitor<IRegisterDMData[]> rm) {
 		final IRegisterDMData[] regDataArray = new IRegisterDMData[regDMCs.length];
 		final DsfExecutor executor = regService.getExecutor();
-		
+
 		final CountingRequestMonitor crm = new CountingRequestMonitor(executor, rm) {
 			@Override
 			protected void handleSuccess() {
@@ -996,7 +1025,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 				rm.done();
 			}
 		};
-		
+
 		for (int i = 0; i < regDMCs.length; i++) {
 			final int index = i;
 			regService.getRegisterData(regDMCs[index], new DataRequestMonitor<IRegisterDMData>(executor, crm) {
@@ -1007,7 +1036,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 				}
 			});
 		}
-		
+
 		crm.setDoneCount(regDMCs.length);
 	}
 }

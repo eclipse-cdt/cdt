@@ -23,7 +23,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
-
 public final class MethodStubsLabelProvider implements ITableLabelProvider {
 
 	/*
@@ -33,8 +32,8 @@ public final class MethodStubsLabelProvider implements ITableLabelProvider {
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex != 0)
 			return null;
-		
-	    IMethodStub stub = (IMethodStub) element;
+
+		IMethodStub stub = (IMethodStub) element;
 		ImageDescriptor descriptor = CElementImageProvider.getMethodImageDescriptor(stub.getAccess());
 		if (descriptor != null) {
 			return CUIPlugin.getImageDescriptorRegistry().get(descriptor);
@@ -47,19 +46,19 @@ public final class MethodStubsLabelProvider implements ITableLabelProvider {
 	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-	    IMethodStub stub = (IMethodStub) element;
-		
+		IMethodStub stub = (IMethodStub) element;
+
 		switch (columnIndex) {
-			case 0:
-				return stub.getName();
-			case 1:
-				return BaseClassesLabelProvider.getAccessText(stub.getAccess());
-			case 2:
-				return BaseClassesLabelProvider.getYesNoText(stub.isVirtual());
-			case 3:
-				return BaseClassesLabelProvider.getYesNoText(stub.isInline());
-			default:
-				return null;
+		case 0:
+			return stub.getName();
+		case 1:
+			return BaseClassesLabelProvider.getAccessText(stub.getAccess());
+		case 2:
+			return BaseClassesLabelProvider.getYesNoText(stub.isVirtual());
+		case 3:
+			return BaseClassesLabelProvider.getYesNoText(stub.isInline());
+		default:
+			return null;
 		}
 	}
 

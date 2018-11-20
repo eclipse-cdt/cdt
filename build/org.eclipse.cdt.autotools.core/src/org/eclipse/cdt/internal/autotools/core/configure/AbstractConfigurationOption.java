@@ -25,13 +25,13 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 	public AbstractConfigurationOption(String name, AutotoolsConfiguration cfg) {
 		this(name, name, cfg);
 	}
-	
+
 	public AbstractConfigurationOption(String name, String msgName, AutotoolsConfiguration cfg) {
 		this.name = name;
 		this.msgName = msgName;
 		this.cfg = cfg;
 	}
-	
+
 	@Override
 	public String getDescription() {
 		return ConfigureMessages.getConfigureDescription(msgName);
@@ -45,7 +45,7 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 	public String getMsgName() {
 		return msgName;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -54,7 +54,7 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 	public AutotoolsConfiguration getCfg() {
 		return cfg;
 	}
-	
+
 	@Override
 	public List<String> getParameters() {
 		List<String> parameters = new ArrayList<>();
@@ -62,7 +62,7 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 			parameters.add(getParameter());
 		return parameters;
 	}
-	
+
 	public String getParameterName() {
 		return "--" + getName();
 	}
@@ -71,12 +71,12 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 	public boolean isCategory() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFlag() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFlagValue() {
 		return false;

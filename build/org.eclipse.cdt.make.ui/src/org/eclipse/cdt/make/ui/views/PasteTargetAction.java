@@ -80,7 +80,7 @@ public class PasteTargetAction extends SelectionListenerAction {
 			return false;
 		}
 
-		return determineDropContainer()!=null;
+		return determineDropContainer() != null;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class PasteTargetAction extends SelectionListenerAction {
 	@Override
 	public void run() {
 		IContainer dropContainer = determineDropContainer();
-		if (dropContainer==null) {
+		if (dropContainer == null) {
 			return;
 		}
 
@@ -98,22 +98,22 @@ public class PasteTargetAction extends SelectionListenerAction {
 
 		clipboardContent = clipboard.getContents(MakeTargetTransfer.getInstance());
 		if (clipboardContent instanceof MakeTargetTransferData) {
-			MakeTargetTransferDropTargetListener.createTransferTargetsUI(
-				(MakeTargetTransferData) clipboardContent, dropContainer, DND.DROP_COPY, shell);
+			MakeTargetTransferDropTargetListener.createTransferTargetsUI((MakeTargetTransferData) clipboardContent,
+					dropContainer, DND.DROP_COPY, shell);
 			return;
 		}
 
 		clipboardContent = clipboard.getContents(FileTransfer.getInstance());
 		if (clipboardContent instanceof String[]) {
-			FileTransferDropTargetListener.createFileTargetsUI((String[]) clipboardContent,
-				dropContainer, DND.DROP_COPY, shell);
+			FileTransferDropTargetListener.createFileTargetsUI((String[]) clipboardContent, dropContainer,
+					DND.DROP_COPY, shell);
 			return;
 		}
 
 		clipboardContent = clipboard.getContents(TextTransfer.getInstance());
 		if (clipboardContent instanceof String) {
-			TextTransferDropTargetListener.createMultilineTargetsUI((String) clipboardContent,
-				dropContainer, DND.DROP_COPY, shell);
+			TextTransferDropTargetListener.createMultilineTargetsUI((String) clipboardContent, dropContainer,
+					DND.DROP_COPY, shell);
 			return;
 		}
 
@@ -128,15 +128,15 @@ public class PasteTargetAction extends SelectionListenerAction {
 	 */
 	private IContainer determineDropContainer() {
 		IStructuredSelection selection = getStructuredSelection();
-		if (selection.size()==0) {
+		if (selection.size() == 0) {
 			return null;
 		}
 
 		Object first = selection.getFirstElement();
 
 		if (first instanceof IContainer) {
-			if (selection.size()==1) {
-				return (IContainer)first;
+			if (selection.size() == 1) {
+				return (IContainer) first;
 			} else {
 				return null;
 			}
@@ -144,9 +144,9 @@ public class PasteTargetAction extends SelectionListenerAction {
 
 		if (first instanceof IMakeTarget) {
 			// it has to be selection of IMakeTargets only and from the same IContainer
-			IContainer dropContainer = ((IMakeTarget)first).getContainer();
+			IContainer dropContainer = ((IMakeTarget) first).getContainer();
 			for (Object item : selection.toList()) {
-				if ( !(item instanceof IMakeTarget) || ((IMakeTarget)item).getContainer()!=dropContainer ) {
+				if (!(item instanceof IMakeTarget) || ((IMakeTarget) item).getContainer() != dropContainer) {
 					return null;
 				}
 			}

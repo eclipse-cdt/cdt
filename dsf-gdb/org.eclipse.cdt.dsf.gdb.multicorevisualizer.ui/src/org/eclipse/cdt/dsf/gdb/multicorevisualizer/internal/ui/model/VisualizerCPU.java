@@ -26,33 +26,30 @@ import java.util.List;
 //----------------------------------------------------------------------------
 
 /** Represents single CPU. */
-public class VisualizerCPU
-	implements Comparable<VisualizerCPU>, IVisualizerModelObject
-{
+public class VisualizerCPU implements Comparable<VisualizerCPU>, IVisualizerModelObject {
 	// --- members ---
-	
+
 	/** ID of this core. */
 	public int m_id;
-	
+
 	/** Load object associated to this cpu */
 	protected VisualizerLoadInfo m_loadinfo;
-	
+
 	/** List of cores */
 	protected ArrayList<VisualizerCore> m_cores;
-	
+
 	/** Lookup table for cores. */
 	protected Hashtable<Integer, VisualizerCore> m_coreMap;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public VisualizerCPU(int id) {
 		m_id = id;
 		m_cores = new ArrayList<VisualizerCore>();
 		m_coreMap = new Hashtable<Integer, VisualizerCore>();
 	}
-	
+
 	/** Dispose method */
 	public void dispose() {
 		if (m_cores != null) {
@@ -66,63 +63,61 @@ public class VisualizerCPU
 			m_loadinfo = null;
 		}
 	}
-	
-	
+
 	// --- Object methods ---
-	
+
 	/** Returns string representation. */
 	@Override
 	public String toString() {
 		return "CPU:" + m_id; //$NON-NLS-1$
 	}
-	
-	
+
 	// --- accessors ---
-	
+
 	/** Gets ID of this CPU. */
 	@Override
 	public int getID() {
 		return m_id;
 	}
-	
+
 	/** CPU has no parent  - always returns null */
 	@Override
 	public IVisualizerModelObject getParent() {
 		return null;
 	}
-	
+
 	/** Sets the load object associated to this CPU */
-	public synchronized void setLoadInfo (VisualizerLoadInfo info) {
+	public synchronized void setLoadInfo(VisualizerLoadInfo info) {
 		m_loadinfo = info;
 	}
-	
+
 	/** Gets the load value associated to this CPU */
 	public synchronized Integer getLoad() {
 		return (m_loadinfo == null) ? null : m_loadinfo.getLoad();
 	}
-	
+
 	/** get the highest recorded load value for this CPU*/
 	public synchronized Integer getHighLoadWatermark() {
 		return (m_loadinfo == null) ? null : m_loadinfo.getHighLoadWaterMark();
 	}
-	
+
 	// --- methods ---
-	
+
 	/** Gets number of cores. */
 	public int getCoreCount() {
 		return m_cores.size();
 	}
-	
+
 	/** Gets cores. */
 	public List<VisualizerCore> getCores() {
 		return m_cores;
 	}
-	
+
 	/** Gets core with specified ID. */
 	public VisualizerCore getCore(int id) {
 		return m_coreMap.get(id);
 	}
-	
+
 	/** Adds core. */
 	public VisualizerCore addCore(VisualizerCore core) {
 		m_cores.add(core);
@@ -136,15 +131,13 @@ public class VisualizerCPU
 		m_coreMap.remove(core.getID());
 	}
 
-	
 	/** Sorts cores, cpus, etc. by IDs. */
 	public void sort() {
 		Collections.sort(m_cores);
 	}
 
-	
 	// --- Comparable implementation ---
-	
+
 	/** Compares this item to the specified item. */
 	@Override
 	public int compareTo(VisualizerCPU o) {
@@ -152,20 +145,19 @@ public class VisualizerCPU
 		if (o != null) {
 			if (m_id < o.m_id) {
 				result = -1;
-			}
-			else if (m_id > o.m_id) {
+			} else if (m_id > o.m_id) {
 				result = 1;
 			}
 		}
 		return result;
 	}
-	
+
 	/** IVisualizerModelObject version of compareTO() */
 	@Override
 	public int compareTo(IVisualizerModelObject o) {
 		if (o != null) {
 			if (o.getClass() == this.getClass()) {
-				return compareTo((VisualizerCPU)o);
+				return compareTo((VisualizerCPU) o);
 			}
 		}
 		return 1;

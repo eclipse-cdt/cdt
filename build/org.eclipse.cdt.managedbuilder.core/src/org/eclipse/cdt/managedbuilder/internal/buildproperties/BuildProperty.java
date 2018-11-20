@@ -23,14 +23,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class BuildProperty implements IBuildProperty{
+public class BuildProperty implements IBuildProperty {
 	private IBuildPropertyType fType;
 	private IBuildPropertyValue fValue;
 
 	BuildProperty(String property) throws CoreException {
 		int index = property.indexOf(BuildPropertyManager.PROPERTY_VALUE_SEPARATOR);
 		String type, value;
-		if(index != -1){
+		if (index != -1) {
 			type = SafeStringInterner.safeIntern(property.substring(0, index));
 			value = SafeStringInterner.safeIntern(property.substring(index + 1));
 		} else {
@@ -39,9 +39,8 @@ public class BuildProperty implements IBuildProperty{
 		}
 
 		fType = BuildPropertyManager.getInstance().getPropertyType(type);
-		if(fType == null){
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (fType == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildProperty.0"))); //$NON-NLS-1$
 		}
 		setValue(value);
@@ -53,48 +52,47 @@ public class BuildProperty implements IBuildProperty{
 	}
 
 	@Override
-	public IBuildPropertyType getPropertyType(){
+	public IBuildPropertyType getPropertyType() {
 		return fType;
 	}
 
 	private void setValue(String id) throws CoreException {
 		IBuildPropertyValue value = fType.getSupportedValue(id);
 
-		if(value == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-				ManagedBuilderCorePlugin.getUniqueIdentifier(),
-				BuildPropertiesMessages.getString("BuildProperty.1")+id)); //$NON-NLS-1$
+		if (value == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					BuildPropertiesMessages.getString("BuildProperty.1") + id)); //$NON-NLS-1$
 
 		setValue(value);
 	}
 
-	private void setValue(IBuildPropertyValue value){
+	private void setValue(IBuildPropertyValue value) {
 		fValue = value;
 	}
 
 	@Override
-	public IBuildPropertyValue getValue(){
+	public IBuildPropertyValue getValue() {
 		return fValue;
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return toString(fType.toString(), fValue.toString());
 	}
 
-	public static String toString(String type, String value){
+	public static String toString(String type, String value) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(type).append(BuildPropertyManager.PROPERTY_VALUE_SEPARATOR).append(value);
 		return buf.toString();
 
 	}
 
-/*	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
+	/*	public Object clone() {
+			try {
+				return super.clone();
+			} catch (CloneNotSupportedException e) {
+			}
+			return null;
 		}
-		return null;
-	}
-*/
+	*/
 }

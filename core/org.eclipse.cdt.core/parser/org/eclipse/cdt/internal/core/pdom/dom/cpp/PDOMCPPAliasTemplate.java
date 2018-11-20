@@ -47,10 +47,10 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 	public PDOMCPPAliasTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPAliasTemplate template)
 			throws CoreException, DOMException {
 		super(linkage, parent, template.getNameCharArray());
-		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
+		final ICPPTemplateParameter[] origParams = template.getTemplateParameters();
 		parameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		final Database db = getDB();
-		long rec= PDOMTemplateParameterArray.putArray(db, parameters);
+		long rec = PDOMTemplateParameterArray.putArray(db, parameters);
 		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
 		linkage.new ConfigureAliasTemplate(template, this);
 	}
@@ -62,7 +62,7 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 	public void initData(IType aliasedType) {
 		storeAliasedType(aliasedType);
 	}
-	
+
 	private void storeAliasedType(IType aliasedType) {
 		try {
 			getLinkage().storeType(record + ALIASED_TYPE, aliasedType);
@@ -70,13 +70,13 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (!(newBinding instanceof ICPPAliasTemplate)) {
 			return;
 		}
-		
+
 		storeAliasedType(((ICPPAliasTemplate) newBinding).getType());
 	}
 
@@ -87,7 +87,7 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 
 	@Override
 	public boolean isSameType(IType type) {
-		if (type == null){
+		if (type == null) {
 			return false;
 		}
 		IType aliasedType = getType();
@@ -99,11 +99,11 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 		if (parameters == null) {
 			try {
 				Database db = getDB();
-				long rec= db.getRecPtr(record + TEMPLATE_PARAMS);
+				long rec = db.getRecPtr(record + TEMPLATE_PARAMS);
 				if (rec == 0) {
-					parameters= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+					parameters = IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {
-					parameters= PDOMTemplateParameterArray.getArray(this, rec);
+					parameters = PDOMTemplateParameterArray.getArray(this, rec);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -142,11 +142,11 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 		// Template parameters are identified by their position in the parameter list.
 		int pos = param.getParameterPosition();
 		ICPPTemplateParameter[] pars = getTemplateParameters();
-		
+
 		if (pars == null || pos >= pars.length)
 			return null;
-		
-		ICPPTemplateParameter result= pars[pos];
+
+		ICPPTemplateParameter result = pars[pos];
 		if (param instanceof ICPPTemplateTypeParameter) {
 			if (result instanceof ICPPTemplateTypeParameter)
 				return result;

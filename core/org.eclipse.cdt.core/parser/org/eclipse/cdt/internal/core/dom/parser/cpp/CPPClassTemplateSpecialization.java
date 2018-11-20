@@ -51,12 +51,12 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		if (fPartialSpecs == null) {
-			ICPPClassTemplate origTemplate= getSpecializedBinding();
+			ICPPClassTemplate origTemplate = getSpecializedBinding();
 			ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 			ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
 			ICPPClassSpecialization owner = getOwner();
 			for (int i = 0; i < orig.length; i++) {
-				spec[i]= (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i]);
+				spec[i] = (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i]);
 			}
 			fPartialSpecs = spec;
 		}
@@ -72,14 +72,14 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
-		String key= ASTTypeUtil.getArgumentListString(arguments, true);
+		String key = ASTTypeUtil.getArgumentListString(arguments, true);
 		instances.put(key, instance);
 	}
 
 	@Override
 	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
-			String key= ASTTypeUtil.getArgumentListString(arguments, true);
+			String key = ASTTypeUtil.getArgumentListString(arguments, true);
 			return (ICPPTemplateInstance) instances.get(key);
 		}
 		return null;
@@ -88,9 +88,9 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
-			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i=0; i < instances.size(); i++) {
-				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			ICPPTemplateInstance[] result = new ICPPTemplateInstance[instances.size()];
+			for (int i = 0; i < instances.size(); i++) {
+				result[i] = (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;
 		}
@@ -114,7 +114,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
-			fDeferredInstance= CPPTemplates.createDeferredInstance(this);
+			fDeferredInstance = CPPTemplates.createDeferredInstance(this);
 		}
 		return fDeferredInstance;
 	}

@@ -55,7 +55,7 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 		fExecutor = session.getExecutor();
 		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
 		fSession = session;
-	}    
+	}
 
 	public void dispose() {
 		fTracker.dispose();
@@ -67,97 +67,99 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 			return;
 		}
 
-		final ITraceTargetDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), ITraceTargetDMContext.class);
+		final ITraceTargetDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				ITraceTargetDMContext.class);
 		if (dmc == null) {
 			return;
 		}
 
-      	Query<Object> selectRecordQuery = new Query<Object>() {
-            @Override
-            public void execute(final DataRequestMonitor<Object> rm) {
-        		final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+		Query<Object> selectRecordQuery = new Query<Object>() {
+			@Override
+			public void execute(final DataRequestMonitor<Object> rm) {
+				final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
 
-       			if (traceControl != null) {
-       				traceControl.getCurrentTraceRecordContext(
-       					    dmc,
-       						new DataRequestMonitor<ITraceRecordDMContext>(fExecutor, rm) {
-       							@Override
-       							protected void handleSuccess() {
-       							 final ITraceRecordDMContext prevDmc = traceControl.createPrevRecordContext(getData());
-       							 traceControl.selectTraceRecord(prevDmc, new ImmediateRequestMonitor(rm) {
-       							     @Override
-       							     protected void handleSuccess() {
-       							         fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(prevDmc), new Hashtable<String, String>());
-       							         rm.done();
-       							     }
-       							 });
-       							};
-       						});
-       			} else {
-       				rm.done();
-       			}
-       		}
-       	};
-    	try {
-    		fExecutor.execute(selectRecordQuery);
-    		selectRecordQuery.get();
+				if (traceControl != null) {
+					traceControl.getCurrentTraceRecordContext(dmc,
+							new DataRequestMonitor<ITraceRecordDMContext>(fExecutor, rm) {
+								@Override
+								protected void handleSuccess() {
+									final ITraceRecordDMContext prevDmc = traceControl
+											.createPrevRecordContext(getData());
+									traceControl.selectTraceRecord(prevDmc, new ImmediateRequestMonitor(rm) {
+										@Override
+										protected void handleSuccess() {
+											fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(prevDmc),
+													new Hashtable<String, String>());
+											rm.done();
+										}
+									});
+								};
+							});
+				} else {
+					rm.done();
+				}
+			}
+		};
+		try {
+			fExecutor.execute(selectRecordQuery);
+			selectRecordQuery.get();
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
-        } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown
-        }
+		} catch (RejectedExecutionException e) {
+			// Can be thrown if the session is shutdown
+		}
 	}
 
 	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
-	throws CoreException 
-	{
+			throws CoreException {
 		if (targets.length != 1) {
 			return false;
 		}
 
-		final ITraceTargetDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), ITraceTargetDMContext.class);
+		final ITraceTargetDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				ITraceTargetDMContext.class);
 		if (dmc == null) {
 			return false;
 		}
 
-        Query<Boolean> canSelectRecordQuery = new Query<Boolean>() {
-        	@Override
-        	public void execute(final DataRequestMonitor<Boolean> rm) {
-        		final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+		Query<Boolean> canSelectRecordQuery = new Query<Boolean>() {
+			@Override
+			public void execute(final DataRequestMonitor<Boolean> rm) {
+				final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
 
-        		if (traceControl != null) {
-        			traceControl.getTraceStatus(dmc, new DataRequestMonitor<ITraceStatusDMData>(fExecutor, rm) {
-        				@Override
-        				protected void handleSuccess() {
-        					if (getData().getNumberOfCollectedFrame() <= 0) {
-        						// No frames to look at.
-        						rm.done(false);
-        						return;
-        					}
-        					
-        					if (getData() instanceof ITraceStatusDMData2) {
-        						if (((ITraceStatusDMData2)getData()).getCurrentTraceFrameId() == null) {
-        							// Haven't started looking at frames, so don't enable the "Previous" button
-        							rm.done(false);
-            						return;
-        						}
-        					}
+				if (traceControl != null) {
+					traceControl.getTraceStatus(dmc, new DataRequestMonitor<ITraceStatusDMData>(fExecutor, rm) {
+						@Override
+						protected void handleSuccess() {
+							if (getData().getNumberOfCollectedFrame() <= 0) {
+								// No frames to look at.
+								rm.done(false);
+								return;
+							}
 
-        					traceControl.isTracing(dmc, new DataRequestMonitor<Boolean>(fExecutor, rm) {
-        						@Override
-        						protected void handleSuccess() {
-        							// Can do visualization if we are tracing.
-        							rm.done(!getData());
-        						};
-        					});        					
-        				};
-        			});
-        		} else {
-        			rm.done(false);
-        		}
-        	}
-        };
+							if (getData() instanceof ITraceStatusDMData2) {
+								if (((ITraceStatusDMData2) getData()).getCurrentTraceFrameId() == null) {
+									// Haven't started looking at frames, so don't enable the "Previous" button
+									rm.done(false);
+									return;
+								}
+							}
+
+							traceControl.isTracing(dmc, new DataRequestMonitor<Boolean>(fExecutor, rm) {
+								@Override
+								protected void handleSuccess() {
+									// Can do visualization if we are tracing.
+									rm.done(!getData());
+								};
+							});
+						};
+					});
+				} else {
+					rm.done(false);
+				}
+			}
+		};
 		try {
 			fExecutor.execute(canSelectRecordQuery);
 			return canSelectRecordQuery.get();

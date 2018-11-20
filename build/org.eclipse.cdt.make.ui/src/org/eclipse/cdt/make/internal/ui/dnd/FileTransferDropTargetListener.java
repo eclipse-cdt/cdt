@@ -83,7 +83,7 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	public int dragOverOperation(int operation, IContainer dropContainer, Object dropTarget) {
 		// This class is intended only for drag/drop between eclipse instances,
 		// so DND_COPY always set and we don't bother checking if the target is the source
-		if (operation!=DND.DROP_NONE) {
+		if (operation != DND.DROP_NONE) {
 			return DND.DROP_COPY;
 		}
 		return operation;
@@ -98,9 +98,9 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 */
 	@Override
 	public void dropToContainer(Object dropObject, IContainer dropContainer, int operation) {
-		if (dropObject instanceof String[] && ((String[])dropObject).length>0 && dropContainer!=null) {
+		if (dropObject instanceof String[] && ((String[]) dropObject).length > 0 && dropContainer != null) {
 			Shell shell = fViewer.getControl().getShell();
-			createFileTargetsUI((String[])dropObject, dropContainer, operation, shell);
+			createFileTargetsUI((String[]) dropObject, dropContainer, operation, shell);
 		}
 	}
 
@@ -115,8 +115,8 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 *        are displayed.
 	 * @return array of make targets.
 	 */
-	private static IMakeTarget[] prepareMakeTargetsFromFiles(String[] filenames,
-			IContainer dropContainer, Shell shell) {
+	private static IMakeTarget[] prepareMakeTargetsFromFiles(String[] filenames, IContainer dropContainer,
+			Shell shell) {
 		List<IMakeTarget> makeTargetsList = new ArrayList<IMakeTarget>(filenames.length);
 
 		int errorCount = 0;
@@ -128,7 +128,8 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 				String name = path.lastSegment();
 				try {
 					String buildCommand = MakeTargetDndUtil.getProjectBuildCommand(dropContainer.getProject());
-					makeTargetsList.add(MakeTargetDndUtil.createMakeTarget(name, filepath, buildCommand, dropContainer));
+					makeTargetsList
+							.add(MakeTargetDndUtil.createMakeTarget(name, filepath, buildCommand, dropContainer));
 				} catch (CoreException e) {
 					errorCount++;
 					MakeUIPlugin.log(e);
@@ -141,11 +142,11 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 		if (shell != null) {
 			if (errorCount > 0) {
 				MessageDialog.openError(shell, MakeUIPlugin.getResourceString("MakeTargetDnD.title.createError"), //$NON-NLS-1$
-					MakeUIPlugin.getResourceString("MakeTargetDnD.message.createError")); //$NON-NLS-1$
+						MakeUIPlugin.getResourceString("MakeTargetDnD.message.createError")); //$NON-NLS-1$
 			}
 			if (nonFileCount > 0) {
 				MessageDialog.openInformation(shell, MakeUIPlugin.getResourceString("MakeTargetDnD.title.createInfo"), //$NON-NLS-1$
-					MakeUIPlugin.getResourceString("MakeTargetDnD.message.createNonFileTargetAttempt")); //$NON-NLS-1$
+						MakeUIPlugin.getResourceString("MakeTargetDnD.message.createNonFileTargetAttempt")); //$NON-NLS-1$
 			}
 		}
 

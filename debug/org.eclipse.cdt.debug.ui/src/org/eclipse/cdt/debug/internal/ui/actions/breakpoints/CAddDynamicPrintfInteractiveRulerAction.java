@@ -53,13 +53,13 @@ import org.eclipse.ui.texteditor.IUpdate;
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
 public class CAddDynamicPrintfInteractiveRulerAction extends Action implements IUpdate {
-	
+
 	private IWorkbenchPart fPart;
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
 
 	private IToggleBreakpointsTargetCExtension fDynamicPrintfBreakpointsTarget;
-	
+
 	/**
 	 * Constructs a new action to toggle a dynamic printf in the given
 	 * part containing the given document and ruler.
@@ -70,58 +70,58 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	 * <code>null</code> when the document should be derived from the given part
 	 * @param rulerInfo specifies location the user has double-clicked
 	 */
-	public CAddDynamicPrintfInteractiveRulerAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
-		super(ActionMessages.getString("CAddDynamicPrintfInteractiveRulerAction_label"));  //$NON-NLS-1$
+	public CAddDynamicPrintfInteractiveRulerAction(IWorkbenchPart part, IDocument document,
+			IVerticalRulerInfo rulerInfo) {
+		super(ActionMessages.getString("CAddDynamicPrintfInteractiveRulerAction_label")); //$NON-NLS-1$
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		IDocument document= getDocument();
+		IDocument document = getDocument();
 		if (document == null) {
 			return;
 		}
 
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-		
+
 		// Test if line is valid
 		if (line == -1)
 			return;
 
-		try {			
+		try {
 			if (fDynamicPrintfBreakpointsTarget != null) {
 				ITextSelection selection = getTextSelection(document, line);
 				if (fDynamicPrintfBreakpointsTarget.canCreateLineBreakpointsInteractive(fPart, selection)) {
 					fDynamicPrintfBreakpointsTarget.createLineBreakpointsInteractive(fPart, selection);
 				}
-			}			
+			}
 		} catch (BadLocationException e) {
 			reportException(e);
 		} catch (CoreException e) {
 			reportException(e);
 		}
 	}
-	
+
 	/**
 	 * Report an error to the user.
 	 * 
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
-        IStatus status= new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating dynamic printf: ", e); //$NON-NLS-1$
-	    ErrorDialog.openError(
-	        fPart.getSite().getShell(), 
-	        ActionMessages.getString("CAddBreakpointInteractiveRulerAction_error_title"),  //$NON-NLS-1$
-	        ActionMessages.getString("CAddDynamicPrintfInteractiveRulerAction_error_message"), //$NON-NLS-1$
-	        status);
-	    CDebugUIPlugin.log(status);
+		IStatus status = new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating dynamic printf: ", e); //$NON-NLS-1$
+		ErrorDialog.openError(fPart.getSite().getShell(),
+				ActionMessages.getString("CAddBreakpointInteractiveRulerAction_error_title"), //$NON-NLS-1$
+				ActionMessages.getString("CAddDynamicPrintfInteractiveRulerAction_error_message"), //$NON-NLS-1$
+				status);
+		CDebugUIPlugin.log(status);
 	}
-	
+
 	/**
 	 * Disposes this action. Clients must call this method when
 	 * this action is no longer needed.
@@ -140,48 +140,48 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	private IDocument getDocument() {
 		if (fDocument != null)
 			return fDocument;
-		
+
 		if (fPart instanceof ITextEditor) {
-			ITextEditor editor= (ITextEditor)fPart;
+			ITextEditor editor = (ITextEditor) fPart;
 			IDocumentProvider provider = editor.getDocumentProvider();
 			if (provider != null)
 				return provider.getDocument(editor.getEditorInput());
 		}
-		
+
 		IDocument doc = fPart.getAdapter(IDocument.class);
 		if (doc != null) {
 			return doc;
 		}
-		
+
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		IDocument document= getDocument();
+		IDocument document = getDocument();
 		if (document != null) {
-		    int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-		    if (line > -1) {
-		        try {
-		            ITextSelection selection = getTextSelection(document, line);
-                   
+			int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+			if (line > -1) {
+				try {
+					ITextSelection selection = getTextSelection(document, line);
+
 					if (fDynamicPrintfBreakpointsTarget == null) {
 						fDynamicPrintfBreakpointsTarget = fetchDynamicPrintfBreakpointsTarget(selection);
 					}
 
-                    if (fDynamicPrintfBreakpointsTarget == null) {
-                        setEnabled(false);
-                        return;
-                    }
-                    if (fDynamicPrintfBreakpointsTarget.canCreateLineBreakpointsInteractive(fPart, selection)) {
-                           setEnabled(true);
-                           return;
-                    }
-                } catch (BadLocationException e) {
-                    reportException(e);
-                }
+					if (fDynamicPrintfBreakpointsTarget == null) {
+						setEnabled(false);
+						return;
+					}
+					if (fDynamicPrintfBreakpointsTarget.canCreateLineBreakpointsInteractive(fPart, selection)) {
+						setEnabled(true);
+						return;
+					}
+				} catch (BadLocationException e) {
+					reportException(e);
+				}
 			}
 		}
 		setEnabled(false);
@@ -201,38 +201,40 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 		IRegion region = document.getLineInformation(line);
 		ITextSelection textSelection = new TextSelection(document, region.getOffset(), 0);
 		ISelectionProvider provider = fPart.getSite().getSelectionProvider();
-		if (provider != null){
+		if (provider != null) {
 			ISelection selection = provider.getSelection();
-			if (selection instanceof ITextSelection
-					&& ((ITextSelection) selection).getStartLine() <= line
+			if (selection instanceof ITextSelection && ((ITextSelection) selection).getStartLine() <= line
 					&& ((ITextSelection) selection).getEndLine() >= line) {
 				textSelection = (ITextSelection) selection;
-			} 
+			}
 		}
 		return textSelection;
 	}
 
 	private IToggleBreakpointsTargetCExtension fetchDynamicPrintfBreakpointsTarget(ITextSelection selection) {
-		if (fDynamicPrintfBreakpointsTarget == null){
-			IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES);
+		if (fDynamicPrintfBreakpointsTarget == null) {
+			IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(IDebugUIConstants.PLUGIN_ID,
+					IDebugUIConstants.EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES);
 			IConfigurationElement[] elements = ep.getConfigurationElements();
-			for (int i= 0; i < elements.length; i++) {
-				String id = elements[i].getAttribute("id");  //$NON-NLS-1$
+			for (int i = 0; i < elements.length; i++) {
+				String id = elements[i].getAttribute("id"); //$NON-NLS-1$
 				if (id != null && id.equals("org.eclipse.cdt.debug.ui.ToggleCDynamicPrintfTargetFactory")) { //$NON-NLS-1$
-					try{
+					try {
 						Object obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
-						if(obj instanceof IToggleBreakpointsTargetFactory) {
-							IToggleBreakpointsTarget target = ((IToggleBreakpointsTargetFactory)obj).createToggleTarget(ToggleCDynamicPrintfTargetFactory.TOGGLE_C_DYNAMICPRINTF_TARGET_ID);
+						if (obj instanceof IToggleBreakpointsTargetFactory) {
+							IToggleBreakpointsTarget target = ((IToggleBreakpointsTargetFactory) obj)
+									.createToggleTarget(
+											ToggleCDynamicPrintfTargetFactory.TOGGLE_C_DYNAMICPRINTF_TARGET_ID);
 							if (target instanceof IToggleBreakpointsTargetCExtension) {
-								fDynamicPrintfBreakpointsTarget = (IToggleBreakpointsTargetCExtension)target;
+								fDynamicPrintfBreakpointsTarget = (IToggleBreakpointsTargetCExtension) target;
 							}
-						} 
-					} catch (CoreException e){
+						}
+					} catch (CoreException e) {
 					}
 					break;
 				}
 			}
 		}
 		return fDynamicPrintfBreakpointsTarget;
-    }
+	}
 }

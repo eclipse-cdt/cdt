@@ -36,43 +36,56 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
  */
 
 public interface ICPropertyProvider extends ICOptionContainer {
-	
+
 	// new list of config descriptions for given project
 	ICConfigurationDescription[] getCfgsReadOnly(IProject p);
+
 	// list of loaded config descriptions for current project 
 	ICConfigurationDescription[] getCfgsEditable();
+
 	// Resource description for given object in current cfg
 	ICResourceDescription getResDesc();
+
 	// Resource description for given object, in given cfg
 	ICResourceDescription getResDesc(ICConfigurationDescription cfgd);
+
 	// get Affected object (project, folder, file) 
 	IAdaptable getElement();
+
 	// ask page to enable or disable config selection
-	void enableConfigSelection (boolean enable);
-	
+	void enableConfigSelection(boolean enable);
+
 	//
 	// set of methods intended to handle messages
 	//
 	// 1. send message to all tabs in all pages
 	void informAll(int code, Object data);
+
 	// 2. send message to all pages. 
 	void informPages(int code, Object data);
+
 	// 3. send message only to current page
 	void handleMessage(int code, Object data);
-	
+
 	//
 	// set of methods for object kind check
 	//
 	boolean isForProject();
+
 	boolean isForFolder();
+
 	boolean isForFile();
+
 	boolean isForPrefs();
-	
+
 	// Checks whether a project is new CDT model-style
 	boolean isCDTProject(IProject p);
+
 	boolean isMultiCfg();
+
 	// Gives access to buttons
 	Button getAButton();
+
 	Button getDButton();
 
 }

@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.internal.ui.preferences;
 
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -27,7 +26,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The page for setting the editor options.
  */
 public final class MarkOccurrencesPreferencePage extends AbstractConfigurationBlockPreferencePage {
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
@@ -41,10 +40,10 @@ public final class MarkOccurrencesPreferencePage extends AbstractConfigurationBl
 	 */
 	@Override
 	protected void setDescription() {
-		String description= PreferencesMessages.MarkOccurrencesConfigurationBlock_title; 
+		String description = PreferencesMessages.MarkOccurrencesConfigurationBlock_title;
 		setDescription(description);
 	}
-	
+
 	/*
 	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */
@@ -52,8 +51,7 @@ public final class MarkOccurrencesPreferencePage extends AbstractConfigurationBl
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
-	
-	
+
 	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.

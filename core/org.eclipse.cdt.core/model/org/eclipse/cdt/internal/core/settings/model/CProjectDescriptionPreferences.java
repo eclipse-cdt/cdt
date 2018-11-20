@@ -27,43 +27,46 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 	private Integer fConfigRelations;
 	private CProjectDescriptionPreferences fSuperPreference;
 
-	CProjectDescriptionPreferences(CProjectDescriptionPreferences base, boolean isReadOnly){
+	CProjectDescriptionPreferences(CProjectDescriptionPreferences base, boolean isReadOnly) {
 		this(base, base.fSuperPreference, isReadOnly);
 	}
 
-	CProjectDescriptionPreferences(CProjectDescriptionPreferences base, CProjectDescriptionPreferences superPreference, boolean isReadOnly){
+	CProjectDescriptionPreferences(CProjectDescriptionPreferences base, CProjectDescriptionPreferences superPreference,
+			boolean isReadOnly) {
 		fConfigRelations = base.fConfigRelations;
 		fSuperPreference = superPreference;
 		fIsReadOnly = isReadOnly;
 	}
 
-	CProjectDescriptionPreferences(ICStorageElement el, CProjectDescriptionPreferences superPreference, boolean isReadOnly){
+	CProjectDescriptionPreferences(ICStorageElement el, CProjectDescriptionPreferences superPreference,
+			boolean isReadOnly) {
 		fIsReadOnly = isReadOnly;
-		if(el != null){
-			if(el.getAttribute(ATTR_CONFIG_RELATIONS) != null)
+		if (el != null) {
+			if (el.getAttribute(ATTR_CONFIG_RELATIONS) != null)
 				fConfigRelations = Integer.valueOf(CDataUtil.getInteger(el, ATTR_CONFIG_RELATIONS, DEFAULT_RELATIONS));
 		}
 
 		this.fSuperPreference = superPreference;
 	}
 
-	protected CProjectDescriptionPreferences getSuperPreferences(){
-		if(isReadOnly())
+	protected CProjectDescriptionPreferences getSuperPreferences() {
+		if (isReadOnly())
 			return fSuperPreference;
-		return (CProjectDescriptionPreferences)CProjectDescriptionManager.getInstance().getProjectDescriptionWorkspacePreferences(false);
+		return (CProjectDescriptionPreferences) CProjectDescriptionManager.getInstance()
+				.getProjectDescriptionWorkspacePreferences(false);
 	}
 
-	void serialize(ICStorageElement el){
-		if(fConfigRelations != null)
+	void serialize(ICStorageElement el) {
+		if (fConfigRelations != null)
 			CDataUtil.setInteger(el, ATTR_CONFIG_RELATIONS, fConfigRelations.intValue());
 	}
 
 	@Override
 	public int getConfigurationRelations() {
-		if(fConfigRelations != null)
+		if (fConfigRelations != null)
 			return fConfigRelations.intValue();
 		CProjectDescriptionPreferences superPrefs = getSuperPreferences();
-		if(superPrefs != null)
+		if (superPrefs != null)
 			return superPrefs.getConfigurationRelations();
 		return DEFAULT_RELATIONS;
 	}
@@ -75,9 +78,9 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 
 	@Override
 	public void setConfigurationRelations(int status) {
-		if(fIsReadOnly)
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		if(fConfigRelations != null && fConfigRelations.intValue() == status)
+		if (fConfigRelations != null && fConfigRelations.intValue() == status)
 			return;
 
 		fConfigRelations = Integer.valueOf(status);
@@ -86,39 +89,39 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 
 	@Override
 	public void useDefaultConfigurationRelations() {
-		if(fIsReadOnly)
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 
-		if(fConfigRelations == null)
+		if (fConfigRelations == null)
 			return;
 
 		fConfigRelations = null;
 		fIsModified = true;
 	}
 
-	public boolean isModified(){
-		return fIsModified
-			|| (fSuperPreference != null
-					&& !fSuperPreference.settingsEqual((CProjectDescriptionPreferences)CProjectDescriptionManager.getInstance().getProjectDescriptionWorkspacePreferences(false)));
+	public boolean isModified() {
+		return fIsModified || (fSuperPreference != null
+				&& !fSuperPreference.settingsEqual((CProjectDescriptionPreferences) CProjectDescriptionManager
+						.getInstance().getProjectDescriptionWorkspacePreferences(false)));
 	}
 
-	void setModified(boolean modified){
+	void setModified(boolean modified) {
 		fIsModified = modified;
 	}
 
-	public boolean isReadOnly(){
+	public boolean isReadOnly() {
 		return fIsReadOnly;
 	}
 
-	void setReadOnly(boolean readOnly){
+	void setReadOnly(boolean readOnly) {
 		fIsReadOnly = readOnly;
 	}
 
-	public boolean settingsEqual(CProjectDescriptionPreferences other){
-		if(isDefaultConfigurationRelations() != other.isDefaultConfigurationRelations())
+	public boolean settingsEqual(CProjectDescriptionPreferences other) {
+		if (isDefaultConfigurationRelations() != other.isDefaultConfigurationRelations())
 			return false;
 
-		if(getConfigurationRelations() != other.getConfigurationRelations())
+		if (getConfigurationRelations() != other.getConfigurationRelations())
 			return false;
 
 		return true;

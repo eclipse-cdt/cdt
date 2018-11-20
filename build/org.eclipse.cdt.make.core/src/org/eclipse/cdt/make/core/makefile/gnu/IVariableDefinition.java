@@ -22,21 +22,21 @@ import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IVariableDefinition extends IMacroDefinition {
-	
+
 	boolean isRecursivelyExpanded();
-	
+
 	boolean isSimplyExpanded();
-	
+
 	boolean isConditional();
-	
+
 	boolean isAppend();
-	
+
 	boolean isTargetSpecific();
-	
+
 	boolean isExport();
-	
+
 	boolean isMultiLine();
-	
+
 	/**
 	 * Variable from an `override' directive.
 	 */
@@ -46,5 +46,6 @@ public interface IVariableDefinition extends IMacroDefinition {
 	 * Automatic variable -- cannot be set.
 	 */
 	boolean isAutomatic();
+
 	String getTarget();
 }

@@ -21,14 +21,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class TraditionalRenderingPlugin extends AbstractUIPlugin 
-{
+public class TraditionalRenderingPlugin extends AbstractUIPlugin {
 	private static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.traditional"; //$NON-NLS-1$
-	
+
 	private static TraditionalRenderingPlugin plugin;
-	
-	public TraditionalRenderingPlugin() 
-	{
+
+	public TraditionalRenderingPlugin() {
 		super();
 		plugin = this;
 	}
@@ -45,21 +43,21 @@ public class TraditionalRenderingPlugin extends AbstractUIPlugin
 	public static TraditionalRenderingPlugin getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Returns the unique identifier for this plugin.
 	 */
 	public static String getUniqueIdentifier() {
 		return PLUGIN_ID;
 	}
-	
+
 	/**
 	 * Returns the workbench's display.
 	 */
 	public static Display getStandardDisplay() {
 		return PlatformUI.getWorkbench().getDisplay();
 	}
-	
+
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
@@ -73,10 +71,9 @@ public class TraditionalRenderingPlugin extends AbstractUIPlugin
 			if (windows.length > 0) {
 				return windows[0].getShell();
 			}
-		}
-		else {
+		} else {
 			return window.getShell();
 		}
 		return null;
-	}	
+	}
 }

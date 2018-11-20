@@ -49,9 +49,9 @@ public class InternalParserUtil extends ParserFactory {
 	 * Normalizes the path by using the location of the file, if possible.
 	 */
 	public static String normalizePath(String path, IFile file) {
-		IPath loc= file.getLocation();
+		IPath loc = file.getLocation();
 		if (loc != null) {
-			path= loc.toOSString();
+			path = loc.toOSString();
 		}
 		return path;
 	}
@@ -61,15 +61,16 @@ public class InternalParserUtil extends ParserFactory {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public static org.eclipse.cdt.core.parser.CodeReader createExternalFileReader(String externalLocation, CodeReaderLRUCache cache) throws IOException {
+	public static org.eclipse.cdt.core.parser.CodeReader createExternalFileReader(String externalLocation,
+			CodeReaderLRUCache cache) throws IOException {
 		File includeFile = new File(externalLocation);
 		if (includeFile.isFile()) {
-		    // Use the canonical path so that in case of non-case-sensitive OSs
-		    // the CodeReader always has the same name as the file on disk with
-		    // no differences in case.
+			// Use the canonical path so that in case of non-case-sensitive OSs
+			// the CodeReader always has the same name as the file on disk with
+			// no differences in case.
 			final String path = PathCanonicalizationStrategy.getCanonicalPath(includeFile);
 			if (cache != null) {
-				org.eclipse.cdt.core.parser.CodeReader result= cache.get(path);
+				org.eclipse.cdt.core.parser.CodeReader result = cache.get(path);
 				if (result != null)
 					return result;
 			}
@@ -78,24 +79,25 @@ public class InternalParserUtil extends ParserFactory {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a code reader for an external location, normalizing path to 
 	 * canonical path.
 	 * @deprecated, use {@link FileContent}, instead.
 	 */
 	@Deprecated
-	public static org.eclipse.cdt.core.parser.CodeReader createWorkspaceFileReader(String path, IFile file, CodeReaderLRUCache cache) throws CoreException, IOException{
+	public static org.eclipse.cdt.core.parser.CodeReader createWorkspaceFileReader(String path, IFile file,
+			CodeReaderLRUCache cache) throws CoreException, IOException {
 		path = normalizePath(path, file);
 		if (cache != null) {
-			org.eclipse.cdt.core.parser.CodeReader result= cache.get(path);
+			org.eclipse.cdt.core.parser.CodeReader result = cache.get(path);
 			if (result != null)
 				return result;
 		}
-		
+
 		InputStream in;
 		try {
-			in= file.getContents(true);
+			in = file.getContents(true);
 		} catch (CoreException e) {
 			switch (e.getStatus().getCode()) {
 			case IResourceStatus.NOT_FOUND_LOCAL:
@@ -116,16 +118,15 @@ public class InternalParserUtil extends ParserFactory {
 		}
 	}
 
-
-
 	/**
 	 * @deprecated, use {@link FileContent}, instead.
 	 */
 	@Deprecated
-	public static org.eclipse.cdt.core.parser.CodeReader createCodeReader(IIndexFileLocation ifl, CodeReaderLRUCache cache) throws CoreException, IOException {
-		String fullPath= ifl.getFullPath();
+	public static org.eclipse.cdt.core.parser.CodeReader createCodeReader(IIndexFileLocation ifl,
+			CodeReaderLRUCache cache) throws CoreException, IOException {
+		String fullPath = ifl.getFullPath();
 		if (fullPath != null) {
-			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
 			if (res instanceof IFile)
 				return createWorkspaceFileReader(ifl.getURI().getPath(), (IFile) res, cache);
 		}
@@ -133,12 +134,12 @@ public class InternalParserUtil extends ParserFactory {
 	}
 
 	public static InternalFileContent createFileContent(IIndexFileLocation ifl) {
-		String fullPath= ifl.getFullPath();
+		String fullPath = ifl.getFullPath();
 		if (fullPath != null) {
-			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
 			if (res instanceof IFile)
 				return createWorkspaceFileContent((IFile) res);
-		} 
+		}
 		/*
 		 * If URI refers to a remote resource, use the full URI to retrieve the file content
 		 * Otherwise, assume it is in the local filesystem somewhere
@@ -149,10 +150,10 @@ public class InternalParserUtil extends ParserFactory {
 		}
 		return createExternalFileContent(ifl.getURI().getPath(), SYSTEM_DEFAULT_ENCODING);
 	}
-	
+
 	public static InternalFileContent createWorkspaceFileContent(IFile file) {
-		String path= file.getLocationURI().getPath();
-		path= normalizePath(path, file);
+		String path = file.getLocationURI().getPath();
+		path = normalizePath(path, file);
 
 		InputStream input;
 		try {
@@ -161,11 +162,11 @@ public class InternalParserUtil extends ParserFactory {
 			IFileInfo fileInfo = store.fetchInfo();
 			if (!fileInfo.exists())
 				return null;
-			input= file.getContents(true);
+			input = file.getContents(true);
 			if (input instanceof FileInputStream) {
 				try {
-					return createFileContent(path, null, file.getCharset(), input,
-							fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
+					return createFileContent(path, null, file.getCharset(), input, fileInfo.getLastModified(),
+							fileInfo.getLength(), fileReadTime);
 				} finally {
 					try {
 						input.close();
@@ -200,9 +201,9 @@ public class InternalParserUtil extends ParserFactory {
 		String localPath = null;
 		if (!UNCPathConverter.isUNC(externalLocation)) {
 			includeFile = new File(externalLocation);
-		    // Use the canonical path so that in case of non-case-sensitive OSs
-		    // the CodeReader always has the same name as the file on disk with
-		    // no differences in case.
+			// Use the canonical path so that in case of non-case-sensitive OSs
+			// the CodeReader always has the same name as the file on disk with
+			// no differences in case.
 			path = PathCanonicalizationStrategy.getCanonicalPath(includeFile);
 		} else {
 			try {
@@ -241,10 +242,10 @@ public class InternalParserUtil extends ParserFactory {
 			localPath = path;
 		}
 		try {
-			AbstractCharArray chars= FileCharArray.create(localPath, charset, in);
+			AbstractCharArray chars = FileCharArray.create(localPath, charset, in);
 			if (chars == null)
 				return null;
-			
+
 			return new InternalFileContent(path, chars, fileTimestamp, fileSize, fileReadTime);
 		} catch (IOException e) {
 			CCorePlugin.log(e);

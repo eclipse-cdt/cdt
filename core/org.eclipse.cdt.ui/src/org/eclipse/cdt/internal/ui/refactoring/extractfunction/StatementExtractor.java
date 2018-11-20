@@ -59,8 +59,8 @@ public class StatementExtractor extends FunctionExtractor {
 	}
 
 	@Override
-	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode,
-			NameInformation returnVariable, List<IASTPointerOperator> pointerOperators) {
+	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation returnVariable,
+			List<IASTPointerOperator> pointerOperators) {
 		if (returnVariable != null) {
 			IASTName declarationName = returnVariable.getDeclarationName();
 			IASTDeclarator declarator = ASTHelper.getDeclaratorForNode(declarationName);
@@ -77,8 +77,7 @@ public class StatementExtractor extends FunctionExtractor {
 	}
 
 	@Override
-	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
-			IASTExpression callExpression) {
+	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt, IASTExpression callExpression) {
 		stmt.setExpression(callExpression);
 		return stmt;
 	}

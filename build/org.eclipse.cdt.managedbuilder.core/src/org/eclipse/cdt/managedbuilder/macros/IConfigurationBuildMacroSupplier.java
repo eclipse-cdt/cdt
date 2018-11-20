@@ -40,10 +40,8 @@ public interface IConfigurationBuildMacroSupplier {
 	 * @return the reference to the IBuildMacro interface representing 
 	 * the build macro of a given name or null if the macro of  that name is not defined
 	 */
-	public IBuildMacro getMacro(String macroName, 
-				IConfiguration configuration, 
-				IBuildMacroProvider provider);
- 
+	public IBuildMacro getMacro(String macroName, IConfiguration configuration, IBuildMacroProvider provider);
+
 	/**
 	 *
 	 * @param configuration configuration
@@ -59,7 +57,5 @@ public interface IConfigurationBuildMacroSupplier {
 	 * about the build macros defined for the higher levels.
 	 * @return the IBuildMacro[] array representing defined macros 
 	 */
-	public IBuildMacro[] getMacros(IConfiguration configuration,
-			IBuildMacroProvider provider);
+	public IBuildMacro[] getMacros(IConfiguration configuration, IBuildMacroProvider provider);
 }
-

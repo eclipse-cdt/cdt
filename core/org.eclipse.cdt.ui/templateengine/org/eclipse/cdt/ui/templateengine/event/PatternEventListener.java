@@ -30,8 +30,8 @@ public interface PatternEventListener extends EventListener {
 	 * PatternEvent instance is the parameter to this method.
 	 * 
 	 * @param aPet
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
 	public void patternPerformed(PatternEvent aPet);
 

@@ -15,7 +15,6 @@ package org.eclipse.cdt.ui.text.contentassist;
 
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
-
 /**
  * Filters completion proposals displayed by the C/C++ editor content assistant.
  * <p>
@@ -33,6 +32,6 @@ public interface IProposalFilter {
 	 * @param proposals The List of proposals
 	 * @return The filtered list of proposals as array
 	 */
-	ICCompletionProposal[] filterProposals(ICCompletionProposal[] proposals) ;
+	ICCompletionProposal[] filterProposals(ICCompletionProposal[] proposals);
 
 }

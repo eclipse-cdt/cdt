@@ -37,51 +37,51 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
-	public static final String ARGUMENTS = "arguments";	//$NON-NLS-1$
-	public static final String BUILDER_ELEMENT_NAME = "builder"; 	//$NON-NLS-1$
-	public static final String BUILDFILEGEN_ID ="buildfileGenerator"; //$NON-NLS-1$
-	public static final String COMMAND = "command";	//$NON-NLS-1$
-	
-	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
-	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
-	
-	public static final String VARIABLE_FORMAT = "variableFormat";			//$NON-NLS-1$
-	public static final String IS_VARIABLE_CASE_SENSITIVE = "isVariableCaseSensitive";			//$NON-NLS-1$
-	public static final String RESERVED_MACRO_NAMES = "reservedMacroNames";			//$NON-NLS-1$
-	public static final String RESERVED_MACRO_NAME_SUPPLIER = "reservedMacroNameSupplier";			//$NON-NLS-1$
-	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
-	
-//	static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
+	public static final String ARGUMENTS = "arguments"; //$NON-NLS-1$
+	public static final String BUILDER_ELEMENT_NAME = "builder"; //$NON-NLS-1$
+	public static final String BUILDFILEGEN_ID = "buildfileGenerator"; //$NON-NLS-1$
+	public static final String COMMAND = "command"; //$NON-NLS-1$
+
+	public static final String VERSIONS_SUPPORTED = "versionsSupported"; //$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId"; //$NON-NLS-1$
+
+	public static final String VARIABLE_FORMAT = "variableFormat"; //$NON-NLS-1$
+	public static final String IS_VARIABLE_CASE_SENSITIVE = "isVariableCaseSensitive"; //$NON-NLS-1$
+	public static final String RESERVED_MACRO_NAMES = "reservedMacroNames"; //$NON-NLS-1$
+	public static final String RESERVED_MACRO_NAME_SUPPLIER = "reservedMacroNameSupplier"; //$NON-NLS-1$
+	public static final String IS_SYSTEM = "isSystem"; //$NON-NLS-1$
+
+	//	static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 	static final String ATTRIBUTE_BUILD_PATH = "buildPath"; //$NON-NLS-1$
-//	static final String USE_DEFAULT_BUILD_CMD = "useDefaultBuildCmd"; //$NON-NLS-1$
+	//	static final String USE_DEFAULT_BUILD_CMD = "useDefaultBuildCmd"; //$NON-NLS-1$
 	static final String ATTRIBUTE_TARGET_AUTO = "autoBuildTarget"; //$NON-NLS-1$
 	static final String ATTRIBUTE_TARGET_INCREMENTAL = "incrementalBuildTarget"; //$NON-NLS-1$
-//	static final String BUILD_TARGET_FULL = "fullBuildTarget"; //$NON-NLS-1$
+	//	static final String BUILD_TARGET_FULL = "fullBuildTarget"; //$NON-NLS-1$
 	static final String ATTRIBUTE_TARGET_CLEAN = "cleanBuildTarget"; //$NON-NLS-1$
-//	static final String BUILD_FULL_ENABLED = "enableFullBuild"; //$NON-NLS-1$
+	//	static final String BUILD_FULL_ENABLED = "enableFullBuild"; //$NON-NLS-1$
 	static final String ATTRIBUTE_CLEAN_ENABLED = "enableCleanBuild"; //$NON-NLS-1$
 	static final String ATTRIBUTE_INCREMENTAL_ENABLED = "enabledIncrementalBuild"; //$NON-NLS-1$
 	static final String ATTRIBUTE_AUTO_ENABLED = "enableAutoBuild"; //$NON-NLS-1$
-//	static final String BUILD_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
+	//	static final String BUILD_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
 	static final String ATTRIBUTE_ENVIRONMENT = "environment"; //$NON-NLS-1$
 	static final String ATTRIBUTE_APPEND_ENVIRONMENT = "appendEnvironment"; //$NON-NLS-1$ 
-//	public final static String BUILD_TARGET_INCREMENTAL = "build.target.inc"; //$NON-NLS-1$
-//	public final static String BUILD_TARGET_AUTO = "build.target.auto"; //$NON-NLS-1$
-//	public final static String BUILD_TARGET_CLEAN = "build.target.clean"; //$NON-NLS-1$
-//	public final static String BUILD_LOCATION = "build.location"; //$NON-NLS-1$
-//	public final static String BUILD_COMMAND = "build.command"; //$NON-NLS-1$
-//	public final static String BUILD_ARGUMENTS = "build.arguments"; //$NON-NLS-1$
+	//	public final static String BUILD_TARGET_INCREMENTAL = "build.target.inc"; //$NON-NLS-1$
+	//	public final static String BUILD_TARGET_AUTO = "build.target.auto"; //$NON-NLS-1$
+	//	public final static String BUILD_TARGET_CLEAN = "build.target.clean"; //$NON-NLS-1$
+	//	public final static String BUILD_LOCATION = "build.location"; //$NON-NLS-1$
+	//	public final static String BUILD_COMMAND = "build.command"; //$NON-NLS-1$
+	//	public final static String BUILD_ARGUMENTS = "build.arguments"; //$NON-NLS-1$
 
 	static final String ATTRIBUTE_MANAGED_BUILD_ON = "managedBuildOn"; //$NON-NLS-1$ 
 	static final String ATTRIBUTE_KEEP_ENV = "keepEnvironmentInBuildfile"; //$NON-NLS-1$ 
 	static final String ATTRIBUTE_SUPORTS_MANAGED_BUILD = "supportsManagedBuild"; //$NON-NLS-1$
-	
+
 	static final String ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS = "customizedErrorParsers"; //$NON-NLS-1$
 	static final String ATTRIBUTE_CUSTOM_PROPS = "customBuilderProperties"; //$NON-NLS-1$
 
 	static final String ATTRIBUTE_IGNORE_ERR_CMD = "ignoreErrCmd"; //$NON-NLS-1$
 	static final String ATTRIBUTE_STOP_ON_ERR = "stopOnErr"; //$NON-NLS-1$
-	
+
 	static final String ATTRIBUTE_PARALLEL_BUILD_CMD = "parallelBuildCmd"; //$NON-NLS-1$
 	static final String ATTRIBUTE_PARALLEL_BUILD_ON = "parallelBuildOn"; //$NON-NLS-1$
 	static final String ATTRIBUTE_PARALLELIZATION_NUMBER = "parallelizationNumber"; //$NON-NLS-1$
@@ -92,17 +92,17 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	static final String PARALLEL_PATTERN_NUM = "*"; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM_START = "["; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM_END = "]"; //$NON-NLS-1$
-	
+
 	static final String OUTPUT_ENTRIES = "outputEntries"; //$NON-NLS-1$
-	
-	static final String DEFAULT_TARGET_INCREMENTAL = "all";  //$NON-NLS-1$
-	static final String DEFAULT_TARGET_CLEAN = "clean";  //$NON-NLS-1$
+
+	static final String DEFAULT_TARGET_INCREMENTAL = "all"; //$NON-NLS-1$
+	static final String DEFAULT_TARGET_CLEAN = "clean"; //$NON-NLS-1$
 	static final String DEFAULT_TARGET_AUTO = "all"; //$NON-NLS-1$
 	/** @since 6.0 */
 	static final String ATTRIBUTE_COMMAND_LAUNCHER = "commandLauncher"; //$NON-NLS-1$
 	/** @since 8.0 */
 	static final String ATTRIBUTE_BUILD_RUNNER = "buildRunner"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns the command line arguments to pass to the build/make utility used 
 	 * to build a configuration.
@@ -119,14 +119,14 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 */
 	@Deprecated
 	public IConfigurationElement getBuildFileGeneratorElement();
-	
+
 	/**
 	 * Returns the BuildfileGenerator used to generate buildfiles for this builder
 	 * 
 	 * @return IManagedBuilderMakefileGenerator
 	 */
 	IManagedBuilderMakefileGenerator getBuildFileGenerator();
-	
+
 	/**
 	 * Returns the name of the build/make utility for the configuration.
 	 *  
@@ -164,7 +164,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return IBuilder
 	 */
 	public IBuilder getSuperClass();
-	
+
 	/**
 	 * Returns a semi-colon delimited list of child Ids of the superclass'
 	 * children that should not be automatically inherited by this element.
@@ -172,7 +172,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return String 
 	 */
 	public String getUnusedChildren();
-	
+
 	/**
 	 * Returns whether this element is abstract.  Returns <code>false</code>
 	 * if the attribute was not specified.
@@ -188,7 +188,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Returns <code>true</code> if this builder was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
@@ -202,7 +202,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * receiver to produce a build goal.
 	 */
 	public void setArguments(String makeArgs);
-	
+
 	/**
 	 * Sets the BuildFileGenerator plugin.xml element
 	 * 
@@ -215,7 +215,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * Sets the build command for the receiver to the value in the argument.
 	 */
 	public void setCommand(String command);
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
@@ -230,7 +230,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * Sets the isAbstract attribute of the builder. 
 	 */
 	public void setIsAbstract(boolean b);
-	
+
 	/**
 	 * Returns the 'versionsSupported' of this builder
 	 * 
@@ -238,7 +238,7 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 */
 
 	public String getVersionsSupported();
-	
+
 	/**
 	 * Returns the 'convertToId' of this builder
 	 * 
@@ -246,13 +246,13 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 */
 
 	public String getConvertToId();
-	
+
 	/**
 	 * Sets the 'versionsSupported' attribute of the builder. 
 	 */
-	
+
 	public void setVersionsSupported(String versionsSupported);
-	
+
 	/**
 	 * Sets the 'convertToId' attribute of the builder. 
 	 */
@@ -265,21 +265,21 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return IFileContextBuildMacroValues
 	 */
 	public IFileContextBuildMacroValues getFileContextBuildMacroValues();
-	
+
 	/**
 	 * Returns String representing the build variable pattern to be used while makefile generation
 	 * 
 	 * @return String
 	 */
 	public String getBuilderVariablePattern();
-	
+
 	/**
 	 * Returns whether the builder supports case sensitive variables or not
 	 * 
 	 * @return boolean
 	 */
 	public boolean isVariableCaseSensitive();
-	
+
 	/**
 	 * Returns an array of Strings representing the patterns of the builder/buildfile-generator 
 	 * reserved variables
@@ -287,38 +287,38 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return String[]
 	 */
 	public String[] getReservedMacroNames();
-	
+
 	/**
 	 * Returns the tool-integrator defined implementation of the IReservedMacroNameSupplier
 	 * to be used for detecting the builder/buildfile-generator reserved variables
 	 * @return IReservedMacroNameSupplier
 	 */
 	public IReservedMacroNameSupplier getReservedMacroNameSupplier();
-	
+
 	public CBuildData getBuildData();
-	
+
 	public boolean isCustomBuilder();
-	
+
 	public boolean supportsCustomizedBuild();
-	
+
 	public boolean keepEnvironmentVariablesInBuildfile();
 
 	public void setKeepEnvironmentVariablesInBuildfile(boolean keep);
 
 	public boolean canKeepEnvironmentVariablesInBuildfile();
-	
+
 	void setBuildPath(String path);
 
 	String getBuildPath();
-	
+
 	boolean isInternalBuilder();
-	
+
 	boolean matches(IBuilder builder);
-	
+
 	boolean isSystemObject();
-	
+
 	String getUniqueRealName();
-	
+
 	/**
 	 * Returns the ICommandLauncher which should be used to launch the builder command.
 	 * 
@@ -334,5 +334,5 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @since 8.0
 	 */
 	public AbstractBuildRunner getBuildRunner() throws CoreException;
-	
+
 }

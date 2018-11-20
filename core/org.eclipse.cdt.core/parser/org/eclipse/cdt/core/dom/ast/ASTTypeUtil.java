@@ -83,21 +83,21 @@ public class ASTTypeUtil {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
 	private static final int DEAULT_ITYPE_SIZE = 2;
-	
+
 	// A threshold above which type strings are appended to other type strings
 	// "by reference" rather than by copying their contents. This avoids the
 	// sizes of type strings from getting out of control for certain code patterns.
 	private static final int TYPE_STRING_LENGTH_THRESHOLD = 100000;
 
-	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress=
-			new ThreadLocal<Set<IBinding>>() {
+	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress = new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();
 		}
 	};
 
-	private ASTTypeUtil() {}
+	private ASTTypeUtil() {
+	}
 
 	/**
 	 * Returns a string representation for the parameters of the given function type.
@@ -126,13 +126,13 @@ public class ASTTypeUtil {
 	private static void appendParameterTypeString(IFunctionType ft, StringBuilder result) {
 		IType[] types = ft.getParameterTypes();
 		result.append(Keywords.cpLPAREN);
-		boolean needComma= false;
+		boolean needComma = false;
 		for (IType type : types) {
 			if (type != null) {
 				if (needComma)
 					result.append(COMMA_SPACE);
 				appendType(type, true, result);
-				needComma= true;
+				needComma = true;
 			}
 		}
 		if (ft instanceof ICPPFunctionType && ((ICPPFunctionType) ft).takesVarArgs()) {
@@ -147,10 +147,11 @@ public class ASTTypeUtil {
 		appendParameterTypeString(ft, result);
 		boolean needSpace = false;
 		if (ft instanceof ICPPFunctionType) {
-			ICPPFunctionType cppft= (ICPPFunctionType) ft;
-			needSpace= appendCVQ(result, needSpace, cppft.isConst(), cppft.isVolatile(), false);
+			ICPPFunctionType cppft = (ICPPFunctionType) ft;
+			needSpace = appendCVQ(result, needSpace, cppft.isConst(), cppft.isVolatile(), false);
 			if (cppft.hasRefQualifier()) {
-				appendRefQualifier(result, needSpace, cppft.isRValueReference()); needSpace = true;
+				appendRefQualifier(result, needSpace, cppft.isRValueReference());
+				needSpace = true;
 			}
 		}
 		return needSpace;
@@ -214,11 +215,11 @@ public class ASTTypeUtil {
 	public static String getArgumentListString(ICPPTemplateArgument[] args, boolean normalize) {
 		if (args.length == 0)
 			return "<>"; //$NON-NLS-1$
-		StringBuilder result= new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		appendArgumentList(args, normalize, result);
 		return result.toString();
 	}
-	
+
 	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
 		result.append('<');
 		for (int i = 0; i < args.length; i++) {
@@ -239,13 +240,13 @@ public class ASTTypeUtil {
 	 * @since 5.1
 	 */
 	public static String getArgumentString(ICPPTemplateArgument arg, boolean normalize) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		appendArgument(arg, normalize, buf);
 		return buf.toString();
 	}
 
 	private static void appendArgument(ICPPTemplateArgument arg, boolean normalize, StringBuilder buf) {
-		IValue val= arg.getNonTypeValue();
+		IValue val = arg.getNonTypeValue();
 		if (val != null) {
 			appendType(arg.getTypeOfNonTypeValue(), normalize, buf);
 			buf.append(val.getSignature());
@@ -281,39 +282,47 @@ public class ASTTypeUtil {
 			if (type instanceof ICArrayType) {
 				final ICArrayType catype = (ICArrayType) type;
 				if (catype.isConst()) {
-					result.append(Keywords.CONST); needSpace = true;
+					result.append(Keywords.CONST);
+					needSpace = true;
 				}
 				if (catype.isRestrict()) {
 					if (needSpace) {
-						result.append(SPACE); needSpace = false;
+						result.append(SPACE);
+						needSpace = false;
 					}
-					result.append(Keywords.RESTRICT); needSpace = true;
+					result.append(Keywords.RESTRICT);
+					needSpace = true;
 				}
 				if (catype.isStatic()) {
 					if (needSpace) {
-						result.append(SPACE); needSpace = false;
+						result.append(SPACE);
+						needSpace = false;
 					}
-					result.append(Keywords.STATIC); needSpace = true;
+					result.append(Keywords.STATIC);
+					needSpace = true;
 				}
 				if (catype.isVolatile()) {
 					if (needSpace) {
-						result.append(SPACE); needSpace = false;
+						result.append(SPACE);
+						needSpace = false;
 					}
 					result.append(Keywords.VOLATILE);
 				}
 			}
-			IValue val= ((IArrayType) type).getSize();
+			IValue val = ((IArrayType) type).getSize();
 			if (val != null && val != IntegralValue.UNKNOWN) {
 				if (normalize) {
 					if (needSpace) {
-						result.append(SPACE); needSpace = false;
+						result.append(SPACE);
+						needSpace = false;
 					}
 					result.append(val.getSignature());
 				} else {
-					Number v= val.numberValue();
+					Number v = val.numberValue();
 					if (v != null) {
 						if (needSpace) {
-							result.append(SPACE); needSpace = false;
+							result.append(SPACE);
+							needSpace = false;
 						}
 						result.append(v.longValue());
 					}
@@ -321,92 +330,116 @@ public class ASTTypeUtil {
 			}
 			result.append(Keywords.cpRBRACKET);
 		} else if (type instanceof IBasicType) {
-			IBasicType basicType= (IBasicType) type;
+			IBasicType basicType = (IBasicType) type;
 			final Kind kind = basicType.getKind();
 			if (basicType.isSigned()) {
 				// 3.9.1.2: signed integer types
 				if (!normalize || kind == Kind.eChar) {
-					result.append(Keywords.SIGNED); needSpace = true;
+					result.append(Keywords.SIGNED);
+					needSpace = true;
 				}
 			} else if (basicType.isUnsigned()) {
 				if (needSpace) {
-					result.append(SPACE); needSpace = false;
+					result.append(SPACE);
+					needSpace = false;
 				}
-				result.append(Keywords.UNSIGNED); needSpace = true;
+				result.append(Keywords.UNSIGNED);
+				needSpace = true;
 			}
 			if (basicType.isLong()) {
 				if (needSpace) {
-					result.append(SPACE); needSpace = false;
+					result.append(SPACE);
+					needSpace = false;
 				}
-				result.append(Keywords.LONG); needSpace = true;
+				result.append(Keywords.LONG);
+				needSpace = true;
 			} else if (basicType.isShort()) {
 				if (needSpace) {
-					result.append(SPACE); needSpace = false;
+					result.append(SPACE);
+					needSpace = false;
 				}
-				result.append(Keywords.SHORT); needSpace = true;
+				result.append(Keywords.SHORT);
+				needSpace = true;
 			} else if (basicType.isLongLong()) {
 				if (needSpace) {
-					result.append(SPACE); needSpace = false;
+					result.append(SPACE);
+					needSpace = false;
 				}
-				result.append(Keywords.LONG_LONG); needSpace = true;
+				result.append(Keywords.LONG_LONG);
+				needSpace = true;
 			}
 
 			if (basicType.isComplex()) {
 				if (needSpace) {
-					result.append(SPACE); needSpace = false;
+					result.append(SPACE);
+					needSpace = false;
 				}
-				result.append(Keywords.c_COMPLEX); needSpace = true;
+				result.append(Keywords.c_COMPLEX);
+				needSpace = true;
 			}
 			if ((basicType).isImaginary()) {
 				if (needSpace) {
-					result.append(SPACE); needSpace = false;
+					result.append(SPACE);
+					needSpace = false;
 				}
-				result.append(Keywords.c_IMAGINARY); needSpace = true;
+				result.append(Keywords.c_IMAGINARY);
+				needSpace = true;
 			}
 
 			switch (kind) {
 			case eChar:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.CHAR);
 				break;
 			case eDouble:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.DOUBLE);
 				break;
 			case eFloat:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.FLOAT);
 				break;
 			case eFloat128:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(GCCKeywords.__FLOAT128);
 				break;
 			case eDecimal32:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(GCCKeywords._DECIMAL32);
 				break;
 			case eDecimal64:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(GCCKeywords._DECIMAL64);
 				break;
 			case eDecimal128:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(GCCKeywords._DECIMAL128);
 				break;
 			case eInt:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.INT);
 				break;
 			case eInt128:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(GCCKeywords.__INT128);
 				break;
 			case eVoid:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.VOID);
 				break;
 			case eBoolean:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				if (basicType instanceof ICPPBasicType) {
 					result.append(Keywords.BOOL);
 				} else {
@@ -414,19 +447,23 @@ public class ASTTypeUtil {
 				}
 				break;
 			case eWChar:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.WCHAR_T);
 				break;
 			case eChar16:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.CHAR16_T);
 				break;
 			case eChar32:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append(Keywords.CHAR32_T);
 				break;
 			case eNullPtr:
-				if (needSpace) result.append(SPACE);
+				if (needSpace)
+					result.append(SPACE);
 				result.append("std::nullptr_t"); //$NON-NLS-1$
 				break;
 			case eUnspecified:
@@ -467,22 +504,25 @@ public class ASTTypeUtil {
 				appendTypeString(((ICPPPointerToMemberType) type).getMemberOfClass(), normalize, result);
 				result.append(Keywords.cpCOLONCOLON);
 			}
-			result.append(Keywords.cpSTAR); needSpace = true;
-			IPointerType pt= (IPointerType) type;
-			needSpace= appendCVQ(result, needSpace, pt.isConst(), pt.isVolatile(), pt.isRestrict());
+			result.append(Keywords.cpSTAR);
+			needSpace = true;
+			IPointerType pt = (IPointerType) type;
+			needSpace = appendCVQ(result, needSpace, pt.isConst(), pt.isVolatile(), pt.isRestrict());
 		} else if (type instanceof IQualifierType) {
 			if (type instanceof ICQualifierType) {
 				if (((ICQualifierType) type).isRestrict()) {
-					result.append(Keywords.RESTRICT); needSpace = true;
+					result.append(Keywords.RESTRICT);
+					needSpace = true;
 				}
 			} else if (type instanceof IGPPQualifierType) {
 				if (((IGPPQualifierType) type).isRestrict()) {
-					result.append(Keywords.RESTRICT); needSpace = true;
+					result.append(Keywords.RESTRICT);
+					needSpace = true;
 				}
 			}
 
-			IQualifierType qt= (IQualifierType) type;
-			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile(), false);
+			IQualifierType qt = (IQualifierType) type;
+			needSpace = appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile(), false);
 		} else if (type instanceof TypeOfDependentExpression) {
 			result.append(((TypeOfDependentExpression) type).getSignature());
 		} else if (type instanceof ISemanticProblem) {
@@ -497,7 +537,7 @@ public class ASTTypeUtil {
 			result.append('#');
 			result.append(Integer.toString(type.getParameterID(), 16));
 			if (type.isParameterPack())
-				result.append("(...)");  //$NON-NLS-1$
+				result.append("(...)"); //$NON-NLS-1$
 		} else {
 			result.append(type.getName());
 		}
@@ -529,8 +569,7 @@ public class ASTTypeUtil {
 		return needSpace;
 	}
 
-	private static void appendRefQualifier(StringBuilder target, boolean needSpace,
-			boolean isRValueReference) {
+	private static void appendRefQualifier(StringBuilder target, boolean needSpace, boolean isRValueReference) {
 		if (needSpace) {
 			target.append(SPACE);
 		}
@@ -589,11 +628,11 @@ public class ASTTypeUtil {
 	 * repeatedly to them.
 	 */
 	private static void appendStringReference(String str, StringBuilder result) {
-		result.append("{String@");  //$NON-NLS-1$
+		result.append("{String@"); //$NON-NLS-1$
 		result.append(System.identityHashCode(str));
-		result.append("}");  //$NON-NLS-1$
+		result.append("}"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Appends the the result of {@link #getType(IType, boolean)} to the given buffer.
 	 * @since 5.3
@@ -625,8 +664,8 @@ public class ASTTypeUtil {
 
 		// Push all of the types onto the stack.
 		int i = 0;
-		IQualifierType cvq= null;
-		ICPPReferenceType ref= null;
+		IQualifierType cvq = null;
+		ICPPReferenceType ref = null;
 		while (type != null && ++i < 100) {
 			if (type instanceof ITypedef) {
 				// If normalization was not requested, skip the typedef and proceed with its target type.
@@ -634,44 +673,44 @@ public class ASTTypeUtil {
 					// Output reference, qualifier and typedef, then stop.
 					if (ref != null) {
 						types = ArrayUtil.appendAt(types, numTypes++, ref);
-						ref= null;
+						ref = null;
 					}
 					if (cvq != null) {
 						types = ArrayUtil.appendAt(types, numTypes++, cvq);
-						cvq= null;
+						cvq = null;
 					}
 					types = ArrayUtil.appendAt(types, numTypes++, type);
-					type= null;
+					type = null;
 				}
 			} else {
 				if (type instanceof ICPPReferenceType) {
 					// Reference types ignore cv-qualifiers.
-					cvq= null;
+					cvq = null;
 					// Lvalue references win over rvalue references.
 					if (ref == null || ref.isRValueReference()) {
 						// Delay reference to see if there are more.
-						ref= (ICPPReferenceType) type;
+						ref = (ICPPReferenceType) type;
 					}
 				} else {
 					if (cvq != null) {
 						// Merge cv qualifiers.
 						if (type instanceof IQualifierType || type instanceof IPointerType) {
-							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile(), false);
-							cvq= null;
+							type = SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile(), false);
+							cvq = null;
 						}
 					}
 					if (type instanceof IQualifierType) {
 						// Delay cv qualifier to merge it with others
-						cvq= (IQualifierType) type;
+						cvq = (IQualifierType) type;
 					} else {
 						// No reference, no cv qualifier: output reference and cv-qualifier.
 						if (ref != null) {
 							types = ArrayUtil.appendAt(types, numTypes++, ref);
-							ref= null;
+							ref = null;
 						}
 						if (cvq != null) {
 							types = ArrayUtil.appendAt(types, numTypes++, cvq);
-							cvq= null;
+							cvq = null;
 						}
 						types = ArrayUtil.appendAt(types, numTypes++, type);
 					}
@@ -680,17 +719,17 @@ public class ASTTypeUtil {
 			if (type instanceof ITypeContainer) {
 				type = ((ITypeContainer) type).getType();
 			} else if (type instanceof IFunctionType) {
-				type= ((IFunctionType) type).getReturnType();
+				type = ((IFunctionType) type).getReturnType();
 			} else {
-				type= null;
+				type = null;
 			}
 		}
 
 		// Pop all of the types from the stack, and build the string representation while doing so.
-		List<IType> postfix= null;
-		BitSet parenthesis= null;
-		boolean needParenthesis= false;
-		boolean needSpace= false;
+		List<IType> postfix = null;
+		BitSet parenthesis = null;
+		boolean needParenthesis = false;
+		boolean needSpace = false;
 		for (int j = numTypes; --j >= 0;) {
 			IType tj = types[j];
 			if (j > 0 && types[j - 1] instanceof IQualifierType) {
@@ -699,7 +738,7 @@ public class ASTTypeUtil {
 				appendTypeString(types[j - 1], normalize, result);
 				result.append(SPACE);
 				appendTypeString(tj, normalize, result);
-				needSpace= true;
+				needSpace = true;
 				--j;
 			} else {
 				// Handle post-fix.
@@ -708,13 +747,13 @@ public class ASTTypeUtil {
 						if (needSpace)
 							result.append(SPACE);
 						appendTypeString(tj, normalize, result);
-						needSpace= true;
+						needSpace = true;
 					} else {
 						if (postfix == null) {
-							postfix= new ArrayList<>();
+							postfix = new ArrayList<>();
 						}
 						postfix.add(tj);
-						needParenthesis= true;
+						needParenthesis = true;
 					}
 				} else {
 					if (needSpace)
@@ -722,13 +761,13 @@ public class ASTTypeUtil {
 					if (needParenthesis && postfix != null) {
 						result.append('(');
 						if (parenthesis == null) {
-							parenthesis= new BitSet();
+							parenthesis = new BitSet();
 						}
 						parenthesis.set(postfix.size() - 1);
 					}
 					appendTypeString(tj, normalize, result);
-					needParenthesis= false;
-					needSpace= true;
+					needParenthesis = false;
+					needSpace = true;
 				}
 			}
 		}
@@ -750,7 +789,7 @@ public class ASTTypeUtil {
 			if (toCache.length() > TYPE_STRING_LENGTH_THRESHOLD) {
 				// Remove the contents of the string from the buffer.
 				result.setLength(startOffset);
-				
+
 				// Intern the string. This is required for calling appendStringReference(),
 				// to ensure that we get a unique String object for unique contents.
 				toCache = toCache.intern();
@@ -778,13 +817,13 @@ public class ASTTypeUtil {
 		IType type = null;
 
 		if (binding instanceof IEnumerator) {
-			type = ((IEnumerator)binding).getType();
+			type = ((IEnumerator) binding).getType();
 		} else if (binding instanceof IFunction) {
-			type = ((IFunction)binding).getType();
+			type = ((IFunction) binding).getType();
 		} else if (binding instanceof ITypedef) {
-			type = ((ITypedef)binding).getType();
+			type = ((ITypedef) binding).getType();
 		} else if (binding instanceof IVariable) {
-			type = ((IVariable)binding).getType();
+			type = ((IVariable) binding).getType();
 		}
 
 		if (type != null) {
@@ -804,11 +843,11 @@ public class ASTTypeUtil {
 		if (node instanceof IASTDeclarator)
 			return getType((IASTDeclarator) node);
 		if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IVariable)
-			return getType(((IVariable)((IASTName) node).resolveBinding()).getType());
+			return getType(((IVariable) ((IASTName) node).resolveBinding()).getType());
 		if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IFunction)
-			return getType(((IFunction)((IASTName) node).resolveBinding()).getType());
+			return getType(((IFunction) ((IASTName) node).resolveBinding()).getType());
 		if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IType)
-			return getType((IType)((IASTName) node).resolveBinding());
+			return getType((IType) ((IASTName) node).resolveBinding());
 		if (node instanceof IASTTypeId)
 			return getType((IASTTypeId) node);
 
@@ -870,19 +909,19 @@ public class ASTTypeUtil {
 	 * @since 5.3
 	 */
 	public static String getQualifiedName(ICPPBinding binding) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		appendCppName(binding, false, true, buf);
 		return buf.toString();
 	}
 
 	private static void appendCppName(IBinding binding, boolean normalize, boolean qualify, StringBuilder result) {
-		ICPPTemplateParameter tpar= getTemplateParameter(binding);
+		ICPPTemplateParameter tpar = getTemplateParameter(binding);
 		if (tpar != null) {
 			appendTemplateParameter(tpar, normalize, result);
 		} else {
 			if (qualify) {
-				int pos= result.length();
-				IBinding owner= binding.getOwner();
+				int pos = result.length();
+				IBinding owner = binding.getOwner();
 				if (owner instanceof ICPPNamespace || owner instanceof IType) {
 					appendCppName(owner, normalize, qualify, result);
 					if (owner instanceof ICPPNamespace && owner.getNameCharArray().length == 0) {
@@ -955,7 +994,7 @@ public class ASTTypeUtil {
 	}
 
 	private static void appendNameCheckAnonymous(IBinding binding, StringBuilder result) {
-		char[] name= binding.getNameCharArray();
+		char[] name = binding.getNameCharArray();
 		if (name != null && name.length > 0) {
 			result.append(name);
 		} else if (!(binding instanceof ICPPNamespace)) {
@@ -968,7 +1007,7 @@ public class ASTTypeUtil {
 			// TODO: Do we need distinct names for distinct specializations?
 			return createNameForAnonymous(((ICPPSpecialization) binding).getSpecializedBinding());
 		}
-		StringBuilder result= new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		appendNameForAnonymous(binding, result);
 		if (result.length() == 0)
 			return null;
@@ -978,17 +1017,17 @@ public class ASTTypeUtil {
 
 	private static char[] extractChars(StringBuilder buf) {
 		final int length = buf.length();
-		char[] result= new char[length];
+		char[] result = new char[length];
 		buf.getChars(0, length, result, 0);
 		return result;
 	}
 
 	private static void appendNameForAnonymous(IBinding binding, StringBuilder buf) {
-		IASTNode node= null;
+		IASTNode node = null;
 		if (binding instanceof ICInternalBinding) {
-			node= ((ICInternalBinding) binding).getPhysicalNode();
+			node = ((ICInternalBinding) binding).getPhysicalNode();
 		} else if (binding instanceof ICPPInternalBinding) {
-			node= ((ICPPInternalBinding) binding).getDefinition();
+			node = ((ICPPInternalBinding) binding).getDefinition();
 		}
 		if (node != null) {
 			appendNodeLocation(node, !(binding instanceof ICPPNamespace), buf);
@@ -996,11 +1035,11 @@ public class ASTTypeUtil {
 	}
 
 	private static void appendNodeLocation(IASTNode node, boolean includeOffset, StringBuilder buf) {
-		IASTFileLocation loc= node.getFileLocation();
+		IASTFileLocation loc = node.getFileLocation();
 		if (loc == null) {
-			node= node.getParent();
+			node = node.getParent();
 			if (node != null) {
-				loc= node.getFileLocation();
+				loc = node.getFileLocation();
 			}
 		}
 		if (loc != null) {
@@ -1043,7 +1082,7 @@ public class ASTTypeUtil {
 		IPath workspaceRelative = file.getFullPath();
 		return workspaceRelative.toString();
 	}
-	
+
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @deprecated This method is no longer used and is scheduled for removal in 10.0.

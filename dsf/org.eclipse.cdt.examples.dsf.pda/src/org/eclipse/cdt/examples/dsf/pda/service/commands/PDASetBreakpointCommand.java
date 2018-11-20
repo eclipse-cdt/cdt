@@ -38,15 +38,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDASetBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetBreakpointCommand(PDAVirtualMachineDMContext context, int line, boolean stopVM) {
-        super(context, 
-              "set " + 
-              (line - 1) + " " + 
-              (stopVM ? "1" : "0"));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASetBreakpointCommand(PDAVirtualMachineDMContext context, int line, boolean stopVM) {
+		super(context, "set " + (line - 1) + " " + (stopVM ? "1" : "0"));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

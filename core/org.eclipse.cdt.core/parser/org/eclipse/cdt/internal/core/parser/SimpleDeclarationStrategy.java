@@ -14,13 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-
 /**
  * @author jcamelon
  *
  */
 public enum SimpleDeclarationStrategy {
-    TRY_CONSTRUCTOR,
-	TRY_FUNCTION,
-	TRY_VARIABLE,
+	TRY_CONSTRUCTOR, TRY_FUNCTION, TRY_VARIABLE,
 }

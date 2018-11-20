@@ -87,7 +87,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	private static final String LEADING_COMMENT_TITLE = "<<<=== Leading Comment Test Section ===>>>"; //$NON-NLS-1$
 	private static final String TRAILING_COMMENT_TITLE = "<<<=== Trailing Comment Test Section ===>>>"; //$NON-NLS-1$
 	private static final String FREESTANDING_COMMENT_TITLE = "<<<=== Freestanding Comment Test Section ===>>>"; //$NON-NLS-1$
-	
+
 	public CommentHandlingTest(String name, List<TestSourceFile> files) {
 		super(name, files);
 	}
@@ -97,7 +97,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		if (fileMap.isEmpty()) {
 			fail("No file for testing"); //$NON-NLS-1$
 		}
-		
+
 		for (String fileName : fileMap.keySet()) {
 			TestSourceFile file = fileMap.get(fileName);
 			NodeCommentMap nodeMap = getNodeMapForFile(fileName);
@@ -110,17 +110,17 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	}
 
 	private StringBuilder buildExpectedResult(TestSourceFile file) {
-		Matcher matcher = Pattern.compile(CommentHandlingTest.getSeparatingRegexp(),
-				Pattern.MULTILINE | Pattern.DOTALL).matcher(file.getExpectedSource());
+		Matcher matcher = Pattern.compile(CommentHandlingTest.getSeparatingRegexp(), Pattern.MULTILINE | Pattern.DOTALL)
+				.matcher(file.getExpectedSource());
 		if (!matcher.find()) {
 			fail("Missing expected section. Expected result code must be of the following format:\n\"=>leading\n...\n=>trailing\n...\n=>freestanding\""); //$NON-NLS-1$
 		}
 		StringBuilder expectedResultBuilder = new StringBuilder();
-		
+
 		String leadingResult = matcher.group(1);
 		String trailingResult = matcher.group(2);
 		String freestandingResult = matcher.group(3);
-		
+
 		appendLineTrimmed(expectedResultBuilder, LEADING_COMMENT_TITLE);
 		appendLineTrimmed(expectedResultBuilder, leadingResult);
 		appendLineTrimmed(expectedResultBuilder, TRAILING_COMMENT_TITLE);
@@ -176,16 +176,16 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	}
 
 	private static String getSeparatingRegexp() {
-		return LEADING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP + TRAILING_COMMENT_SEPARATOR +
-				ANY_CHAR_REGEXP + FREESTANDING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP;
+		return LEADING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP + TRAILING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP
+				+ FREESTANDING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP;
 	}
-	
+
 	protected IASTTranslationUnit getUnit(String fileName) throws CoreException {
-		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(
-				project.getFile(fileName));
+		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel()
+				.create(project.getFile(fileName));
 		return tu.getAST();
 	}
-	
+
 	private final class NodeOffsetComparator implements Comparator<IASTNode> {
 		@Override
 		public int compare(IASTNode o1, IASTNode o2) {
@@ -196,7 +196,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 			return offDif;
 		}
 	}
-	
+
 	private void appendLineTrimmed(StringBuilder builderToAppendTo, String line) {
 		builderToAppendTo.append(line.trim());
 		builderToAppendTo.append(SEPARATOR);

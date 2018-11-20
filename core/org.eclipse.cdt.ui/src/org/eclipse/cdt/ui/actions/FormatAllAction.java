@@ -102,14 +102,17 @@ public class FormatAllAction extends SelectionDispatchAction {
 	 */
 	public static class ObjectDelegate implements IObjectActionDelegate {
 		private FormatAllAction fAction;
+
 		@Override
 		public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-			fAction= new FormatAllAction(targetPart.getSite());
+			fAction = new FormatAllAction(targetPart.getSite());
 		}
+
 		@Override
 		public void run(IAction action) {
 			fAction.run();
 		}
+
 		@Override
 		public void selectionChanged(IAction action, ISelection selection) {
 			if (fAction == null)
@@ -135,7 +138,6 @@ public class FormatAllAction extends SelectionDispatchAction {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.FORMAT_ALL);
 	}
 
-
 	@Override
 	public void selectionChanged(ITextSelection selection) {
 		// do nothing
@@ -147,23 +149,23 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private ITranslationUnit[] getTranslationUnits(IStructuredSelection selection) {
-		HashSet<ICElement> result= new HashSet<ICElement>();
-		Object[] selected= selection.toArray();
-		for (int i= 0; i < selected.length; i++) {
+		HashSet<ICElement> result = new HashSet<ICElement>();
+		Object[] selected = selection.toArray();
+		for (int i = 0; i < selected.length; i++) {
 			try {
 				if (selected[i] instanceof ICElement) {
-					ICElement elem= (ICElement) selected[i];
+					ICElement elem = (ICElement) selected[i];
 					if (elem.exists()) {
 						switch (elem.getElementType()) {
-							case ICElement.C_UNIT:
-								result.add(elem);
-								break;
-							case ICElement.C_CCONTAINER:
-								collectTranslationUnits((ICContainer) elem, result);
-								break;
-							case ICElement.C_PROJECT:
-								collectTranslationUnits((ICProject) elem, result);
-								break;
+						case ICElement.C_UNIT:
+							result.add(elem);
+							break;
+						case ICElement.C_CCONTAINER:
+							collectTranslationUnits((ICContainer) elem, result);
+							break;
+						case ICElement.C_PROJECT:
+							collectTranslationUnits((ICProject) elem, result);
+							break;
 						}
 					}
 				} else if (selected[i] instanceof IProject) {
@@ -187,9 +189,9 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private void collectTranslationUnits(ICContainer container, Collection<ICElement> result) throws CModelException {
-		ICElement[] children= container.getChildren();
-		for (int i= 0; i < children.length; i++) {
-			ICElement elem= children[i];
+		ICElement[] children = container.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			ICElement elem = children[i];
 			if (elem.exists()) {
 				switch (elem.getElementType()) {
 				case ICElement.C_UNIT:
@@ -204,16 +206,16 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private boolean isEnabled(IStructuredSelection selection) {
-		Object[] selected= selection.toArray();
-		for (int i= 0; i < selected.length; i++) {
+		Object[] selected = selection.toArray();
+		for (int i = 0; i < selected.length; i++) {
 			if (selected[i] instanceof ICElement) {
-				ICElement elem= (ICElement) selected[i];
+				ICElement elem = (ICElement) selected[i];
 				if (elem.exists()) {
 					switch (elem.getElementType()) {
-						case ICElement.C_UNIT:
-						case ICElement.C_CCONTAINER:
-						case ICElement.C_PROJECT:
-							return true;
+					case ICElement.C_UNIT:
+					case ICElement.C_CCONTAINER:
+					case ICElement.C_PROJECT:
+						return true;
 					}
 				}
 			} else if (selected[i] instanceof IProject) {
@@ -231,25 +233,22 @@ public class FormatAllAction extends SelectionDispatchAction {
 
 	@Override
 	public void run(IStructuredSelection selection) {
-		ITranslationUnit[] tus= getTranslationUnits(selection);
+		ITranslationUnit[] tus = getTranslationUnits(selection);
 		if (tus.length == 0)
 			return;
 		if (tus.length > 1) {
-			int returnCode= OptionalMessageDialog.open("FormatAll",  //$NON-NLS-1$
-					getShell(),
-					ActionMessages.FormatAllAction_noundo_title,
-					null,
-					ActionMessages.FormatAllAction_noundo_message,
-					MessageDialog.WARNING,
-					new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL},
-					0);
-			if (returnCode != OptionalMessageDialog.NOT_SHOWN &&
-					returnCode != Window.OK ) return;
+			int returnCode = OptionalMessageDialog.open("FormatAll", //$NON-NLS-1$
+					getShell(), ActionMessages.FormatAllAction_noundo_title, null,
+					ActionMessages.FormatAllAction_noundo_message, MessageDialog.WARNING,
+					new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+			if (returnCode != OptionalMessageDialog.NOT_SHOWN && returnCode != Window.OK)
+				return;
 		}
 
-		IStatus status= Resources.makeCommittable(getResources(tus), getShell());
+		IStatus status = Resources.makeCommittable(getResources(tus), getShell());
 		if (!status.isOK()) {
-			ErrorDialog.openError(getShell(), ActionMessages.FormatAllAction_failedvalidateedit_title, ActionMessages.FormatAllAction_failedvalidateedit_message, status);
+			ErrorDialog.openError(getShell(), ActionMessages.FormatAllAction_failedvalidateedit_title,
+					ActionMessages.FormatAllAction_failedvalidateedit_message, status);
 			return;
 		}
 
@@ -257,9 +256,9 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private IResource[] getResources(ITranslationUnit[] tus) {
-		IResource[] res= new IResource[tus.length];
-		for (int i= 0; i < res.length; i++) {
-			res[i]= tus[i].getResource();
+		IResource[] res = new IResource[tus.length];
+		for (int i = 0; i < res.length; i++) {
+			res[i] = tus[i].getResource();
 		}
 		return res;
 	}
@@ -270,29 +269,32 @@ public class FormatAllAction extends SelectionDispatchAction {
 	 */
 	public void runOnMultiple(final ITranslationUnit[] tus) {
 		try {
-			String message= ActionMessages.FormatAllAction_status_description;
-			final MultiStatus status= new MultiStatus(CUIPlugin.PLUGIN_ID, IStatus.OK, message, null);
+			String message = ActionMessages.FormatAllAction_status_description;
+			final MultiStatus status = new MultiStatus(CUIPlugin.PLUGIN_ID, IStatus.OK, message, null);
 
 			if (tus.length == 1) {
 				EditorUtility.openInEditor(tus[0]);
 			}
 
-			PlatformUI.getWorkbench().getProgressService().run(true, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					doRunOnMultiple(tus, status, monitor);
-				}
-			})); // workspace lock
+			PlatformUI.getWorkbench().getProgressService().run(true, true,
+					new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
+						@Override
+						public void run(IProgressMonitor monitor) {
+							doRunOnMultiple(tus, status, monitor);
+						}
+					})); // workspace lock
 			if (!status.isOK()) {
-				String title= ActionMessages.FormatAllAction_multi_status_title;
+				String title = ActionMessages.FormatAllAction_multi_status_title;
 				ErrorDialog.openError(getShell(), title, null, status);
 			}
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title, ActionMessages.FormatAllAction_error_message);
+			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title,
+					ActionMessages.FormatAllAction_error_message);
 		} catch (InterruptedException e) {
 			// Canceled by user
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title, ActionMessages.FormatAllAction_error_message);
+			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title,
+					ActionMessages.FormatAllAction_error_message);
 		}
 	}
 
@@ -306,7 +308,8 @@ public class FormatAllAction extends SelectionDispatchAction {
 			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, options);
 			context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.valueOf(true));
 
-			final MultiPassContentFormatter formatter= new MultiPassContentFormatter(ICPartitions.C_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE);
+			final MultiPassContentFormatter formatter = new MultiPassContentFormatter(ICPartitions.C_PARTITIONING,
+					IDocument.DEFAULT_CONTENT_TYPE);
 			formatter.setMasterStrategy(new CFormattingStrategy());
 
 			try {
@@ -316,17 +319,17 @@ public class FormatAllAction extends SelectionDispatchAction {
 				stopSequentialRewriteMode(document);
 			}
 		} finally {
-		    context.dispose();
+			context.dispose();
 		}
-    }
+	}
 
 	@SuppressWarnings("deprecation")
 	private void startSequentialRewriteMode(IDocument document) {
 		if (document instanceof IDocumentExtension4) {
-			IDocumentExtension4 extension= (IDocumentExtension4) document;
-			fRewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
+			IDocumentExtension4 extension = (IDocumentExtension4) document;
+			fRewriteSession = extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
 		} else if (document instanceof IDocumentExtension) {
-			IDocumentExtension extension= (IDocumentExtension) document;
+			IDocumentExtension extension = (IDocumentExtension) document;
 			extension.startSequentialRewrite(false);
 		}
 	}
@@ -334,39 +337,40 @@ public class FormatAllAction extends SelectionDispatchAction {
 	@SuppressWarnings("deprecation")
 	private void stopSequentialRewriteMode(IDocument document) {
 		if (document instanceof IDocumentExtension4) {
-			IDocumentExtension4 extension= (IDocumentExtension4) document;
+			IDocumentExtension4 extension = (IDocumentExtension4) document;
 			extension.stopRewriteSession(fRewriteSession);
 		} else if (document instanceof IDocumentExtension) {
-			IDocumentExtension extension= (IDocumentExtension)document;
+			IDocumentExtension extension = (IDocumentExtension) document;
 			extension.stopSequentialRewrite();
 		}
 	}
 
-	private void doRunOnMultiple(ITranslationUnit[] tus, MultiStatus status, IProgressMonitor monitor) throws OperationCanceledException {
+	private void doRunOnMultiple(ITranslationUnit[] tus, MultiStatus status, IProgressMonitor monitor)
+			throws OperationCanceledException {
 		if (monitor == null) {
-			monitor= new NullProgressMonitor();
+			monitor = new NullProgressMonitor();
 		}
 		monitor.setTaskName(ActionMessages.FormatAllAction_operation_description);
 
 		monitor.beginTask("", tus.length * 4); //$NON-NLS-1$
 		try {
-			Map<String, Object> lastOptions= null;
-			ICProject lastProject= null;
+			Map<String, Object> lastOptions = null;
+			ICProject lastProject = null;
 
-			for (int i= 0; i < tus.length; i++) {
-				ITranslationUnit tu= tus[i];
-				IPath path= tu.getPath();
-				if (lastProject == null || lastOptions == null|| !lastProject.equals(tu.getCProject())) {
-					lastProject= tu.getCProject();
-					lastOptions= getFomatterSettings(lastProject);
+			for (int i = 0; i < tus.length; i++) {
+				ITranslationUnit tu = tus[i];
+				IPath path = tu.getPath();
+				if (lastProject == null || lastOptions == null || !lastProject.equals(tu.getCProject())) {
+					lastProject = tu.getCProject();
+					lastOptions = getFomatterSettings(lastProject);
 				}
 
-				ILanguage language= null;
+				ILanguage language = null;
 				try {
-					language= tu.getLanguage();
+					language = tu.getLanguage();
 				} catch (CoreException exc) {
 					// use fallback CPP
-					language= GPPLanguage.getDefault();
+					language = GPPLanguage.getDefault();
 				}
 
 				// use working copy if available
@@ -382,13 +386,13 @@ public class FormatAllAction extends SelectionDispatchAction {
 					throw new OperationCanceledException();
 				}
 
-				ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 				try {
 					try {
 						manager.connect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
 
 						monitor.subTask(path.makeRelative().toString());
-						ITextFileBuffer fileBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
+						ITextFileBuffer fileBuffer = manager.getTextFileBuffer(path, LocationKind.IFILE);
 						boolean wasDirty = fileBuffer.isDirty();
 
 						formatTranslationUnit(fileBuffer, lastOptions);

@@ -64,34 +64,33 @@ public class IndexLabelProvider extends LabelProvider {
 		}
 		return super.getText(element);
 	}
-	
+
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IndexNode) {
 			return ((IndexNode) element).fImage;
 		}
-		ImageDescriptor desc= null;
+		ImageDescriptor desc = null;
 		if (element instanceof ICProject)
 			desc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SEARCHPROJECT);
 		else if (element instanceof ICContainer)
 			desc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SEARCHFOLDER);
 		else if (element instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) element;
-			desc = tu.isHeaderUnit()
-				? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER)
-				: CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);
+			desc = tu.isHeaderUnit() ? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER)
+					: CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);
 		}
-		
+
 		if (desc != null)
 			return CUIPlugin.getImageDescriptorRegistry().get(desc);
-		
+
 		return super.getImage(element);
 	}
 
 	public static String getText(IPDOMNode element) {
 		if (element instanceof PDOMNamedNode) {
 			try {
-				String result = ((PDOMNamedNode)element).getDBName().getString();
+				String result = ((PDOMNamedNode) element).getDBName().getString();
 
 				if (element instanceof ICPPTemplateInstance) {
 					StringBuilder buffer = null;
@@ -114,7 +113,8 @@ public class IndexLabelProvider extends LabelProvider {
 					StringBuilder buffer = new StringBuilder("Part: "); //$NON-NLS-1$
 					buffer.append(result);
 					buffer.append('<');
-					ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
+					ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element)
+							.getTemplateArguments();
 					for (int i = 0; i < types.length; i++) {
 						if (i > 0)
 							buffer.append(',');
@@ -124,46 +124,46 @@ public class IndexLabelProvider extends LabelProvider {
 					result = buffer.toString();
 				} else if (element instanceof ICPPSpecialization) {
 					ICPPSpecialization spec = (ICPPSpecialization) element;
-					
+
 					StringBuilder buffer = null;
 					buffer = new StringBuilder("Spec: "); //$NON-NLS-1$
 					buffer.append(result);
-					
+
 					if (!(spec instanceof ICPPTemplateDefinition)
 							&& spec.getSpecializedBinding() instanceof ICPPTemplateDefinition) {
 						buffer.append('<');
 						buffer.append(((ICPPSpecialization) element).getTemplateParameterMap().toString());
 						buffer.append('>');
 					}
-					
+
 					result = buffer.toString();
 				}
-				
+
 				/*
 				 * aftodo - Ideally here we'd call ASTTypeUtil.getType but
 				 * we don't currently store return types
 				 */
-				if(element instanceof IFunction) {
-					result += " "+ASTTypeUtil.getParameterTypeString(((IFunction) element).getType()); //$NON-NLS-1$
+				if (element instanceof IFunction) {
+					result += " " + ASTTypeUtil.getParameterTypeString(((IFunction) element).getType()); //$NON-NLS-1$
 				}
-				
+
 				return result;
 			} catch (CoreException e) {
 				return e.getMessage();
 			}
-		} 
+		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	public static Image getImage(IPDOMNode element) {
 		ImageDescriptor desc = null;
-	
+
 		if (element instanceof IVariable)
 			desc = CElementImageProvider.getVariableImageDescriptor();
 		else if (element instanceof IFunction)
 			desc = CElementImageProvider.getFunctionImageDescriptor();
 		else if (element instanceof ICPPClassType) {
-			switch (((ICPPClassType)element).getKey()) {
+			switch (((ICPPClassType) element).getKey()) {
 			case ICPPClassType.k_class:
 				desc = CElementImageProvider.getClassImageDescriptor();
 				break;
@@ -174,8 +174,7 @@ public class IndexLabelProvider extends LabelProvider {
 				desc = CElementImageProvider.getUnionImageDescriptor();
 				break;
 			}
-		}
-		else if (element instanceof ICompositeType)
+		} else if (element instanceof ICompositeType)
 			desc = CElementImageProvider.getStructImageDescriptor();
 		else if (element instanceof ICPPNamespace)
 			desc = CElementImageProvider.getNamespaceImageDescriptor();
@@ -185,7 +184,7 @@ public class IndexLabelProvider extends LabelProvider {
 			desc = CElementImageProvider.getEnumeratorImageDescriptor();
 		else if (element instanceof ITypedef)
 			desc = CElementImageProvider.getTypedefImageDescriptor();
-		
+
 		if (desc != null)
 			return CUIPlugin.getImageDescriptorRegistry().get(desc);
 		else if (element instanceof PDOMLinkage)
@@ -193,5 +192,5 @@ public class IndexLabelProvider extends LabelProvider {
 
 		return null;
 	}
-	
+
 }

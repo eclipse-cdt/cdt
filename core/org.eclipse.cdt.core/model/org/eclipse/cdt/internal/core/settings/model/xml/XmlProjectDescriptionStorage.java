@@ -129,7 +129,6 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		super(type, project, version);
 	}
 
-
 	/**
 	 * The workspace runnable that actually goes about serializing the project description
 	 */
@@ -177,8 +176,10 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				// end Bug 249951 & Bug 310007
 				serializingLock.acquire();
 				LanguageSettingsProvidersSerializer.serializeLanguageSettings(fDes);
-				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
-				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
+				projectModificaitonStamp = serialize(fDes.getProject(),
+						ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
+				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager()
+						.getContributedEnvironment()).serialize(fDes);
 			} finally {
 				serializingLock.release();
 				Job.getJobManager().removeJobChangeListener(notifyJobCanceller);
@@ -189,7 +190,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 	/** A soft reference to the read-only project description
 	 *  Volatile provides a memory barrier in Java 5+ */
-	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<ICProjectDescription>(null);
+	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<ICProjectDescription>(
+			null);
 	/** The last modification stamp of the .cproject project description file */
 	private volatile long projectModificaitonStamp = IResource.NULL_STAMP;
 
@@ -198,10 +200,9 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 *  with a concurrent reply (as resource locks aren't used for load...)*/
 	private final ILock serializingLock = Job.getJobManager().newLock();
 
-
 	@Override
 	public ICSettingsStorage getStorageForElement(ICStorageElement element) throws CoreException {
-		return new XmlStorage((InternalXmlStorageElement)element);
+		return new XmlStorage((InternalXmlStorageElement) element);
 	}
 
 	@Override
@@ -281,7 +282,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			if (creatingState && des != null)
 				creatingState = des.isCdtProjectCreating();
 			try {
-				InternalXmlStorageElement element = createStorage(project, ICProjectDescriptionStorageType.STORAGE_FILE_NAME, false, true, false);
+				InternalXmlStorageElement element = createStorage(project,
+						ICProjectDescriptionStorageType.STORAGE_FILE_NAME, false, true, false);
 				return new CProjectDescription(project, new XmlStorage(element), element, false, creatingState);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -294,7 +296,6 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		return des;
 	}
 
-
 	/**
 	 * Method to check whether the description has been modified externally.
 	 * If so the current read-only descriptor is nullified.
@@ -303,7 +304,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 */
 	protected synchronized boolean checkExternalModification() {
 		// If loaded, and we have cached the modification stamp, reload
-		long currentModificationStamp = getModificationStamp(project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
+		long currentModificationStamp = getModificationStamp(
+				project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
 		if (projectModificaitonStamp != currentModificationStamp) {
 			setCurrentDescription(null, true);
 			projectModificaitonStamp = currentModificationStamp;
@@ -337,7 +339,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	private CProjectDescription createWritableDescription(CProjectDescription cache) {
 		CProjectDescription des = null;
 		try {
-			InternalXmlStorageElement el = (InternalXmlStorageElement)cache.getRootStorageElement();
+			InternalXmlStorageElement el = (InternalXmlStorageElement) cache.getRootStorageElement();
 			el = copyElement(el, false);
 
 			des = new CProjectDescription(cache, false, new XmlStorage(el), el, cache.isCdtProjectCreating());
@@ -379,7 +381,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			if (project.exists() && project.isOpen()) {
 				fProjectDescription = new SoftReference<ICProjectDescription>(des);
 			} else {
-				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, SettingsModelMessages.getString("CProjectDescriptionManager.16"), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+						SettingsModelMessages.getString("CProjectDescriptionManager.16"), null); //$NON-NLS-1$
 				CCorePlugin.log(new CoreException(status));
 			}
 		} else {
@@ -394,7 +397,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		ICStorageElement rootEl = readOldCDTProjectFile(project);
 		if (rootEl != null) {
 			String ownerId = rootEl.getAttribute(OLD_PROJECT_OWNER_ID);
-			CProjectDescription des = (CProjectDescription) CProjectDescriptionManager.getInstance().createProjectDescription(project, false);
+			CProjectDescription des = (CProjectDescription) CProjectDescriptionManager.getInstance()
+					.createProjectDescription(project, false);
 			String id = CDataUtil.genId(CONVERTED_CFG_ID_PREFIX);
 			des.createConvertedConfiguration(id, CONVERTED_CFG_NAME, rootEl);
 			return new Object[] { ownerId, des };
@@ -426,9 +430,11 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 			ICProjectConverter converter = CProjectDescriptionManager.getInstance().getConverter(project, ownerId, des);
 			if (converter != null) {
-				CProjectDescription convertedDes = (CProjectDescription) converter.convertProject(project, eDes, ownerId, des);
+				CProjectDescription convertedDes = (CProjectDescription) converter.convertProject(project, eDes,
+						ownerId, des);
 				if (convertedDes != null) {
-					CProjectDescriptionManager.getInstance().checkHandleActiveCfgChange(convertedDes, null, eDes, new NullProgressMonitor());
+					CProjectDescriptionManager.getInstance().checkHandleActiveCfgChange(convertedDes, null, eDes,
+							new NullProgressMonitor());
 					des = convertedDes;
 				}
 			}
@@ -456,7 +462,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		return des;
 	}
 
-	private void saveConversion(final IProject proj, final SettingsContext context, CProjectDescription des, IProgressMonitor monitor) {
+	private void saveConversion(final IProject proj, final SettingsContext context, CProjectDescription des,
+			IProgressMonitor monitor) {
 		try {
 			context.addWorkspaceRunnable(createDesSerializationRunnable());
 		} catch (CoreException e1) {
@@ -491,11 +498,14 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				return getLoadedDescription();
 
 			// Don't log core exceptions caused by .cproject file not exists. Leave that to caller
-			InternalXmlStorageElement storage = createStorage(project, ICProjectDescriptionStorageType.STORAGE_FILE_NAME, true, false, false);
+			InternalXmlStorageElement storage = createStorage(project,
+					ICProjectDescriptionStorageType.STORAGE_FILE_NAME, true, false, false);
 			try {
 				// Update the modification stamp
-				projectModificaitonStamp = getModificationStamp(project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
-				CProjectDescription des = new CProjectDescription(project, new XmlStorage(storage), storage, true, false);
+				projectModificaitonStamp = getModificationStamp(
+						project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
+				CProjectDescription des = new CProjectDescription(project, new XmlStorage(storage), storage, true,
+						false);
 				try {
 					setThreadLocalProjectDesc(des);
 
@@ -518,9 +528,10 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 	@Override
 	public IWorkspaceRunnable createDesSerializationRunnable() throws CoreException {
-		CProjectDescription des = (CProjectDescription)getLoadedDescription();
+		CProjectDescription des = (CProjectDescription) getLoadedDescription();
 		if (des == null) // This won't happen because CModelOperation has a handle on the current read-only description
-			throw ExceptionFactory.createCoreException("No read-only Project Description found! Project: " + project.getName()); //$NON-NLS-1$
+			throw ExceptionFactory
+					.createCoreException("No read-only Project Description found! Project: " + project.getName()); //$NON-NLS-1$
 		final ICStorageElement element = des.getRootStorageElement();
 		IWorkspaceRunnable r = new DesSerializationRunnable(des, element);
 		return r;
@@ -563,11 +574,10 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	protected long serialize(IContainer container, String file, ICStorageElement element) throws CoreException {
 		try {
 			final IFile projectFile = container.getFile(new Path(file));
-			final ISchedulingRule rule = MultiRule.combine(new ISchedulingRule[] {
-					ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projectFile),
-					ResourcesPlugin.getWorkspace().getRuleFactory().createRule(projectFile),
-					ResourcesPlugin.getWorkspace().getRuleFactory().deleteRule(projectFile)
-					});
+			final ISchedulingRule rule = MultiRule.combine(
+					new ISchedulingRule[] { ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projectFile),
+							ResourcesPlugin.getWorkspace().getRuleFactory().createRule(projectFile),
+							ResourcesPlugin.getWorkspace().getRuleFactory().deleteRule(projectFile) });
 
 			String utfString;
 			ByteArrayOutputStream stream = null;
@@ -590,14 +600,17 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				CProjectDescriptionStorageManager.ensureWritable(projectFile);
 				if (projectFile.exists()) {
 					try {
-						projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor()); //$NON-NLS-1$
+						projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, //$NON-NLS-1$
+								new NullProgressMonitor());
 					} catch (CoreException e) {
 						if (projectFile.getLocation().toFile().isHidden()) {
 							String os = System.getProperty("os.name"); //$NON-NLS-1$
 							if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
 								projectFile.delete(true, null);
-								projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor()); //$NON-NLS-1$
-								CCorePlugin.log(e.getLocalizedMessage() + "\n** Error occured because of file status <hidden>." + //$NON-NLS-1$
+								projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), //$NON-NLS-1$
+										IResource.FORCE, new NullProgressMonitor());
+								CCorePlugin.log(e.getLocalizedMessage()
+										+ "\n** Error occured because of file status <hidden>." + //$NON-NLS-1$
 										"\n** This status is disabled now, to allow writing."); //$NON-NLS-1$
 							} else
 								throw (e);
@@ -605,7 +618,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 							throw (e);
 					}
 				} else {
-					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor()); //$NON-NLS-1$
+					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, //$NON-NLS-1$
+							new NullProgressMonitor());
 				}
 				return getModificationStamp(projectFile);
 			} finally {
@@ -653,54 +667,61 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 * @return InternalXmlStorageElement representing the particular storage
 	 * @throws CoreException
 	 */
-	protected InternalXmlStorageElement createStorage(IContainer container, String fileName, boolean reCreate, boolean createEmptyIfNotFound, boolean readOnly) throws CoreException{
+	protected InternalXmlStorageElement createStorage(IContainer container, String fileName, boolean reCreate,
+			boolean createEmptyIfNotFound, boolean readOnly) throws CoreException {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = null;
 			Element element = null;
 			InputStream stream = null;
-			if(reCreate){
-				try{
+			if (reCreate) {
+				try {
 					stream = getSharedProperty(container, fileName);
-					if(stream != null){
+					if (stream != null) {
 						doc = builder.parse(stream);
 
 						// Get the first element in the project file
 						Node rootElement = doc.getFirstChild();
 
 						if (rootElement.getNodeType() != Node.PROCESSING_INSTRUCTION_NODE) {
-							throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.7")); //$NON-NLS-1$
+							throw ExceptionFactory.createCoreException(
+									SettingsModelMessages.getString("CProjectDescriptionManager.7")); //$NON-NLS-1$
 						} else {
 							// Make sure that the version is compatible with the manager
 							String fileVersion = rootElement.getNodeValue();
 							Version version = new Version(fileVersion);
 							if (getVersion().compareTo(version) < 0) {
-								throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.8")); //$NON-NLS-1$
+								throw ExceptionFactory.createCoreException(
+										SettingsModelMessages.getString("CProjectDescriptionManager.8")); //$NON-NLS-1$
 							}
 						}
 
 						// Now get the project root element (there should be only one)
-						NodeList nodes = doc.getElementsByTagName(ICProjectDescriptionStorageType.STORAGE_ROOT_ELEMENT_NAME);
+						NodeList nodes = doc
+								.getElementsByTagName(ICProjectDescriptionStorageType.STORAGE_ROOT_ELEMENT_NAME);
 						if (nodes.getLength() == 0)
-							throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.9")); //$NON-NLS-1$
+							throw ExceptionFactory.createCoreException(
+									SettingsModelMessages.getString("CProjectDescriptionManager.9")); //$NON-NLS-1$
 						Node node = nodes.item(0);
-						if(node.getNodeType() != Node.ELEMENT_NODE)
-							throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.10")); //$NON-NLS-1$
-						element = (Element)node;
-					} else if(!createEmptyIfNotFound){
-						throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.11") + fileName); //$NON-NLS-1$
+						if (node.getNodeType() != Node.ELEMENT_NODE)
+							throw ExceptionFactory.createCoreException(
+									SettingsModelMessages.getString("CProjectDescriptionManager.10")); //$NON-NLS-1$
+						element = (Element) node;
+					} else if (!createEmptyIfNotFound) {
+						throw ExceptionFactory.createCoreException(
+								SettingsModelMessages.getString("CProjectDescriptionManager.11") + fileName); //$NON-NLS-1$
 					}
 				} catch (FactoryConfigurationError e) {
-					if(!createEmptyIfNotFound)
+					if (!createEmptyIfNotFound)
 						throw ExceptionFactory.createCoreException(e.getLocalizedMessage());
 				} catch (SAXException e) {
-					if(!createEmptyIfNotFound)
+					if (!createEmptyIfNotFound)
 						throw ExceptionFactory.createCoreException(e);
 				} catch (IOException e) {
-					if(!createEmptyIfNotFound)
+					if (!createEmptyIfNotFound)
 						throw ExceptionFactory.createCoreException(e);
 				} finally {
-					if(stream != null){
+					if (stream != null) {
 						try {
 							stream.close();
 						} catch (IOException e) {
@@ -709,9 +730,10 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				}
 			}
 
-			if(element == null) {
+			if (element == null) {
 				doc = builder.newDocument();
-				ProcessingInstruction instruction = doc.createProcessingInstruction(ICProjectDescriptionStorageType.STORAGE_VERSION_NAME, getVersion().toString());
+				ProcessingInstruction instruction = doc.createProcessingInstruction(
+						ICProjectDescriptionStorageType.STORAGE_VERSION_NAME, getVersion().toString());
 				doc.appendChild(instruction);
 				element = doc.createElement(ICProjectDescriptionStorageType.STORAGE_ROOT_ELEMENT_NAME);
 				element.setAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE, getStorageTypeId());
@@ -815,7 +837,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		// FIXME JBB From ResourceChangeHandler.
 		//       Why do the project description and configurations need to know
 		//       their project?  They should ask their ProjectDescriptionStorage
-		CProjectDescription desc = (CProjectDescription)fProjectDescription.get();
+		CProjectDescription desc = (CProjectDescription) fProjectDescription.get();
 		if (desc != null) {
 			desc.updateProject(newProject);
 		}
@@ -834,23 +856,24 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			Document doc = builder.newDocument();
 			Element newXmlEl = null;
 			synchronized (doc) {
-			synchronized (el.fLock) {
-			if (el.fElement.getParentNode().getNodeType() == Node.DOCUMENT_NODE) {
-				Document baseDoc = el.fElement.getOwnerDocument();
-				NodeList list = baseDoc.getChildNodes();
-				for (int i = 0; i < list.getLength(); i++) {
-					Node node = list.item(i);
-					node = importAddNode(doc, node);
-					if (node.getNodeType() == Node.ELEMENT_NODE && newXmlEl == null) {
-						newXmlEl = (Element) node;
-					}
-				}
+				synchronized (el.fLock) {
+					if (el.fElement.getParentNode().getNodeType() == Node.DOCUMENT_NODE) {
+						Document baseDoc = el.fElement.getOwnerDocument();
+						NodeList list = baseDoc.getChildNodes();
+						for (int i = 0; i < list.getLength(); i++) {
+							Node node = list.item(i);
+							node = importAddNode(doc, node);
+							if (node.getNodeType() == Node.ELEMENT_NODE && newXmlEl == null) {
+								newXmlEl = (Element) node;
+							}
+						}
 
-			} else {
-				newXmlEl = (Element) importAddNode(doc, el.fElement);
+					} else {
+						newXmlEl = (Element) importAddNode(doc, el.fElement);
+					}
+					return newXmlEl;
+				}
 			}
-			return newXmlEl;
-			}}
 		} catch (ParserConfigurationException e) {
 			throw ExceptionFactory.createCoreException(e);
 		} catch (FactoryConfigurationError e) {
@@ -861,9 +884,10 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 	@Override
 	public InternalXmlStorageElement copyElement(ICStorageElement el, boolean readOnly) throws CoreException {
-		InternalXmlStorageElement internalEl = (InternalXmlStorageElement)el;
+		InternalXmlStorageElement internalEl = (InternalXmlStorageElement) el;
 		Element newXmlEl = createXmlElementCopy(internalEl);
-		return new InternalXmlStorageElement(newXmlEl, internalEl.getParent(), internalEl.getAttributeFilters(), internalEl.getChildFilters(), readOnly);
+		return new InternalXmlStorageElement(newXmlEl, internalEl.getParent(), internalEl.getAttributeFilters(),
+				internalEl.getChildFilters(), readOnly);
 	}
 
 	private Node importAddNode(Document doc, Node node) {

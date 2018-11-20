@@ -12,6 +12,7 @@
  * TimeSys Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
+
 /**
  * Clients may implement this interface to dynamically provided the config
  * information that is otherwise specified in the ManagedBuidInfo extension
@@ -19,10 +20,10 @@ package org.eclipse.cdt.managedbuilder.core;
  * the ManagedBuildInfo extension point.
  */
 public interface IManagedConfigElementProvider {
-	
-	String ELEMENT_NAME = "dynamicElementProvider";	//$NON-NLS-1$
-	String CLASS_ATTRIBUTE = "class";	//$NON-NLS-1$
-	
+
+	String ELEMENT_NAME = "dynamicElementProvider"; //$NON-NLS-1$
+	String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+
 	/**
 	 * Each configuration element returned from this method is treated as if
 	 * it were a direct sub-child of a ManagedBuildInfo extension.  As such

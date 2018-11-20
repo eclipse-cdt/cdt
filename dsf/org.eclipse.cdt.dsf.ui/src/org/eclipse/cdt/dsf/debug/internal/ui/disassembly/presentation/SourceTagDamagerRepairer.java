@@ -45,33 +45,27 @@ import org.eclipse.swt.graphics.RGB;
 public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements ISourceTagListener {
 
 	private ISourceTagProvider fSourceTagProvider;
-	private Map<String, ITokenScanner> fScannerMap= new HashMap<String, ITokenScanner>();
+	private Map<String, ITokenScanner> fScannerMap = new HashMap<String, ITokenScanner>();
 	private List<ISourceTag> fSourceTags = new ArrayList<ISourceTag>();
 	private IColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
-	private Map<String, TextAttribute> fAttributeMap= new HashMap<String, TextAttribute>();
+	private Map<String, TextAttribute> fAttributeMap = new HashMap<String, TextAttribute>();
 
-	private final static String[] KEYS= {
-		SemanticHighlightings.CLASS,
-		SemanticHighlightings.METHOD_DECLARATION,
-		SemanticHighlightings.FUNCTION_DECLARATION,
-		SemanticHighlightings.FIELD,
-		SemanticHighlightings.GLOBAL_VARIABLE,
-		SemanticHighlightings.TYPEDEF,
-		SemanticHighlightings.MACRO_DEFINITION,
-		SemanticHighlightings.ENUMERATOR,
-		SemanticHighlightings.ENUM,
-	};
+	private final static String[] KEYS = { SemanticHighlightings.CLASS, SemanticHighlightings.METHOD_DECLARATION,
+			SemanticHighlightings.FUNCTION_DECLARATION, SemanticHighlightings.FIELD,
+			SemanticHighlightings.GLOBAL_VARIABLE, SemanticHighlightings.TYPEDEF,
+			SemanticHighlightings.MACRO_DEFINITION, SemanticHighlightings.ENUMERATOR, SemanticHighlightings.ENUM, };
 
 	/**
 	 * @param scanner
 	 * @param sourceTagProvider
 	 */
-	public SourceTagDamagerRepairer(ITokenScanner scanner, ISourceTagProvider sourceTagProvider, IColorManager colorManager, IPreferenceStore store) {
+	public SourceTagDamagerRepairer(ITokenScanner scanner, ISourceTagProvider sourceTagProvider,
+			IColorManager colorManager, IPreferenceStore store) {
 		super(scanner);
-		fSourceTagProvider= sourceTagProvider;
-		fColorManager= colorManager;
-		fPreferenceStore= store;
+		fSourceTagProvider = sourceTagProvider;
+		fColorManager = colorManager;
+		fPreferenceStore = store;
 		fDefaultTextAttribute = new TextAttribute(null, null, SWT.NORMAL);
 		if (fSourceTagProvider != null) {
 			fSourceTagProvider.addSourceTagListener(this);
@@ -80,16 +74,22 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 	}
 
 	private void initTextAttributes() {
-		boolean shEnabled= fPreferenceStore.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
-		for (int i= 0; i < KEYS.length; i++) {
-			String enabledKey= PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i] + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX;
-			String colorKey= PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i] + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
-			boolean enabled= shEnabled && fPreferenceStore.getBoolean(enabledKey);
+		boolean shEnabled = fPreferenceStore.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
+		for (int i = 0; i < KEYS.length; i++) {
+			String enabledKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i]
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX;
+			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i]
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+			boolean enabled = shEnabled && fPreferenceStore.getBoolean(enabledKey);
 			if (enabled) {
-				String boldKey= PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i] + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX;
-				String italicKey= PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i] + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX;
-				String strikethroughKey= PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i] + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX;
-				String underlineKey= PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i] + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX;
+				String boldKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i]
+						+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX;
+				String italicKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i]
+						+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX;
+				String strikethroughKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i]
+						+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX;
+				String underlineKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + KEYS[i]
+						+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX;
 				addTextAttribute(KEYS[i], colorKey, boldKey, italicKey, strikethroughKey, underlineKey);
 			} else {
 				removeTextAttribute(KEYS[i], colorKey);
@@ -99,7 +99,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 
 	private void removeTextAttribute(String key, String colorKey) {
 		if (fColorManager != null && colorKey != null) {
-			Color color= fColorManager.getColor(colorKey);
+			Color color = fColorManager.getColor(colorKey);
 			if (color != null) {
 				fColorManager.unbindColor(colorKey);
 			}
@@ -108,26 +108,28 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 		fAttributeMap.remove(key);
 	}
 
-	private void addTextAttribute(String key, String colorKey, String boldKey, String italicKey, String strikethroughKey, String underlineKey) {
+	private void addTextAttribute(String key, String colorKey, String boldKey, String italicKey,
+			String strikethroughKey, String underlineKey) {
 		if (fColorManager != null && colorKey != null) {
-			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, colorKey);
-			Color color= fColorManager.getColor(colorKey);
+			RGB rgb = PreferenceConverter.getColor(fPreferenceStore, colorKey);
+			Color color = fColorManager.getColor(colorKey);
 			if (color == null || !rgb.equals(color.getRGB())) {
 				fColorManager.unbindColor(colorKey);
 				fColorManager.bindColor(colorKey, rgb);
 			}
 		}
 
-		TextAttribute textAttribute= createTextAttribute(colorKey, boldKey, italicKey, strikethroughKey, underlineKey);
+		TextAttribute textAttribute = createTextAttribute(colorKey, boldKey, italicKey, strikethroughKey, underlineKey);
 		fAttributeMap.put(key, textAttribute);
 	}
 
-	private TextAttribute createTextAttribute(String colorKey, String boldKey, String italicKey, String strikethroughKey, String underlineKey) {
-		Color color= null;
+	private TextAttribute createTextAttribute(String colorKey, String boldKey, String italicKey,
+			String strikethroughKey, String underlineKey) {
+		Color color = null;
 		if (colorKey != null)
-			color= fColorManager.getColor(colorKey);
+			color = fColorManager.getColor(colorKey);
 
-		int style= fPreferenceStore.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
+		int style = fPreferenceStore.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
 		if (fPreferenceStore.getBoolean(italicKey))
 			style |= SWT.ITALIC;
 
@@ -157,7 +159,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 		if (fAttributeMap.isEmpty()) {
 			initTextAttributes();
 		}
-		String contentType= region.getType();
+		String contentType = region.getType();
 		fScanner = fScannerMap.get(contentType);
 		if (!contentType.equals(IDocument.DEFAULT_CONTENT_TYPE) && !contentType.equals(ICPartitions.C_PREPROCESSOR)) {
 			super.createPresentation(presentation, region);
@@ -181,7 +183,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 
 		if (sourceTagCount > 0 && fDocument.getLength() > 0) {
 			int left = 0;
-			int mid = (int) (sourceTagCount * ((float)lastStart / fDocument.getLength()));
+			int mid = (int) (sourceTagCount * ((float) lastStart / fDocument.getLength()));
 			int right = sourceTagCount - 1;
 			while (true) {
 				sourceTag = fSourceTags.get(mid);
@@ -218,7 +220,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 			TextAttribute attribute = getTokenTextAttribute(token);
 			int tokenLength = fScanner.getTokenLength();
 			if (tokenLength > 0
-				&& (lastAttribute == attribute || lastAttribute != null && lastAttribute.equals(attribute))) {
+					&& (lastAttribute == attribute || lastAttribute != null && lastAttribute.equals(attribute))) {
 				length += tokenLength;
 				continue;
 			}
@@ -234,14 +236,12 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 						String sourceTagStyle = getSourceTagStyle(sourceTag.getStyleCode());
 						if (sourceTagStyle != null) {
 							if (sourceTagStart > lastStart) {
-								addRange(presentation, lastStart, Math.min(sourceTagStart - lastStart, length), lastAttribute);
+								addRange(presentation, lastStart, Math.min(sourceTagStart - lastStart, length),
+										lastAttribute);
 							}
 							int rangeEnd = Math.min(sourceTagEnd, regionEnd);
-							addRange(
-								presentation,
-								sourceTagStart,
-								rangeEnd - sourceTagStart,
-								getSourceTagTextAttribute(sourceTagStyle));
+							addRange(presentation, sourceTagStart, rangeEnd - sourceTagStart,
+									getSourceTagTextAttribute(sourceTagStyle));
 							length = lastStart + length - rangeEnd;
 							lastStart = rangeEnd;
 						} else {
@@ -293,37 +293,37 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 	 */
 	private String getSourceTagStyle(int styleCode) {
 		switch (styleCode) {
-			case ISourceTag.STYLE_None :
-				return null;
-			case ISourceTag.STYLE_Class :
-				return SemanticHighlightings.CLASS;
-			case ISourceTag.STYLE_Struct :
-				return SemanticHighlightings.CLASS;
-			case ISourceTag.STYLE_Union :
-				return SemanticHighlightings.CLASS;
-			case ISourceTag.STYLE_Function :
-				return SemanticHighlightings.FUNCTION_DECLARATION;
-			case ISourceTag.STYLE_Method :
-				return SemanticHighlightings.METHOD_DECLARATION;
-			case ISourceTag.STYLE_Variable :
-				return SemanticHighlightings.GLOBAL_VARIABLE;
-			case ISourceTag.STYLE_MemberVariable :
-				return SemanticHighlightings.FIELD;
-			case ISourceTag.STYLE_Enumerator :
-				return SemanticHighlightings.ENUMERATOR;
-			case ISourceTag.STYLE_Macro :
-				return SemanticHighlightings.MACRO_DEFINITION;
-			case ISourceTag.STYLE_Include :
-				// include is colored by the scanner
-				return null;
-			case ISourceTag.STYLE_Enumeration :
-				return SemanticHighlightings.ENUM;
-			case ISourceTag.STYLE_Undefined :
-				return null;
-			case ISourceTag.STYLE_Typedef :
-				return SemanticHighlightings.TYPEDEF;
-			default :
-				return null;
+		case ISourceTag.STYLE_None:
+			return null;
+		case ISourceTag.STYLE_Class:
+			return SemanticHighlightings.CLASS;
+		case ISourceTag.STYLE_Struct:
+			return SemanticHighlightings.CLASS;
+		case ISourceTag.STYLE_Union:
+			return SemanticHighlightings.CLASS;
+		case ISourceTag.STYLE_Function:
+			return SemanticHighlightings.FUNCTION_DECLARATION;
+		case ISourceTag.STYLE_Method:
+			return SemanticHighlightings.METHOD_DECLARATION;
+		case ISourceTag.STYLE_Variable:
+			return SemanticHighlightings.GLOBAL_VARIABLE;
+		case ISourceTag.STYLE_MemberVariable:
+			return SemanticHighlightings.FIELD;
+		case ISourceTag.STYLE_Enumerator:
+			return SemanticHighlightings.ENUMERATOR;
+		case ISourceTag.STYLE_Macro:
+			return SemanticHighlightings.MACRO_DEFINITION;
+		case ISourceTag.STYLE_Include:
+			// include is colored by the scanner
+			return null;
+		case ISourceTag.STYLE_Enumeration:
+			return SemanticHighlightings.ENUM;
+		case ISourceTag.STYLE_Undefined:
+			return null;
+		case ISourceTag.STYLE_Typedef:
+			return SemanticHighlightings.TYPEDEF;
+		default:
+			return null;
 		}
 	}
 
@@ -335,8 +335,8 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 			Collections.sort(fSourceTags, new Comparator<Object>() {
 				@Override
 				public int compare(Object o1, Object o2) {
-					ISourceRange sr1 = ((ISourceTag)o1).getRangeOfIdentifier();
-					ISourceRange sr2 = ((ISourceTag)o2).getRangeOfIdentifier();
+					ISourceRange sr1 = ((ISourceTag) o1).getRangeOfIdentifier();
+					ISourceRange sr2 = ((ISourceTag) o2).getRangeOfIdentifier();
 					return (sr1.getBeginOffset() - sr2.getBeginOffset());
 				}
 			});
@@ -350,7 +350,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 	protected void addRange(TextPresentation presentation, int offset, int length, TextAttribute attr) {
 		if (length > 0 && attr != null) {
 			presentation.addStyleRange(
-				new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), attr.getStyle()));
+					new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), attr.getStyle()));
 		}
 	}
 

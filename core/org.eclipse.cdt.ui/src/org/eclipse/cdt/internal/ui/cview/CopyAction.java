@@ -73,16 +73,17 @@ public class CopyAction extends SelectionListenerAction {
 	 * @param clipboard a platform clipboard
 	 */
 	public CopyAction(Shell shell, Clipboard clipboard) {
-		super(CViewMessages.CopyAction_title); 
+		super(CViewMessages.CopyAction_title);
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(CViewMessages.CopyAction_toolTip); 
+		setToolTipText(CViewMessages.CopyAction_toolTip);
 		setId(CopyAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COPY_ACTION);
 
 	}
+
 	/**
 	 * Creates a new action.
 	 *
@@ -96,6 +97,7 @@ public class CopyAction extends SelectionListenerAction {
 		this(shell, clipboard);
 		this.pasteAction = pasteAction;
 	}
+
 	/**
 	 * The <code>CopyAction</code> implementation of this method defined 
 	 * on <code>IAction</code> copies the selected resources to the 
@@ -134,6 +136,7 @@ public class CopyAction extends SelectionListenerAction {
 		if (pasteAction != null && pasteAction.getStructuredSelection() != null)
 			pasteAction.selectionChanged(pasteAction.getStructuredSelection());
 	}
+
 	/**
 	 * Set the clipboard contents. Prompt to retry if clipboard is busy.
 	 * 
@@ -145,21 +148,21 @@ public class CopyAction extends SelectionListenerAction {
 		try {
 			// set the clipboard contents
 			if (fileNames.length > 0) {
-				clipboard.setContents(
-					new Object[] { resources, fileNames, names },
-					new Transfer[] { ResourceTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});
+				clipboard.setContents(new Object[] { resources, fileNames, names }, new Transfer[] {
+						ResourceTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance() });
 			} else {
-				clipboard.setContents(
-					new Object[] { resources, names },
-					new Transfer[] { ResourceTransfer.getInstance(), TextTransfer.getInstance()});
+				clipboard.setContents(new Object[] { resources, names },
+						new Transfer[] { ResourceTransfer.getInstance(), TextTransfer.getInstance() });
 			}
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(shell, CViewMessages.CopyToClipboardProblemDialog_title, CViewMessages.CopyToClipboardProblemDialog_message)) 
+			if (MessageDialog.openQuestion(shell, CViewMessages.CopyToClipboardProblemDialog_title,
+					CViewMessages.CopyToClipboardProblemDialog_message))
 				setClipboard(resources, fileNames, names);
 		}
 	}
+
 	/**
 	 * The <code>CopyAction</code> implementation of this
 	 * <code>SelectionListenerAction</code> method enables this action if 

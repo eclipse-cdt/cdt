@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @see IASTInitializer
  * @author Emanuel Graf IFS
  */
-public class InitializerWriter extends NodeWriter{
+public class InitializerWriter extends NodeWriter {
 
 	public InitializerWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
@@ -92,7 +92,7 @@ public class InitializerWriter extends NodeWriter{
 	}
 
 	private void writeDesignatedInitializer(ICASTDesignatedInitializer desigInit) {
-		ICASTDesignator[] designators =  desigInit.getDesignators();
+		ICASTDesignator[] designators = desigInit.getDesignators();
 		for (ICASTDesignator designator : designators) {
 			writeDesignator(designator);
 		}
@@ -101,7 +101,7 @@ public class InitializerWriter extends NodeWriter{
 	}
 
 	private void writeDesignatedInitializer(ICPPASTDesignatedInitializer desigInit) {
-		ICPPASTDesignator[] designators =  desigInit.getDesignators();
+		ICPPASTDesignator[] designators = desigInit.getDesignators();
 		for (ICPPASTDesignator designator : designators) {
 			writeDesignator(designator);
 		}

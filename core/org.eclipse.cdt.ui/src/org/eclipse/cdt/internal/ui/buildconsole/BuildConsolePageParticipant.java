@@ -31,7 +31,7 @@ public class BuildConsolePageParticipant implements IConsolePageParticipant {
 
 	@Override
 	public void init(IPageBookViewPage page, IConsole console) {
-		this.console = (BuildConsole)console;
+		this.console = (BuildConsole) console;
 	}
 
 	@Override

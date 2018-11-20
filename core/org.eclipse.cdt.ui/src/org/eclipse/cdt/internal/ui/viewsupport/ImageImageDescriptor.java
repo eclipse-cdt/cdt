@@ -29,7 +29,7 @@ public class ImageImageDescriptor extends ImageDescriptor {
 	 */
 	public ImageImageDescriptor(Image image) {
 		super();
-		fImage= image;
+		fImage = image;
 	}
 
 	/* (non-Javadoc)
@@ -45,7 +45,7 @@ public class ImageImageDescriptor extends ImageDescriptor {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj != null) && getClass().equals(obj.getClass()) && fImage.equals(((ImageImageDescriptor)obj).fImage);
+		return (obj != null) && getClass().equals(obj.getClass()) && fImage.equals(((ImageImageDescriptor) obj).fImage);
 	}
 
 	/* (non-Javadoc)

@@ -81,9 +81,9 @@ public class MakeTargetTransferDragSourceListener extends AbstractSelectionDragA
 	public Object prepareDataForTransfer(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			MakeTargetTransferData makeTargetTransferData = new MakeTargetTransferData();
-			for (Object selectionItem : ((IStructuredSelection)selection).toList()) {
+			for (Object selectionItem : ((IStructuredSelection) selection).toList()) {
 				if (selectionItem instanceof IMakeTarget) {
-					makeTargetTransferData.addMakeTarget((IMakeTarget)selectionItem);
+					makeTargetTransferData.addMakeTarget((IMakeTarget) selectionItem);
 				}
 			}
 			return makeTargetTransferData;

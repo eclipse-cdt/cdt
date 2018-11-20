@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.visualizer.ui.util;
 
-
 // ---------------------------------------------------------------------------
 // Event
 // ---------------------------------------------------------------------------
@@ -22,45 +21,41 @@ package org.eclipse.cdt.visualizer.ui.util;
 /**
  * Base class for events
  */
-public class Event
-{
-	
+public class Event {
+
 	// --- event types ---
-	
+
 	/** Event type constant */
 	public static final int UNDEFINED = 0;
-	
 
 	// --- members ---
-	
+
 	/** Source of the event */
 	protected Object m_source = null;
-	
+
 	/** Type of event */
 	protected int m_type = UNDEFINED;
-	
 
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public Event(Object source) {
 		this(source, UNDEFINED);
 	}
-	
+
 	/** Constructor */
 	public Event(Object source, int type) {
 		m_source = source;
 		m_type = type;
 	}
-	
+
 	/** Dispose method */
 	public void dispose() {
 		m_source = null;
 	}
 
-	
 	// --- Object methods ---
-	
+
 	/** Returns string representation of event */
 	public String toString() {
 		StringBuilder result = new StringBuilder();
@@ -72,35 +67,35 @@ public class Event
 		result.append("]");
 		return result.toString();
 	}
-	
+
 	/** Converts event type to string */
 	public String typeToString(int type) {
 		String result = "";
 		switch (type) {
-			case UNDEFINED:
-				result = "UNDEFINED"; break;
-			default:
-				result = "OTHER(" + type +")";
-				break;
+		case UNDEFINED:
+			result = "UNDEFINED";
+			break;
+		default:
+			result = "OTHER(" + type + ")";
+			break;
 		}
 		return result;
 	}
 
-
 	// --- accessors ---
-	
+
 	/** Gets source of the event */
 	public Object getSource() {
 		return m_source;
 	}
-	
+
 	/**
 	 * Gets type of event
 	 */
 	public int getType() {
 		return m_type;
 	}
-	
+
 	/**
 	 * Returns true if event has specified type.
 	 */

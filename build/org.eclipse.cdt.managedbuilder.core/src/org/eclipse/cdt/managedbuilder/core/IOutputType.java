@@ -25,19 +25,19 @@ import org.eclipse.core.runtime.content.IContentType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IOutputType extends IBuildObject {
-	public static final String OUTPUT_TYPE_ELEMENT_NAME = "outputType";	//$NON-NLS-1$
-	public static final String OUTPUT_CONTENT_TYPE = "outputContentType";	//$NON-NLS-1$
-	public static final String OUTPUTS = "outputs";	//$NON-NLS-1$
-	public static final String OPTION = "option";	//$NON-NLS-1$
-	public static final String MULTIPLE_OF_TYPE = "multipleOfType";	//$NON-NLS-1$
-	public static final String PRIMARY_INPUT_TYPE = "primaryInputType";	//$NON-NLS-1$
-	public static final String PRIMARY_OUTPUT = "primaryOutput";	//$NON-NLS-1$
-	public static final String OUTPUT_PREFIX = "outputPrefix";	//$NON-NLS-1$
-	public static final String OUTPUT_NAMES = "outputNames";	//$NON-NLS-1$
-	public static final String NAME_PATTERN = "namePattern";	//$NON-NLS-1$
-	public static final String NAME_PROVIDER = "nameProvider";	//$NON-NLS-1$
-	public static final String BUILD_VARIABLE = "buildVariable";	//$NON-NLS-1$
-	
+	public static final String OUTPUT_TYPE_ELEMENT_NAME = "outputType"; //$NON-NLS-1$
+	public static final String OUTPUT_CONTENT_TYPE = "outputContentType"; //$NON-NLS-1$
+	public static final String OUTPUTS = "outputs"; //$NON-NLS-1$
+	public static final String OPTION = "option"; //$NON-NLS-1$
+	public static final String MULTIPLE_OF_TYPE = "multipleOfType"; //$NON-NLS-1$
+	public static final String PRIMARY_INPUT_TYPE = "primaryInputType"; //$NON-NLS-1$
+	public static final String PRIMARY_OUTPUT = "primaryOutput"; //$NON-NLS-1$
+	public static final String OUTPUT_PREFIX = "outputPrefix"; //$NON-NLS-1$
+	public static final String OUTPUT_NAMES = "outputNames"; //$NON-NLS-1$
+	public static final String NAME_PATTERN = "namePattern"; //$NON-NLS-1$
+	public static final String NAME_PROVIDER = "nameProvider"; //$NON-NLS-1$
+	public static final String BUILD_VARIABLE = "buildVariable"; //$NON-NLS-1$
+
 	/**
 	 * Returns the tool defining this OutputType.
 	 * 
@@ -52,7 +52,7 @@ public interface IOutputType extends IBuildObject {
 	 * @return IInputType
 	 */
 	public IOutputType getSuperClass();
-	
+
 	/**
 	 * Returns the Eclipse <code>IContentType</code> that describes this
 	 * output type. If both the outputs attribute and the outputContentType 
@@ -62,7 +62,7 @@ public interface IOutputType extends IBuildObject {
 	 * @return IContentType
 	 */
 	public IContentType getOutputContentType();
-	
+
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes this
 	 * output type. 
@@ -70,7 +70,7 @@ public interface IOutputType extends IBuildObject {
 	 * @param contentType  The Eclipse content type
 	 */
 	public void setOutputContentType(IContentType contentType);
-	
+
 	/**
 	 * Returns the list of valid output extensions from the
 	 * outputs attribute. Note that this value is not used
@@ -81,7 +81,7 @@ public interface IOutputType extends IBuildObject {
 	 * @return <code>String[]</code> of extensions
 	 */
 	public String[] getOutputExtensionsAttribute();
-	
+
 	/**
 	 * Sets all of the output extensions that the receiver can build.
 	 * NOTE: The value of this attribute will NOT be used if a 
@@ -89,23 +89,23 @@ public interface IOutputType extends IBuildObject {
 	 *       Eclipse.
 	 */
 	public void setOutputExtensionsAttribute(String extensions);
-	
+
 	/**
 	 * Returns the list of the output extensions that the receiver can build.
 	 * Note that the list will come from the outputContentType if it 
 	 * is specified and registered with Eclipse.  Otherwise the  
 	 * outputs attribute will be used.
 	 * 
-     * @param tool  the tool that contains the output-type
+	 * @param tool  the tool that contains the output-type
 	 * @return String[]
 	 */
 	public String[] getOutputExtensions(ITool tool);
-	
+
 	/**
 	 * Answers <code>true</code> if the output type considers the file extension to be 
 	 * one associated with an output file.
 	 * 
-     * @param tool  the tool that contains the output-type
+	 * @param tool  the tool that contains the output-type
 	 * @param ext  file extension
 	 * @return boolean
 	 */
@@ -128,7 +128,7 @@ public interface IOutputType extends IBuildObject {
 	 * output type on the command line. 
 	 */
 	public void setOptionId(String optionId);
-	
+
 	/**
 	 * Returns <code>true</code> if this outputType creates multiple output
 	 * resources in one invocation of the tool, else <code>false</code>.
@@ -136,13 +136,13 @@ public interface IOutputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean getMultipleOfType();
-	
+
 	/**
 	 * Sets whether this outputType can create multiple output resources in
 	 * one invocation of the tool.
 	 */
 	public void setMultipleOfType(boolean multiple);
-	
+
 	/**
 	 * Returns the input type that is used in determining the default
 	 * names of this output type. 
@@ -150,13 +150,13 @@ public interface IOutputType extends IBuildObject {
 	 * @return IInputType
 	 */
 	public IInputType getPrimaryInputType();
-	
+
 	/**
 	 * Sets the input type that is used in determining the default
 	 * names of this output type.
 	 */
 	public void setPrimaryInputType(IInputType contentType);
-	
+
 	/**
 	 * Returns <code>true</code> if this is considered the primary output
 	 * of the tool, else <code>false</code>.
@@ -164,7 +164,7 @@ public interface IOutputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean getPrimaryOutput();
-	
+
 	/**
 	 * Sets whether this is the primary output of the tool.
 	 */
@@ -210,7 +210,7 @@ public interface IOutputType extends IBuildObject {
 	 * 
 	 */
 	public void setNamePattern(String pattern);
-	
+
 	/**
 	 * Returns the IManagedOutputNameProvider interface as specified by the nameProvider attribute.
 	 * 
@@ -242,7 +242,7 @@ public interface IOutputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Returns <code>true</code> if this OutputType was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
@@ -250,7 +250,7 @@ public interface IOutputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isExtensionElement();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */

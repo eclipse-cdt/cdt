@@ -95,7 +95,7 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 	 * @return the IQMakeEnv instance; or null if no instance is provided
 	 */
 	public IQMakeEnv createEnv(IController controller) {
-		if (! matches(controller)) {
+		if (!matches(controller)) {
 			return null;
 		}
 		IQMakeEnvProvider provider;

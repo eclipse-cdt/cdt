@@ -26,28 +26,27 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 @SuppressWarnings("restriction")
-public class GdbExtendedLaunchVMProvider extends LaunchVMProvider 
-{
+public class GdbExtendedLaunchVMProvider extends LaunchVMProvider {
 	@ThreadSafe
-    public GdbExtendedLaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)
-    {
-        super(adapter, presentationContext, session);
-    }
-	
+	public GdbExtendedLaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext,
+			DsfSession session) {
+		super(adapter, presentationContext, session);
+	}
+
 	@Override
 	protected void createNodes() {
-        IRootVMNode launchNode = new LaunchRootVMNode(this);
-        setRootNode(launchNode);
+		IRootVMNode launchNode = new LaunchRootVMNode(this);
+		setRootNode(launchNode);
 
-        // Container node to contain all processes and threads
-        IVMNode containerNode = new ContainerVMNode(this, getSession());
-        IVMNode processesNode = new GdbStandardProcessVMNode(this);
-        addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode});
-        
-        IVMNode threadsNode = new GdbExtendedThreadVMNode(this, getSession());
-        addChildNodes(containerNode, new IVMNode[] { threadsNode });
-        
-        IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
-        addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
-    }
+		// Container node to contain all processes and threads
+		IVMNode containerNode = new ContainerVMNode(this, getSession());
+		IVMNode processesNode = new GdbStandardProcessVMNode(this);
+		addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode });
+
+		IVMNode threadsNode = new GdbExtendedThreadVMNode(this, getSession());
+		addChildNodes(containerNode, new IVMNode[] { threadsNode });
+
+		IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
+		addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
+	}
 }

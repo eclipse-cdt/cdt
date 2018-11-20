@@ -35,9 +35,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * be accessed directly via the preference store.
  *
  */
-public class LlvmPreferencePage
-	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
+public class LlvmPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	/**
 	 * Constructor.
@@ -64,15 +62,15 @@ public class LlvmPreferencePage
 		return null;
 	}
 
-//	@Override
-//	public boolean performOk() {
-//		//rebuilt the index of all projects
-//		IProject[] projects = LlvmToolOptionPathUtil.getProjectsInWorkspace();
-//		for (IProject proj : projects) {
-//			ProjectIndex.rebuiltIndex(proj);
-//		}
-//		return true;
-//	}
+	//	@Override
+	//	public boolean performOk() {
+	//		//rebuilt the index of all projects
+	//		IProject[] projects = LlvmToolOptionPathUtil.getProjectsInWorkspace();
+	//		for (IProject proj : projects) {
+	//			ProjectIndex.rebuiltIndex(proj);
+	//		}
+	//		return true;
+	//	}
 
 	@Override
 	/**
@@ -80,22 +78,19 @@ public class LlvmPreferencePage
 	 */
 	protected void createFieldEditors() {
 		//field for installation path
-		addField(new DirectoryFieldEditor(PreferenceConstants.P_LLVM_PATH,
-				Messages.LlvmPreferencePage_1, getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(PreferenceConstants.P_LLVM_PATH, Messages.LlvmPreferencePage_1,
+				getFieldEditorParent()));
 		//list editor for include paths
-		IncludePathListEditor includePathListEditor = new IncludePathListEditor(
-				PreferenceConstants.P_LLVM_INCLUDE_PATH, Messages.LlvmPreferencePage_2,
-				getFieldEditorParent());
+		IncludePathListEditor includePathListEditor = new IncludePathListEditor(PreferenceConstants.P_LLVM_INCLUDE_PATH,
+				Messages.LlvmPreferencePage_2, getFieldEditorParent());
 		addField(includePathListEditor);
 		//list editor for libraries
-		LibraryListEditor libraryListEditor = new LibraryListEditor(
-				PreferenceConstants.P_LLVM_LIBRARIES, Messages.LlvmPreferencePage_3,
-				getFieldEditorParent());
+		LibraryListEditor libraryListEditor = new LibraryListEditor(PreferenceConstants.P_LLVM_LIBRARIES,
+				Messages.LlvmPreferencePage_3, getFieldEditorParent());
 		addField(libraryListEditor);
 		//list editor for library paths
-		LibraryPathListEditor libraryPathListEditor = new LibraryPathListEditor(
-				PreferenceConstants.P_LLVM_LIBRARY_PATH, Messages.LlvmPreferencePage_4,
-				getFieldEditorParent());
+		LibraryPathListEditor libraryPathListEditor = new LibraryPathListEditor(PreferenceConstants.P_LLVM_LIBRARY_PATH,
+				Messages.LlvmPreferencePage_4, getFieldEditorParent());
 		addField(libraryPathListEditor);
 	}
 

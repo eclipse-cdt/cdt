@@ -59,7 +59,7 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 	public synchronized <T extends ICodanDisposable> void add(T object) {
 		Object old = objectStorage.put(object.getClass(), object);
 		if (old != null && object != old) {
-			objectStorage.put(old.getClass(), old);  // Restore old value.
+			objectStorage.put(old.getClass(), old); // Restore old value.
 			throw new IllegalArgumentException();
 		}
 	}

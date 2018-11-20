@@ -46,30 +46,30 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	}
 
 	public CPPPointerType(IType type) {
-	    this(type, false, false, false);
+		this(type, false, false, false);
 	}
 
 	@Override
 	public boolean isSameType(IType o) {
-	    if (o == this)
-            return true;
-        if (o instanceof ITypedef)
-            return o.isSameType(this);
+		if (o == this)
+			return true;
+		if (o instanceof ITypedef)
+			return o.isSameType(this);
 
-        if (!(o instanceof IPointerType))
-        	return false;
+		if (!(o instanceof IPointerType))
+			return false;
 
-	    if (this instanceof ICPPPointerToMemberType != o instanceof ICPPPointerToMemberType)
-	        return false;
+		if (this instanceof ICPPPointerToMemberType != o instanceof ICPPPointerToMemberType)
+			return false;
 
-	    if (type == null)
-	        return false;
+		if (type == null)
+			return false;
 
-	    IPointerType pt = (IPointerType) o;
-	    if (isConst == pt.isConst() && isVolatile == pt.isVolatile() && isRestrict == pt.isRestrict()) {
+		IPointerType pt = (IPointerType) o;
+		if (isConst == pt.isConst() && isVolatile == pt.isVolatile() && isRestrict == pt.isRestrict()) {
 			return type.isSameType(pt.getType());
-	    }
-	    return false;
+		}
+		return false;
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	@Override
 	public void setType(IType t) {
 		assert t != null;
-	    type = t;
+		type = t;
 	}
 
 	@Override
@@ -98,33 +98,35 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 		return isRestrict;
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return t;
+	}
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.POINTER_TYPE;
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		short firstBytes = ITypeMarshalBuffer.POINTER_TYPE;
+		if (isConst())
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile())
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict())
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 		buffer.putShort(firstBytes);
 		final IType nestedType = getType();
 		buffer.marshalType(nestedType);
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType nested= buffer.unmarshalType();
+		IType nested = buffer.unmarshalType();
 		return new CPPPointerType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0,
-				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, (firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 
 	@Override

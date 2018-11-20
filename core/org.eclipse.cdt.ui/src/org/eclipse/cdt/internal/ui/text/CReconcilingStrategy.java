@@ -41,10 +41,10 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	private IProgressMonitor fProgressMonitor;
 	// used by tests
 	protected boolean fInitialProcessDone;
-	
+
 	public CReconcilingStrategy(ITextEditor editor) {
-		fEditor= editor;
-		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
+		fEditor = editor;
+		fManager = CUIPlugin.getDefault().getWorkingCopyManager();
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 
 	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
-		fProgressMonitor= monitor;
+		fProgressMonitor = monitor;
 	}
 
 	@Override
@@ -67,39 +67,39 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	}
 
 	private void reconcile(final boolean initialReconcile) {
-		boolean computeAST= fEditor instanceof ICReconcilingListener;
-		IASTTranslationUnit ast= null;
-		IWorkingCopy workingCopy= fManager.getWorkingCopy(fEditor.getEditorInput());
+		boolean computeAST = fEditor instanceof ICReconcilingListener;
+		IASTTranslationUnit ast = null;
+		IWorkingCopy workingCopy = fManager.getWorkingCopy(fEditor.getEditorInput());
 		if (workingCopy == null) {
 			return;
 		}
-		boolean forced= false;
+		boolean forced = false;
 		try {
 			// reconcile
 			synchronized (workingCopy) {
-				forced= workingCopy.isConsistent();
-				ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
+				forced = workingCopy.isConsistent();
+				ast = workingCopy.reconcile(computeAST, true, fProgressMonitor);
 			}
 		} catch (OperationCanceledException e) {
 			// document was modified while parsing
 		} catch (CModelException e) {
-			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
-					"Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
+					"Error in CDT UI during reconcile", e); //$NON-NLS-1$
 			CUIPlugin.log(status);
 		} finally {
 			if (computeAST) {
-				IIndex index= null;
+				IIndex index = null;
 				if (ast != null) {
-					index= ast.getIndex();
+					index = ast.getIndex();
 				}
 				try {
 					final boolean canceled = fProgressMonitor.isCanceled();
 					if (ast == null || canceled) {
-						((ICReconcilingListener)fEditor).reconciled(null, forced, fProgressMonitor);
+						((ICReconcilingListener) fEditor).reconciled(null, forced, fProgressMonitor);
 					} else {
 						((ASTTranslationUnit) ast).beginExclusiveAccess();
 						try {
-							((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
+							((ICReconcilingListener) fEditor).reconciled(ast, forced, fProgressMonitor);
 						} finally {
 							((ASTTranslationUnit) ast).endExclusiveAccess();
 						}
@@ -108,8 +108,8 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 						aboutToBeReconciled();
 					}
 				} catch (Exception e) {
-					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
-							"Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
+							"Error in CDT UI during reconcile", e); //$NON-NLS-1$
 					CUIPlugin.log(status);
 				} finally {
 					if (index != null) {
@@ -118,17 +118,17 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 				}
 			}
 		}
- 	}
+	}
 
 	@Override
 	public void initialReconcile() {
 		reconcile(true);
-		fInitialProcessDone= true;
+		fInitialProcessDone = true;
 	}
 
 	void aboutToBeReconciled() {
 		if (fEditor instanceof ICReconcilingListener) {
-			((ICReconcilingListener)fEditor).aboutToBeReconciled();
+			((ICReconcilingListener) fEditor).aboutToBeReconciled();
 		}
 	}
 }

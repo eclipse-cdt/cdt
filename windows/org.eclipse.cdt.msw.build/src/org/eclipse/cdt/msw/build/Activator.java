@@ -23,7 +23,7 @@ public class Activator extends Plugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */

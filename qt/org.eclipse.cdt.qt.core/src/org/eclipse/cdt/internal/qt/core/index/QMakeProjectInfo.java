@@ -74,8 +74,11 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 	// this means that theoretically there might be multiple thread calculating the same results but only the last one wins
 	State updateState() {
 		// note that getProjectDescription might acquire workspace lock
-		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(project);
-		ICConfigurationDescription configuration = projectDescription != null ? projectDescription.getActiveConfiguration() : null;
+		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescriptionManager()
+				.getProjectDescription(project);
+		ICConfigurationDescription configuration = projectDescription != null
+				? projectDescription.getActiveConfiguration()
+				: null;
 		State newState = configuration != null ? new State(configuration) : STATE_INVALID;
 		setState(newState);
 		return newState;
@@ -84,7 +87,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 	private void setState(State newState) {
 		State oldState = null;
 		synchronized (stateSync) {
-			if (newState == null  ||  state == newState) {
+			if (newState == null || state == newState) {
 				return;
 			}
 			if (state == STATE_FREEZE) {
@@ -188,8 +191,9 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 			String qmakeFilePath = qmakeEnvInfo != null ? qmakeEnvInfo.getQMakeFilePath() : null;
 			// retries environment
 			List<String> envList = new ArrayList<String>();
-			Map<String, String> envMap = qmakeEnvInfo != null ? qmakeEnvInfo.getEnvironment() : Collections.<String,String>emptyMap();
-			for (Map.Entry<String,String> entry : envMap.entrySet()) {
+			Map<String, String> envMap = qmakeEnvInfo != null ? qmakeEnvInfo.getEnvironment()
+					: Collections.<String, String>emptyMap();
+			for (Map.Entry<String, String> entry : envMap.entrySet()) {
 				envList.add(entry.getKey() + "=" + entry.getValue());
 			}
 
@@ -198,7 +202,8 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 
 			// calculates a new set of sensitive file paths
 			sensitiveFilePathSet = new SensitiveSet();
-			Set<IFile> envSensFiles = qmakeEnvInfo != null ? qmakeEnvInfo.getSensitiveFiles() : Collections.<IFile>emptySet();
+			Set<IFile> envSensFiles = qmakeEnvInfo != null ? qmakeEnvInfo.getSensitiveFiles()
+					: Collections.<IFile>emptySet();
 			for (IFile sensitiveFile : envSensFiles) {
 				if (sensitiveFile != null) {
 					sensitiveFilePathSet.addSensitiveFile(sensitiveFile);
@@ -232,7 +237,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 
 		public void destroyBeforeInit() {
 			// see IQMakeEnv JavaDoc for details
-			if (qmakeEnv != null  &&  ! (qmakeEnv instanceof IQMakeEnv2)) {
+			if (qmakeEnv != null && !(qmakeEnv instanceof IQMakeEnv2)) {
 				qmakeEnv.destroy();
 			}
 		}
@@ -267,7 +272,8 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 		// adds a sensitive file in form of a specified absolute path
 		private void addSensitiveFile(String sensitiveFile) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IFile[] files = root.findFilesForLocationURI(URIUtil.toURI(Path.fromOSString(sensitiveFile).makeAbsolute()));
+			IFile[] files = root
+					.findFilesForLocationURI(URIUtil.toURI(Path.fromOSString(sensitiveFile).makeAbsolute()));
 			if (files != null && files.length > 0) {
 				IFile file = files[0];
 				addSensitiveFile(file);

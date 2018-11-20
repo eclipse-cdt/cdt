@@ -97,12 +97,12 @@ public abstract class ProcessRunner {
 	 */
 	protected final String getProcessMessage(String processId, int code, String msg) {
 		switch (code) {
-			case IStatus.ERROR:
-				return processId + Messages.getString("ProcessRunner.error") + msg; //$NON-NLS-1$
-			case IStatus.OK:
-				return processId + Messages.getString("ProcessRunner.success") + msg; //$NON-NLS-1$
-			default:
-				return processId + Messages.getString("ProcessRunner.info") + msg; //$NON-NLS-1$
+		case IStatus.ERROR:
+			return processId + Messages.getString("ProcessRunner.error") + msg; //$NON-NLS-1$
+		case IStatus.OK:
+			return processId + Messages.getString("ProcessRunner.success") + msg; //$NON-NLS-1$
+		default:
+			return processId + Messages.getString("ProcessRunner.info") + msg; //$NON-NLS-1$
 		}
 	}
 
@@ -112,5 +112,6 @@ public abstract class ProcessRunner {
 	 * @param processId
 	 * @throws ProcessFailureException
 	 */
-	public abstract void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException;
+	public abstract void process(TemplateCore template, ProcessArgument[] args, String processId,
+			IProgressMonitor monitor) throws ProcessFailureException;
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui;
 
 import java.net.URI;
@@ -25,16 +25,16 @@ import org.eclipse.core.runtime.IPath;
  * Allows for looking up resources by location or name.
  */
 public class ResourceLookup {
-	private static ResourceLookupTree lookupTree= new ResourceLookupTree();
+	private static ResourceLookupTree lookupTree = new ResourceLookupTree();
 
 	public static void startup() {
 		lookupTree.startup();
 	}
-	
+
 	public static void shutdown() {
 		lookupTree.shutdown();
 	}
-	
+
 	/**
 	 * Searches for files with the given location suffix. 
 	 * 
@@ -49,7 +49,7 @@ public class ResourceLookup {
 	public static IFile[] findFilesByName(IPath locationSuffix, IProject[] projects, boolean ignoreCase) {
 		return lookupTree.findFilesByName(locationSuffix, projects, ignoreCase);
 	}
-	
+
 	/**
 	 * Uses a lookup-tree that finds resources for locations using the canonical representation
 	 * of the path. 
@@ -100,17 +100,16 @@ public class ResourceLookup {
 		if (files.length == 1)
 			return files[0];
 
-		IFile best= null;
-		int bestRelevance= -1;
+		IFile best = null;
+		int bestRelevance = -1;
 
 		for (int i = 0; i < files.length; i++) {
 			IFile file = files[i];
-			int relevance= FileRelevance.getRelevance(file, preferredProject);
-			if (best == null || relevance > bestRelevance ||
-					(relevance == bestRelevance && 
-							best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
-				bestRelevance= relevance;
-				best= file;
+			int relevance = FileRelevance.getRelevance(file, preferredProject);
+			if (best == null || relevance > bestRelevance || (relevance == bestRelevance
+					&& best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+				bestRelevance = relevance;
+				best = file;
 			}
 		}
 		return best;
@@ -144,12 +143,14 @@ public class ResourceLookup {
 	public static void dump() {
 		lookupTree.dump();
 	}
+
 	/** 
 	 * For testing, only.
 	 */
 	public static void unrefNodeMap() {
 		lookupTree.unrefNodeMap();
 	}
+
 	/** 
 	 * For testing, only.
 	 */

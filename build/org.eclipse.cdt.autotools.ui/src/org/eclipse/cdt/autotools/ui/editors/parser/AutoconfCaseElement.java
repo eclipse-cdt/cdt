@@ -14,7 +14,7 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 public class AutoconfCaseElement extends AutoconfElement {
-	
+
 	public AutoconfCaseElement() {
 		super("case"); //$NON-NLS-1$
 	}

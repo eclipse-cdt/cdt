@@ -47,7 +47,8 @@ public interface ICompletionProposalComputer {
 	 *        invocation, i.e. there is no need for the receiver to spawn a sub monitor.
 	 * @return a list of completion proposals (element type: {@link ICompletionProposal})
 	 */
-	List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor);
+	List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor);
 
 	/**
 	 * Returns context information objects valid at the given invocation context.
@@ -57,7 +58,8 @@ public interface ICompletionProposalComputer {
 	 *        invocation, i.e. there is no need for the receiver to spawn a sub monitor.
 	 * @return a list of context information objects (element type: {@link IContextInformation})
 	 */
-	List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor);
+	List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor);
 
 	/**
 	 * Returns the reason why this computer was unable to produce any completion proposals or

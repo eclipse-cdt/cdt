@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextSelection;
@@ -62,7 +61,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 	 */
 	protected SelectionDispatchAction(IWorkbenchSite site) {
 		Assert.isNotNull(site);
-		fSite= site;
+		fSite = site;
 	}
 
 	/**
@@ -90,7 +89,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 	 *
 	 * @return the site's shell
 	 */
-	public  Shell getShell() {
+	public Shell getShell() {
 		return fSite.getShell();
 	}
 
@@ -121,7 +120,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 	 * @param selection the new selection
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		selectionChanged((ISelection)selection);
+		selectionChanged((ISelection) selection);
 	}
 
 	/**
@@ -129,7 +128,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 	 * calls <code>run(ISelection selection)</code>.
 	 */
 	public void run(IStructuredSelection selection) {
-		run((ISelection)selection);
+		run((ISelection) selection);
 	}
 
 	/**
@@ -139,7 +138,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 	 * @param selection the new selection
 	 */
 	public void selectionChanged(ITextSelection selection) {
-		selectionChanged((ISelection)selection);
+		selectionChanged((ISelection) selection);
 	}
 
 	/**
@@ -147,7 +146,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 	 * calls <code>run(ISelection selection)</code>.
 	 */
 	public void run(ITextSelection selection) {
-		run((ISelection)selection);
+		run((ISelection) selection);
 	}
 
 	/**
@@ -185,9 +184,9 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 
 	private void dispatchSelectionChanged(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			selectionChanged((IStructuredSelection)selection);
+			selectionChanged((IStructuredSelection) selection);
 		} else if (selection instanceof ITextSelection) {
-			selectionChanged((ITextSelection)selection);
+			selectionChanged((ITextSelection) selection);
 		} else {
 			selectionChanged(selection);
 		}
@@ -195,9 +194,9 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 
 	private void dispatchRun(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			run((IStructuredSelection)selection);
+			run((IStructuredSelection) selection);
 		} else if (selection instanceof ITextSelection) {
-			run((ITextSelection)selection);
+			run((ITextSelection) selection);
 		} else {
 			run(selection);
 		}

@@ -34,31 +34,31 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements ICPPFunctionInstance {
 	private static final int ARGUMENTS = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
-	
+
 	@SuppressWarnings("hiding")
 	private static final int EXCEPTION_SPEC = PDOMCPPFunctionSpecialization.RECORD_SIZE + 4;
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
-	
-	public PDOMCPPFunctionInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function, 
-			PDOMBinding orig) throws CoreException {
+
+	public PDOMCPPFunctionInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function, PDOMBinding orig)
+			throws CoreException {
 		super(linkage, parent, function, orig);
 
 		final Database db = getDB();
 		long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
 		db.putRecPtr(record + EXCEPTION_SPEC, exceptSpecRec);
-		
+
 		linkage.new ConfigureFunctionInstance(function, this);
 	}
 
 	public PDOMCPPFunctionInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	public void initData(ICPPTemplateArgument[] templateArguments) {
 		try {
-			final long argListRec= PDOMCPPArgumentList.putArguments(this, templateArguments);
+			final long argListRec = PDOMCPPArgumentList.putArguments(this, templateArguments);
 			final Database db = getDB();
 			db.putRecPtr(record + ARGUMENTS, argListRec);
 		} catch (CoreException e) {
@@ -75,12 +75,12 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FUNCTION_INSTANCE;
 	}
-	
+
 	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
-	
+
 	@Override
 	public boolean isExplicitSpecialization() {
 		try {
@@ -93,14 +93,14 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
+			final long rec = getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 	}
-	
+
 	@Override
 	public IType[] getExceptionSpecification() {
 		try {

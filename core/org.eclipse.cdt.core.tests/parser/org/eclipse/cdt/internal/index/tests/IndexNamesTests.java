@@ -53,9 +53,9 @@ public class IndexNamesTests extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws CoreException {
-		fCProject= CProjectHelper.createCCProject("__encNamesTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCCProject("__encNamesTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
 	@Override
@@ -70,8 +70,8 @@ public class IndexNamesTests extends BaseTestCase {
 	}
 
 	public String getComment() throws IOException {
-		CharSequence[] contents = TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1);
+		CharSequence[] contents = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser",
+				getClass(), getName(), 1);
 		return contents[0].toString();
 	}
 
@@ -84,10 +84,10 @@ public class IndexNamesTests extends BaseTestCase {
 	}
 
 	protected Pattern[] getPattern(String qname) {
-		String[] parts= qname.split("::");
-		Pattern[] result= new Pattern[parts.length];
+		String[] parts = qname.split("::");
+		Pattern[] result = new Pattern[parts.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= Pattern.compile(parts[i]);
+			result[i] = Pattern.compile(parts[i]);
 		}
 		return result;
 	}
@@ -112,31 +112,31 @@ public class IndexNamesTests extends BaseTestCase {
 	// };
 	public void testNestingWithFunction() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
+			IIndexBinding[] mainBS = fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
 			assertLength(1, mainBS);
-			IIndexBinding mainB= mainBS[0];
+			IIndexBinding mainB = mainBS[0];
 
-			IIndexName[] names= fIndex.findDefinitions(mainB);
+			IIndexName[] names = fIndex.findDefinitions(mainB);
 			assertLength(1, names);
-			IIndexName main= names[0];
+			IIndexName main = names[0];
 
 			assertNull(main.getEnclosingDefinition());
-			IIndexName[] enclosed= main.getEnclosedNames();
+			IIndexName[] enclosed = main.getEnclosedNames();
 			assertLength(2, enclosed);
 			assertName("func", enclosed[0]);
 			assertName("var", enclosed[1]);
 
-			IIndexName enclosing= enclosed[0].getEnclosingDefinition();
+			IIndexName enclosing = enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
-			enclosing= enclosed[1].getEnclosingDefinition();
+			enclosing = enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 		} finally {
@@ -170,66 +170,66 @@ public class IndexNamesTests extends BaseTestCase {
 	// };
 	public void testNestingWithMethod() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
+			IIndexBinding[] mainBS = fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
 			assertLength(1, mainBS);
-			IIndexBinding mainB= mainBS[0];
+			IIndexBinding mainB = mainBS[0];
 
-			IIndexName[] names= fIndex.findDefinitions(mainB);
+			IIndexName[] names = fIndex.findDefinitions(mainB);
 			assertLength(1, names);
-			IIndexName main= names[0];
+			IIndexName main = names[0];
 
 			assertNull(main.getEnclosingDefinition());
-			IIndexName[] enclosed= main.getEnclosedNames();
+			IIndexName[] enclosed = main.getEnclosedNames();
 			assertLength(4, enclosed);
 			assertName("C", enclosed[0]); // Class reference
 			assertName("C", enclosed[1]); // Implicit ctor call
 			assertName("func", enclosed[2]);
 			assertName("var", enclosed[3]);
 
-			IIndexName enclosing= enclosed[0].getEnclosingDefinition();
+			IIndexName enclosing = enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
-			enclosing= enclosed[1].getEnclosingDefinition();
+			enclosing = enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
-			enclosing= enclosed[2].getEnclosingDefinition();
+			enclosing = enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
-			enclosing= enclosed[3].getEnclosingDefinition();
+			enclosing = enclosed[3].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
-			IIndexBinding funcB= fIndex.findBinding(enclosed[2]);
+			IIndexBinding funcB = fIndex.findBinding(enclosed[2]);
 			assertNotNull(funcB);
-			names= fIndex.findDefinitions(funcB);
+			names = fIndex.findDefinitions(funcB);
 			assertLength(1, names);
-			IIndexName funcdef= names[0];
+			IIndexName funcdef = names[0];
 
 			assertNull(funcdef.getEnclosingDefinition());
-			enclosed= funcdef.getEnclosedNames();
+			enclosed = funcdef.getEnclosedNames();
 			assertLength(3, enclosed);
 			assertName("C", enclosed[0]);
 			assertName("func", enclosed[1]);
 			assertName("var", enclosed[2]);
 
-			enclosing= enclosed[0].getEnclosingDefinition();
+			enclosing = enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("func", enclosing);
 
-			enclosing= enclosed[1].getEnclosingDefinition();
+			enclosing = enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("func", enclosing);
 
-			enclosing= enclosed[2].getEnclosingDefinition();
+			enclosing = enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("func", enclosing);
 		} finally {
@@ -265,18 +265,18 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testCouldBePolymorphicMethodCall_Bug156691() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
-		boolean[] couldbepolymorphic= {true, false, true, false, true, false, false, false};
-		String[] container= 		  {"Y",  "X",   "X",  "X",   "X",  "X",   "X",   "X"  };
+		boolean[] couldbepolymorphic = { true, false, true, false, true, false, false, false };
+		String[] container = { "Y", "X", "X", "X", "X", "X", "X", "X" };
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= getIndexFile(ILinkage.CPP_LINKAGE_ID, file);
-			IIndexName[] names= ifile.findNames(0, content.length());
-			int j= 0;
+			IIndexFile ifile = getIndexFile(ILinkage.CPP_LINKAGE_ID, file);
+			IIndexName[] names = ifile.findNames(0, content.length());
+			int j = 0;
 			for (IIndexName indexName : names) {
 				if (indexName.isReference() && indexName.toString().equals("vm")) {
 					assertEquals(couldbepolymorphic[j], indexName.couldBePolymorphicMethodCall());
@@ -304,15 +304,15 @@ public class IndexNamesTests extends BaseTestCase {
 	//	};
 	public void testAddressOfPolymorphicMethod_Bug363731() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= getIndexFile(ILinkage.CPP_LINKAGE_ID, file);
-			IIndexName[] names= ifile.findNames(0, content.length());
-			int j= 0;
+			IIndexFile ifile = getIndexFile(ILinkage.CPP_LINKAGE_ID, file);
+			IIndexName[] names = ifile.findNames(0, content.length());
+			int j = 0;
 			for (IIndexName indexName : names) {
 				if (indexName.isReference() && indexName.toString().equals("foo")) {
 					assertEquals(true, indexName.couldBePolymorphicMethodCall());
@@ -357,27 +357,26 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testReadWriteFlagsC() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "test.c", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "test.c", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		checkReadWriteFlags(file, ILinkage.C_LINKAGE_ID, 41);
 	}
 
-	private void checkReadWriteFlags(IFile file, int linkageID, int count) throws InterruptedException,
-			CoreException {
+	private void checkReadWriteFlags(IFile file, int linkageID, int count) throws InterruptedException, CoreException {
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= getIndexFile(linkageID, file);
-			IIndexName[] names= ifile.findNames(0, Integer.MAX_VALUE);
-			int j= 0;
+			IIndexFile ifile = getIndexFile(linkageID, file);
+			IIndexName[] names = ifile.findNames(0, Integer.MAX_VALUE);
+			int j = 0;
 			for (IIndexName indexName : names) {
 				final String name = indexName.toString();
-				final char c0= name.length() > 0 ? name.charAt(0) : 0;
+				final char c0 = name.length() > 0 ? name.charAt(0) : 0;
 				if ((c0 == '_' || c0 == 'r' || c0 == 'w') && indexName.isReference()) {
-					boolean isRead= name.charAt(0) == 'r';
-					boolean isWrite= c0 == 'w' || (isRead && name.length() > 1 && name.charAt(1) == 'w');
-					String msg= name + "(j=" + j + "):";
+					boolean isRead = name.charAt(0) == 'r';
+					boolean isWrite = c0 == 'w' || (isRead && name.length() > 1 && name.charAt(1) == 'w');
+					String msg = name + "(j=" + j + "):";
 					assertEquals("Read access for " + msg, isRead, indexName.isReadAccess());
 					assertEquals("Write access for " + msg, isWrite, indexName.isWriteAccess());
 					j++;
@@ -429,13 +428,12 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testReadWriteFlagsCpp() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 48);
 	}
-
 
 	//	int _i, ri, wi, rwi;
 	//	void f(int&, int);
@@ -446,8 +444,8 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testRWInSecondArg() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "testRWInSecondArg.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "testRWInSecondArg.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 4);
@@ -463,8 +461,8 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testRWInConstructorCall_328528() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "testRWInConstructorCall.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "testRWInConstructorCall.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 2);
@@ -480,8 +478,8 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testRWInArrayInitializer_328528() throws Exception {
 		waitForIndexer();
-		String content= getComment();
-		IFile file= createFile(getProject().getProject(), "testRWInArrayInitializer.cpp", content);
+		String content = getComment();
+		IFile file = createFile(getProject().getProject(), "testRWInArrayInitializer.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
 		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 2);

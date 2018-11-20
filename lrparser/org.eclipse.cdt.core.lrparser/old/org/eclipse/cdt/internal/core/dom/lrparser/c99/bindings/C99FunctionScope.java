@@ -30,8 +30,7 @@ public class C99FunctionScope extends C99Scope implements ICFunctionScope {
 	 * Does not include the parameters which are part of this function scope.
 	 */
 	private IScope bodyScope;
-	
-	
+
 	@Override
 	public IBinding getBinding(@SuppressWarnings("unused") char[] name) throws DOMException {
 		// TODO Auto-generated method stub
@@ -39,9 +38,9 @@ public class C99FunctionScope extends C99Scope implements ICFunctionScope {
 	}
 
 	public void setBodyScope(IScope bodyScope) {
-		this.bodyScope = bodyScope; 
+		this.bodyScope = bodyScope;
 	}
-	
+
 	@Override
 	public IScope getBodyScope() throws DOMException {
 		return bodyScope;

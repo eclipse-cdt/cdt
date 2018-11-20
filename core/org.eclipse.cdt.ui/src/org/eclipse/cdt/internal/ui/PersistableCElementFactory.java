@@ -41,67 +41,67 @@ import org.eclipse.cdt.core.model.ICElement;
  */
 public class PersistableCElementFactory implements IElementFactory, IPersistableElement {
 
-    // These persistence constants are stored in XML.  Do not
-    // change them.
-    private static final String TAG_PATH = "path";//$NON-NLS-1$
-    private static final String TAG_TYPE = "type";//$NON-NLS-1$
+	// These persistence constants are stored in XML.  Do not
+	// change them.
+	private static final String TAG_PATH = "path";//$NON-NLS-1$
+	private static final String TAG_TYPE = "type";//$NON-NLS-1$
 
-    private static final String FACTORY_ID = "org.eclipse.cdt.ui.PersistableCElementFactory";//$NON-NLS-1$
+	private static final String FACTORY_ID = "org.eclipse.cdt.ui.PersistableCElementFactory";//$NON-NLS-1$
 
-    // IPersistable data.
-    private ICElement fCElement;
+	// IPersistable data.
+	private ICElement fCElement;
 
-    /**
-     * Create a PersistableCElementFactory.  This constructor is typically used
-     * for our IElementFactory side.
-     */
-    public PersistableCElementFactory() {
-    }
+	/**
+	 * Create a PersistableCElementFactory.  This constructor is typically used
+	 * for our IElementFactory side.
+	 */
+	public PersistableCElementFactory() {
+	}
 
-    /**
-     * Create a PersistableCElementFactory.  This constructor is typically used
-     * for our IPersistableElement side.
-     */
-    public PersistableCElementFactory(ICElement input) {
-        fCElement = input;
-    }
+	/**
+	 * Create a PersistableCElementFactory.  This constructor is typically used
+	 * for our IPersistableElement side.
+	 */
+	public PersistableCElementFactory(ICElement input) {
+		fCElement = input;
+	}
 
-    /**
-     * @see IElementFactory
-     */
-    @Override
+	/**
+	 * @see IElementFactory
+	 */
+	@Override
 	public IAdaptable createElement(IMemento memento) {
-        // Get the file name.
-        String fileName = memento.getString(TAG_PATH);
-        if (fileName == null) {
+		// Get the file name.
+		String fileName = memento.getString(TAG_PATH);
+		if (fileName == null) {
 			return null;
 		}
 
-        IPath elementPath= new Path(fileName);
-        fCElement = CoreModel.getDefault().create(elementPath);
-        if (fCElement != null && fCElement.getResource() != null) {
-        	IResource resource= fCElement.getResource();
-        	if (!resource.isAccessible()) {
-        		return resource;
-        	}
-        }
-        if (fCElement != null) {
-        	return fCElement;
-        }
+		IPath elementPath = new Path(fileName);
+		fCElement = CoreModel.getDefault().create(elementPath);
+		if (fCElement != null && fCElement.getResource() != null) {
+			IResource resource = fCElement.getResource();
+			if (!resource.isAccessible()) {
+				return resource;
+			}
+		}
+		if (fCElement != null) {
+			return fCElement;
+		}
 
-        final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        Integer elementType= memento.getInteger(TAG_TYPE);
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		Integer elementType = memento.getInteger(TAG_TYPE);
 		if (elementType == null) {
 			if (elementPath.segmentCount() == 1) {
 				return root.getProject(fileName);
 			}
-        	IFolder folder= root.getFolder(elementPath);
-        	File osFile= folder.getLocation().toFile();
-        	if (osFile.isDirectory()) {
-        		return folder;
-        	}
-        	return root.getFile(elementPath);
-        }
+			IFolder folder = root.getFolder(elementPath);
+			File osFile = folder.getLocation().toFile();
+			if (osFile.isDirectory()) {
+				return folder;
+			}
+			return root.getFile(elementPath);
+		}
 		switch (elementType.intValue()) {
 		case IResource.ROOT:
 			return root;
@@ -112,25 +112,25 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
 		case IResource.FILE:
 			return root.getFile(elementPath);
 		}
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @see IPersistableElement
-     */
-    @Override
+	/**
+	 * @see IPersistableElement
+	 */
+	@Override
 	public String getFactoryId() {
-        return FACTORY_ID;
-    }
+		return FACTORY_ID;
+	}
 
-    /**
-     * @see IPersistableElement
-     */
-    @Override
+	/**
+	 * @see IPersistableElement
+	 */
+	@Override
 	public void saveState(IMemento memento) {
-    	if (fCElement.getResource() != null) {
-	        memento.putString(TAG_PATH, fCElement.getResource().getFullPath().toString());
-	        memento.putInteger(TAG_TYPE, fCElement.getResource().getType());
-    	}
-    }
+		if (fCElement.getResource() != null) {
+			memento.putString(TAG_PATH, fCElement.getResource().getFullPath().toString());
+			memento.putInteger(TAG_TYPE, fCElement.getResource().getType());
+		}
+	}
 }

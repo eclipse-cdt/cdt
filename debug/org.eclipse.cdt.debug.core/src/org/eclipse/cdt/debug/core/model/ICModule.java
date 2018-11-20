@@ -11,13 +11,13 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.model; 
+package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
- 
+
 /**
  * Represents a module in the process being debugged.
  * 
@@ -74,7 +74,7 @@ public interface ICModule extends ICDebugElement {
 	 * @param symbolsFile the symbol provider for this module.
 	 * @throws DebugException if this method fails. Reasons include:
 	 */
-	public void setSymbolsFileName( IPath symbolsFile ) throws DebugException;
+	public void setSymbolsFileName(IPath symbolsFile) throws DebugException;
 
 	/**
 	 * Returns the base address of this module.

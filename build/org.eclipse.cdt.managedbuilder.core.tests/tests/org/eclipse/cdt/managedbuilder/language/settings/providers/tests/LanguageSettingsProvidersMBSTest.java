@@ -59,7 +59,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	 * Test that null arguments don't crash the provider.
 	 */
 	public void testNulls() throws Exception {
-		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID);
+		ILanguageSettingsProvider provider = LanguageSettingsManager
+				.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID);
 		assertNotNull(provider);
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
 		assertEquals(null, entries);
@@ -80,7 +81,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			{
 				ILanguageSettingsProvider provider = providers.get(0);
 				String id = provider.getId();
@@ -129,8 +131,10 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getDefaultLanguageSettingsProvidersIds();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			assertEquals(defaultIds.length, providers.size());
 			for (int i = 0; i < defaultIds.length; i++) {
 				assertEquals(providers.get(i).getId(), defaultIds[i]);
@@ -144,7 +148,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 		assertEquals(true, xmlStorageFile.getParent().exists()); // .settings folder
 
 		// settings file in workspace area
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests
+				.getStoreLocationInWorkspaceArea(project.getName() + '.' + LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(true, xmlStorageFilePrjWsp.exists());
 	}
@@ -164,7 +169,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
+			((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
 			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders().size() == 0);
 		}
 
@@ -175,7 +181,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 		assertEquals(true, xmlStorageFile.exists());
 
 		// no settings file in workspace area
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests
+				.getStoreLocationInWorkspaceArea(project.getName() + '.' + LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(false, xmlStorageFilePrjWsp.exists());
 

@@ -18,23 +18,18 @@ package org.eclipse.cdt.serial;
  */
 public enum StopBits {
 
-	S1,
-	S2;
-	
-	private static final String[] strings = {
-		"1", //$NON-NLS-1$
-		"2" //$NON-NLS-1$
+	S1, S2;
+
+	private static final String[] strings = { "1", //$NON-NLS-1$
+			"2" //$NON-NLS-1$
 	};
-	
+
 	public static String[] getStrings() {
 		return strings;
 	}
-	
-	private static final StopBits[] stopBits = {
-		S1,
-		S2
-	};
-	
+
+	private static final StopBits[] stopBits = { S1, S2 };
+
 	public static StopBits fromStringIndex(int index) {
 		return stopBits[index];
 	}
@@ -47,9 +42,9 @@ public enum StopBits {
 		}
 		return getStringIndex(getDefault());
 	}
-	
+
 	public static StopBits getDefault() {
 		return S1;
 	}
-	
+
 }

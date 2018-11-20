@@ -57,21 +57,21 @@ import org.osgi.framework.Bundle;
  * Tests the GeneratePDOMApplication
  */
 public class GeneratePDOMApplicationTest extends PDOMTestBase {
-	private static final URI    BASEURI= URI.create("file:///base/"); // unimportant what the value is
+	private static final URI BASEURI = URI.create("file:///base/"); // unimportant what the value is
 	private static final String SDK_VERSION = "com.acme.sdk.version";
-	private static final String ACME_SDK_ID= "com.acme.sdk.4.0.1";
-	private static final String LOC_TSTPRJ1= "resources/pdomtests/generatePDOMTests/project1";
-	private static final String LOC_TSTPRJ2= "resources/pdomtests/generatePDOMTests/project2";
-	private static final String LOC_TSTPRJ3= "resources/pdomtests/generatePDOMTests/project3";
-	private static final String LOC_CYCINC1= "resources/pdomtests/generatePDOMTests/cyclicIncludes1";
-	private static final String LOC_CYCINC2= "resources/pdomtests/generatePDOMTests/cyclicIncludes2";
-	
-	private static Deque<ICProject> projectsToDeleteOnTearDown= new ArrayDeque<>();
-	
+	private static final String ACME_SDK_ID = "com.acme.sdk.4.0.1";
+	private static final String LOC_TSTPRJ1 = "resources/pdomtests/generatePDOMTests/project1";
+	private static final String LOC_TSTPRJ2 = "resources/pdomtests/generatePDOMTests/project2";
+	private static final String LOC_TSTPRJ3 = "resources/pdomtests/generatePDOMTests/project3";
+	private static final String LOC_CYCINC1 = "resources/pdomtests/generatePDOMTests/cyclicIncludes1";
+	private static final String LOC_CYCINC2 = "resources/pdomtests/generatePDOMTests/cyclicIncludes2";
+
+	private static Deque<ICProject> projectsToDeleteOnTearDown = new ArrayDeque<>();
+
 	public static Test suite() {
 		return suite(GeneratePDOMApplicationTest.class);
 	}
-	
+
 	protected File target; // the location of the generated PDOM
 
 	@Override
@@ -87,31 +87,26 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			cproject.getProject().delete(true, new NullProgressMonitor());
 		}
 		super.tearDown();
-	}	
+	}
 
 	public void testBrokenExportProjectProvider1() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for createProject 
-		doGenerate(new String[] {
-			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-			GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName()
-		});
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName() });
 	}
 
 	public void testBrokenExportProjectProvider2() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for getLocationConverter 
-		doGenerate(new String[] {
-			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-			GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName()
-		});
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName() });
 	}
 
 	public void testSimpleExportProjectProvider1() throws Exception {
-		doGenerate(new String[] {
-				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider3.class.getName()
-		});
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider3.class.getName() });
 		assertTrue(target.exists());
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		WritablePDOM wpdom = new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI),
+				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		String fid;
@@ -126,12 +121,11 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 
 	public void testSimpleExportProjectProvider2() throws Exception {
-		doGenerate(new String[] {
-				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider4.class.getName()
-		});
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider4.class.getName() });
 		assertTrue(target.exists());
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		WritablePDOM wpdom = new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI),
+				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		wpdom.acquireReadLock();
@@ -149,43 +143,39 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	public void testExternalExportProjectProvider_BadCmdLine1() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -source must be specified
-		
-		doGenerate(new String[] {
-			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
-			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName()
-		});
+
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName() });
 		assertFalse(target.exists());
 	}
 
 	public void testExternalExportProjectProvider_BadCmdLine2() throws Exception {
-		TestProjectProvider4 tpp4= new TestProjectProvider4();
-		ICProject cproject= tpp4.createProject();
-		
+		TestProjectProvider4 tpp4 = new TestProjectProvider4();
+		ICProject cproject = tpp4.createProject();
+
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -id must be specified
-		
-		doGenerate(new String[] {
-			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
-			ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
-		});
+
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
+				ExternalExportProjectProvider.OPT_SOURCE,
+				cproject.getProject().getLocation().toFile().getAbsolutePath() });
 		assertFalse(target.exists());
 	}
-	
+
 	public void testExternalExportProjectProvider_BadCmdLine3() throws Exception {
-		TestProjectProvider4 tpp4= new TestProjectProvider4();
-		ICProject cproject= tpp4.createProject();
-		
+		TestProjectProvider4 tpp4 = new TestProjectProvider4();
+		ICProject cproject = tpp4.createProject();
+
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -target must be specified
-		doGenerate(new String[] {
-			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
-			ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
-		});
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_PROJECTPROVIDER,
+				ExternalExportProjectProvider.class.getName(), ExternalExportProjectProvider.OPT_SOURCE,
+				cproject.getProject().getLocation().toFile().getAbsolutePath() });
 		assertFalse(target.exists());
 	}
 
 	public void testExternalExportProjectProvider() throws Exception {
-		final int[] stateCount= new int[1];
-		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ1, ExternalExportProjectProvider.class, stateCount);
+		final int[] stateCount = new int[1];
+		WritablePDOM wpdom = generatePDOM(LOC_TSTPRJ1, ExternalExportProjectProvider.class, stateCount);
 		verifyProject1Content(wpdom);
 
 		wpdom.acquireReadLock();
@@ -201,37 +191,37 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 
 	public void testExternalExportProjectProvider_SysIncludes() throws Exception {
-		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ2, ExternalExportProjectProvider.class, null);
+		WritablePDOM wpdom = generatePDOM(LOC_TSTPRJ2, ExternalExportProjectProvider.class, null);
 		verifyProject2Content(wpdom);
 	}
-	
+
 	public void testGenerateOnCyclicIncludes1() throws Exception {
 		// testing for zero NON-OK status objects (see BaseTestCase.setExpectedNumberOfLoggedNonOKStatusObjects)
-		WritablePDOM wpdom= generatePDOM(LOC_CYCINC1, ExternalExportProjectProvider.class, null);
+		WritablePDOM wpdom = generatePDOM(LOC_CYCINC1, ExternalExportProjectProvider.class, null);
 	}
-	
+
 	public void testGenerateOnCyclicIncludes2() throws Exception {
 		// testing for zero NON-OK status objects (see BaseTestCase.setExpectedNumberOfLoggedNonOKStatusObjects)
-		WritablePDOM wpdom= generatePDOM(LOC_CYCINC2, ExternalExportProjectProvider.class, null);
+		WritablePDOM wpdom = generatePDOM(LOC_CYCINC2, ExternalExportProjectProvider.class, null);
 	}
-	
+
 	public void testExternalExportProjectProvider_CLinkage() throws Exception {
-		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ3, TestProjectProvider5.class, null);
-		
-		IndexFilter CLinkage= new IndexFilter() {
+		WritablePDOM wpdom = generatePDOM(LOC_TSTPRJ3, TestProjectProvider5.class, null);
+
+		IndexFilter CLinkage = new IndexFilter() {
 			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return linkage.getLinkageID() == ILinkage.C_LINKAGE_ID;
 			}
 		};
 
-		IndexFilter CPPLinkage= new IndexFilter() {
+		IndexFilter CPPLinkage = new IndexFilter() {
 			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 			}
 		};
-		
+
 		wpdom.acquireReadLock();
 		try {
 			assertEquals(1, wpdom.findBindings(new char[][] { "foo".toCharArray() }, CLinkage, npm()).length);
@@ -244,10 +234,10 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public void verifyProject1Content(WritablePDOM wpdom) throws Exception {
 		wpdom.acquireReadLock();
 		try {
-			IBinding[] bindings= wpdom.findBindings(Pattern.compile(".*foo.*"), false, IndexFilter.ALL, PROGRESS);
+			IBinding[] bindings = wpdom.findBindings(Pattern.compile(".*foo.*"), false, IndexFilter.ALL, PROGRESS);
 			assertEquals(1, bindings.length);
 
-			bindings= wpdom.findBindings(Pattern.compile(".*bar.*"), false, IndexFilter.ALL, PROGRESS);
+			bindings = wpdom.findBindings(Pattern.compile(".*bar.*"), false, IndexFilter.ALL, PROGRESS);
 			assertEquals(1, bindings.length);
 		} finally {
 			wpdom.releaseReadLock();
@@ -257,23 +247,23 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public void verifyProject2Content(WritablePDOM wpdom) throws Exception {
 		wpdom.acquireReadLock();
 		try {
-			IBinding[] bindings= wpdom.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, npm());
+			IBinding[] bindings = wpdom.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, npm());
 			assertEquals(2, bindings.length);
 
-			int b= bindings[0].getName().equals("A") ? 1 : 0;
+			int b = bindings[0].getName().equals("A") ? 1 : 0;
 			assertTrue(bindings[0] instanceof ICPPClassType);
 			assertTrue(bindings[1] instanceof ICPPClassType);
-			assertTrue(((ICPPClassType)bindings[1 - b]).getBases().length == 0);
-			assertTrue(((ICPPClassType)bindings[b]).getBases().length == 1);
+			assertTrue(((ICPPClassType) bindings[1 - b]).getBases().length == 0);
+			assertTrue(((ICPPClassType) bindings[b]).getBases().length == 1);
 		} finally {
 			wpdom.releaseReadLock();
 		}
 	}
 
 	private WritablePDOM generatePDOM(String testProject, Class<?> provider, final int[] stateCount) throws Exception {
-		IIndexerStateListener listener= null;
+		IIndexerStateListener listener = null;
 		if (stateCount != null) {
-			listener= new IIndexerStateListener() {
+			listener = new IIndexerStateListener() {
 				@Override
 				public void indexChanged(IIndexerStateEvent event) {
 					stateCount[0]++;
@@ -282,154 +272,215 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			CCorePlugin.getIndexManager().joinIndexer(8000, new NullProgressMonitor());
 			CCorePlugin.getIndexManager().addIndexerStateListener(listener);
 		}
-		
-		URL url= FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(testProject), null);
-		String baseDir= FileLocator.toFileURL(url).getFile();
 
-		doGenerate(new String[] {
-				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+		URL url = FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(testProject), null);
+		String baseDir = FileLocator.toFileURL(url).getFile();
+
+		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, provider.getName(),
-				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
-				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "generate.pdom.tests.id." + getName()
-		});
+				ExternalExportProjectProvider.OPT_SOURCE, baseDir, ExternalExportProjectProvider.OPT_FRAGMENT_ID,
+				"generate.pdom.tests.id." + getName() });
 		assertTrue(target.exists());
-		if (listener!=null) {
+		if (listener != null) {
 			CCorePlugin.getIndexManager().removeIndexerStateListener(listener);
 		}
 		return new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI),
 				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 	}
-	
+
 	private void doGenerate(String[] args) throws CoreException {
 		GeneratePDOMApplication app = new GeneratePDOMApplication() {
 			@Override
-			protected void output(String s) {}
+			protected void output(String s) {
+			}
 		};
-		String[] newArgs= new String[args.length+1];
-		newArgs[0]= GeneratePDOMApplication.OPT_QUIET;
+		String[] newArgs = new String[args.length + 1];
+		newArgs[0] = GeneratePDOMApplication.OPT_QUIET;
 		System.arraycopy(args, 0, newArgs, 1, args.length);
-		IApplicationContext ac= new MockApplicationContext(newArgs);
+		IApplicationContext ac = new MockApplicationContext(newArgs);
 		app.start(ac);
 	}
 
 	/*
 	 * IExportProjectProvider test implementations
 	 */
-	
+
 	public static class TestProjectProvider1 implements IExportProjectProvider {
 		@Override
-		public ICProject createProject() throws CoreException {return null;}
+		public ICProject createProject() throws CoreException {
+			return null;
+		}
+
 		@Override
-		public Map getExportProperties() {return null;}
+		public Map getExportProperties() {
+			return null;
+		}
+
 		@Override
-		public IIndexLocationConverter getLocationConverter(ICProject cproject) {return null;}
+		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
+			return null;
+		}
+
 		@Override
-		public void setApplicationArguments(String[] arguments) {}
+		public void setApplicationArguments(String[] arguments) {
+		}
 	}
 
 	public static class TestProjectProvider2 implements IExportProjectProvider {
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			ICProject cproject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null,
+					IPDOMManager.ID_NO_INDEXER);
 			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
+
 		@Override
-		public Map getExportProperties() {return null;}
+		public Map getExportProperties() {
+			return null;
+		}
+
 		@Override
-		public IIndexLocationConverter getLocationConverter(ICProject cproject) {return null;}
+		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
+			return null;
+		}
+
 		@Override
-		public void setApplicationArguments(String[] arguments) {}
+		public void setApplicationArguments(String[] arguments) {
+		}
 	}
 
 	public static class TestProjectProvider3 implements IExportProjectProvider {
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			ICProject cproject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null,
+					IPDOMManager.ID_NO_INDEXER);
 			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
+
 		@Override
-		public Map getExportProperties() {return null;}
+		public Map getExportProperties() {
+			return null;
+		}
+
 		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
 			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		}
+
 		@Override
-		public void setApplicationArguments(String[] arguments) {}
+		public void setApplicationArguments(String[] arguments) {
+		}
 	}
 
-	public static class TestProjectProvider4 implements IExportProjectProvider {		
+	public static class TestProjectProvider4 implements IExportProjectProvider {
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			ICProject cproject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null,
+					IPDOMManager.ID_NO_INDEXER);
 			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
+
 		@Override
 		public Map getExportProperties() {
-			Map map= new HashMap();
+			Map map = new HashMap();
 			map.put(SDK_VERSION, "4.0.1");
 			map.put(IIndexFragment.PROPERTY_FRAGMENT_ID, ACME_SDK_ID);
 			return map;
 		}
+
 		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
 			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		}
+
 		@Override
-		public void setApplicationArguments(String[] arguments) {}
+		public void setApplicationArguments(String[] arguments) {
+		}
 	}
-	
-	public static class TestProjectProvider5 implements IExportProjectProvider {		
+
+	public static class TestProjectProvider5 implements IExportProjectProvider {
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			ICProject cproject = CProjectHelper.createCProject("test" + System.currentTimeMillis(), null,
+					IPDOMManager.ID_NO_INDEXER);
 			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ3);
 			return cproject;
 		}
+
 		@Override
 		public Map getExportProperties() {
-			Map map= new HashMap();
+			Map map = new HashMap();
 			map.put(SDK_VERSION, "4.0.1");
 			map.put(IIndexFragment.PROPERTY_FRAGMENT_ID, ACME_SDK_ID);
 			return map;
 		}
+
 		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
 			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		}
+
 		@Override
-		public void setApplicationArguments(String[] arguments) {}
+		public void setApplicationArguments(String[] arguments) {
+		}
 	}
 }
 
 class MockApplicationContext implements IApplicationContext {
 	Map arguments;
+
 	MockApplicationContext(String[] appArgs) {
-		arguments= new HashMap();
+		arguments = new HashMap();
 		arguments.put(APPLICATION_ARGS, appArgs);
 	}
+
 	@Override
-	public void applicationRunning() {}
+	public void applicationRunning() {
+	}
+
 	@Override
-	public Map getArguments() {return arguments;}
+	public Map getArguments() {
+		return arguments;
+	}
+
 	@Override
-	public String getBrandingApplication() {return null;}
+	public String getBrandingApplication() {
+		return null;
+	}
+
 	@Override
-	public Bundle getBrandingBundle() {return null;}
+	public Bundle getBrandingBundle() {
+		return null;
+	}
+
 	@Override
-	public String getBrandingDescription() {return null;}
+	public String getBrandingDescription() {
+		return null;
+	}
+
 	@Override
-	public String getBrandingId() {return null;}
+	public String getBrandingId() {
+		return null;
+	}
+
 	@Override
-	public String getBrandingName() {return null;}
+	public String getBrandingName() {
+		return null;
+	}
+
 	@Override
-	public String getBrandingProperty(String key) {return null;}
+	public String getBrandingProperty(String key) {
+		return null;
+	}
+
 	@Override
-	public void setResult(Object result, IApplication application) {}
+	public void setResult(Object result, IApplication application) {
+	}
 }

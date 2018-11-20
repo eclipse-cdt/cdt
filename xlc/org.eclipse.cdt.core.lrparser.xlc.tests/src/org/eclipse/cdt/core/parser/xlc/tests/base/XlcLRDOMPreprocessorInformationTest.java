@@ -24,11 +24,11 @@ public class XlcLRDOMPreprocessorInformationTest extends LRDOMPreprocessorInform
 	public static TestSuite suite() {
 		return suite(XlcLRDOMPreprocessorInformationTest.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

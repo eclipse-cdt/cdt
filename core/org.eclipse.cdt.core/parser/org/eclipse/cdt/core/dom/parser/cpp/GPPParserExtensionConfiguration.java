@@ -29,7 +29,8 @@ import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
  * Configures the parser for c++-sources as accepted by g++.
  */
 public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionConfiguration {
-	private static GPPParserExtensionConfiguration sInstance= new GPPParserExtensionConfiguration();
+	private static GPPParserExtensionConfiguration sInstance = new GPPParserExtensionConfiguration();
+
 	/**
 	 * @since 5.1
 	 */
@@ -37,50 +38,50 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 		return sInstance;
 	}
 
-    @Override
+	@Override
 	public boolean allowRestrictPointerOperators() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportTypeofUnaryExpressions() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportAlignOfUnaryExpression() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportExtendedTemplateSyntax() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportMinAndMaxOperators() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportStatementsInExpressions() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportComplexNumbers() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportRestrictKeyword() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportLongLongs() {
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public boolean supportKnRC() {
@@ -109,8 +110,7 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 
 	@Override
 	public Map<String, ContextSensitiveTokenType> getAdditionalContextSensitiveKeywords() {
-		Map<String, ContextSensitiveTokenType> result =
-				new HashMap<>(super.getAdditionalContextSensitiveKeywords());
+		Map<String, ContextSensitiveTokenType> result = new HashMap<>(super.getAdditionalContextSensitiveKeywords());
 		result.put(GCCKeywords.__FINAL, ContextSensitiveTokenType.FINAL);
 		return result;
 	}

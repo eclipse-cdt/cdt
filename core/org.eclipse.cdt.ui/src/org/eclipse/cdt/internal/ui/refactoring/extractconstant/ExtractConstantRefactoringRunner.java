@@ -29,15 +29,14 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class ExtractConstantRefactoringRunner extends RefactoringRunner {
 
-	public ExtractConstantRefactoringRunner(ICElement element, ISelection selection,
-			IShellProvider shellProvider, ICProject cProject) {
+	public ExtractConstantRefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		super(element, selection, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
-		ExtractConstantRefactoring refactoring =
-				new ExtractConstantRefactoring(element, selection, project);
+		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring(element, selection, project);
 		ExtractConstantWizard wizard = new ExtractConstantWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 	}

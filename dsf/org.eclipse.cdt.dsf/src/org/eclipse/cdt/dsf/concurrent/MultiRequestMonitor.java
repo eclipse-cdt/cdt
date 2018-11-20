@@ -50,95 +50,95 @@ import org.eclipse.core.runtime.MultiStatus;
  * @since 1.0
  */
 public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonitor {
-    private List<V> fRequestMonitorList = Collections.synchronizedList(new LinkedList<V>());
-    private Map<V,Boolean> fStatusMap = Collections.synchronizedMap(new HashMap<V,Boolean>());
-    private int fDoneCounter;
+	private List<V> fRequestMonitorList = Collections.synchronizedList(new LinkedList<V>());
+	private Map<V, Boolean> fStatusMap = Collections.synchronizedMap(new HashMap<V, Boolean>());
+	private int fDoneCounter;
 
 	/**
 	 * Has client called {@link #requireDoneAdding()}? Should be set right
 	 * after construction so no need to synchronize
 	 */
-    private boolean fRequiresDoneAdding;
-    
+	private boolean fRequiresDoneAdding;
+
 	/**
 	 * Has client called {@link #doneAdding()}?
 	 */
 	private boolean fDoneAdding;
 
-    public MultiRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
-        super(executor, parentRequestMonitor);
-        setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
-    }
+	public MultiRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
+		super(executor, parentRequestMonitor);
+		setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
+	}
 
-    /** 
-     * Adds a new RequestMonitor callback to this tracker's list. 
-     * @param <T> Client-specific class of the RequestMonitor callback, it's used here to avoid an 
-     * unnecessary cast by the client.
-     * @param rm Request monitor object to add to the tracker
-     * @return The request monitor that was just added, it allows this method to be used 
-     * in-lined in service method calls
-     */
-    public synchronized <T extends V> T add(T rm) {
-        assert !fStatusMap.containsKey(rm);
-        if (fDoneAdding) {
-        	throw new IllegalStateException("Can't add a monitor after having called doneAdding()"); //$NON-NLS-1$
-        }
-        fRequestMonitorList.add(rm);
-        fStatusMap.put(rm, false);
-        fDoneCounter++;
-        return rm;
-    }
-    
-    /**
-     * Marks the given RequestMonitor callback as completed.  Client implementations of 
-     * the RequestMonitor callback have to call this method in order for the tracker
-     * to complete.
-     * <br>
-     * @param requestMonitor
-     */
-    public void requestMonitorDone(V requestMonitor) {
-    	// Avoid holding object lock while calling our super's done()
-    	boolean callSuperDone = false;
+	/** 
+	 * Adds a new RequestMonitor callback to this tracker's list. 
+	 * @param <T> Client-specific class of the RequestMonitor callback, it's used here to avoid an 
+	 * unnecessary cast by the client.
+	 * @param rm Request monitor object to add to the tracker
+	 * @return The request monitor that was just added, it allows this method to be used 
+	 * in-lined in service method calls
+	 */
+	public synchronized <T extends V> T add(T rm) {
+		assert !fStatusMap.containsKey(rm);
+		if (fDoneAdding) {
+			throw new IllegalStateException("Can't add a monitor after having called doneAdding()"); //$NON-NLS-1$
+		}
+		fRequestMonitorList.add(rm);
+		fStatusMap.put(rm, false);
+		fDoneCounter++;
+		return rm;
+	}
 
-    	synchronized (this) {
-	        if (getStatus() instanceof MultiStatus) {
-	            ((MultiStatus)getStatus()).merge(requestMonitor.getStatus());
-	        }
-	        
-	        if (!fStatusMap.containsKey(requestMonitor)) {
-	        	throw new IllegalArgumentException("Unknown monitor."); //$NON-NLS-1$
-	        }
-	        
-	        fStatusMap.put(requestMonitor, true);
-	        assert fDoneCounter > 0;
-	        fDoneCounter--;
-	        if (fDoneCounter == 0 && (fDoneAdding || !fRequiresDoneAdding)) {
-	            assert !fStatusMap.containsValue(false);
-	            callSuperDone = true;
-	        }
-    	}
+	/**
+	 * Marks the given RequestMonitor callback as completed.  Client implementations of 
+	 * the RequestMonitor callback have to call this method in order for the tracker
+	 * to complete.
+	 * <br>
+	 * @param requestMonitor
+	 */
+	public void requestMonitorDone(V requestMonitor) {
+		// Avoid holding object lock while calling our super's done()
+		boolean callSuperDone = false;
 
-    	if (callSuperDone) {
-    		super.done();
-    	}
-    }
+		synchronized (this) {
+			if (getStatus() instanceof MultiStatus) {
+				((MultiStatus) getStatus()).merge(requestMonitor.getStatus());
+			}
+
+			if (!fStatusMap.containsKey(requestMonitor)) {
+				throw new IllegalArgumentException("Unknown monitor."); //$NON-NLS-1$
+			}
+
+			fStatusMap.put(requestMonitor, true);
+			assert fDoneCounter > 0;
+			fDoneCounter--;
+			if (fDoneCounter == 0 && (fDoneAdding || !fRequiresDoneAdding)) {
+				assert !fStatusMap.containsValue(false);
+				callSuperDone = true;
+			}
+		}
+
+		if (callSuperDone) {
+			super.done();
+		}
+	}
 
 	/**
 	 * Returns the list of requested monitors, sorted in order as they were
 	 * added. The returned list is a copy.
 	 */
-    public List<V> getRequestMonitors() {
-    	synchronized (fRequestMonitorList) { // needed while copying, even when list is a synchronized collection
-    		return new LinkedList<V>(fRequestMonitorList);
-    	}
-    }
+	public List<V> getRequestMonitors() {
+		synchronized (fRequestMonitorList) { // needed while copying, even when list is a synchronized collection
+			return new LinkedList<V>(fRequestMonitorList);
+		}
+	}
 
-    /**
-     * Returns true if given monitor is finished.
-     */
-    public boolean isRequestMonitorDone(V rm) {
-        return fStatusMap.get(rm);
-    }
+	/**
+	 * Returns true if given monitor is finished.
+	 */
+	public boolean isRequestMonitorDone(V rm) {
+		return fStatusMap.get(rm);
+	}
 
 	/**
 	 * In order to avoid a theoretical (but unlikely) race condition failure,
@@ -148,9 +148,9 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	 * 
 	 * @since 2.1
 	 */
-    public void requireDoneAdding() {
-    	fRequiresDoneAdding = true;
-    }
+	public void requireDoneAdding() {
+		fRequiresDoneAdding = true;
+	}
 
 	/**
 	 * Client should call this after it has finished adding monitors to this
@@ -160,30 +160,30 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	 * 
 	 * @since 2.1
 	 */
-    public void doneAdding() {
-    	// Avoid holding object lock while calling our super's done().
-    	boolean callSuperDone = false;
-    	
-    	synchronized (this) {
-	    	if (!fRequiresDoneAdding) {
-	    		throw new IllegalStateException("The method requiresDoneAdding() must be called first"); //$NON-NLS-1$
-	    	}
-	    	fDoneAdding = true;
-	    	
-	    	// In theory, the added monitors may have already completed.
-	        if (fDoneCounter == 0) {
-	            assert !fStatusMap.containsValue(false);
-	            callSuperDone = true;
-	        }
-    	}
-    	
-    	if (callSuperDone) {
-    		super.done();
-    	}
-    }
-    
-    @Override
-    public String toString() {
-        return "Multi-RequestMonitor: " + getStatus().toString(); //$NON-NLS-1$
-    }
+	public void doneAdding() {
+		// Avoid holding object lock while calling our super's done().
+		boolean callSuperDone = false;
+
+		synchronized (this) {
+			if (!fRequiresDoneAdding) {
+				throw new IllegalStateException("The method requiresDoneAdding() must be called first"); //$NON-NLS-1$
+			}
+			fDoneAdding = true;
+
+			// In theory, the added monitors may have already completed.
+			if (fDoneCounter == 0) {
+				assert !fStatusMap.containsValue(false);
+				callSuperDone = true;
+			}
+		}
+
+		if (callSuperDone) {
+			super.done();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Multi-RequestMonitor: " + getStatus().toString(); //$NON-NLS-1$
+	}
 }

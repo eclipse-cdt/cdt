@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +38,6 @@ public abstract class RelaunchSelectedAction extends Action {
 
 	private ITestingSession testingSession;
 	private TreeViewer treeViewer;
-
 
 	public RelaunchSelectedAction(ITestingSession testingSession, TreeViewer treeViewer) {
 		this.testingSession = testingSession;
@@ -69,18 +67,18 @@ public abstract class RelaunchSelectedAction extends Action {
 		}
 		setEnabled(false);
 	}
-	
+
 	/**
 	 * Returns the currently selected items of test hierarchy.
 	 * 
 	 * @return array of test items
 	 */
 	private ITestItem[] getSelectedTestItems() {
-		IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		ITestItem[] result = new ITestItem[selection.size()];
 		int resultIndex = 0;
 		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-			result[resultIndex] = (ITestItem)it.next();
+			result[resultIndex] = (ITestItem) it.next();
 			++resultIndex;
 		}
 		return result;
@@ -94,6 +92,5 @@ public abstract class RelaunchSelectedAction extends Action {
 	public void setTestingSession(ITestingSession testingSession) {
 		this.testingSession = testingSession;
 	}
-	
-}
 
+}

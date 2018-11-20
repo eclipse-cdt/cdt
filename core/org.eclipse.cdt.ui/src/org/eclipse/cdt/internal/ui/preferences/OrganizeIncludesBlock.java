@@ -31,40 +31,32 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  * The preference block for configuring Organize Includes command.
  */
 public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
-	private static final Key KEY_HEURISTIC_HEADER_SUBSTITUTION = getCDTUIKey(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION);
-	private static final Key KEY_PARTNER_INDIRECT_INCLUSION = getCDTUIKey(PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION);
+	private static final Key KEY_HEURISTIC_HEADER_SUBSTITUTION = getCDTUIKey(
+			PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION);
+	private static final Key KEY_PARTNER_INDIRECT_INCLUSION = getCDTUIKey(
+			PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION);
 	private static final Key KEY_INCLUDES_REORDERING = getCDTUIKey(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
-	private static final Key KEY_UNUSED_STATEMENTS_DISPOSITION = getCDTUIKey(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
-	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
+	private static final Key KEY_UNUSED_STATEMENTS_DISPOSITION = getCDTUIKey(
+			PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
+	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(
+			PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
 	private static final Key KEY_FORWARD_DECLARE_ENUMS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_ENUMS);
 	private static final Key KEY_FORWARD_DECLARE_FUNCTIONS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
-	private static final Key KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_EXTERNAL_VARIABLES);
+	private static final Key KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES = getCDTUIKey(
+			PreferenceConstants.FORWARD_DECLARE_EXTERNAL_VARIABLES);
 	private static final Key KEY_FORWARD_DECLARE_TEMPLATES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
-	private static final Key KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
+	private static final Key KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS = getCDTUIKey(
+			PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
 
-	private static final String[] DISPOSITION_VALUES = {
-		UnusedStatementDisposition.REMOVE.toString(),
-		UnusedStatementDisposition.COMMENT_OUT.toString(),
-		UnusedStatementDisposition.KEEP.toString(),
-	};
-	private static final String[] DISPOSITION_LABELS = {
-		PreferencesMessages.OrganizeIncludesBlock_remove,
-		PreferencesMessages.OrganizeIncludesBlock_comment_out,
-		PreferencesMessages.OrganizeIncludesBlock_keep,
-	};
+	private static final String[] DISPOSITION_VALUES = { UnusedStatementDisposition.REMOVE.toString(),
+			UnusedStatementDisposition.COMMENT_OUT.toString(), UnusedStatementDisposition.KEEP.toString(), };
+	private static final String[] DISPOSITION_LABELS = { PreferencesMessages.OrganizeIncludesBlock_remove,
+			PreferencesMessages.OrganizeIncludesBlock_comment_out, PreferencesMessages.OrganizeIncludesBlock_keep, };
 
-	private static Key[] ALL_KEYS = {
-		KEY_HEURISTIC_HEADER_SUBSTITUTION,
-		KEY_PARTNER_INDIRECT_INCLUSION,
-		KEY_INCLUDES_REORDERING,
-		KEY_UNUSED_STATEMENTS_DISPOSITION,
-		KEY_FORWARD_DECLARE_COMPOSITE_TYPES,
-		KEY_FORWARD_DECLARE_ENUMS,
-		KEY_FORWARD_DECLARE_FUNCTIONS,
-		KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES,
-		KEY_FORWARD_DECLARE_TEMPLATES,
-		KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS,
-	};
+	private static Key[] ALL_KEYS = { KEY_HEURISTIC_HEADER_SUBSTITUTION, KEY_PARTNER_INDIRECT_INCLUSION,
+			KEY_INCLUDES_REORDERING, KEY_UNUSED_STATEMENTS_DISPOSITION, KEY_FORWARD_DECLARE_COMPOSITE_TYPES,
+			KEY_FORWARD_DECLARE_ENUMS, KEY_FORWARD_DECLARE_FUNCTIONS, KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES,
+			KEY_FORWARD_DECLARE_TEMPLATES, KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS, };
 
 	public OrganizeIncludesBlock(IStatusChangeListener context, IProject project,
 			IWorkbenchPreferenceContainer container) {
@@ -75,7 +67,7 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 	protected Control createContents(Composite parent) {
 		setShell(parent.getShell());
 
-		Composite composite =  new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;

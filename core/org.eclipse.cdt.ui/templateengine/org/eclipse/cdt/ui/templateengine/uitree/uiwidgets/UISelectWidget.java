@@ -63,8 +63,8 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	public UISelectWidget(UIAttributes attribute, Map<String, String> value2name, String defaultValue) {
 		super(attribute);
-		this.value2name= value2name;
-		this.defaultValue= defaultValue;
+		this.value2name = value2name;
+		this.defaultValue = defaultValue;
 	}
 
 	/*
@@ -73,7 +73,7 @@ public class UISelectWidget extends InputUIElement {
 	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> values = new HashMap<String, String>();
-		if(currentValue != null) {
+		if (currentValue != null) {
 			values.put(uiAttributes.get(UIElement.ID), currentValue);
 		}
 		return values;
@@ -84,10 +84,10 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	@Override
 	public void setValues(Map<String, String> valueMap) {
-		defaultValue= valueMap.get(uiAttributes.get(UIElement.ID));
+		defaultValue = valueMap.get(uiAttributes.get(UIElement.ID));
 		if (combo != null) {
-			String[] items= combo.getItems();
-			for (int i=0; i < items.length; i++) {
+			String[] items = combo.getItems();
+			for (int i = 0; i < items.length; i++) {
 				if (items[i].equals(defaultValue)) {
 					combo.select(i);
 					break;
@@ -101,23 +101,23 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	@Override
 	public void createWidgets(final UIComposite uiComposite) {
-		label= new Label(uiComposite, SWT.LEFT);
+		label = new Label(uiComposite, SWT.LEFT);
 		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
 
 		Composite comboComposite = new Composite(uiComposite, SWT.NONE);
 		comboComposite.setLayout(GridLayoutFactory.swtDefaults().create());
 		comboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
-		combo= new Combo(comboComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		combo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());		
+		combo = new Combo(comboComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		combo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		combo.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
 
 		// populate combo
-		int index= 0, defaultIndex= 0;
-		for(String value : value2name.keySet()) {			
+		int index = 0, defaultIndex = 0;
+		for (String value : value2name.keySet()) {
 			combo.add(value2name.get(value));
-			if(value.equals(defaultValue)) {
-				defaultIndex= index;
+			if (value.equals(defaultValue)) {
+				defaultIndex = index;
 			}
 			index++;
 
@@ -126,7 +126,7 @@ public class UISelectWidget extends InputUIElement {
 		combo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				currentValue= getValue(combo.getItem(combo.getSelectionIndex()));
+				currentValue = getValue(combo.getItem(combo.getSelectionIndex()));
 				uiComposite.firePatternEvent(createPatternEvent());
 			}
 		});
@@ -134,7 +134,7 @@ public class UISelectWidget extends InputUIElement {
 	}
 
 	private PatternEvent createPatternEvent() {
-		String msg= MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), label.getText()); //$NON-NLS-1$
+		String msg = MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), label.getText()); //$NON-NLS-1$
 		return new PatternEvent(this, msg, isValid());
 	}
 
@@ -145,23 +145,22 @@ public class UISelectWidget extends InputUIElement {
 	@Override
 	public boolean isValid() {
 		boolean retVal = true;
-		if(Boolean.parseBoolean(uiAttributes.get(InputUIElement.MANDATORY))
-				&& ! InputUIElement.SELECTTYPE.equals(uiAttributes.get(UIElement.TYPE)) ) {
-			retVal= currentValue!= null && currentValue.trim().length()>0;
+		if (Boolean.parseBoolean(uiAttributes.get(InputUIElement.MANDATORY))
+				&& !InputUIElement.SELECTTYPE.equals(uiAttributes.get(UIElement.TYPE))) {
+			retVal = currentValue != null && currentValue.trim().length() > 0;
 		}
 		return retVal;
 	}
 
 	private String getValue(String name) {
-		for(String value : value2name.keySet()) {
-			if(value2name.get(value).equals(name)) {
+		for (String value : value2name.keySet()) {
+			if (value2name.get(value).equals(name)) {
 				return value;
 			}
 		}
 		throw new IllegalStateException();
 	}
-	
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */

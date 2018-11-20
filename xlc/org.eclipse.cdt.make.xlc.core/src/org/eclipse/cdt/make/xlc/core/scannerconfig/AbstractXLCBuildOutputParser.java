@@ -84,8 +84,8 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 	 */
 	protected String[] computeCompilerCommands() {
 		if (fProject != null) {
-			SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().getSCProfileInstance(
-					fProject, ScannerConfigProfileManager.NULL_PROFILE_ID);
+			SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().getSCProfileInstance(fProject,
+					ScannerConfigProfileManager.NULL_PROFILE_ID);
 			BuildOutputProvider boProvider = profileInstance.getProfile().getBuildOutputProviderElement();
 			if (boProvider != null) {
 				String compilerCommandsString = boProvider.getScannerInfoConsoleParser().getCompilerCommands();
@@ -140,9 +140,9 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 			fSMultiline = ""; //$NON-NLS-1$
 		}
 		line = line.trim();
-		try{
+		try {
 			TraceUtil.outputTrace("XLCBuildOutputParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
-		}catch(NoClassDefFoundError e){
+		} catch (NoClassDefFoundError e) {
 			//no problem, as this may be called from a standalone indexer
 		}
 		// make\[[0-9]*\]: error_desc
@@ -202,7 +202,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 			getUtility().reportProblems();
 		}
 
-		if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
+		if (fCollector != null && fCollector instanceof IScannerInfoCollector2) {
 			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
 			try {
 				collector.updateScannerConfiguration(null);
@@ -386,7 +386,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	abstract protected boolean processCommand(String[] tokens);
 
-	protected  List<String> getFileExtensionsList() {
+	protected List<String> getFileExtensionsList() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		List<String> extensions = new LinkedList<String>();
 		IContentType cSource = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);

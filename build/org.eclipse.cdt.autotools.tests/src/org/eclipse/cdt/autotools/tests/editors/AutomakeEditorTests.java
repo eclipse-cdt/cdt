@@ -28,29 +28,28 @@ import org.eclipse.ui.PlatformUI;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class AutomakeEditorTests {
-	
+
 	private ProjectTools tools;
 	private IProject project;
-	
+
 	@Before
-    public void setUp() throws Exception {
-        tools = new ProjectTools();
-        if (!ProjectTools.setup())
-        	fail("could not perform basic project workspace setup");
-    }
-	  
+	public void setUp() throws Exception {
+		tools = new ProjectTools();
+		if (!ProjectTools.setup())
+			fail("could not perform basic project workspace setup");
+	}
+
 	@Test
 	public void testAutomakeEditorAssociation() throws Exception {
 		project = ProjectTools.createProject("testProjectAET");
-		
-		if(project == null) {
-            fail("Unable to create test project");
-        }
-		
+
+		if (project == null) {
+			fail("Unable to create test project");
+		}
+
 		project.open(new NullProgressMonitor());
-		
+
 		Display.getDefault().syncExec(() -> {
 			try {
 				IFile makefileAmFile = tools.createFile(project, "Makefile.am", "");

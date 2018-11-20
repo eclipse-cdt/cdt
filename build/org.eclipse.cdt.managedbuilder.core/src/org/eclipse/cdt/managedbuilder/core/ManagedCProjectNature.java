@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +35,7 @@ import org.eclipse.core.runtime.Plugin;
 public class ManagedCProjectNature implements IProjectNature {
 	public static final String BUILDER_NAME = "genmakebuilder"; //$NON-NLS-1$
 	public static final String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
-	public static final String MNG_NATURE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedBuildNature";  //$NON-NLS-1$
+	public static final String MNG_NATURE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedBuildNature"; //$NON-NLS-1$
 	private IProject project;
 
 	/**
@@ -63,7 +62,7 @@ public class ManagedCProjectNature implements IProjectNature {
 				Vector<ICommand> vec = new Vector<ICommand>(Arrays.asList(commands));
 				vec.removeElementAt(i);
 				vec.trimToSize();
-				ICommand[] tempCommands = vec.toArray(new ICommand[commands.length-1]);
+				ICommand[] tempCommands = vec.toArray(new ICommand[commands.length - 1]);
 				description.setBuildSpec(tempCommands);
 				break;
 			}
@@ -73,21 +72,21 @@ public class ManagedCProjectNature implements IProjectNature {
 		boolean found = false;
 		// See if the builder is already there
 		for (int i = 0; i < commands.length; ++i) {
-		   if (commands[i].getBuilderName().equals(getBuilderID())) {
-			  found = true;
-			  break;
-		   }
+			if (commands[i].getBuilderName().equals(getBuilderID())) {
+				found = true;
+				break;
+			}
 		}
 		if (!found) {
-		   //add builder to project
-		   ICommand command = description.newCommand();
-		   command.setBuilderName(getBuilderID());
-		   ICommand[] newCommands = new ICommand[commands.length + 1];
-		   // Add it before other builders.
-		   System.arraycopy(commands, 0, newCommands, 1, commands.length);
-		   newCommands[0] = command;
-		   description.setBuildSpec(newCommands);
-		   project.setDescription(description, null);
+			//add builder to project
+			ICommand command = description.newCommand();
+			command.setBuilderName(getBuilderID());
+			ICommand[] newCommands = new ICommand[commands.length + 1];
+			// Add it before other builders.
+			System.arraycopy(commands, 0, newCommands, 1, commands.length);
+			newCommands[0] = command;
+			description.setBuildSpec(newCommands);
+			project.setDescription(description, null);
 		}
 	}
 
@@ -188,7 +187,6 @@ public class ManagedCProjectNature implements IProjectNature {
 		// Just return the project associated with the nature
 		return project;
 	}
-
 
 	/**
 	 * Utility method to remove the managed nature from a project.

@@ -22,8 +22,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
  */
 public class PDOMCPPGlobalScope extends PDOMGlobalScope implements ICPPNamespaceScope {
 	public static final PDOMCPPGlobalScope INSTANCE = new PDOMCPPGlobalScope();
-	
-	private PDOMCPPGlobalScope() {}
+
+	private PDOMCPPGlobalScope() {
+	}
 
 	@Override
 	public void addUsingDirective(ICPPUsingDirective usingDirective) {

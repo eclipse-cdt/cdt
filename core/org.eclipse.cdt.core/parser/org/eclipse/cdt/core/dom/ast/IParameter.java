@@ -22,8 +22,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IParameter extends IVariable {
-	public static final IParameter [] EMPTY_PARAMETER_ARRAY = {};
-	
+	public static final IParameter[] EMPTY_PARAMETER_ARRAY = {};
+
 	/**
 	 * Inherited from {@link IVariable}, always returns <code>null</code>.
 	 * @since 5.1

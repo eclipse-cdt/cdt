@@ -24,21 +24,21 @@ import org.eclipse.swt.widgets.Composite;
 public interface ICPropertyTab {
 
 	// kinds of message to be sent (and appropriate data class)
-	public static final int OK = 0;    // perform OK (null)
+	public static final int OK = 0; // perform OK (null)
 	public static final int APPLY = 1; // apply changes (IResourceDescription)
 	public static final int CANCEL = 2; // cancel changes (null)
 	public static final int DEFAULTS = 3; // set defaults (null)
-	public static final int UPDATE = 4;  // re-read cfg (IConfiguration)
+	public static final int UPDATE = 4; // re-read cfg (IConfiguration)
 	public static final int VISIBLE = 5; // set visible (not-null means true)
 	public static final int DISPOSE = 6; // dispose (null)    
 	public static final int SET_ICON = 7; // inform tab about its icon (Image)    
-	
+
 	public static final int MAXCOMMON = 100; // values below are common
-	                                         // values above are private
-	// Informs other tabs about changes in managed build settings.
-	// It may result in hiding/showing some tabs or changing their 
-	// contents. Data field is not used (null). 
-	public static final int MANAGEDBUILDSTATE  = MAXCOMMON + 1; 
+												// values above are private
+												// Informs other tabs about changes in managed build settings.
+												// It may result in hiding/showing some tabs or changing their 
+												// contents. Data field is not used (null). 
+	public static final int MANAGEDBUILDSTATE = MAXCOMMON + 1;
 
 	/**
 	 * Creation of all visible elements
@@ -46,7 +46,7 @@ public interface ICPropertyTab {
 	 * @param provider - underlying page 
 	 */
 	public void createControls(Composite parent, ICPropertyProvider provider);
-	
+
 	/**
 	 * Handle events sent by another tabs or pages 
 	 * Most of them are processed in <link>AbstractCPropertyTab</link>
@@ -54,8 +54,8 @@ public interface ICPropertyTab {
 	 * @param kind - message ID (see <link>AbstractCPropertyTab</link>)
 	 * @param data - additional info, depanding of message kind.
 	 */
-	public void handleTabEvent (int kind, Object data);
-	
+	public void handleTabEvent(int kind, Object data);
+
 	/**
 	 * Returns true (by default) if page's contents is correct
 	 * Returns false if page cannot be shown because it does
@@ -63,7 +63,7 @@ public interface ICPropertyTab {
 	 * settings are not possible when managed build is off).
 	 */
 	public boolean canBeVisible();
-	
+
 	//*********************************
 	// TODO: in next version, add :
 	//*********************************

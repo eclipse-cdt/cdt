@@ -25,81 +25,84 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class BinaryPropertySource extends FilePropertySource {
-	
-	private final static String ELF_CPU= "CElementProperties.elf_cpu"; //$NON-NLS-1$
-	private final static String ELF_TEXT= "CElementProperties.elf_text"; //$NON-NLS-1$
-	private final static String ELF_DATA= "CElementProperties.elf_data"; //$NON-NLS-1$
-	private final static String ELF_BSS= "CElementProperties.elf_bss"; //$NON-NLS-1$
-	private final static String ELF_TYPE= "CElementProperties.elf_type"; //$NON-NLS-1$
-	private final static String ELF_HAS_DEBUG= "CElementProperties.elf_has_debug"; //$NON-NLS-1$
-	private final static String ELF_SONAME= "CElementProperties.elf_soname"; //$NON-NLS-1$
-	private final static String ELF_NEEDED= "CElementProperties.elf_needed"; //$NON-NLS-1$
-	
+
+	private final static String ELF_CPU = "CElementProperties.elf_cpu"; //$NON-NLS-1$
+	private final static String ELF_TEXT = "CElementProperties.elf_text"; //$NON-NLS-1$
+	private final static String ELF_DATA = "CElementProperties.elf_data"; //$NON-NLS-1$
+	private final static String ELF_BSS = "CElementProperties.elf_bss"; //$NON-NLS-1$
+	private final static String ELF_TYPE = "CElementProperties.elf_type"; //$NON-NLS-1$
+	private final static String ELF_HAS_DEBUG = "CElementProperties.elf_has_debug"; //$NON-NLS-1$
+	private final static String ELF_SONAME = "CElementProperties.elf_soname"; //$NON-NLS-1$
+	private final static String ELF_NEEDED = "CElementProperties.elf_needed"; //$NON-NLS-1$
+
 	private IBinary binary;
-	
+
 	// Property Descriptors
 	static private IPropertyDescriptor[] fgPropertyDescriptors;
-	
+
 	/**
 	 * Get a PropertyDescriptor that defines the binary properties of an Elf
 	 * @return the PropertyDescriptor
 	 */
 	private static IPropertyDescriptor[] getInitialPropertyDescriptor() {
 		// cpu name
-		String cpuName= CUIPlugin.getResourceString(ELF_CPU);
-		PropertyDescriptor cpuDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_CPU, cpuName);
+		String cpuName = CUIPlugin.getResourceString(ELF_CPU);
+		PropertyDescriptor cpuDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_CPU, cpuName);
 		cpuDescriptor.setAlwaysIncompatible(true);
 		cpuDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
 
 		// elf text
 		String textName = CUIPlugin.getResourceString(ELF_TEXT);
-		PropertyDescriptor textDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TEXT, textName);
+		PropertyDescriptor textDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TEXT, textName);
 		textDescriptor.setAlwaysIncompatible(true);
 		textDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
+
 		// elf data
 		String dataName = CUIPlugin.getResourceString(ELF_DATA);
-		PropertyDescriptor dataDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_DATA, dataName);
+		PropertyDescriptor dataDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_DATA, dataName);
 		dataDescriptor.setAlwaysIncompatible(true);
 		dataDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
+
 		// elf bss
 		String bssName = CUIPlugin.getResourceString(ELF_BSS);
-		PropertyDescriptor bssDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_BSS, bssName);
+		PropertyDescriptor bssDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_BSS, bssName);
 		bssDescriptor.setAlwaysIncompatible(true);
 		bssDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
+
 		// elf type
 		String typeName = CUIPlugin.getResourceString(ELF_TYPE);
-		PropertyDescriptor typeDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TYPE, typeName);
+		PropertyDescriptor typeDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TYPE, typeName);
 		typeDescriptor.setAlwaysIncompatible(true);
 		typeDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
+
 		// elf needed
 		String neededName = CUIPlugin.getResourceString(ELF_NEEDED);
-		PropertyDescriptor neededDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_NEEDED, neededName);
+		PropertyDescriptor neededDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_NEEDED,
+				neededName);
 		neededDescriptor.setAlwaysIncompatible(true);
 		neededDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
+
 		// elf soname
 		String sonameName = CUIPlugin.getResourceString(ELF_SONAME);
-		PropertyDescriptor sonameDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_SONAME, sonameName);
+		PropertyDescriptor sonameDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_SONAME,
+				sonameName);
 		sonameDescriptor.setAlwaysIncompatible(true);
 		sonameDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
+
 		// elf debug
 		String debugName = CUIPlugin.getResourceString(ELF_HAS_DEBUG);
-		PropertyDescriptor debugDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_HAS_DEBUG, debugName);
+		PropertyDescriptor debugDescriptor = new PropertyDescriptor(ICElementPropertyConstants.P_ELF_HAS_DEBUG,
+				debugName);
 		debugDescriptor.setAlwaysIncompatible(true);
 		debugDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
-		
-		return new IPropertyDescriptor[] { cpuDescriptor, textDescriptor, dataDescriptor,
-			bssDescriptor, typeDescriptor, sonameDescriptor, debugDescriptor, neededDescriptor };
+
+		return new IPropertyDescriptor[] { cpuDescriptor, textDescriptor, dataDescriptor, bssDescriptor, typeDescriptor,
+				sonameDescriptor, debugDescriptor, neededDescriptor };
 	}
-	
+
 	public BinaryPropertySource(IBinary bin) {
-		super((IFile)bin.getResource());
-		binary= bin;
+		super((IFile) bin.getResource());
+		binary = bin;
 	}
 
 	/**
@@ -115,12 +118,12 @@ public class BinaryPropertySource extends FilePropertySource {
 
 	/**
 	 * @see IPropertySource#getPropertyValue
-	 */	
+	 */
 	@Override
 	public Object getPropertyValue(Object name) {
 		if (element != null) {
 			Object returnValue = super.getPropertyValue(name);
-			if(returnValue != null) {
+			if (returnValue != null) {
 				return returnValue;
 			}
 		}
@@ -137,7 +140,7 @@ public class BinaryPropertySource extends FilePropertySource {
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_SONAME)) {
 			return binary.getSoname();
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_HAS_DEBUG)) {
-			 if (binary.hasDebug()) {
+			if (binary.hasDebug()) {
 				return "true";//$NON-NLS-1$
 			}
 			return "false";//$NON-NLS-1$

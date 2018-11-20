@@ -99,16 +99,19 @@ public class MakeCorePlugin extends Plugin {
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
 
 	public static final String EXTERNAL_SI_PROVIDER_SIMPLE_ID = "ExternalScannerInfoProvider"; //$NON-NLS-1$
-	public static final String SI_CONSOLE_PARSER_SIMPLE_ID = "ScannerInfoConsoleParser";	//$NON-NLS-1$
-	public static final String DEFAULT_EXTERNAL_SI_PROVIDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".DefaultExternalScannerInfoProvider"; //$NON-NLS-1$
+	public static final String SI_CONSOLE_PARSER_SIMPLE_ID = "ScannerInfoConsoleParser"; //$NON-NLS-1$
+	public static final String DEFAULT_EXTERNAL_SI_PROVIDER_ID = MakeCorePlugin.getUniqueIdentifier()
+			+ ".DefaultExternalScannerInfoProvider"; //$NON-NLS-1$
 
-	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCSpecsConsoleParser"; //$NON-NLS-1$
-	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
+	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier()
+			+ ".GCCSpecsConsoleParser"; //$NON-NLS-1$
+	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier()
+			+ ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
 
 	public static final String MAKEFILE_STYLE = PLUGIN_ID + ".editor_makefile_style"; //$NON-NLS-1$
 	public static final String MAKEFILE_DIRS = PLUGIN_ID + ".editor_makefile_dirs"; //$NON-NLS-1$
 
-	public static final String CFG_DATA_PROVIDER_ID =  PLUGIN_ID + ".configurationDataProvider"; //$NON-NLS-1$
+	public static final String CFG_DATA_PROVIDER_ID = PLUGIN_ID + ".configurationDataProvider"; //$NON-NLS-1$
 	private MakeTargetManager fTargetManager;
 	private DiscoveredPathManager fDiscoveryPathManager;
 	//The shared instance.
@@ -165,7 +168,7 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	public IMakeTargetManager getTargetManager() {
-		if ( fTargetManager == null) {
+		if (fTargetManager == null) {
 			fTargetManager = new MakeTargetManager();
 			fTargetManager.startup();
 		}
@@ -217,18 +220,19 @@ public class MakeCorePlugin extends Plugin {
 		return makefile;
 	}
 
-	public static IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs) throws CoreException {
+	public static IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs)
+			throws CoreException {
 		return createMakefile(file.toURI(), isGnuStyle, makefileDirs, (String) null);
 	}
 
-	static IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs, String encoding) throws CoreException {
+	static IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs, String encoding)
+			throws CoreException {
 		return createMakefile(file.toURI(), isGnuStyle, makefileDirs, encoding);
 	}
 
 	static IMakefile createMakefile(URI fileURI, boolean isGnuStyle, String[] makefileDirs, String encoding) {
 		return createMakefile(fileURI, isGnuStyle, makefileDirs, new FileStoreReaderProvider(encoding));
 	}
-
 
 	/**
 	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
@@ -237,8 +241,8 @@ public class MakeCorePlugin extends Plugin {
 	 * @param fileURI URI of main file
 	 * @param makefileReaderProvider may be <code>null</code> for EFS IFileStore reading
 	 */
-	public static IMakefile createMakefile(URI fileURI,
-			boolean isGnuStyle, String[] makefileDirs, IMakefileReaderProvider makefileReaderProvider) {
+	public static IMakefile createMakefile(URI fileURI, boolean isGnuStyle, String[] makefileDirs,
+			IMakefileReaderProvider makefileReaderProvider) {
 		IMakefile makefile;
 		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
@@ -274,13 +278,14 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	public IMakefile createMakefile(IFile file) throws CoreException {
-		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs(), file.getCharset());
+		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs(),
+				file.getCharset());
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			if ( fTargetManager != null) {
+			if (fTargetManager != null) {
 				fTargetManager.shutdown();
 				fTargetManager = null;
 			}
@@ -298,18 +303,17 @@ public class MakeCorePlugin extends Plugin {
 	 * Following methods create IScannerConfigBuilderInfo
 	 * Delegating requests to ScannerConfigInfoFactory
 	 */
-	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
-			Preferences prefs, String builderID, boolean useDefaults) {
+	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(Preferences prefs, String builderID,
+			boolean useDefaults) {
 		return ScannerConfigInfoFactory.create(prefs, builderID, useDefaults);
 	}
 
-	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
-			IProject project, String builderID) throws CoreException {
+	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(IProject project, String builderID)
+			throws CoreException {
 		return ScannerConfigInfoFactory.create(project, builderID);
 	}
 
-	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
-			Map<String, String> args, String builderID) {
+	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(Map<String, String> args, String builderID) {
 		return ScannerConfigInfoFactory.create(args, builderID);
 	}
 
@@ -318,7 +322,7 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	public IDiscoveredPathManager getDiscoveryManager() {
-		if ( fDiscoveryPathManager == null) {
+		if (fDiscoveryPathManager == null) {
 			fDiscoveryPathManager = new DiscoveredPathManager();
 			fDiscoveryPathManager.startup();
 		}
@@ -331,7 +335,8 @@ public class MakeCorePlugin extends Plugin {
 	 */
 	public IExternalScannerInfoProvider getExternalScannerInfoProvider(String id) {
 		try {
-	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, EXTERNAL_SI_PROVIDER_SIMPLE_ID);
+			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID,
+					EXTERNAL_SI_PROVIDER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
@@ -341,15 +346,15 @@ public class MakeCorePlugin extends Plugin {
 						for (int j = 0; j < configElements.length; j++) {
 							IConfigurationElement[] runElement = configElements[j].getChildren("run"); //$NON-NLS-1$
 							if (runElement.length > 0) {
-								IExternalScannerInfoProvider builder = (IExternalScannerInfoProvider) runElement[0].createExecutableExtension("class"); //$NON-NLS-1$
+								IExternalScannerInfoProvider builder = (IExternalScannerInfoProvider) runElement[0]
+										.createExecutableExtension("class"); //$NON-NLS-1$
 								return builder;
 							}
 						}
 					}
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			log(e);
 		}
 		return null;
@@ -361,9 +366,10 @@ public class MakeCorePlugin extends Plugin {
 	public String[] getScannerInfoConsoleParserIds(String commandId) {
 		String[] empty = new String[0];
 		if (commandId == null || commandId.length() == 0) {
-			commandId = "all";	//$NON-NLS-1$
+			commandId = "all"; //$NON-NLS-1$
 		}
-        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, SI_CONSOLE_PARSER_SIMPLE_ID);
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID,
+				SI_CONSOLE_PARSER_SIMPLE_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			List<String> parserIds = new ArrayList<String>(extensions.length);
@@ -372,7 +378,7 @@ public class MakeCorePlugin extends Plugin {
 				if (parserId != null) {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					String id = configElements[0].getAttribute("commandId");//$NON-NLS-1$
-					if (id != null && (id.equals(commandId) || id.equals("all"))) {	//$NON-NLS-1$
+					if (id != null && (id.equals(commandId) || id.equals("all"))) { //$NON-NLS-1$
 						parserIds.add(parserId);
 					}
 				}
@@ -387,20 +393,21 @@ public class MakeCorePlugin extends Plugin {
 	 */
 	public IScannerInfoConsoleParser getScannerInfoConsoleParser(String parserId) {
 		try {
-	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, SI_CONSOLE_PARSER_SIMPLE_ID);
+			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID,
+					SI_CONSOLE_PARSER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
 					String id = extensions[i].getUniqueIdentifier();
 					if (id != null && id.equals(parserId)) {
 						IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-						IScannerInfoConsoleParser parser = (IScannerInfoConsoleParser)configElements[0].createExecutableExtension("class");//$NON-NLS-1$
+						IScannerInfoConsoleParser parser = (IScannerInfoConsoleParser) configElements[0]
+								.createExecutableExtension("class");//$NON-NLS-1$
 						return parser;
 					}
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			log(e);
 		}
 		return null;
@@ -415,11 +422,12 @@ public class MakeCorePlugin extends Plugin {
 
 		//Set debug tracing options
 		configurePluginDebugOptions();
-        // Scanner config discovery setup
-        GCCScannerConfigUtil.createSpecs();
+		// Scanner config discovery setup
+		GCCScannerConfigUtil.createSpecs();
 	}
 
 	private static final String SCANNER_CONFIG = MakeCorePlugin.getUniqueIdentifier() + "/debug/scdiscovery"; //$NON-NLS-1$
+
 	/**
 	 *
 	 */
@@ -427,7 +435,7 @@ public class MakeCorePlugin extends Plugin {
 		if (isDebugging()) {
 			String option = Platform.getDebugOption(SCANNER_CONFIG);
 			if (option != null) {
-				TraceUtil.SCANNER_CONFIG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+				TraceUtil.SCANNER_CONFIG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			}
 		}
 	}

@@ -25,12 +25,9 @@ public class TestValueHandler extends ManagedOptionValueHandler {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler#handleValue(IConfiguration,IToolChain,IOption,String,int)
 	 */
 	@Override
-	public boolean handleValue(IBuildObject configuration, 
-                   IHoldsOptions holder, 
-                   IOption option,
-                   String extraArgument, int event)
-	{
+	public boolean handleValue(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument,
+			int event) {
 		// The event was not handled, thus return false
 		return false;
-	}	
+	}
 }

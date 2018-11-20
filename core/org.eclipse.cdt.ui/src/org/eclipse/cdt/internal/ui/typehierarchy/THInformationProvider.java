@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -26,7 +26,7 @@ public class THInformationProvider implements IInformationProviderExtension, IIn
 	private ITextEditor fEditor;
 
 	public THInformationProvider(ITextEditor editor) {
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	@Override

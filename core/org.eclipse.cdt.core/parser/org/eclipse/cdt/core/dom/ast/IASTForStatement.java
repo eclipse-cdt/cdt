@@ -42,22 +42,22 @@ public interface IASTForStatement extends IASTStatement {
 	public static final ASTNodeProperty BODY = new ASTNodeProperty(
 			"IASTForStatement.BODY - IASTStatement body of IASTForStatement"); //$NON-NLS-1$
 
-    /**
-     * {@code INITIALIZER} represents the relationship between a {@code IASTForStatement} and
-     * its {@code IASTDeclaration} initializer.
-     */
-    public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-            "IASTForStatement.INITIALIZER - initializer for IASTForStatement"); //$NON-NLS-1$
+	/**
+	 * {@code INITIALIZER} represents the relationship between a {@code IASTForStatement} and
+	 * its {@code IASTDeclaration} initializer.
+	 */
+	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
+			"IASTForStatement.INITIALIZER - initializer for IASTForStatement"); //$NON-NLS-1$
 
-    /**
-     * Returns the initializer statement.
-     */
-    public IASTStatement getInitializerStatement();
-    
-    /**
-     * @param statement
-     */
-    public void setInitializerStatement(IASTStatement statement);
+	/**
+	 * Returns the initializer statement.
+	 */
+	public IASTStatement getInitializerStatement();
+
+	/**
+	 * @param statement
+	 */
+	public void setInitializerStatement(IASTStatement statement);
 
 	/**
 	 * Returns the condition expression for the loop.
@@ -107,7 +107,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * @return {@code IScope}
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

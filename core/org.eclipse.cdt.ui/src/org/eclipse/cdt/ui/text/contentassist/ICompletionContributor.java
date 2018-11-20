@@ -42,11 +42,7 @@ public interface ICompletionContributor {
 	 * proposals to this list.
 	 */
 	@SuppressWarnings("rawtypes") // no need to change, it's deprecated
-	void contributeCompletionProposals(ITextViewer viewer,
-									   int offset,
-									   IWorkingCopy workingCopy,
-									   ASTCompletionNode completionNode,
-                                       String prefix,
-									   List proposals);
-	
+	void contributeCompletionProposals(ITextViewer viewer, int offset, IWorkingCopy workingCopy,
+			ASTCompletionNode completionNode, String prefix, List proposals);
+
 }

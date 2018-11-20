@@ -47,7 +47,7 @@ public class ExtractFunctionAction extends RefactoringAction {
 		}
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
 		super.updateSelection(elem);
 		setEnabled(false);

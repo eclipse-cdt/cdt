@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -34,6 +33,5 @@ public class RedebugSelectedAction extends RelaunchSelectedAction {
 	protected String getLaunchMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
-	
-}
 
+}

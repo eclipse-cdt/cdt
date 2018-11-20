@@ -55,7 +55,7 @@ public class CoreBuildGenericLaunchConfigDelegate extends CoreBuildLaunchConfigD
 			}
 			location = substLocation;
 		}
-		
+
 		if (!new File(location).canExecute()) {
 			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID,
 					String.format(Messages.CoreBuildGenericLaunchConfigDelegate_CommandNotValid, location)));

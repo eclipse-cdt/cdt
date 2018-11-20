@@ -56,172 +56,172 @@ import org.eclipse.debug.core.model.MemoryByte;
  * 
  * @since 1.0
  */
-public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicyProvider
-{
+public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicyProvider {
 	private final static String UPDATE_POLICY_AUTOMATIC = "Automatic"; //$NON-NLS-1$
 	private final static String UPDATE_POLICY_MANUAL = "Manual"; //$NON-NLS-1$
 	private final static String UPDATE_POLICY_BREAKPOINT = "On Breakpoint"; //$NON-NLS-1$
-	
+
 	private final IMemoryDMContext fContext;
-    private final ILaunch fLaunch;
-    private final IDebugTarget fDebugTarget;
-    private final DsfMemoryBlockRetrieval fRetrieval;
-    private final String fModelId;
-    private final String fExpression;
-    private final BigInteger fBaseAddress;
+	private final ILaunch fLaunch;
+	private final IDebugTarget fDebugTarget;
+	private final DsfMemoryBlockRetrieval fRetrieval;
+	private final String fModelId;
+	private final String fExpression;
+	private final BigInteger fBaseAddress;
 
-    private BigInteger fBlockAddress;
-    private int fLength;
-    private int fWordSize;
-    private MemoryByte[] fBlock;
-    
-    private String fUpdatePolicy = UPDATE_POLICY_AUTOMATIC;
-    
-    private ArrayList<Object> fConnections = new ArrayList<Object>();
+	private BigInteger fBlockAddress;
+	private int fLength;
+	private int fWordSize;
+	private MemoryByte[] fBlock;
 
-    @SuppressWarnings("unused")
+	private String fUpdatePolicy = UPDATE_POLICY_AUTOMATIC;
+
+	private ArrayList<Object> fConnections = new ArrayList<Object>();
+
+	@SuppressWarnings("unused")
 	private boolean isEnabled;
 
-    /**
-     * Constructor.
-     * 
-     * @param retrieval    - the MemoryBlockRetrieval (session context)
-     * @param modelId      - 
-     * @param expression   - the displayed expression in the UI
-     * @param address      - the actual memory block start address
-     * @param word_size    - the number of bytes per address
-     * @param length       - the requested block length (could be 0)
-     * @since 2.1
-     */
-    protected DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context, String modelId, String expression, BigInteger address, int word_size, long length) {
-    	fLaunch      = retrieval.getLaunch();
-    	fDebugTarget = retrieval.getDebugTarget();
-        fRetrieval   = retrieval;
-        fContext     = context;
-        fModelId     = modelId;
-        fExpression  = expression;
-        fBaseAddress = address;
+	/**
+	 * Constructor.
+	 * 
+	 * @param retrieval    - the MemoryBlockRetrieval (session context)
+	 * @param modelId      - 
+	 * @param expression   - the displayed expression in the UI
+	 * @param address      - the actual memory block start address
+	 * @param word_size    - the number of bytes per address
+	 * @param length       - the requested block length (could be 0)
+	 * @since 2.1
+	 */
+	protected DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context, String modelId,
+			String expression, BigInteger address, int word_size, long length) {
+		fLaunch = retrieval.getLaunch();
+		fDebugTarget = retrieval.getDebugTarget();
+		fRetrieval = retrieval;
+		fContext = context;
+		fModelId = modelId;
+		fExpression = expression;
+		fBaseAddress = address;
 
-        // Current block information
-        fBlockAddress = address;
-        fWordSize     = word_size;
-        fLength       = (int) length;
-        fBlock        = null;
+		// Current block information
+		fBlockAddress = address;
+		fWordSize = word_size;
+		fLength = (int) length;
+		fBlock = null;
 
-        try {
-            fRetrieval.getExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    fRetrieval.getSession().addServiceEventListener(DsfMemoryBlock.this, null);
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session is shut down.
-        }
-    }
+		try {
+			fRetrieval.getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					fRetrieval.getSession().addServiceEventListener(DsfMemoryBlock.this, null);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session is shut down.
+		}
+	}
 
-    // ////////////////////////////////////////////////////////////////////////
-    // IAdaptable
-    // ////////////////////////////////////////////////////////////////////////
+	// ////////////////////////////////////////////////////////////////////////
+	// IAdaptable
+	// ////////////////////////////////////////////////////////////////////////
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-    public Object getAdapter(Class adapter) {
-        if (adapter.isAssignableFrom(DsfMemoryBlockRetrieval.class)) {
-            return fRetrieval;
-        }
-        if (adapter.isAssignableFrom(IMemoryDMContext.class)) {
-          return getContext();
-        }
-        return super.getAdapter(adapter);
-    }
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(DsfMemoryBlockRetrieval.class)) {
+			return fRetrieval;
+		}
+		if (adapter.isAssignableFrom(IMemoryDMContext.class)) {
+			return getContext();
+		}
+		return super.getAdapter(adapter);
+	}
 
-    // ////////////////////////////////////////////////////////////////////////
-    // IDebugElement
-    // ////////////////////////////////////////////////////////////////////////
+	// ////////////////////////////////////////////////////////////////////////
+	// IDebugElement
+	// ////////////////////////////////////////////////////////////////////////
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-     */
-    @Override
-    public IDebugTarget getDebugTarget() {
-        return fDebugTarget;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
+	 */
+	@Override
+	public IDebugTarget getDebugTarget() {
+		return fDebugTarget;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
-     */
-    @Override
-    public String getModelIdentifier() {
-        return fModelId;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-     */
-    @Override
-    public ILaunch getLaunch() {
-        return fLaunch;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
+	 */
+	@Override
+	public String getModelIdentifier() {
+		return fModelId;
+	}
 
-    // ////////////////////////////////////////////////////////////////////////
-    // IMemoryBock interface - obsoleted by IMemoryBlockExtension
-    // ////////////////////////////////////////////////////////////////////////
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
+	 */
+	@Override
+	public ILaunch getLaunch() {
+		return fLaunch;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
-     */
-    @Override
-    public long getStartAddress() {
-    	// Not implemented (obsolete)
-    	return 0;
-    }
+	// ////////////////////////////////////////////////////////////////////////
+	// IMemoryBock interface - obsoleted by IMemoryBlockExtension
+	// ////////////////////////////////////////////////////////////////////////
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
-     */
-    @Override
-    public long getLength() {
-    	// Not implemented (obsolete)
-        return 0;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
+	 */
+	@Override
+	public long getStartAddress() {
+		// Not implemented (obsolete)
+		return 0;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
-     */
-    @Override
-    public byte[] getBytes() throws DebugException {
-    	// Not implemented (obsolete)
-    	return new byte[0];
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
+	 */
+	@Override
+	public long getLength() {
+		// Not implemented (obsolete)
+		return 0;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
-     */
-    @Override
-    public boolean supportsValueModification() {
-    	return fRetrieval.supportsValueModification();
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
+	 */
+	@Override
+	public byte[] getBytes() throws DebugException {
+		// Not implemented (obsolete)
+		return new byte[0];
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
-     */
-    @Override
-    public void setValue(long offset, byte[] bytes) throws DebugException {
-    	// Not implemented (obsolete)
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
+	 */
+	@Override
+	public boolean supportsValueModification() {
+		return fRetrieval.supportsValueModification();
+	}
 
-    // ////////////////////////////////////////////////////////////////////////
-    // IMemoryBlockExtension interface
-    // ////////////////////////////////////////////////////////////////////////
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
+	 */
+	@Override
+	public void setValue(long offset, byte[] bytes) throws DebugException {
+		// Not implemented (obsolete)
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	// IMemoryBlockExtension interface
+	// ////////////////////////////////////////////////////////////////////////
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getExpression()
 	 */
-    @Override
+	@Override
 	public String getExpression() {
 		return fExpression;
 	}
@@ -229,15 +229,15 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigBaseAddress()
 	 */
-    @Override
+	@Override
 	public BigInteger getBigBaseAddress() throws DebugException {
-        return fBaseAddress;
+		return fBaseAddress;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockStartAddress()
 	 */
-    @Override
+	@Override
 	public BigInteger getMemoryBlockStartAddress() throws DebugException {
 		// Null indicates that memory can be retrieved at addresses lower than the block base address
 		return null;
@@ -246,7 +246,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockEndAddress()
 	 */
-    @Override
+	@Override
 	public BigInteger getMemoryBlockEndAddress() throws DebugException {
 		// Null indicates that memory can be retrieved at addresses higher the block base address
 		return null;
@@ -255,7 +255,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigLength()
 	 */
-    @Override
+	@Override
 	public BigInteger getBigLength() throws DebugException {
 		// -1 indicates that memory block is unbounded
 		return BigInteger.valueOf(-1);
@@ -264,7 +264,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressSize()
 	 */
-    @Override
+	@Override
 	public int getAddressSize() throws DebugException {
 		return fRetrieval.getAddressSize();
 	}
@@ -272,7 +272,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportBaseAddressModification()
 	 */
-    @Override
+	@Override
 	public boolean supportBaseAddressModification() throws DebugException {
 		return fRetrieval.supportBaseAddressModification();
 	}
@@ -280,7 +280,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
 	 */
-    @Override
+	@Override
 	public boolean supportsChangeManagement() {
 		return true;
 	}
@@ -288,7 +288,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setBaseAddress(java.math.BigInteger)
 	 */
-    @Override
+	@Override
 	public void setBaseAddress(BigInteger address) throws DebugException {
 		fBlockAddress = address;
 	}
@@ -296,26 +296,25 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(java.math.BigInteger, long)
 	 */
-    @Override
+	@Override
 	public MemoryByte[] getBytesFromOffset(BigInteger offset, long units) throws DebugException {
 		return getBytesFromAddress(fBlockAddress.add(offset), units);
 	}
-	
+
 	private boolean fUseCachedData = false;
-	
-    @Override
+
+	@Override
 	public void clearCache() {
 		fUseCachedData = false;
 	}
-	
-	@DsfServiceEventHandler 
-    public void handleCacheSuspendEvent(IRunControl.ISuspendedDMEvent e) {
+
+	@DsfServiceEventHandler
+	public void handleCacheSuspendEvent(IRunControl.ISuspendedDMEvent e) {
 		if (e.getReason() == StateChangeReason.BREAKPOINT)
 			fUseCachedData = false;
 	}
-	
-	private boolean isUseCacheData()
-	{
+
+	private boolean isUseCacheData() {
 		if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
 			return fUseCachedData;
 
@@ -324,210 +323,208 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 		return false;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
-     */
-    @SuppressWarnings("null")
-    @Override
-    public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
+	 */
+	@SuppressWarnings("null")
+	@Override
+	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
 
 		int addressableSize = 1;
 		try {
 			addressableSize = getAddressableSize();
-		} catch (DebugException e) {}
-		
-        if (isUseCacheData() && fBlockAddress.compareTo(address) == 0 && units * addressableSize <= fBlock.length)
-            return fBlock;
-        
-        MemoryByte[] newBlock = fetchMemoryBlock(address, units);
-        int newLength = (newBlock != null) ? newBlock.length : 0;
+		} catch (DebugException e) {
+		}
 
-        // If the retrieved block overlaps with the cached block, flag the changed bytes
-        // so they can be properly highlighted in the platform Memory view. 
-        // Note: In the standard Memory view, the values are displayed in cells of 4 bytes
-        // (on 4-bytes address boundaries) and all 4 bytes have to be flagged so the
-        // cell is highlighted (and the delta sigh is shown).
-        if (fBlock != null && newLength > 0) {
-            switch (fBlockAddress.compareTo(address))    {
-                // case : Cached block begins before the retrieved block location
-                //          
-                //          <--- fLength -------------------------------------------------->
-                //          +--------------------------------------------------------------+
-                //          | Cached data from previous retrieve                           |
-                //          |                                                              |
-                //          |     <------------------ length ----------------------->      |
-                //          |     +-------------------------------------------------+      |
-                //          |     |<----------------- newLength ------------------->|      |
-                //          |     |          Newly retrieved data                   |      |
-                //          |<-+->+-------------------------------------------------+      |
-                //          |  |   address                                                 |
-                //          |  |                                                           |
-                //          |  +--- bigDistance/distance                                   |
-                //          |                                                              |
-                //          |     <------------------ length ----------------------------->|
-                //          |     +--------------------------------------------------------+
-                //          |     |<----------------- newLength -------------------------->|
-                //          |     |          Newly retrieved data                          |
-                //          |<-+->+--------------------------------------------------------+
-                //          |  |   address                                                 |
-                //          |  |                                                           |
-                //          |  +--- bigDistance/distance                                   |
-                //          |                                                              |
-                //          |     <------------------ length ----------------------------->|
-                //          |     +---------------------------------------------------------------+
-                //          |     |<----------------- newLength --------------------------------->|
-                //          |     |          Newly retrieved data                                 |
-                //          |<-+->+---------------------------------------------------------------+
-                //          |  |   address                                                 |
-                //          |  |                                                           |
-                //          |  +--- bigDistance/distance                                   |
-                //          |                                                              |
-                //          +--------------------------------------------------------------+
-                //          fBlockAddress
-                case -1:
-                {
-                    // Determine the distance between the cached and the requested block addresses
-                	// If the distance does not exceed the length of the cached block,  then there 
-                	// is some overlap between the blocks and we have to mark the changed bytes.
-                    BigInteger bigDistance = address.subtract(fBlockAddress).multiply(BigInteger.valueOf(addressableSize));
-                    if (bigDistance.compareTo(BigInteger.valueOf(fLength)) == -1) {
-                    	// Calculate the length of the data we are going to examine/update
-                        int distance = bigDistance.intValue(); 
-                        int length   = fLength - distance;
-                        if ( length > newLength ) {
-                            length = newLength;
-                        }
+		if (isUseCacheData() && fBlockAddress.compareTo(address) == 0 && units * addressableSize <= fBlock.length)
+			return fBlock;
 
-                        // Process each cell, updating the status and history/change
-                        for (int i = 0; i < length; i++) {
-                        	if ( i < newLength ) {
-                        		newBlock[i].setFlags(fBlock[distance + i].getFlags());
-                    			newBlock[i].setHistoryKnown(true);
-                        		if (newBlock[i].getValue() != fBlock[distance + i].getValue()) {
-                        			newBlock[i].setChanged(true);
-                        		}
-                        	}
-                        }
-                    }
-                    break;
-                }
+		MemoryByte[] newBlock = fetchMemoryBlock(address, units);
+		int newLength = (newBlock != null) ? newBlock.length : 0;
 
-                // The cached block starts at the same address as the retrieved data
-                // or it starts after the retrieved block and the retrieved block runs
-                // in to it.
-                //
-                // Case 0:
-                //          <--- fLength -------------------------------------------------->
-                //          +--------------------------------------------------------------+
-                //          | Cached data from previous retrieve                           |
-                //          |                                                              |
-                //          |<-- length ---------------->                                  |
-                //          +---------------------------+                                  |
-                //          |<-- newLength ------------>|                                  |
-                //          | Newly retrieve data       |                                  |
-                //          +---------------------------+                                  |
-                //          |address                                                       |
-                //          |                                                              |
-                //          |<--------------------- length ------------------------------->|
-                //          +--------------------------------------------------------------+
-                //          |<--------------------- newLength ---------------------------->|
-                //          | Newly retrieve data                                          |
-                //          +--------------------------------------------------------------+
-                //          |address                                                       |
-                //          |                                                              |
-                //          +--------------------------------------------------------------+
-                //          fBlockAddress
-                //          bigDistance/distance = 0
-                //
-                // Case 1:
-                //          <--- fLength -------------------------------------------------->
-                //          +--------------------------------------------------------------+
-                //          | Cached data from previous retrieve                           |
-                //          |                                                              |
-                //          |<-- length ----->                                             |
-                //   +-----------------------+                                             |
-                //   |<----- newLength ----->|                                             |
-                //   | Newly retrieved data  |                                             |
-                //   +-----------------------+                                             |
-                //   address|                                                              |
-                //          |                                                              |
-                //          |<----------------------- length ----------------------------->|
-                //   +---------------------------------------------------------------------+
-                //   |<------------------------------ newLength -------------------------->|
-                //   | Newly retrieved data                                                |
-                //   +---------------------------------------------------------------------+
-                //   address|                                                              |
-                //          |                                                              |
-                //          |<----------------------- length ----------------------------->|
-                //   +---------------------------------------------------------------------------+
-                //   |<------------------------------ newLength -------------------------------->|
-                //   | Newly retrieved data                                                      |
-                //   +---------------------------------------------------------------------------+
-                //   address|                                                              |
-                //   <--+-->|                                                              |
-                //      |   +--------------------------------------------------------------+
-                //      |   fBlockAddress
-                //      +---bigDistance/distance
-                case 0:
-                case 1:
-                {
-                    // Determine the distance between the requested block  and the cache block
-                	// If the distance does not exceed the length of the new block, then there
-                	// is some overlap between the blocks and we have to update the blanks and
-                	// possibly note they are changed.
-                    BigInteger bigDistance = fBlockAddress.subtract(address).multiply(BigInteger.valueOf(addressableSize));
-                    if (bigDistance.compareTo(BigInteger.valueOf(newLength)) == -1) {
-                        // Calculate the length of the data we are going to examine/update
-                        int distance = bigDistance.intValue(); 
-                        int length   = newLength - distance;
-                        if ( length > fBlock.length ) {
-                            length = fBlock.length;
-                        }
+		// If the retrieved block overlaps with the cached block, flag the changed bytes
+		// so they can be properly highlighted in the platform Memory view. 
+		// Note: In the standard Memory view, the values are displayed in cells of 4 bytes
+		// (on 4-bytes address boundaries) and all 4 bytes have to be flagged so the
+		// cell is highlighted (and the delta sigh is shown).
+		if (fBlock != null && newLength > 0) {
+			switch (fBlockAddress.compareTo(address)) {
+			// case : Cached block begins before the retrieved block location
+			//          
+			//          <--- fLength -------------------------------------------------->
+			//          +--------------------------------------------------------------+
+			//          | Cached data from previous retrieve                           |
+			//          |                                                              |
+			//          |     <------------------ length ----------------------->      |
+			//          |     +-------------------------------------------------+      |
+			//          |     |<----------------- newLength ------------------->|      |
+			//          |     |          Newly retrieved data                   |      |
+			//          |<-+->+-------------------------------------------------+      |
+			//          |  |   address                                                 |
+			//          |  |                                                           |
+			//          |  +--- bigDistance/distance                                   |
+			//          |                                                              |
+			//          |     <------------------ length ----------------------------->|
+			//          |     +--------------------------------------------------------+
+			//          |     |<----------------- newLength -------------------------->|
+			//          |     |          Newly retrieved data                          |
+			//          |<-+->+--------------------------------------------------------+
+			//          |  |   address                                                 |
+			//          |  |                                                           |
+			//          |  +--- bigDistance/distance                                   |
+			//          |                                                              |
+			//          |     <------------------ length ----------------------------->|
+			//          |     +---------------------------------------------------------------+
+			//          |     |<----------------- newLength --------------------------------->|
+			//          |     |          Newly retrieved data                                 |
+			//          |<-+->+---------------------------------------------------------------+
+			//          |  |   address                                                 |
+			//          |  |                                                           |
+			//          |  +--- bigDistance/distance                                   |
+			//          |                                                              |
+			//          +--------------------------------------------------------------+
+			//          fBlockAddress
+			case -1: {
+				// Determine the distance between the cached and the requested block addresses
+				// If the distance does not exceed the length of the cached block,  then there 
+				// is some overlap between the blocks and we have to mark the changed bytes.
+				BigInteger bigDistance = address.subtract(fBlockAddress).multiply(BigInteger.valueOf(addressableSize));
+				if (bigDistance.compareTo(BigInteger.valueOf(fLength)) == -1) {
+					// Calculate the length of the data we are going to examine/update
+					int distance = bigDistance.intValue();
+					int length = fLength - distance;
+					if (length > newLength) {
+						length = newLength;
+					}
 
-                        // Process each cell, updating the status and history/change
-                        for (int i = 0; i < length; i++) {
-                        	if ( (distance + i) < newLength ) {
-                        		newBlock[distance + i].setFlags(fBlock[i].getFlags());
-                    			newBlock[distance + i].setHistoryKnown(true);
-                        		if (newBlock[distance + i].getValue() != fBlock[i].getValue()) {
-                        			newBlock[distance + i].setChanged(true);
-                        		}
-                        	}
-                        }
-                    }
-                    break;
-                }
-            }
-        }
+					// Process each cell, updating the status and history/change
+					for (int i = 0; i < length; i++) {
+						if (i < newLength) {
+							newBlock[i].setFlags(fBlock[distance + i].getFlags());
+							newBlock[i].setHistoryKnown(true);
+							if (newBlock[i].getValue() != fBlock[distance + i].getValue()) {
+								newBlock[i].setChanged(true);
+							}
+						}
+					}
+				}
+				break;
+			}
 
-        // Update the internal state
-        fBlock        = newBlock;
-        fBlockAddress = address;
-        fLength       = newLength;
-        
-        if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT)) {
-            fUseCachedData = true;
-        } 
-        else if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL)) {
-            fUseCachedData = true;
-        }
+			// The cached block starts at the same address as the retrieved data
+			// or it starts after the retrieved block and the retrieved block runs
+			// in to it.
+			//
+			// Case 0:
+			//          <--- fLength -------------------------------------------------->
+			//          +--------------------------------------------------------------+
+			//          | Cached data from previous retrieve                           |
+			//          |                                                              |
+			//          |<-- length ---------------->                                  |
+			//          +---------------------------+                                  |
+			//          |<-- newLength ------------>|                                  |
+			//          | Newly retrieve data       |                                  |
+			//          +---------------------------+                                  |
+			//          |address                                                       |
+			//          |                                                              |
+			//          |<--------------------- length ------------------------------->|
+			//          +--------------------------------------------------------------+
+			//          |<--------------------- newLength ---------------------------->|
+			//          | Newly retrieve data                                          |
+			//          +--------------------------------------------------------------+
+			//          |address                                                       |
+			//          |                                                              |
+			//          +--------------------------------------------------------------+
+			//          fBlockAddress
+			//          bigDistance/distance = 0
+			//
+			// Case 1:
+			//          <--- fLength -------------------------------------------------->
+			//          +--------------------------------------------------------------+
+			//          | Cached data from previous retrieve                           |
+			//          |                                                              |
+			//          |<-- length ----->                                             |
+			//   +-----------------------+                                             |
+			//   |<----- newLength ----->|                                             |
+			//   | Newly retrieved data  |                                             |
+			//   +-----------------------+                                             |
+			//   address|                                                              |
+			//          |                                                              |
+			//          |<----------------------- length ----------------------------->|
+			//   +---------------------------------------------------------------------+
+			//   |<------------------------------ newLength -------------------------->|
+			//   | Newly retrieved data                                                |
+			//   +---------------------------------------------------------------------+
+			//   address|                                                              |
+			//          |                                                              |
+			//          |<----------------------- length ----------------------------->|
+			//   +---------------------------------------------------------------------------+
+			//   |<------------------------------ newLength -------------------------------->|
+			//   | Newly retrieved data                                                      |
+			//   +---------------------------------------------------------------------------+
+			//   address|                                                              |
+			//   <--+-->|                                                              |
+			//      |   +--------------------------------------------------------------+
+			//      |   fBlockAddress
+			//      +---bigDistance/distance
+			case 0:
+			case 1: {
+				// Determine the distance between the requested block  and the cache block
+				// If the distance does not exceed the length of the new block, then there
+				// is some overlap between the blocks and we have to update the blanks and
+				// possibly note they are changed.
+				BigInteger bigDistance = fBlockAddress.subtract(address).multiply(BigInteger.valueOf(addressableSize));
+				if (bigDistance.compareTo(BigInteger.valueOf(newLength)) == -1) {
+					// Calculate the length of the data we are going to examine/update
+					int distance = bigDistance.intValue();
+					int length = newLength - distance;
+					if (length > fBlock.length) {
+						length = fBlock.length;
+					}
 
-        return fBlock;
-    }
+					// Process each cell, updating the status and history/change
+					for (int i = 0; i < length; i++) {
+						if ((distance + i) < newLength) {
+							newBlock[distance + i].setFlags(fBlock[i].getFlags());
+							newBlock[distance + i].setHistoryKnown(true);
+							if (newBlock[distance + i].getValue() != fBlock[i].getValue()) {
+								newBlock[distance + i].setChanged(true);
+							}
+						}
+					}
+				}
+				break;
+			}
+			}
+		}
+
+		// Update the internal state
+		fBlock = newBlock;
+		fBlockAddress = address;
+		fLength = newLength;
+
+		if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT)) {
+			fUseCachedData = true;
+		} else if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL)) {
+			fUseCachedData = true;
+		}
+
+		return fBlock;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setValue(java.math.BigInteger, byte[])
 	 */
-    @Override
+	@Override
 	public void setValue(BigInteger offset, byte[] bytes) throws DebugException {
 		writeMemoryBlock(offset.longValue(), bytes);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#connect(java.lang.Object)
 	 */
-    @Override
+	@Override
 	public void connect(Object client) {
 		if (!fConnections.contains(client))
 			fConnections.add(client);
@@ -538,7 +535,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#disconnect(java.lang.Object)
 	 */
-    @Override
+	@Override
 	public void disconnect(Object client) {
 		if (fConnections.contains(client))
 			fConnections.remove(client);
@@ -549,7 +546,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getConnections()
 	 */
-    @Override
+	@Override
 	public Object[] getConnections() {
 		return fConnections.toArray();
 	}
@@ -565,24 +562,24 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#dispose()
 	 */
-    @Override
+	@Override
 	public void dispose() throws DebugException {
 		try {
-    		fRetrieval.getExecutor().execute(new Runnable() {
-    		    @Override
-    		    public void run() {
-    		        fRetrieval.getSession().removeServiceEventListener(DsfMemoryBlock.this);
-    		    }
-    		});
+			fRetrieval.getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					fRetrieval.getSession().removeServiceEventListener(DsfMemoryBlock.this);
+				}
+			});
 		} catch (RejectedExecutionException e) {
-		    // Session is down.
+			// Session is down.
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockRetrieval()
 	 */
-    @Override
+	@Override
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval() {
 		return fRetrieval;
 	}
@@ -590,16 +587,16 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
 	 */
-    @Override
+	@Override
 	public int getAddressableSize() throws DebugException {
 		return fWordSize;
 	}
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Helper functions
-    ///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	// Helper functions
+	///////////////////////////////////////////////////////////////////////////
 
-    /**
+	/**
 	 * The real thing. Since the original call is synchronous (from a platform
 	 * Job), we use a Query that will patiently wait for the underlying
 	 * asynchronous calls to complete before returning.
@@ -610,184 +607,177 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @throws DebugException
 	 * @since 2.1
 	 */
-    protected MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long count) throws DebugException {
+	protected MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long count) throws DebugException {
 		//resolve the addressable size
-    	int aSize;
+		int aSize;
 		try {
 			aSize = getAddressableSize();
 		} catch (DebugException e) {
 			aSize = 1;
 		}
 		final int addressableSize = aSize;
-		
-    	// For the IAddress interface
-    	final Addr64 address = new Addr64(bigAddress);
-    	
-        // Use a Query to synchronize the downstream calls  
-        Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+
+		// For the IAddress interface
+		final Addr64 address = new Addr64(bigAddress);
+
+		// Use a Query to synchronize the downstream calls  
+		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
-			    IMemory memoryService = fRetrieval.getServiceTracker().getService();
-			    if (memoryService != null) {
-			        // Go for it
-			        memoryService.getMemory( 
-			            fContext, address, 0, addressableSize, (int) count,
-			            new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), drm) {
-			                @Override
-			                protected void handleSuccess() {
-			                    drm.setData(getData());
-			                    drm.done();
-			                }
-			            });
-			    }
-				else {
-			    	drm.done();
-			    }
+				IMemory memoryService = fRetrieval.getServiceTracker().getService();
+				if (memoryService != null) {
+					// Go for it
+					memoryService.getMemory(fContext, address, 0, addressableSize, (int) count,
+							new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), drm) {
+								@Override
+								protected void handleSuccess() {
+									drm.setData(getData());
+									drm.done();
+								}
+							});
+				} else {
+					drm.done();
+				}
 			}
-        };
-        fRetrieval.getExecutor().execute(query);
+		};
+		fRetrieval.getExecutor().execute(query);
 
 		try {
-            return query.get();
-        } catch (InterruptedException e) {
-    		throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Error reading memory block (InterruptedException)", e)); //$NON-NLS-1$
-        } catch (ExecutionException e) {
-    		throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Error reading memory block (ExecutionException)", e)); //$NON-NLS-1$
-        }
-    }
+			return query.get();
+		} catch (InterruptedException e) {
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+					"Error reading memory block (InterruptedException)", e)); //$NON-NLS-1$
+		} catch (ExecutionException e) {
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+					"Error reading memory block (ExecutionException)", e)); //$NON-NLS-1$
+		}
+	}
 
 	/**
 	 *  Writes an array of bytes to memory.
-     * 
-     * @param offset
-     * @param bytes
-     * @throws DebugException
+	 * 
+	 * @param offset
+	 * @param bytes
+	 * @throws DebugException
 	 * @since 2.1
 	 */
-    protected void writeMemoryBlock(final long offset, final byte[] bytes) throws DebugException {
+	protected void writeMemoryBlock(final long offset, final byte[] bytes) throws DebugException {
 		//resolve the addressable size
-    	int aSize;
+		int aSize;
 		try {
 			aSize = getAddressableSize();
 		} catch (DebugException e) {
 			aSize = 1;
 		}
 		final int addressableSize = aSize;
-		
-		final int addressableUnits = bytes.length/addressableSize;
-		
-    	// For the IAddress interface
-    	final Addr64 address = new Addr64(fBaseAddress);
 
-        // Use a Query to synchronize the downstream calls  
-        Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+		final int addressableUnits = bytes.length / addressableSize;
+
+		// For the IAddress interface
+		final Addr64 address = new Addr64(fBaseAddress);
+
+		// Use a Query to synchronize the downstream calls  
+		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
-			    IMemory memoryService = fRetrieval.getServiceTracker().getService();
-			    if (memoryService != null) {
-			        // Go for it
-	    	        memoryService.setMemory(
-		    	  	      fContext, address, offset, addressableSize, addressableUnits, bytes,
-		    	  	      new RequestMonitor(fRetrieval.getExecutor(), drm));
-			    }
-			    else {
-			    	drm.done();
-			    }
+				IMemory memoryService = fRetrieval.getServiceTracker().getService();
+				if (memoryService != null) {
+					// Go for it
+					memoryService.setMemory(fContext, address, offset, addressableSize, addressableUnits, bytes,
+							new RequestMonitor(fRetrieval.getExecutor(), drm));
+				} else {
+					drm.done();
+				}
 			}
-        };
-        fRetrieval.getExecutor().execute(query);
+		};
+		fRetrieval.getExecutor().execute(query);
 
 		try {
-            query.get();
-        } catch (InterruptedException e) {
-    		throw new DebugException(new Status(IStatus.ERROR,
-    				DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
-    				"Error writing memory block (InterruptedException)", e)); //$NON-NLS-1$
-        } catch (ExecutionException e) {
-    		throw new DebugException(new Status(IStatus.ERROR,
-    				DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
-    				"Error writing memory block (ExecutionException)", e)); //$NON-NLS-1$
-        }
-    }
+			query.get();
+		} catch (InterruptedException e) {
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+					"Error writing memory block (InterruptedException)", e)); //$NON-NLS-1$
+		} catch (ExecutionException e) {
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+					"Error writing memory block (ExecutionException)", e)); //$NON-NLS-1$
+		}
+	}
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Event Handlers
-    ///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	// Event Handlers
+	///////////////////////////////////////////////////////////////////////////
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+	@DsfServiceEventHandler
+	public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
 
-    	// Clear the "Changed" flags after each run/resume/step
+		// Clear the "Changed" flags after each run/resume/step
 		for (int i = 0; i < fLength; i++)
 			fBlock[i].setChanged(false);
-    	
-    	// Generate the MemoryChangedEvents
-        handleMemoryChange(BigInteger.ZERO);
-    }
-    
-    @DsfServiceEventHandler
-    public void eventDispatched(IMemoryChangedEvent e) {
 
-        // Check if we are in the same address space 
-        if (e.getDMContext().equals(fContext)) {
-        	IAddress[] addresses = e.getAddresses();
-        	for (int i = 0; i < addresses.length; i++)
-        		handleMemoryChange(addresses[i].getValue());
-        }
-    }
-    
-    /**
+		// Generate the MemoryChangedEvents
+		handleMemoryChange(BigInteger.ZERO);
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(IMemoryChangedEvent e) {
+
+		// Check if we are in the same address space 
+		if (e.getDMContext().equals(fContext)) {
+			IAddress[] addresses = e.getAddresses();
+			for (int i = 0; i < addresses.length; i++)
+				handleMemoryChange(addresses[i].getValue());
+		}
+	}
+
+	/**
 	 * @param address
 	 * @param length
 	 */
 	public void handleMemoryChange(BigInteger address) {
-    	int addressableSize;
+		int addressableSize;
 		try {
 			addressableSize = getAddressableSize();
 		} catch (DebugException e) {
 			addressableSize = 1;
 		}
-		
-		int addressesLength = fLength/addressableSize;
+
+		int addressesLength = fLength / addressableSize;
 		// Check if the change affects this particular block (0 is universal)
 		BigInteger fEndAddress = fBlockAddress.add(BigInteger.valueOf(addressesLength));
-		if (address.equals(BigInteger.ZERO) ||
-		   ((fBlockAddress.compareTo(address) != 1) && (fEndAddress.compareTo(address) == 1)))
-		{
+		if (address.equals(BigInteger.ZERO)
+				|| ((fBlockAddress.compareTo(address) != 1) && (fEndAddress.compareTo(address) == 1))) {
 			// Notify the event listeners
 			DebugEvent debugEvent = new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT);
 			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { debugEvent });
 		}
 	}
 
-    @Override
+	@Override
 	public String[] getUpdatePolicies() {
-		return new String[] {UPDATE_POLICY_AUTOMATIC, UPDATE_POLICY_MANUAL, UPDATE_POLICY_BREAKPOINT};
+		return new String[] { UPDATE_POLICY_AUTOMATIC, UPDATE_POLICY_MANUAL, UPDATE_POLICY_BREAKPOINT };
 	}
-    
-    @Override
-    public String getUpdatePolicy()
-    {
-    	return fUpdatePolicy;
-    }
-    
-    @Override
-    public void setUpdatePolicy(String policy)
-    {
-    	fUpdatePolicy = policy;
-    }
-    
-    @Override
-    public String getUpdatePolicyDescription(String id) {
+
+	@Override
+	public String getUpdatePolicy() {
+		return fUpdatePolicy;
+	}
+
+	@Override
+	public void setUpdatePolicy(String policy) {
+		fUpdatePolicy = policy;
+	}
+
+	@Override
+	public String getUpdatePolicyDescription(String id) {
 		return id;
 	}
-    
-    /**
-     * Get the context specified at construction.
-     * 
+
+	/**
+	 * Get the context specified at construction.
+	 * 
 	 * @since 2.7
 	 */
-    public IMemoryDMContext getContext() {
-    	return fContext;
-    }
+	public IMemoryDMContext getContext() {
+		return fContext;
+	}
 }

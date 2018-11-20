@@ -70,21 +70,21 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-	
+
 	public boolean isEnabledFor(ISelection selection) {
 		selectionChanged(null, selection);
 		ICElement[] elements = getSelectedCElements();
 		return elements.length > 0;
 	}
-	
+
 	protected ICElement[] getSelectedCElements() {
-		ArrayList<ICElement> tuSelection= new ArrayList<ICElement>();
+		ArrayList<ICElement> tuSelection = new ArrayList<ICElement>();
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection resources = SelectionConverter.convertSelectionToResources(fSelection);
-			for (Iterator<?> i= resources.iterator(); i.hasNext();) {
-				Object o= i.next();
+			for (Iterator<?> i = resources.iterator(); i.hasNext();) {
+				Object o = i.next();
 				if (o instanceof IResource) {
-					ICElement celement= CCorePlugin.getDefault().getCoreModel().create((IResource) o);
+					ICElement celement = CCorePlugin.getDefault().getCoreModel().create((IResource) o);
 					if (celement != null) {
 						tuSelection.add(celement);
 					}
@@ -93,7 +93,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 		} else if (fSelection == null || fSelection instanceof ITextSelection) {
 			IProject project = EditorUtility.getProjectForActiveEditor();
 			if (project != null) {
-				ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(project);
+				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
 				if (cproject != null) {
 					tuSelection.add(cproject);
 				}

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 public class LanguageMapping {
 	public ILanguage language;
 	public int inheritedFrom;
-	
+
 	public LanguageMapping(ILanguage language, int inheritedFrom) {
 		this.language = language;
 		this.inheritedFrom = inheritedFrom;

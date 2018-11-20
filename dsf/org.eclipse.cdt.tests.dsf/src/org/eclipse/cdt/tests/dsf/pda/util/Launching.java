@@ -27,22 +27,23 @@ import org.eclipse.debug.core.Launch;
  * 
  */
 public class Launching {
-    
-	private static PDABackend fBackendService;
-	
-    public static Process launchPDA(DsfSession session, Launch launch, String pdaProgram) throws CoreException {
-        
-        class InitializeBackendServiceQuery extends Query<Object> {
-            @Override
-            protected void execute(DataRequestMonitor<Object> rm) {
-                fBackendService.initialize(rm);
-            }
-        };
 
-        fBackendService = new PDABackend(session, launch, pdaProgram);
-    	InitializeBackendServiceQuery initQuery = new InitializeBackendServiceQuery();
-        session.getExecutor().execute(initQuery);
-        try {
+	private static PDABackend fBackendService;
+
+	public static Process launchPDA(DsfSession session, Launch launch, String pdaProgram) throws CoreException {
+
+		class InitializeBackendServiceQuery extends Query<Object> {
+			@Override
+			protected void execute(DataRequestMonitor<Object> rm) {
+				fBackendService.initialize(rm);
+			}
+		}
+		;
+
+		fBackendService = new PDABackend(session, launch, pdaProgram);
+		InitializeBackendServiceQuery initQuery = new InitializeBackendServiceQuery();
+		session.getExecutor().execute(initQuery);
+		try {
 			initQuery.get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -50,10 +51,10 @@ public class Launching {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 			return null;
-		}        
-   	
-        return fBackendService.getProcess();
-    }
+		}
+
+		return fBackendService.getProcess();
+	}
 
 	public static PDABackend getBackendService() {
 		return fBackendService;

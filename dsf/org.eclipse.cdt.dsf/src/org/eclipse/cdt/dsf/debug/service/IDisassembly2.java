@@ -33,8 +33,5 @@ public interface IDisassembly2 extends IDisassembly {
 	 * @param address the address to align
 	 * @param drm aligned address
 	 */
-	void alignOpCodeAddress(
-			IDisassemblyDMContext context,
-			BigInteger address,
-			DataRequestMonitor<BigInteger> drm);
+	void alignOpCodeAddress(IDisassemblyDMContext context, BigInteger address, DataRequestMonitor<BigInteger> drm);
 }

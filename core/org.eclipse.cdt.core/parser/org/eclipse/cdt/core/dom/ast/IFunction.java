@@ -26,31 +26,34 @@ public interface IFunction extends IBinding {
 	 * Returns the formal parameters of the function.
 	 */
 	public IParameter[] getParameters();
-	
+
 	/**
 	 * Returns the function scope
 	 */
 	public IScope getFunctionScope();
-	
+
 	/**
 	 * Returns the IFunctionType for this function
 	 */
 	public IFunctionType getType();
-	
+
 	/**
 	 * Returns {@code true} if the function has the static storage-class specifier
 	 * similarly for extern, auto, register.
 	 */
 	public boolean isStatic();
+
 	public boolean isExtern();
+
 	public boolean isAuto();
+
 	public boolean isRegister();
 
 	/**
 	 * Returns {@code true} if the function is inline.
 	 */
 	public boolean isInline();
-	
+
 	/**
 	 * Returns {@code true} if this function takes variable arguments.
 	 */

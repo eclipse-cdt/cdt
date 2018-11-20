@@ -25,8 +25,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * 
  * @since Aug 19, 2002
  */
-public interface ICSourceLocator extends ISourceLocator
-{
+public interface ICSourceLocator extends ISourceLocator {
 	/**
 	 * Returns the project this source locator is associated with or <code>null</code>.
 	 * 
@@ -43,7 +42,7 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @return line number of instruction pointer in this stack frame, 
 	 * 		   or -1 if line number information is unavailable
 	 */
-	int getLineNumber( IStackFrame stackFrame );
+	int getLineNumber(IStackFrame stackFrame);
 
 	/**
 	 * Returns the source locations of this locator.
@@ -51,13 +50,13 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @return the source locations of this locator
 	 */
 	ICSourceLocation[] getSourceLocations();
-	
+
 	/**
 	 * Sets the source locations of this locator.
 	 * 
 	 * @param location - an array of source locations
 	 */
-	void setSourceLocations( ICSourceLocation[] locations );
+	void setSourceLocations(ICSourceLocation[] locations);
 
 	/**
 	 * Returns whether this locator is able to locate the given resource.
@@ -65,8 +64,8 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @param resource the resource to locate
 	 * @return whether this locator is able to locate the given resource
 	 */
-	boolean contains( IResource resource );
-	
+	boolean contains(IResource resource);
+
 	/**
 	 * Returns an object representing the source code
 	 * for a type with the specified name, or <code>null</code>
@@ -78,7 +77,7 @@ public interface ICSourceLocator extends ISourceLocator
 	 * 
 	 * @return source element
 	 */
-	Object findSourceElement( String fileName );
+	Object findSourceElement(String fileName);
 
 	/**
 	 * Returns whether to search for all source elements, or just the first match.
@@ -92,5 +91,5 @@ public interface ICSourceLocator extends ISourceLocator
 	 * 
 	 * @param search - a value to set
 	 */
-	void setSearchForDuplicateFiles( boolean search );
+	void setSearchForDuplicateFiles(boolean search);
 }

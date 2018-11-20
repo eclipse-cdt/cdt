@@ -29,16 +29,16 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 	}
 
 	@Override
-	protected SettingsSet createEmptySettings(){
+	protected SettingsSet createEmptySettings() {
 		SettingsSet settings = new SettingsSet(2);
 		SettingsSet.SettingLevel levels[] = settings.getLevels();
-		
+
 		levels[USER_ENTRIES_LEVEL].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
 		levels[USER_ENTRIES_LEVEL].setFlagsToSet(0);
 		levels[USER_ENTRIES_LEVEL].setReadOnly(false);
 		levels[USER_ENTRIES_LEVEL].setOverrideSupported(false);
 
-		boolean override = canDisableDiscoveredEntries(); 
+		boolean override = canDisableDiscoveredEntries();
 		int readOnlyFlag = override ? 0 : ICSettingEntry.READONLY;
 		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToClear(0);
 		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
@@ -47,15 +47,15 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 
 		return settings;
 	}
-	
+
 	@Override
 	protected void obtainEntriesFromLevel(int levelNum, SettingLevel level) {
-		switch(levelNum){
+		switch (levelNum) {
 		case USER_ENTRIES_LEVEL:
 			setUserEntries(level != null ? level.getEntries() : null);
 			break;
 		case DISCOVERY_ENTRIES_LEVEL:
-			if(level != null){
+			if (level != null) {
 				Set<String> set = level.getOverrideSet();
 				setDisabledDiscoveredNames(set);
 			} else {
@@ -66,7 +66,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 
 	@Override
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
-		switch(levelNum){
+		switch (levelNum) {
 		case USER_ENTRIES_LEVEL:
 			level.addEntries(getUserEntries());
 			break;
@@ -74,18 +74,18 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 			HashSet<String> set = new HashSet<String>();
 			ICLanguageSettingEntry[] entries = getDiscoveredEntries(set);
 			level.addEntries(entries);
-			if(set.size() != 0)
+			if (set.size() != 0)
 				level.fOverrideSet = set;
 			break;
 		}
 	}
 
-	protected boolean canDisableDiscoveredEntries(){
+	protected boolean canDisableDiscoveredEntries() {
 		return false;
 	}
 
 	protected abstract void setUserEntries(ICLanguageSettingEntry[] entries);
-	
+
 	protected abstract ICLanguageSettingEntry[] getUserEntries();
 
 	protected abstract void setDisabledDiscoveredNames(Set<String> disabledNameSet);

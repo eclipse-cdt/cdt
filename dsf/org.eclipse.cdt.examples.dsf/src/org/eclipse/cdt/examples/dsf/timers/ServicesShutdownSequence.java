@@ -28,76 +28,70 @@ import org.eclipse.core.runtime.Status;
  */
 public class ServicesShutdownSequence extends Sequence {
 
-    // Session that the services are running in.
-    final private DsfSession fSession;
-    
-    // DSF Services is created as the first step of the sequence.  It 
-    // cannot be created by the constructor because it can only be called
-    // in the session thread.
-    DsfServicesTracker fTracker;
+	// Session that the services are running in.
+	final private DsfSession fSession;
 
-    public ServicesShutdownSequence(DsfSession session) {
-        super(session.getExecutor());
-        fSession = session;
-    }
-    
-    Step[] fSteps = new Step[] {
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                fTracker = new DsfServicesTracker(DsfExamplesPlugin.getBundleContext(), fSession.getId());
-                requestMonitor.done();
-            }
-            
-            @Override
-            public void rollBack(RequestMonitor requestMonitor) {
-                // Dispose the tracker in case shutdown sequence is aborted
-                // and is rolled back.
-                fTracker.dispose();
-                fTracker = null;
-                requestMonitor.done();
-            } 
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                shutdownService(AlarmService.class, requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                shutdownService(TimerService.class, requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Dispose the tracker after the services are shut down.
-                fTracker.dispose();
-                fTracker = null;
-                requestMonitor.done();
-            }
-        }
-    };
-    
-    @Override
-    public Step[] getSteps() { return fSteps; }
+	// DSF Services is created as the first step of the sequence.  It 
+	// cannot be created by the constructor because it can only be called
+	// in the session thread.
+	DsfServicesTracker fTracker;
 
-    // A convenience method that shuts down given service.  Only service class 
-    // is used to identify the service. 
-    private <V extends IDsfService> void shutdownService(Class<V> clazz, RequestMonitor requestMonitor) {
-        IDsfService service = fTracker.getService(clazz);
-        if (service != null) {
-            service.shutdown(requestMonitor);
-        }
-        else {
-            requestMonitor.setStatus(new Status(
-                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
-                IDsfStatusConstants.INTERNAL_ERROR,  
-                "Service '" + clazz.getName() + "' not found.", null));             
-            requestMonitor.done();
-        }
-    }
+	public ServicesShutdownSequence(DsfSession session) {
+		super(session.getExecutor());
+		fSession = session;
+	}
+
+	Step[] fSteps = new Step[] { new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fTracker = new DsfServicesTracker(DsfExamplesPlugin.getBundleContext(), fSession.getId());
+			requestMonitor.done();
+		}
+
+		@Override
+		public void rollBack(RequestMonitor requestMonitor) {
+			// Dispose the tracker in case shutdown sequence is aborted
+			// and is rolled back.
+			fTracker.dispose();
+			fTracker = null;
+			requestMonitor.done();
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			shutdownService(AlarmService.class, requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			shutdownService(TimerService.class, requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Dispose the tracker after the services are shut down.
+			fTracker.dispose();
+			fTracker = null;
+			requestMonitor.done();
+		}
+	} };
+
+	@Override
+	public Step[] getSteps() {
+		return fSteps;
+	}
+
+	// A convenience method that shuts down given service.  Only service class 
+	// is used to identify the service. 
+	private <V extends IDsfService> void shutdownService(Class<V> clazz, RequestMonitor requestMonitor) {
+		IDsfService service = fTracker.getService(clazz);
+		if (service != null) {
+			service.shutdown(requestMonitor);
+		} else {
+			requestMonitor.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
+					IDsfStatusConstants.INTERNAL_ERROR, "Service '" + clazz.getName() + "' not found.", null));
+			requestMonitor.done();
+		}
+	}
 
 }

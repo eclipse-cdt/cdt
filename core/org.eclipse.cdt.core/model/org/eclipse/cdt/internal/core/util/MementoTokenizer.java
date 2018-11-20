@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.util;
 
 import org.eclipse.cdt.internal.core.model.CElement;
 
-
 /**
  * A tokenizer to decipher a C element memento string.
  * 
@@ -71,7 +70,8 @@ public class MementoTokenizer {
 		loop: while (this.index < this.length) {
 			switch (this.memento[this.index]) {
 			case CElement.CEM_ESCAPE:
-				if (buffer == null) buffer = new StringBuilder();
+				if (buffer == null)
+					buffer = new StringBuilder();
 				buffer.append(this.memento, start, this.index - start);
 				start = ++this.index;
 				break;

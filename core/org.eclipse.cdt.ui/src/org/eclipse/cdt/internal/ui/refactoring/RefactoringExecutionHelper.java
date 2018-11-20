@@ -67,10 +67,10 @@ public class RefactoringExecutionHelper {
 		final boolean fCancelable;
 
 		public Operation(boolean forked, boolean forkChangeExecution, boolean cancelable) {
-			fForked= forked;
-			fForkChangeExecution= forkChangeExecution;
+			fForked = forked;
+			fForkChangeExecution = forkChangeExecution;
 			this.fCancelable = cancelable;
-        }
+		}
 
 		@Override
 		public void run(IProgressMonitor pm) throws CoreException {
@@ -78,32 +78,35 @@ public class RefactoringExecutionHelper {
 				pm.beginTask("", fForked && !fForkChangeExecution ? 7 : 11); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
 
-				final RefactoringStatus status= fRefactoring.checkAllConditions(
+				final RefactoringStatus status = fRefactoring.checkAllConditions(
 						new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				if (status.getSeverity() >= fStopSeverity) {
-					final boolean[] canceled= { false };
+					final boolean[] canceled = { false };
 					if (fForked) {
 						fParent.getDisplay().syncExec(new Runnable() {
 							@Override
 							public void run() {
-								canceled[0]= showStatusDialog(status);
+								canceled[0] = showStatusDialog(status);
 							}
 						});
 					} else {
-						canceled[0]= showStatusDialog(status);
+						canceled[0] = showStatusDialog(status);
 					}
 					if (canceled[0]) {
 						throw new OperationCanceledException();
 					}
 				}
 
-				fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-				fChange.initializeValidationData(new SubProgressMonitor(pm, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				fChange = fRefactoring
+						.createChange(new SubProgressMonitor(pm, 2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				fChange.initializeValidationData(
+						new SubProgressMonitor(pm, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 				fPerformChangeOperation = createPerformChangeOperation(fChange);
 
 				if (!fForked || fForkChangeExecution)
-					fPerformChangeOperation.run(new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					fPerformChangeOperation
+							.run(new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			} finally {
 				pm.done();
 			}
@@ -114,7 +117,7 @@ public class RefactoringExecutionHelper {
 		 * @return <code>true</code> iff the operation should be cancelled
 		 */
 		private boolean showStatusDialog(RefactoringStatus status) {
-			Dialog dialog= RefactoringUI.createRefactoringStatusDialog(status, fParent, fRefactoring.getName(), false);
+			Dialog dialog = RefactoringUI.createRefactoringStatusDialog(status, fParent, fRefactoring.getName(), false);
 			return dialog.open() == IDialogConstants.CANCEL_ID;
 		}
 	}
@@ -134,11 +137,11 @@ public class RefactoringExecutionHelper {
 		Assert.isNotNull(refactoring);
 		Assert.isNotNull(parent);
 		Assert.isNotNull(context);
-		fRefactoring= refactoring;
-		fStopSeverity= stopSeverity;
-		fParent= parent;
-		fExecContext= context;
-		fSaveMode= saveMode;
+		fRefactoring = refactoring;
+		fStopSeverity = stopSeverity;
+		fParent = parent;
+		fExecContext = context;
+		fSaveMode = saveMode;
 	}
 
 	/**
@@ -168,8 +171,7 @@ public class RefactoringExecutionHelper {
 		performOperation(operation, null, fork);
 	}
 
-	public void performChange(Change change, boolean fork)
-			throws InterruptedException, InvocationTargetException {
+	public void performChange(Change change, boolean fork) throws InterruptedException, InvocationTargetException {
 		PerformChangeOperation operation = createPerformChangeOperation(change);
 		performOperation(null, operation, fork);
 	}
@@ -185,11 +187,11 @@ public class RefactoringExecutionHelper {
 			throws InterruptedException, InvocationTargetException {
 		Assert.isTrue((operation == null) != (changeOperation == null));
 		Assert.isTrue(Display.getCurrent() != null);
-		final IJobManager manager= Job.getJobManager();
+		final IJobManager manager = Job.getJobManager();
 		final ISchedulingRule rule = getSchedulingRule();
 		try {
 			try {
-				Runnable r= new Runnable() {
+				Runnable r = new Runnable() {
 					@Override
 					public void run() {
 						manager.beginRule(rule, null);
@@ -200,7 +202,7 @@ public class RefactoringExecutionHelper {
 				throw new InterruptedException(e.getMessage());
 			}
 
-			RefactoringSaveHelper saveHelper= new RefactoringSaveHelper(fSaveMode);
+			RefactoringSaveHelper saveHelper = new RefactoringSaveHelper(fSaveMode);
 			if (operation != null) {
 				if (!saveHelper.saveEditors(fParent))
 					throw new InterruptedException();
@@ -212,11 +214,11 @@ public class RefactoringExecutionHelper {
 					changeOperation = operation.fPerformChangeOperation;
 					fork = fork && !operation.fForkChangeExecution;
 				}
-	
+
 				if (changeOperation != null) {
 					if (fork)
 						fExecContext.run(false, false, new WorkbenchRunnableAdapter(changeOperation, rule, true));
-					RefactoringStatus validationStatus= changeOperation.getValidationStatus();
+					RefactoringStatus validationStatus = changeOperation.getValidationStatus();
 					if (validationStatus != null && validationStatus.hasFatalError()) {
 						MessageDialog.openError(fParent, fRefactoring.getName(),
 								NLS.bind(Messages.RefactoringExecutionHelper_cannot_execute,
@@ -226,12 +228,12 @@ public class RefactoringExecutionHelper {
 				}
 			} catch (InvocationTargetException e) {
 				if (changeOperation != null && changeOperation.changeExecutionFailed()) {
-					ChangeExceptionHandler handler= new ChangeExceptionHandler(fParent, fRefactoring);
-					Throwable inner= e.getTargetException();
+					ChangeExceptionHandler handler = new ChangeExceptionHandler(fParent, fRefactoring);
+					Throwable inner = e.getTargetException();
 					if (inner instanceof RuntimeException) {
-						handler.handle(changeOperation.getChange(), (RuntimeException)inner);
+						handler.handle(changeOperation.getChange(), (RuntimeException) inner);
 					} else if (inner instanceof CoreException) {
-						handler.handle(changeOperation.getChange(), (CoreException)inner);
+						handler.handle(changeOperation.getChange(), (CoreException) inner);
 					} else {
 						throw e;
 					}

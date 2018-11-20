@@ -100,7 +100,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (actionMenuCache == null){
+		if (actionMenuCache == null) {
 			actionMenuCache = action;
 		}
 		onSelectionChanged(action, selection);
@@ -115,7 +115,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 		menu.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuShown(MenuEvent e) {
-				fillMenu((Menu)e.widget);
+				fillMenu((Menu) e.widget);
 			}
 		});
 	}
@@ -129,16 +129,17 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	 * Update the tool tip based on the currently selected project and active configuration.
 	 * @param action - The build configuration menu to change the tool tip on
 	 */
-	public void updateBuildConfigMenuToolTip(IAction action){
+	public void updateBuildConfigMenuToolTip(IAction action) {
 		String toolTipText = ""; //$NON-NLS-1$
 		if (fProjects.size() <= 5) {
 			StringBuilder sb = new StringBuilder();
 			for (IProject prj : fProjects) {
-				if (prj != null){
+				if (prj != null) {
 					ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
 					if (prjd != null) {
 						sb.append(NLS.bind(ActionMessages.BuildActiveConfigMenuAction_buildConfigTooltip,
-								prjd.getActiveConfiguration().getName(), prj.getName())).append(System.getProperty("line.separator")); //$NON-NLS-1$
+								prjd.getActiveConfiguration().getName(), prj.getName()))
+								.append(System.getProperty("line.separator")); //$NON-NLS-1$
 					}
 				}
 			}
@@ -151,7 +152,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 
 	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
-		if (actionMenuCache != null){
+		if (actionMenuCache != null) {
 			updateBuildConfigMenuToolTip(actionMenuCache);
 		}
 	}

@@ -25,9 +25,9 @@ public class ScrollLockAction extends Action {
 	private BuildConsoleViewer fConsoleViewer;
 
 	public ScrollLockAction(BuildConsoleViewer viewer) {
-		super(ConsoleMessages.ScrollLockAction_Scroll_Lock_1); 
+		super(ConsoleMessages.ScrollLockAction_Scroll_Lock_1);
 		fConsoleViewer = viewer;
-		setToolTipText(ConsoleMessages.ScrollLockAction_Scroll_Lock_1); 
+		setToolTipText(ConsoleMessages.ScrollLockAction_Scroll_Lock_1);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_SCROLL_LOCK);
 		setChecked(false);
 	}

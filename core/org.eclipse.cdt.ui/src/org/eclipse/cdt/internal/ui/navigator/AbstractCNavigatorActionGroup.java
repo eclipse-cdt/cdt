@@ -77,7 +77,7 @@ public abstract class AbstractCNavigatorActionGroup extends ActionGroup {
 	 * Makes the actions contained in this action group.
 	 */
 	protected abstract void makeActions();
-	
+
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */

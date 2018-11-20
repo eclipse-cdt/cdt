@@ -18,7 +18,7 @@ import org.eclipse.cdt.make.core.makefile.gnu.IVariableDefinition;
 
 /**
  */
-public class GNUVariableDef extends MacroDefinition implements IVariableDefinition  {
+public class GNUVariableDef extends MacroDefinition implements IVariableDefinition {
 
 	/**
 	 * ? is Conditional
@@ -38,7 +38,7 @@ public class GNUVariableDef extends MacroDefinition implements IVariableDefiniti
 	}
 
 	public GNUVariableDef(Directive parent, String name, StringBuffer value, int type) {
-		this(parent,  "", name, value, type); //$NON-NLS-1$
+		this(parent, "", name, value, type); //$NON-NLS-1$
 	}
 
 	public GNUVariableDef(Directive parent, String target, String name, StringBuffer value, int type) {
@@ -122,7 +122,7 @@ public class GNUVariableDef extends MacroDefinition implements IVariableDefiniti
 	/**
 	 * Variable from an `override' directive.
 	 */
-	 @Override
+	@Override
 	public boolean isOverride() {
 		return false;
 	}
@@ -130,7 +130,7 @@ public class GNUVariableDef extends MacroDefinition implements IVariableDefiniti
 	/**
 	 * Automatic variable -- cannot be set.
 	 */
-	 @Override
+	@Override
 	public boolean isAutomatic() {
 		return false;
 	}

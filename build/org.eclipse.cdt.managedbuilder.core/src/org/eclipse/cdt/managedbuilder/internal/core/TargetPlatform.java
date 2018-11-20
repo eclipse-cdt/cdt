@@ -91,7 +91,8 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * @param name The name for the new tool chain
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
-	public TargetPlatform(ToolChain parent, ITargetPlatform superClass, String Id, String name, boolean isExtensionElement) {
+	public TargetPlatform(ToolChain parent, ITargetPlatform superClass, String Id, String name,
+			boolean isExtensionElement) {
 		this.parent = parent;
 		this.superClass = superClass;
 		setManagedBuildRevision(parent.getManagedBuildRevision());
@@ -140,9 +141,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 		superClass = targetPlatform.isExtensionTargetPlatform ? targetPlatform : targetPlatform.superClass;
 		if (superClass != null) {
-//			if (targetPlatform.superClassId != null) {
-				superClassId = superClass.getId();// targetPlatform.superClassId;
-//			}
+			//			if (targetPlatform.superClassId != null) {
+			superClassId = superClass.getId();// targetPlatform.superClassId;
+			//			}
 		}
 		setId(Id);
 		setName(name);
@@ -200,10 +201,10 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
 
 		// isAbstract
-        String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
-        if (isAbs != null){
-    		isAbstract = Boolean.parseBoolean(isAbs);
-        }
+		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
+		if (isAbs != null) {
+			isAbstract = Boolean.parseBoolean(isAbs);
+		}
 
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
@@ -263,13 +264,13 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
+			unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
 		}
 
 		// isAbstract
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
-			if (isAbs != null){
+			if (isAbs != null) {
 				isAbstract = Boolean.parseBoolean(isAbs);
 			}
 		}
@@ -416,7 +417,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
 		} else {
-			return false;	// Note: no inheritance from superClass
+			return false; // Note: no inheritance from superClass
 		}
 	}
 
@@ -428,7 +429,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (unusedChildren != null) {
 			return unusedChildren;
 		} else
-			return EMPTY_STRING;	// Note: no inheritance from superClass
+			return EMPTY_STRING; // Note: no inheritance from superClass
 	}
 
 	/* (non-Javadoc)
@@ -438,7 +439,8 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	@Override
 	public String getBinaryParserId() {
 		String[] ids = getBinaryParserList();
-		if (ids.length > 0) return ids[0];
+		if (ids.length > 0)
+			return ids[0];
 		return EMPTY_STRING;
 	}
 
@@ -469,7 +471,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				return superClass.getArchList();
 			} else {
 				// I have no superClass and no defined list
-				return new String[] {"all"}; //$NON-NLS-1$
+				return new String[] { "all" }; //$NON-NLS-1$
 			}
 		}
 		return archList.toArray(new String[archList.size()]);
@@ -486,7 +488,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				return superClass.getOSList();
 			} else {
 				// I have no superClass and no defined filter list
-				return new String[] {"all"};	//$NON-NLS-1$
+				return new String[] { "all" }; //$NON-NLS-1$
 			}
 		}
 		return osList.toArray(new String[osList.size()]);
@@ -501,7 +503,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (id == null) {
 			setBinaryParserList(new String[0]);
 		} else {
-			setBinaryParserList(new String[]{id});
+			setBinaryParserList(new String[] { id });
 		}
 	}
 
@@ -510,7 +512,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	@Override
 	public void setBinaryParserList(String[] ids) {
-		if(ids != null){
+		if (ids != null) {
 			if (binaryParserList == null) {
 				binaryParserList = new ArrayList<String>();
 			} else {
@@ -588,7 +590,8 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension Builder
- 		if (isExtensionTargetPlatform) return false;
+		if (isExtensionTargetPlatform)
+			return false;
 		return isDirty;
 	}
 
@@ -611,10 +614,8 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				superClass = ManagedBuildManager.getExtensionTargetPlatform(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.outputResolveError(
-							"superClass",	//$NON-NLS-1$
-							superClassId,
-							"targetPlatform",	//$NON-NLS-1$
+					ManagedBuildManager.outputResolveError("superClass", //$NON-NLS-1$
+							superClassId, "targetPlatform", //$NON-NLS-1$
 							getId());
 				}
 			}
@@ -626,8 +627,8 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	@Override
 	public Version getVersion() {
-		if ( version == null) {
-			if ( getParent() != null) {
+		if (version == null) {
+			if (getParent() != null) {
 				return getParent().getVersion();
 			}
 		}

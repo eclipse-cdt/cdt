@@ -34,7 +34,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	protected ICElement[] fElements;
 
-	protected final static ICElement[] EmptyElement = new ICElement[]{};
+	protected final static ICElement[] EmptyElement = new ICElement[] {};
 	/**
 	 * The path related to the failure, or <code>null</code> if no path is
 	 * involved.
@@ -110,7 +110,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with the given corresponding element.
 	 */
 	public CModelStatus(int code, ICElement element) {
-		this(code, new ICElement[]{element});
+		this(code, new ICElement[] { element });
 	}
 
 	/**
@@ -118,12 +118,12 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * string
 	 */
 	public CModelStatus(int code, ICElement element, String string) {
-		this(code, new ICElement[]{element});
+		this(code, new ICElement[] { element });
 		fString = string;
 	}
 
 	public CModelStatus(int code, ICElement element, IPath path) {
-		this(code, new ICElement[]{element});
+		this(code, new ICElement[] { element });
 		fPath = path;
 	}
 
@@ -145,7 +145,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 
 	protected int getBits() {
 		int severity = 1 << (getCode() % 100 / 33);
-		int category = 1 << ( (getCode() / 100) + 3);
+		int category = 1 << ((getCode() / 100) + 3);
 		return severity | category;
 	}
 
@@ -213,7 +213,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					if (i > 0) {
 						buff.append(", "); //$NON-NLS-1$
 					}
-					buff.append( (fElements[i]).toString());
+					buff.append((fElements[i]).toString());
 				}
 				return buff.toString();
 
@@ -222,7 +222,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 
 			case INVALID_PATH:
 				String path = getPath() == null ? "null" : getPath().toString(); //$NON-NLS-1$
-				return CoreModelMessages.getFormattedString("status.invalidPath", new Object[]{path, getString()}); //$NON-NLS-1$
+				return CoreModelMessages.getFormattedString("status.invalidPath", new Object[] { path, getString() }); //$NON-NLS-1$
 
 			case INVALID_PATHENTRY:
 				return CoreModelMessages.getFormattedString("status.invalidPathEntry", getString()); //$NON-NLS-1$
@@ -269,8 +269,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				return CoreModelMessages.getFormattedString("operation.needString"); //$NON-NLS-1$
 
 			case PATH_OUTSIDE_PROJECT:
-				return CoreModelMessages.getFormattedString(
-						"operation.pathOutsideProject", new String[]{getString(), getFirstElementName()}); //$NON-NLS-1$
+				return CoreModelMessages.getFormattedString("operation.pathOutsideProject", //$NON-NLS-1$
+						new String[] { getString(), getFirstElementName() });
 
 			case READ_ONLY:
 				return CoreModelMessages.getFormattedString("status.readOnly", getFirstElementName()); //$NON-NLS-1$
@@ -369,7 +369,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 			return matches(this, mask);
 		}
 		for (IStatus element : fChildren) {
-			if (matches((CModelStatus)element, mask))
+			if (matches((CModelStatus) element, mask))
 				return true;
 		}
 		return false;
@@ -382,7 +382,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		int severityMask = mask & 0x7;
 		int categoryMask = mask & ~0x7;
 		int bits = status.getBits();
-		return ( (severityMask == 0) || (bits & severityMask) != 0) && ( (categoryMask == 0) || (bits & categoryMask) != 0);
+		return ((severityMask == 0) || (bits & severityMask) != 0)
+				&& ((categoryMask == 0) || (bits & categoryMask) != 0);
 	}
 
 	/**

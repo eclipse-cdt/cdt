@@ -39,19 +39,21 @@ public interface IBTreeVisitor {
 	 * @param record the offset of the record being visited
 	 * @return {@code true} to continue the visit, {@code false} to abort it.
 	 */
-	public boolean visit(long record) throws CoreException;	
+	public boolean visit(long record) throws CoreException;
 
 	/**
 	 * Called before visiting a record.
 	 *
 	 * @param record the offset of the record being visited
 	 */
-	public default void preVisit(long record) throws CoreException {}
+	public default void preVisit(long record) throws CoreException {
+	}
 
 	/**
 	 * Called after visiting a record.
 	 *
 	 * @param record the offset of the record being visited
 	 */
-	public default void postVisit(long record) throws CoreException {}
+	public default void postVisit(long record) throws CoreException {
+	}
 }

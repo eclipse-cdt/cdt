@@ -102,5 +102,5 @@ public class ArduinoBoard {
 		String pkg = getPlatform().getPackage().getName();
 		return pkg + ',' + arch + ',' + id + ',' + name;
 	}
-	
+
 }

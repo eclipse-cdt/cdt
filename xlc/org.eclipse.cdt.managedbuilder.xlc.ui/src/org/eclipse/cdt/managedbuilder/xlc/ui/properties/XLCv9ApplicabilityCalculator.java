@@ -37,7 +37,7 @@ public class XLCv9ApplicabilityCalculator implements IOptionApplicability {
 
 	private boolean isVersion9(IBuildObject configuration) {
 		// first we check the preference for this project, if it exists
-		if(configuration instanceof IConfiguration) {
+		if (configuration instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration) configuration;
 			IManagedProject managedProject = config.getManagedProject();
 
@@ -45,24 +45,24 @@ public class XLCv9ApplicabilityCalculator implements IOptionApplicability {
 
 			String currentVersion = null;
 			try {
-				currentVersion = project.getPersistentProperty(new QualifiedName("",
-						PreferenceConstants.P_XLC_COMPILER_VERSION));
+				currentVersion = project
+						.getPersistentProperty(new QualifiedName("", PreferenceConstants.P_XLC_COMPILER_VERSION));
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			if(currentVersion == null) {
+			if (currentVersion == null) {
 				// if the property isn't set, then use the workbench preference
 				IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 				currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 			}
 
-		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_9))
-			  return true;
+			if (currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_9))
+				return true;
 		}
 
-		if(configuration instanceof IFolderInfo) {
+		if (configuration instanceof IFolderInfo) {
 			IFolderInfo folderInfo = (IFolderInfo) configuration;
 
 			IConfiguration config = folderInfo.getParent();
@@ -73,21 +73,21 @@ public class XLCv9ApplicabilityCalculator implements IOptionApplicability {
 
 			String currentVersion = null;
 			try {
-				currentVersion = project.getPersistentProperty(new QualifiedName("",
-						PreferenceConstants.P_XLC_COMPILER_VERSION));
+				currentVersion = project
+						.getPersistentProperty(new QualifiedName("", PreferenceConstants.P_XLC_COMPILER_VERSION));
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			if(currentVersion == null) {
+			if (currentVersion == null) {
 				// if the property isn't set, then use the workbench preference
 				IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 				currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 			}
 
-		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_9))
-			  return true;
+			if (currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_9))
+				return true;
 
 		}
 
@@ -99,8 +99,7 @@ public class XLCv9ApplicabilityCalculator implements IOptionApplicability {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionEnabled(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	@Override
-	public boolean isOptionEnabled(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return isVersion9(configuration);
 	}
 
@@ -108,8 +107,7 @@ public class XLCv9ApplicabilityCalculator implements IOptionApplicability {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionUsedInCommandLine(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	@Override
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return isVersion9(configuration);
 	}
 
@@ -117,8 +115,7 @@ public class XLCv9ApplicabilityCalculator implements IOptionApplicability {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionVisible(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	@Override
-	public boolean isOptionVisible(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return isVersion9(configuration);
 	}
 

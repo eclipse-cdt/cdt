@@ -21,8 +21,7 @@ import org.eclipse.core.resources.IProject;
  * 
  * @since Dec 24, 2002
  */
-public interface IProjectSourceLocation extends ICSourceLocation
-{
+public interface IProjectSourceLocation extends ICSourceLocation {
 	IProject getProject();
 
 	boolean isGeneric();

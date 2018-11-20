@@ -21,19 +21,19 @@ import org.eclipse.cdt.core.settings.model.util.CEntriesSet;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 
 public final class CExternalSetting implements ICExternalSetting {
-//	private EntryStore fEntryStore = new EntryStore();
+	//	private EntryStore fEntryStore = new EntryStore();
 	private KindBasedStore<CEntriesSet> fStore = new KindBasedStore<CEntriesSet>(false);
 	private String[] fContentTypeIds;
 	private String[] fLanguageIds;
 	private String[] fExtensions;
-//	private String fId;
+	//	private String fId;
 
 	public CExternalSetting(ICExternalSetting base) {
 		fLanguageIds = base.getCompatibleLanguageIds();
 		fContentTypeIds = base.getCompatibleContentTypeIds();
 		fExtensions = base.getCompatibleExtensions();
 
-//		fEntryStore = new EntryStore();
+		//		fEntryStore = new EntryStore();
 		initEntryStore(base.getEntries());
 	}
 
@@ -63,21 +63,21 @@ public final class CExternalSetting implements ICExternalSetting {
 			addEntry(entry);
 		}
 
-//		trimToSize();
+		//		trimToSize();
 	}
 
 	private void addEntry(ICSettingEntry entry) {
 		getEntriesSet(entry.getKind(), true).addEntry(entry);
 	}
 
-//	private void trimToSize() {
-//		int kinds[] = KindBasedStore.getSupportedKinds();
-//		for (int i = 0; i < kinds.length; i++) {
-//			CEntriesSet set = getEntriesSet(kinds[i], false);
-//			if (set != null)
-//				set.trimToSize();
-//		}
-//	}
+	//	private void trimToSize() {
+	//		int kinds[] = KindBasedStore.getSupportedKinds();
+	//		for (int i = 0; i < kinds.length; i++) {
+	//			CEntriesSet set = getEntriesSet(kinds[i], false);
+	//			if (set != null)
+	//				set.trimToSize();
+	//		}
+	//	}
 
 	private CEntriesSet getEntriesSet(int kind, boolean create) {
 		CEntriesSet set = fStore.get(kind);
@@ -117,9 +117,9 @@ public final class CExternalSetting implements ICExternalSetting {
 		return new ICSettingEntry[0];
 	}
 
-//	public String getId() {
-//		return fId;
-//	}
+	//	public String getId() {
+	//		return fId;
+	//	}
 
 	@Override
 	public ICSettingEntry[] getEntries() {

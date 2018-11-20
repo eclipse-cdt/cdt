@@ -27,7 +27,7 @@ public class ASTWriterTestSourceFile extends TestSourceFile {
 	public ASTWriterTestSourceFile(String name) {
 		super(name);
 	}
-	
+
 	public void setParserLanguage(ParserLanguage lang) {
 		this.parserLanguage = lang;
 	}

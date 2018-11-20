@@ -58,8 +58,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 
 	public boolean isOrphaned() throws CoreException {
 		Database db = getDB();
-		return db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
-				&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
+		return db.getRecPtr(record + FIRST_DEF_OFFSET) == 0 && db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
 	}
 
 	public void addDefinition(PDOMMacro name) throws CoreException {
@@ -101,8 +100,8 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 
 	public IIndexMacro[] getDefinitions() throws CoreException {
-		List<PDOMMacro> macros= new ArrayList<>();
-		for (PDOMMacro macro= getFirstDefinition(); macro != null; macro= macro.getNextInContainer()) {
+		List<PDOMMacro> macros = new ArrayList<>();
+		for (PDOMMacro macro = getFirstDefinition(); macro != null; macro = macro.getNextInContainer()) {
 			macros.add(macro);
 		}
 		return macros.toArray(new IIndexMacro[macros.size()]);

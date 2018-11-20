@@ -24,7 +24,8 @@ public final class Flags {
 	/**
 	 * Not instantiable.
 	 */
-	private Flags() {}
+	private Flags() {
+	}
 
 	/**
 	 * Returns whether the given integer includes the <code>abstract</code> modifier.
@@ -115,6 +116,7 @@ public final class Flags {
 	public static boolean isExtern(int flags) {
 		return (flags & IConstants.AccExtern) != 0;
 	}
+
 	/**
 	 * Returns whether the given integer includes the <code>mutable</code> modifier.
 	 *
@@ -135,6 +137,7 @@ public final class Flags {
 	public static boolean isRegister(int flags) {
 		return (flags & IConstants.AccRegister) != 0;
 	}
+
 	/**
 	 * Returns whether the given integer includes the <code>virtual</code> modifier.
 	 *
@@ -142,7 +145,7 @@ public final class Flags {
 	 * @return <code>true</code> if the <code>virtual</code> modifier is included
 	 */
 	public static boolean isVirtual(int flags) {
-		return (flags &  IConstants.AccVirtual) != 0;
+		return (flags & IConstants.AccVirtual) != 0;
 	}
 
 	/**
@@ -173,21 +176,33 @@ public final class Flags {
 	public static String toString(int flags) {
 		StringBuilder sb = new StringBuilder();
 
-		if (isPublic(flags))	sb.append("public "); //$NON-NLS-1$
-		if (isProtected(flags)) sb.append("protected "); //$NON-NLS-1$
-		if (isPrivate(flags))	sb.append("private "); //$NON-NLS-1$
-		if (isStatic(flags)) sb.append("static "); //$NON-NLS-1$
-		if (isAbstract(flags)) sb.append("abstract "); //$NON-NLS-1$
-		if (isVirtual(flags)) sb.append("virtual "); //$NON-NLS-1$
-		if (isInline(flags)) sb.append("inline "); //$NON-NLS-1$
-		if (isExtern(flags)) sb.append("extern "); //$NON-NLS-1$
-		if (isExport(flags)) sb.append("export "); //$NON-NLS-1$
-		if (isVolatile(flags)) sb.append("volatile "); //$NON-NLS-1$
-		if (isExplicit(flags)) sb.append("explicit "); //$NON-NLS-1$
+		if (isPublic(flags))
+			sb.append("public "); //$NON-NLS-1$
+		if (isProtected(flags))
+			sb.append("protected "); //$NON-NLS-1$
+		if (isPrivate(flags))
+			sb.append("private "); //$NON-NLS-1$
+		if (isStatic(flags))
+			sb.append("static "); //$NON-NLS-1$
+		if (isAbstract(flags))
+			sb.append("abstract "); //$NON-NLS-1$
+		if (isVirtual(flags))
+			sb.append("virtual "); //$NON-NLS-1$
+		if (isInline(flags))
+			sb.append("inline "); //$NON-NLS-1$
+		if (isExtern(flags))
+			sb.append("extern "); //$NON-NLS-1$
+		if (isExport(flags))
+			sb.append("export "); //$NON-NLS-1$
+		if (isVolatile(flags))
+			sb.append("volatile "); //$NON-NLS-1$
+		if (isExplicit(flags))
+			sb.append("explicit "); //$NON-NLS-1$
 
 		int len = sb.length();
-		if (len == 0) return ""; //$NON-NLS-1$
-		sb.setLength(len-1);
+		if (len == 0)
+			return ""; //$NON-NLS-1$
+		sb.setLength(len - 1);
 		return sb.toString();
 	}
 }

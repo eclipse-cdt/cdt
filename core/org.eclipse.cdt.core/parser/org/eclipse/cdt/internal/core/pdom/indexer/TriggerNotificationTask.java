@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
@@ -30,8 +30,8 @@ public class TriggerNotificationTask implements IPDOMIndexerTask {
 	private PDOMManager fManager;
 
 	public TriggerNotificationTask(PDOMManager manager, WritablePDOM pdom) {
-		fManager= manager;
-		fPDOM= pdom;
+		fManager = manager;
+		fPDOM = pdom;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class TriggerNotificationTask implements IPDOMIndexerTask {
 
 	@Override
 	public void run(IProgressMonitor monitor) {
-		ChangeEvent event= new ChangeEvent();
+		ChangeEvent event = new ChangeEvent();
 		event.setReloaded();
 		fManager.handleChange(fPDOM, event);
 	}

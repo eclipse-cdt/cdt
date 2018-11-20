@@ -31,27 +31,28 @@ import org.junit.Test;
 // This test verifies an autogen.sh project that builds configure, but
 // does not run it.
 public class AutotoolsProjectTest2 {
-    
+
 	private IProject testProject;
+
 	@Before
-    public void setUp() throws Exception {
-        if (!ProjectTools.setup())
-        	fail("could not perform basic project workspace setup");
+	public void setUp() throws Exception {
+		if (!ProjectTools.setup())
+			fail("could not perform basic project workspace setup");
 		testProject = ProjectTools.createProject("testProject2");
 		if (testProject == null) {
-            fail("Unable to create test project");
-        }
+			fail("Unable to create test project");
+		}
 		testProject.open(new NullProgressMonitor());
-    }
-	
-    /**
-     * Test sample project which has a hello world program. The top-level 
-     * contains autogen.sh which will build configure, but not run it.
-     * The hello world source is found in
-     * src/sample/hello.c so configuration must create multiple
-     * Makefiles.
-     * @throws Exception
-     */
+	}
+
+	/**
+	 * Test sample project which has a hello world program. The top-level 
+	 * contains autogen.sh which will build configure, but not run it.
+	 * The hello world source is found in
+	 * src/sample/hello.c so configuration must create multiple
+	 * Makefiles.
+	 * @throws Exception
+	 */
 	@Test
 	public void testAutotoolsProject2() throws Exception {
 		Path p = new Path("zip/project2.zip");
@@ -89,6 +90,7 @@ public class AutotoolsProjectTest2 {
 		x = new org.eclipse.core.runtime.Path("sample/Makefile");
 		assertTrue(testProject.exists(x));
 	}
+
 	@After
 	public void tearDown() throws Exception {
 		testProject.refreshLocal(IResource.DEPTH_INFINITE, null);

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
@@ -26,7 +26,7 @@ public interface ICPPASTPackExpandable {
 	 * @since 5.2
 	 */
 	public boolean isPackExpansion();
-	
+
 	/**
 	 * Sets whether this base specifier is a pack expansion. Not allowed on frozen AST.
 	 * @since 5.2

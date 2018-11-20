@@ -33,11 +33,13 @@ public class AutomaticVariableReferenceRule extends WordRule {
 	public AutomaticVariableReferenceRule(IToken token) {
 		super(new IWordDetector() {
 			int count = 0;
+
 			@Override
 			public boolean isWordPart(char c) {
 				count++;
 				return count <= 2;
 			}
+
 			@Override
 			public boolean isWordStart(char c) {
 				count = 1;

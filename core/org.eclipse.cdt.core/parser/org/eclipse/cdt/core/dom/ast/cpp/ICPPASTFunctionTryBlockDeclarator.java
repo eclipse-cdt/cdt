@@ -43,7 +43,7 @@ public interface ICPPASTFunctionTryBlockDeclarator extends ICPPASTFunctionDeclar
 	 * @return <code>ICPPASTCatchHandler</code>
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
-	
+
 	/**
 	 * @since 5.1
 	 */

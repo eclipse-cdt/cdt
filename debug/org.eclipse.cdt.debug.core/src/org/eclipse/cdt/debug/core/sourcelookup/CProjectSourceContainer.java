@@ -57,9 +57,8 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * Unique identifier for the project source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.project</code>).
 	 */
-	public static final String TYPE_ID =
-			CDebugCorePlugin.getUniqueIdentifier() + ".containerType.project"; //$NON-NLS-1$
-	private final IProject fOwnProject;  // Project assigned to this container at construction time.
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.project"; //$NON-NLS-1$
+	private final IProject fOwnProject; // Project assigned to this container at construction time.
 	private IProject fProject;
 	private boolean fSearchReferencedProjects;
 	private URI fRootURI;
@@ -147,7 +146,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 						}
 					} else if (files.length > 0) {
 						sources.add(files[0]);
-					}					
+					}
 				}
 			}
 		}
@@ -168,18 +167,18 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 					break;
 				}
 			}
-		}			
-		
+		}
+
 		if (sources.isEmpty())
 			return EMPTY;
 		return sources.toArray();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	@Override
-	public String getName() {		
+	public String getName() {
 		return fProject != null ? fProject.getName() : InternalSourceLookupMessages.CProjectSourceContainer_0;
 	}
 
@@ -191,10 +190,10 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		if (obj != null && obj instanceof CProjectSourceContainer) {
 			CProjectSourceContainer loc = (CProjectSourceContainer) obj;
 			return fProject == null ? loc.fProject == null : fProject.equals(loc.fProject);
-		}	
+		}
 		return false;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -229,7 +228,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 					}
 				}
 				return containers.toArray(new ISourceContainer[containers.size()]);
-			} 
+			}
 			return createFolderSourceContainers(fProject);
 		}
 		return new ISourceContainer[0];
@@ -246,7 +245,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		ISourceContainer[] containers = list.toArray(new ISourceContainer[list.size()]);
 		for (ISourceContainer container : containers) {
 			container.init(getDirector());
-		}			
+		}
 		return containers;
 	}
 

@@ -71,7 +71,7 @@ public class UPCASTCompositeTypeSpecifier extends CASTCompositeTypeSpecifier imp
 	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
-		if(expr != null) {
+		if (expr != null) {
 			expr.setParent(this);
 			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
 		}
@@ -88,30 +88,40 @@ public class UPCASTCompositeTypeSpecifier extends CASTCompositeTypeSpecifier imp
 		this.sharedQualifier = shared;
 	}
 
-
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+	public boolean accept(ASTVisitor action) {
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if( getName() != null ) if( !getName().accept( action ) ) return false;
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+		if (getName() != null)
+			if (!getName().accept(action))
+				return false;
+		if (blockSizeExpression != null)
+			if (!blockSizeExpression.accept(action))
+				return false;
 
-        IASTDeclaration [] decls = getMembers();
-        for( int i = 0; i < decls.length; i++ )
-            if( !decls[i].accept( action ) ) return false;
+		IASTDeclaration[] decls = getMembers();
+		for (int i = 0; i < decls.length; i++)
+			if (!decls[i].accept(action))
+				return false;
 
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 }

@@ -23,19 +23,19 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildMacroStatus extends ICdtVariableStatus {
-	
+
 	/**
 	 * returns the context type used in the operation
 	 * @return int
 	 */
 	public int getContextType();
-	
+
 	/**
 	 * returns the context data used in the operation
 	 * @return Object
 	 */
 	public Object getContextData();
-	
+
 	public String getMacroName();
-	
+
 }

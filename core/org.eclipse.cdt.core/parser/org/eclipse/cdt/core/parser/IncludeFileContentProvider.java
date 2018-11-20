@@ -10,12 +10,11 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
 import org.eclipse.cdt.internal.core.parser.SavedFilesProvider;
-
 
 /**
  * A file content provider is used to create file content objects for include

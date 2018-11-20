@@ -34,7 +34,8 @@ public final class EvalPointer extends EvalReference {
 		this(record, referredSubValue, templateDefinition, referredSubValue.getElementId());
 	}
 
-	public EvalPointer(ActivationRecord record, EvalCompositeAccess referredSubValue, IBinding templateDefinition, int offset) {
+	public EvalPointer(ActivationRecord record, EvalCompositeAccess referredSubValue, IBinding templateDefinition,
+			int offset) {
 		super(record, referredSubValue, templateDefinition);
 		setPosition(offset);
 	}
@@ -46,10 +47,11 @@ public final class EvalPointer extends EvalReference {
 
 	public EvalReference dereference() {
 		if (referredSubValue != null) {
-			final EvalCompositeAccess pointedToValue = new EvalCompositeAccess(referredSubValue.getParent(), getPosition());
+			final EvalCompositeAccess pointedToValue = new EvalCompositeAccess(referredSubValue.getParent(),
+					getPosition());
 			return new EvalReference(owningRecord, pointedToValue, getTemplateDefinition());
-		} else  {
-			return new EvalReference(owningRecord,referredBinding, getTemplateDefinition());
+		} else {
+			return new EvalReference(owningRecord, referredBinding, getTemplateDefinition());
 		}
 	}
 
@@ -80,7 +82,8 @@ public final class EvalPointer extends EvalReference {
 	}
 
 	private boolean subValuePositionOutOfrange() {
-		return referredSubValue != null && (position - referredSubValue.getParent().getValue().numberOfSubValues() > 0 || position < 0);
+		return referredSubValue != null
+				&& (position - referredSubValue.getParent().getValue().numberOfSubValues() > 0 || position < 0);
 	}
 
 	@Override
@@ -98,16 +101,18 @@ public final class EvalPointer extends EvalReference {
 	public EvalPointer copy() {
 		if (referredSubValue != null) {
 			return new EvalPointer(owningRecord, referredSubValue, getTemplateDefinition(), position);
-		} else  {
+		} else {
 			return new EvalPointer(owningRecord, referredBinding, getTemplateDefinition());
 		}
 	}
 
 	public static EvalPointer createFromAddress(EvalReference reference) {
 		if (reference.referredSubValue != null) {
-			return new EvalPointer(reference.owningRecord, reference.referredSubValue, reference.getTemplateDefinition());
-		} else  {
-			return new EvalPointer(reference.owningRecord, reference.referredBinding, reference.getTemplateDefinition());
+			return new EvalPointer(reference.owningRecord, reference.referredSubValue,
+					reference.getTemplateDefinition());
+		} else {
+			return new EvalPointer(reference.owningRecord, reference.referredBinding,
+					reference.getTemplateDefinition());
 		}
 	}
 

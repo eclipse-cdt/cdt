@@ -121,8 +121,7 @@ public class SyncUtil {
 
 			@Override
 			public void run() {
-				DsfServicesTracker tracker = new DsfServicesTracker(
-						TestsPlugin.getBundleContext(), fSession.getId());
+				DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
 				fGdbControl = tracker.getService(IGDBControl.class);
 				fRunControl = tracker.getService(IMIRunControl.class);
@@ -140,13 +139,13 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent step(int numSteps, StepType stepType) throws Throwable {
-		return step(numSteps,stepType, false);
+		return step(numSteps, stepType, false);
 	}
-	
+
 	public static MIStoppedEvent step(int numSteps, StepType stepType, boolean reverse) throws Throwable {
-	    MIStoppedEvent retVal = null;
-		for (int i=0; i<numSteps; i++) {
-		    retVal = step(stepType, reverse, DefaultTimeouts.get(ETimeout.step));
+		MIStoppedEvent retVal = null;
+		for (int i = 0; i < numSteps; i++) {
+			retVal = step(stepType, reverse, DefaultTimeouts.get(ETimeout.step));
 		}
 		return retVal;
 	}
@@ -156,23 +155,23 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent step(StepType stepType, boolean reverse, int massagedTimeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return step(containerDmc, stepType, reverse, massagedTimeout);
 	}
-	
+
 	public static MIStoppedEvent step(IExecutionDMContext dmc, StepType stepType) throws Throwable {
-		return step(dmc, stepType, DefaultTimeouts.get(ETimeout.step));		
+		return step(dmc, stepType, DefaultTimeouts.get(ETimeout.step));
 	}
-	
-	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, int massagedTimeout) throws Throwable {
+
+	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, int massagedTimeout)
+			throws Throwable {
 		return step(dmc, stepType, false, massagedTimeout);
 	}
-	
-	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse, int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-			new ServiceEventWaitor<MIStoppedEvent>(
-					fSession,
-					MIStoppedEvent.class);
+
+	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse,
+			int massagedTimeout) throws Throwable {
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+				MIStoppedEvent.class);
 
 		if (!reverse) {
 			fRunControl.getExecutor().submit(new Runnable() {
@@ -180,7 +179,7 @@ public class SyncUtil {
 				public void run() {
 					// No need for a RequestMonitor since we will wait for the
 					// ServiceEvent telling us the program has been suspended again
-					switch(stepType) {
+					switch (stepType) {
 					case STEP_INTO:
 						fGdbControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
 						break;
@@ -188,7 +187,8 @@ public class SyncUtil {
 						fGdbControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
 						break;
 					case STEP_RETURN:
-						fGdbControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
+						fGdbControl.queueCommand(
+								fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
 						break;
 					default:
 						fail("Unsupported step type; " + stepType.toString());
@@ -201,7 +201,7 @@ public class SyncUtil {
 				public void run() {
 					// No need for a RequestMonitor since we will wait for the
 					// ServiceEvent telling us the program has been suspended again
-					switch(stepType) {
+					switch (stepType) {
 					case STEP_INTO:
 						fGdbControl.queueCommand(fCommandFactory.createMIExecReverseStep(dmc), null);
 						break;
@@ -209,13 +209,14 @@ public class SyncUtil {
 						fGdbControl.queueCommand(fCommandFactory.createMIExecReverseNext(dmc), null);
 						break;
 					case STEP_RETURN:
-						fGdbControl.queueCommand(fCommandFactory.createMIExecUncall(fStack.createFrameDMContext(dmc, 0)), null);
+						fGdbControl.queueCommand(
+								fCommandFactory.createMIExecUncall(fStack.createFrameDMContext(dmc, 0)), null);
 						break;
 					default:
 						fail("Unsupported step type; " + stepType.toString());
 					}
 				}
-			});			
+			});
 		}
 
 		// Wait for the execution to suspend after the step
@@ -233,43 +234,43 @@ public class SyncUtil {
 	public static String addBreakpoint(String location, boolean temporary) throws Throwable {
 		return addBreakpoint(location, temporary, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
-	
-	private static String addBreakpoint(final String location, final boolean temporary, int massagedTimeout)
-							throws Throwable {
 
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-        final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-        
+	private static String addBreakpoint(final String location, final boolean temporary, int massagedTimeout)
+			throws Throwable {
+
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc,
+				IBreakpointsTargetDMContext.class);
+
 		Query<MIBreakInsertInfo> query = new Query<MIBreakInsertInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakInsertInfo> rm) {
 				fGdbControl.queueCommand(
-						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, false, null, 0, location, "0"),
-						rm);
+						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, false, null, 0, location, "0"), rm);
 			}
 		};
-		
+
 		fGdbControl.getExecutor().execute(query);
 		MIBreakInsertInfo info = query.get(massagedTimeout, TimeUnit.MILLISECONDS);
-        return info.getMIBreakpoints()[0].getNumber();
+		return info.getMIBreakpoints()[0].getNumber();
 	}
 
-	
 	public static String[] getBreakpointList(int timeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-        final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc,
+				IBreakpointsTargetDMContext.class);
 
-        Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
 				fGdbControl.queueCommand(fCommandFactory.createMIBreakList(bpTargetDmc), rm);
 			}
 		};
-		
+
 		fGdbControl.getExecutor().execute(query);
 		MIBreakListInfo info = query.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
 		MIBreakpoint[] breakpoints = info.getMIBreakpoints();
-		
+
 		String[] result = new String[breakpoints.length];
 		for (int i = 0; i < breakpoints.length; i++) {
 			result[i] = breakpoints[i].getNumber();
@@ -277,20 +278,17 @@ public class SyncUtil {
 		return result;
 	}
 
-	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
-        final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-            new ServiceEventWaitor<MIStoppedEvent>(
-                    fSession,
-                    MIStoppedEvent.class);
+	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout)
+			throws Throwable {
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+				MIStoppedEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
-				fGdbControl.queueCommand(
-						fCommandFactory.createMIExecContinue(dmc),
-						null);
+				fGdbControl.queueCommand(fCommandFactory.createMIExecContinue(dmc), null);
 			}
 		});
 
@@ -299,54 +297,49 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent resumeUntilStopped() throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-        // Don't call resumeUtilStopped(int timeout) as this will duplicate the timeout massage 
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		// Don't call resumeUtilStopped(int timeout) as this will duplicate the timeout massage 
 		return resumeUntilStopped(containerDmc, DefaultTimeouts.get(ETimeout.resumeUntilStopped));
 	}
 
 	public static MIStoppedEvent resumeUntilStopped(int timeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return resumeUntilStopped(containerDmc, TestsPlugin.massageTimeout(timeout));
 	}
 
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
-        final ServiceEventWaitor<MIRunningEvent> eventWaitor =
-            new ServiceEventWaitor<MIRunningEvent>(
-                    fSession,
-                    MIRunningEvent.class);
+		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<MIRunningEvent>(fSession,
+				MIRunningEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been resumed
-				fGdbControl.queueCommand(
-						fCommandFactory.createMIExecContinue(dmc),
-						null);
+				fGdbControl.queueCommand(fCommandFactory.createMIExecContinue(dmc), null);
 			}
 		});
 
 		// Wait for the execution to start after the step
-    	return eventWaitor.waitForEvent(massagedTimeout);
+		return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
-	public static boolean canResume(final IExecutionDMContext execDmc) throws Throwable {	
-        Query<Boolean> query = new Query<Boolean>() {
+	public static boolean canResume(final IExecutionDMContext execDmc) throws Throwable {
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				fRunControl.canResume(execDmc,
-            			new ImmediateDataRequestMonitor<Boolean>(rm) {
-            				@Override
-            				protected void handleSuccess() {
-            					rm.done(getData());
-            				}
-            			});
+				fRunControl.canResume(execDmc, new ImmediateDataRequestMonitor<Boolean>(rm) {
+					@Override
+					protected void handleSuccess() {
+						rm.done(getData());
+					}
+				});
 			}
-        };
+		};
 
-        fRunControl.getExecutor().execute(query);
-        boolean canResume = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-        return canResume;
+		fRunControl.getExecutor().execute(query);
+		boolean canResume = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		return canResume;
 	}
 
 	public static MIRunningEvent resume() throws Throwable {
@@ -354,7 +347,7 @@ public class SyncUtil {
 	}
 
 	public static MIRunningEvent resume(int massagedTimeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return resume(containerDmc, massagedTimeout);
 	}
 
@@ -363,19 +356,19 @@ public class SyncUtil {
 	}
 
 	public static void resumeAll(int massagedTimeout) throws Throwable {
-        IMIExecutionDMContext[] threadDmcs = SyncUtil.getExecutionContexts();
-        for (IMIExecutionDMContext thread : threadDmcs) {
-        	if (canResume(thread)) {
-        		resume(thread, massagedTimeout);
-        	}
-        }
+		IMIExecutionDMContext[] threadDmcs = SyncUtil.getExecutionContexts();
+		for (IMIExecutionDMContext thread : threadDmcs) {
+			if (canResume(thread)) {
+				resume(thread, massagedTimeout);
+			}
+		}
 	}
 
 	public static MIStoppedEvent waitForStop() throws Throwable {
 		// Use a direct value to avoid double call to TestsPlugin.massageTimeout
 		return waitForStop(10000);
 	}
-	
+
 	// This method is risky.  If the command to resume/step execution
 	// is sent and the stopped event is received before we call this method
 	// here, then we will miss the stopped event.
@@ -385,19 +378,17 @@ public class SyncUtil {
 	// if there is a sleep in the code between the resume and the time
 	// it stops; this will give us plenty of time to call this method.
 	public static MIStoppedEvent waitForStop(int timeout) throws Throwable {
-        final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-            new ServiceEventWaitor<MIStoppedEvent>(
-                    fSession,
-                    MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+				MIStoppedEvent.class);
 
 		// Wait for the execution to suspend
 		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(timeout));
 	}
-	
+
 	public static MIStoppedEvent runToLocation(String location) throws Throwable {
 		return runToLocation(location, DefaultTimeouts.get(ETimeout.runToLocation));
 	}
-	
+
 	public static MIStoppedEvent runToLocation(String location, int timeout) throws Throwable {
 		// Set a temporary breakpoint and run to it.
 		// Note that if there were other breakpoints set ahead of this one,
@@ -407,8 +398,8 @@ public class SyncUtil {
 		// if a timeout value is provided via DefaultTimeouts the value will be massaged twice
 		return resumeUntilStopped();
 	}
-	
-    public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
+
+	public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
 		Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
@@ -427,67 +418,66 @@ public class SyncUtil {
 
 		fSession.getExecutor().execute(query);
 		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    }
-	
-    /**
+	}
+
+	/**
 	 * Utility method to return a specific frame DM context.
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IFrameDMContext getStackFrame(int threadIndex, final int level) throws Exception {
 		return getStackFrame(getExecutionContext(threadIndex), level);
-	}    
+	}
 
-    public static Integer getStackDepth(final IExecutionDMContext execCtx) throws Throwable {
-    	return getStackDepth(execCtx, 0);
-    }
-    
-    public static Integer getStackDepth(final IExecutionDMContext execCtx, final int maxDepth) throws Throwable {
-    	Query<Integer> query = new Query<Integer>() {
-            @Override
-            protected void execute(final DataRequestMonitor<Integer> rm) {
-                fStack.getStackDepth(execCtx, maxDepth, rm);
-            }
-        };
+	public static Integer getStackDepth(final IExecutionDMContext execCtx) throws Throwable {
+		return getStackDepth(execCtx, 0);
+	}
 
-        fSession.getExecutor().execute(query);
-        return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    }
+	public static Integer getStackDepth(final IExecutionDMContext execCtx, final int maxDepth) throws Throwable {
+		Query<Integer> query = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> rm) {
+				fStack.getStackDepth(execCtx, maxDepth, rm);
+			}
+		};
 
-    public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
-      	Query<IFrameDMData> query = new Query<IFrameDMData>() {
-    		@Override
-    		protected void execute(final DataRequestMonitor<IFrameDMData> rm) {
-    			fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
-    				@Override
-    				protected void handleSuccess() {
-    					IFrameDMContext[] frameDmcs = getData();
-    					assert frameDmcs != null;
-    					assert frameDmcs.length == 1;
-    					fStack.getFrameData(frameDmcs[0], rm);
-    				}
-    			});
-    		}
-    	};
+		fSession.getExecutor().execute(query);
+		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+	}
 
-    	fSession.getExecutor().execute(query);
-    	return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    }
-    
-    public static IFrameDMData getFrameData(final int threadId, final int level) throws Throwable {
-    	return getFrameData(getExecutionContext(threadId), level);
-    }    
+	public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
+		Query<IFrameDMData> query = new Query<IFrameDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IFrameDMData> rm) {
+				fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
+					@Override
+					protected void handleSuccess() {
+						IFrameDMContext[] frameDmcs = getData();
+						assert frameDmcs != null;
+						assert frameDmcs.length == 1;
+						fStack.getFrameData(frameDmcs[0], rm);
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+	}
+
+	public static IFrameDMData getFrameData(final int threadId, final int level) throws Throwable {
+		return getFrameData(getExecutionContext(threadId), level);
+	}
 
 	public static IThreadDMData getThreadData(final int threadId)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
-				SyncUtil.getContainerContext(), IProcessDMContext.class);
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(),
+				IProcessDMContext.class);
 
 		Query<IThreadDMData> query = new Query<IThreadDMData>() {
 			@Override
 			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
-				IThreadDMContext threadDmc = fProcessesService
-						.createThreadContext(processContext,
-								Integer.toString(threadId));
+				IThreadDMContext threadDmc = fProcessesService.createThreadContext(processContext,
+						Integer.toString(threadId));
 				fProcessesService.getExecutionData(threadDmc, rm);
 
 			}
@@ -497,16 +487,16 @@ public class SyncUtil {
 		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
-    public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
-        throws Throwable {
-        Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
-            @Override
+	public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
+			throws Throwable {
+		Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
+			@Override
 			public IExpressionDMContext call() throws Exception {
-                return fExpressions.createExpression(parentCtx, expression);
-            }
-        };
-        return fSession.getExecutor().submit(callable).get();
-    }
+				return fExpressions.createExpression(parentCtx, expression);
+			}
+		};
+		return fSession.getExecutor().submit(callable).get();
+	}
 
 	public static IExpressionDMContext[] getSubExpressions(final IExpressionDMContext dmc)
 			throws InterruptedException, ExecutionException {
@@ -534,73 +524,61 @@ public class SyncUtil {
 		return subExpressions[0];
 	}
 
-    public static String getExpressionValue(final IExpressionDMContext exprDmc, final String format) 
-        throws Throwable {
+	public static String getExpressionValue(final IExpressionDMContext exprDmc, final String format) throws Throwable {
 		Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				FormattedValueDMContext valueDmc = fExpressions.getFormattedValueContext(exprDmc, format);
 				fExpressions.getFormattedExpressionValue(valueDmc,
 						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-					@Override
-					protected void handleSuccess() {
-						rm.done(getData().getFormattedValue());
-					}
-				});
+							@Override
+							protected void handleSuccess() {
+								rm.done(getData().getFormattedValue());
+							}
+						});
 			}
 		};
 
 		fSession.getExecutor().execute(query);
-		return query.get(); 
+		return query.get();
 	}
-	
-    public static FormattedValueDMContext getFormattedValue(
-        final IFormattedValues service, final IFormattedDataDMContext dmc, final String formatId) throws Throwable 
-    {
-        Callable<FormattedValueDMContext> callable = new Callable<FormattedValueDMContext>() {
-            @Override
+
+	public static FormattedValueDMContext getFormattedValue(final IFormattedValues service,
+			final IFormattedDataDMContext dmc, final String formatId) throws Throwable {
+		Callable<FormattedValueDMContext> callable = new Callable<FormattedValueDMContext>() {
+			@Override
 			public FormattedValueDMContext call() throws Exception {
-                return service.getFormattedValueContext(dmc, formatId);
-            }
-        };
-        return fSession.getExecutor().submit(callable).get();
-    }
-    
-    public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId) throws Throwable {
-	    Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
-	        @Override
+				return service.getFormattedValueContext(dmc, formatId);
+			}
+		};
+		return fSession.getExecutor().submit(callable).get();
+	}
+
+	public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId)
+			throws Throwable {
+		Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
+			@Override
 			public IMIExecutionDMContext call() throws Exception {
-	        	String threadIdStr = Integer.toString(threadId);
-	        	IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentCtx, IProcessDMContext.class);
-	        	IThreadDMContext threadDmc = fProcessesService.createThreadContext(processDmc, threadIdStr);
-	            return fProcessesService.createExecutionContext(parentCtx, threadDmc, threadIdStr);
-	        }
-	    };
-	    return fSession.getExecutor().submit(callable).get();
-    }
-    
-    static class DefaultTimeouts {
+				String threadIdStr = Integer.toString(threadId);
+				IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentCtx, IProcessDMContext.class);
+				IThreadDMContext threadDmc = fProcessesService.createThreadContext(processDmc, threadIdStr);
+				return fProcessesService.createExecutionContext(parentCtx, threadDmc, threadIdStr);
+			}
+		};
+		return fSession.getExecutor().submit(callable).get();
+	}
+
+	static class DefaultTimeouts {
 
 		/**
 		 * Overridable default timeout values. An override is specified using a
 		 * system property that is "dsf.gdb.tests.timeout.default." plus the
 		 * name of the enum below.
 		 */
-    	enum ETimeout {
-    		addBreakpoint,
-    		deleteBreakpoint,
-    		getBreakpointList,
-    		createExecutionContext,
-    		createExpression,
-    		getFormattedValue,
-    		getStackFrame,
-    		resume,
-    		resumeUntilStopped,
-    		runToLine,
-    		runToLocation,
-    		step,
-    		waitForStop
-    	}
+		enum ETimeout {
+			addBreakpoint, deleteBreakpoint, getBreakpointList, createExecutionContext, createExpression,
+			getFormattedValue, getStackFrame, resume, resumeUntilStopped, runToLine, runToLocation, step, waitForStop
+		}
 
 		/**
 		 * Map of timeout enums to their <b>harcoded</b> default value )in
@@ -614,22 +592,22 @@ public class SyncUtil {
 		 * we allows 10 seconds, which is probably ample in most cases. Tests
 		 * can provide larger values as needed in specific SyncUtil calls.
 		 */
-    	private static Map<ETimeout,Integer> sTimeouts = new HashMap<ETimeout, Integer>();
-    	static {
-    		sTimeouts.put(ETimeout.addBreakpoint, 1000);
-    		sTimeouts.put(ETimeout.deleteBreakpoint, 1000);
-    		sTimeouts.put(ETimeout.getBreakpointList, 1000);
-    		sTimeouts.put(ETimeout.createExecutionContext, 1000);
-    		sTimeouts.put(ETimeout.createExpression, 1000);
-    		sTimeouts.put(ETimeout.getFormattedValue, 1000);
-    		sTimeouts.put(ETimeout.getStackFrame, 1000);
-    		sTimeouts.put(ETimeout.resume, 1000);
-    		sTimeouts.put(ETimeout.resumeUntilStopped, 10000); // 10 seconds
-    		sTimeouts.put(ETimeout.runToLine, 10000);	// 10 seconds
-    		sTimeouts.put(ETimeout.runToLocation, 10000);	// 10 seconds    		
-    		sTimeouts.put(ETimeout.step, 1000);
-    		sTimeouts.put(ETimeout.waitForStop, 10000);	// 10 seconds
-    	}
+		private static Map<ETimeout, Integer> sTimeouts = new HashMap<ETimeout, Integer>();
+		static {
+			sTimeouts.put(ETimeout.addBreakpoint, 1000);
+			sTimeouts.put(ETimeout.deleteBreakpoint, 1000);
+			sTimeouts.put(ETimeout.getBreakpointList, 1000);
+			sTimeouts.put(ETimeout.createExecutionContext, 1000);
+			sTimeouts.put(ETimeout.createExpression, 1000);
+			sTimeouts.put(ETimeout.getFormattedValue, 1000);
+			sTimeouts.put(ETimeout.getStackFrame, 1000);
+			sTimeouts.put(ETimeout.resume, 1000);
+			sTimeouts.put(ETimeout.resumeUntilStopped, 10000); // 10 seconds
+			sTimeouts.put(ETimeout.runToLine, 10000); // 10 seconds
+			sTimeouts.put(ETimeout.runToLocation, 10000); // 10 seconds    		
+			sTimeouts.put(ETimeout.step, 1000);
+			sTimeouts.put(ETimeout.waitForStop, 10000); // 10 seconds
+		}
 
 		/**
 		 * Get the default timeout to use when the caller of a SyncUtil method
@@ -641,31 +619,32 @@ public class SyncUtil {
 		 *            the timeout enum
 		 * @return the default value
 		 */
-    	static int get(ETimeout timeout) {
-    		int value = -1;
-    		final String propname = "dsf.gdb.tests.timeout.default." + timeout.toString();
-    		final String prop = System.getProperty(propname);
-    		if (prop != null) {
-	    		try {
-	    			value = Integer.valueOf(value);
-	    			if (value < 0) {
-	    				TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
-	    				value = -1;
-	    			}
-	    		}
-	    		catch (NumberFormatException exc) {
-	    			TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
-	    			value = -1;
-	    		}
-    		}
-    		
-    		if (value == -1) {
-    			value = sTimeouts.get(timeout);
-    		}
-    		assert value >= 0;
-    		return TestsPlugin.massageTimeout(value);
-    	}
-    }
+		static int get(ETimeout timeout) {
+			int value = -1;
+			final String propname = "dsf.gdb.tests.timeout.default." + timeout.toString();
+			final String prop = System.getProperty(propname);
+			if (prop != null) {
+				try {
+					value = Integer.valueOf(value);
+					if (value < 0) {
+						TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname //$NON-NLS-1$
+								+ "\" property incorrectly specified. Should be an integer value or not specified at all."));
+						value = -1;
+					}
+				} catch (NumberFormatException exc) {
+					TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname //$NON-NLS-1$
+							+ "\" property incorrectly specified. Should be an integer value or not specified at all."));
+					value = -1;
+				}
+			}
+
+			if (value == -1) {
+				value = sTimeouts.get(timeout);
+			}
+			assert value >= 0;
+			return TestsPlugin.massageTimeout(value);
+		}
+	}
 
 	/**
 	 * Utility method to return the container DM context. This can be used only by
@@ -681,32 +660,32 @@ public class SyncUtil {
 	 * @throws ExecutionException 
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IContainerDMContext getContainerContext() throws InterruptedException, ExecutionException, TimeoutException {
+	public static IContainerDMContext getContainerContext()
+			throws InterruptedException, ExecutionException, TimeoutException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
 		Query<IContainerDMContext> query = new Query<IContainerDMContext>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
-				fProcessesService.getProcessesBeingDebugged(
-            			fGdbControl.getContext(), 
-            			new ImmediateDataRequestMonitor<IDMContext[]>() {
-                    @Override
-                    protected void handleCompleted() {
-                    	if (isSuccess()) {
-                    		IDMContext[] contexts = getData();
-                    		assertNotNull("invalid return value from service", contexts);
-                    		assertEquals("unexpected number of processes", 1, contexts.length);
-                    		IDMContext context = contexts[0];    
-                    		assertNotNull("unexpected process context type ", context);
-                    		rm.done((IContainerDMContext)context);
-                    	} else {
-                            rm.done(getStatus());
-                    	}
-                    }
-            	});
+				fProcessesService.getProcessesBeingDebugged(fGdbControl.getContext(),
+						new ImmediateDataRequestMonitor<IDMContext[]>() {
+							@Override
+							protected void handleCompleted() {
+								if (isSuccess()) {
+									IDMContext[] contexts = getData();
+									assertNotNull("invalid return value from service", contexts);
+									assertEquals("unexpected number of processes", 1, contexts.length);
+									IDMContext context = contexts[0];
+									assertNotNull("unexpected process context type ", context);
+									rm.done((IContainerDMContext) context);
+								} else {
+									rm.done(getStatus());
+								}
+							}
+						});
 			}
 		};
-		
+
 		fGdbControl.getExecutor().execute(query);
 		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
@@ -717,32 +696,32 @@ public class SyncUtil {
 	 * @throws ExecutionException 
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IMIExecutionDMContext[] getExecutionContexts() throws InterruptedException, ExecutionException, TimeoutException {
+	public static IMIExecutionDMContext[] getExecutionContexts()
+			throws InterruptedException, ExecutionException, TimeoutException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
-        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
 		Query<IMIExecutionDMContext[]> query = new Query<IMIExecutionDMContext[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IMIExecutionDMContext[]> rm) {
-				fProcessesService.getProcessesBeingDebugged(
-            			containerDmc, 
-            			new ImmediateDataRequestMonitor<IDMContext[]>() {
-                    @Override
-                    protected void handleCompleted() {
-                    	if (isSuccess()) {
-                    		IDMContext[] threads = getData();
-                    		assertNotNull("invalid return value from service", threads);
-                    		rm.setData((IMIExecutionDMContext[])threads);
-                    	} else {
-                            rm.setStatus(getStatus());
-                    	}
-                    	rm.done();
-                    }
-            	});
+				fProcessesService.getProcessesBeingDebugged(containerDmc,
+						new ImmediateDataRequestMonitor<IDMContext[]>() {
+							@Override
+							protected void handleCompleted() {
+								if (isSuccess()) {
+									IDMContext[] threads = getData();
+									assertNotNull("invalid return value from service", threads);
+									rm.setData((IMIExecutionDMContext[]) threads);
+								} else {
+									rm.setStatus(getStatus());
+								}
+								rm.done();
+							}
+						});
 			}
 		};
-		
+
 		fGdbControl.getExecutor().execute(query);
 		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
@@ -753,7 +732,8 @@ public class SyncUtil {
 	 * @throws ExecutionException 
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IMIExecutionDMContext getExecutionContext(int threadIndex) throws InterruptedException, ExecutionException, TimeoutException {
+	public static IMIExecutionDMContext getExecutionContext(int threadIndex)
+			throws InterruptedException, ExecutionException, TimeoutException {
 		IMIExecutionDMContext[] threads = getExecutionContexts();
 		assertTrue("unexpected number of threads", threadIndex < threads.length);
 		assertNotNull("unexpected thread context type ", threads[threadIndex]);
@@ -767,117 +747,113 @@ public class SyncUtil {
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// Check if restart is allowed
-        Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				fProcessesService.canRestart(
-            			containerDmc,
-            			new ImmediateDataRequestMonitor<Boolean>(rm) {
-            				@Override
-            				protected void handleSuccess() {
-            					rm.setData(getData());
-            					rm.done();
-            				}
-            			});
-            	
-			}
-        };
+				fProcessesService.canRestart(containerDmc, new ImmediateDataRequestMonitor<Boolean>(rm) {
+					@Override
+					protected void handleSuccess() {
+						rm.setData(getData());
+						rm.done();
+					}
+				});
 
-        fGdbControl.getExecutor().execute(query);
-        boolean canRestart = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-        return canRestart;
+			}
+		};
+
+		fGdbControl.getExecutor().execute(query);
+		boolean canRestart = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		return canRestart;
 	}
 
-    /**
-     * Restart the program.
-     */
+	/**
+	 * Restart the program.
+	 */
 	public static MIStoppedEvent restart(final GdbLaunch launch) throws Exception {
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// If we are calling this method, the restart operation should be allowed
 		if (!canRestart()) {
-        	throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Unable to restart"));
-        }
+			throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Unable to restart"));
+		}
 
-        // Now wait for the stopped event of the restart
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-			new ServiceEventWaitor<MIStoppedEvent>(
-					fSession,
-					MIStoppedEvent.class);
-			
-        // Perform the restart
-        Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {
+		// Now wait for the stopped event of the restart
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+				MIStoppedEvent.class);
+
+		// Perform the restart
+		Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
 				Map<String, Object> attributes = null;
 				try {
 					attributes = launch.getLaunchConfiguration().getAttributes();
-				} catch (CoreException e) {}
+				} catch (CoreException e) {
+				}
 
 				fProcessesService.restart(containerDmc, attributes, rm);
 			}
-        };
+		};
 
-        fGdbControl.getExecutor().execute(query2);
-        query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-        
-        
- 		MIStoppedEvent event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
- 		if (event instanceof MISignalEvent) {
- 			// This is not the stopped event we were waiting for.  Get the next one.
- 	 		event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
- 		}
- 		return event;
-    }
-	
-    public static IVariableDMData[] getLocals(final IFrameDMContext frameDmc) throws Throwable {
-    	Query<IVariableDMData[]> query = new Query<IVariableDMData[]>() {
-    		@Override
-    		protected void execute(final DataRequestMonitor<IVariableDMData[]> rm) {
-    			fStack.getLocals(frameDmc, new ImmediateDataRequestMonitor<IVariableDMContext[]>() {
-    				@Override
-    				protected void handleCompleted() {
-    					if (isSuccess()) {
-    						IVariableDMContext[] varDmcs = getData();
-    						final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
-    						final CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm) {
-    							@Override
-    							protected void handleSuccess() {
-    								rm.done(localsDMData.toArray(new IVariableDMData[localsDMData.size()]));
-    							};
-    						};
+		fGdbControl.getExecutor().execute(query2);
+		query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 
-    						for (IVariableDMContext varDmc : varDmcs) {
-    							fStack.getVariableData(varDmc, 
-    									new ImmediateDataRequestMonitor<IVariableDMData>(crm) {
-    								@Override
-    								public void handleSuccess() {
-    									localsDMData.add(getData());
-    									crm.done();
-    								}
-    							});
-    						}
-    						crm.setDoneCount(varDmcs.length);    			        		
-    					} else {
-    						rm.done();
-    					}
-    				}
-    			});
-    		}	
-    	};
+		MIStoppedEvent event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+		if (event instanceof MISignalEvent) {
+			// This is not the stopped event we were waiting for.  Get the next one.
+			event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+		}
+		return event;
+	}
 
-    	fSession.getExecutor().execute(query);
-    	IVariableDMData[] result = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	return result;
-    }
+	public static IVariableDMData[] getLocals(final IFrameDMContext frameDmc) throws Throwable {
+		Query<IVariableDMData[]> query = new Query<IVariableDMData[]>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IVariableDMData[]> rm) {
+				fStack.getLocals(frameDmc, new ImmediateDataRequestMonitor<IVariableDMContext[]>() {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							IVariableDMContext[] varDmcs = getData();
+							final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
+							final CountingRequestMonitor crm = new CountingRequestMonitor(
+									ImmediateExecutor.getInstance(), rm) {
+								@Override
+								protected void handleSuccess() {
+									rm.done(localsDMData.toArray(new IVariableDMData[localsDMData.size()]));
+								};
+							};
 
-    /**
-     * Get the registers directly from GDB (without using the registers service)
-     * @param gdbVersion
-     * @param context
-     * @return
-     * @throws Throwable
-     */
+							for (IVariableDMContext varDmc : varDmcs) {
+								fStack.getVariableData(varDmc, new ImmediateDataRequestMonitor<IVariableDMData>(crm) {
+									@Override
+									public void handleSuccess() {
+										localsDMData.add(getData());
+										crm.done();
+									}
+								});
+							}
+							crm.setDoneCount(varDmcs.length);
+						} else {
+							rm.done();
+						}
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		IVariableDMData[] result = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		return result;
+	}
+
+	/**
+	 * Get the registers directly from GDB (without using the registers service)
+	 * @param gdbVersion
+	 * @param context
+	 * @return
+	 * @throws Throwable
+	 */
 	public static List<String> getRegistersFromGdb(String gdbVersion, IDMContext context) throws Throwable {
 		if (!fRegisterNames.containsKey(gdbVersion)) {
 			// The tests must run on different machines, so the set of registers can change.
@@ -926,9 +902,8 @@ public class SyncUtil {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static MemoryByte[] readMemory(final IMemoryDMContext dmc,
-			final IAddress address, final long offset, final int wordSize,
-			final int count) throws InterruptedException, ExecutionException {
+	public static MemoryByte[] readMemory(final IMemoryDMContext dmc, final IAddress address, final long offset,
+			final int wordSize, final int count) throws InterruptedException, ExecutionException {
 		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<MemoryByte[]> rm) {
@@ -953,15 +928,12 @@ public class SyncUtil {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static void writeMemory(final IMemoryDMContext dmc,
-			final IAddress address, final long offset, final int wordSize,
-			final int count, final byte[] buffer) throws InterruptedException,
-			ExecutionException {
+	public static void writeMemory(final IMemoryDMContext dmc, final IAddress address, final long offset,
+			final int wordSize, final int count, final byte[] buffer) throws InterruptedException, ExecutionException {
 		Query<Void> query = new Query<Void>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
-				fMemory.setMemory(dmc, address, offset, wordSize, count,
-						buffer, rm);
+				fMemory.setMemory(dmc, address, offset, wordSize, count, buffer, rm);
 			}
 		};
 
@@ -982,15 +954,12 @@ public class SyncUtil {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static void fillMemory(final IMemoryDMContext dmc,
-			final IAddress address, final long offset, final int wordSize,
-			final int count, final byte[] pattern) throws InterruptedException,
-			ExecutionException {
+	public static void fillMemory(final IMemoryDMContext dmc, final IAddress address, final long offset,
+			final int wordSize, final int count, final byte[] pattern) throws InterruptedException, ExecutionException {
 		Query<Void> query = new Query<Void>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
-				fMemory.fillMemory(dmc, address, offset, wordSize, count,
-						pattern, rm);
+				fMemory.fillMemory(dmc, address, offset, wordSize, count, pattern, rm);
 			}
 		};
 
@@ -1025,8 +994,7 @@ public class SyncUtil {
 		assert (fMemory instanceof IGDBMemory2);
 		final IGDBMemory2 memoryService = (IGDBMemory2) fMemory;
 
-		return memoryService.isBigEndian(dmc) ? ByteOrder.BIG_ENDIAN
-				: ByteOrder.LITTLE_ENDIAN;
+		return memoryService.isBigEndian(dmc) ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
 	}
 
 	/**

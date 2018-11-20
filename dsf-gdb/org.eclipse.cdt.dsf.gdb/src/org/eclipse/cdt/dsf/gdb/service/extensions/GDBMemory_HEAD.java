@@ -42,11 +42,13 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GDBMemory_HEAD extends GDBMemory_7_6 {
 	public GDBMemory_HEAD(DsfSession session) {
 		super(session);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_6_VERSION; }
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_6_VERSION;
+	}
 
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);

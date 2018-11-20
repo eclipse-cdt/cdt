@@ -63,10 +63,10 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 		return null;
 	}
 
-	protected IPath fullPathForLocation(IPath location){
-		IResource rcs[] = isFile() ?
-				(IResource[]) ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location) :
-				(IResource[]) ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(location);
+	protected IPath fullPathForLocation(IPath location) {
+		IResource rcs[] = isFile()
+				? (IResource[]) ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location)
+				: (IResource[]) ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(location);
 
 		if (rcs.length > 0)
 			return rcs[0].getFullPath();
@@ -82,7 +82,7 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 	public IPath getLocation() {
 		if (!isValueWorkspacePath())
 			return new Path(getValue());
-		if (isResolved()){
+		if (isResolved()) {
 			IPath path = new Path(getValue());
 			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (rc != null)

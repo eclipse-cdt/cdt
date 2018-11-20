@@ -51,7 +51,7 @@ public class ErrorParserManager extends OutputStream {
 	 * as key/value pair with key="org.eclipse.cdt.core.errorOutputParser"
 	 * @deprecated since CDT 4.0.
 	 */
-	
+
 	/**
 	 * Delimiter for error parsers presented in one string.
 	 * @since 5.2
@@ -59,7 +59,7 @@ public class ErrorParserManager extends OutputStream {
 	public static final char ERROR_PARSER_DELIMITER = ';';
 
 	private int nOpens;
-	private int lineCounter=0;
+	private int lineCounter = 0;
 
 	private final IProject fProject;
 	private final MarkerGenerator fMarkerGenerator;
@@ -74,7 +74,6 @@ public class ErrorParserManager extends OutputStream {
 	private OutputStream outputStream;
 	private final StringBuilder currentLine = new StringBuilder();
 
-
 	/**
 	 * Constructor.
 	 * 
@@ -84,7 +83,6 @@ public class ErrorParserManager extends OutputStream {
 	public ErrorParserManager(IProject project, MarkerGenerator markerGenerator) {
 		this(project, project.getLocationURI(), markerGenerator);
 	}
-
 
 	/**
 	 * URI based constructor.
@@ -194,7 +192,6 @@ public class ErrorParserManager extends OutputStream {
 		return fDirectoryStack.size();
 	}
 
-
 	/**
 	 * Parses the input and tries to generate error or warning markers
 	 */
@@ -202,7 +199,7 @@ public class ErrorParserManager extends OutputStream {
 		String lineTrimmed = line.trim();
 		lineCounter++;
 
-		ProblemMarkerInfo marker=null;
+		ProblemMarkerInfo marker = null;
 
 		for (ErrorParser parser : fErrorParsers.values()) {
 			ErrorParser curr = parser;
@@ -217,7 +214,7 @@ public class ErrorParserManager extends OutputStream {
 			}
 			// standard behavior (pre 5.1) is to trim the line
 			String lineToParse = lineTrimmed;
-			if ((types & IErrorParser2.KEEP_UNTRIMMED) !=0 ) {
+			if ((types & IErrorParser2.KEEP_UNTRIMMED) != 0) {
 				// untrimmed lines
 				lineToParse = line;
 			}
@@ -228,11 +225,11 @@ public class ErrorParserManager extends OutputStream {
 			// It should not stop parsing of the rest of output.
 			try {
 				consume = curr.processLine(lineToParse, this);
-			} catch (Exception e){
+			} catch (Exception e) {
 				AutotoolsPlugin.log(e);
 			} finally {
 				if (fErrors.size() > 0) {
-					if (marker==null)
+					if (marker == null)
 						marker = fErrors.get(0);
 					fErrors.clear();
 				}
@@ -240,10 +237,10 @@ public class ErrorParserManager extends OutputStream {
 
 			if (consume)
 				break;
-			}
+		}
 		outputLine(line, marker);
 	}
-	
+
 	/** 
 	 * Conditionally output line to outputStream. If stream 
 	 * supports error markers, use it, otherwise use conventional stream
@@ -256,12 +253,12 @@ public class ErrorParserManager extends OutputStream {
 		try {
 			if (marker != null) {
 				if (outputStream instanceof IErrorMarkeredOutputStream) {
-					IErrorMarkeredOutputStream mos = (IErrorMarkeredOutputStream)outputStream;
+					IErrorMarkeredOutputStream mos = (IErrorMarkeredOutputStream) outputStream;
 					mos.write(l, marker);
 				}
 			}
 			byte[] b = l.getBytes();
-			outputStream.write(b, 0, b.length);			
+			outputStream.write(b, 0, b.length);
 		} catch (IOException e) {
 			AutotoolsPlugin.log(e);
 		}
@@ -274,7 +271,6 @@ public class ErrorParserManager extends OutputStream {
 	public int getLineCounter() {
 		return lineCounter;
 	}
-
 
 	/**
 	 * Add marker to the list of error markers.
@@ -304,10 +300,10 @@ public class ErrorParserManager extends OutputStream {
 	 * @param varName - variable name.
 	 * @param externalPath - external path pointing to a file outside the workspace.
 	 */
-	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, 
-			String varName, IPath externalPath, String libraryInfo, AutotoolsProblemMarkerInfo.Type type) {
-		AutotoolsProblemMarkerInfo problemMarkerInfo = 
-			new AutotoolsProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath, libraryInfo, type);
+	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName,
+			IPath externalPath, String libraryInfo, AutotoolsProblemMarkerInfo.Type type) {
+		AutotoolsProblemMarkerInfo problemMarkerInfo = new AutotoolsProblemMarkerInfo(file, lineNumber, desc, severity,
+				varName, externalPath, libraryInfo, type);
 		addProblemMarker(problemMarkerInfo);
 	}
 
@@ -316,7 +312,7 @@ public class ErrorParserManager extends OutputStream {
 	 * 
 	 * @param problemMarkerInfo - The marker to be added 
 	 */
-	public void addProblemMarker(AutotoolsProblemMarkerInfo problemMarkerInfo){
+	public void addProblemMarker(AutotoolsProblemMarkerInfo problemMarkerInfo) {
 		fErrors.add(problemMarkerInfo.getMarker());
 		fMarkerGenerator.addMarker(problemMarkerInfo);
 	}
@@ -401,8 +397,8 @@ public class ErrorParserManager extends OutputStream {
 		while ((i = buffer.indexOf('\n')) != -1) {
 			String line = buffer.substring(0, i);
 			// get rid of any trailing '\r'
-			if (line.endsWith("\r"))  //$NON-NLS-1$
-				line=line.substring(0,line.length()-1);
+			if (line.endsWith("\r")) //$NON-NLS-1$
+				line = line.substring(0, line.length() - 1);
 			processLine(line);
 			previousLine = line;
 			buffer = buffer.substring(i + 1); // skip the \n and advance
@@ -418,32 +414,29 @@ public class ErrorParserManager extends OutputStream {
 		}
 	}
 
-
 	/**
-     * Converts a location {@link IPath} to an {@link URI}. Contrary to
-     * {@link URIUtil#toURI(IPath)} this method does not assume that the path belongs
-     * to local file system.
-     *
-     * The returned URI uses the scheme and authority of the current working directory
-     * as returned by {@link #getWorkingDirectoryURI()}
-     *
+	 * Converts a location {@link IPath} to an {@link URI}. Contrary to
+	 * {@link URIUtil#toURI(IPath)} this method does not assume that the path belongs
+	 * to local file system.
+	 *
+	 * The returned URI uses the scheme and authority of the current working directory
+	 * as returned by {@link #getWorkingDirectoryURI()}
+	 *
 	 * @param path - the path to convert to URI.
 	 * @return URI
 	 * @since 5.1
 	 */
 	private URI toURI(IPath path) {
-//		try {
-			URI baseURI = getWorkingDirectoryURI();
-			String uriString = path.toString();
+		//		try {
+		URI baseURI = getWorkingDirectoryURI();
+		String uriString = path.toString();
 
-			// On Windows "C:/folder/" -> "/C:/folder/"
-			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
-			    uriString = IPath.SEPARATOR + uriString;
-			
-			return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
+		// On Windows "C:/folder/" -> "/C:/folder/"
+		if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
+			uriString = IPath.SEPARATOR + uriString;
+
+		return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
 	}
-
-
 
 	/**
 	 * @param ids - array of error parser IDs
@@ -451,9 +444,9 @@ public class ErrorParserManager extends OutputStream {
 	 * @since 5.2
 	 */
 	public static String toDelimitedString(String[] ids) {
-		String result=""; //$NON-NLS-1$
+		String result = ""; //$NON-NLS-1$
 		for (String id : ids) {
-			if (result.length()==0) {
+			if (result.length() == 0) {
 				result = id;
 			} else {
 				result += ERROR_PARSER_DELIMITER + id;

@@ -80,7 +80,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 			}
 		}
 		ICPPClassScope clsScope = (ICPPClassScope) scope;
-		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(clsScope);
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal
+				.getPhysicalNodeOfScope(clsScope);
 		IASTDeclaration[] members = compSpec.getMembers();
 		for (IASTDeclaration member : members) {
 			if (member instanceof ICPPASTTemplateDeclaration) {
@@ -94,7 +95,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 						}
 					}
 				} else if (decl instanceof IASTFunctionDefinition) {
-					IASTName name = ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator()).getName();
+					IASTName name = ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator())
+							.getName();
 					if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 						return member;
 					}
@@ -110,13 +112,13 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		if (decl == null) {
 			ICPPClassType cls = getClassOwner();
 			if (cls != null) {
-				return cls.getKey() == ICPPClassType.k_class ?
-						ICPPASTVisibilityLabel.v_private : ICPPASTVisibilityLabel.v_public;
+				return cls.getKey() == ICPPClassType.k_class ? ICPPASTVisibilityLabel.v_private
+						: ICPPASTVisibilityLabel.v_public;
 			}
 			return ICPPASTVisibilityLabel.v_private;
 		}
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
-		IASTDeclaration [] members = cls.getMembers();
+		IASTDeclaration[] members = cls.getMembers();
 		ICPPASTVisibilityLabel vis = null;
 		for (IASTDeclaration member : members) {
 			if (member instanceof ICPPASTVisibilityLabel) {
@@ -135,10 +137,10 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		IScope scope= getScope();
+		IScope scope = getScope();
 		if (scope instanceof ICPPTemplateScope) {
 			try {
-				scope= scope.getParent();
+				scope = scope.getParent();
 			} catch (DOMException e) {
 				return null;
 			}
@@ -149,11 +151,11 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return null;
 	}
 
-    @Override
+	@Override
 	public boolean isVirtual() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration) {
-			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			ICPPASTDeclSpecifier declSpec = getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
 			if (declSpec != null) {
 				return declSpec.isVirtual();
 			}
@@ -165,7 +167,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	public boolean isStatic(boolean resolveAll) {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration) {
-			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			ICPPASTDeclSpecifier declSpec = getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
 			if (declSpec != null) {
 				return declSpec.getStorageClass() == IASTDeclSpecifier.sc_static;
 			}
@@ -173,7 +175,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isInline() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration
@@ -201,8 +203,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	public boolean isExplicit() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration) {
-			ICPPASTDeclSpecifier declSpec=
-					getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			ICPPASTDeclSpecifier declSpec = getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
 			if (declSpec != null) {
 				return declSpec.isExplicit();
 			}

@@ -27,49 +27,49 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class VMDelegatingPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpdate {
 
-    /**
-     * Update to write the properties to.
-     */
-    private final IPropertiesUpdate fParentUpdate;
-    
-    public VMDelegatingPropertiesUpdate(IPropertiesUpdate parentUpdate, RequestMonitor rm) {
-        super(parentUpdate, rm);
-        fParentUpdate = parentUpdate;
-    }
+	/**
+	 * Update to write the properties to.
+	 */
+	private final IPropertiesUpdate fParentUpdate;
 
-    @Override
+	public VMDelegatingPropertiesUpdate(IPropertiesUpdate parentUpdate, RequestMonitor rm) {
+		super(parentUpdate, rm);
+		fParentUpdate = parentUpdate;
+	}
+
+	@Override
 	public Set<String> getProperties() {
-        return fParentUpdate.getProperties();
-    }
+		return fParentUpdate.getProperties();
+	}
 
-    @Override
+	@Override
 	public void setProperty(String property, Object value) {
-        fParentUpdate.setProperty(property, value);
-    }
-    
-    @Override
+		fParentUpdate.setProperty(property, value);
+	}
+
+	@Override
 	public void setAllProperties(Map<String, Object> properties) {
-        fParentUpdate.setAllProperties(properties);
-    }
-    
-    /**
-     * @since 2.2
-     */
-    @Override
-    public IStatus getStatus() {
-        return fParentUpdate.getStatus();
-    }
-    
-    /**
-     * @since 2.2
-     */
-    @Override
-    public void setStatus(IStatus status) {
-        fParentUpdate.setStatus(status);
-    }    
-    
-    @Override
-    public String toString() {
-        return "VMDelegatingPropertiesUpdate -> " + fParentUpdate; //$NON-NLS-1$ 
-    }
+		fParentUpdate.setAllProperties(properties);
+	}
+
+	/**
+	 * @since 2.2
+	 */
+	@Override
+	public IStatus getStatus() {
+		return fParentUpdate.getStatus();
+	}
+
+	/**
+	 * @since 2.2
+	 */
+	@Override
+	public void setStatus(IStatus status) {
+		fParentUpdate.setStatus(status);
+	}
+
+	@Override
+	public String toString() {
+		return "VMDelegatingPropertiesUpdate -> " + fParentUpdate; //$NON-NLS-1$ 
+	}
 }

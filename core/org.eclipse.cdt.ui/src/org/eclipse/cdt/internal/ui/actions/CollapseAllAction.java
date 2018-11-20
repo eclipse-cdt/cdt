@@ -24,20 +24,20 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * Collapse all nodes.
  */
 public class CollapseAllAction extends Action {
-	
+
 	private final TreeViewer fViewer;
-	
+
 	public CollapseAllAction(TreeViewer viewer) {
-		super(ActionMessages.CollapseAllAction_label); 
-		setDescription(ActionMessages.CollapseAllAction_description); 
-		setToolTipText(ActionMessages.CollapseAllAction_tooltip); 
+		super(ActionMessages.CollapseAllAction_label);
+		setDescription(ActionMessages.CollapseAllAction_description);
+		setToolTipText(ActionMessages.CollapseAllAction_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_COLLAPSE_ALL);
 		fViewer = viewer;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COLLAPSE_ALL_ACTION);
 	}
- 
+
 	@Override
-	public void run() { 
+	public void run() {
 		try {
 			fViewer.getControl().setRedraw(false);
 			fViewer.collapseAll();

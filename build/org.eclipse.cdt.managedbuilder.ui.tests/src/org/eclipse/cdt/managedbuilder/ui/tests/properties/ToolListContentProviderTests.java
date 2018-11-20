@@ -39,15 +39,15 @@ public class ToolListContentProviderTests extends TestCase {
 		return new TestSuite(ToolListContentProviderTests.class);
 	}
 
-	private void resetValueHandler(){
+	private void resetValueHandler() {
 		fHandleValueCalled = false;
 	}
 
-	public void testToolListContentProvider(){
+	public void testToolListContentProvider() {
 		resetValueHandler();
 
 		IProject project = ManagedBuildTestHelper.createProject(testName,
-								"cdt.managedbuild.target.ToolListContentProvider.exe"); //$NON-NLS-1$
+				"cdt.managedbuild.target.ToolListContentProvider.exe"); //$NON-NLS-1$
 
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration cfg = info.getManagedProject().getConfigurations()[0];
@@ -58,11 +58,11 @@ public class ToolListContentProviderTests extends TestCase {
 		ManagedBuildTestHelper.removeProject(testName);
 	}
 
-	private void doTestToolListContentProvider(IConfiguration cfg){
+	private void doTestToolListContentProvider(IConfiguration cfg) {
 		ToolListContentProvider provider = new ToolListContentProvider(ToolListContentProvider.PROJECT);
 		provider.inputChanged(null, null, cfg.getRootFolderInfo());
 
-		ToolListElement[] elements = (ToolListElement[])provider.getChildren(cfg);
+		ToolListElement[] elements = (ToolListElement[]) provider.getChildren(cfg);
 
 		// Toolchain level
 		List<String> toolchainOptCats = getOptionCategories(elements);

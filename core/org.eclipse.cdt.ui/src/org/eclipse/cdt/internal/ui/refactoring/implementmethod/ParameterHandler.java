@@ -36,29 +36,31 @@ public class ParameterHandler {
 	private PseudoNameGenerator pseudoNameGenerator;
 	private ArrayList<ParameterInfo> parameterInfos;
 	private IASTSimpleDeclaration method;
-	
+
 	public ParameterHandler(IASTSimpleDeclaration method) {
 		this.method = method;
 		initArgumentNames();
 	}
-	
+
 	public boolean needsAdditionalArgumentNames() {
 		return needsAditionalArgumentNames;
 	}
-	
+
 	public void initArgumentNames() {
-		if(parameterInfos != null) {
+		if (parameterInfos != null) {
 			return;
 		}
-		needsAditionalArgumentNames = false; 
+		needsAditionalArgumentNames = false;
 		parameterInfos = new ArrayList<ParameterInfo>();
-		for(IASTParameterDeclaration actParam : getParametersFromMethodNode()) {
+		for (IASTParameterDeclaration actParam : getParametersFromMethodNode()) {
 			String actName = actParam.getDeclarator().getName().toString();
 			boolean isChangable = false;
-			if(actParam.getDeclSpecifier()instanceof IASTSimpleDeclSpecifier && ((IASTSimpleDeclSpecifier)actParam.getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
+			if (actParam.getDeclSpecifier() instanceof IASTSimpleDeclSpecifier
+					&& ((IASTSimpleDeclSpecifier) actParam.getDeclSpecifier())
+							.getType() == IASTSimpleDeclSpecifier.t_void) {
 				actName = ""; //$NON-NLS-1$
 				isChangable = false;
-			}else if(actName.length() == 0) {
+			} else if (actName.length() == 0) {
 				needsAditionalArgumentNames = true;
 				isChangable = true;
 				actName = findNameForParameter(NameHelper.getTypeName(actParam));
@@ -68,20 +70,20 @@ public class ParameterHandler {
 	}
 
 	private String findNameForParameter(String typeName) {
-		if(pseudoNameGenerator == null) {
+		if (pseudoNameGenerator == null) {
 			pseudoNameGenerator = new PseudoNameGenerator();
 
-			for(IASTParameterDeclaration parameter : getParametersFromMethodNode()) {
-				if(parameter.getDeclarator().getName().toString().length() != 0) {
+			for (IASTParameterDeclaration parameter : getParametersFromMethodNode()) {
+				if (parameter.getDeclarator().getName().toString().length() != 0) {
 					pseudoNameGenerator.addExistingName(parameter.getDeclarator().getName().toString());
 				}
 			}
 		}
 		return pseudoNameGenerator.generateNewName(typeName);
 	}
-	
+
 	private IASTParameterDeclaration[] getParametersFromMethodNode() {
-		if(method.getDeclarators().length < 1) {
+		if (method.getDeclarators().length < 1) {
 			return null;
 		}
 		return ((ICPPASTFunctionDeclarator) method.getDeclarators()[0]).getParameters();

@@ -100,7 +100,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
-    Group group = new Group(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE);
 		//		WorkbenchHelp.setHelp(group,
 		// IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
 		GridLayout workingDirLayout = new GridLayout();
@@ -111,24 +111,22 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		group.setFont(font);
 		setControl(group);
 
-    group.setText(LaunchMessages.WorkingDirectoryBlock_Working_directory); 
+		group.setText(LaunchMessages.WorkingDirectoryBlock_Working_directory);
 
-    fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
-    fWorkingDirText.getAccessible().addAccessibleListener(
-			new AccessibleAdapter() {                       
-                @Override
-				public void getName(AccessibleEvent e) {
-                        e.result = LaunchMessages.WorkingDirectoryBlock_Working_directory; 
-                }
-            }
-	);
+		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		fWorkingDirText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = LaunchMessages.WorkingDirectoryBlock_Working_directory;
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);
 		fWorkingDirText.addModifyListener(fListener);
 
 		fUseDefaultWorkingDirButton = new Button(group, SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText(LaunchMessages.WorkingDirectoryBlock_Use_default); 
+		fUseDefaultWorkingDirButton.setText(LaunchMessages.WorkingDirectoryBlock_Use_default);
 		gd = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
@@ -142,13 +140,13 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComp.setLayoutData(gd);
 		buttonComp.setFont(font);
-		fWorkspaceButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_0, null); 
+		fWorkspaceButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_0, null);
 		fWorkspaceButton.addSelectionListener(fListener);
 
-		fFileSystemButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_1, null); 
+		fFileSystemButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_1, null);
 		fFileSystemButton.addSelectionListener(fListener);
 
-		fVariablesButton = createVariablesButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_17, null); 
+		fVariablesButton = createVariablesButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_17, null);
 	}
 
 	/*
@@ -165,7 +163,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(LaunchMessages.WorkingDirectoryBlock_7); 
+		dialog.setMessage(LaunchMessages.WorkingDirectoryBlock_7);
 		String currentWorkingDir = fWorkingDirText.getText();
 		if (!currentWorkingDir.trim().isEmpty()) {
 			File path = new File(currentWorkingDir);
@@ -185,13 +183,13 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * workspace
 	 */
 	protected void handleWorkspaceDirBrowseButtonSelected() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				LaunchMessages.WorkingDirectoryBlock_4); 
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
+				ResourcesPlugin.getWorkspace().getRoot(), false, LaunchMessages.WorkingDirectoryBlock_4);
 
 		IContainer currentContainer = getContainer();
 		if (currentContainer != null) {
 			IPath path = currentContainer.getFullPath();
-			dialog.setInitialSelections(new Object[] { path});
+			dialog.setInitialSelections(new Object[] { path });
 		}
 
 		dialog.showClosedProjects(false);
@@ -279,7 +277,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 				if (dir.isDirectory()) {
 					return true;
 				}
-				setErrorMessage(LaunchMessages.WorkingDirectoryBlock_10); 
+				setErrorMessage(LaunchMessages.WorkingDirectoryBlock_10);
 				return false;
 			}
 		}
@@ -306,7 +304,8 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {
-			String wd = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
+			String wd = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
+					(String) null);
 			fWorkingDirText.setText(""); //$NON-NLS-1$
 			if (wd == null) {
 				fUseDefaultWorkingDirButton.setSelection(true);
@@ -316,7 +315,8 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage(LaunchMessages.WorkingDirectoryBlock_Exception_occurred_reading_configuration_15 + e.getStatus().getMessage()); 
+			setErrorMessage(LaunchMessages.WorkingDirectoryBlock_Exception_occurred_reading_configuration_15
+					+ e.getStatus().getMessage());
 			LaunchUIPlugin.log(e);
 		}
 	}
@@ -355,7 +355,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 */
 	@Override
 	public String getName() {
-		return LaunchMessages.WorkingDirectoryBlock_Working_Directory_8; 
+		return LaunchMessages.WorkingDirectoryBlock_Working_Directory_8;
 	}
 
 	/**
@@ -381,4 +381,3 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	}
 
 }
-

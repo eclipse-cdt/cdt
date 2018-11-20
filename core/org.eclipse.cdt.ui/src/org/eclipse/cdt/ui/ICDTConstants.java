@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
 /**
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICDTConstants 
-{
+public interface ICDTConstants {
 	// CDT Extension Points
 	public static final String EP_TEXT_HOVERS = "textHovers"; //$NON-NLS-1$
 

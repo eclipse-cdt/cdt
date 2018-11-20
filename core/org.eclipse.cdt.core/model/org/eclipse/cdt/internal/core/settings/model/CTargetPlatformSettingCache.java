@@ -22,7 +22,8 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultTargetPlatform
 public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 		implements ICTargetPlatformSetting, ICachedData {
 	private CConfigurationDescriptionCache fCfgCache;
-	CTargetPlatformSettingCache(CTargetPlatformData base, CConfigurationDescriptionCache cfgCache){
+
+	CTargetPlatformSettingCache(CTargetPlatformData base, CConfigurationDescriptionCache cfgCache) {
 		fId = base.getId();
 
 		fCfgCache = cfgCache;
@@ -31,7 +32,6 @@ public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 
 		copyDataFrom(base);
 	}
-
 
 	@Override
 	public ICConfigurationDescription getConfiguration() {
@@ -50,14 +50,14 @@ public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 
 	@Override
 	public void setBinaryParserIds(String[] ids) {
-		if(!fCfgCache.isInitializing())
+		if (!fCfgCache.isInitializing())
 			throw ExceptionFactory.createIsReadOnlyException();
 
 		super.setBinaryParserIds(ids);
 	}
 
 	public void setName(String name) {
-		if(!fCfgCache.isInitializing())
+		if (!fCfgCache.isInitializing())
 			throw ExceptionFactory.createIsReadOnlyException();
 	}
 }

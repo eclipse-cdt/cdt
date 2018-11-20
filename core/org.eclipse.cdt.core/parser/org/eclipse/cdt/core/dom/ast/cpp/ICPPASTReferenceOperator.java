@@ -28,7 +28,7 @@ public interface ICPPASTReferenceOperator extends IASTPointerOperator {
 	 * @since 5.2
 	 */
 	public boolean isRValueReference();
-	
+
 	/**
 	 * @since 5.1
 	 */

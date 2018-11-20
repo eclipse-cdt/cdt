@@ -38,16 +38,16 @@ import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
  */
 public abstract class ParsingBasedProposalComputer implements ICompletionProposalComputer {
 	private String fErrorMessage;
-	
+
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(
-			ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		try {
 			if (context instanceof CContentAssistInvocationContext) {
 				CContentAssistInvocationContext cContext = (CContentAssistInvocationContext) context;
-				
+
 				IASTCompletionNode completionNode = cContext.getCompletionNode();
-				if (completionNode == null) 
+				if (completionNode == null)
 					return Collections.emptyList();
 				String prefix = completionNode.getPrefix();
 				if (prefix == null) {
@@ -63,26 +63,24 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 
 		return Collections.emptyList();
 	}
-	
-	protected abstract List<ICompletionProposal> computeCompletionProposals(
-			CContentAssistInvocationContext context,
-			IASTCompletionNode completionNode,
-			String prefix) throws CoreException;
-	
+
+	protected abstract List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext context,
+			IASTCompletionNode completionNode, String prefix) throws CoreException;
+
 	@Override
-	public List<IContextInformation> computeContextInformation(
-			ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		Collection<ICompletionProposal> proposals= computeCompletionProposals(context, monitor);
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
+		Collection<ICompletionProposal> proposals = computeCompletionProposals(context, monitor);
 		// Remove duplicates
-		proposals= (new LinkedHashSet<ICompletionProposal>(proposals));
-		List<IContextInformation> result= new ArrayList<IContextInformation>();
+		proposals = (new LinkedHashSet<ICompletionProposal>(proposals));
+		List<IContextInformation> result = new ArrayList<IContextInformation>();
 		for (ICompletionProposal proposal : proposals) {
-			IContextInformation contextInformation= proposal.getContextInformation();
+			IContextInformation contextInformation = proposal.getContextInformation();
 			if (contextInformation != null) {
 				result.add(contextInformation);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -108,11 +106,11 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 	 * @return a relevance value indicating the quality of the name match
 	 */
 	protected int computeBaseRelevance(String prefix, String match) {
-		boolean caseMatch= prefix.length() > 0 && match.startsWith(prefix);
+		boolean caseMatch = prefix.length() > 0 && match.startsWith(prefix);
 		if (caseMatch) {
 			return RelevanceConstants.CASE_MATCH_RELEVANCE;
 		}
-		boolean exactNameMatch= match.equalsIgnoreCase(prefix);
+		boolean exactNameMatch = match.equalsIgnoreCase(prefix);
 		if (exactNameMatch) {
 			return RelevanceConstants.EXACT_NAME_MATCH_RELEVANCE;
 		}

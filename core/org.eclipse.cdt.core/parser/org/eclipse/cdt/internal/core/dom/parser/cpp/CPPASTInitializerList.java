@@ -33,8 +33,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializerList, IASTAmbiguityParent {
 	private static final ICPPASTInitializerClause[] NO_CLAUSES = {};
 	private ICPPASTInitializerClause[] initializers;
-    private int initializersPos= -1;
-    private int actualSize;
+	private int initializersPos = -1;
+	private int actualSize;
 	private boolean fIsPackExpansion;
 	private ICPPEvaluation fEvaluation;
 
@@ -70,20 +70,20 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	@Override
 	@Deprecated
 	public IASTInitializer[] getInitializers() {
-		IASTInitializerClause[] clauses= getClauses();
+		IASTInitializerClause[] clauses = getClauses();
 		if (clauses.length == 0)
 			return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
 
-		IASTInitializer[] inits= new IASTInitializer[clauses.length];
+		IASTInitializer[] inits = new IASTInitializer[clauses.length];
 		for (int i = 0; i < inits.length; i++) {
-			IASTInitializerClause clause= clauses[i];
+			IASTInitializerClause clause = clauses[i];
 			if (clause instanceof IASTInitializer) {
-				inits[i]= (IASTInitializer) clause;
+				inits[i] = (IASTInitializer) clause;
 			} else if (clause instanceof IASTExpression) {
 				final CPPASTEqualsInitializer initExpr = new CPPASTEqualsInitializer(((IASTExpression) clause).copy());
 				initExpr.setParent(this);
 				initExpr.setPropertyInParent(NESTED_INITIALIZER);
-				inits[i]= initExpr;
+				inits[i] = initExpr;
 			}
 		}
 		return inits;
@@ -91,36 +91,40 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 
 	@Override
 	public void addClause(IASTInitializerClause d) {
-        assertNotFrozen();
-    	if (d != null) {
-    		initializers = ArrayUtil.appendAt(ICPPASTInitializerClause.class, initializers, ++initializersPos, (ICPPASTInitializerClause) d);
-    		d.setParent(this);
+		assertNotFrozen();
+		if (d != null) {
+			initializers = ArrayUtil.appendAt(ICPPASTInitializerClause.class, initializers, ++initializersPos,
+					(ICPPASTInitializerClause) d);
+			d.setParent(this);
 			d.setPropertyInParent(NESTED_INITIALIZER);
-    	}
-    	actualSize++;
-    }
+		}
+		actualSize++;
+	}
 
 	@Override
 	@Deprecated
 	public void addInitializer(IASTInitializer d) {
-        assertNotFrozen();
-        if (d instanceof IASTInitializerClause) {
-        	addClause((IASTInitializerClause) d);
-        } else if (d instanceof IASTEqualsInitializer) {
-        	addClause(((IASTEqualsInitializer) d).getInitializerClause());
-        } else {
-        	addClause(null);
-        }
-    }
+		assertNotFrozen();
+		if (d instanceof IASTInitializerClause) {
+			addClause((IASTInitializerClause) d);
+		} else if (d instanceof IASTEqualsInitializer) {
+			addClause(((IASTEqualsInitializer) d).getInitializerClause());
+		} else {
+			addClause(null);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitInitializers) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		IASTInitializerClause[] list = getClauses();
 		for (IASTInitializerClause clause : list) {
@@ -132,7 +136,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 			return false;
 
 		return true;
-    }
+	}
 
 	@Override
 	public boolean isPackExpansion() {
@@ -142,7 +146,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	@Override
 	public void setIsPackExpansion(boolean val) {
 		assertNotFrozen();
-		fIsPackExpansion= val;
+		fIsPackExpansion = val;
 	}
 
 	@Override
@@ -161,15 +165,15 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
-			fEvaluation= createEvaluation();
+			fEvaluation = createEvaluation();
 		return fEvaluation;
 	}
 
 	private ICPPEvaluation createEvaluation() {
 		final ICPPASTInitializerClause[] clauses = getClauses();
-		ICPPEvaluation[] evals= new ICPPEvaluation[clauses.length];
+		ICPPEvaluation[] evals = new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < evals.length; i++) {
-			evals[i]= clauses[i].getEvaluation();
+			evals[i] = clauses[i].getEvaluation();
 		}
 		return new EvalInitList(evals, this);
 	}

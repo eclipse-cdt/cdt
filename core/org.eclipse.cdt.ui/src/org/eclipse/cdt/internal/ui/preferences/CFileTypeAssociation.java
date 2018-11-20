@@ -73,7 +73,6 @@ public class CFileTypeAssociation {
 		return true;
 	}
 
-
 	/**
 	 * @return Returns the fSettings.
 	 */
@@ -94,7 +93,7 @@ public class CFileTypeAssociation {
 			return "*." + pattern; //$NON-NLS-1$
 		}
 		return pattern;
-		
+
 	}
 
 	public boolean isFileSpec() {

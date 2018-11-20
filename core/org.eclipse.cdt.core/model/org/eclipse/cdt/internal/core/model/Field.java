@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
@@ -26,11 +25,11 @@ public class Field extends VariableDeclaration implements IField {
 	}
 
 	@Override
-	public boolean isMutable() throws CModelException{
+	public boolean isMutable() throws CModelException {
 		return getFieldInfo().isMutable();
 	}
 
-	public void setMutable(boolean mutable) throws CModelException{
+	public void setMutable(boolean mutable) throws CModelException {
 		getFieldInfo().setMutable(mutable);
 	}
 
@@ -83,12 +82,12 @@ public class Field extends VariableDeclaration implements IField {
 		getFieldInfo().setVisibility(visibility);
 	}
 
-	public FieldInfo getFieldInfo() throws CModelException{
+	public FieldInfo getFieldInfo() throws CModelException {
 		return (FieldInfo) getElementInfo();
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new FieldInfo(this);
 	}
 }

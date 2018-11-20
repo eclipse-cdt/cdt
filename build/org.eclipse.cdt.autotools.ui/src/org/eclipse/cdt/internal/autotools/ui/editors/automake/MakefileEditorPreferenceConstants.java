@@ -34,29 +34,26 @@ public class MakefileEditorPreferenceConstants {
 	public static final String CURRENT_LINE_COLOR = "org.eclipse.cdt.make.ui.currentLineHightlightColor"; //$NON-NLS-1$
 	public static final String LINE_NUMBER_RULER_COLOR = "org.eclipse.cdt.make.ui.lineNumberForegroundColor"; //$NON-NLS-1$
 	public static final String PRINT_MARGIN_COLOR = "org.eclipse.cdt.make.ui.printMarginColor"; //$NON-NLS-1$	
-	
+
 	/**
 	 * Preference key suffix for bold text style preference keys.
 	 * 
 	 */
-	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
+	public static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for italic text style preference keys.
 	 */
-	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
-
+	public static final String EDITOR_ITALIC_SUFFIX = "_italic"; //$NON-NLS-1$
 
 	public static final String EDITOR_FOLDING_MACRODEF = "editor_folding_default_macrodef"; //$NON-NLS-1$
 
-
 	public static final String EDITOR_FOLDING_RULE = "editor_folding_default_rule"; //$NON-NLS-1$
-
 
 	public static final String EDITOR_FOLDING_CONDITIONAL = "editor_folding_default_conditional"; //$NON-NLS-1$
 
 	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$
-	
+
 	public static void initializeDefaultValues(IPreferenceStore store) {
 
 		store.setDefault(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);

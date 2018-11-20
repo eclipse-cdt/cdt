@@ -92,7 +92,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		shouldVisitTemplateParameters = true;
 		shouldVisitTranslationUnit = true;
 		shouldVisitTypeIds = true;
-		shouldVisitAttributes= true;
+		shouldVisitAttributes = true;
 	}
 
 	/**
@@ -125,8 +125,8 @@ public class ASTWriterVisitor extends ASTVisitor {
 		declarationWriter = new DeclarationWriter(scribe, this, commentMap);
 		declSpecWriter = new DeclSpecWriter(scribe, this, commentMap);
 		expWriter = new ExpressionWriter(scribe, this, macroHandler, commentMap);
-		initializerWriter = new InitializerWriter (scribe, this, commentMap);
-//		ppStmtWriter = new PreprocessorStatementWriter(scribe, this, commentMap);
+		initializerWriter = new InitializerWriter(scribe, this, commentMap);
+		//		ppStmtWriter = new PreprocessorStatementWriter(scribe, this, commentMap);
 		nameWriter = new NameWriter(scribe, this, commentMap);
 		tempParameterWriter = new TemplateParameterWriter(scribe, this, commentMap);
 		attributeWriter = new AttributeWriter(scribe, this, commentMap);
@@ -176,7 +176,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		declSpecWriter.writeBaseSpecifiers(baseSpecifier);
 		return ASTVisitor.PROCESS_SKIP;
 	}
-	
+
 	@Override
 	public int visit(IASTName name) {
 		if (spaceNeededBeforeName && name.getSimpleID().length != 0) {
@@ -196,7 +196,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		declSpecWriter.writeDelcSpec(declSpec);
 		return ASTVisitor.PROCESS_SKIP;
 	}
-	
+
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpec) {
 		scribe.print(Keywords.DECLTYPE);
@@ -211,8 +211,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		writeLeadingComments(expression);
 		if (!macroHandler.checkisMacroExpansionNode(expression)) {
 			if (expression instanceof IGNUASTCompoundStatementExpression) {
-				IGNUASTCompoundStatementExpression gnuCompStmtExp =
-						(IGNUASTCompoundStatementExpression) expression;
+				IGNUASTCompoundStatementExpression gnuCompStmtExp = (IGNUASTCompoundStatementExpression) expression;
 				gnuCompStmtExp.getCompoundStatement().accept(this);
 			} else {
 				expWriter.writeExpression(expression);
@@ -226,8 +225,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		insertBlankLineIfNeeded(statement);
 		writeLeadingComments(statement);
 		try {
-			if (macroHandler.isStatementWithMixedLocation(statement) &&
-					!(statement instanceof IASTCompoundStatement)) {
+			if (macroHandler.isStatementWithMixedLocation(statement) && !(statement instanceof IASTCompoundStatement)) {
 				return statementWriter.writeMixedStatement(statement);
 			}
 			if (macroHandler.checkisMacroExpansionNode(statement)) {
@@ -280,7 +278,8 @@ public class ASTWriterVisitor extends ASTVisitor {
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		writeLeadingComments(parameterDeclaration);
 		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
-			attributeWriter.writeAttributes((ICPPASTParameterDeclaration) parameterDeclaration, EnumSet.of(SpaceLocation.AFTER));
+			attributeWriter.writeAttributes((ICPPASTParameterDeclaration) parameterDeclaration,
+					EnumSet.of(SpaceLocation.AFTER));
 		}
 		if (!macroHandler.checkisMacroExpansionNode(parameterDeclaration)) {
 			parameterDeclaration.getDeclSpecifier().accept(this);
@@ -304,7 +303,8 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTTypeId typeId) {
 		IASTDeclSpecifier declSpecifier = typeId.getDeclSpecifier();
-		if (declSpecifier != null) declSpecifier.accept(this);
+		if (declSpecifier != null)
+			declSpecifier.accept(this);
 		if (typeId instanceof ICPPASTTypeId) {
 			if (((ICPPASTTypeId) typeId).isPackExpansion()) {
 				scribe.print(Keywords.cpELLIPSIS);
@@ -357,8 +357,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	}
 
 	private void insertBlankLineIfNeeded(IASTNode node) {
-		if (!suppressLeadingBlankLine &&
-				(insertLeadingBlankLine || ASTWriter.requiresLeadingBlankLine(node))) {
+		if (!suppressLeadingBlankLine && (insertLeadingBlankLine || ASTWriter.requiresLeadingBlankLine(node))) {
 			scribe.newLine();
 		}
 		insertLeadingBlankLine = false;

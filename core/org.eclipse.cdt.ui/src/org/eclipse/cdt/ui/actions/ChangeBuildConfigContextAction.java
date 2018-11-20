@@ -26,8 +26,8 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * This context menu action is used to change active build configuration for the project
  */
-public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase implements
-	IMenuCreator, IObjectActionDelegate	{
+public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase
+		implements IMenuCreator, IObjectActionDelegate {
 
 	/**
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -80,7 +80,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 		menu.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuShown(MenuEvent e) {
-				fillMenu((Menu)e.widget);
+				fillMenu((Menu) e.widget);
 			}
 		});
 		return menu;

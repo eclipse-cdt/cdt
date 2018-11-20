@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.HashMap;
@@ -34,111 +34,110 @@ import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
 public class IBLabelProvider extends LabelProvider implements IColorProvider {
-    private CElementLabelProvider fCLabelProvider= new CElementLabelProvider();
-    private Color fColorInactive;
-    private IBContentProvider fContentProvider;
-    private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
-    private boolean fShowFolders;
-    
-    public IBLabelProvider(Display display, IBContentProvider cp) {
-        fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
-        fContentProvider= cp;
-    }
-    
-    @Override
+	private CElementLabelProvider fCLabelProvider = new CElementLabelProvider();
+	private Color fColorInactive;
+	private IBContentProvider fContentProvider;
+	private HashMap<String, Image> fCachedImages = new HashMap<String, Image>();
+	private boolean fShowFolders;
+
+	public IBLabelProvider(Display display, IBContentProvider cp) {
+		fColorInactive = display.getSystemColor(SWT.COLOR_DARK_GRAY);
+		fContentProvider = cp;
+	}
+
+	@Override
 	public Image getImage(Object element) {
-        if (element instanceof IBNode) {
-            IBNode node= (IBNode) element;
-            ITranslationUnit tu= node.getRepresentedTranslationUnit();
-            Image image= tu != null ? fCLabelProvider.getImage(tu) : CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
-            return decorateImage(image, node);
-        }
-        return super.getImage(element);
-    }
+		if (element instanceof IBNode) {
+			IBNode node = (IBNode) element;
+			ITranslationUnit tu = node.getRepresentedTranslationUnit();
+			Image image = tu != null ? fCLabelProvider.getImage(tu)
+					: CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+			return decorateImage(image, node);
+		}
+		return super.getImage(element);
+	}
 
-    @Override
+	@Override
 	public String getText(Object element) {
-        if (element instanceof IBNode) {
-            IBNode node= (IBNode) element;
-            IPath path= node.getRepresentedPath();
-            if (path != null) {
-            	if (fShowFolders) {
-            		return path.lastSegment() + " (" + path.removeLastSegments(1) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-            	}
-            	return path.lastSegment();
-            }
-            return node.getDirectiveName();
-        }
-        return super.getText(element);
-    }
-    
-    @Override
+		if (element instanceof IBNode) {
+			IBNode node = (IBNode) element;
+			IPath path = node.getRepresentedPath();
+			if (path != null) {
+				if (fShowFolders) {
+					return path.lastSegment() + " (" + path.removeLastSegments(1) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				return path.lastSegment();
+			}
+			return node.getDirectiveName();
+		}
+		return super.getText(element);
+	}
+
+	@Override
 	public void dispose() {
-        fCLabelProvider.dispose();
-        for (Iterator<Image> iter = fCachedImages.values().iterator(); iter.hasNext();) {
-            Image image = iter.next();
-            image.dispose();
-        }
-        fCachedImages.clear();
-        super.dispose();
-    }
+		fCLabelProvider.dispose();
+		for (Iterator<Image> iter = fCachedImages.values().iterator(); iter.hasNext();) {
+			Image image = iter.next();
+			image.dispose();
+		}
+		fCachedImages.clear();
+		super.dispose();
+	}
 
-    private Image decorateImage(Image image, IBNode node) {
-        int flags= 0;
-        if (node.isSystemInclude()) {
-            flags |= CElementImageDescriptor.SYSTEM_INCLUDE;
-        }
-        if (!node.isActiveCode()) {
-            flags |= CElementImageDescriptor.INACTIVE;
-        }
-        
-        if (node.isRecursive()) {
-            flags |= CElementImageDescriptor.RECURSIVE_RELATION;
-        }
-        else if (fContentProvider.hasChildren(node)) {
-            if (fContentProvider.getComputeIncludedBy()) {
-                flags |= CElementImageDescriptor.REFERENCED_BY;
-            }
-            else {
-                flags |= CElementImageDescriptor.RELATES_TO;
-            }
-        }
+	private Image decorateImage(Image image, IBNode node) {
+		int flags = 0;
+		if (node.isSystemInclude()) {
+			flags |= CElementImageDescriptor.SYSTEM_INCLUDE;
+		}
+		if (!node.isActiveCode()) {
+			flags |= CElementImageDescriptor.INACTIVE;
+		}
 
-        if (node.isActiveCode() && node.getRepresentedIFL() == null) {
-        	flags |= CElementImageDescriptor.WARNING;
-        }
+		if (node.isRecursive()) {
+			flags |= CElementImageDescriptor.RECURSIVE_RELATION;
+		} else if (fContentProvider.hasChildren(node)) {
+			if (fContentProvider.getComputeIncludedBy()) {
+				flags |= CElementImageDescriptor.REFERENCED_BY;
+			} else {
+				flags |= CElementImageDescriptor.RELATES_TO;
+			}
+		}
 
-        if (flags == 0) {
-            return image;
-        }
-        String key= image.toString()+String.valueOf(flags);
-        Image result= fCachedImages.get(key);
-        if (result == null) {
-            ImageDescriptor desc= new CElementImageDescriptor(
-                    new ImageImageDescriptor(image), flags, new Point(20,16));
-            result= desc.createImage();
-            fCachedImages.put(key, result);
-        }
-        return result;
-    }
+		if (node.isActiveCode() && node.getRepresentedIFL() == null) {
+			flags |= CElementImageDescriptor.WARNING;
+		}
 
-    @Override
+		if (flags == 0) {
+			return image;
+		}
+		String key = image.toString() + String.valueOf(flags);
+		Image result = fCachedImages.get(key);
+		if (result == null) {
+			ImageDescriptor desc = new CElementImageDescriptor(new ImageImageDescriptor(image), flags,
+					new Point(20, 16));
+			result = desc.createImage();
+			fCachedImages.put(key, result);
+		}
+		return result;
+	}
+
+	@Override
 	public Color getBackground(Object element) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public Color getForeground(Object element) {
-        if (element instanceof IBNode) {
-            IBNode node= (IBNode) element;
-            if (!node.isActiveCode()) {
-                return fColorInactive;
-            }
-        }
-        return null;
-    }
+		if (element instanceof IBNode) {
+			IBNode node = (IBNode) element;
+			if (!node.isActiveCode()) {
+				return fColorInactive;
+			}
+		}
+		return null;
+	}
 
-    public void setShowFolders(boolean show) {
-        fShowFolders= show;
-    }
+	public void setShowFolders(boolean show) {
+		fShowFolders = show;
+	}
 }

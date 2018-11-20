@@ -391,16 +391,19 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 		// Store the show source file editor
 		if (fShowSourceNotFoundAllTime.getSelection()) {
-			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
-					.put(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_THE_TIME);
+			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).put(
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_THE_TIME);
 		}
 		if (fShowSourceNotFoundOnlyCaseSourceNotFound.getSelection()) {
-			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
-					.put(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_SOMETIMES);
+			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).put(
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_SOMETIMES);
 		}
 		if (fShowSourceNotFoundNever.getSelection()) {
-			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
-					.put(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_NEVER);
+			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).put(
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_NEVER);
 		}
 	}
 
@@ -414,9 +417,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		setDefaultValues();
 		super.performDefaults();
 	}
-	
-	private void setShowEditorButtons(String value)
-	{
+
+	private void setShowEditorButtons(String value) {
 		switch (value) {
 		case CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_SOMETIMES:
 			fShowSourceNotFoundOnlyCaseSourceNotFound.setSelection(true);

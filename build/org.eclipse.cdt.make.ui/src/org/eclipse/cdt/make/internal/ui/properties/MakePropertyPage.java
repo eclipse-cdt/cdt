@@ -47,13 +47,13 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 
 	public MakePropertyPage() {
 		super();
-	    fOptionBlock = new MakeProjectOptionBlock();
+		fOptionBlock = new MakeProjectOptionBlock();
 	}
 
 	@Override
 	public void setContainer(IPreferencePageContainer preferencePageContainer) {
-	    super.setContainer(preferencePageContainer);
-	    fOptionBlock.setOptionContainer(this);
+		super.setContainer(preferencePageContainer);
+		fOptionBlock.setOptionContainer(this);
 	}
 
 	@Override
@@ -93,10 +93,12 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(PlatformUI.getWorkbench().getProgressService() ,runnable, MakeUIPlugin.getWorkspace().getRoot());
+			PlatformUI.getWorkbench().getProgressService().runInUI(PlatformUI.getWorkbench().getProgressService(),
+					runnable, MakeUIPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
-			MakeUIPlugin.errorDialog(getShell(), MakeUIPlugin.getResourceString("MakeProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
+			MakeUIPlugin.errorDialog(getShell(),
+					MakeUIPlugin.getResourceString("MakeProjectPropertyPage.internalError"), e1.toString(), e1); //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {
 			// cancelled

@@ -26,16 +26,16 @@ class CompositeCPPParameter extends CompositeCPPVariable implements ICPPParamete
 
 	@Override
 	public boolean hasDefaultValue() {
-		return ((ICPPParameter)rbinding).hasDefaultValue();
+		return ((ICPPParameter) rbinding).hasDefaultValue();
 	}
-	
+
 	@Override
 	public IValue getDefaultValue() {
-		return cf.getCompositeValue(((ICPPParameter)rbinding).getDefaultValue());
+		return cf.getCompositeValue(((ICPPParameter) rbinding).getDefaultValue());
 	}
 
 	@Override
 	public boolean isParameterPack() {
-		return ((ICPPParameter)rbinding).isParameterPack();
+		return ((ICPPParameter) rbinding).isParameterPack();
 	}
 }

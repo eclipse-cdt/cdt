@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 public class UtilTestSuite extends TestSuite {
 
 	public static Test suite() throws Exception {
-		UtilTestSuite suite = new UtilTestSuite(); 
+		UtilTestSuite suite = new UtilTestSuite();
 		suite.addTest(IdentifierHelperTest.suite());
 		suite.addTestSuite(DefinitionFinderTest.class);
 		suite.addTestSuite(PseudoNameGeneratorTest.class);

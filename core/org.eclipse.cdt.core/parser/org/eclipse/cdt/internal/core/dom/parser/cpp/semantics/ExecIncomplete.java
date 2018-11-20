@@ -20,7 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 public class ExecIncomplete implements ICPPExecution {
 	public static ExecIncomplete INSTANCE = new ExecIncomplete();
 
-	private ExecIncomplete() {}
+	private ExecIncomplete() {
+	}
 
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {

@@ -15,7 +15,6 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 public class DefineVariable extends VariableDefinition {
 
 	public DefineVariable(Directive parent, String name, StringBuffer value) {

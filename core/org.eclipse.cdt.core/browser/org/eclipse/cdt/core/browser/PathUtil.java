@@ -37,12 +37,12 @@ import org.eclipse.core.runtime.Path;
  */
 @Deprecated
 public class PathUtil {
-	
+
 	public static boolean isWindowsFileSystem() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
 		return (os != null && os.startsWith("Win")); //$NON-NLS-1$
 	}
-	
+
 	public static IWorkspaceRoot getWorkspaceRoot() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if (workspace != null) {
@@ -50,9 +50,9 @@ public class PathUtil {
 		}
 		return null;
 	}
-	
+
 	public static IPath getCanonicalPath(IPath fullPath) {
-	    File file = fullPath.toFile();
+		File file = fullPath.toFile();
 		try {
 			String canonPath = file.getCanonicalPath();
 			return new Path(canonPath);
@@ -73,7 +73,7 @@ public class PathUtil {
 		}
 		return fullPath;
 	}
-	
+
 	public static IPath getProjectRelativePath(IPath fullPath, IProject project) {
 		IPath projectPath = project.getFullPath();
 		if (projectPath.isPrefixOf(fullPath)) {
@@ -101,73 +101,74 @@ public class PathUtil {
 		return wsRelativePath;
 	}
 
-    public static IPath makeRelativePath(IPath path, IPath relativeTo) {
-        int segments = relativeTo.matchingFirstSegments(path);
-        if (segments > 0) {
-            IPath prefix = relativeTo.removeFirstSegments(segments);
-            IPath suffix = path.removeFirstSegments(segments);
-            IPath relativePath = new Path(""); //$NON-NLS-1$
-            for (int i = 0; i < prefix.segmentCount(); ++i) {
-                relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
-            }
-            return relativePath.append(suffix);
-        }
-        return null;
-    }
+	public static IPath makeRelativePath(IPath path, IPath relativeTo) {
+		int segments = relativeTo.matchingFirstSegments(path);
+		if (segments > 0) {
+			IPath prefix = relativeTo.removeFirstSegments(segments);
+			IPath suffix = path.removeFirstSegments(segments);
+			IPath relativePath = new Path(""); //$NON-NLS-1$
+			for (int i = 0; i < prefix.segmentCount(); ++i) {
+				relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
+			}
+			return relativePath.append(suffix);
+		}
+		return null;
+	}
 
-    public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-        if (provider != null) {
-            IScannerInfo info = provider.getScannerInformation(project);
-            if (info != null) {
-                return makeRelativePathToIncludes(fullPath, info.getIncludePaths());
-            }
-        }
-        return null;
-    }
-    
-    public static IPath makeRelativePathToIncludes(IPath fullPath, String[] includePaths) {
-        IPath relativePath = null;
-        int mostSegments = 0;
-        for (int i = 0; i < includePaths.length; ++i) {
-            IPath includePath = new Path(includePaths[i]);
-            if (includePath.isPrefixOf(fullPath)) {
-                int segments = includePath.matchingFirstSegments(fullPath);
-                if (segments > mostSegments) {
-                    relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
-                    mostSegments = segments;
-                }
-            }
-        }
-        return relativePath;
-    }
+	public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+		if (provider != null) {
+			IScannerInfo info = provider.getScannerInformation(project);
+			if (info != null) {
+				return makeRelativePathToIncludes(fullPath, info.getIncludePaths());
+			}
+		}
+		return null;
+	}
 
-    /**
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    public static ICProject getEnclosingProject(IPath fullPath) {
+	public static IPath makeRelativePathToIncludes(IPath fullPath, String[] includePaths) {
+		IPath relativePath = null;
+		int mostSegments = 0;
+		for (int i = 0; i < includePaths.length; ++i) {
+			IPath includePath = new Path(includePaths[i]);
+			if (includePath.isPrefixOf(fullPath)) {
+				int segments = includePath.matchingFirstSegments(fullPath);
+				if (segments > mostSegments) {
+					relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
+					mostSegments = segments;
+				}
+			}
+		}
+		return relativePath;
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static ICProject getEnclosingProject(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
 			IPath path = getWorkspaceRelativePath(fullPath);
 			while (path.segmentCount() > 0) {
 				IResource res = root.findMember(path);
 				if (res != null)
-				    return CoreModel.getDefault().create(res.getProject());
+					return CoreModel.getDefault().create(res.getProject());
 
 				path = path.removeLastSegments(1);
 			}
 		}
 		return null;
-    }
-    
-    public static IPath getValidEnclosingFolder(IPath fullPath) {
+	}
+
+	public static IPath getValidEnclosingFolder(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
 			IPath path = getWorkspaceRelativePath(fullPath);
 			while (path.segmentCount() > 0) {
 				IResource res = root.findMember(path);
-				if (res != null && res.exists() && (res.getType() == IResource.PROJECT || res.getType() == IResource.FOLDER))
-				    return path;
+				if (res != null && res.exists()
+						&& (res.getType() == IResource.PROJECT || res.getType() == IResource.FOLDER))
+					return path;
 
 				path = path.removeLastSegments(1);
 			}

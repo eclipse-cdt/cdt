@@ -51,12 +51,14 @@ public class LRUCacheEnumerator<T> implements Enumeration<T> {
 			fValue = value;
 		}
 	}
+
 	/**
 	 *	Creates a CacheEnumerator on the list of <code>LRUEnumeratorElements</code>.
 	 */
 	public LRUCacheEnumerator(LRUEnumeratorElement<T> firstElement) {
 		fElementQueue = firstElement;
 	}
+
 	/**
 	 * Returns true if more elements exist.
 	 */
@@ -64,6 +66,7 @@ public class LRUCacheEnumerator<T> implements Enumeration<T> {
 	public boolean hasMoreElements() {
 		return fElementQueue != null;
 	}
+
 	/**
 	 * Returns the next element.
 	 */
@@ -74,4 +77,3 @@ public class LRUCacheEnumerator<T> implements Enumeration<T> {
 		return temp;
 	}
 }
-

@@ -45,14 +45,14 @@ public interface IExportProjectProvider {
 	 * @see Platform#getApplicationArgs()
 	 */
 	public void setApplicationArguments(String[] arguments);
-	
+
 	/**
 	 * Creates, configures and returns a project for the indexer to index. This routine should
 	 * not itself index the project, as a reindex will be performed by the framework.
 	 * May not return null.
 	 */
 	public ICProject createProject() throws CoreException;
-	
+
 	/**
 	 * The location converter to use on export. This converter will be called to convert
 	 * IIndexFileLocation's to an external form. The external form is implementation dependent. 
@@ -61,7 +61,7 @@ public interface IExportProjectProvider {
 	 * @see ResourceContainerRelativeLocationConverter
 	 */
 	public IIndexLocationConverter getLocationConverter(ICProject cproject);
-	
+
 	/**
 	 * Get a String to String map of properties to store with the index
 	 * content. The export framework may ignore this if the index format does
@@ -69,5 +69,5 @@ public interface IExportProjectProvider {
 	 * @return a Map of String typed key value pairs representing ISV specific properties. This
 	 * may return null.
 	 */
-	public Map<String,String> getExportProperties();	
+	public Map<String, String> getExportProperties();
 }

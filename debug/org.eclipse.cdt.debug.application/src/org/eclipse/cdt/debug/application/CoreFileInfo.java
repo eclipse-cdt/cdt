@@ -30,21 +30,21 @@ public class CoreFileInfo {
 		fTargetPath = targetPath;
 		fCoreFilePath = coreFilePath;
 	}
-	
+
 	/**
 	 * Returns the path of the executable on the host
 	 */
 	public String getHostPath() {
 		return fHostPath;
 	}
-	
+
 	/**
 	 * Sets the path of the executable on the host
 	 */
 	public void setHostPath(String path) {
 		fHostPath = path;
 	}
-	
+
 	/**
 	 * For remote sessions returns the path of the executable 
 	 * on the target. Otherwise returns null.
@@ -59,7 +59,7 @@ public class CoreFileInfo {
 	public void setTargetPath(String path) {
 		fTargetPath = path;
 	}
-	
+
 	/**
 	 * Get the build log path.
 	 * 
@@ -68,7 +68,7 @@ public class CoreFileInfo {
 	public String getCoreFilePath() {
 		return fCoreFilePath;
 	}
-	
+
 	/**
 	 * Sets the build log path.
 	 * 
@@ -77,5 +77,5 @@ public class CoreFileInfo {
 	public void setCoreFilePath(String path) {
 		fCoreFilePath = path;
 	}
-	
+
 }

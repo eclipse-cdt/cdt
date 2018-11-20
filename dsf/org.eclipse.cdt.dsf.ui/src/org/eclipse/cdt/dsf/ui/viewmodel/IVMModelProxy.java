@@ -31,62 +31,62 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public interface IVMModelProxy extends IModelProxy {
 
-    /**
-     * Returns the root element that this model proxy was created for.  
-     */
-    public Object getRootElement();
-    
-    /**
-     * Returns whether the given event applies to the root element and the 
-     * nodes in this model proxy. 
-     * <p>
-     * This method is the equivalent of calling 
-     * <code> getEventDeltaFlags(event) != IModelDelta.NO_CHANGE </code>.
-     * </p>
-     */
-    public boolean isDeltaEvent(Object event);
+	/**
+	 * Returns the root element that this model proxy was created for.  
+	 */
+	public Object getRootElement();
 
-    /**
-     * Creates a model delta for the given event.
-     */
-    public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm);
+	/**
+	 * Returns whether the given event applies to the root element and the 
+	 * nodes in this model proxy. 
+	 * <p>
+	 * This method is the equivalent of calling 
+	 * <code> getEventDeltaFlags(event) != IModelDelta.NO_CHANGE </code>.
+	 * </p>
+	 */
+	public boolean isDeltaEvent(Object event);
 
-    /**
-     * Sends the given delta to this model proxy's listeners.
-     */
-    public void fireModelChanged(IModelDelta delta);
+	/**
+	 * Creates a model delta for the given event.
+	 */
+	public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm);
 
-    /**
-     * Returns the viewer.
-     * 
-     * @since 2.0
-     */
-    public Viewer getViewer();
+	/**
+	 * Sends the given delta to this model proxy's listeners.
+	 */
+	public void fireModelChanged(IModelDelta delta);
 
-    /**
-     * Returns the viewer input that was set to the viewer when this proxy 
-     * was created.  
-     * 
-     * @since 2.0
-     */
-    public Object getViewerInput();
+	/**
+	 * Returns the viewer.
+	 * 
+	 * @since 2.0
+	 */
+	public Viewer getViewer();
 
-    /**
-     * Returns the full path for the root element.  If the path is empty, it
-     * means that the root element is the viewer input.
-     * 
-     * @since 2.0
-     */
-    public TreePath getRootPath();
+	/**
+	 * Returns the viewer input that was set to the viewer when this proxy 
+	 * was created.  
+	 * 
+	 * @since 2.0
+	 */
+	public Object getViewerInput();
 
-    /**
-     * Returns the delta flags associated with this event.  This method is   
-     * 
-     * @param event 
-     * @return
-     * 
-     * @since 2.1
-     */
-    public int getEventDeltaFlags(Object event);
+	/**
+	 * Returns the full path for the root element.  If the path is empty, it
+	 * means that the root element is the viewer input.
+	 * 
+	 * @since 2.0
+	 */
+	public TreePath getRootPath();
+
+	/**
+	 * Returns the delta flags associated with this event.  This method is   
+	 * 
+	 * @param event 
+	 * @return
+	 * 
+	 * @since 2.1
+	 */
+	public int getEventDeltaFlags(Object event);
 
 }

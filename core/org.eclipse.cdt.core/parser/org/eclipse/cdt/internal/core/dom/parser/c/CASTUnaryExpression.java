@@ -33,10 +33,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * Unary expression in C.
  */
 public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression, IASTAmbiguityParent {
-    private int operator;
-    private IASTExpression operand;
+	private int operator;
+	private IASTExpression operand;
 
-    public CASTUnaryExpression() {
+	public CASTUnaryExpression() {
 	}
 
 	public CASTUnaryExpression(int operator, IASTExpression operand) {
@@ -51,67 +51,73 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 
 	@Override
 	public CASTUnaryExpression copy(CopyStyle style) {
-		CASTUnaryExpression copy =
-				new CASTUnaryExpression(operator, operand == null ? null : operand.copy(style));
+		CASTUnaryExpression copy = new CASTUnaryExpression(operator, operand == null ? null : operand.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getOperator() {
-        return operator;
-    }
+		return operator;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int value) {
-        assertNotFrozen();
-        this.operator = value;
-    }
+		assertNotFrozen();
+		this.operator = value;
+	}
 
-    @Override
+	@Override
 	public IASTExpression getOperand() {
-        return operand;
-    }
+		return operand;
+	}
 
-    @Override
+	@Override
 	public void setOperand(IASTExpression expression) {
-        assertNotFrozen();
-        operand = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		operand = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (operand != null && !operand.accept(action)) return false;
+		if (operand != null && !operand.accept(action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == operand) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            operand = (IASTExpression) other;
-        }
-    }
+		if (child == operand) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			operand = (IASTExpression) other;
+		}
+	}
 
 	@Override
 	public IType getExpressionType() {
@@ -132,7 +138,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		case op_minus:
 		case op_plus:
 		case op_tilde:
-			IType t= CArithmeticConversion.promoteCType(type);
+			IType t = CArithmeticConversion.promoteCType(type);
 			if (t != null) {
 				return restoreTypedefs(t, exprType);
 			}

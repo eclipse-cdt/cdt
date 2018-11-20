@@ -19,7 +19,6 @@ import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 
-
 public class AutomakeEditorFactory {
 	private IWorkingCopyManager workingCopyManager;
 	private AutomakeDocumentProvider automakeFileDocumentProvider;
@@ -31,18 +30,18 @@ public class AutomakeEditorFactory {
 	private AutomakeEditorFactory() {
 		factory = this;
 	}
-	
+
 	public synchronized AutomakeDocumentProvider getAutomakefileDocumentProvider() {
 		if (automakeFileDocumentProvider == null) {
-			automakeFileDocumentProvider=  new AutomakeDocumentProvider();
+			automakeFileDocumentProvider = new AutomakeDocumentProvider();
 		}
 		return automakeFileDocumentProvider;
 	}
 
 	public synchronized IWorkingCopyManager getWorkingCopyManager() {
 		if (workingCopyManager == null) {
-			IMakefileDocumentProvider provider= getAutomakefileDocumentProvider();
-			workingCopyManager= new WorkingCopyManager(provider);
+			IMakefileDocumentProvider provider = getAutomakefileDocumentProvider();
+			workingCopyManager = new WorkingCopyManager(provider);
 		}
 		return workingCopyManager;
 	}
@@ -52,7 +51,8 @@ public class AutomakeEditorFactory {
 	 */
 	public static Color getPreferenceColor(String key) {
 		//FIXME: what do we do with Makefile editor preferences?
-		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(AutotoolsPlugin.getDefault().getPreferenceStore(), key));
+		return ColorManager.getDefault()
+				.getColor(PreferenceConverter.getColor(AutotoolsPlugin.getDefault().getPreferenceStore(), key));
 	}
 
 	public static AutomakeEditorFactory getDefault() {

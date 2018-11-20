@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 final public class EmptyCIndex implements IIndex {
-	public static IIndex INSTANCE= new EmptyCIndex();
+	public static IIndex INSTANCE = new EmptyCIndex();
 
 	private EmptyCIndex() {
 	}
@@ -68,8 +68,8 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	@Override
-	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
-			ISignificantMacros significantFiles) throws CoreException {
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location, ISignificantMacros significantFiles)
+			throws CoreException {
 		return null;
 	}
 
@@ -132,14 +132,14 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	@Override
-	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified,
-			IndexFilter filter, IProgressMonitor monitor) {
+	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter,
+			IProgressMonitor monitor) {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	@Override
-	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified,
-			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
@@ -149,26 +149,24 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	@Override
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope,
-			IndexFilter filter, IProgressMonitor monitor) {
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-
-	@Override
-	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope,
-			IndexFilter filter, IProgressMonitor monitor) {
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-
-	@Override
-	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter,
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter,
 			IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	@Override
-	public IIndexBinding[] findBindings(char[] names, IndexFilter filter,
-			IProgressMonitor monitor)  {
+	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	@Override
+	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	@Override
+	public IIndexBinding[] findBindings(char[] names, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
@@ -203,7 +201,8 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	@Override
-	public IIndexBinding[] findBindings(char[] name, boolean fileScopeOnly,	IndexFilter filter, IProgressMonitor monitor) {
+	public IIndexBinding[] findBindings(char[] name, boolean fileScopeOnly, IndexFilter filter,
+			IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 

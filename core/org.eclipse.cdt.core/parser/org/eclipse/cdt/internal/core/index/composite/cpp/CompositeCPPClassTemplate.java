@@ -30,13 +30,12 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 
-public class CompositeCPPClassTemplate extends CompositeCPPClassType 
-		implements ICPPClassTemplate, ICPPInstanceCache {
+public class CompositeCPPClassTemplate extends CompositeCPPClassType implements ICPPClassTemplate, ICPPInstanceCache {
 
 	public CompositeCPPClassTemplate(ICompositesFactory cf, ICPPClassType ct) {
 		super(cf, ct);
 	}
-	
+
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		try {
@@ -51,8 +50,7 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 				System.arraycopy(ss, 0, preresult[i], 0, ss.length);
 			}
 
-			return ArrayUtil.addAll(
-					ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY,
+			return ArrayUtil.addAll(ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY,
 					cf.getCompositeBindings(preresult));
 		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
@@ -67,26 +65,26 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
+		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
+		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);
 	}
 
 	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}
-	
+
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
-		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
+		CompositeInstanceCache cache = CompositeInstanceCache.getCache(cf, rbinding);
 		synchronized (cache) {
-			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
+			ICPPDeferredClassInstance dci = cache.getDeferredInstance();
 			if (dci == null) {
-				dci= CPPTemplates.createDeferredInstance(this);
+				dci = CPPTemplates.createDeferredInstance(this);
 				cache.putDeferredInstance(dci);
 			}
 			return dci;

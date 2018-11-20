@@ -12,7 +12,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
@@ -46,14 +46,14 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 		public final IIndexFragmentFile fIndexFile;
 
 		public DependsOnOutdatedFileException(Object tu, IIndexFragmentFile file) {
-			fTu= tu;
-			fIndexFile= file;
+			fTu = tu;
+			fIndexFile = file;
 		}
 	}
 
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
-    private final Map<String, IFileNomination> fPragmaOnce= new HashMap<>();
-    private final Map<String, List<ISignificantMacros>> fLoadedVersions= new HashMap<>();
+	private final Map<String, IFileNomination> fPragmaOnce = new HashMap<>();
+	private final Map<String, List<ISignificantMacros>> fLoadedVersions = new HashMap<>();
 
 	/**
 	 * Checks whether the specified inclusion exists.
@@ -76,11 +76,10 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 *
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
-     * @return Returns an inclusion content, or {@code null} if the location does not exist.
+	 * @return Returns an inclusion content, or {@code null} if the location does not exist.
 	 * @see InternalFileContent
 	 */
-	public abstract InternalFileContent getContentForInclusion(String filePath,
-			IMacroDictionary macroDictionary);
+	public abstract InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary);
 
 	/** 
 	 * Called only when used as a delegate of the index file content provider.
@@ -96,8 +95,8 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 * @param macroDictionary macros defined at the inclusion point.
 	 * @throws DependsOnOutdatedFileException 
 	 */
-	public InternalFileContent getContentForContextToHeaderGap(String filePath,
-			IMacroDictionary macroDictionary) throws DependsOnOutdatedFileException {
+	public InternalFileContent getContentForContextToHeaderGap(String filePath, IMacroDictionary macroDictionary)
+			throws DependsOnOutdatedFileException {
 		return null;
 	}
 
@@ -131,7 +130,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	}
 
 	public final void setIncludeResolutionHeuristics(IIncludeFileResolutionHeuristics heuristics) {
-		fIncludeResolutionHeuristics= heuristics;
+		fIncludeResolutionHeuristics = heuristics;
 	}
 
 	public List<ISignificantMacros> getLoadedVersions(String path) {
@@ -140,13 +139,13 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	}
 
 	public void addLoadedVersions(String path, int reduceVersions, ISignificantMacros sig) {
-		List<ISignificantMacros> list= fLoadedVersions.get(path);
+		List<ISignificantMacros> list = fLoadedVersions.get(path);
 		if (list == null || reduceVersions == 0) {
 			fLoadedVersions.put(path, Collections.singletonList(sig));
 		} else if (!list.contains(sig)) {
 			if (list.size() == 1) {
 				ISignificantMacros first = list.get(0);
-				list= new ArrayList<>(2);
+				list = new ArrayList<>(2);
 				list.add(first);
 				fLoadedVersions.put(path, list);
 			} else if (reduceVersions > 0 && reduceVersions < list.size()) {

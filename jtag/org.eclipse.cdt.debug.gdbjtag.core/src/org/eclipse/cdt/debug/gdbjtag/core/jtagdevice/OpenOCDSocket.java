@@ -17,7 +17,6 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.Collection;
 
-
 /**
  * @since 9.2
  */
@@ -35,7 +34,7 @@ public class OpenOCDSocket extends DefaultGDBJtagDeviceImpl {
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
 	 */
 	@Override
-	public void doDelay(int delay, Collection <String>commands) {
+	public void doDelay(int delay, Collection<String> commands) {
 		addCmd(commands, "monitor sleep " + String.valueOf(delay * 1000)); //$NON-NLS-1$
 	}
 

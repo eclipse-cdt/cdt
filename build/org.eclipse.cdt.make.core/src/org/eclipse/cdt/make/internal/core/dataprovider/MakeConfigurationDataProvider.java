@@ -46,19 +46,20 @@ public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProv
 
 	@Override
 	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			IProgressMonitor monitor) throws CoreException {
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, IProgressMonitor monitor)
+			throws CoreException {
 
 		CConfigurationData result = super.applyConfiguration(cfgDescription, baseCfgDescription, baseData, monitor);
-		if(!cfgDescription.isPreferenceConfiguration())
+		if (!cfgDescription.isPreferenceConfiguration())
 			updateDiscoveredInfo(cfgDescription.getProjectDescription().getProject(), result);
 		return result;
 	}
 
 	@Override
-	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor) throws CoreException {
+	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor)
+			throws CoreException {
 		CConfigurationData result = super.loadConfiguration(cfgDescription, monitor);
-		if(!cfgDescription.isPreferenceConfiguration())
+		if (!cfgDescription.isPreferenceConfiguration())
 			updateDiscoveredInfo(cfgDescription.getProjectDescription().getProject(), result);
 		return result;
 	}
@@ -74,7 +75,7 @@ public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProv
 		processor.applyDiscoveredInfo(cfgData, dsInfo);
 	}
 
-	protected CDataDiscoveredInfoProcessor getInfoProcessor( ){
+	protected CDataDiscoveredInfoProcessor getInfoProcessor() {
 		return MakeDiscoveredInfoProcessor.getDefault();
 	}
 

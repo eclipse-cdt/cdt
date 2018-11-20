@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.Map;
@@ -39,21 +39,21 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final boolean fIsPPCondition;
 	private final LexerOptions fLexerOptions;
 
-	public SingleMacroExpansionExplorer(String input, IASTName[] refs, 
-			Map<IMacroBinding, IASTFileLocation> macroDefinitionLocationMap, 
-			String filePath, int lineNumber, boolean isPPCondition, LexerOptions options) {
-		fInput= input;
-		fDictionary= createDictionary(refs);
-		fMacroLocationMap= macroDefinitionLocationMap;
-		fFilePath= filePath;
-		fLineNumber= lineNumber;
-		fIsPPCondition= isPPCondition;
-		fLexerOptions= (LexerOptions) options.clone();
-		fLexerOptions.fCreateImageLocations= false;
+	public SingleMacroExpansionExplorer(String input, IASTName[] refs,
+			Map<IMacroBinding, IASTFileLocation> macroDefinitionLocationMap, String filePath, int lineNumber,
+			boolean isPPCondition, LexerOptions options) {
+		fInput = input;
+		fDictionary = createDictionary(refs);
+		fMacroLocationMap = macroDefinitionLocationMap;
+		fFilePath = filePath;
+		fLineNumber = lineNumber;
+		fIsPPCondition = isPPCondition;
+		fLexerOptions = (LexerOptions) options.clone();
+		fLexerOptions.fCreateImageLocations = false;
 	}
 
 	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName[] refs) {
-		CharArrayMap<PreprocessorMacro> map= new CharArrayMap<PreprocessorMacro>(refs.length);
+		CharArrayMap<PreprocessorMacro> map = new CharArrayMap<PreprocessorMacro>(refs.length);
 		for (IASTName name : refs) {
 			addMacroDefinition(map, name);
 		}
@@ -61,7 +61,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	}
 
 	private void addMacroDefinition(CharArrayMap<PreprocessorMacro> map, IASTName name) {
-		IBinding binding= name.getBinding();
+		IBinding binding = name.getBinding();
 		if (binding instanceof PreprocessorMacro) {
 			map.put(name.getSimpleID(), (PreprocessorMacro) binding);
 		}
@@ -80,14 +80,14 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	}
 
 	private void computeExpansion() {
-		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, fLexerOptions);
-		MacroExpansionTracker tracker= new MacroExpansionTracker(Integer.MAX_VALUE);
+		MacroExpander expander = new MacroExpander(ILexerLog.NULL, fDictionary, null, fLexerOptions);
+		MacroExpansionTracker tracker = new MacroExpansionTracker(Integer.MAX_VALUE);
 		expander.expand(fInput, tracker, fFilePath, fLineNumber, fIsPPCondition);
-		
-		fExpansionCount= tracker.getStepCount();
-		ReplaceEdit r= tracker.getReplacement();
-		ReplaceEdit[] replacements= r==null ? new ReplaceEdit[0] : new ReplaceEdit[]{r};
-		fFullExpansion= new MacroExpansionStep(fInput, null, null, replacements);
+
+		fExpansionCount = tracker.getStepCount();
+		ReplaceEdit r = tracker.getReplacement();
+		ReplaceEdit[] replacements = r == null ? new ReplaceEdit[0] : new ReplaceEdit[] { r };
+		fFullExpansion = new MacroExpansionStep(fInput, null, null, replacements);
 	}
 
 	@Override
@@ -96,13 +96,13 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 		if (step < 0 || step >= fExpansionCount) {
 			throw new IndexOutOfBoundsException();
 		}
-		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, fLexerOptions);
-		MacroExpansionTracker tracker= new MacroExpansionTracker(step);
+		MacroExpander expander = new MacroExpander(ILexerLog.NULL, fDictionary, null, fLexerOptions);
+		MacroExpansionTracker tracker = new MacroExpansionTracker(step);
 		expander.expand(fInput, tracker, fFilePath, fLineNumber, fIsPPCondition);
-		
-		fExpansionCount= tracker.getStepCount();
-		ReplaceEdit r= tracker.getReplacement();
-		ReplaceEdit[] replacements= r==null ? new ReplaceEdit[0] : new ReplaceEdit[]{r};
+
+		fExpansionCount = tracker.getStepCount();
+		ReplaceEdit r = tracker.getReplacement();
+		ReplaceEdit[] replacements = r == null ? new ReplaceEdit[0] : new ReplaceEdit[] { r };
 		final IMacroBinding macro = tracker.getExpandedMacro();
 		return new MacroExpansionStep(tracker.getCodeBeforeStep(), macro, fMacroLocationMap.get(macro), replacements);
 	}

@@ -40,76 +40,76 @@ public class BuildMacroException extends CdtVariableException {
 		super(status);
 	}
 
-//	/**
-//	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity
-//	 * 
-//	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
-//	 * @param message message, can be null. In this case the default message will
-//	 *  be generated base upon the other status info
-//	 * @param exception a low-level exception, or <code>null</code> if not
-//	 *    applicable 
-//	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
-//	 * @param expression the string whose resolutinon caused caused this status creation or null if none
-//	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-//	 * @param contextType the context type used in the operation
-//	 * @param contextData the context data used in the operation
-//	 */
-//	public BuildMacroException(int code, 
-//			String message, 
-//			Throwable exception, 
-//			String macroName, 
-//			String expression, 
-//			String referencedName,
-//			int contextType,
-//			Object contextData) {
-//		super(new BuildMacroStatus(code, message, exception, macroName, expression, referencedName, contextType, contextData));
-//	}
+	//	/**
+	//	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity
+	//	 * 
+	//	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
+	//	 * @param message message, can be null. In this case the default message will
+	//	 *  be generated base upon the other status info
+	//	 * @param exception a low-level exception, or <code>null</code> if not
+	//	 *    applicable 
+	//	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
+	//	 * @param expression the string whose resolutinon caused caused this status creation or null if none
+	//	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
+	//	 * @param contextType the context type used in the operation
+	//	 * @param contextData the context data used in the operation
+	//	 */
+	//	public BuildMacroException(int code, 
+	//			String message, 
+	//			Throwable exception, 
+	//			String macroName, 
+	//			String expression, 
+	//			String referencedName,
+	//			int contextType,
+	//			Object contextData) {
+	//		super(new BuildMacroStatus(code, message, exception, macroName, expression, referencedName, contextType, contextData));
+	//	}
 
-//	/**
-//	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity and with the default message
-//	 * 
-//	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
-//	 * @param exception a low-level exception, or <code>null</code> if not
-//	 *    applicable 
-//	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
-//	 * @param expression the string whose resolutinon caused caused this status creation or null if none
-//	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-//	 * @param contextType the context type used in the operation
-//	 * @param contextData the context data used in the operation
-//	 */
-//	public BuildMacroException(int code, 
-//			String macroName, 
-//			String expression, 
-//			String referencedName,
-//			int contextType,
-//			Object contextData) {
-//		super(new BuildMacroStatus(code, macroName, expression, referencedName, contextType, contextData));
-//	}
-	
-	public BuildMacroException(CdtVariableException e){
+	//	/**
+	//	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity and with the default message
+	//	 * 
+	//	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
+	//	 * @param exception a low-level exception, or <code>null</code> if not
+	//	 *    applicable 
+	//	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
+	//	 * @param expression the string whose resolutinon caused caused this status creation or null if none
+	//	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
+	//	 * @param contextType the context type used in the operation
+	//	 * @param contextData the context data used in the operation
+	//	 */
+	//	public BuildMacroException(int code, 
+	//			String macroName, 
+	//			String expression, 
+	//			String referencedName,
+	//			int contextType,
+	//			Object contextData) {
+	//		super(new BuildMacroStatus(code, macroName, expression, referencedName, contextType, contextData));
+	//	}
+
+	public BuildMacroException(CdtVariableException e) {
 		super(e.getStatus());
 	}
-	
+
 	/**
 	 * Returns an array of the IBuildMacroStatus statuses this exception holds
 	 * 
 	 * @return IBuildMacroStatus[]
 	 */
-	public IBuildMacroStatus[] getMacroStatuses(){
+	public IBuildMacroStatus[] getMacroStatuses() {
 		IStatus status = getStatus();
-		if(status instanceof IBuildMacroStatus)
-			return new IBuildMacroStatus[]{(IBuildMacroStatus)status};
-		else if(status.isMultiStatus()){
+		if (status instanceof IBuildMacroStatus)
+			return new IBuildMacroStatus[] { (IBuildMacroStatus) status };
+		else if (status.isMultiStatus()) {
 			IStatus children[] = status.getChildren();
 			IBuildMacroStatus result[] = new IBuildMacroStatus[children.length];
 			int num = 0;
-			for(int i = 0; i < children.length; i++){
-				if(children[i] instanceof IBuildMacroStatus)
-					result[num++]=(IBuildMacroStatus)children[i];
+			for (int i = 0; i < children.length; i++) {
+				if (children[i] instanceof IBuildMacroStatus)
+					result[num++] = (IBuildMacroStatus) children[i];
 			}
-			if(num != children.length){
+			if (num != children.length) {
 				IBuildMacroStatus tmp[] = new IBuildMacroStatus[num];
-				for(int i = 0; i < num; i++)
+				for (int i = 0; i < num; i++)
 					tmp[i] = result[i];
 				result = tmp;
 			}

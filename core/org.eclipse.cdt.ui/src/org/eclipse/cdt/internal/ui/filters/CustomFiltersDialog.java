@@ -57,7 +57,7 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 public class CustomFiltersDialog extends SelectionDialog {
 
-	private static final String SEPARATOR= ",";  //$NON-NLS-1$
+	private static final String SEPARATOR = ","; //$NON-NLS-1$
 
 	private String fViewId;
 	private boolean fEnablePatterns;
@@ -72,17 +72,12 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 	Stack<FilterDescriptor> fFilterDescriptorChangeHistory;
 
-	
 	/**
 	 * Creates a dialog to customize Java element filters.
 	 *
 	 * @param shell the parent shell
 	 */
-	public CustomFiltersDialog(
-			Shell shell,
-			String viewId,
-			boolean enablePatterns,
-			String[] patterns,
+	public CustomFiltersDialog(Shell shell, String viewId, boolean enablePatterns, String[] patterns,
 			String[] enabledFilterIds) {
 
 		super(shell);
@@ -90,20 +85,20 @@ public class CustomFiltersDialog extends SelectionDialog {
 		Assert.isNotNull(patterns);
 		Assert.isNotNull(enabledFilterIds);
 
-		fViewId= viewId;
-		fPatterns= patterns;
-		fEnablePatterns= enablePatterns;
-		fEnabledFilterIds= enabledFilterIds;
+		fViewId = viewId;
+		fPatterns = patterns;
+		fEnablePatterns = enablePatterns;
+		fEnabledFilterIds = enabledFilterIds;
 
-		fBuiltInFilters= FilterDescriptor.getFilterDescriptors(fViewId);
-		fFilterDescriptorChangeHistory= new Stack<FilterDescriptor>();
+		fBuiltInFilters = FilterDescriptor.getFilterDescriptors(fViewId);
+		fFilterDescriptorChangeHistory = new Stack<FilterDescriptor>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	@Override
 	protected void configureShell(Shell shell) {
-		setTitle(FilterMessages.CustomFiltersDialog_title);  
-		setMessage(FilterMessages.CustomFiltersDialog_filterList_label); 
+		setTitle(FilterMessages.CustomFiltersDialog_title);
+		setMessage(FilterMessages.CustomFiltersDialog_filterList_label);
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, ICHelpContextIds.CUSTOM_FILTERS_DIALOG);
 	}
@@ -112,37 +107,37 @@ public class CustomFiltersDialog extends SelectionDialog {
 	 * Overrides method in Dialog
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
-	 */	
+	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		// create a composite with standard margins and spacing
-		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
-		Composite group= composite;
-		
+		Composite group = composite;
+
 		// Checkbox
-		fEnableUserDefinedPatterns= new Button(group, SWT.CHECK);
-		fEnableUserDefinedPatterns.setText(FilterMessages.CustomFiltersDialog_enableUserDefinedPattern); 
-		
+		fEnableUserDefinedPatterns = new Button(group, SWT.CHECK);
+		fEnableUserDefinedPatterns.setText(FilterMessages.CustomFiltersDialog_enableUserDefinedPattern);
+
 		// Pattern	field
-		fUserDefinedPatterns= new Text(group, SWT.SINGLE | SWT.BORDER);
-		GridData  data= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		data.widthHint= convertWidthInCharsToPixels(59);
+		fUserDefinedPatterns = new Text(group, SWT.SINGLE | SWT.BORDER);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		data.widthHint = convertWidthInCharsToPixels(59);
 		fUserDefinedPatterns.setLayoutData(data);
-		String patterns= convertToString(fPatterns, SEPARATOR);
+		String patterns = convertToString(fPatterns, SEPARATOR);
 		fUserDefinedPatterns.setText(patterns);
 
 		// Info text
-		final Label info= new Label(group, SWT.LEFT);
-		info.setText(FilterMessages.CustomFiltersDialog_patternInfo); 
+		final Label info = new Label(group, SWT.LEFT);
+		info.setText(FilterMessages.CustomFiltersDialog_patternInfo);
 
 		// Enabling / disabling of pattern group
 		fEnableUserDefinedPatterns.setSelection(fEnablePatterns);
@@ -151,7 +146,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fEnableUserDefinedPatterns.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean state= fEnableUserDefinedPatterns.getSelection();
+				boolean state = fEnableUserDefinedPatterns.getSelection();
 				fUserDefinedPatterns.setEnabled(state);
 				info.setEnabled(fEnableUserDefinedPatterns.getSelection());
 				if (state)
@@ -162,21 +157,21 @@ public class CustomFiltersDialog extends SelectionDialog {
 		// Filters provided by extension point
 		if (fBuiltInFilters.length > 0)
 			createCheckBoxList(group);
-				
-		applyDialogFont(parent);		
+
+		applyDialogFont(parent);
 		return parent;
 	}
 
 	private void createCheckBoxList(Composite parent) {
 		// Filler
 		new Label(parent, SWT.NONE);
-		
-		Label info= new Label(parent, SWT.LEFT);
-		info.setText(FilterMessages.CustomFiltersDialog_filterList_label);  
-		
-		fCheckBoxList= CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
-		GridData data= new GridData(GridData.FILL_BOTH);
-		data.heightHint= fCheckBoxList.getTable().getItemHeight() * 10;
+
+		Label info = new Label(parent, SWT.LEFT);
+		info.setText(FilterMessages.CustomFiltersDialog_filterList_label);
+
+		fCheckBoxList = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = fCheckBoxList.getTable().getItemHeight() * 10;
 		fCheckBoxList.getTable().setLayoutData(data);
 
 		fCheckBoxList.setLabelProvider(createLabelPrivder());
@@ -184,11 +179,11 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 		fCheckBoxList.setInput(fBuiltInFilters);
 		setInitialSelections(getEnabledFilterDescriptors());
-		
-		List<?> initialSelection= getInitialElementSelections();
+
+		List<?> initialSelection = getInitialElementSelections();
 		if (initialSelection != null && !initialSelection.isEmpty())
 			checkInitialSelections();
-		
+
 		fCheckBoxList.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
@@ -198,20 +193,21 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fCheckBoxList.getTable().setToolTipText(FilterMessages.CustomFiltersDialog_filterList_label);
 
 		// Description
-		info= new Label(parent, SWT.LEFT);
-		info.setText(FilterMessages.CustomFiltersDialog_description_label);  
-		final Text description= new Text(parent, SWT.LEFT | SWT.WRAP | SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.VERTICAL);
+		info = new Label(parent, SWT.LEFT);
+		info.setText(FilterMessages.CustomFiltersDialog_description_label);
+		final Text description = new Text(parent,
+				SWT.LEFT | SWT.WRAP | SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.VERTICAL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint= convertHeightInCharsToPixels(3);
+		data.heightHint = convertHeightInCharsToPixels(3);
 		description.setLayoutData(data);
 		fCheckBoxList.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection= event.getSelection();
+				ISelection selection = event.getSelection();
 				if (selection instanceof IStructuredSelection) {
-					Object selectedElement= ((IStructuredSelection)selection).getFirstElement();
+					Object selectedElement = ((IStructuredSelection) selection).getFirstElement();
 					if (selectedElement instanceof FilterDescriptor)
-						description.setText(((FilterDescriptor)selectedElement).getDescription());
+						description.setText(((FilterDescriptor) selectedElement).getDescription());
 				}
 			}
 		});
@@ -221,33 +217,34 @@ public class CustomFiltersDialog extends SelectionDialog {
 			 */
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object element= event.getElement();
+				Object element = event.getElement();
 				if (element instanceof FilterDescriptor) {
 					// renew if already touched
 					if (fFilterDescriptorChangeHistory.contains(element)) {
 						fFilterDescriptorChangeHistory.remove(element);
 					}
-					fFilterDescriptorChangeHistory.push((FilterDescriptor)element);
+					fFilterDescriptorChangeHistory.push((FilterDescriptor) element);
 				}
-			}});
+			}
+		});
 
 		addSelectionButtons(parent);
 	}
 
 	private void addSelectionButtons(Composite composite) {
-		Composite buttonComposite= new Composite(composite, SWT.RIGHT);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
+		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
-		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		data.grabExcessHorizontalSpace= true;
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 
 		// Select All button
-		String label= FilterMessages.CustomFiltersDialog_SelectAllButton_label; 
-		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, label, false);
+		String label = FilterMessages.CustomFiltersDialog_SelectAllButton_label;
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, label, false);
 		SWTUtil.setButtonDimensionHint(selectButton);
-		SelectionListener listener= new SelectionAdapter() {
+		SelectionListener listener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(true);
@@ -260,10 +257,10 @@ public class CustomFiltersDialog extends SelectionDialog {
 		selectButton.addSelectionListener(listener);
 
 		// Deselect All button
-		label= FilterMessages.CustomFiltersDialog_DeselectAllButton_label; 
-		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, label, false);
+		label = FilterMessages.CustomFiltersDialog_DeselectAllButton_label;
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, label, false);
 		SWTUtil.setButtonDimensionHint(deselectButton);
-		listener= new SelectionAdapter() {
+		listener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(false);
@@ -276,16 +273,16 @@ public class CustomFiltersDialog extends SelectionDialog {
 	}
 
 	private void checkInitialSelections() {
-		Iterator<?> itemsToCheck= getInitialElementSelections().iterator();
+		Iterator<?> itemsToCheck = getInitialElementSelections().iterator();
 		while (itemsToCheck.hasNext())
-			fCheckBoxList.setChecked(itemsToCheck.next(),true);
+			fCheckBoxList.setChecked(itemsToCheck.next(), true);
 	}
 
 	@Override
 	protected void okPressed() {
 		if (fBuiltInFilters != null) {
-			ArrayList<FilterDescriptor> result= new ArrayList<FilterDescriptor>();
-			for (int i= 0; i < fBuiltInFilters.length; ++i) {
+			ArrayList<FilterDescriptor> result = new ArrayList<FilterDescriptor>();
+			for (int i = 0; i < fBuiltInFilters.length; ++i) {
 				if (fCheckBoxList.getChecked(fBuiltInFilters[i]))
 					result.add(fBuiltInFilters[i]);
 			}
@@ -293,38 +290,37 @@ public class CustomFiltersDialog extends SelectionDialog {
 		}
 		super.okPressed();
 	}
-	
+
 	private ILabelProvider createLabelPrivder() {
-		return 
-			new LabelProvider() {
-				@Override
-				public Image getImage(Object element) {
-					return null;
-				}
-				@Override
-				public String getText(Object element) {
-					if (element instanceof FilterDescriptor)
-						return ((FilterDescriptor)element).getName();
-					return null;
-				}
-			};
+		return new LabelProvider() {
+			@Override
+			public Image getImage(Object element) {
+				return null;
+			}
+
+			@Override
+			public String getText(Object element) {
+				if (element instanceof FilterDescriptor)
+					return ((FilterDescriptor) element).getName();
+				return null;
+			}
+		};
 	}
 
 	// ---------- result handling ----------
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected void setResult(List newResult) {
 		super.setResult(newResult);
 		if (fUserDefinedPatterns.getText().length() > 0) {
-			fEnablePatterns= fEnableUserDefinedPatterns.getSelection();
-			fPatterns= convertFromString(fUserDefinedPatterns.getText(), SEPARATOR);
+			fEnablePatterns = fEnableUserDefinedPatterns.getSelection();
+			fPatterns = convertFromString(fUserDefinedPatterns.getText(), SEPARATOR);
 		} else {
-			fEnablePatterns= false;
-			fPatterns= new String[0];
-		}			
+			fEnablePatterns = false;
+			fPatterns = new String[0];
+		}
 	}
-
 
 	/**
 	 * @return the patterns which have been entered by the user
@@ -337,10 +333,10 @@ public class CustomFiltersDialog extends SelectionDialog {
 	 * @return the ids of the enabled built-in filters
 	 */
 	public String[] getEnabledFilterIds() {
-		Object[] result= getResult();
-		Set<String> enabledIds= new HashSet<String>(result.length);
+		Object[] result = getResult();
+		Set<String> enabledIds = new HashSet<String>(result.length);
 		for (Object element : result)
-			enabledIds.add(((FilterDescriptor)element).getId());
+			enabledIds.add(((FilterDescriptor) element).getId());
 		return enabledIds.toArray(new String[enabledIds.size()]);
 	}
 
@@ -350,7 +346,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	public boolean areUserDefinedPatternsEnabled() {
 		return fEnablePatterns;
 	}
-	
+
 	/**
 	 * @return a stack with the filter descriptor check history
 	 * @since 3.0
@@ -360,34 +356,33 @@ public class CustomFiltersDialog extends SelectionDialog {
 	}
 
 	private FilterDescriptor[] getEnabledFilterDescriptors() {
-		FilterDescriptor[] filterDescs= fBuiltInFilters;
-		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>(filterDescs.length);
-		List<String> enabledFilterIds= Arrays.asList(fEnabledFilterIds);
+		FilterDescriptor[] filterDescs = fBuiltInFilters;
+		List<FilterDescriptor> result = new ArrayList<FilterDescriptor>(filterDescs.length);
+		List<String> enabledFilterIds = Arrays.asList(fEnabledFilterIds);
 		for (FilterDescriptor filterDesc : filterDescs) {
-			String id= filterDesc.getId();
+			String id = filterDesc.getId();
 			if (enabledFilterIds.contains(id))
 				result.add(filterDesc);
 		}
 		return result.toArray(new FilterDescriptor[result.size()]);
 	}
 
-
 	public static String[] convertFromString(String patterns, String separator) {
-		StringTokenizer tokenizer= new StringTokenizer(patterns, separator);
-		String[] result= new String[tokenizer.countTokens()];
-		for (int i= 0; i < result.length; i++)
-			result[i]= tokenizer.nextToken().trim();
+		StringTokenizer tokenizer = new StringTokenizer(patterns, separator);
+		String[] result = new String[tokenizer.countTokens()];
+		for (int i = 0; i < result.length; i++)
+			result[i] = tokenizer.nextToken().trim();
 		return result;
 	}
 
 	public static String convertToString(String[] patterns, String separator) {
-		int length= patterns.length;
-		StringBuilder strBuf= new StringBuilder();
+		int length = patterns.length;
+		StringBuilder strBuf = new StringBuilder();
 		if (length > 0)
 			strBuf.append(patterns[0]);
 		else
 			return ""; //$NON-NLS-1$
-		int i= 1;
+		int i = 1;
 		while (i < length) {
 			strBuf.append(separator);
 			strBuf.append(" "); //$NON-NLS-1$

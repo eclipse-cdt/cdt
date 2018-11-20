@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.wizards;
 
- 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -37,7 +36,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-
 /**
  *
  * ConvertToAutotoolsProjectWizardPage
@@ -56,14 +54,14 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * </p>
  */
 public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPage {
-    
-    private static final String WZ_TITLE = "WizardAutotoolsProjectConversion.title"; //$NON-NLS-1$
-    private static final String WZ_DESC = "WizardAutotoolsProjectConversion.description"; //$NON-NLS-1$
-    private static final String PREFIX = "WizardAutotoolsProjectConversion";
-	protected static final String MSG_ADD_NATURE = PREFIX + ".message.add_nature";	//$NON-NLS-1$
-	protected static final String MSG_ADD_BUILDER = PREFIX + ".message.add_builder";	//$NON-NLS-1$
-	protected static final String MSG_SAVE = PREFIX + ".message.save";	//$NON-NLS-1$
-    
+
+	private static final String WZ_TITLE = "WizardAutotoolsProjectConversion.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "WizardAutotoolsProjectConversion.description"; //$NON-NLS-1$
+	private static final String PREFIX = "WizardAutotoolsProjectConversion";
+	protected static final String MSG_ADD_NATURE = PREFIX + ".message.add_nature"; //$NON-NLS-1$
+	protected static final String MSG_ADD_BUILDER = PREFIX + ".message.add_builder"; //$NON-NLS-1$
+	protected static final String MSG_SAVE = PREFIX + ".message.save"; //$NON-NLS-1$
+
 	/**
 	 * Constructor for ConvertToStdMakeProjectWizardPage.
 	 * @param pageName
@@ -72,58 +70,59 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 		super(pageName);
 		setWizard(wizard);
 	}
-    
-    /**
-     * Method getWzTitleResource returns the correct Title Label for this class
-     * overriding the default in the superclass.
-     */
-    @Override
-	protected String getWzTitleResource(){
-        return AutotoolsUIPlugin.getResourceString(WZ_TITLE);
-    }
-    
-    /**
-     * Method getWzDescriptionResource returns the correct description
-     * Label for this class overriding the default in the superclass.
-     */
-    @Override
-	protected String getWzDescriptionResource(){
-        return AutotoolsUIPlugin.getResourceString(WZ_DESC);
-    }
-       
-    /**
-     * Method isCandidate returns true for all projects.
-     * 
-     * @param project
-     * @return boolean
-     */
-    @Override
-	public boolean isCandidate(IProject project) { 
+
+	/**
+	 * Method getWzTitleResource returns the correct Title Label for this class
+	 * overriding the default in the superclass.
+	 */
+	@Override
+	protected String getWzTitleResource() {
+		return AutotoolsUIPlugin.getResourceString(WZ_TITLE);
+	}
+
+	/**
+	 * Method getWzDescriptionResource returns the correct description
+	 * Label for this class overriding the default in the superclass.
+	 */
+	@Override
+	protected String getWzDescriptionResource() {
+		return AutotoolsUIPlugin.getResourceString(WZ_DESC);
+	}
+
+	/**
+	 * Method isCandidate returns true for all projects.
+	 * 
+	 * @param project
+	 * @return boolean
+	 */
+	@Override
+	public boolean isCandidate(IProject project) {
 		return true; // all 
-    }    
-    
-    protected IProjectType getProjectType() {
-    	return ((ConvertToAutotoolsProjectWizard)getWizard()).getProjectType();
-    }
-    
-    protected IConfiguration[] getSelectedConfigurations() {
-    	return ((ConvertToAutotoolsProjectWizard)getWizard()).getSelectedConfigurations();
-    }
-    
-    protected void applyOptions(IProject project, IProgressMonitor monitor) {
-    	((ConvertToAutotoolsProjectWizard)getWizard()).applyOptions(project, monitor);
-    }
-    
+	}
+
+	protected IProjectType getProjectType() {
+		return ((ConvertToAutotoolsProjectWizard) getWizard()).getProjectType();
+	}
+
+	protected IConfiguration[] getSelectedConfigurations() {
+		return ((ConvertToAutotoolsProjectWizard) getWizard()).getSelectedConfigurations();
+	}
+
+	protected void applyOptions(IProject project, IProgressMonitor monitor) {
+		((ConvertToAutotoolsProjectWizard) getWizard()).applyOptions(project, monitor);
+	}
+
 	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(AutotoolsUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 7); //$NON-NLS-1$
+		monitor.beginTask(
+				AutotoolsUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 7); //$NON-NLS-1$
 		IConfiguration defaultCfg = null;
 		Boolean convertingNewAutotoolsProject = false;
 		try {
 			super.convertProject(project, SubMonitor.convert(monitor, 1), projectID);
 			// Bug 289834 - Converting C Autotools project to C++ loses configurations
 			if (project.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID)) {
-				convertingNewAutotoolsProject = true;  // set this for finally clause
+				convertingNewAutotoolsProject = true; // set this for finally clause
 				return; // We have converted C to C++ or vice-versa for an existing Autotools project and are done
 			}
 			// Otherwise, we must scrap existing configurations as they will have tool settings we cannot use
@@ -135,7 +134,8 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 			monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_BUILDER));
 			AutotoolsNewProjectNature.addAutotoolsBuilder(project, SubMonitor.convert(monitor, 1));
 			// FIXME: Default scanner property: make -w - eventually we want to use Make core's build scanner
-			project.setPersistentProperty(AutotoolsPropertyConstants.SCANNER_USE_MAKE_W, AutotoolsPropertyConstants.TRUE);
+			project.setPersistentProperty(AutotoolsPropertyConstants.SCANNER_USE_MAKE_W,
+					AutotoolsPropertyConstants.TRUE);
 			// Specify false for override in next call as override can cause the method to throw an
 			// exception.
 			CCorePlugin.getDefault().mapCProjectOwner(project, projectID, false);
@@ -147,27 +147,27 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 				IProjectType parent = getProjectType();
 				newManagedProject = ManagedBuildManager.createManagedProject(project, parent);
 				if (newManagedProject != null) {
-					IConfiguration [] selectedConfigs = getSelectedConfigurations();
+					IConfiguration[] selectedConfigs = getSelectedConfigurations();
 					for (int i = 0; i < selectedConfigs.length; i++) {
 						IConfiguration config = selectedConfigs[i];
 						int id = ManagedBuildManager.getRandomNumber();
-						IConfiguration newConfig = newManagedProject.createConfiguration(config, config.getId() + "." + id); //$NON-NLS-1$
+						IConfiguration newConfig = newManagedProject.createConfiguration(config,
+								config.getId() + "." + id); //$NON-NLS-1$
 						newConfig.setArtifactName(newManagedProject.getDefaultArtifactName());
 					}
 					// Now add the first supported config in the list as the default
 					IConfiguration[] newConfigs = newManagedProject.getConfigurations();
-					for(int i = 0; i < newConfigs.length; i++) {
-						if(newConfigs[i].isSupported()){
+					for (int i = 0; i < newConfigs.length; i++) {
+						if (newConfigs[i].isSupported()) {
 							defaultCfg = newConfigs[i];
 							break;
 						}
 					}
-					
-					if(defaultCfg == null && newConfigs.length > 0)
+
+					if (defaultCfg == null && newConfigs.length > 0)
 						defaultCfg = newConfigs[0];
-					
-					
-					if(defaultCfg != null) {
+
+					if (defaultCfg != null) {
 						ManagedBuildManager.setDefaultConfiguration(project, defaultCfg);
 						ManagedBuildManager.setSelectedConfiguration(project, defaultCfg);
 					}
@@ -212,8 +212,8 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		IStructuredSelection sel = ((BasicNewResourceWizard)getWizard()).getSelection();
-		if ( sel != null) {
+		IStructuredSelection sel = ((BasicNewResourceWizard) getWizard()).getSelection();
+		if (sel != null) {
 			tableViewer.setCheckedElements(sel.toArray());
 			setPageComplete(validatePage());
 		}

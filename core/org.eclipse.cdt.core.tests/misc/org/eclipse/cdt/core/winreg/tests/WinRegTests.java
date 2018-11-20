@@ -24,7 +24,8 @@ public class WinRegTests extends TestCase {
 		WindowsRegistry registry = WindowsRegistry.getRegistry();
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			assertNotNull(registry);
-			String value = registry.getLocalMachineValue("SOFTWARE\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir");
+			String value = registry.getLocalMachineValue("SOFTWARE\\Microsoft\\Windows\\CurrentVersion",
+					"ProgramFilesDir");
 			// Not sure how you set this to anything else so it seems safe.
 			assertEquals("C:\\Program Files", value);
 		} else {
@@ -32,7 +33,7 @@ public class WinRegTests extends TestCase {
 			assertNotNull(registry);
 		}
 	}
-	
+
 	public void test2() {
 		WindowsRegistry registry = WindowsRegistry.getRegistry();
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {

@@ -68,7 +68,8 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	Set<Object> fExisting;
 	private Object fFocusElement;
 
-	public MultipleFolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
+	public MultipleFolderSelectionDialog(Shell parent, ILabelProvider labelProvider,
+			ITreeContentProvider contentProvider) {
 		super(parent);
 		fLabelProvider = labelProvider;
 		fContentProvider = contentProvider;
@@ -245,7 +246,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		treeWidget.setFont(composite.getFont());
 
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(CPathEntryMessages.MultipleFolderSelectionDialog_button); 
+		button.setText(CPathEntryMessages.MultipleFolderSelectionDialog_button);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override

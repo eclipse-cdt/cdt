@@ -17,15 +17,25 @@ import junit.framework.TestSuite;
 
 public class RangeBasedForStatementTests extends TestBase {
 	public static class NonIndexing extends RangeBasedForStatementTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends RangeBasedForStatementTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	//	constexpr int f() {
 	//		int bar[4] { 3, 5, 7, 11 };
 	//		int sum { 0 };
@@ -34,12 +44,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSimpleRangeBasedForLoop() throws Exception {
 		assertEvaluationEquals(26);
 	}
-	
+
 	//	constexpr int f() {
 	//		int bar[4] { 3, 5, 7, 11 };
 	//		int sum { 0 };
@@ -48,12 +58,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testReturnInRangeBasedForLoop() throws Exception {
 		assertEvaluationEquals(42);
 	}
-	
+
 	//	constexpr int f() {
 	//		int bar[4] { 3, 5, 7, 11 };
 	//		int sum { 0 };
@@ -65,12 +75,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//      return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopReferences() throws Exception {
 		assertEvaluationEquals(30);
-	}	
-	
+	}
+
 	//	constexpr void incr(int & i) {
 	//		i++;
 	//	}
@@ -85,12 +95,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testPassReferenceObtainedFromRangeBasedForLoopToFunctionAndModify() throws Exception {
 		assertEvaluationEquals(30);
 	}
-	
+
 	//	constexpr int f() {
 	//		int bar[4] { 3, 5, 7, 11 };
 	//		int sum { 0 };
@@ -98,12 +108,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//			sum += i;
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopWithNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(26);
 	}
-	
+
 	//	constexpr int f() {
 	//		int bar[4] { 3, 5, 7, 11 };
 	//		int sum { 0 };
@@ -111,12 +121,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//			return 42;
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopWithReturnInNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}
-	
+
 	//	class Range {
 	//		int arr[5];
 	//	public:
@@ -132,12 +142,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverCustomType() throws Exception {
 		assertEvaluationEquals(15);
 	}
-	
+
 	// 	class Range {
 	//		int arr[5];
 	//	public:
@@ -160,12 +170,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopThatModifiesElementsInCustomType() throws Exception {
 		assertEvaluationEquals(20);
 	}
-	
+
 	//	class Range {
 	//	  int arr1[5];
 	//	  int arr2[5];
@@ -184,12 +194,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverNonConstRangeChoosesNonConstBeginEnd() throws Exception {
 		assertEvaluationEquals(15);
 	}
-	
+
 	//	class Range {
 	//	  int arr1[5];
 	//	  int arr2[5];
@@ -208,12 +218,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverConstRangeChoosesConstBeginEnd() throws Exception {
 		assertEvaluationEquals(40);
 	}
-	
+
 	//	class Range {
 	//	  int arr1[5];
 	//	  int arr2[5];
@@ -233,12 +243,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverConstRefRangeChoosesConstBeginEnd() throws Exception {
 		assertEvaluationEquals(40);
 	}
-	
+
 	//	class Range {
 	//		int arr[5];
 	//	public:
@@ -254,12 +264,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverCustomTypeWithInvalidBeginMemberFunction() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
-	
+
 	//	class Range {
 	//		int arr[5];
 	//	public:
@@ -275,12 +285,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverCustomTypeWithBeginMemberFunctionWithDefaultParameterValue() throws Exception {
 		assertEvaluationEquals(15);
 	}
-	
+
 	//	namespace ns {
 	//	  class Vec {
 	//	  public:
@@ -300,12 +310,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testDoesArgumentDependentLookupIfBeginEndMemberFunctionsDontExist() throws Exception {
 		assertEvaluationEquals(15);
 	}
-	
+
 	//	namespace ns {
 	//	  class Vec {
 	//	  public:
@@ -328,12 +338,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testChoosesMemberFunctionsOverFreeFunctions() throws Exception {
 		assertEvaluationEquals(40);
 	}
-	
+
 	//	namespace ns {
 	//	  class Vec {
 	//	  public:
@@ -353,12 +363,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testDoesntMixMemberFunctionsAndFreeFunctions() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
-	
+
 	//	namespace ns {
 	//	    class Vec {
 	//	      int arr[5];
@@ -381,12 +391,12 @@ public class RangeBasedForStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testWorksWithBeginEndTemplates() throws Exception {
 		assertEvaluationEquals(15);
 	}
-	
+
 	//	constexpr int f() {
 	//		int sum = 0;
 	//		for(auto x : {1,2,3,4,5}) {
@@ -394,7 +404,7 @@ public class RangeBasedForStatementTests extends TestBase {
 	//		}
 	//		return sum;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testRangeBasedForLoopOverInitializerList() throws Exception {
 		assertEvaluationEquals(15);

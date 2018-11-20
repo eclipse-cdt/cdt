@@ -24,11 +24,11 @@ package org.eclipse.cdt.debug.ui.disassembly;
  */
 public interface IDocumentElementLabelUpdate extends IDocumentUpdate {
 
-    /**
-     * Sets the text of the label of the specified attribute.
-     * 
-     * @param attribute the attribute name
-     * @param text the label text to set
-     */
-    public void setLabel( String attribute, String text );
+	/**
+	 * Sets the text of the label of the specified attribute.
+	 * 
+	 * @param attribute the attribute name
+	 * @param text the label text to set
+	 */
+	public void setLabel(String attribute, String text);
 }

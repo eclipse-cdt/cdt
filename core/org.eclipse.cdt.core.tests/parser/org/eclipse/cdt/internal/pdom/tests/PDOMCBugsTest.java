@@ -47,34 +47,36 @@ import org.osgi.framework.Bundle;
 public class PDOMCBugsTest extends BaseTestCase {
 	ICProject cproject;
 	PDOM pdom;
-	
+
 	public static Test suite() {
 		return suite(PDOMCBugsTest.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
-		cproject= CProjectHelper.createCProject("PDOMCBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		cproject = CProjectHelper.createCProject("PDOMCBugsTest" + System.currentTimeMillis(), "bin",
+				IPDOMManager.ID_NO_INDEXER);
 		Bundle b = CTestPlugin.getDefault().getBundle();
-		CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser",
-				PDOMCBugsTest.this.getClass(), getName(), 1);
+		CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser", PDOMCBugsTest.this.getClass(),
+				getName(), 1);
 
 		IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 
-		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 		super.tearDown();
 	}
-	
+
 	// // check we get the right IProblemBinding objects
 	// typedef A B;
 	// typedef C D;
@@ -85,27 +87,27 @@ public class PDOMCBugsTest extends BaseTestCase {
 	// typedef int (*J)(J);
 	public void test192165() throws Exception {
 		pdom.acquireReadLock();
-		IBinding[] bindings= pdom.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
 		assertEquals(7, bindings.length);
-		Set bnames= new HashSet();
+		Set bnames = new HashSet();
 		for (IBinding binding : bindings) {
 			final String name = binding.getName();
 			bnames.add(name);
-			assertTrue("expected typedef, got "+binding, binding instanceof ITypedef);
-			IType type= SemanticUtil.getUltimateType((IType)binding, false);
+			assertTrue("expected typedef, got " + binding, binding instanceof ITypedef);
+			IType type = SemanticUtil.getUltimateType((IType) binding, false);
 			if (name.equals("J")) {
 				// for plain C the second J has to be interpreted as a (useless) parameter name.
 				assertTrue(type instanceof IFunctionType);
-				IFunctionType ft= (IFunctionType) type;
+				IFunctionType ft = (IFunctionType) type;
 				assertEquals("int (int)", ASTTypeUtil.getType(ft));
 			} else {
 				assertTrue(type instanceof IProblemType);
 			}
 		}
-		
-		Set expected= new HashSet(Arrays.asList(new String[]{"B","D","E","G","H","I","J"}));
+
+		Set expected = new HashSet(Arrays.asList(new String[] { "B", "D", "E", "G", "H", "I", "J" }));
 		assertEquals(expected, bnames);
-		
+
 		pdom.releaseReadLock();
 	}
 }

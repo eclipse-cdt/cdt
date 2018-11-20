@@ -38,30 +38,30 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	private static final int BASECLASS_TYPE = CLASS_DEFINITION + Database.PTR_SIZE;
 	private static final int NEXTBASE = BASECLASS_TYPE + Database.TYPE_SIZE;
 	private static final int FLAGS = NEXTBASE + Database.PTR_SIZE;
-	
+
 	protected static final int RECORD_SIZE = FLAGS + 1;
-	
+
 	private static final int FLAGS_VISIBILITY_MASK = 0x03;
 	private static final int FLAGS_VIRTUAL = 0x04;
 	private static final int FLAGS_INHERITED_CONSTRUCTORS_SOURCE = 0x08;
-	
+
 	private final PDOMLinkage linkage;
 	private final long record;
-	
+
 	private IType fCachedBaseClass;
-	
+
 	public PDOMCPPBase(PDOMLinkage linkage, long record) {
 		this.linkage = linkage;
 		this.record = record;
 	}
-	
+
 	public PDOMCPPBase(PDOMLinkage linkage, ICPPBase base, PDOMName classDefName) throws CoreException {
 		Database db = linkage.getDB();
 		this.linkage = linkage;
 		this.record = db.malloc(RECORD_SIZE);
 		db.putRecPtr(record + CLASS_DEFINITION, classDefName.getRecord());
 		linkage.storeType(record + BASECLASS_TYPE, base.getBaseClassType());
-		
+
 		byte flags = (byte) (base.getVisibility() | (base.isVirtual() ? FLAGS_VIRTUAL : 0)
 				| (base.isInheritedConstructorsSource() ? FLAGS_INHERITED_CONSTRUCTORS_SOURCE : 0));
 		db.putByte(record + FLAGS, flags);
@@ -74,17 +74,17 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	public long getRecord() {
 		return record;
 	}
-	
+
 	public void setNextBase(PDOMCPPBase nextBase) throws CoreException {
 		long rec = nextBase != null ? nextBase.getRecord() : 0;
 		getDB().putRecPtr(record + NEXTBASE, rec);
 	}
-	
+
 	public PDOMCPPBase getNextBase() throws CoreException {
 		long rec = getDB().getRecPtr(record + NEXTBASE);
 		return rec != 0 ? new PDOMCPPBase(linkage, rec) : null;
 	}
-	
+
 	private int getFlags() throws CoreException {
 		return getDB().getByte(record + FLAGS);
 	}
@@ -101,14 +101,14 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IType getBaseClassType() {
 		if (fCachedBaseClass == null) {
 			try {
-				fCachedBaseClass= linkage.loadType(record + BASECLASS_TYPE);
+				fCachedBaseClass = linkage.loadType(record + BASECLASS_TYPE);
 			} catch (CoreException e) {
-				fCachedBaseClass= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
+				fCachedBaseClass = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 			}
 		}
 		return fCachedBaseClass;
@@ -116,7 +116,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 
 	@Override
 	public IBinding getBaseClass() {
-		IType type= getBaseClassType();
+		IType type = getBaseClassType();
 		type = getNestedType(type, TDEF);
 		if (type instanceof IBinding)
 			return (IBinding) type;
@@ -156,32 +156,33 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	public void delete() throws CoreException {
 		getDB().free(record);
 	}
-	
+
 	@Override
 	public void setBaseClass(IBinding binding) {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
+
 	@Override
 	public void setBaseClass(IType binding) {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public ICPPBase clone() {
 		return new PDOMCPPBaseClone(this);
 	}
-	
+
 	private static class PDOMCPPBaseClone implements ICPPBase, ICPPInternalBase {
 		private final ICPPBase base;
 		private IType baseClass;
-		
+
 		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
 		}
 
 		@Override
 		public IBinding getBaseClass() {
-			IType type= getBaseClassType();
+			IType type = getBaseClassType();
 			type = getNestedType(type, TDEF);
 			if (type instanceof IBinding)
 				return (IBinding) type;
@@ -191,16 +192,16 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		@Override
 		public IType getBaseClassType() {
 			if (baseClass == null) {
-				baseClass=  base.getBaseClassType();
+				baseClass = base.getBaseClassType();
 			}
 			return baseClass;
 		}
-		
+
 		@Override
 		public IName getClassDefinitionName() {
 			return base.getClassDefinitionName();
 		}
-		
+
 		@Override
 		public int getVisibility() {
 			return base.getVisibility();

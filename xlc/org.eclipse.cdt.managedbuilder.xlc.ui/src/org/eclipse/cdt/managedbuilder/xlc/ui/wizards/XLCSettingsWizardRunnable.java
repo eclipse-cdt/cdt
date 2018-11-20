@@ -40,20 +40,24 @@ public class XLCSettingsWizardRunnable implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		// take the data from the page manager, and set the project properties with it
-		String compilerPath    = MBSCustomPageManager.getPageProperty(pageId, PreferenceConstants.P_XL_COMPILER_ROOT).toString();
-		String compilerVersion = MBSCustomPageManager.getPageProperty(pageId, PreferenceConstants.P_XLC_COMPILER_VERSION).toString();
+		String compilerPath = MBSCustomPageManager.getPageProperty(pageId, PreferenceConstants.P_XL_COMPILER_ROOT)
+				.toString();
+		String compilerVersion = MBSCustomPageManager
+				.getPageProperty(pageId, PreferenceConstants.P_XLC_COMPILER_VERSION).toString();
 
 		// get a handle to the wizard
 		IWizardPage[] pages = MBSCustomPageManager.getPages();
 
-		if(pages != null && pages.length > 0) {
+		if (pages != null && pages.length > 0) {
 
 			ICDTCommonProjectWizard wizard = (ICDTCommonProjectWizard) pages[0].getWizard();
 			IProject project = wizard.getLastProject();
 
 			try {
-				project.setPersistentProperty(new QualifiedName("", PreferenceConstants.P_XL_COMPILER_ROOT), compilerPath);
-				project.setPersistentProperty(new QualifiedName("", PreferenceConstants.P_XLC_COMPILER_VERSION), compilerVersion);
+				project.setPersistentProperty(new QualifiedName("", PreferenceConstants.P_XL_COMPILER_ROOT),
+						compilerPath);
+				project.setPersistentProperty(new QualifiedName("", PreferenceConstants.P_XLC_COMPILER_VERSION),
+						compilerVersion);
 
 			} catch (CoreException e) {
 				CCorePlugin.log(e);

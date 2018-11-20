@@ -119,7 +119,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	private IDsfDebugServicesFactory fServiceFactory;
 	private ILaunchTarget fLaunchTarget;
 	private Properties fInitialEnv;
-	
+
 	private String fGdbVersion;
 
 	public GdbLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
@@ -518,7 +518,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		if (fGdbVersion != null) {
 			return fGdbVersion;
 		}
-		
+
 		String cmd = getGDBPath().toOSString() + " --version"; //$NON-NLS-1$
 
 		// Parse cmd to properly handle spaces and such things (bug 458499)
@@ -842,10 +842,10 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		}
 		if (!programPath.toFile().exists()) {
 			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-					  new FileNotFoundException(
-							  LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found",  //$NON-NLS-1$ 
-							                                    programPath.toOSString())),
-					  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+					new FileNotFoundException(
+							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$ 
+									programPath.toOSString())),
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
 		return programPath.toOSString();
@@ -865,9 +865,9 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 */
 	private static void throwException(String message, Throwable exception, int code) throws CoreException {
 		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, message, exception);
-		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code, 
-				              exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
-				              exception));
+		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code,
+				exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				exception));
 		throw new CoreException(status);
 	}
 

@@ -58,10 +58,9 @@ public class SymbolTab extends AbstractLangsListTab {
 
 	@Override
 	public ICLanguageSettingEntry doAdd() {
-		SymbolDialog dlg = new SymbolDialog(
-				usercomp.getShell(), true,
-				Messages.SymbolTab_2, EMPTY_STR, EMPTY_STR, getResDesc());
-		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
+		SymbolDialog dlg = new SymbolDialog(usercomp.getShell(), true, Messages.SymbolTab_2, EMPTY_STR, EMPTY_STR,
+				getResDesc());
+		if (dlg.open() && dlg.text1.trim().length() > 0) {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
 			return CDataUtil.createCMacroEntry(dlg.text1, dlg.text2, 0);
@@ -71,9 +70,7 @@ public class SymbolTab extends AbstractLangsListTab {
 
 	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
-		SymbolDialog dlg = new SymbolDialog(
-				usercomp.getShell(), false,
-				Messages.SymbolTab_3, ent.getName(),
+		SymbolDialog dlg = new SymbolDialog(usercomp.getShell(), false, Messages.SymbolTab_3, ent.getName(),
 				ent.getValue(), getResDesc());
 		if (dlg.open())
 			return CDataUtil.createCMacroEntry(dlg.text1, dlg.text2, 0);

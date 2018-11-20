@@ -21,7 +21,8 @@ import org.eclipse.debug.core.model.IValue;
 /**
  * C/C++ specific extension of <code>IStackFrame</code>.
  */
-public interface ICStackFrame extends IRunToLine, IRunToAddress, IResumeAtLine, IResumeAtAddress, IStackFrame, ICDebugElement {
+public interface ICStackFrame
+		extends IRunToLine, IRunToAddress, IResumeAtLine, IResumeAtAddress, IStackFrame, ICDebugElement {
 
 	/**
 	 * Returns the address of this stack frame.
@@ -29,7 +30,7 @@ public interface ICStackFrame extends IRunToLine, IRunToAddress, IResumeAtLine, 
 	 * @return the address of this stack frame
 	 */
 	public IAddress getAddress();
-	
+
 	/**
 	 * Returns the source file of this stack frame or <code>null</code>
 	 * if the source file is unknown.
@@ -68,7 +69,7 @@ public interface ICStackFrame extends IRunToLine, IRunToAddress, IResumeAtLine, 
 	 * @return the evaluation result
 	 * @throws DebugException if this method fails.
 	 */
-	public IValue evaluateExpression( String expression ) throws DebugException;
+	public IValue evaluateExpression(String expression) throws DebugException;
 
 	/**
 	 * Evaluates the specified expression in the context of this stack frame 
@@ -78,7 +79,7 @@ public interface ICStackFrame extends IRunToLine, IRunToAddress, IResumeAtLine, 
 	 * @return the evaluation result
 	 * @throws DebugException on failure. Reasons include:
 	 */
-	public String evaluateExpressionToString( String expression ) throws DebugException;
+	public String evaluateExpressionToString(String expression) throws DebugException;
 
 	/**
 	 * Returns whether this stack frame can currently evaluate an expression.

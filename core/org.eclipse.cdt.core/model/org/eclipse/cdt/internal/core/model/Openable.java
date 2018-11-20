@@ -34,8 +34,7 @@ public abstract class Openable extends Parent implements IOpenable {
 
 	public Openable(ICElement parent, IPath path, int type) {
 		// Check if the file is under the workspace.
-		this(parent, ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path),
-				path.lastSegment(), type);
+		this(parent, ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path), path.lastSegment(), type);
 	}
 
 	public Openable(ICElement parent, IResource resource, int type) {
@@ -87,7 +86,8 @@ public abstract class Openable extends Parent implements IOpenable {
 	 * Closes the buffer associated with this element, if any.
 	 */
 	protected void closeBuffer() {
-		if (!hasBuffer()) return; // nothing to do
+		if (!hasBuffer())
+			return; // nothing to do
 		IBuffer buffer = null;
 		buffer = getBufferManager().getBuffer(this);
 		if (buffer != null) {
@@ -127,7 +127,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * Returns the buffer factory to use for creating new buffers.
 	 */
-	public IBufferFactory getBufferFactory(){
+	public IBufferFactory getBufferFactory() {
 		return getBufferManager().getDefaultBufferFactory();
 	}
 
@@ -147,7 +147,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	}
 
 	@Override
-	public boolean hasUnsavedChanges() throws CModelException{
+	public boolean hasUnsavedChanges() throws CModelException {
 		if (isReadOnly() || !isOpen()) {
 			return false;
 		}
@@ -157,12 +157,12 @@ public abstract class Openable extends Parent implements IOpenable {
 		}
 		// For roots and projects must check open buffers to see
 		// if they have an child with unsaved changes.
-		if (fType == C_MODEL ||	fType == C_PROJECT) {
-			Enumeration<IBuffer> openBuffers= getBufferManager().getOpenBuffers();
+		if (fType == C_MODEL || fType == C_PROJECT) {
+			Enumeration<IBuffer> openBuffers = getBufferManager().getOpenBuffers();
 			while (openBuffers.hasMoreElements()) {
-				IBuffer buffer= openBuffers.nextElement();
+				IBuffer buffer = openBuffers.nextElement();
 				if (buffer.hasUnsavedChanges()) {
-					ICElement owner= (ICElement) buffer.getOwner();
+					ICElement owner = (ICElement) buffer.getOwner();
 					if (isAncestorOf(owner)) {
 						return true;
 					}
@@ -234,19 +234,19 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * Open the parent element if necessary.
 	 */
-	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements,
-			IProgressMonitor pm) throws CModelException {
+	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm)
+			throws CModelException {
 		Openable openableParent = (Openable) getOpenableParent();
-		if (openableParent != null && !openableParent.isOpen()){
+		if (openableParent != null && !openableParent.isOpen()) {
 			openableParent.generateInfos(openableParent.createElementInfo(), newElements, pm);
 		}
 	}
 
 	@Override
-	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements,
-			IProgressMonitor monitor) throws CModelException {
-		if (CModelManager.VERBOSE){
-			System.out.println("OPENING Element ("+ Thread.currentThread()+"): " + this); //$NON-NLS-1$//$NON-NLS-2$
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor)
+			throws CModelException {
+		if (CModelManager.VERBOSE) {
+			System.out.println("OPENING Element (" + Thread.currentThread() + "): " + this); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
 		// Open the parent if necessary.

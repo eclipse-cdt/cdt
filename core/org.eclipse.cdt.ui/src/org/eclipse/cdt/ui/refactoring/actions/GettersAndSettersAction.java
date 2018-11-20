@@ -31,12 +31,12 @@ import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGetters
  * Launches a getter and setter source code generation.
  * 
  * @noextend This class is not intended to be subclassed by clients.
- */          
+ */
 public class GettersAndSettersAction extends RefactoringAction {
 
-    public GettersAndSettersAction() {
-        super(Messages.GettersAndSetters_label);
-    }
+	public GettersAndSettersAction() {
+		super(Messages.GettersAndSetters_label);
+	}
 
 	/**
 	 * @since 5.1
@@ -58,12 +58,12 @@ public class GettersAndSettersAction extends RefactoringAction {
 		}
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	if (!(elem instanceof IField) || !(elem instanceof ISourceReference) ||
-    			!(((ISourceReference) elem).getTranslationUnit().getResource() instanceof IFile)) {
-    		setEnabled(false);
-    	}
-    }
+		super.updateSelection(elem);
+		if (!(elem instanceof IField) || !(elem instanceof ISourceReference)
+				|| !(((ISourceReference) elem).getTranslationUnit().getResource() instanceof IFile)) {
+			setEnabled(false);
+		}
+	}
 }

@@ -16,23 +16,23 @@ package org.eclipse.cdt.dsf.ui.viewmodel.update;
 import org.eclipse.osgi.util.NLS;
 
 public class ViewModelUpdateMessages extends NLS {
-    public static String AutomaticUpdatePolicy_name;
-    public static String ManualUpdatePolicy_InitialDataElement__label;
-    public static String ManualUpdatePolicy_name;
-    /** 
-     * @since 1.1 
-     */
-    public static String AllUpdateScope_name;
-    /** 
-     * @since 1.1 
-     */
-    public static String VisibleUpdateScope_name;
-	
-    static {
-        // load message values from bundle file
-        NLS.initializeMessages(ViewModelUpdateMessages.class.getName(), ViewModelUpdateMessages.class);
-    }
+	public static String AutomaticUpdatePolicy_name;
+	public static String ManualUpdatePolicy_InitialDataElement__label;
+	public static String ManualUpdatePolicy_name;
+	/** 
+	 * @since 1.1 
+	 */
+	public static String AllUpdateScope_name;
+	/** 
+	 * @since 1.1 
+	 */
+	public static String VisibleUpdateScope_name;
 
-    private ViewModelUpdateMessages() {
-    }
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(ViewModelUpdateMessages.class.getName(), ViewModelUpdateMessages.class);
+	}
+
+	private ViewModelUpdateMessages() {
+	}
 }

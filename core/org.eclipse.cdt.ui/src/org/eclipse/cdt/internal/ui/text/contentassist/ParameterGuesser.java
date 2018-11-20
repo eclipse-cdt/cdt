@@ -76,9 +76,7 @@ public class ParameterGuesser {
 	 * which is preferred over GLOBAL).
 	 */
 	static enum VariableType {
-		LOCAL(0),
-		FIELD(1),
-		GLOBAL(3); // Give the global variables a lower priority.
+		LOCAL(0), FIELD(1), GLOBAL(3); // Give the global variables a lower priority.
 
 		private final int priority;
 
@@ -95,7 +93,7 @@ public class ParameterGuesser {
 		public final String name;
 		public final VariableType variableType;
 		public final int positionScore;
-		
+
 		public int totalScore;
 
 		public final char[] triggerChars;
@@ -103,8 +101,8 @@ public class ParameterGuesser {
 
 		public boolean alreadyMatched;
 
-		public Variable(String name, VariableType variableType, int positionScore,
-				char[] triggerChars, ImageDescriptor descriptor) {
+		public Variable(String name, VariableType variableType, int positionScore, char[] triggerChars,
+				ImageDescriptor descriptor) {
 			this.name = name;
 			this.variableType = variableType;
 			this.positionScore = positionScore;
@@ -140,17 +138,13 @@ public class ParameterGuesser {
 		return null;
 	}
 
-	private Variable createVariable(IBinding element, IType enclosingType, int positionScore)
-			throws CModelException {
+	private Variable createVariable(IBinding element, IType enclosingType, int positionScore) throws CModelException {
 		IType elementType = getType(element);
 		String elementName = element.getName();
 		if (elementType != null && enclosingType != null
-				&& (elementType.toString().equals(enclosingType.toString())
-						|| elementType.isSameType(enclosingType)
-						|| isImplicitlyConvertible(enclosingType, elementType)
-						|| isParent(elementType, enclosingType)
-						|| isReferenceTo(enclosingType, elementType) 
-						|| isReferenceTo(elementType, enclosingType))) {
+				&& (elementType.toString().equals(enclosingType.toString()) || elementType.isSameType(enclosingType)
+						|| isImplicitlyConvertible(enclosingType, elementType) || isParent(elementType, enclosingType)
+						|| isReferenceTo(enclosingType, elementType) || isReferenceTo(elementType, enclosingType))) {
 			VariableType variableType = VariableType.GLOBAL;
 			if (element instanceof ICPPField) {
 				variableType = VariableType.FIELD;
@@ -185,11 +179,11 @@ public class ParameterGuesser {
 		}
 		return false;
 	}
-	
+
 	private boolean isImplicitlyConvertible(IType orginType, IType candidateType) {
 		try {
-			Cost cost = Conversions.checkImplicitConversionSequence(orginType, candidateType,
-					ValueCategory.LVALUE, UDCMode.ALLOWED, Context.ORDINARY);
+			Cost cost = Conversions.checkImplicitConversionSequence(orginType, candidateType, ValueCategory.LVALUE,
+					UDCMode.ALLOWED, Context.ORDINARY);
 			if (cost.converts())
 				return true;
 		} catch (DOMException e) {
@@ -202,9 +196,9 @@ public class ParameterGuesser {
 	 * Returns true, if the parent type is a direct/indirect parent of the child type
 	 */
 	private boolean isParent(IType child, IType parent) {
-		if (child != null && parent != null 
-				&& child instanceof ICPPClassType && !(child instanceof ICPPClassSpecialization)
-				&& parent instanceof ICPPClassType && !(parent instanceof ICPPClassSpecialization)) {
+		if (child != null && parent != null && child instanceof ICPPClassType
+				&& !(child instanceof ICPPClassSpecialization) && parent instanceof ICPPClassType
+				&& !(parent instanceof ICPPClassSpecialization)) {
 			ICPPBase[] bases = ((ICPPClassType) child).getBases();
 			for (ICPPBase base : bases) {
 				IType tmpType = base.getBaseClassType();
@@ -223,8 +217,7 @@ public class ParameterGuesser {
 		if (binding instanceof ITypedef) {
 			imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
 		} else if (binding instanceof ICompositeType) {
-			if (((ICompositeType) binding).getKey() == ICPPClassType.k_class
-					|| binding instanceof ICPPClassTemplate)
+			if (((ICompositeType) binding).getKey() == ICPPClassType.k_class || binding instanceof ICPPClassTemplate)
 				imageDescriptor = CElementImageProvider.getClassImageDescriptor();
 			else if (((ICompositeType) binding).getKey() == ICompositeType.k_struct)
 				imageDescriptor = CElementImageProvider.getStructImageDescriptor();
@@ -236,8 +229,7 @@ public class ParameterGuesser {
 				imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PRIVATE);
 				break;
 			case ICPPMember.v_protected:
-				imageDescriptor = 
-						CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PROTECTED);
+				imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PROTECTED);
 				break;
 			default:
 				imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC);
@@ -251,8 +243,7 @@ public class ParameterGuesser {
 				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PRIVATE);
 				break;
 			case ICPPMember.v_protected:
-				imageDescriptor = 
-						CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PROTECTED);
+				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PROTECTED);
 				break;
 			default:
 				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PUBLIC);
@@ -289,8 +280,7 @@ public class ParameterGuesser {
 	 * @return returns the name of the best match, or <code>null</code> if no match found
 	 */
 	public ICompletionProposal[] parameterProposals(IType expectedType, String paramName, Position pos,
-			List<IBinding> suggestions, boolean isLastParameter)
-			throws CModelException {
+			List<IBinding> suggestions, boolean isLastParameter) throws CModelException {
 		List<Variable> typeMatches = new ArrayList<>(evaluateVisibleMatches(expectedType, suggestions));
 		orderMatches(typeMatches, paramName);
 
@@ -313,8 +303,8 @@ public class ParameterGuesser {
 				System.arraycopy(v.triggerChars, 0, triggers, 0, v.triggerChars.length);
 				triggers[triggers.length - 1] = ',';
 			}
-			ret[i++] = new PositionBasedCompletionProposal(v.name, pos, replacementLength,
-					getImage(v.descriptor), displayString, null, null, triggers);
+			ret[i++] = new PositionBasedCompletionProposal(v.name, pos, replacementLength, getImage(v.descriptor),
+					displayString, null, null, triggers);
 		}
 		return ret;
 	}
@@ -379,12 +369,12 @@ public class ParameterGuesser {
 		int shorter = Math.min(v.name.length(), parameterName.length());
 		if (subStringScore < 0.6 * shorter)
 			subStringScore = 0;
-		
+
 		int positionScore = v.positionScore;
 		int matchedScore = v.alreadyMatched ? 0 : 1;
-		
+
 		int score = variableScore << 21 | subStringScore << 11 | matchedScore << 10 | positionScore;
-		
+
 		return score;
 	}
 

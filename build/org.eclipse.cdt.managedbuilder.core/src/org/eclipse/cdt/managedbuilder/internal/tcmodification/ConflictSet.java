@@ -33,22 +33,23 @@ public class ConflictSet {
 
 	private PerTypeMapStorage<IRealBuildObjectAssociation, Conflict> fConflictStorage;
 	private List<ConflictMatch> fConflictMatchList;
-//	private Set<IRealBuildObjectAssociation> fExtConflictSet;
-//	private IRealBuildObjectAssociation fRealObj;
+	//	private Set<IRealBuildObjectAssociation> fExtConflictSet;
+	//	private IRealBuildObjectAssociation fRealObj;
 
-	public ConflictSet(IRealBuildObjectAssociation realObj, List<ConflictMatch> conflictMatchList, Set<? extends IRealBuildObjectAssociation> extConflictSet){
+	public ConflictSet(IRealBuildObjectAssociation realObj, List<ConflictMatch> conflictMatchList,
+			Set<? extends IRealBuildObjectAssociation> extConflictSet) {
 		fConflictMatchList = conflictMatchList;
-//		fExtConflictSet = (Set<IRealBuildObjectAssociation>) extConflictSet;
-//		fRealObj = realObj;
+		//		fExtConflictSet = (Set<IRealBuildObjectAssociation>) extConflictSet;
+		//		fRealObj = realObj;
 	}
 
-	private void init(){
-		if(fConflictStorage == null){
+	private void init() {
+		if (fConflictStorage == null) {
 			fConflictStorage = new PerTypeMapStorage<IRealBuildObjectAssociation, Conflict>();
-			if(fConflictMatchList != null && fConflictMatchList.size() != 0){
+			if (fConflictMatchList != null && fConflictMatchList.size() != 0) {
 				int size = fConflictMatchList.size();
 				PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> result = new PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>>();
-				for(int i = 0; i < size; i++){
+				for (int i = 0; i < size; i++) {
 					ConflictMatch match = fConflictMatchList.get(i);
 					int objType = match.fMatchType;
 					Map<IRealBuildObjectAssociation, Set<IPath>> cm = match.fRObjToPathMap;
@@ -57,13 +58,13 @@ public class ConflictSet {
 					Set<Entry<IRealBuildObjectAssociation, Set<IPath>>> entrySet = cm.entrySet();
 					for (Entry<IRealBuildObjectAssociation, Set<IPath>> entry : entrySet) {
 						IRealBuildObjectAssociation bo = entry.getKey();
-						if(DbgTcmUtil.DEBUG){
-							if((bo).getType() != objType)
+						if (DbgTcmUtil.DEBUG) {
+							if ((bo).getType() != objType)
 								DbgTcmUtil.fail();
 						}
 
 						Set<IPath> set = cur.get(bo);
-						if(set == null){
+						if (set == null) {
 							set = new TreeSet<IPath>(PathComparator.INSTANCE);
 							cur.put(bo, set);
 						}
@@ -73,10 +74,10 @@ public class ConflictSet {
 				}
 
 				int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
-				for(int i = 0; i < types.length; i++){
+				for (int i = 0; i < types.length; i++) {
 					int type = types[i];
 					Map<IRealBuildObjectAssociation, Set<IPath>> map = result.getMap(type, false);
-					if(map == null)
+					if (map == null)
 						continue;
 
 					Set<Entry<IRealBuildObjectAssociation, Set<IPath>>> entrySet = map.entrySet();
@@ -98,7 +99,7 @@ public class ConflictSet {
 		private Set<IPath> fPathSet;
 		private int fType;
 
-		Conflict(int type, IRealBuildObjectAssociation obj, Set<IPath> paths){
+		Conflict(int type, IRealBuildObjectAssociation obj, Set<IPath> paths) {
 			fType = type;
 			fObj = obj;
 			fPathSet = paths;
@@ -125,13 +126,13 @@ public class ConflictSet {
 		}
 	}
 
-	public IConflict[] getConflicts(){
+	public IConflict[] getConflicts() {
 		init();
 		int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
 		List<Conflict> list = new ArrayList<Conflict>();
-		for(int i = 0; i < types.length; i++){
+		for (int i = 0; i < types.length; i++) {
 			Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(types[i], false);
-			if(map == null)
+			if (map == null)
 				continue;
 
 			getConflicts(map, list);
@@ -140,8 +141,8 @@ public class ConflictSet {
 		return conflictArray(list);
 	}
 
-	private static List<Conflict> getConflicts(Map<IRealBuildObjectAssociation, Conflict> map, List<Conflict> list){
-		if(list == null)
+	private static List<Conflict> getConflicts(Map<IRealBuildObjectAssociation, Conflict> map, List<Conflict> list) {
+		if (list == null)
 			list = new ArrayList<Conflict>();
 
 		Collection<Conflict> conflicts = map.values();
@@ -152,41 +153,40 @@ public class ConflictSet {
 		return list;
 	}
 
-	private static Conflict[] conflictArray(Collection<Conflict> list){
+	private static Conflict[] conflictArray(Collection<Conflict> list) {
 		return list.toArray(new Conflict[list.size()]);
 	}
 
-	private static IRealBuildObjectAssociation[] objArray(Collection<IRealBuildObjectAssociation> list){
+	private static IRealBuildObjectAssociation[] objArray(Collection<IRealBuildObjectAssociation> list) {
 		return list.toArray(new IRealBuildObjectAssociation[list.size()]);
 	}
 
-	public IConflict[] getConflictsWith(int objectType){
+	public IConflict[] getConflictsWith(int objectType) {
 		init();
 		Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(objectType, false);
-		if(map == null)
+		if (map == null)
 			return EMPTY_CONFLICT_ARRAY;
-
 
 		return conflictArray(map.values());
 	}
 
-	public IBuildObject[] getConflictingObjects(int objectType){
+	public IBuildObject[] getConflictingObjects(int objectType) {
 		init();
 		Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(objectType, false);
-		if(map == null)
+		if (map == null)
 			return EMPTY_BO_ARRAY;
 
 		return objArray(map.keySet());
 	}
 
-	public IConflict getConflictWith(IBuildObject bo){
+	public IConflict getConflictWith(IBuildObject bo) {
 		init();
-		if(!(bo instanceof IRealBuildObjectAssociation))
+		if (!(bo instanceof IRealBuildObjectAssociation))
 			return null;
 
-		IRealBuildObjectAssociation obj = (IRealBuildObjectAssociation)bo;
+		IRealBuildObjectAssociation obj = (IRealBuildObjectAssociation) bo;
 		Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(obj.getType(), false);
-		if(map == null)
+		if (map == null)
 			return null;
 
 		return map.get(obj);

@@ -19,6 +19,6 @@ package org.eclipse.cdt.managedbuilder.buildproperties;
  */
 public interface IPropertyBase {
 	String getId();
-	
+
 	String getName();
 }

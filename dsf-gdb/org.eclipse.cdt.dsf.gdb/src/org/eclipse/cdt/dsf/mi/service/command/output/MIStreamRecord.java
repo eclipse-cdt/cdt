@@ -21,26 +21,31 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public abstract class MIStreamRecord extends MIOOBRecord {
 
-    String cstring = ""; //$NON-NLS-1$
+	String cstring = ""; //$NON-NLS-1$
 
-    public String getCString() {
-        return cstring;
-    } 
+	public String getCString() {
+		return cstring;
+	}
 
-    public void setCString(String str) {
-        cstring = str;
-    } 
+	public void setCString(String str) {
+		cstring = str;
+	}
 
-    public String getString () {
-        // Return the translated C string without escaping any special characters.
-        return MIStringHandler.translateCString(getCString(), false);
-    }
+	public String getString() {
+		// Return the translated C string without escaping any special characters.
+		return MIStringHandler.translateCString(getCString(), false);
+	}
 
-    @Override
-    public String toString() {
-             if (this instanceof MIConsoleStreamOutput) { return "~\"" + cstring + "\"\n"; } //$NON-NLS-1$ //$NON-NLS-2$
-        else if (this instanceof MITargetStreamOutput)  { return "@\"" + cstring + "\"\n"; } //$NON-NLS-1$ //$NON-NLS-2$
-        else if (this instanceof MILogStreamOutput)     { return "&\"" + cstring + "\"\n"; } //$NON-NLS-1$ //$NON-NLS-2$
-        else                                               { return  "\"" + cstring + "\"\n"; } //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	@Override
+	public String toString() {
+		if (this instanceof MIConsoleStreamOutput) {
+			return "~\"" + cstring + "\"\n"; //$NON-NLS-1$//$NON-NLS-2$
+		} else if (this instanceof MITargetStreamOutput) {
+			return "@\"" + cstring + "\"\n"; //$NON-NLS-1$//$NON-NLS-2$
+		} else if (this instanceof MILogStreamOutput) {
+			return "&\"" + cstring + "\"\n"; //$NON-NLS-1$//$NON-NLS-2$
+		} else {
+			return "\"" + cstring + "\"\n"; //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}
 }

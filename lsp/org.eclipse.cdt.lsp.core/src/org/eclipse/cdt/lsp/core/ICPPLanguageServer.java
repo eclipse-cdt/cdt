@@ -12,11 +12,12 @@
 package org.eclipse.cdt.lsp.core;
 
 import java.net.URI;
+
 /*
  * Encapsulates functionality specific to a particular C++ language server (e.g., CQuery)
  */
 public interface ICPPLanguageServer {
 
-	public Object getLSSpecificInitializationOptions(Object defaultInitOptions, URI rootPath) ;
+	public Object getLSSpecificInitializationOptions(Object defaultInitOptions, URI rootPath);
 
 }

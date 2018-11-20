@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  *
  * Notifies CProjectDescriptionManager on some events, in particular project close and remove
  */
-public class ResourceChangeHandler extends ResourceChangeHandlerBase implements  ISaveParticipant {
+public class ResourceChangeHandler extends ResourceChangeHandlerBase implements ISaveParticipant {
 
 	/**
 	 * A resource move handler which updates the model when C model resources are moved / removed.
@@ -91,12 +91,13 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		 * @param entries - source entries to check
 		 * @return ICSourceEntry[] or null if no change to the source entries
 		 */
-		private ICSourceEntry[] checkMove(IPath fromFullPath, IPath toFullPath, ICSourceEntry[] entries){
+		private ICSourceEntry[] checkMove(IPath fromFullPath, IPath toFullPath, ICSourceEntry[] entries) {
 			boolean modified = false;
-			for(int k = 0; k < entries.length; k++){
-				if(entries[k].getFullPath().equals(fromFullPath)){
+			for (int k = 0; k < entries.length; k++) {
+				if (entries[k].getFullPath().equals(fromFullPath)) {
 					ICSourceEntry entry = entries[k];
-					entries[k] = (ICSourceEntry)CDataUtil.createEntry(entry.getKind(), toFullPath.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
+					entries[k] = (ICSourceEntry) CDataUtil.createEntry(entry.getKind(), toFullPath.toString(), null,
+							entry.getExclusionPatterns(), entry.getFlags());
 					modified = true;
 				}
 			}
@@ -113,8 +114,8 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			List<ICSourceEntry> updatedList = null;
 			int num = 0;
 			for (ICSourceEntry entrie : entries) {
-				if(entrie.getFullPath().equals(rcFullPath)){
-					if(updatedList == null){
+				if (entrie.getFullPath().equals(rcFullPath)) {
+					if (updatedList == null) {
 						updatedList = new ArrayList<ICSourceEntry>(Arrays.asList(entries));
 					}
 					updatedList.remove(num);
@@ -130,14 +131,14 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			boolean proceed = true;
 			IProject fromProject = fromRc.getProject();
 			IProject toProject = toRc.getProject();
-			switch(toRc.getType()){
-			case IResource.PROJECT:{
+			switch (toRc.getType()) {
+			case IResource.PROJECT: {
 				ICProjectDescription des = fMngr.projectMove(fromProject, toProject);
 				fRemovedProjects.add(fromProject);
-				if(des != null)
+				if (des != null)
 					fProjDesMap.put(toProject, des);
 			}
-			break;
+				break;
 			case IResource.FOLDER:
 			case IResource.FILE:
 				// Only handle move in the same project
@@ -157,12 +158,12 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		private ICProjectDescription getProjectDescription(IResource rc) {
 			IProject project = rc.getProject();
 			ICProjectDescription des = fProjDesMap.get(project);
-			if(des == null && !fProjDesMap.containsKey(project)){
+			if (des == null && !fProjDesMap.containsKey(project)) {
 				int flags = 0;
 				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
 				flags |= ICProjectDescriptionManager.GET_WRITABLE;
 				des = fMngr.getProjectDescription(project, flags);
-				if(des != null)
+				if (des != null)
 					fProjDesMap.put(project, des);
 			}
 			return des;
@@ -172,7 +173,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		public boolean handleResourceRemove(IResource rc) {
 			boolean proceed = true;
 			IProject project = rc.getProject();
-			switch(rc.getType()){
+			switch (rc.getType()) {
 			case IResource.PROJECT:
 				fMngr.projectClosedRemove(project);
 				fRemovedProjects.add(project);
@@ -191,7 +192,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		@Override
 		public void done() {
 			// If the resource's project was moved / removed, don't consider the path for source entry removal
-			for (Iterator<IResource> it = fMovedResources.keySet().iterator(); it.hasNext() ; ) {
+			for (Iterator<IResource> it = fMovedResources.keySet().iterator(); it.hasNext();) {
 				if (fRemovedProjects.contains(it.next().getProject()))
 					it.remove();
 			}
@@ -203,7 +204,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			//   - reconciles  both source-entry move & remove
 			//   - resource configuration move & remove
 			// Run it in the Workspace, so we don't trip Bug 311189
-			CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable(){
+			CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable() {
 
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -211,7 +212,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						IResource from = entry.getKey();
 						IResource to = entry.getValue();
 						// TODO: don't handle moves to a different project
-						assert(to == null || to.getProject().equals(from.getProject()));
+						assert (to == null || to.getProject().equals(from.getProject()));
 
 						// Bug 311189 -- if the resource still exists now, don't treat as a remove!
 						if (to == null) {
@@ -239,7 +240,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 									else
 										entries = checkRemove(from.getFullPath(), entries);
 									// Update if there have been any changes
-									if(entries != null)
+									if (entries != null)
 										cfg.setSourceEntries(entries);
 								}
 
@@ -247,8 +248,9 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 								// the project is created and may be deleted at during a normal project lifecycle
 
 								// Handle resource description change
-								ICResourceDescription rcDescription = cfg.getResourceDescription(from.getProjectRelativePath(), true);
-								if(rcDescription != null)
+								ICResourceDescription rcDescription = cfg
+										.getResourceDescription(from.getProjectRelativePath(), true);
+								if (rcDescription != null)
 									if (to != null)
 										rcDescription.setPath(to.getProjectRelativePath());
 									else
@@ -264,7 +266,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 
 					// Save all the changed project descriptions
 					for (Entry<IProject, ICProjectDescription> entry : fProjDesMap.entrySet()) {
-						if(!entry.getKey().isAccessible())
+						if (!entry.getKey().isAccessible())
 							continue;
 						try {
 							fMngr.setProjectDescription(entry.getKey(), entry.getValue());
@@ -277,10 +279,8 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		}
 	}
 
-
 	@Override
-	protected IResourceMoveHandler createResourceMoveHandler(
-			IResourceChangeEvent event) {
+	protected IResourceMoveHandler createResourceMoveHandler(IResourceChangeEvent event) {
 		return new RcMoveHandler();
 	}
 
@@ -294,7 +294,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		//Request a resource delta to be used on next activation.
-	    context.needDelta();
+		context.needDelta();
 	}
 
 	/* (non-Javadoc)
@@ -319,25 +319,24 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	}
 
 	@Override
-	protected void doHandleResourceMove(IResourceChangeEvent event,
-			IResourceMoveHandler handler) {
-		switch(event.getType()){
+	protected void doHandleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler) {
+		switch (event.getType()) {
 		case IResourceChangeEvent.POST_CHANGE:
 			IResourceDelta delta = event.getDelta();
-			if(delta != null){
+			if (delta != null) {
 				IResourceDelta projs[] = delta.getAffectedChildren();
 				for (IResourceDelta proj : projs) {
 					IResourceDelta projDelta = proj;
-					if(!shouldVisit((IProject)projDelta.getResource()))
+					if (!shouldVisit((IProject) projDelta.getResource()))
 						continue;
 
-					if((projDelta.getKind() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED)
+					if ((projDelta.getKind() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED)
 						continue;
 
 					IResourceDelta children[] = projDelta.getAffectedChildren();
 					for (IResourceDelta child : children) {
 						IResource rc = child.getResource();
-						if(rc.getType() != IResource.FILE)
+						if (rc.getType() != IResource.FILE)
 							continue;
 					}
 				}
@@ -346,7 +345,5 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		}
 		super.doHandleResourceMove(event, handler);
 	}
-
-
 
 }

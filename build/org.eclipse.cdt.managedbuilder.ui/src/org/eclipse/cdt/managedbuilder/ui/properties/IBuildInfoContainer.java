@@ -31,7 +31,10 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IBuildInfoContainer {
 	public IScannerConfigBuilderInfo2 getBuildInfo();
+
 	public CfgInfoContext getContext();
+
 	public ICConfigurationDescription getConfiguration();
+
 	public IProject getProject();
 }

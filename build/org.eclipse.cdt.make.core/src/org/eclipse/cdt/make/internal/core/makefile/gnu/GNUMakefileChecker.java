@@ -70,7 +70,8 @@ public class GNUMakefileChecker extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	@Override
-	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor)
+			throws CoreException {
 		if (DEBUG_EVENTS) {
 			@SuppressWarnings("unchecked")
 			Map<String, String> pargs = args;
@@ -135,7 +136,7 @@ public class GNUMakefileChecker extends ACBuilder {
 		// FIXME: Find the candidate in the store somewhere.
 		IFile defaultMakefile = proj.getFile(new Path("Makefile")); //$NON-NLS-1$
 		if (defaultMakefile.exists()) {
-			return new IFile[] {defaultMakefile};
+			return new IFile[] { defaultMakefile };
 		}
 		return new IFile[0];
 	}

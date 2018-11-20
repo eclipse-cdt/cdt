@@ -27,7 +27,7 @@ public interface ICPPNamespace extends ICPPBinding {
 	 * Returns the scope object associated with this namespace
 	 */
 	public ICPPNamespaceScope getNamespaceScope();
-	
+
 	/**
 	 * Returns an array of the all the bindings declared in this namespace.
 	 */

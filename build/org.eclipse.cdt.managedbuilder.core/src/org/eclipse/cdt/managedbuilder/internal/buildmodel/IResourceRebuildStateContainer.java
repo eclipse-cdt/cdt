@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IPath;
 
 public interface IResourceRebuildStateContainer extends IRebuildState {
 	int getStateForFullPath(IPath fullPath);
-	
+
 	IPath[] getFullPathsForState(int state);
-	
+
 	void setStateForFullPath(IPath fullPath, int state);
 }

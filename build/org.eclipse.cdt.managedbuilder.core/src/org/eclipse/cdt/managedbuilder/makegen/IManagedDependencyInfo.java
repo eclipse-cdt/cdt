@@ -32,7 +32,10 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IManagedDependencyInfo {
 	public IPath getSource();
+
 	public IBuildObject getBuildContext();
+
 	public ITool getTool();
+
 	public IPath getTopBuildDirectory();
 }

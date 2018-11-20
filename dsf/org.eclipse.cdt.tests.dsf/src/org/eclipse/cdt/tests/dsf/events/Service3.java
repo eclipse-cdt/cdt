@@ -19,29 +19,30 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
 public class Service3 extends AbstractService {
-    Service3(DsfSession session) {
-        super(session);
-    }
+	Service3(DsfSession session) {
+		super(session);
+	}
 
-    @Override public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize(
-            new RequestMonitor(getExecutor(), requestMonitor) { 
-                @Override
-                public void handleSuccess() {
-                    doInitialize(requestMonitor);
-                }
-            });
-    }
-            
-    private void doInitialize(RequestMonitor requestMonitor) {
-        getServicesTracker().getService(Service1.class);
-        getServicesTracker().getService(Service2.class);
-        register(new String[]{Service3.class.getName()}, new Hashtable<String,String>());
-        requestMonitor.done();
-    }
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+			@Override
+			public void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
+	}
 
-    @Override public void shutdown(RequestMonitor requestMonitor) {
-        unregister();
-        super.shutdown(requestMonitor);
-    }
+	private void doInitialize(RequestMonitor requestMonitor) {
+		getServicesTracker().getService(Service1.class);
+		getServicesTracker().getService(Service2.class);
+		register(new String[] { Service3.class.getName() }, new Hashtable<String, String>());
+		requestMonitor.done();
+	}
+
+	@Override
+	public void shutdown(RequestMonitor requestMonitor) {
+		unregister();
+		super.shutdown(requestMonitor);
+	}
 }

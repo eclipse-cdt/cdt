@@ -22,15 +22,16 @@ import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.jface.action.Action;
 
 public class GdbConsoleTerminateLaunchAction extends Action implements ILaunchesListener2 {
-	
+
 	private final ILaunch fLaunch;
-	
+
 	public GdbConsoleTerminateLaunchAction(ILaunch launch) {
 		fLaunch = launch;
 		setText(ConsoleMessages.ConsoleTerminateLaunchAction_name);
 		setToolTipText(ConsoleMessages.ConsoleTerminateLaunchAction_description);
 		setImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_TERMINATE_ACTIVE_COLOR));
-		setDisabledImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_TERMINATE_DISABLED_COLOR));
+		setDisabledImageDescriptor(
+				GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_TERMINATE_DISABLED_COLOR));
 
 		if (fLaunch.isTerminated()) {
 			// Launch already terminated
@@ -62,7 +63,7 @@ public class GdbConsoleTerminateLaunchAction extends Action implements ILaunches
 			}
 		}
 	}
-	
+
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 	}

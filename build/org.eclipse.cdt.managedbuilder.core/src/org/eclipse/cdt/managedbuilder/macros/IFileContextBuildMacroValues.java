@@ -20,8 +20,8 @@ package org.eclipse.cdt.managedbuilder.macros;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileContextBuildMacroValues {
-	public static final String PREFIX = "macro";	//$NON-NLS-1$
-	public static final String SUFFIX = "Value";	//$NON-NLS-1$
+	public static final String PREFIX = "macro"; //$NON-NLS-1$
+	public static final String SUFFIX = "Value"; //$NON-NLS-1$
 
 	/**
 	 *

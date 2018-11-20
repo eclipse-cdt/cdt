@@ -79,11 +79,11 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	private TextSelection selection;
 	private TestSourceFile historyScript;
 
-    protected RefactoringTestBase() {
+	protected RefactoringTestBase() {
 		super();
 	}
 
-    protected RefactoringTestBase(String name) {
+	protected RefactoringTestBase(String name) {
 		super(name);
 	}
 
@@ -91,9 +91,11 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		resetPreferences();
-		cproject = cpp ?
-				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		cproject = cpp
+				? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER)
+				: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER);
 		TestScannerProvider.sLocalIncludes = new String[] { cproject.getProject().getLocation().toOSString() };
 
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
@@ -137,8 +139,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			reader.close();
 
 			if (testFile.getName() != null && (createEmptyFiles || !testFile.getSource().isEmpty())) {
-				TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()),
-						testFile.getSource());
+				TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()), testFile.getSource());
 			}
 			testFiles.add(testFile);
 			if (testFile.getName().endsWith(".xml")) {
@@ -159,8 +160,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	@Override
 	public void tearDown() throws Exception {
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
-					npm());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, npm());
 		}
 		resetPreferences();
 		super.tearDown();
@@ -200,8 +200,8 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		executeRefactoring(refactoring, null, false, expectedSuccess);
 	}
 
-	protected void executeRefactoring(Refactoring refactoring, RefactoringContext context,
-			boolean withUserInput, boolean expectedSuccess) throws CoreException, Exception {
+	protected void executeRefactoring(Refactoring refactoring, RefactoringContext context, boolean withUserInput,
+			boolean expectedSuccess) throws CoreException, Exception {
 		try {
 			RefactoringStatus initialStatus = refactoring.checkInitialConditions(npm());
 			if (!expectedSuccess) {
@@ -235,10 +235,10 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	}
 
 	private void executeHistoryRefactoring(boolean expectedSuccess) throws Exception {
-		URI uri= URIUtil.toURI(cproject.getProject().getLocation());
+		URI uri = URIUtil.toURI(cproject.getProject().getLocation());
 		String scriptSource = historyScript.getSource().replaceAll("\\$\\{projectPath\\}", uri.getPath());
-		RefactoringHistory history = RefactoringHistoryService.getInstance().readRefactoringHistory(
-				new ByteArrayInputStream(scriptSource.getBytes()), 0);
+		RefactoringHistory history = RefactoringHistoryService.getInstance()
+				.readRefactoringHistory(new ByteArrayInputStream(scriptSource.getBytes()), 0);
 		for (RefactoringDescriptorProxy proxy : history.getDescriptors()) {
 			RefactoringDescriptor descriptor = proxy.requestDescriptor(npm());
 			RefactoringStatus status = new RefactoringStatus();
@@ -385,8 +385,8 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			String expectedSource = testFile.getExpectedSource();
 			IFile file = cproject.getProject().getFile(new Path(testFile.getExpectedName()));
 			String actualSource = getFileContents(file);
-			expectedSource= expectedSource.replace("\r\n", "\n");
-			actualSource= actualSource.replace("\r\n", "\n");
+			expectedSource = expectedSource.replace("\r\n", "\n");
+			actualSource = actualSource.replace("\r\n", "\n");
 			assertEquals(expectedSource, actualSource);
 		}
 	}
@@ -394,9 +394,9 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	protected String getFileContents(IFile file) throws Exception {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(), "UTF-8"));
 		StringBuilder buffer = new StringBuilder();
-		char[] part= new char[2048];
-		int read= 0;
-		while ((read= reader.read(part)) != -1)
+		char[] part = new char[2048];
+		int read = 0;
+		while ((read = reader.read(part)) != -1)
 			buffer.append(part, 0, read);
 		reader.close();
 		return buffer.toString().replace("\r", "");

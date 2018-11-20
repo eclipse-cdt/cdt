@@ -38,6 +38,6 @@ public class MIVarSetUpdateRange extends MICommand<MIInfo> {
 	 * @param to One behind the last child to be updated.
 	 */
 	public MIVarSetUpdateRange(ICommandControlDMContext ctx, String name, int from, int to) {
-		super(ctx, "-var-set-update-range", new String[]{name, String.valueOf(from), String.valueOf(to)}); //$NON-NLS-1$
+		super(ctx, "-var-set-update-range", new String[] { name, String.valueOf(from), String.valueOf(to) }); //$NON-NLS-1$
 	}
 }

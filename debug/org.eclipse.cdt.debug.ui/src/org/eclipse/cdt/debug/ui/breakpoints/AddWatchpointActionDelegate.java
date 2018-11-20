@@ -12,7 +12,7 @@
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
 *******************************************************************************/
-package org.eclipse.cdt.debug.ui.breakpoints; 
+package org.eclipse.cdt.debug.ui.breakpoints;
 
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.internal.ui.actions.breakpoints.ToggleBreakpointAdapter;
@@ -27,7 +27,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
- 
+
 /**
  * A delegate for the "Add Watchpoint" action.  Clients can register this object on
  * a model-specific element which supports a toggle breakpoints target.
@@ -40,13 +40,13 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 	private IWorkbenchPart fPart;
 	private ISelection fSelection;
 	private ToggleBreakpointAdapter fDefaultToggleTarget = new ToggleBreakpointAdapter();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
-	public void init( IViewPart view ) {
-		setView( view );
+	public void init(IViewPart view) {
+		setView(view);
 	}
 
 	private void setView(IViewPart view) {
@@ -56,34 +56,35 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 	protected IWorkbenchPart getPart() {
 		return fPart;
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    fSelection = selection;
+		fSelection = selection;
 	}
-	
+
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	    fPart = targetPart;
+		fPart = targetPart;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-	    IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
-	    IToggleBreakpointsTargetCExtension cToggleTarget = null;
-	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-	        cToggleTarget = (IToggleBreakpointsTargetCExtension)toggleTarget;
-	    } else { 
-	        cToggleTarget = fDefaultToggleTarget;
-	    }
-	        
-        try {
-            cToggleTarget.createWatchpointsInteractive(fPart, fSelection);
-        } catch (CoreException e) {
-            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate.0" ), e ); //$NON-NLS-1$
-        }
+	public void run(IAction action) {
+		IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager()
+				.getToggleBreakpointsTarget(fPart, fSelection);
+		IToggleBreakpointsTargetCExtension cToggleTarget = null;
+		if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
+			cToggleTarget = (IToggleBreakpointsTargetCExtension) toggleTarget;
+		} else {
+			cToggleTarget = fDefaultToggleTarget;
+		}
+
+		try {
+			cToggleTarget.createWatchpointsInteractive(fPart, fSelection);
+		} catch (CoreException e) {
+			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddWatchpointActionDelegate.0"), e); //$NON-NLS-1$
+		}
 	}
 }

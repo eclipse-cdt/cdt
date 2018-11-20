@@ -37,9 +37,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * ID Expression in C.
  */
 public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
-    private IASTName name;
+	private IASTName name;
 
-    public CASTIdExpression() {
+	public CASTIdExpression() {
 	}
 
 	public CASTIdExpression(IASTName name) {
@@ -59,44 +59,52 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 
 	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ID_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (name != null && !name.accept(action)) return false;
+		if (name != null && !name.accept(action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (n == name) return r_reference;
+		if (n == name)
+			return r_reference;
 		return r_unclear;
 	}
 
@@ -134,7 +142,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 
 		for (int i = 0; i < bindings.length; i++) {
 			if (bindings[i] instanceof IEnumeration || bindings[i] instanceof ICompositeType) {
-				bindings[i]= null;
+				bindings[i] = null;
 			}
 		}
 

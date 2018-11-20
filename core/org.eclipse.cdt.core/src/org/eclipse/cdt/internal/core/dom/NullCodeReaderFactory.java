@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
 public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	private static final char[] EMPTY_CHARS = new char[0];
-	private static final NullCodeReaderFactory INSTANCE= new NullCodeReaderFactory();
+	private static final NullCodeReaderFactory INSTANCE = new NullCodeReaderFactory();
 
 	public static NullCodeReaderFactory getInstance() {
 		return INSTANCE;
@@ -43,7 +43,6 @@ public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 	public CodeReader createCodeReaderForInclusion(String path) {
 		return new CodeReader(path, EMPTY_CHARS);
 	}
-
 
 	@Override
 	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) {

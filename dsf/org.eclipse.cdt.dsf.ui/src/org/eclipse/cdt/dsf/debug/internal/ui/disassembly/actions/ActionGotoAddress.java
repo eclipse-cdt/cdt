@@ -30,10 +30,11 @@ public final class ActionGotoAddress extends AbstractDisassemblyAction {
 		super(disassemblyPart);
 		setText(DisassemblyMessages.Disassembly_action_GotoAddress_label);
 	}
+
 	@Override
 	public void run() {
 		ITextViewer viewer = getDisassemblyPart().getTextViewer();
-		IDocument document= viewer.getDocument();
+		IDocument document = viewer.getDocument();
 		IRegion wordRegion = CWordFinder.findWord(document, viewer.getSelectedRange().x);
 		String defaultValue = null;
 		if (wordRegion != null) {
@@ -51,7 +52,7 @@ public final class ActionGotoAddress extends AbstractDisassemblyAction {
 		}
 		String dlgTitle = DisassemblyMessages.Disassembly_GotoAddressDialog_title;
 		String dlgLabel = DisassemblyMessages.Disassembly_GotoAddressDialog_label;
-		final Shell shell= getDisassemblyPart().getSite().getShell();
+		final Shell shell = getDisassemblyPart().getSite().getShell();
 		InputDialog dlg = new InputDialog(shell, dlgTitle, dlgLabel, defaultValue, null);
 		if (dlg.open() == IDialogConstants.OK_ID) {
 			String value = dlg.getValue();

@@ -23,28 +23,28 @@ public class MIVarInfoPathExpressionInfo extends MIInfo {
 
 	String exp = ""; //$NON-NLS-1$
 
-    public MIVarInfoPathExpressionInfo(MIOutput record) {
-    	super(record);
-    	if (isDone()) {
-    		MIOutput out = getMIOutput();
-    		MIResultRecord rr = out.getMIResultRecord();
-    		if (rr != null) {
-    			MIResult[] results =  rr.getMIResults();
-    			for (int i = 0; i < results.length; i++) {
-    				String var = results[i].getVariable();
-    				if (var.equals("path_expr")) { //$NON-NLS-1$
-    					MIValue val = results[i].getMIValue();
-    					if (val instanceof MIConst) {
-    						exp = ((MIConst)val).getString();
-    					}
-    				}
-    			}
-    		}
-    	}
-    }
-	public String getFullExpression () {
+	public MIVarInfoPathExpressionInfo(MIOutput record) {
+		super(record);
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("path_expr")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							exp = ((MIConst) val).getString();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public String getFullExpression() {
 		return exp;
 	}
 
 }
- 

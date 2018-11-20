@@ -73,7 +73,7 @@ public class DeclarationWriter extends NodeWriter {
 		super(scribe, visitor, commentMap);
 	}
 
-	protected void writeDeclaration(IASTDeclaration declaration) throws ProblemRuntimeException{
+	protected void writeDeclaration(IASTDeclaration declaration) throws ProblemRuntimeException {
 		writeDeclaration(declaration, true);
 	}
 
@@ -111,7 +111,7 @@ public class DeclarationWriter extends NodeWriter {
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			writeAliasDeclaration((ICPPASTAliasDeclaration) declaration);
 		} else if (declaration instanceof ICPPASTStaticAssertDeclaration) {
-			writeStaticAssertDeclaration((ICPPASTStaticAssertDeclaration)declaration);
+			writeStaticAssertDeclaration((ICPPASTStaticAssertDeclaration) declaration);
 		}
 
 		writeTrailingComments(declaration, addNewLine);
@@ -232,7 +232,8 @@ public class DeclarationWriter extends NodeWriter {
 		}
 	}
 
-	protected void writeDeclarationsInNamespace(ICPPASTNamespaceDefinition namespaceDefinition, IASTDeclaration[] declarations) {
+	protected void writeDeclarationsInNamespace(ICPPASTNamespaceDefinition namespaceDefinition,
+			IASTDeclaration[] declarations) {
 		for (IASTDeclaration declaration : declarations) {
 			declaration.accept(visitor);
 		}
@@ -265,8 +266,9 @@ public class DeclarationWriter extends NodeWriter {
 		}
 	}
 
-	private void writeExplicitTemplateInstantiation(ICPPASTExplicitTemplateInstantiation explicitTemplateInstantiation) {
-		switch(explicitTemplateInstantiation.getModifier()) {
+	private void writeExplicitTemplateInstantiation(
+			ICPPASTExplicitTemplateInstantiation explicitTemplateInstantiation) {
+		switch (explicitTemplateInstantiation.getModifier()) {
 		case ICPPASTExplicitTemplateInstantiation.EXTERN:
 			scribe.printStringSpace(Keywords.EXTERN);
 			break;
@@ -319,7 +321,7 @@ public class DeclarationWriter extends NodeWriter {
 		}
 
 		if (funcDef instanceof ICPPASTFunctionDefinition) {
-			ICPPASTFunctionDefinition cppFuncDef= (ICPPASTFunctionDefinition) funcDef;
+			ICPPASTFunctionDefinition cppFuncDef = (ICPPASTFunctionDefinition) funcDef;
 			writeCtorChainInitializer(cppFuncDef, cppFuncDef.getMemberInitializers());
 			if (cppFuncDef.isDefaulted()) {
 				scribe.print(EQUALS);

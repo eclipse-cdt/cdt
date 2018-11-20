@@ -86,10 +86,8 @@ public abstract class CSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	public static final int FIND_ALL_OCCURRENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 
-	protected static final long LABEL_FLAGS=
-			CElementLabels.M_PARAMETER_TYPES |
-			CElementLabels.ALL_FULLY_QUALIFIED |
-			CElementLabels.TEMPLATE_ARGUMENTS;
+	protected static final long LABEL_FLAGS = CElementLabels.M_PARAMETER_TYPES | CElementLabels.ALL_FULLY_QUALIFIED
+			| CElementLabels.TEMPLATE_ARGUMENTS;
 
 	protected CSearchResult result;
 	protected int flags;
@@ -117,14 +115,14 @@ public abstract class CSearchQuery implements ISearchQuery {
 			} else {
 				Map<String, ICProject> projectMap = new HashMap<>();
 				Set<String> pathFilter = new HashSet<>();
-				boolean needFilter= false;
+				boolean needFilter = false;
 				for (int i = 0; i < scope.length; ++i) {
 					ICProject project = scope[i].getCProject();
 					if (project != null && project.getProject().isOpen()) {
-						IResource res= scope[i].getResource();
+						IResource res = scope[i].getResource();
 						if (res != null) {
 							pathFilter.add(res.getFullPath().toString());
-							needFilter= needFilter || !(res instanceof IProject);
+							needFilter = needFilter || !(res instanceof IProject);
 						}
 						projectMap.put(project.getElementName(), project);
 					}
@@ -132,7 +130,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 
 				projects = projectMap.values().toArray(new ICProject[projectMap.size()]);
 				if (needFilter) {
-					fullPathFilter= pathFilter;
+					fullPathFilter = pathFilter;
 				}
 			}
 		} catch (CoreException e) {
@@ -140,11 +138,10 @@ public abstract class CSearchQuery implements ISearchQuery {
 		}
 	}
 
-	protected String labelForBinding(final IIndex index, IBinding binding, String defaultLabel)
-			throws CoreException {
-		IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
+	protected String labelForBinding(final IIndex index, IBinding binding, String defaultLabel) throws CoreException {
+		IIndexName[] names = index.findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		if (names.length > 0) {
-			ICElementHandle elem= IndexUI.getCElementForName((ICProject) null, index, names[0]);
+			ICElementHandle elem = IndexUI.getCElementForName((ICProject) null, index, names[0]);
 			if (elem != null) {
 				return CElementLabels.getElementLabel(elem, LABEL_FLAGS);
 			}
@@ -160,7 +157,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 		} else if ((flags & FIND_DECLARATIONS) != 0) {
 			type = CSearchMessages.PDOMSearchQuery_decls_label;
 		} else {
- 			type = CSearchMessages.PDOMSearchQuery_defs_label;
+			type = CSearchMessages.PDOMSearchQuery_defs_label;
 		}
 		return type;
 	}
@@ -174,7 +171,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 	public String getResultLabel(String pattern, String scope, int matchCount) {
 		// Report pattern and number of matches
 		String label;
-		final int kindFlags= flags & FIND_ALL_OCCURRENCES;
+		final int kindFlags = flags & FIND_ALL_OCCURRENCES;
 		switch (kindFlags) {
 		case FIND_REFERENCES:
 			label = NLS.bind(CSearchMessages.PDOMSearchQuery_refs_result_label, pattern);
@@ -194,8 +191,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 		}
 
 		if (scope != null) {
-			label= NLS.bind(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope,
-					label, scope);
+			label = NLS.bind(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, label, scope);
 		}
 
 		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, matchCount);
@@ -254,7 +250,8 @@ public abstract class CSearchQuery implements ISearchQuery {
 						enclosingElement = IndexUI.getCElementForName(preferred, index, enclosingDefinition);
 					} else {
 						// Get names from the external search providers.
-						for (IExternalSearchProvider provider : CSearchProviderManager.INSTANCE.getExternalSearchProviders()) {
+						for (IExternalSearchProvider provider : CSearchProviderManager.INSTANCE
+								.getExternalSearchProviders()) {
 							enclosingElement = provider.getEnclosingElement(name);
 							if (enclosingElement != null)
 								break;
@@ -262,8 +259,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 					}
 
 					boolean isWriteAccess = name.isWriteAccess();
-					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement,
-							isWriteAccess));
+					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement, isWriteAccess));
 				}
 			}
 		}
@@ -290,8 +286,8 @@ public abstract class CSearchQuery implements ISearchQuery {
 		return matches;
 	}
 
-	private void collectNames(IIndex index, Collection<IIndexName> names,
-			Collection<IIndexName> polymorphicNames) throws CoreException {
+	private void collectNames(IIndex index, Collection<IIndexName> names, Collection<IIndexName> polymorphicNames)
+			throws CoreException {
 		// group all matched names by files
 		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<>();
 		createMatchesFromNames(index, fileMatches, names, false);
@@ -301,10 +297,10 @@ public abstract class CSearchQuery implements ISearchQuery {
 		Map<IPath, ITextEditor> pathsDirtyEditors = new HashMap<>();
 		for (IEditorPart editorPart : dirtyEditors) {
 			if (editorPart instanceof ITextEditor) {
-				ITextEditor textEditor = (ITextEditor)editorPart;
+				ITextEditor textEditor = (ITextEditor) editorPart;
 				IEditorInput editorInput = editorPart.getEditorInput();
 				if (editorInput instanceof IPathEditorInput) {
-					IPathEditorInput pathEditorInput = (IPathEditorInput)editorInput;
+					IPathEditorInput pathEditorInput = (IPathEditorInput) editorInput;
 					pathsDirtyEditors.put(pathEditorInput.getPath(), textEditor);
 				}
 			}
@@ -353,9 +349,9 @@ public abstract class CSearchQuery implements ISearchQuery {
 	protected void createMatches(IIndex index, IBinding[] bindings) throws CoreException {
 		if (bindings == null)
 			return;
-		List<IIndexName> names= new ArrayList<>();
-		List<IIndexName> polymorphicNames= null;
-		HashSet<IBinding> handled= new HashSet<>();
+		List<IIndexName> names = new ArrayList<>();
+		List<IIndexName> polymorphicNames = null;
+		HashSet<IBinding> handled = new HashSet<>();
 
 		for (IBinding binding : bindings) {
 			if (binding != null && handled.add(binding)) {
@@ -374,11 +370,11 @@ public abstract class CSearchQuery implements ISearchQuery {
 					}
 
 					if (binding instanceof ICPPMethod) {
-						ICPPMethod m= (ICPPMethod) binding;
+						ICPPMethod m = (ICPPMethod) binding;
 						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
 						if (msInBases.length > 0) {
 							if (polymorphicNames == null) {
-								polymorphicNames= new ArrayList<>();
+								polymorphicNames = new ArrayList<>();
 							}
 							for (ICPPMethod mInBase : msInBases) {
 								if (mInBase != null && handled.add(mInBase)) {
@@ -404,12 +400,12 @@ public abstract class CSearchQuery implements ISearchQuery {
 	}
 
 	private void createMatches1(IIndex index, IBinding binding, List<IIndexName> names) throws CoreException {
-		IIndexName[] bindingNames= index.findNames(binding, flags);
+		IIndexName[] bindingNames = index.findNames(binding, flags);
 		if (fullPathFilter == null) {
 			names.addAll(Arrays.asList(bindingNames));
 		} else {
 			for (IIndexName name : bindingNames) {
-				String fullPath= name.getFile().getLocation().getFullPath();
+				String fullPath = name.getFile().getLocation().getFullPath();
 				if (fullPath != null && accept(fullPath))
 					names.add(name);
 			}
@@ -420,16 +416,16 @@ public abstract class CSearchQuery implements ISearchQuery {
 		while (true) {
 			if (fullPathFilter.contains(fullPath))
 				return true;
-			int idx= fullPath.lastIndexOf('/');
+			int idx = fullPath.lastIndexOf('/');
 			if (idx < 0)
 				return false;
-			fullPath= fullPath.substring(0, idx);
+			fullPath = fullPath.substring(0, idx);
 		}
 	}
 
 	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 		if (binding != null) {
-			Set<IASTName> names= new HashSet<>();
+			Set<IASTName> names = new HashSet<>();
 			names.addAll(Arrays.asList(ast.getDeclarationsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getReferences(binding)));
@@ -437,26 +433,25 @@ public abstract class CSearchQuery implements ISearchQuery {
 			IIndexFileLocation fileLocation = null;
 			Set<Match> localMatches = new HashSet<>();
 			for (IASTName name : names) {
-				if (((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration()) ||
-						((flags & FIND_DEFINITIONS) != 0 && name.isDefinition()) ||
-						((flags & FIND_REFERENCES) != 0 && name.isReference())) {
-					ASTTypeInfo typeInfo= ASTTypeInfo.create(name);
+				if (((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration())
+						|| ((flags & FIND_DEFINITIONS) != 0 && name.isDefinition())
+						|| ((flags & FIND_REFERENCES) != 0 && name.isReference())) {
+					ASTTypeInfo typeInfo = ASTTypeInfo.create(name);
 					if (typeInfo != null) {
-						ITypeReference ref= typeInfo.getResolvedReference();
+						ITypeReference ref = typeInfo.getResolvedReference();
 						if (ref != null) {
 							ICElement element = null;
 							IASTNode node = name;
 							while (node != null && !(node instanceof IASTFunctionDefinition)) {
-								node= node.getParent();
+								node = node.getParent();
 							}
 							if (node != null) {
 								IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
-								element = IndexUI.getCElementForName(getPreferredProject(),
-										ast.getIndex(), definition.getDeclarator().getName());
+								element = IndexUI.getCElementForName(getPreferredProject(), ast.getIndex(),
+										definition.getDeclarator().getName());
 							}
 							boolean isWrite = CSearchUtil.isWriteOccurrence(name, binding);
-							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false,
-									element, isWrite));
+							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false, element, isWrite));
 							fileLocation = typeInfo.getIFL();
 						}
 					}
@@ -507,16 +502,16 @@ public abstract class CSearchQuery implements ISearchQuery {
 	}
 
 	private ICProject getPreferredProject() {
-		ICProject preferred= null;
+		ICProject preferred = null;
 		if (projects != null && projects.length == 1) {
-			preferred= projects[0];
+			preferred = projects[0];
 		}
 		return preferred;
 	}
 
 	@Override
 	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		CSearchResult result= (CSearchResult) getSearchResult();
+		CSearchResult result = (CSearchResult) getSearchResult();
 		result.removeAll();
 
 		result.setIndexerBusy(!CCorePlugin.getIndexManager().isIndexerIdle());
@@ -550,7 +545,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 	}
 
 	public String getScopeDescription() {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		switch (scope.length) {
 		case 0:
 			break;

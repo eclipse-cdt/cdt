@@ -96,11 +96,10 @@ public class ErrorParserNamedWrapper implements IErrorParserNamed {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ErrorParserNamedWrapper) {
-			ErrorParserNamedWrapper that = (ErrorParserNamedWrapper)o;
-			return this.fId.equals(that.fId)
-				&& this.fName.equals(that.fName)
-				// can't be more specific than that since IErrorParser may not implement equals()...
-				&& this.getClass()==that.getClass();
+			ErrorParserNamedWrapper that = (ErrorParserNamedWrapper) o;
+			return this.fId.equals(that.fId) && this.fName.equals(that.fName)
+			// can't be more specific than that since IErrorParser may not implement equals()...
+					&& this.getClass() == that.getClass();
 		}
 		return false;
 

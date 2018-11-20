@@ -38,7 +38,8 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 	private static final String BACKSLASH = java.io.File.separator;
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration, IEnvironmentVariableProvider provider) {
+	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+			IEnvironmentVariableProvider provider) {
 		if (variableName == null) {
 			return null;
 		}
@@ -53,7 +54,8 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 			return new BuildEnvVar(ENV_PATH, path, IBuildEnvironmentVariable.ENVVAR_PREPEND);
 
 		} else if (variableName.equals(Cygwin.ENV_CYGWIN_HOME)) {
-			IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(Cygwin.ENV_CYGWIN_HOME, (ICConfigurationDescription) null, false);
+			IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
+					.getVariable(Cygwin.ENV_CYGWIN_HOME, (ICConfigurationDescription) null, false);
 			if (varCygwinHome == null) {
 				// Contribute if the variable does not already come from workspace environment
 				String home = Cygwin.getCygwinHome();
@@ -88,11 +90,12 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 	}
 
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider) {
+	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
+			IEnvironmentVariableProvider provider) {
 		IBuildEnvironmentVariable varHome = getVariable(Cygwin.ENV_CYGWIN_HOME, configuration, provider);
 		IBuildEnvironmentVariable varLang = getVariable(ENV_LANG, configuration, provider);
 		IBuildEnvironmentVariable varPath = getVariable(ENV_PATH, configuration, provider);
 
-		return new IBuildEnvironmentVariable[] {varHome, varLang, varPath};
+		return new IBuildEnvironmentVariable[] { varHome, varLang, varPath };
 	}
 }

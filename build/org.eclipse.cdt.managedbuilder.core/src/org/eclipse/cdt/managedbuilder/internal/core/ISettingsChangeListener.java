@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-
 public interface ISettingsChangeListener {
 	void settingsChanged(SettingsChangeEvent event);
 }

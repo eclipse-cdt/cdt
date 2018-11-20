@@ -29,7 +29,6 @@ import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacement;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnTarget;
 
-
 /**
  * The description of an extension to the
  * <code>org.eclipse.ui.workbench.texteditor.rulerColumns</code> extension point. Instances are
@@ -40,25 +39,25 @@ import org.eclipse.ui.internal.texteditor.rulers.RulerColumnTarget;
  */
 public final class RulerColumnDescriptor {
 	/** The extension schema name of the class attribute. */
-	private static final String CLASS= "class"; //$NON-NLS-1$
+	private static final String CLASS = "class"; //$NON-NLS-1$
 	/** The extension schema name of the id attribute. */
-	private static final String ID= "id"; //$NON-NLS-1$
+	private static final String ID = "id"; //$NON-NLS-1$
 	/** The extension schema name of the optional name attribute. */
-	private static final String NAME= "name"; //$NON-NLS-1$
+	private static final String NAME = "name"; //$NON-NLS-1$
 	/** The extension schema name of the optional enabled attribute. */
-	private static final String ENABLED= "enabled"; //$NON-NLS-1$
+	private static final String ENABLED = "enabled"; //$NON-NLS-1$
 	/** The extension schema name of the optional icon attribute. */
-	private static final String ICON= "icon"; //$NON-NLS-1$
+	private static final String ICON = "icon"; //$NON-NLS-1$
 	/** The extension schema name of the optional global attribute. */
-	private static final String GLOBAL= "global"; //$NON-NLS-1$
+	private static final String GLOBAL = "global"; //$NON-NLS-1$
 	/** The extension schema name of the optional menu inclusion attribute. */
-	private static final String INCLUDE_IN_MENU= "includeInMenu"; //$NON-NLS-1$
+	private static final String INCLUDE_IN_MENU = "includeInMenu"; //$NON-NLS-1$
 	/** The extension schema name of the targetEditor element. */
-	private static final String TARGET_ID= "targetId"; //$NON-NLS-1$
+	private static final String TARGET_ID = "targetId"; //$NON-NLS-1$
 	/** The extension schema name of the targetClass element. */
-	private static final String TARGET_CLASS= "targetClass"; //$NON-NLS-1$
+	private static final String TARGET_CLASS = "targetClass"; //$NON-NLS-1$
 	/** The extension schema name of the placement element. */
-	private static final String PLACEMENT= "placement"; //$NON-NLS-1$
+	private static final String PLACEMENT = "placement"; //$NON-NLS-1$
 
 	/** The identifier of the extension. */
 	private final String fId;
@@ -87,50 +86,53 @@ public final class RulerColumnDescriptor {
 	 * @throws InvalidRegistryObjectException if the configuration element is no longer valid
 	 * @throws CoreException if the configuration element does not conform to the extension point spec
 	 */
-	RulerColumnDescriptor(IConfigurationElement element, RulerColumnRegistry registry) throws InvalidRegistryObjectException, CoreException {
+	RulerColumnDescriptor(IConfigurationElement element, RulerColumnRegistry registry)
+			throws InvalidRegistryObjectException, CoreException {
 		Assert.isLegal(registry != null);
 		Assert.isLegal(element != null);
-		fElement= element;
+		fElement = element;
 
-		ExtensionPointHelper helper= new ExtensionPointHelper(element);
+		ExtensionPointHelper helper = new ExtensionPointHelper(element);
 
-		fId= helper.getNonNullAttribute(ID);
-		fName= helper.getDefaultAttribute(NAME, fId);
+		fId = helper.getNonNullAttribute(ID);
+		fName = helper.getDefaultAttribute(NAME, fId);
 		helper.getNonNullAttribute(CLASS); // just check validity
-		URL iconURL= helper.getDefaultResourceURL(ICON, null);
-		fIcon= iconURL == null ? null : ImageDescriptor.createFromURL(iconURL);
-		fDefaultEnablement= helper.getDefaultAttribute(ENABLED, true);
-		fIsGlobal= helper.getDefaultAttribute(GLOBAL, true);
-		fIncludeInMenu= helper.getDefaultAttribute(INCLUDE_IN_MENU, true);
+		URL iconURL = helper.getDefaultResourceURL(ICON, null);
+		fIcon = iconURL == null ? null : ImageDescriptor.createFromURL(iconURL);
+		fDefaultEnablement = helper.getDefaultAttribute(ENABLED, true);
+		fIsGlobal = helper.getDefaultAttribute(GLOBAL, true);
+		fIncludeInMenu = helper.getDefaultAttribute(INCLUDE_IN_MENU, true);
 
-		IConfigurationElement[] targetEditors= element.getChildren(TARGET_ID);
-		IConfigurationElement[] targetClasses= element.getChildren(TARGET_CLASS);
+		IConfigurationElement[] targetEditors = element.getChildren(TARGET_ID);
+		IConfigurationElement[] targetClasses = element.getChildren(TARGET_CLASS);
 
-		RulerColumnTarget combined= null;
-		for (int i= 0; i < targetEditors.length; i++) {
-			IConfigurationElement targetEditor= targetEditors[i];
-			RulerColumnTarget target= RulerColumnTarget.createEditorIdTarget(new ExtensionPointHelper(targetEditor).getNonNullAttribute(ID));
-			combined= RulerColumnTarget.createOrTarget(combined, target);
+		RulerColumnTarget combined = null;
+		for (int i = 0; i < targetEditors.length; i++) {
+			IConfigurationElement targetEditor = targetEditors[i];
+			RulerColumnTarget target = RulerColumnTarget
+					.createEditorIdTarget(new ExtensionPointHelper(targetEditor).getNonNullAttribute(ID));
+			combined = RulerColumnTarget.createOrTarget(combined, target);
 		}
-		for (int i= 0; i < targetClasses.length; i++) {
-			IConfigurationElement targetClass= targetClasses[i];
-			RulerColumnTarget target= RulerColumnTarget.createClassTarget(new ExtensionPointHelper(targetClass).getNonNullAttribute(CLASS));
-			combined= RulerColumnTarget.createOrTarget(combined, target);
+		for (int i = 0; i < targetClasses.length; i++) {
+			IConfigurationElement targetClass = targetClasses[i];
+			RulerColumnTarget target = RulerColumnTarget
+					.createClassTarget(new ExtensionPointHelper(targetClass).getNonNullAttribute(CLASS));
+			combined = RulerColumnTarget.createOrTarget(combined, target);
 		}
-		fTarget= combined;
+		fTarget = combined;
 
-		IConfigurationElement[] placements= element.getChildren(PLACEMENT);
+		IConfigurationElement[] placements = element.getChildren(PLACEMENT);
 		switch (placements.length) {
-			case 0:
-				fRulerColumnPlacement= new RulerColumnPlacement();
-				break;
-			case 1:
-				fRulerColumnPlacement= new RulerColumnPlacement(placements[0]);
-				break;
-			default:
-				helper.fail(RulerColumnMessages.RulerColumnDescriptor_invalid_placement_msg);
-				fRulerColumnPlacement= null; // dummy
-				break;
+		case 0:
+			fRulerColumnPlacement = new RulerColumnPlacement();
+			break;
+		case 1:
+			fRulerColumnPlacement = new RulerColumnPlacement(placements[0]);
+			break;
+		default:
+			helper.fail(RulerColumnMessages.RulerColumnDescriptor_invalid_placement_msg);
+			fRulerColumnPlacement = null; // dummy
+			break;
 		}
 
 		Assert.isTrue(fTarget != null);
@@ -213,16 +215,16 @@ public final class RulerColumnDescriptor {
 	 */
 	public boolean matchesPart(IWorkbenchPart disassembly) {
 		Assert.isLegal(disassembly != null);
-		RulerColumnTarget target= getTarget();
+		RulerColumnTarget target = getTarget();
 
-		IWorkbenchPartSite site= disassembly.getSite();
+		IWorkbenchPartSite site = disassembly.getSite();
 		if (site != null && target.matchesEditorId(site.getId()))
 			return true;
 
 		if (target.matchesClass(disassembly.getClass()))
 			return true;
 
-		IContentType contentType= getContentType(disassembly);
+		IContentType contentType = getContentType(disassembly);
 		return contentType != null && target.matchesContentType(contentType);
 
 	}
@@ -235,9 +237,10 @@ public final class RulerColumnDescriptor {
 	 * @throws CoreException as thrown by {@link IConfigurationElement#createExecutableExtension(String)}
 	 * @throws InvalidRegistryObjectException as thrown by {@link IConfigurationElement#createExecutableExtension(String)}
 	 */
-	public IContributedRulerColumn createColumn(IWorkbenchPart disassembly) throws CoreException, InvalidRegistryObjectException {
+	public IContributedRulerColumn createColumn(IWorkbenchPart disassembly)
+			throws CoreException, InvalidRegistryObjectException {
 		Assert.isLegal(disassembly != null);
-		IContributedRulerColumn column= (IContributedRulerColumn)fElement.createExecutableExtension(CLASS);
+		IContributedRulerColumn column = (IContributedRulerColumn) fElement.createExecutableExtension(CLASS);
 		column.setDescriptor(this);
 		column.setDisassemblyPart(disassembly);
 		column.columnCreated();
@@ -262,9 +265,9 @@ public final class RulerColumnDescriptor {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime= 31;
-		int result= 1;
-		result= prime * result + ((fId == null) ? 0 : fId.hashCode());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((fId == null) ? 0 : fId.hashCode());
 		return result;
 	}
 
@@ -279,7 +282,7 @@ public final class RulerColumnDescriptor {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final RulerColumnDescriptor other= (RulerColumnDescriptor) obj;
+		final RulerColumnDescriptor other = (RulerColumnDescriptor) obj;
 		if (fId == null) {
 			if (other.fId != null)
 				return false;

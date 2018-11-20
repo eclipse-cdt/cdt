@@ -33,7 +33,8 @@ public class DoxygenSingleConfiguration extends AbstractGenericTagDocCommentView
 	 * Default constructor
 	 */
 	public DoxygenSingleConfiguration() {
-		super(DoxygenHelper.getDoxygenTags(), new char[] {'@','\\'}, PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR, PreferenceConstants.DOXYGEN_TAG_COLOR);
+		super(DoxygenHelper.getDoxygenTags(), new char[] { '@', '\\' }, PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR,
+				PreferenceConstants.DOXYGEN_TAG_COLOR);
 	}
 
 	/**
@@ -43,7 +44,8 @@ public class DoxygenSingleConfiguration extends AbstractGenericTagDocCommentView
 	 * @param defaultToken the default scanner token id
 	 * @param tagToken the scanner token to use to mark used by this configuration
 	 */
-	protected DoxygenSingleConfiguration(GenericDocTag[] tags, char[] tagMarkers, String defaultToken, String tagToken) {
+	protected DoxygenSingleConfiguration(GenericDocTag[] tags, char[] tagMarkers, String defaultToken,
+			String tagToken) {
 		super(tags, tagMarkers, defaultToken, tagToken);
 	}
 
@@ -61,11 +63,11 @@ public class DoxygenSingleConfiguration extends AbstractGenericTagDocCommentView
 	@Override
 	public boolean isDocumentationComment(IDocument doc, int offset, int length) {
 		try {
-			if(offset+2 < doc.getLength()) {
-				char c= doc.getChar(offset+2);
+			if (offset + 2 < doc.getLength()) {
+				char c = doc.getChar(offset + 2);
 				return c == '/' || c == '!';
 			}
-		} catch(BadLocationException ble) {
+		} catch (BadLocationException ble) {
 			CUIPlugin.log(ble);
 		}
 		return false;

@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecializatio
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPFieldTemplatePartialSpecialization
-		extends CompositeCPPVariableTemplatePartialSpecialization implements ICPPField {
+public class CompositeCPPFieldTemplatePartialSpecialization extends CompositeCPPVariableTemplatePartialSpecialization
+		implements ICPPField {
 
 	public CompositeCPPFieldTemplatePartialSpecialization(ICompositesFactory cf,
 			ICPPVariableTemplatePartialSpecialization delegate) {
@@ -41,8 +41,7 @@ public class CompositeCPPFieldTemplatePartialSpecialization
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		return (ICPPClassType) cf.getCompositeBinding(
-				(IIndexFragmentBinding) ((ICPPField) rbinding).getClassOwner());
+		return (ICPPClassType) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPField) rbinding).getClassOwner());
 	}
 
 	@Override

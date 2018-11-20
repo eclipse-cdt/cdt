@@ -37,19 +37,19 @@ public class PersistentPTY extends PTY {
 			// This is the change to bring persistence.
 			// Don't actually close the stream.
 		}
-		
+
 		public void realClose() throws IOException {
 			// This method should be called to actually close
 			// the stream once we know it won't be needed anymore
 			super.close();
 		}
-		
+
 		@Override
 		protected void finalize() throws IOException {
 			realClose();
 		}
 	}
-	
+
 	private class PersistentPTYOutputStream extends PTYOutputStream {
 		public PersistentPTYOutputStream(MasterFD fd, boolean sendEotBeforeClose) {
 			super(fd, sendEotBeforeClose);
@@ -60,7 +60,7 @@ public class PersistentPTY extends PTY {
 			// This is the change to bring persistence.
 			// Don't actually close the stream.
 		}
-		
+
 		public void realClose() throws IOException {
 			// This method should be called to actually close
 			// the stream once we know it won't be needed anymore
@@ -75,7 +75,7 @@ public class PersistentPTY extends PTY {
 
 	final PersistentPTYInputStream in2;
 	final PersistentPTYOutputStream out2;
-	
+
 	public PersistentPTY() throws IOException {
 		this(Mode.CONSOLE);
 	}
@@ -85,17 +85,17 @@ public class PersistentPTY extends PTY {
 		in2 = new PersistentPTYInputStream(new MasterFD());
 		out2 = new PersistentPTYOutputStream(new MasterFD(), !Platform.OS_WIN32.equals(Platform.getOS()));
 	}
-	
+
 	@Override
 	public PTYInputStream getInputStream() {
 		return in2;
 	}
-	
+
 	@Override
 	public PTYOutputStream getOutputStream() {
 		return out2;
 	}
-	
+
 	/**
 	 * This method must be called once the PersistentPTY is
 	 * no longer needed, so that its streams can be closed. 

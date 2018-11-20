@@ -37,7 +37,7 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 	 *  Unique string ID for this page.  Used by Managed Build's custom page manager to refer to this page.
 	 */
 	public static final String PAGE_ID = "org.eclipse.cdt.ui.wizard.basicPage"; //$NON-NLS-1$
-	
+
 	/* TODO: Implement proper data publishing from this wizard page.
 	 * 
 	 * The following items would in theory be used to publish the project name and location with
@@ -54,8 +54,7 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 	public static final String PROJECT_NAME = "projectName"; //$NON-NLS-1$
 	public static final String PROJECT_LOCATION = "projectLocation"; //$NON-NLS-1$
 	*/
-	
-	
+
 	public NewCProjectWizardPage(String pageName) {
 		super(pageName);
 	}
@@ -84,8 +83,7 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 				setErrorMessage(validLocation.getMessage());
 				return false;
 			}
-			
-			
+
 			return true;
 		}
 		return false;

@@ -67,14 +67,14 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			return fIsComment;
 		}
 
-//		public void setIsComment(boolean isComment) {
-//			fIsComment= isComment;
-//		}
+		//		public void setIsComment(boolean isComment) {
+		//			fIsComment= isComment;
+		//		}
 	}
 
 	public void install(MakefileEditor editor, ProjectionViewer viewer) {
-		fEditor= editor;
-		fViewer= viewer;
+		fEditor = editor;
+		fViewer = viewer;
 		fViewer.addProjectionListener(this);
 	}
 
@@ -82,8 +82,8 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		if (isInstalled()) {
 			projectionDisabled();
 			fViewer.removeProjectionListener(this);
-			fViewer= null;
-			fEditor= null;
+			fViewer = null;
+			fEditor = null;
 		}
 	}
 
@@ -119,16 +119,16 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		projectionDisabled();
 
 		initialize();
-		fParticipant= new ReconcilerParticipant();
+		fParticipant = new ReconcilerParticipant();
 		fEditor.addReconcilingParticipant(fParticipant);
 	}
 
 	@Override
 	public void projectionDisabled() {
-		fCachedDocument= null;
+		fCachedDocument = null;
 		if (fParticipant != null) {
 			fEditor.addReconcilingParticipant(fParticipant);
-			fParticipant= null;
+			fParticipant = null;
 		}
 	}
 
@@ -140,24 +140,24 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		initializePreferences();
 
 		try {
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
-			fAllowCollapsing= true;
+			IDocumentProvider provider = fEditor.getDocumentProvider();
+			fCachedDocument = provider.getDocument(fEditor.getEditorInput());
+			fAllowCollapsing = true;
 
-			IWorkingCopyManager manager= MakeUIPlugin.getDefault().getWorkingCopyManager();
-			fInput= manager.getWorkingCopy(fEditor.getEditorInput());
+			IWorkingCopyManager manager = MakeUIPlugin.getDefault().getWorkingCopyManager();
+			fInput = manager.getWorkingCopy(fEditor.getEditorInput());
 
 			if (fInput != null) {
-				ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
+				ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 				if (model != null) {
-					Map<MakefileProjectionAnnotation, Position> additions= computeAdditions((IParent) fInput);
+					Map<MakefileProjectionAnnotation, Position> additions = computeAdditions((IParent) fInput);
 					model.removeAllAnnotations();
 					model.replaceAnnotations(null, additions);
 				}
 			}
 		} finally {
-			fCachedDocument= null;
-			fAllowCollapsing= false;
+			fCachedDocument = null;
+			fAllowCollapsing = false;
 		}
 	}
 
@@ -169,7 +169,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Map<MakefileProjectionAnnotation, Position> computeAdditions(IParent parent) {
-		Map<MakefileProjectionAnnotation, Position> map= new HashMap<MakefileProjectionAnnotation, Position>();
+		Map<MakefileProjectionAnnotation, Position> map = new HashMap<MakefileProjectionAnnotation, Position>();
 		computeAdditions(parent.getDirectives(), map);
 		return map;
 	}
@@ -179,29 +179,29 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			computeAdditions(element, map);
 
 			if (element instanceof IParent) {
-				IParent parent= (IParent) element;
+				IParent parent = (IParent) element;
 				computeAdditions(parent.getDirectives(), map);
 			}
 		}
 	}
 
 	private void computeAdditions(IDirective element, Map<MakefileProjectionAnnotation, Position> map) {
-		boolean createProjection= false;
-		boolean collapse= false;
+		boolean createProjection = false;
+		boolean collapse = false;
 
 		if (element instanceof IConditional) {
-			collapse= fAllowCollapsing && fCollapseConditional;
-			createProjection= true;
+			collapse = fAllowCollapsing && fCollapseConditional;
+			createProjection = true;
 		} else if (element instanceof IMacroDefinition) {
-			collapse= fAllowCollapsing && fCollapseMacroDef;
-			createProjection= true;
+			collapse = fAllowCollapsing && fCollapseMacroDef;
+			createProjection = true;
 		} else if (element instanceof IRule) {
-			collapse= fAllowCollapsing && fCollapseRule;
-			createProjection= true;
+			collapse = fAllowCollapsing && fCollapseRule;
+			createProjection = true;
 		}
 
 		if (createProjection) {
-			Position position= createProjectionPosition(element);
+			Position position = createProjectionPosition(element);
 			if (position != null) {
 				map.put(new MakefileProjectionAnnotation(element, collapse, true), position);
 			}
@@ -214,11 +214,11 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		}
 
 		try {
-			int startLine= element.getStartLine() - 1;
-			int endLine= element.getEndLine() - 1;
+			int startLine = element.getStartLine() - 1;
+			int endLine = element.getEndLine() - 1;
 			if (startLine != endLine) {
-				int offset= fCachedDocument.getLineOffset(startLine);
-				int endOffset= fCachedDocument.getLineOffset(endLine + 1);
+				int offset = fCachedDocument.getLineOffset(startLine);
+				int endOffset = fCachedDocument.getLineOffset(endLine + 1);
 				return new Position(offset, endOffset - offset);
 			}
 		} catch (BadLocationException x) {
@@ -232,36 +232,36 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			return;
 		}
 
-		ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 		if (model == null) {
 			return;
 		}
 
 		try {
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
-			fAllowCollapsing= false;
+			IDocumentProvider provider = fEditor.getDocumentProvider();
+			fCachedDocument = provider.getDocument(fEditor.getEditorInput());
+			fAllowCollapsing = false;
 
-			Map<MakefileProjectionAnnotation, Position> additions= new HashMap<MakefileProjectionAnnotation, Position>();
-			List<MakefileProjectionAnnotation> deletions= new ArrayList<MakefileProjectionAnnotation>();
-			List<MakefileProjectionAnnotation> updates= new ArrayList<MakefileProjectionAnnotation>();
+			Map<MakefileProjectionAnnotation, Position> additions = new HashMap<MakefileProjectionAnnotation, Position>();
+			List<MakefileProjectionAnnotation> deletions = new ArrayList<MakefileProjectionAnnotation>();
+			List<MakefileProjectionAnnotation> updates = new ArrayList<MakefileProjectionAnnotation>();
 
-			Map<MakefileProjectionAnnotation, Position> updated= computeAdditions((IParent) fInput);
-			Map<IDirective, List<MakefileProjectionAnnotation>> previous= createAnnotationMap(model);
+			Map<MakefileProjectionAnnotation, Position> updated = computeAdditions((IParent) fInput);
+			Map<IDirective, List<MakefileProjectionAnnotation>> previous = createAnnotationMap(model);
 
 			for (MakefileProjectionAnnotation annotation : updated.keySet()) {
-				IDirective element= annotation.getElement();
-				Position position= updated.get(annotation);
+				IDirective element = annotation.getElement();
+				Position position = updated.get(annotation);
 
-				List<MakefileProjectionAnnotation> annotations= previous.get(element);
+				List<MakefileProjectionAnnotation> annotations = previous.get(element);
 				if (annotations == null) {
 					additions.put(annotation, position);
 				} else {
-					Iterator<MakefileProjectionAnnotation> x= annotations.iterator();
+					Iterator<MakefileProjectionAnnotation> x = annotations.iterator();
 					while (x.hasNext()) {
-						MakefileProjectionAnnotation a= x.next();
+						MakefileProjectionAnnotation a = x.next();
 						if (annotation.isComment() == a.isComment()) {
-							Position p= model.getPosition(a);
+							Position p = model.getPosition(a);
 							if (p != null && !position.equals(p)) {
 								p.setOffset(position.getOffset());
 								p.setLength(position.getLength());
@@ -279,23 +279,23 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			}
 
 			for (List<MakefileProjectionAnnotation> list : previous.values()) {
-				int size= list.size();
-				for (int i= 0; i < size; i++) {
+				int size = list.size();
+				for (int i = 0; i < size; i++) {
 					deletions.add(list.get(i));
 				}
 			}
 
 			match(model, deletions, additions, updates);
 
-			Annotation[] removals= new Annotation[deletions.size()];
+			Annotation[] removals = new Annotation[deletions.size()];
 			deletions.toArray(removals);
-			Annotation[] changes= new Annotation[updates.size()];
+			Annotation[] changes = new Annotation[updates.size()];
 			updates.toArray(changes);
 			model.modifyAnnotations(removals, additions, changes);
 
 		} finally {
-			fCachedDocument= null;
-			fAllowCollapsing= true;
+			fCachedDocument = null;
+			fAllowCollapsing = true;
 		}
 	}
 
@@ -306,22 +306,22 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			return;
 		}
 
-		List<MakefileProjectionAnnotation> newDeletions= new ArrayList<MakefileProjectionAnnotation>();
-		List<MakefileProjectionAnnotation> newChanges= new ArrayList<MakefileProjectionAnnotation>();
+		List<MakefileProjectionAnnotation> newDeletions = new ArrayList<MakefileProjectionAnnotation>();
+		List<MakefileProjectionAnnotation> newChanges = new ArrayList<MakefileProjectionAnnotation>();
 
-		Iterator<MakefileProjectionAnnotation> deletionIterator= deletions.iterator();
+		Iterator<MakefileProjectionAnnotation> deletionIterator = deletions.iterator();
 		outer: while (deletionIterator.hasNext()) {
-			MakefileProjectionAnnotation deleted= deletionIterator.next();
-			Position deletedPosition= model.getPosition(deleted);
+			MakefileProjectionAnnotation deleted = deletionIterator.next();
+			Position deletedPosition = model.getPosition(deleted);
 			if (deletedPosition == null) {
 				continue;
 			}
 
-			Iterator<MakefileProjectionAnnotation> changesIterator= changes.iterator();
+			Iterator<MakefileProjectionAnnotation> changesIterator = changes.iterator();
 			while (changesIterator.hasNext()) {
-				MakefileProjectionAnnotation changed= changesIterator.next();
+				MakefileProjectionAnnotation changed = changesIterator.next();
 				if (deleted.isComment() == changed.isComment()) {
-					Position changedPosition= model.getPosition(changed);
+					Position changedPosition = model.getPosition(changed);
 					if (changedPosition == null) {
 						continue;
 					}
@@ -342,11 +342,11 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 				}
 			}
 
-			Iterator<MakefileProjectionAnnotation> additionsIterator= additions.keySet().iterator();
+			Iterator<MakefileProjectionAnnotation> additionsIterator = additions.keySet().iterator();
 			while (additionsIterator.hasNext()) {
-				MakefileProjectionAnnotation added= additionsIterator.next();
+				MakefileProjectionAnnotation added = additionsIterator.next();
 				if (deleted.isComment() == added.isComment()) {
-					Position addedPosition= additions.get(added);
+					Position addedPosition = additions.get(added);
 
 					if (deletedPosition.getOffset() == addedPosition.getOffset()) {
 
@@ -369,15 +369,15 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Map<IDirective, List<MakefileProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
-		Map<IDirective, List<MakefileProjectionAnnotation>> map= new HashMap<IDirective, List<MakefileProjectionAnnotation>>();
-		Iterator<?> e= model.getAnnotationIterator();
+		Map<IDirective, List<MakefileProjectionAnnotation>> map = new HashMap<IDirective, List<MakefileProjectionAnnotation>>();
+		Iterator<?> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Object annotation= e.next();
+			Object annotation = e.next();
 			if (annotation instanceof MakefileProjectionAnnotation) {
-				MakefileProjectionAnnotation directive= (MakefileProjectionAnnotation) annotation;
-				List<MakefileProjectionAnnotation> list= map.get(directive.getElement());
+				MakefileProjectionAnnotation directive = (MakefileProjectionAnnotation) annotation;
+				List<MakefileProjectionAnnotation> list = map.get(directive.getElement());
 				if (list == null) {
-					list= new ArrayList<MakefileProjectionAnnotation>(2);
+					list = new ArrayList<MakefileProjectionAnnotation>(2);
 					map.put(directive.getElement(), list);
 				}
 				list.add(directive);

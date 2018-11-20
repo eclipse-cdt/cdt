@@ -58,7 +58,7 @@ public interface IQmlRegistration extends IQObject.IMember {
 	 * Returns QObject to which this registration applies.  In the sample at {@link IQmlRegistration}
 	 * this would return the IQObject for Q.
 	 */
-    public IQObject getQObject();
+	public IQObject getQObject();
 
 	/**
 	 * Returns the specific revision of the IQObject that was registered.  Returns null if no
@@ -82,35 +82,35 @@ public interface IQmlRegistration extends IQObject.IMember {
 	 * @see IQMethod#getRevision()
 	 * @see IQProperty#getRevision()
 	 */
-    public Long getVersion();
+	public Long getVersion();
 
-    /**
-     * Returns the literal value of the first argument to the function if it can be
-     * resolved and null otherwise.
-     */
-    public String getURI();
+	/**
+	 * Returns the literal value of the first argument to the function if it can be
+	 * resolved and null otherwise.
+	 */
+	public String getURI();
 
-    /**
-     * Returns the literal value of the second argument to the function if it can be
-     * resolved and null otherwise.
-     */
-    public Long getMajor();
+	/**
+	 * Returns the literal value of the second argument to the function if it can be
+	 * resolved and null otherwise.
+	 */
+	public Long getMajor();
 
-    /**
-     * Returns the literal value of the third argument to the function if it can be
-     * resolved and null otherwise.
-     */
-    public Long getMinor();
+	/**
+	 * Returns the literal value of the third argument to the function if it can be
+	 * resolved and null otherwise.
+	 */
+	public Long getMinor();
 
-    /**
-     * Returns the literal value of the fourth argument to the function if it can be
-     * resolved and null otherwise.
-     */
-    public String getQmlName();
+	/**
+	 * Returns the literal value of the fourth argument to the function if it can be
+	 * resolved and null otherwise.
+	 */
+	public String getQmlName();
 
-    /**
-     * Returns the literal value of the fifth argument to qmlRegisterUncreatableType if it
-     * can be resolved and null otherwise.
-     */
-    public String getReason();
+	/**
+	 * Returns the literal value of the fifth argument to qmlRegisterUncreatableType if it
+	 * can be resolved and null otherwise.
+	 */
+	public String getReason();
 }

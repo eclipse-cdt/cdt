@@ -279,16 +279,17 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 					ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
 					if (tu != null) {
 						tu = CModelUtil.toWorkingCopy(tu);
-						ASTProvider.getASTProvider().runOnAST(
-								tu, ASTProvider.WAIT_ACTIVE_ONLY, submonitor.newChild(1),
+						ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, submonitor.newChild(1),
 								new ASTRunnable() {
 									@Override
 									public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 										ICodanBuilder builder = CodanRuntime.getInstance().getBuilder();
 										if (ast != null) {
-											builder.processResource(file, submonitor.newChild(1), CheckerLaunchMode.RUN_AS_YOU_TYPE, ast);
+											builder.processResource(file, submonitor.newChild(1),
+													CheckerLaunchMode.RUN_AS_YOU_TYPE, ast);
 										} else {
-											builder.processResource(file, submonitor.newChild(1), CheckerLaunchMode.RUN_ON_FILE_OPEN, null);
+											builder.processResource(file, submonitor.newChild(1),
+													CheckerLaunchMode.RUN_ON_FILE_OPEN, null);
 										}
 										return Status.OK_STATUS;
 									}
@@ -298,7 +299,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 				return Status.OK_STATUS;
 			}
 		};
-        IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
 		job.setRule(ruleFactory.markerRule(resource));
 		job.setSystem(true);
 		job.schedule();
@@ -320,8 +321,8 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		}
 	}
 
-	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry,
-			Set<String> markerTypes, IResource resource, IProgressMonitor monitor) throws CoreException {
+	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry, Set<String> markerTypes,
+			IResource resource, IProgressMonitor monitor) throws CoreException {
 		if (!resource.isAccessible()) {
 			return;
 		}
@@ -331,7 +332,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		}
 		int numChildren = children == null ? 0 : children.length;
 		int childWeight = 10;
-        SubMonitor progress = SubMonitor.convert(monitor, 1 + numChildren * childWeight);
+		SubMonitor progress = SubMonitor.convert(monitor, 1 + numChildren * childWeight);
 		IProblemProfile resourceProfile = null;
 		for (String markerType : markerTypes) {
 			IMarker[] markers = resource.findMarkers(markerType, false, IResource.DEPTH_ZERO);
@@ -351,8 +352,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			for (IResource child : children) {
 				if (monitor.isCanceled())
 					return;
-				removeMarkersForDisabledProblems(chegistry, markerTypes, child,
-						progress.newChild(childWeight));
+				removeMarkersForDisabledProblems(chegistry, markerTypes, child, progress.newChild(childWeight));
 			}
 		}
 	}

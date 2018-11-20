@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IProject;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PathEntryStoreChangedEvent extends EventObject {
-	
+
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
@@ -45,7 +45,7 @@ public class PathEntryStoreChangedEvent extends EventObject {
 	}
 
 	public IPathEntryStore getPathEntryStore() {
-		return (IPathEntryStore)getSource();
+		return (IPathEntryStore) getSource();
 	}
 
 	public IProject getProject() {

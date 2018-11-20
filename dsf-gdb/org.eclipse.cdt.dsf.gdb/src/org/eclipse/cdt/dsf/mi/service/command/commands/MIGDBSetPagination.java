@@ -21,9 +21,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  *     
  * @since 3.0
  */
-public class MIGDBSetPagination extends MIGDBSet 
-{
-    public MIGDBSetPagination(ICommandControlDMContext ctx, boolean isSet) {
-        super(ctx, new String[] {"pagination", isSet ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-    }
+public class MIGDBSetPagination extends MIGDBSet {
+	public MIGDBSetPagination(ICommandControlDMContext ctx, boolean isSet) {
+		super(ctx, new String[] { "pagination", isSet ? "on" : "off" });//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
 }

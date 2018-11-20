@@ -41,89 +41,88 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 1.1
  */
 public class NumberFormatsContribution extends CompoundContributionItem implements IWorkbenchContribution {
-    
-    protected static final List<String> FORMATS = new LinkedList<String>(); 
-    static {
-        FORMATS.add(IFormattedValues.NATURAL_FORMAT);
-        FORMATS.add(IFormattedValues.HEX_FORMAT);
-        FORMATS.add(IFormattedValues.DECIMAL_FORMAT);
-        FORMATS.add(IFormattedValues.OCTAL_FORMAT);
-        FORMATS.add(IFormattedValues.BINARY_FORMAT);
-        FORMATS.add(IFormattedValues.STRING_FORMAT);
-    }
-    
-    private class SelectNumberFormatAction extends Action {
-        private final IPresentationContext fContext;
-        private final String fFormatId;
-        SelectNumberFormatAction(IPresentationContext context, String formatId) {
-            super(FormattedValueVMUtil.getFormatLabel(formatId), AS_RADIO_BUTTON);
-            fContext = context;
-            fFormatId = formatId;
-        }
 
-        @Override
-        public void run() {
-            if (isChecked()) {
-                fContext.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE, fFormatId);
-            }
-        }
-    }
- 
-    protected IServiceLocator fServiceLocator;
+	protected static final List<String> FORMATS = new LinkedList<String>();
+	static {
+		FORMATS.add(IFormattedValues.NATURAL_FORMAT);
+		FORMATS.add(IFormattedValues.HEX_FORMAT);
+		FORMATS.add(IFormattedValues.DECIMAL_FORMAT);
+		FORMATS.add(IFormattedValues.OCTAL_FORMAT);
+		FORMATS.add(IFormattedValues.BINARY_FORMAT);
+		FORMATS.add(IFormattedValues.STRING_FORMAT);
+	}
 
-    private static IContributionItem[] NO_FORMAT_CONTRIBUTION_ITEMS = new IContributionItem[] { 
-    	new ContributionItem() {
-            @Override
-			public void fill(Menu menu, int index) {
-				MenuItem item = new MenuItem(menu, SWT.NONE);
-				item.setEnabled(false);
-				item.setText(MessagesForNumberFormat.NumberFormatContribution_EmptyFormatsList_label);
+	private class SelectNumberFormatAction extends Action {
+		private final IPresentationContext fContext;
+		private final String fFormatId;
+
+		SelectNumberFormatAction(IPresentationContext context, String formatId) {
+			super(FormattedValueVMUtil.getFormatLabel(formatId), AS_RADIO_BUTTON);
+			fContext = context;
+			fFormatId = formatId;
+		}
+
+		@Override
+		public void run() {
+			if (isChecked()) {
+				fContext.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE, fFormatId);
 			}
-	
-            @Override
-			public boolean isEnabled() {
-				return false;
-			}
-    	}
-    };
-    
-    @Override
-    protected IContributionItem[] getContributionItems() {
-        IVMProvider provider = VMHandlerUtils.getActiveVMProvider(fServiceLocator);
+		}
+	}
 
-        // If no part or selection, disable all.
-        if (provider == null) {
-            return NO_FORMAT_CONTRIBUTION_ITEMS;
-        }
-        
-        IPresentationContext context = provider.getPresentationContext(); 
-        Object activeId = context.getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
-        if (activeId == null) {
-            activeId = IFormattedValues.NATURAL_FORMAT;
-        }
-        
-        List<Action> actions = new ArrayList<Action>(FORMATS.size());
-        for (String formatId : FORMATS) {
-            Action action = new SelectNumberFormatAction(context, formatId);
-            if (formatId.equals(activeId)) {
-                action.setChecked(true);
-            }
-            actions.add(action);
-        }
-        
-        if ( actions.isEmpty() ) {
-            return NO_FORMAT_CONTRIBUTION_ITEMS;
-        }
-        
-        IContributionItem[] items = new IContributionItem[actions.size()];
-        for (int i = 0; i < actions.size(); i++) {
-            items[i] = new ActionContributionItem(actions.get(i));
-        }
-        return items;
-    }
-    
-    @Override
+	protected IServiceLocator fServiceLocator;
+
+	private static IContributionItem[] NO_FORMAT_CONTRIBUTION_ITEMS = new IContributionItem[] { new ContributionItem() {
+		@Override
+		public void fill(Menu menu, int index) {
+			MenuItem item = new MenuItem(menu, SWT.NONE);
+			item.setEnabled(false);
+			item.setText(MessagesForNumberFormat.NumberFormatContribution_EmptyFormatsList_label);
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return false;
+		}
+	} };
+
+	@Override
+	protected IContributionItem[] getContributionItems() {
+		IVMProvider provider = VMHandlerUtils.getActiveVMProvider(fServiceLocator);
+
+		// If no part or selection, disable all.
+		if (provider == null) {
+			return NO_FORMAT_CONTRIBUTION_ITEMS;
+		}
+
+		IPresentationContext context = provider.getPresentationContext();
+		Object activeId = context.getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
+		if (activeId == null) {
+			activeId = IFormattedValues.NATURAL_FORMAT;
+		}
+
+		List<Action> actions = new ArrayList<Action>(FORMATS.size());
+		for (String formatId : FORMATS) {
+			Action action = new SelectNumberFormatAction(context, formatId);
+			if (formatId.equals(activeId)) {
+				action.setChecked(true);
+			}
+			actions.add(action);
+		}
+
+		if (actions.isEmpty()) {
+			return NO_FORMAT_CONTRIBUTION_ITEMS;
+		}
+
+		IContributionItem[] items = new IContributionItem[actions.size()];
+		for (int i = 0; i < actions.size(); i++) {
+			items[i] = new ActionContributionItem(actions.get(i));
+		}
+		return items;
+	}
+
+	@Override
 	public void initialize(IServiceLocator serviceLocator) {
-        fServiceLocator = serviceLocator;
-    }
+		fServiceLocator = serviceLocator;
+	}
 }

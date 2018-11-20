@@ -46,48 +46,56 @@ import org.eclipse.swt.widgets.Label;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildToolSettingUI extends AbstractToolSettingUI {
-	
+
 	//  Label class for a preference page.
 	class LabelFieldEditor extends FieldEditor {
 		private String fTitle;
 		private Label fTitleLabel;
 
-		public LabelFieldEditor( Composite parent, String title ) {
+		public LabelFieldEditor(Composite parent, String title) {
 			fTitle = title;
-			this.createControl( parent );
+			this.createControl(parent);
 		}
 
 		@Override
-		protected void adjustForNumColumns( int numColumns ) {
-			((GridData)fTitleLabel.getLayoutData()).horizontalSpan = 2;
+		protected void adjustForNumColumns(int numColumns) {
+			((GridData) fTitleLabel.getLayoutData()).horizontalSpan = 2;
 		}
 
 		@Override
-		protected void doFillIntoGrid( Composite parent, int numColumns ) {
-			fTitleLabel = new Label( parent, SWT.WRAP );
-			fTitleLabel.setText( fTitle );
+		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			fTitleLabel = new Label(parent, SWT.WRAP);
+			fTitleLabel.setText(fTitle);
 			GridData gd = new GridData();
 			gd.verticalAlignment = SWT.TOP;
 			gd.grabExcessHorizontalSpace = false;
 			gd.horizontalSpan = 2;
-			fTitleLabel.setLayoutData( gd );
+			fTitleLabel.setLayoutData(gd);
 		}
 
 		@Override
-		public int getNumberOfControls() {	return 1; }
+		public int getNumberOfControls() {
+			return 1;
+		}
+
 		/**
 		 * The label field editor is only used to present a text label on a preference page.
 		 */
 		@Override
-		protected void doLoad() {}
+		protected void doLoad() {
+		}
+
 		@Override
-		protected void doLoadDefault() {}
+		protected void doLoadDefault() {
+		}
+
 		@Override
-		protected void doStore() {}
+		protected void doStore() {
+		}
 	}
 
 	// Data members
-	
+
 	// all build options field editor label
 	private static final String ALL_OPTIONS = Messages.BuildToolSettingsPage_alloptions;
 
@@ -110,9 +118,8 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	private ITool fTool;
 	// Map that holds all user object options and its values
 	private HashMap<IOption, String> userObjsMap;
-	
-	public BuildToolSettingUI(AbstractCBuildPropertyTab page,
-			IResourceInfo info, ITool _tool) {
+
+	public BuildToolSettingUI(AbstractCBuildPropertyTab page, IResourceInfo info, ITool _tool) {
 		// Cache the configuration and tool this page is for
 		//TODO: 
 		super(info);
@@ -121,7 +128,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		stringOptionsMap = new HashMap<String, String>();
 		userObjsMap = new HashMap<IOption, String>();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
 	 */
@@ -137,47 +144,43 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 */
 	@Override
 	protected void createFieldEditors() {
-		
+
 		// Load up the preference store
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
 		Composite parent = getFieldEditorParent();
 		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
-		commandStringField = new StringFieldEditor(fTool.getId(),
-				Messages.BuildToolSettingsPage_tool_command,
-				parent);
+		commandStringField = new StringFieldEditor(fTool.getId(), Messages.BuildToolSettingsPage_tool_command, parent);
 		commandStringField.setEmptyStringAllowed(false);
-		GridData gd = ((GridData)commandStringField.getTextControl(parent).getLayoutData());
+		GridData gd = ((GridData) commandStringField.getTextControl(parent).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 3);
 		addField(commandStringField);
 		// Add a field editor that displays overall build options
 		Composite par = getFieldEditorParent();
-		allOptionFieldEditor = new MultiLineTextFieldEditor(ToolSettingsPrefStore.ALL_OPTIONS_ID,
-				ALL_OPTIONS, par);
+		allOptionFieldEditor = new MultiLineTextFieldEditor(ToolSettingsPrefStore.ALL_OPTIONS_ID, ALL_OPTIONS, par);
 		allOptionFieldEditor.getTextControl(par).setEditable(false);
-//		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
+		//		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(allOptionFieldEditor);
-		
-		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) );
-		addField( createLabelEditor( getFieldEditorParent(), Messages.BuildToolSettingsPage_tool_advancedSettings ) );
-		
+
+		addField(createLabelEditor(getFieldEditorParent(), WHITESPACE));
+		addField(createLabelEditor(getFieldEditorParent(), Messages.BuildToolSettingsPage_tool_advancedSettings));
+
 		// Add a string editor to edit the tool command line pattern
 		parent = getFieldEditorParent();
 		commandLinePatternField = new StringFieldEditor(fTool.getId() + ToolSettingsPrefStore.COMMAND_LINE_SUFFIX,
-				Messages.BuildToolSettingsPage_tool_commandLinePattern,
-				parent);
-		gd = ((GridData)commandLinePatternField.getTextControl(parent).getLayoutData());
+				Messages.BuildToolSettingsPage_tool_commandLinePattern, parent);
+		gd = ((GridData) commandLinePatternField.getTextControl(parent).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
-		gd.widthHint =  Dialog.convertWidthInCharsToPixels(fm,30);
+		gd.widthHint = Dialog.convertWidthInCharsToPixels(fm, 30);
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(commandLinePatternField);
-	}		
+	}
 
-	protected FieldEditor createLabelEditor( Composite parent, String title ) {
-		return new LabelFieldEditor( parent, title );
+	protected FieldEditor createLabelEditor(Composite parent, String title) {
+		return new LabelFieldEditor(parent, title);
 	}
 
 	/**
@@ -211,29 +214,30 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * @param rawOptionString
 	 * @return Vector containing all options
 	 */
-	private Vector<String> getOptionVector(String rawOptionString){
-		Vector<String> tokens = new Vector<String>(Arrays.asList(rawOptionString.split("\\s")));	//$NON-NLS-1$
+	private Vector<String> getOptionVector(String rawOptionString) {
+		Vector<String> tokens = new Vector<String>(Arrays.asList(rawOptionString.split("\\s"))); //$NON-NLS-1$
 		Vector<String> output = new Vector<String>(tokens.size());
 
 		Iterator<String> iter = tokens.iterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			String token = iter.next();
-			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
-			int lastIndex = token.lastIndexOf("\"");	//$NON-NLS-1$
+			int firstIndex = token.indexOf("\""); //$NON-NLS-1$
+			int lastIndex = token.lastIndexOf("\""); //$NON-NLS-1$
 			if (firstIndex != -1 && firstIndex == lastIndex) {
 				// Keep looking
 				while (iter.hasNext()) {
 					String nextToken = iter.next();
 					token += WHITESPACE + nextToken;
-					if (nextToken.indexOf("\"") != -1) break;	//$NON-NLS-1$
+					if (nextToken.indexOf("\"") != -1) //$NON-NLS-1$
+						break;
 				}
 			}
 			output.add(token);
 		}
-		
+
 		return output;
 	}
-	
+
 	/**
 	 * Look for ${VALUE} in the command string
 	 */
@@ -255,7 +259,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * This method parses the string that is entered in the all build option
 	 * field editor and stores the options to the corresponding option fields.
@@ -294,71 +298,68 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 						// and also change the preference store based on
 						// the option value
 						switch (opt.getValueType()) {
-							case IOption.BOOLEAN :
-								String boolCommand;
-								boolCommand = opt.getCommand();
-								if (boolCommand != null && boolCommand.equals(optionValue)) {
-											setOption(opt, true);
+						case IOption.BOOLEAN:
+							String boolCommand;
+							boolCommand = opt.getCommand();
+							if (boolCommand != null && boolCommand.equals(optionValue)) {
+								setOption(opt, true);
+								optionValueExist = true;
+							}
+							boolCommand = opt.getCommandFalse();
+							if (boolCommand != null && boolCommand.equals(optionValue)) {
+								setOption(opt, false);
+								optionValueExist = true;
+							}
+							break;
+						case IOption.ENUMERATED:
+							String enumeration = ""; //$NON-NLS-1$
+							String[] enumValues = opt.getApplicableValues();
+							for (int i = 0; i < enumValues.length; i++) {
+								if (opt.getEnumCommand(enumValues[i]).equals(optionValue)) {
+									enumeration = enumValues[i];
 									optionValueExist = true;
 								}
-								boolCommand = opt.getCommandFalse();
-								if (boolCommand != null && boolCommand.equals(optionValue)) {
-											setOption(opt, false);
+							}
+							if (!enumeration.isEmpty())
+								setOption(opt, enumeration);
+							break;
+						case IOption.TREE:
+							String selectedID = ""; //$NON-NLS-1$
+							ITreeRoot treeRoot = opt.getTreeRoot();
+							String[] treeValues = opt.getApplicableValues();
+							for (int i = 0; i < treeValues.length; i++) {
+								if (opt.getCommand(treeValues[i]).equals(optionValue)) {
+									selectedID = treeValues[i];
 									optionValueExist = true;
 								}
-								break;
-							case IOption.ENUMERATED :
-								String enumeration = ""; //$NON-NLS-1$
-								String[] enumValues = opt.getApplicableValues();
-								for (int i = 0; i < enumValues.length; i++) {
-									if (opt.getEnumCommand(enumValues[i]).equals(
-											optionValue)) {
-										enumeration = enumValues[i];
-										optionValueExist = true;
-									}
-								}
-								if (!enumeration.isEmpty())
-											setOption(opt, enumeration);
-								break;
-							case IOption.TREE :
-								String selectedID = ""; //$NON-NLS-1$
-								ITreeRoot treeRoot = opt.getTreeRoot();
-								String[] treeValues = opt.getApplicableValues();
-								for (int i = 0; i < treeValues.length; i++) {
-									if (opt.getCommand(treeValues[i]).equals(
-											optionValue)) {
-										selectedID = treeValues[i];
-										optionValueExist = true;
-									}
-								}
-								if (!selectedID.isEmpty())
-											setOption(opt, selectedID);
-								break;
-							case IOption.STRING_LIST :
-							case IOption.INCLUDE_PATH :
-							case IOption.PREPROCESSOR_SYMBOLS :
-							case IOption.LIBRARIES :
-							case IOption.INCLUDE_FILES:
-							case IOption.LIBRARY_PATHS:
-							case IOption.LIBRARY_FILES:
-							case IOption.MACRO_FILES:
-							case IOption.UNDEF_INCLUDE_PATH:
-							case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-							case IOption.UNDEF_INCLUDE_FILES:
-							case IOption.UNDEF_LIBRARY_PATHS:
-							case IOption.UNDEF_LIBRARY_FILES:
-							case IOption.UNDEF_MACRO_FILES:
-								if (opt.getCommand() != null
-										&& optionValue.startsWith(opt
-												.getCommand())) {
-									optionsList.add(optionValue);
-									optionValueExist = true;
-								}
-								break;
-							default :
-								break;
+							}
+							if (!selectedID.isEmpty())
+								setOption(opt, selectedID);
+							break;
+						case IOption.STRING_LIST:
+						case IOption.INCLUDE_PATH:
+						case IOption.PREPROCESSOR_SYMBOLS:
+						case IOption.LIBRARIES:
+						case IOption.INCLUDE_FILES:
+						case IOption.LIBRARY_PATHS:
+						case IOption.LIBRARY_FILES:
+						case IOption.MACRO_FILES:
+						case IOption.UNDEF_INCLUDE_PATH:
+						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+						case IOption.UNDEF_INCLUDE_FILES:
+						case IOption.UNDEF_LIBRARY_PATHS:
+						case IOption.UNDEF_LIBRARY_FILES:
+						case IOption.UNDEF_MACRO_FILES:
+							if (opt.getCommand() != null && optionValue.startsWith(opt.getCommand())) {
+								optionsList.add(optionValue);
+								optionValueExist = true;
+							}
+							break;
+						default:
+							break;
 						}
-					} catch (BuildException e) {}
+					} catch (BuildException e) {
+					}
 				}
 			}
 			// If the parsed string does not match with any previous option
@@ -383,8 +384,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 						if (alloptions.indexOf(vals[t]) != -1)
 							buf.append(vals[t]).append(ITool.WHITE_SPACE);
 					}
-					setOption(((IOption) key),
-							buf.toString().trim());
+					setOption(((IOption) key), buf.toString().trim());
 				}
 			}
 		}
@@ -413,48 +413,45 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			//String[] listVal = null;
 			try {
 				switch (opt.getValueType()) {
-					case IOption.BOOLEAN :
-						ArrayList<String> optsList = new ArrayList<String>(optionsArr);
-						if (opt.getCommand() != null 
-								&& opt.getCommand().length() > 0  
-								&& !optsList.contains(opt.getCommand()))
-							setOption(opt, false);
-						if (opt.getCommandFalse() != null 
-								&& opt.getCommandFalse().length() > 0  
-								&& !optsList.contains(opt.getCommandFalse()))
-							setOption(opt, true);
-						break;
-					case IOption.STRING :
-						// TODO create a lst of valid default string options for the tool
-						if (getDefaultOptionNames().contains(opt.getName())) {
-							String newOptions = opt.getStringValue();
-							if (addnOptions.length() > 0) {
-								newOptions = newOptions + ITool.WHITE_SPACE
-										+ addnOptions.toString().trim();
-							}
-							setOption(opt, newOptions);
+				case IOption.BOOLEAN:
+					ArrayList<String> optsList = new ArrayList<String>(optionsArr);
+					if (opt.getCommand() != null && opt.getCommand().length() > 0
+							&& !optsList.contains(opt.getCommand()))
+						setOption(opt, false);
+					if (opt.getCommandFalse() != null && opt.getCommandFalse().length() > 0
+							&& !optsList.contains(opt.getCommandFalse()))
+						setOption(opt, true);
+					break;
+				case IOption.STRING:
+					// TODO create a lst of valid default string options for the tool
+					if (getDefaultOptionNames().contains(opt.getName())) {
+						String newOptions = opt.getStringValue();
+						if (addnOptions.length() > 0) {
+							newOptions = newOptions + ITool.WHITE_SPACE + addnOptions.toString().trim();
 						}
-						break;
-					case IOption.STRING_LIST :
-					case IOption.INCLUDE_PATH :
-					case IOption.PREPROCESSOR_SYMBOLS :
-					case IOption.LIBRARIES :
-						ArrayList<String> newList = new ArrayList<String>();
-						for (String s : optionsList) {
-							if (opt.getCommand() != null
-									&& s.startsWith(opt.getCommand())) {
-								newList.add(s.substring(opt.getCommand().length()));
-							}
+						setOption(opt, newOptions);
+					}
+					break;
+				case IOption.STRING_LIST:
+				case IOption.INCLUDE_PATH:
+				case IOption.PREPROCESSOR_SYMBOLS:
+				case IOption.LIBRARIES:
+					ArrayList<String> newList = new ArrayList<String>();
+					for (String s : optionsList) {
+						if (opt.getCommand() != null && s.startsWith(opt.getCommand())) {
+							newList.add(s.substring(opt.getCommand().length()));
 						}
-						String[] strlist = new String[newList.size()];
-						newList.toArray(strlist);
-						newList.clear();
-						setOption(opt, strlist);
-						break;
-					default :
-						break;
+					}
+					String[] strlist = new String[newList.size()];
+					newList.toArray(strlist);
+					newList.clear();
+					setOption(opt, strlist);
+					break;
+				default:
+					break;
 				}
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 	}
 
@@ -466,22 +463,25 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		}
 	}
 
-	protected void setOption(IOption option, boolean value){
-		try{
-			fInfo.setOption(fTool,option,value);
-		} catch (BuildException e){}
-	}
-	
-	protected void setOption(IOption option, String value){
-		try{ 
-			fInfo.setOption(fTool,option,value);
-		} catch (BuildException e){}
+	protected void setOption(IOption option, boolean value) {
+		try {
+			fInfo.setOption(fTool, option, value);
+		} catch (BuildException e) {
+		}
 	}
 
-	protected void setOption(IOption option, String value[]){
-		try{
-			fInfo.setOption(fTool,option,value);
-		} catch (BuildException e){	}
+	protected void setOption(IOption option, String value) {
+		try {
+			fInfo.setOption(fTool, option, value);
+		} catch (BuildException e) {
+		}
+	}
+
+	protected void setOption(IOption option, String value[]) {
+		try {
+			fInfo.setOption(fTool, option, value);
+		} catch (BuildException e) {
+		}
 	}
 
 	/* (non-Javadoc)
@@ -491,7 +491,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	public boolean performOk() {
 		return super.performOk();
 	}
-	
+
 	/**
 	 * Update the field editor that displays all the build options
 	 */
@@ -499,34 +499,32 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	public void updateFields() {
 		allOptionFieldEditor.load();
 	}
-	
+
 	@Override
-	public void setValues(){
+	public void setValues() {
 		commandStringField.load();
 		commandLinePatternField.load();
 		updateFields();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);
-		
+
 		if (fInfo instanceof MultiResourceInfo) {
-			MultiResourceInfo mri = (MultiResourceInfo)fInfo;
-			if(event.getSource() == commandStringField){
+			MultiResourceInfo mri = (MultiResourceInfo) fInfo;
+			if (event.getSource() == commandStringField) {
 				mri.setToolsCommand(fTool, commandStringField.getStringValue());
 				updateFields();
-			}
-			else if(event.getSource() == commandLinePatternField){
+			} else if (event.getSource() == commandLinePatternField) {
 				mri.setCommandLinePattern(fTool, commandLinePatternField.getStringValue());
 			}
 		} else {
-			if(event.getSource() == commandStringField){
+			if (event.getSource() == commandStringField) {
 				fTool.setToolCommand(commandStringField.getStringValue());
 				updateFields();
-			}
-			else if(event.getSource() == commandLinePatternField){
+			} else if (event.getSource() == commandLinePatternField) {
 				fTool.setCommandLinePattern(commandLinePatternField.getStringValue());
 			}
 		}

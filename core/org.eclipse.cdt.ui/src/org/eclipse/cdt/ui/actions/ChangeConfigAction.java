@@ -32,7 +32,7 @@ public class ChangeConfigAction extends Action {
 
 	private String fConfigName = null;
 	protected HashSet<IProject> fProjects = null;
-	
+
 	/**
 	 * Constructs the action.
 	 * @param projects List of selected managed-built projects 
@@ -44,7 +44,7 @@ public class ChangeConfigAction extends Action {
 		fProjects = projects;
 		fConfigName = configName;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -55,7 +55,7 @@ public class ChangeConfigAction extends Action {
 			IProject prj = iter.next();
 			ICProjectDescription prjd = CDTPropertyManager.getProjectDescription(prj);
 			boolean changed = false;
-			ICConfigurationDescription[] configs = prjd.getConfigurations(); 
+			ICConfigurationDescription[] configs = prjd.getConfigurations();
 			if (configs != null && configs.length > 0) {
 				for (ICConfigurationDescription config : configs) {
 					if (config.getName().equals(fConfigName)) {
@@ -67,8 +67,8 @@ public class ChangeConfigAction extends Action {
 					}
 				}
 			}
-			
-			if(!changed)
+
+			if (!changed)
 				CDTPropertyManager.performCancel(null);
 		}
 	}

@@ -21,27 +21,27 @@ import org.eclipse.core.runtime.CoreException;
  * @since 7.5
  */
 public interface ICDynamicPrintf extends ICLineBreakpoint {
-    /** 
-     * Breakpoint marker type for this breakpoint type.
-     */
-    public static final String C_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cDynamicPrintfMarker"; //$NON-NLS-1$
+	/** 
+	 * Breakpoint marker type for this breakpoint type.
+	 */
+	public static final String C_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cDynamicPrintfMarker"; //$NON-NLS-1$
 
-    /** 
-     * Breakpoint marker type for this breakpoint type.
-     */
-    public static final String C_LINE_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cLineDynamicPrintfMarker"; //$NON-NLS-1$
-    
-    /** 
-     * Breakpoint marker type for this breakpoint type.
-     */
-    public static final String C_ADDRESS_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cAddressDynamicPrintfMarker"; //$NON-NLS-1$
+	/** 
+	 * Breakpoint marker type for this breakpoint type.
+	 */
+	public static final String C_LINE_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cLineDynamicPrintfMarker"; //$NON-NLS-1$
 
-    /** 
-     * Breakpoint marker type for this breakpoint type.
-     */
-    public static final String C_FUNCTION_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cFunctionDynamicPrintfMarker"; //$NON-NLS-1$
+	/** 
+	 * Breakpoint marker type for this breakpoint type.
+	 */
+	public static final String C_ADDRESS_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cAddressDynamicPrintfMarker"; //$NON-NLS-1$
 
-    /**
+	/** 
+	 * Breakpoint marker type for this breakpoint type.
+	 */
+	public static final String C_FUNCTION_DYNAMICPRINTF_MARKER = "org.eclipse.cdt.debug.core.cFunctionDynamicPrintfMarker"; //$NON-NLS-1$
+
+	/**
 	 * Dynamic printf attribute storing the string to be printed (value
 	 * <code>"org.eclipse.cdt.debug.core.printf_string"</code>). This attribute
 	 * is a <code>String</code>.

@@ -23,23 +23,22 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 @SuppressWarnings("restriction")
 @ThreadSafe
-public class GdbExtendedViewModelAdapter extends GdbViewModelAdapter
-{
-    public GdbExtendedViewModelAdapter(DsfSession session, SteppingController controller) {
-        super(session, controller);
-    }    
+public class GdbExtendedViewModelAdapter extends GdbViewModelAdapter {
+	public GdbExtendedViewModelAdapter(DsfSession session, SteppingController controller) {
+		super(session, controller);
+	}
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-    
-    @Override
-    protected IVMProvider createViewModelProvider(IPresentationContext context) {
-        if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
-            return new GdbExtendedLaunchVMProvider(this, context, getSession()); 
-        } else {
-        	return super.createViewModelProvider(context);
-        }
-    }    
+	@Override
+	public void dispose() {
+		super.dispose();
+	}
+
+	@Override
+	protected IVMProvider createViewModelProvider(IPresentationContext context) {
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
+			return new GdbExtendedLaunchVMProvider(this, context, getSession());
+		} else {
+			return super.createViewModelProvider(context);
+		}
+	}
 }

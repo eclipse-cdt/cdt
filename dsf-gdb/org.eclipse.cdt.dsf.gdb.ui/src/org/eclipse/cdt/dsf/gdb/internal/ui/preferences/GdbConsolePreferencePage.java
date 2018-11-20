@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class GdbConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	private static final int MIN_BUFFER_LINES = 16;  /* minimum of ~1000 chars */
+	private static final int MIN_BUFFER_LINES = 16; /* minimum of ~1000 chars */
 	// Instead of using a maximum of Integer.MAX_VALUE (which is some obscure number),
 	// let's use a well defined limit e.g. 2 billion lines, which is readable.
 	private static final int MAX_BUFFER_LINES = 2000000000;
@@ -58,9 +58,11 @@ public class GdbConsolePreferencePage extends FieldEditorPreferencePage implemen
 	}
 
 	private void setupEditors() {
-		BooleanFieldEditor invertColors = new BooleanFieldEditor(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS,
+		BooleanFieldEditor invertColors = new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS,
 				MessagesForPreferences.GdbConsolePreferencePage_InvertColors, getFieldEditorParent());
-		IntegerFieldEditor editorBufferSize = new IntegerFieldEditor(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES,
+		IntegerFieldEditor editorBufferSize = new IntegerFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES,
 				MessagesForPreferences.GdbConsolePreferencePage_BufferLines, getFieldEditorParent());
 
 		editorBufferSize.setValidRange(MIN_BUFFER_LINES, MAX_BUFFER_LINES);

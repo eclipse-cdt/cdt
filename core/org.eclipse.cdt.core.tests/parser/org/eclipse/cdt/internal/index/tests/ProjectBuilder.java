@@ -54,13 +54,12 @@ class ProjectBuilder {
 	}
 
 	ICProject create() throws Exception {
-		ICProject result = cpp ?
-				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
-				CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
+		ICProject result = cpp ? CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER)
+				: CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 
-		IFile lastFile= null;
+		IFile lastFile = null;
 		for (Map.Entry<String, String> entry : path2content.entrySet()) {
-			lastFile= TestSourceReader.createFile(result.getProject(), new Path(entry.getKey()), entry.getValue());
+			lastFile = TestSourceReader.createFile(result.getProject(), new Path(entry.getKey()), entry.getValue());
 		}
 
 		IProjectDescription desc = result.getProject().getDescription();
@@ -72,7 +71,7 @@ class ProjectBuilder {
 		if (lastFile != null) {
 			// Call reindex explicitly since setting indexer ID doesn't trigger reindexing.
 			indexManager.reindex(result);
-			IIndex index= indexManager.getIndex(result);
+			IIndex index = indexManager.getIndex(result);
 			BaseTestCase.waitUntilFileIsIndexed(index, lastFile);
 		}
 		BaseTestCase.waitForIndexer(result);

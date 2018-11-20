@@ -39,7 +39,8 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(ProblemBindingChecker.ERR_ID_FieldResolutionProblem, ProblemBindingChecker.ERR_ID_MethodResolutionProblem,
+		enableProblems(ProblemBindingChecker.ERR_ID_FieldResolutionProblem,
+				ProblemBindingChecker.ERR_ID_MethodResolutionProblem,
 				ProblemBindingChecker.ERR_ID_VariableResolutionProblem);
 	}
 

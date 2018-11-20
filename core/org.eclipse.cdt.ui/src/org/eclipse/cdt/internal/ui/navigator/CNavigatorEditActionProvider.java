@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
  * Common Navigator action provider for clipboard actions.
  */
 public class CNavigatorEditActionProvider extends CommonActionProvider {
-	 
+
 	private CNavigatorEditActionGroup fEditGroup;
 	private GenerateActionGroup fGenerateGroup;
 
@@ -41,16 +41,16 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
 		super.init(anActionSite);
-		
+
 		fEditGroup = new CNavigatorEditActionGroup(anActionSite.getViewSite().getShell());
 
-		ICommonViewerWorkbenchSite workbenchSite= null;
+		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (anActionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			workbenchSite= (ICommonViewerWorkbenchSite) anActionSite.getViewSite();
+			workbenchSite = (ICommonViewerWorkbenchSite) anActionSite.getViewSite();
 		}
 		if (workbenchSite != null) {
 			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
-				IViewPart viewPart= (IViewPart) workbenchSite.getPart();
+				IViewPart viewPart = (IViewPart) workbenchSite.getPart();
 
 				fGenerateGroup = new GenerateActionGroup(viewPart);
 			}
@@ -72,7 +72,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
 	@Override
-	public void fillActionBars(IActionBars actionBars) { 
+	public void fillActionBars(IActionBars actionBars) {
 		fEditGroup.fillActionBars(actionBars);
 		if (fGenerateGroup != null) {
 			fGenerateGroup.fillActionBars(actionBars);
@@ -83,7 +83,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
-	public void fillContextMenu(IMenuManager menu) { 
+	public void fillContextMenu(IMenuManager menu) {
 		fEditGroup.fillContextMenu(menu);
 		if (fGenerateGroup != null) {
 			fGenerateGroup.fillContextMenu(menu);
@@ -94,7 +94,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
 	@Override
-	public void setContext(ActionContext context) { 
+	public void setContext(ActionContext context) {
 		if (context != null) {
 			// convert non-IResource to IResources on the fly
 			ISelection selection = SelectionConverter.convertSelectionToResources(context.getSelection());
@@ -111,7 +111,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */
 	@Override
-	public void updateActionBars() { 
+	public void updateActionBars() {
 		fEditGroup.updateActionBars();
 		if (fGenerateGroup != null) {
 			fGenerateGroup.updateActionBars();

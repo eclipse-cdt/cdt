@@ -23,11 +23,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MIExecReverseNextInstruction extends MICommand<MIInfo> {
 
-    public MIExecReverseNextInstruction(IExecutionDMContext dmc) {
-        this(dmc, 1);
-    }
+	public MIExecReverseNextInstruction(IExecutionDMContext dmc) {
+		this(dmc, 1);
+	}
 
-    public MIExecReverseNextInstruction(IExecutionDMContext dmc, int count) {
-        super(dmc, "-interpreter-exec", new String[] {"console", "reverse-nexti " + Integer.toString(count) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+	public MIExecReverseNextInstruction(IExecutionDMContext dmc, int count) {
+		super(dmc, "-interpreter-exec", new String[] { "console", "reverse-nexti " + Integer.toString(count) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }

@@ -15,12 +15,13 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.ui.newui.AbstractPage;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class Page_Variables extends AbstractPage {
 	@Override
-	protected boolean isSingle() { return true; }
+	protected boolean isSingle() {
+		return true;
+	}
 }

@@ -28,13 +28,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * address will be printed as well.
  * 
  */
-public class MIExecNextInstruction extends MICommand<MIInfo> 
-{
-    public MIExecNextInstruction(IExecutionDMContext dmc) {
-        this(dmc, 1);
-    }
+public class MIExecNextInstruction extends MICommand<MIInfo> {
+	public MIExecNextInstruction(IExecutionDMContext dmc) {
+		this(dmc, 1);
+	}
 
-    public MIExecNextInstruction(IExecutionDMContext dmc, int count) {
-        super(dmc, "-exec-next-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
-    }
+	public MIExecNextInstruction(IExecutionDMContext dmc, int count) {
+		super(dmc, "-exec-next-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	}
 }

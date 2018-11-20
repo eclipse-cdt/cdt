@@ -18,6 +18,6 @@ package org.eclipse.cdt.core.parser;
  */
 public interface IParserLogService {
 	public void traceLog(String message);
-	
+
 	public boolean isTracing();
 }

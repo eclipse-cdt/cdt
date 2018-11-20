@@ -37,15 +37,15 @@ public class CEditorColoringPreferencePage extends AbstractConfigurationBlockPre
 
 	@Override
 	protected void setDescription() {
-		String description= PreferencesMessages.CEditorPreferencePage_colors; 
+		String description = PreferencesMessages.CEditorPreferencePage_colors;
 		setDescription(description);
 	}
-	
+
 	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null;
 	}
-	
+
 	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());

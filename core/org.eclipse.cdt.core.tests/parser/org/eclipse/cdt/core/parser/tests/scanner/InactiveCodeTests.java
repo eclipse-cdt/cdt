@@ -18,36 +18,35 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 import junit.framework.TestSuite;
 
-
 /**
  * Tests for using the preprocessor on inactive code
  */
 public class InactiveCodeTests extends PreprocessorTestsBase {
-	
+
 	public static TestSuite suite() {
 		return suite(InactiveCodeTests.class);
 	}
-	
+
 	@Override
 	protected void initializeScanner() throws Exception {
 		super.initializeScanner();
 		fScanner.setProcessInactiveCode(true);
 	}
-	
+
 	private void validate(char[] activeInactive) throws Exception {
-		boolean active= true;
+		boolean active = true;
 		for (char c : activeInactive) {
-			switch(c) {
+			switch (c) {
 			case 'a':
 				if (!active) {
 					validateToken(IToken.tINACTIVE_CODE_END);
-					active= true;
+					active = true;
 				}
 				validateIdentifier("a");
 				break;
 			case 'i':
 				validateToken(active ? IToken.tINACTIVE_CODE_START : IToken.tINACTIVE_CODE_SEPARATOR);
-				active= false;
+				active = false;
 				validateIdentifier("i");
 				break;
 			default:
@@ -55,7 +54,6 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 			}
 		}
 	}
-
 
 	// #define D
 	// #ifdef D
@@ -144,7 +142,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validate("aiiiaiaiiaiiaiaiia".toCharArray());
 		validateEOF();
 	}
-	
+
 	// #if 1
 	//   a
 	// #elif 1
@@ -229,7 +227,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validate("iiiiiaiiiiiaiiiiia".toCharArray());
 		validateEOF();
 	}
-	
+
 	// #if 0
 	//    i
 	//    #define M
@@ -245,7 +243,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validateEOF();
 		assertNull(fScanner.getMacroDefinitions().get("M"));
 	}
-	
+
 	//	#ifdef X
 	//	# if 0
 	//	# endif
@@ -258,7 +256,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	//	"part1"
 	//	#ifdef SOME_OPTION
 	//	   "part2"

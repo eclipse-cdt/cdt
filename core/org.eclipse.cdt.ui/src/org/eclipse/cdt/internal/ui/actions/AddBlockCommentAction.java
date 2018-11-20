@@ -50,23 +50,23 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	public AddBlockCommentAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
-	
-	@Override
-	protected void runInternal(ITextSelection selection,
-			IDocumentExtension3 docExtension, Edit.EditFactory factory)
-			throws BadLocationException, BadPartitioningException {
-		
-		if ( !(docExtension instanceof IDocument) ) return;
-		
-		List<Edit> edits= new LinkedList<Edit>();
 
-		ITypedRegion firstPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING,
-				selection.getOffset(), false);
+	@Override
+	protected void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory)
+			throws BadLocationException, BadPartitioningException {
+
+		if (!(docExtension instanceof IDocument))
+			return;
+
+		List<Edit> edits = new LinkedList<Edit>();
+
+		ITypedRegion firstPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING, selection.getOffset(),
+				false);
 		ITypedRegion lastPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING,
 				selection.getOffset() + selection.getLength() - 1, false);
-		
+
 		int commentAreaStart = selection.getOffset();
-		int commentAreaEnd = selection.getOffset()+selection.getLength();
+		int commentAreaEnd = selection.getOffset() + selection.getLength();
 		// Include special partitions fully in the comment area
 		if (isSpecialPartition(firstPartition.getType())) {
 			commentAreaStart = firstPartition.getOffset();
@@ -74,14 +74,13 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		if (isSpecialPartition(lastPartition.getType())) {
 			commentAreaEnd = lastPartition.getOffset() + lastPartition.getLength();
 		}
-		Region estimatedCommentArea = new Region(commentAreaStart,commentAreaEnd-commentAreaStart);
+		Region estimatedCommentArea = new Region(commentAreaStart, commentAreaEnd - commentAreaStart);
 
-		
-		Region commentArea = handleEnclosingPartitions(estimatedCommentArea, lastPartition,
-				(IDocument)docExtension, factory, edits);
+		Region commentArea = handleEnclosingPartitions(estimatedCommentArea, lastPartition, (IDocument) docExtension,
+				factory, edits);
 
 		handleInteriorPartition(commentArea, firstPartition, docExtension, factory, edits);
-		
+
 		executeEdits(edits);
 	}
 
@@ -96,50 +95,51 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	 * @return new possibly adjusted comment area
 	 * @throws BadLocationException
 	 */
-	private Region handleEnclosingPartitions(Region commentArea,
-			ITypedRegion lastPartition, IDocument doc, Edit.EditFactory factory,
-			List<Edit> edits) throws BadLocationException {
-		
+	private Region handleEnclosingPartitions(Region commentArea, ITypedRegion lastPartition, IDocument doc,
+			Edit.EditFactory factory, List<Edit> edits) throws BadLocationException {
+
 		int commentAreaStart = commentArea.getOffset();
 		int commentAreaEnd = commentArea.getOffset() + commentArea.getLength();
-		
+
 		String commentStartTag = getCommentStart(); // "/*"
-		String commentEndTag   = getCommentEnd();   // "*/"
-		
+		String commentEndTag = getCommentEnd(); // "*/"
+
 		String startLineEOL = doc.getLineDelimiter(doc.getLineOfOffset(commentAreaStart));
-		if (startLineEOL==null) startLineEOL=""; //$NON-NLS-1$
-		String endLineEOL = doc.getLineDelimiter(doc.getLineOfOffset(commentAreaEnd-1));
-		if (endLineEOL==null) endLineEOL=""; //$NON-NLS-1$
-		
-		boolean isLeftEol = commentAreaStart<startLineEOL.length()
-			|| doc.get(commentAreaStart-startLineEOL.length(),startLineEOL.length()).equals(startLineEOL);
-		boolean isRightEol = doc.get(commentAreaEnd-endLineEOL.length(),endLineEOL.length()).equals(endLineEOL);
-		
+		if (startLineEOL == null)
+			startLineEOL = ""; //$NON-NLS-1$
+		String endLineEOL = doc.getLineDelimiter(doc.getLineOfOffset(commentAreaEnd - 1));
+		if (endLineEOL == null)
+			endLineEOL = ""; //$NON-NLS-1$
+
+		boolean isLeftEol = commentAreaStart < startLineEOL.length()
+				|| doc.get(commentAreaStart - startLineEOL.length(), startLineEOL.length()).equals(startLineEOL);
+		boolean isRightEol = doc.get(commentAreaEnd - endLineEOL.length(), endLineEOL.length()).equals(endLineEOL);
+
 		if (isLeftEol && isRightEol) {
 			// Block of full lines found
-			int areaStartLine = doc.getLineOfOffset(commentAreaStart+startLineEOL.length());
-			int areaEndLine = doc.getLineOfOffset(commentAreaEnd-endLineEOL.length());
-			if (areaStartLine!=areaEndLine) {
+			int areaStartLine = doc.getLineOfOffset(commentAreaStart + startLineEOL.length());
+			int areaEndLine = doc.getLineOfOffset(commentAreaEnd - endLineEOL.length());
+			if (areaStartLine != areaEndLine) {
 				// If multiple full lines arrange inserting comment tags on their own lines
-				commentStartTag = getCommentStart()+startLineEOL;
-				commentEndTag   = getCommentEnd()+endLineEOL;
+				commentStartTag = getCommentStart() + startLineEOL;
+				commentEndTag = getCommentEnd() + endLineEOL;
 			} else {
 				// If one full line insert end comment tag on the same line (before the EOL)
-				commentAreaEnd = commentAreaEnd-endLineEOL.length();
+				commentAreaEnd = commentAreaEnd - endLineEOL.length();
 			}
 		} else {
 			if (lastPartition.getType() == ICPartitions.C_SINGLE_LINE_COMMENT
 					|| lastPartition.getType() == ICPartitions.C_SINGLE_LINE_DOC_COMMENT) {
 				// C++ comments "//" partition ends with EOL, insert end comment tag before it
 				// on the same line, so we get something like /*// text*/
-				commentAreaEnd = commentAreaEnd-endLineEOL.length();
+				commentAreaEnd = commentAreaEnd - endLineEOL.length();
 			}
 		}
-		
+
 		edits.add(factory.createEdit(commentAreaStart, 0, commentStartTag));
 		edits.add(factory.createEdit(commentAreaEnd, 0, commentEndTag));
-		
-		return new Region(commentAreaStart,commentAreaEnd-commentAreaStart);
+
+		return new Region(commentAreaStart, commentAreaEnd - commentAreaStart);
 	}
 
 	/**
@@ -154,32 +154,31 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	 * @throws BadLocationException
 	 * @throws BadPartitioningException
 	 */
-	private void handleInteriorPartition(IRegion commentArea,
-			ITypedRegion partition, IDocumentExtension3 docExtension,
-			Edit.EditFactory factory, List<Edit> edits)
-			throws BadLocationException, BadPartitioningException {
-		
+	private void handleInteriorPartition(IRegion commentArea, ITypedRegion partition, IDocumentExtension3 docExtension,
+			Edit.EditFactory factory, List<Edit> edits) throws BadLocationException, BadPartitioningException {
+
 		int commentAreaEnd = commentArea.getOffset() + commentArea.getLength();
 		int prevPartitionEnd = -1;
-		int partitionEnd = partition.getOffset()+partition.getLength();
-		
+		int partitionEnd = partition.getOffset() + partition.getLength();
+
 		final int startCommentTokenLength = getCommentStart().length();
 		final int endCommentTokenLength = getCommentEnd().length();
-		
-		while (partitionEnd<=commentAreaEnd) {
+
+		while (partitionEnd <= commentAreaEnd) {
 			if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT
-					|| partition.getType() == ICPartitions.C_MULTI_LINE_DOC_COMMENT) {	
+					|| partition.getType() == ICPartitions.C_MULTI_LINE_DOC_COMMENT) {
 				// already in a comment - remove start/end tokens
 				edits.add(factory.createEdit(partition.getOffset(), startCommentTokenLength, "")); //$NON-NLS-1$
 				edits.add(factory.createEdit(partitionEnd - endCommentTokenLength, endCommentTokenLength, "")); //$NON-NLS-1$	
 			}
 			// advance to next partition
 			prevPartitionEnd = partitionEnd;
-			partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, partitionEnd, false);
+			partition = docExtension.getPartition(ICPartitions.C_PARTITIONING, partitionEnd, false);
 			partitionEnd = partition.getOffset() + partition.getLength();
-			
+
 			// break the loop if we get stuck and no advance was made
-			if (partitionEnd<=prevPartitionEnd) break;
+			if (partitionEnd <= prevPartitionEnd)
+				break;
 		}
 	}
 
@@ -198,6 +197,5 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	protected boolean isValidSelection(ITextSelection selection) {
 		return selection != null && !selection.isEmpty() && selection.getLength() > 0;
 	}
-
 
 }

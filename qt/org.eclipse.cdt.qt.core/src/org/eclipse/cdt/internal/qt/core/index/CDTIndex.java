@@ -48,14 +48,14 @@ public class CDTIndex {
 	public <T> T get(Accessor<T> accessor) {
 		try {
 			index.acquireReadLock();
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			return null;
 		}
 
 		try {
 			return accessor.access(index);
-		} catch(CoreException e) {
-			Activator.log( e );
+		} catch (CoreException e) {
+			Activator.log(e);
 		} finally {
 			index.releaseReadLock();
 		}

@@ -29,10 +29,10 @@ public class Scanner extends SimpleScanner {
 	public int eofPosition;
 	public int startPosition;
 
-    public Scanner() {
-    	setReuseToken(true);
-    	setSplitPreprocessor(false);
-    }
+	public Scanner() {
+		setReuseToken(true);
+		setSplitPreprocessor(false);
+	}
 
 	@Override
 	protected void init(Reader reader, String filename) {
@@ -46,10 +46,10 @@ public class Scanner extends SimpleScanner {
 	 * @param source  the source text
 	 */
 	public void setSource(char[] source) {
-		this.source= source;
-		fContext= new ScannerContext().initialize(new CharArrayReader(source));
-		startPosition= -1;
-		eofPosition= source.length;
+		this.source = source;
+		fContext = new ScannerContext().initialize(new CharArrayReader(source));
+		startPosition = -1;
+		eofPosition = source.length;
 	}
 
 	/**
@@ -60,12 +60,12 @@ public class Scanner extends SimpleScanner {
 	public void resetTo(int start, int end) {
 		Reader reader;
 		if (end >= source.length) {
-			reader= new CharArrayReader(source);
+			reader = new CharArrayReader(source);
 		} else {
-			reader= new CharArrayReader(source, 0, Math.min(source.length, end));
+			reader = new CharArrayReader(source, 0, Math.min(source.length, end));
 		}
-		fContext= new ScannerContext().initialize(reader, start);
-		startPosition= start;
+		fContext = new ScannerContext().initialize(reader, start);
+		startPosition = start;
 		if (source != null && source.length < end) {
 			eofPosition = source.length;
 		} else {
@@ -142,8 +142,8 @@ public class Scanner extends SimpleScanner {
 	 * @param nextCharacterStart  the desired scanner offset
 	 */
 	public void setCurrentPosition(int nextCharacterStart) {
-		int currentPos= getCurrentPosition();
-		int diff= currentPos - nextCharacterStart;
+		int currentPos = getCurrentPosition();
+		int diff = currentPos - nextCharacterStart;
 		if (diff < 0) {
 			do {
 				getChar();
@@ -160,7 +160,7 @@ public class Scanner extends SimpleScanner {
 				}
 				--diff;
 			}
-		}			
+		}
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class Scanner extends SimpleScanner {
 	 * @return the next token type
 	 */
 	public int getNextToken() {
-		Token token= nextToken();
+		Token token = nextToken();
 		if (token == null) {
 			return -1;
 		}
@@ -201,28 +201,17 @@ public class Scanner extends SimpleScanner {
 		char middle[];
 		if (middleLength > -1) {
 			middle = new char[middleLength];
-			System.arraycopy(
-				this.source, 
-				this.startPosition, 
-				middle, 
-				0, 
-				middleLength);
+			System.arraycopy(this.source, this.startPosition, middle, 0, middleLength);
 		} else {
 			middle = CharOperation.NO_CHAR;
 		}
-		
+
 		char end[] = new char[this.source.length - (this.getCurrentPosition() - 1)];
-		System.arraycopy(
-			this.source, 
-			(this.getCurrentPosition() - 1) + 1, 
-			end, 
-			0, 
-			this.source.length - (this.getCurrentPosition() - 1) - 1);
-		
-		return new String(front)
-			+ "\n===============================\nStarts here -->" //$NON-NLS-1$
-			+ new String(middle)
-			+ "<-- Ends here\n===============================\n" //$NON-NLS-1$
-			+ new String(end); 
+		System.arraycopy(this.source, (this.getCurrentPosition() - 1) + 1, end, 0,
+				this.source.length - (this.getCurrentPosition() - 1) - 1);
+
+		return new String(front) + "\n===============================\nStarts here -->" //$NON-NLS-1$
+				+ new String(middle) + "<-- Ends here\n===============================\n" //$NON-NLS-1$
+				+ new String(end);
 	}
 }

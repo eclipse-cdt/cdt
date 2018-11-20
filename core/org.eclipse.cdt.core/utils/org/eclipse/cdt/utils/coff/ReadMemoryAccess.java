@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.utils.coff;
 
 public class ReadMemoryAccess {
@@ -59,7 +59,7 @@ public class ReadMemoryAccess {
 	public byte getByte(int offset) {
 		return bytes[offset];
 	}
-		
+
 	public short getUnsignedByte(int offset) {
 		return bytes[offset];
 	}
@@ -80,13 +80,13 @@ public class ReadMemoryAccess {
 
 	public short getShortLE() {
 		short s = getShortLE(memOffset);
-		memOffset +=2;
+		memOffset += 2;
 		return s;
 	}
 
 	public int getUnsignedShortLE() {
 		int i = getUnsignedShortLE(memOffset);
-		memOffset +=2;
+		memOffset += 2;
 		return i;
 	}
 
@@ -97,7 +97,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static short getShortLE(byte[] b) {
-		return (short)(((b[1]&0xff) << 8) | (b[0]&0xff));
+		return (short) (((b[1] & 0xff) << 8) | (b[0] & 0xff));
 	}
 
 	public int getUnsignedShortLE(int offset) {
@@ -112,13 +112,13 @@ public class ReadMemoryAccess {
 
 	public short getShortBE() {
 		short s = getShortBE(memOffset);
-		memOffset +=2;
+		memOffset += 2;
 		return s;
 	}
 
 	public int getUnsignedShortBE() {
 		int i = getUnsignedShortBE(memOffset);
-		memOffset +=2;
+		memOffset += 2;
 		return i;
 	}
 
@@ -129,7 +129,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static short getShortBE(byte[] b) {
-		return (short)(((b[0] & 0xff) << 8) | (b[1] & 0xff));
+		return (short) (((b[0] & 0xff) << 8) | (b[1] & 0xff));
 	}
 
 	public int getUnsignedShortBE(int offset) {
@@ -170,10 +170,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static long getUnsignedIntLE(byte[] b) {
-		return (((b[3] & 0xff) << 24) |
-			      ((b[2] & 0xff) << 16) |
-			      ((b[1] & 0xff) << 8)  |
-			       (b[0] & 0xff));
+		return (((b[3] & 0xff) << 24) | ((b[2] & 0xff) << 16) | ((b[1] & 0xff) << 8) | (b[0] & 0xff));
 	}
 
 	public int getIntLE(int offset) {
@@ -185,10 +182,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static int getIntLE(byte[] b) {
-		return (((b[3] & 0xff) << 24) |
-			     ((b[2] & 0xff) << 16) |
-			     ((b[1] & 0xff) << 8)  |
-			      (b[0] & 0xff));
+		return (((b[3] & 0xff) << 24) | ((b[2] & 0xff) << 16) | ((b[1] & 0xff) << 8) | (b[0] & 0xff));
 	}
 
 	public int getIntBE() {
@@ -212,10 +206,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static int getIntBE(byte[] b) {
-		return (((b[0] & 0xff) << 24) |
-			     ((b[1] & 0xff) << 16) |
-			     ((b[2] & 0xff) << 8)  |
-			      (b[3] & 0xff));
+		return (((b[0] & 0xff) << 24) | ((b[1] & 0xff) << 16) | ((b[2] & 0xff) << 8) | (b[3] & 0xff));
 	}
 
 	public long getUnsignedIntBE(int offset) {
@@ -227,10 +218,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static long getUnsignedIntBE(byte[] b) {
-		return (((b[0] & 0xff) << 24) |
-			      ((b[1] & 0xff) << 16) |
-			      ((b[2] & 0xff) << 8)  |
-			       (b[3] & 0xff));
+		return (((b[0] & 0xff) << 24) | ((b[1] & 0xff) << 16) | ((b[2] & 0xff) << 8) | (b[3] & 0xff));
 	}
 
 	public long getLong() {
@@ -259,16 +247,10 @@ public class ReadMemoryAccess {
 	}
 
 	public long getLongLE(byte[] b) {
-		return  ((long)(b[7] & 0xff) << 56) |
-			((long)(b[6] & 0xff) << 48) |
-			((long)(b[5] & 0xff) << 40) |
-			((long)(b[4] & 0xff) << 32) |
-			((long)(b[3] & 0xff) << 24) |
-			((long)(b[2] & 0xff) << 16) |
-			((long)(b[1] & 0xff) <<  8) |
-			(b[0] & 0xff);
+		return ((long) (b[7] & 0xff) << 56) | ((long) (b[6] & 0xff) << 48) | ((long) (b[5] & 0xff) << 40)
+				| ((long) (b[4] & 0xff) << 32) | ((long) (b[3] & 0xff) << 24) | ((long) (b[2] & 0xff) << 16)
+				| ((long) (b[1] & 0xff) << 8) | (b[0] & 0xff);
 	}
-
 
 	public long getLongBE() {
 		long l = getLongBE(memOffset);
@@ -289,14 +271,9 @@ public class ReadMemoryAccess {
 	}
 
 	public long getLongBE(byte[] b) {
-		return  ((long)(b[0] & 0xff) << 56) |
-			((long)(b[1] & 0xff) << 48) |
-			((long)(b[2] & 0xff) << 40) |
-			((long)(b[3] & 0xff) << 32) |
-			((long)(b[4] & 0xff) << 24) |
-			((long)(b[5] & 0xff) << 16) |
-			((long)(b[6] & 0xff) << 8)  |
-			(b[7] & 0xff);
-	} 
+		return ((long) (b[0] & 0xff) << 56) | ((long) (b[1] & 0xff) << 48) | ((long) (b[2] & 0xff) << 40)
+				| ((long) (b[3] & 0xff) << 32) | ((long) (b[4] & 0xff) << 24) | ((long) (b[5] & 0xff) << 16)
+				| ((long) (b[6] & 0xff) << 8) | (b[7] & 0xff);
+	}
 
 }

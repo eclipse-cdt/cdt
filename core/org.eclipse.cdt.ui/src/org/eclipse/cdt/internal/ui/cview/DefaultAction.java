@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.action.Action;
@@ -23,16 +22,16 @@ public class DefaultAction extends Action {
 
 	Shell shell;
 
-	DefaultAction (Shell shell, String s) {
-		super (s);
+	DefaultAction(Shell shell, String s) {
+		super(s);
 		this.shell = shell;
 	}
 
 	@Override
 	public void run() {
 		MessageBox errorMsg = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText(CViewMessages.DefaultAction_WIP); 
-		errorMsg.setMessage (CViewMessages.DefaultAction_workInProgress); 
+		errorMsg.setText(CViewMessages.DefaultAction_WIP);
+		errorMsg.setMessage(CViewMessages.DefaultAction_workInProgress);
 		errorMsg.open();
 	}
 }

@@ -24,8 +24,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * a message describes the problem
  */
 public class StatusInfo implements IStatus {
-	
-	public static final IStatus OK_STATUS= new StatusInfo();
+
+	public static final IStatus OK_STATUS = new StatusInfo();
 
 	private String fStatusMessage;
 	private int fSeverity;
@@ -42,11 +42,11 @@ public class StatusInfo implements IStatus {
 	 * @param severity The status severity: ERROR, WARNING, INFO and OK.
 	 * @param message The message of the status. Applies only for ERROR,
 	 * WARNING and INFO.
-	 */	
+	 */
 	public StatusInfo(int severity, String message) {
-		fStatusMessage= message;
-		fSeverity= severity;
-	}		
+		fStatusMessage = message;
+		fSeverity = severity;
+	}
 
 	/**
 	 * @see IStatus#getChildren()
@@ -55,6 +55,7 @@ public class StatusInfo implements IStatus {
 	public IStatus[] getChildren() {
 		return new IStatus[0];
 	}
+
 	/**
 	 * @see IStatus#getCode()
 	 */
@@ -62,6 +63,7 @@ public class StatusInfo implements IStatus {
 	public int getCode() {
 		return fSeverity;
 	}
+
 	/**
 	 * @see IStatus#getException()
 	 */
@@ -69,6 +71,7 @@ public class StatusInfo implements IStatus {
 	public Throwable getException() {
 		return null;
 	}
+
 	/**
 	 * @see IStatus#getMessage
 	 */
@@ -76,6 +79,7 @@ public class StatusInfo implements IStatus {
 	public String getMessage() {
 		return fStatusMessage;
 	}
+
 	/**
 	 * @see IStatus#getPlugin()
 	 */
@@ -83,6 +87,7 @@ public class StatusInfo implements IStatus {
 	public String getPlugin() {
 		return CUIPlugin.PLUGIN_ID;
 	}
+
 	/**
 	 * @see IStatus#getSeverity()
 	 */
@@ -90,12 +95,15 @@ public class StatusInfo implements IStatus {
 	public int getSeverity() {
 		return fSeverity;
 	}
+
 	public boolean isError() {
 		return fSeverity == IStatus.ERROR;
 	}
+
 	public boolean isInfo() {
 		return fSeverity == IStatus.INFO;
 	}
+
 	/**
 	 * @see IStatus#isMultiStatus()
 	 */
@@ -103,13 +111,16 @@ public class StatusInfo implements IStatus {
 	public boolean isMultiStatus() {
 		return false;
 	}
+
 	@Override
 	public boolean isOK() {
 		return fSeverity == IStatus.OK;
 	}
+
 	public boolean isWarning() {
 		return fSeverity == IStatus.WARNING;
 	}
+
 	/**
 	 * @see IStatus#matches(int)
 	 */
@@ -117,21 +128,25 @@ public class StatusInfo implements IStatus {
 	public boolean matches(int severityMask) {
 		return (fSeverity & severityMask) != 0;
 	}
+
 	public void setError(String errorMessage) {
-		fStatusMessage= errorMessage;
-		fSeverity= IStatus.ERROR;
+		fStatusMessage = errorMessage;
+		fSeverity = IStatus.ERROR;
 	}
+
 	public void setInfo(String infoMessage) {
-		fStatusMessage= infoMessage;
-		fSeverity= IStatus.INFO;
+		fStatusMessage = infoMessage;
+		fSeverity = IStatus.INFO;
 	}
+
 	public void setOK() {
-		fStatusMessage= null;
-		fSeverity= IStatus.OK;
+		fStatusMessage = null;
+		fSeverity = IStatus.OK;
 	}
+
 	public void setWarning(String warningMessage) {
-		fStatusMessage= warningMessage;
-		fSeverity= IStatus.WARNING;
+		fStatusMessage = warningMessage;
+		fSeverity = IStatus.WARNING;
 	}
 
 	/**

@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
  * Test the functionality of TemplateEngine.
  */
 public class TestTemplateEngine extends BaseTestCase {
-    TemplateEngine templateEngine = null;
-    
+	TemplateEngine templateEngine = null;
+
 	/*
 	 * @see TestCase#setUp()
 	 */
@@ -46,7 +46,7 @@ public class TestTemplateEngine extends BaseTestCase {
 	public TestTemplateEngine(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * check for non null SharedDefaults
 	 *
@@ -54,7 +54,7 @@ public class TestTemplateEngine extends BaseTestCase {
 	public void testSharedDefaults() {
 		assertNotNull(TemplateEngine.getSharedDefaults());
 	}
-	
+
 	/**
 	 * check that the instance is created once(Singleton).
 	 */

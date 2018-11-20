@@ -28,12 +28,13 @@ public class CompositeCPPTemplateNonTypeParameter extends CompositeCPPVariable i
 	}
 
 	public boolean isSameType(IType type) {
-		return ((IType)rbinding).isSameType(type);
+		return ((IType) rbinding).isSameType(type);
 	}
-	
+
 	@Override
 	public Object clone() {
-		fail(); return null; 
+		fail();
+		return null;
 	}
 
 	@Override
@@ -45,12 +46,12 @@ public class CompositeCPPTemplateNonTypeParameter extends CompositeCPPVariable i
 	public short getTemplateNestingLevel() {
 		return ((ICPPTemplateParameter) rbinding).getTemplateNestingLevel();
 	}
-	
+
 	@Override
 	public int getParameterID() {
 		return ((ICPPTemplateParameter) rbinding).getParameterID();
 	}
-	
+
 	@Override
 	public boolean isParameterPack() {
 		return ((ICPPTemplateParameter) rbinding).isParameterPack();

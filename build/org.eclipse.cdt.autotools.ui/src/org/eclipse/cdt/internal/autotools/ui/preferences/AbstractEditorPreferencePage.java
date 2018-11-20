@@ -46,64 +46,64 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.service.prefs.BackingStoreException;
 
-
 /**
  * AbstraceMakeEditorPreferencePage
  */
 public abstract class AbstractEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	OverlayPreferenceStore fOverlayStore;
-	
-	Map<Button, String> fCheckBoxes= new HashMap<>();
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
+
+	Map<Button, String> fCheckBoxes = new HashMap<>();
+	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
+			Button button = (Button) e.widget;
 			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
-	
-	Map<Text, String> fTextFields= new HashMap<>();
+
+	Map<Text, String> fTextFields = new HashMap<>();
 	private ModifyListener fTextFieldListener = e -> {
 		Text text = (Text) e.widget;
 		fOverlayStore.setValue(fTextFields.get(text), text.getText());
 	};
 
-	private Map<Text, Object> fNumberFields= new HashMap<>();
+	private Map<Text, Object> fNumberFields = new HashMap<>();
 	private ModifyListener fNumberFieldListener = e -> numberFieldChanged((Text) e.widget);
-			
+
 	public AbstractEditorPreferencePage() {
 		super();
 		setPreferenceStore(AutotoolsPlugin.getDefault().getPreferenceStore());
-		fOverlayStore= createOverlayStore();
+		fOverlayStore = createOverlayStore();
 	}
-	
+
 	protected abstract OverlayPreferenceStore createOverlayStore();
-	
+
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	protected void initializeFields() {
-		Map<Button, String> checkBoxes= getCheckBoxes();
-		Map<Text, String> textFields= getTextFields();
-		Iterator<Button> e= checkBoxes.keySet().iterator();
+		Map<Button, String> checkBoxes = getCheckBoxes();
+		Map<Text, String> textFields = getTextFields();
+		Iterator<Button> e = checkBoxes.keySet().iterator();
 		while (e.hasNext()) {
-			Button b= e.next();
-			String key= checkBoxes.get(b);
+			Button b = e.next();
+			String key = checkBoxes.get(b);
 			b.setSelection(getOverlayStore().getBoolean(key));
 		}
-		
+
 		Iterator<Text> e2 = textFields.keySet().iterator();
 		while (e.hasNext()) {
-			Text t= e2.next();
-			String key= textFields.get(t);
+			Text t = e2.next();
+			String key = textFields.get(t);
 			t.setText(getOverlayStore().getString(key));
-		}		
+		}
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		getOverlayStore().propagate();
@@ -116,27 +116,27 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		}
 		return true;
 	}
-	
+
 	protected OverlayPreferenceStore getOverlayStore() {
 		return fOverlayStore;
 	}
-	
+
 	protected OverlayPreferenceStore setOverlayStore() {
 		return fOverlayStore;
 	}
-	
+
 	protected Map<Button, String> getCheckBoxes() {
 		return fCheckBoxes;
 	}
-	
+
 	protected Map<Text, String> getTextFields() {
 		return fTextFields;
 	}
-	
+
 	protected Map<Text, Object> getNumberFields() {
 		return fNumberFields;
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		getOverlayStore().loadDefaults();
@@ -144,48 +144,49 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		handleDefaults();
 		super.performDefaults();
 	}
-	
+
 	protected abstract void handleDefaults();
-	
+
 	@Override
 	public void dispose() {
 		if (getOverlayStore() != null) {
 			getOverlayStore().stop();
-			fOverlayStore= null;
+			fOverlayStore = null;
 		}
 		super.dispose();
 	}
-	
-	protected Button addCheckBox(Composite parent, String labelText, String key, int indentation) {		
-		Button checkBox= new Button(parent, SWT.CHECK);
+
+	protected Button addCheckBox(Composite parent, String labelText, String key, int indentation) {
+		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setText(labelText);
 		checkBox.setFont(parent.getFont());
-		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		gd.horizontalSpan= 2;
+
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
+		gd.horizontalSpan = 2;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(fCheckBoxListener);
-		
+
 		getCheckBoxes().put(checkBox, key);
-		
+
 		return checkBox;
 	}
-	
-	protected Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, String[] errorMessages) {
-		Font font= composite.getFont();
-		
-		Label label= new Label(composite, SWT.NONE);
+
+	protected Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation,
+			String[] errorMessages) {
+		Font font = composite.getFont();
+
+		Label label = new Label(composite, SWT.NONE);
 		label.setText(labelText);
 		label.setFont(font);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
 		label.setLayoutData(gd);
-		
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
-		textControl.setFont(font);		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+
+		Text textControl = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		textControl.setFont(font);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 		getTextFields().put(textControl, key);
@@ -195,44 +196,44 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
 		}
-			
+
 		return textControl;
 	}
-	
+
 	void numberFieldChanged(Text textControl) {
-		String number= textControl.getText();
-		IStatus status= validatePositiveNumber(number, (String[])getNumberFields().get(textControl));
+		String number = textControl.getText();
+		IStatus status = validatePositiveNumber(number, (String[]) getNumberFields().get(textControl));
 		if (!status.matches(IStatus.ERROR)) {
 			getOverlayStore().setValue(getTextFields().get(textControl), number);
 		}
 		updateStatus(status);
 	}
-	
+
 	private IStatus validatePositiveNumber(String number, String[] errorMessages) {
-		StatusInfo status= new StatusInfo();
+		StatusInfo status = new StatusInfo();
 		if (number.length() == 0) {
 			status.setError(errorMessages[0]);
 		} else {
 			try {
-				int value= Integer.parseInt(number);
+				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError(MessageFormat.format(errorMessages[1], new Object[]{number})); //$NON-NLS-1$
+					status.setError(MessageFormat.format(errorMessages[1], new Object[] { number })); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
-				status.setError(MessageFormat.format(errorMessages[1], new Object[]{number})); //$NON-NLS-1$
+				status.setError(MessageFormat.format(errorMessages[1], new Object[] { number })); //$NON-NLS-1$
 			}
 		}
 		return status;
 	}
-	
+
 	private void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
-			Set<Text> keys= getNumberFields().keySet();
+			Set<Text> keys = getNumberFields().keySet();
 			for (Iterator<Text> iter = keys.iterator(); iter.hasNext();) {
 				Text text = iter.next();
-				IStatus s= validatePositiveNumber(text.getText(), (String[])getNumberFields().get(text));
-				status= s.getSeverity() > status.getSeverity() ? s : status;
+				IStatus s = validatePositiveNumber(text.getText(), (String[]) getNumberFields().get(text));
+				status = s.getSeverity() > status.getSeverity() ? s : status;
 			}
-		}	
+		}
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
 	}
@@ -241,47 +242,48 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	 * Applies the status to the status line of a dialog page.
 	 */
 	private void applyToStatusLine(DialogPage page, IStatus status) {
-		String message= status.getMessage();
+		String message = status.getMessage();
 		switch (status.getSeverity()) {
-			case IStatus.OK:
-				page.setMessage(message, IMessageProvider.NONE);
-				page.setErrorMessage(null);
-				break;
-			case IStatus.WARNING:
-				page.setMessage(message, IMessageProvider.WARNING);
-				page.setErrorMessage(null);
-				break;				
-			case IStatus.INFO:
-				page.setMessage(message, IMessageProvider.INFORMATION);
-				page.setErrorMessage(null);
-				break;			
-			default:
-				if (message.length() == 0) {
-					message= null;
-				}
-				page.setMessage(null);
-				page.setErrorMessage(message);
-				break;		
+		case IStatus.OK:
+			page.setMessage(message, IMessageProvider.NONE);
+			page.setErrorMessage(null);
+			break;
+		case IStatus.WARNING:
+			page.setMessage(message, IMessageProvider.WARNING);
+			page.setErrorMessage(null);
+			break;
+		case IStatus.INFO:
+			page.setMessage(message, IMessageProvider.INFORMATION);
+			page.setErrorMessage(null);
+			break;
+		default:
+			if (message.length() == 0) {
+				message = null;
+			}
+			page.setMessage(null);
+			page.setErrorMessage(message);
+			break;
 		}
 	}
-	
+
 	/**
 	 * Returns an array of size 2:
 	 *  - first element is of type <code>Label</code>
 	 *  - second element is of type <code>Text</code>
 	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
 	 */
-	protected Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, String[] errorMessages) {
-		Label labelControl= new Label(composite, SWT.NONE);
+	protected Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit,
+			int indentation, String[] errorMessages) {
+		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
 		labelControl.setFont(composite.getFont());
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
 		labelControl.setLayoutData(gd);
-	
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+
+		Text textControl = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 		textControl.setFont(composite.getFont());
@@ -292,18 +294,18 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
 		}
-		
-		return new Control[]{labelControl, textControl};
+
+		return new Control[] { labelControl, textControl };
 	}
-	
+
 	protected String loadPreviewContentFromFile(String filename) {
 		String line;
-		String separator= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		StringBuilder buffer= new StringBuilder(512);
-		BufferedReader reader= null;
+		String separator = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuilder buffer = new StringBuilder(512);
+		BufferedReader reader = null;
 		try {
-			reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
-			while ((line= reader.readLine()) != null) {
+			reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
+			while ((line = reader.readLine()) != null) {
 				buffer.append(line);
 				buffer.append(separator);
 			}
@@ -311,7 +313,10 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 			AutotoolsUIPlugin.log(io);
 		} finally {
 			if (reader != null) {
-				try { reader.close(); } catch (IOException e) {}
+				try {
+					reader.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 		return buffer.toString();

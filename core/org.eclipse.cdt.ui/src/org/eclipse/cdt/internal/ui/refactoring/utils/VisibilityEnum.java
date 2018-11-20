@@ -22,18 +22,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
  */
 public enum VisibilityEnum {
 	// The values are ordered by increasing visibility.
-	v_private("private", ICPPASTVisibilityLabel.v_private),  //$NON-NLS-1$
-	v_protected("protected", ICPPASTVisibilityLabel.v_protected),   //$NON-NLS-1$
+	v_private("private", ICPPASTVisibilityLabel.v_private), //$NON-NLS-1$
+	v_protected("protected", ICPPASTVisibilityLabel.v_protected), //$NON-NLS-1$
 	v_public("public", ICPPASTVisibilityLabel.v_public); //$NON-NLS-1$
 
 	private final String stringRepresentation;
 	private final int visibilityLabelValue;
-	
+
 	private VisibilityEnum(String stringRepresentation, int visibilityLabelValue) {
 		this.stringRepresentation = stringRepresentation;
 		this.visibilityLabelValue = visibilityLabelValue;
 	}
-	
+
 	public static VisibilityEnum from(ICPPASTVisibilityLabel visibility) {
 		switch (visibility.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_private:
@@ -45,11 +45,11 @@ public enum VisibilityEnum {
 		}
 		return null;
 	}
-	
+
 	public int getVisibilityLabelValue() {
 		return visibilityLabelValue;
 	}
-	
+
 	public static VisibilityEnum getEnumForStringRepresentation(String visibility) {
 		if (VisibilityEnum.v_private.toString().equals(visibility)) {
 			return VisibilityEnum.v_private;
@@ -60,7 +60,7 @@ public enum VisibilityEnum {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return stringRepresentation;

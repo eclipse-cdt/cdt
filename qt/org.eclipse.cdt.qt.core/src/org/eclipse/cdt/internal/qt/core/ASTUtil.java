@@ -88,7 +88,7 @@ public class ASTUtil {
 		if (binding instanceof ICPPBinding)
 			try {
 				return getFullyQualifiedName(((ICPPBinding) binding).getQualifiedName());
-			} catch(DOMException e) {
+			} catch (DOMException e) {
 				Activator.log(e);
 				return null;
 			}
@@ -104,7 +104,7 @@ public class ASTUtil {
 	public static String getFullyQualifiedName(String[] qualName) {
 		boolean first = true;
 		StringBuilder str = new StringBuilder();
-		for(String name : qualName) {
+		for (String name : qualName) {
 			if (first)
 				first = false;
 			else
@@ -121,7 +121,8 @@ public class ASTUtil {
 	//					), ...
 	// The regex trims leading and trailing whitespace within the expansion parameter.  This is needed
 	// so that the start of the capture group provides the proper offset into the expansion.
-	public static final Pattern Regex_MacroExpansion = Pattern.compile("(?s)([_a-zA-Z]\\w*)\\s*\\(\\s*(.*?)\\s*\\)\\s*");
+	public static final Pattern Regex_MacroExpansion = Pattern
+			.compile("(?s)([_a-zA-Z]\\w*)\\s*\\(\\s*(.*?)\\s*\\)\\s*");
 
 	public static IType getBaseType(IType type) {
 		while (type instanceof ITypeContainer)
@@ -170,7 +171,7 @@ public class ASTUtil {
 		// Otherwise check for a call to implicit 'this'.  See details in the thread that
 		// starts at http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg26972.html
 		try {
-			for(IScope scope = CPPVisitor.getContainingScope(fncall); scope != null; scope = scope.getParent())
+			for (IScope scope = CPPVisitor.getContainingScope(fncall); scope != null; scope = scope.getParent())
 				if (scope instanceof ICPPClassScope)
 					return ((ICPPClassScope) scope).getClassType();
 		} catch (DOMException e) {
@@ -187,8 +188,7 @@ public class ASTUtil {
 		Set<IQMethod> bindings = new LinkedHashSet<IQMethod>();
 
 		Iterable<IQMethod> methods = null;
-		switch(ref.getType())
-		{
+		switch (ref.getType()) {
 		case Signal:
 			methods = qobj.getSignals().withoutOverrides();
 			break;
@@ -203,7 +203,7 @@ public class ASTUtil {
 				return bindings;
 
 			for (IQMethod method : methods)
-				for(String signature : method.getSignatures())
+				for (String signature : method.getSignatures())
 					if (signature.equals(qtNormalizedSig))
 						bindings.add(method);
 		}
@@ -238,16 +238,14 @@ public class ASTUtil {
 		// CompTypeSpec.  Instead, we cheat and use the InternalBinding.
 
 		MethodSpec methodSpec = new MethodSpec(ast);
-		if (methodSpec.clsSpec == null
-		 && method instanceof ICPPInternalBinding)
-		{
+		if (methodSpec.clsSpec == null && method instanceof ICPPInternalBinding) {
 			ICPPInternalBinding internalBinding = (ICPPInternalBinding) method;
 			IASTNode[] decls = internalBinding.getDeclarations();
 			for (int i = 0; methodSpec.clsSpec == null && i < decls.length; ++i)
 				methodSpec = new MethodSpec(decls[i]);
 		}
 
-		if(methodSpec.clsSpec == null)
+		if (methodSpec.clsSpec == null)
 			return null;
 
 		ICPPASTVisibilityLabel lastLabel = null;
@@ -261,17 +259,14 @@ public class ASTUtil {
 		return null;
 	}
 
-	private static class MethodSpec
-	{
+	private static class MethodSpec {
 		public final ICPPASTCompositeTypeSpecifier clsSpec;
 		public final IASTNode methodDecl;
 
-		public MethodSpec( IASTNode node )
-		{
+		public MethodSpec(IASTNode node) {
 			ICPPASTCompositeTypeSpecifier cls = null;
 			IASTNode mth = node;
-			while( mth != null && cls == null )
-			{
+			while (mth != null && cls == null) {
 				IASTNode parent = mth.getParent();
 				if (parent instanceof ICPPASTCompositeTypeSpecifier)
 					cls = (ICPPASTCompositeTypeSpecifier) parent;

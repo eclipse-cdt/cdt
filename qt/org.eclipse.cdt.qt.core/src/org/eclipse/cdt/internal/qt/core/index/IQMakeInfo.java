@@ -34,7 +34,7 @@ public interface IQMakeInfo {
 	 *
 	 * @return the map
 	 */
-	Map<String,String> getQMakeQueryMap();
+	Map<String, String> getQMakeQueryMap();
 
 	/**
 	 * Returns a Qt version as provided by "qmake -query" command.

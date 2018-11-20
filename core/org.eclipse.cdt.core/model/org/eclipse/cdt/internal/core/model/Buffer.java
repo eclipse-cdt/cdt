@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,14 +41,15 @@ public class Buffer implements IBuffer {
 	protected char[] contents;
 	protected ArrayList<IBufferChangedListener> changeListeners;
 	protected IOpenable owner;
-	protected int gapStart= -1;
-	protected int gapEnd= -1;
+	protected int gapStart = -1;
+	protected int gapEnd = -1;
 
-	protected Object lock= new Object();
+	protected Object lock = new Object();
 
-	protected static final int F_HAS_UNSAVED_CHANGES= 1;
-	protected static final int F_IS_READ_ONLY= 2;
-	protected static final int F_IS_CLOSED= 4;
+	protected static final int F_HAS_UNSAVED_CHANGES = 1;
+	protected static final int F_IS_READ_ONLY = 2;
+	protected static final int F_IS_CLOSED = 4;
+
 	/**
 	 * Creates a new buffer on an underlying resource.
 	 */
@@ -73,6 +73,7 @@ public class Buffer implements IBuffer {
 			this.changeListeners.add(listener);
 		}
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#append(char[])
 	 */
@@ -138,7 +139,8 @@ public class Buffer implements IBuffer {
 	 */
 	@Override
 	public char[] getCharacters() {
-		if (this.contents == null) return null;
+		if (this.contents == null)
+			return null;
 		synchronized (this.lock) {
 			if (this.gapStart < 0) {
 				return this.contents;
@@ -156,7 +158,8 @@ public class Buffer implements IBuffer {
 	 */
 	@Override
 	public String getContents() {
-		if (this.contents == null) return null;
+		if (this.contents == null)
+			return null;
 		return new String(this.getCharacters());
 	}
 
@@ -246,8 +249,10 @@ public class Buffer implements IBuffer {
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void handleException(Throwable exception) {
-						Util.log(exception, "Exception occurred in listener of buffer change notification", ICLogConstants.CDT); //$NON-NLS-1$
+						Util.log(exception, "Exception occurred in listener of buffer change notification", //$NON-NLS-1$
+								ICLogConstants.CDT);
 					}
+
 					@Override
 					public void run() throws Exception {
 						listener.bufferChanged(event);
@@ -256,6 +261,7 @@ public class Buffer implements IBuffer {
 			}
 		}
 	}
+
 	/**
 	 * @see IBuffer
 	 */
@@ -268,6 +274,7 @@ public class Buffer implements IBuffer {
 			}
 		}
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, char[])
 	 */
@@ -314,50 +321,44 @@ public class Buffer implements IBuffer {
 	 * @see org.eclipse.cdt.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	@Override
-	public void save(IProgressMonitor progress, boolean force)
-		throws CModelException {
-			// determine if saving is required
-			if (isReadOnly() || this.file == null) {
+	public void save(IProgressMonitor progress, boolean force) throws CModelException {
+		// determine if saving is required
+		if (isReadOnly() || this.file == null) {
+			return;
+		}
+		synchronized (this.lock) {
+			if (!hasUnsavedChanges())
 				return;
-			}
-			synchronized (this.lock) {
-				if (!hasUnsavedChanges())
-					return;
 
-				// use a platform operation to update the resource contents
+			// use a platform operation to update the resource contents
+			try {
+				String encoding = null;
 				try {
-					String encoding = null;
-					try {
-						encoding = this.file.getCharset();
-					}
-					catch (CoreException ce) {
-						// use no encoding
-					}
-					String contents = this.getContents();
-					if (contents == null) return;
-					byte[] bytes = encoding == null
-						? contents.getBytes()
-					    : contents.getBytes(encoding);
-					ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-
-					if (this.file.exists()) {
-						this.file.setContents(
-							stream,
-							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY,
-							null);
-					} else {
-						this.file.create(stream, force, null);
-					}
-				}  catch (IOException e) {
-					throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+					encoding = this.file.getCharset();
+				} catch (CoreException ce) {
+					// use no encoding
 				}
-				catch (CoreException e) {
-					throw new CModelException(e);
-				}
+				String contents = this.getContents();
+				if (contents == null)
+					return;
+				byte[] bytes = encoding == null ? contents.getBytes() : contents.getBytes(encoding);
+				ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 
-				// the resource no longer has unsaved changes
-				this.flags &= ~ (F_HAS_UNSAVED_CHANGES);
+				if (this.file.exists()) {
+					this.file.setContents(stream,
+							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, null);
+				} else {
+					this.file.create(stream, force, null);
+				}
+			} catch (IOException e) {
+				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+			} catch (CoreException e) {
+				throw new CModelException(e);
 			}
+
+			// the resource no longer has unsaved changes
+			this.flags &= ~(F_HAS_UNSAVED_CHANGES);
+		}
 	}
 
 	/**
@@ -369,7 +370,7 @@ public class Buffer implements IBuffer {
 		// after creation by buffer factory
 		if (this.contents == null) {
 			this.contents = newContents;
-			this.flags &= ~ (F_HAS_UNSAVED_CHANGES);
+			this.flags &= ~(F_HAS_UNSAVED_CHANGES);
 			return;
 		}
 
@@ -423,18 +424,18 @@ public class Buffer implements IBuffer {
 		if (oldSize == 0) {
 			System.arraycopy(this.contents, 0, content, 0, newGapStart);
 			System.arraycopy(this.contents, newGapStart, content, newGapEnd, content.length - newGapEnd);
-		} else
-			if (newGapStart < this.gapStart) {
-				int delta = this.gapStart - newGapStart;
-				System.arraycopy(this.contents, 0, content, 0, newGapStart);
-				System.arraycopy(this.contents, newGapStart, content, newGapEnd, delta);
-				System.arraycopy(this.contents, this.gapEnd, content, newGapEnd + delta, this.contents.length - this.gapEnd);
-			} else {
-				int delta = newGapStart - this.gapStart;
-				System.arraycopy(this.contents, 0, content, 0, this.gapStart);
-				System.arraycopy(this.contents, this.gapEnd, content, this.gapStart, delta);
-				System.arraycopy(this.contents, this.gapEnd + delta, content, newGapEnd, content.length - newGapEnd);
-			}
+		} else if (newGapStart < this.gapStart) {
+			int delta = this.gapStart - newGapStart;
+			System.arraycopy(this.contents, 0, content, 0, newGapStart);
+			System.arraycopy(this.contents, newGapStart, content, newGapEnd, delta);
+			System.arraycopy(this.contents, this.gapEnd, content, newGapEnd + delta,
+					this.contents.length - this.gapEnd);
+		} else {
+			int delta = newGapStart - this.gapStart;
+			System.arraycopy(this.contents, 0, content, 0, this.gapStart);
+			System.arraycopy(this.contents, this.gapEnd, content, this.gapStart, delta);
+			System.arraycopy(this.contents, this.gapEnd + delta, content, newGapEnd, content.length - newGapEnd);
+		}
 		this.contents = content;
 		this.gapStart = newGapStart;
 		this.gapEnd = newGapEnd;
@@ -454,7 +455,7 @@ public class Buffer implements IBuffer {
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("Owner: ").append(((CElement)this.owner).toString()); //$NON-NLS-1$
+		buffer.append("Owner: ").append(((CElement) this.owner).toString()); //$NON-NLS-1$
 		buffer.append("\nHas unsaved changes: ").append(this.hasUnsavedChanges()); //$NON-NLS-1$
 		buffer.append("\nIs readonly: ").append(this.isReadOnly()); //$NON-NLS-1$
 		buffer.append("\nIs closed: ").append(this.isClosed()); //$NON-NLS-1$
@@ -467,20 +468,20 @@ public class Buffer implements IBuffer {
 			for (int i = 0; i < length; i++) {
 				char car = contents[i];
 				switch (car) {
-					case '\n':
-						buffer.append("\\n\n"); //$NON-NLS-1$
-						break;
-					case '\r':
-						if (i < length-1 && this.contents[i+1] == '\n') {
-							buffer.append("\\r\\n\n"); //$NON-NLS-1$
-							i++;
-						} else {
-							buffer.append("\\r\n"); //$NON-NLS-1$
-						}
-						break;
-					default:
-						buffer.append(car);
-						break;
+				case '\n':
+					buffer.append("\\n\n"); //$NON-NLS-1$
+					break;
+				case '\r':
+					if (i < length - 1 && this.contents[i + 1] == '\n') {
+						buffer.append("\\r\\n\n"); //$NON-NLS-1$
+						i++;
+					} else {
+						buffer.append("\\r\n"); //$NON-NLS-1$
+					}
+					break;
+				default:
+					buffer.append(car);
+					break;
 				}
 			}
 		}

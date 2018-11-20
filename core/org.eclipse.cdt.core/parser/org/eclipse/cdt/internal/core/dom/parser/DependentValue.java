@@ -58,7 +58,7 @@ public class DependentValue implements IValue {
 	}
 
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
-		ICPPEvaluation eval= buf.unmarshalEvaluation();
+		ICPPEvaluation eval = buf.unmarshalEvaluation();
 		if (eval != null)
 			return new DependentValue(eval);
 		return IntegralValue.UNKNOWN;

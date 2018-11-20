@@ -49,7 +49,8 @@ public class AutotoolsBuildWizardHandler extends MBSWizardHandler {
 	}
 
 	@Override
-	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
+	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
+			throws CoreException {
 		super.createProject(project, defaults, onFinish, monitor);
 		// Fix for bug #312298
 		// Following is required to get around the fact that the Scanner Discovery BuildInfo isn't
@@ -91,9 +92,9 @@ public class AutotoolsBuildWizardHandler extends MBSWizardHandler {
 
 	@Override
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
-	    super.convertProject(proj, monitor);
+		super.convertProject(proj, monitor);
 		AutotoolsNewProjectNature.addAutotoolsNature(proj, monitor);
-		
+
 		// For each IConfiguration, create a corresponding Autotools Configuration
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(proj);
 		IConfiguration[] cfgs = info.getManagedProject().getConfigurations();

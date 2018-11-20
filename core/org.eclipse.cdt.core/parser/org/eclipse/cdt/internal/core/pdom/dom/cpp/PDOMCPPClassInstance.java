@@ -36,19 +36,19 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTemplateInstance {
 	private static final int ARGUMENTS = PDOMCPPClassSpecialization.RECORD_SIZE + 0;
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPClassInstance record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE + 4;
-	
+
 	private volatile ICPPTemplateArgument[] fTemplateArguments;
-	
+
 	public PDOMCPPClassInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding orig)
 			throws CoreException {
 		super(linkage, parent, classType, orig);
-		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) classType;
+		final ICPPTemplateInstance asInstance = (ICPPTemplateInstance) classType;
 		// Defer storing of template arguments to the post-process
 		// to avoid infinite recursion when the evaluation of a non-type 
 		// template argument tries to store its template definition.
@@ -57,11 +57,11 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		fTemplateArguments = asInstance.getTemplateArguments();
 		linkage.new ConfigureClassInstance(this);
 	}
-	
+
 	public PDOMCPPClassInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -76,12 +76,12 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
-		
+
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		if (fTemplateArguments == null) {
 			try {
-				final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
+				final long rec = getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 				fTemplateArguments = PDOMCPPArgumentList.getArguments(this, rec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -90,21 +90,21 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		}
 		return fTemplateArguments;
 	}
-	
+
 	public void storeTemplateArguments() {
 		try {
 			// fTemplateArguments here are the temporarily stored, possibly non-PDOM arguments stored
 			// by the constructor. Construct the PDOM arguments and store them.
-			final long argListRec= PDOMCPPArgumentList.putArguments(this, fTemplateArguments);
+			final long argListRec = PDOMCPPArgumentList.putArguments(this, fTemplateArguments);
 			getDB().putRecPtr(record + ARGUMENTS, argListRec);
-			
+
 			// Read the stored arguments next time getTemplateArguments() is called.
 			fTemplateArguments = null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public boolean isExplicitSpecialization() {
 		return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
@@ -115,14 +115,14 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
-		
+
 		return CPPClassInstance.isSameClassInstance(this, type);
 	}
 }

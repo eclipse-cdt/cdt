@@ -59,7 +59,6 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
-
 /**
  * Handler for command that excludes resources from build.
  */
@@ -76,10 +75,10 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 
 	protected ISelection getSelection(Object context) {
 		Object s = HandlerUtil.getVariable(context, ISources.ACTIVE_MENU_SELECTION_NAME);
-        if (s instanceof ISelection) {
-        	return (ISelection) s;
-        }
-	    return null;
+		if (s instanceof ISelection) {
+			return (ISelection) s;
+		}
+		return null;
 	}
 
 	public void setEnabledFromSelection(ISelection selection) {
@@ -91,18 +90,17 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 			// case for context menu
 			Object[] obs = null;
 			if (selection instanceof IStructuredSelection) {
-				obs = ((IStructuredSelection)selection).toArray();
-			}
-			else if (selection instanceof ITextSelection) {
+				obs = ((IStructuredSelection) selection).toArray();
+			} else if (selection instanceof ITextSelection) {
 				IFile file = getFileFromActiveEditor();
 				if (file != null)
 					obs = Collections.singletonList(file).toArray();
 			}
 			if (obs != null && obs.length > 0) {
-				for (int i=0; i<obs.length && cfgsOK; i++) {
+				for (int i = 0; i < obs.length && cfgsOK; i++) {
 					// if project selected, don't do anything
 					if ((obs[i] instanceof IProject) || (obs[i] instanceof ICProject)) {
-						cfgsOK=false;
+						cfgsOK = false;
 						break;
 					}
 					IResource res = null;
@@ -115,13 +113,15 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 					}
 					if (res != null) {
 						ICConfigurationDescription[] cfgds = getCfgsRead(res);
-						if (cfgds == null || cfgds.length == 0) continue;
+						if (cfgds == null || cfgds.length == 0)
+							continue;
 
-						if (objects == null) objects = new ArrayList<IResource>();
+						if (objects == null)
+							objects = new ArrayList<IResource>();
 						objects.add(res);
 						if (cfgNames == null) {
 							cfgNames = new ArrayList<String>(cfgds.length);
-							for (int j=0; j<cfgds.length; j++) {
+							for (int j = 0; j < cfgds.length; j++) {
 								if (!canExclude(res, cfgds[j])) {
 									cfgNames = null;
 									cfgsOK = false;
@@ -133,9 +133,8 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 							if (cfgNames.size() != cfgds.length) {
 								cfgsOK = false;
 							} else {
-								for (int j=0; j<cfgds.length; j++) {
-									if (! canExclude(res, cfgds[j]) ||
-										! cfgNames.contains(cfgds[j].getName())) {
+								for (int j = 0; j < cfgds.length; j++) {
+									if (!canExclude(res, cfgds[j]) || !cfgNames.contains(cfgds[j].getName())) {
 										cfgsOK = false;
 										break;
 									}
@@ -174,7 +173,8 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 
 	private void setExclude(IResource res, ICConfigurationDescription cfg, boolean exclude) {
 		try {
-			ICSourceEntry[] newEntries = CDataUtil.setExcluded(res.getFullPath(), (res instanceof IFolder), exclude, cfg.getSourceEntries());
+			ICSourceEntry[] newEntries = CDataUtil.setExcluded(res.getFullPath(), (res instanceof IFolder), exclude,
+					cfg.getSourceEntries());
 			cfg.setSourceEntries(newEntries);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
@@ -189,25 +189,26 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 
 	private ICConfigurationDescription[] getCfgsRead(IResource res) {
 		IProject p = res.getProject();
-		if (!p.isOpen()) return null;
-		if (!CoreModel.getDefault().isNewStyleProject(p)) return null;
+		if (!p.isOpen())
+			return null;
+		if (!CoreModel.getDefault().isNewStyleProject(p))
+			return null;
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
-		if (prjd == null) return null;
+		if (prjd == null)
+			return null;
 		ICConfigurationDescription[] cfgs = prjd.getConfigurations();
 		Arrays.sort(cfgs, CDTListComparator.getInstance());
 		return cfgs;
 	}
 
 	private void openDialog() {
-		if (objects == null || objects.size() == 0) return;
+		if (objects == null || objects.size() == 0)
+			return;
 		// create list of configurations to delete
 
-		ListSelectionDialog dialog = new ListSelectionDialog(
-				CUIPlugin.getActiveWorkbenchShell(),
-				cfgNames,
-				createSelectionDialogContentProvider(),
-				new LabelProvider() {},
-				ActionMessages.ExcludeFromBuildAction_0);
+		ListSelectionDialog dialog = new ListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), cfgNames,
+				createSelectionDialogContentProvider(), new LabelProvider() {
+				}, ActionMessages.ExcludeFromBuildAction_0);
 		dialog.setTitle(ActionMessages.ExcludeFromBuildAction_1);
 
 		boolean[] status = new boolean[cfgNames.size()];
@@ -216,14 +217,16 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 			IResource res = it.next();
 			ICConfigurationDescription[] cfgds = getCfgsRead(res);
 			IPath p = res.getFullPath();
-			for (int i=0; i<cfgds.length; i++) {
+			for (int i = 0; i < cfgds.length; i++) {
 				boolean b = CDataUtil.isExcluded(p, cfgds[i].getSourceEntries());
-				if (b) status[i] = true;
+				if (b)
+					status[i] = true;
 			}
 		}
 		ArrayList<String> lst = new ArrayList<String>();
-		for (int i=0; i<status.length; i++)
-			if (status[i]) lst.add(cfgNames.get(i));
+		for (int i = 0; i < status.length; i++)
+			if (status[i])
+				lst.add(cfgNames.get(i));
 		if (lst.size() > 0)
 			dialog.setInitialElementSelections(lst);
 
@@ -233,14 +236,16 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 			while (it2.hasNext()) {
 				IResource res = it2.next();
 				IProject p = res.getProject();
-				if (!p.isOpen()) continue;
+				if (!p.isOpen())
+					continue;
 				// get writable description
 				ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, true);
-				if (prjd == null) continue;
+				if (prjd == null)
+					continue;
 				ICConfigurationDescription[] cfgds = prjd.getConfigurations();
-				for (int i=0; i<cfgds.length; i++) {
+				for (int i = 0; i < cfgds.length; i++) {
 					boolean exclude = false;
-					for (int j=0; j<selected.length; j++) {
+					for (int j = 0; j < selected.length; j++) {
 						if (cfgds[i].getName().equals(selected[j])) {
 							exclude = true;
 							break;
@@ -261,11 +266,17 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
 			@Override
-			public Object[] getElements(Object inputElement) { return cfgNames.toArray(); }
+			public Object[] getElements(Object inputElement) {
+				return cfgNames.toArray();
+			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		};
 	}
 

@@ -44,12 +44,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public class GDBJtagControl_HEAD extends GDBJtagControl_7_12 {
 	public GDBJtagControl_HEAD(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
 		super(session, config, factory);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_12_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_12_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}

@@ -17,5 +17,6 @@ package org.eclipse.cdt.internal.core;
  */
 public interface ICoreInfo {
 	public String getId();
+
 	public String getPhysicalId();
 }

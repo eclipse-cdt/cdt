@@ -50,7 +50,7 @@ public interface ICodeReaderFactory {
 	 * @return CodeReader for contents at that path.
 	 */
 	public CodeReader createCodeReaderForInclusion(String path);
-	
+
 	/**
 	 * Returns the ICodeReaderCache used for this ICodeReaderFacotry.
 	 * @return the ICodeReaderCache used for this ICodeReaderFacotry

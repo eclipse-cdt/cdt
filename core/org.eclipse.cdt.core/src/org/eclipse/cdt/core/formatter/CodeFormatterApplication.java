@@ -117,7 +117,8 @@ public class CodeFormatterApplication implements IApplication {
 			String contents = new String(Files.readAllBytes(file.toPath())); // compatible only with Java 7+
 			// format the file (the meat and potatoes)
 			doc.set(contents);
-			TextEdit edit = codeFormatter.format(CodeFormatter.K_TRANSLATION_UNIT, contents, 0, contents.length(), 0, null);
+			TextEdit edit = codeFormatter.format(CodeFormatter.K_TRANSLATION_UNIT, contents, 0, contents.length(), 0,
+					null);
 			if (edit != null) {
 				edit.apply(doc);
 			} else {
@@ -139,10 +140,11 @@ public class CodeFormatterApplication implements IApplication {
 			}
 		} catch (IOException e) {
 			String errorMessage = Messages.bind(Messages.CaughtException, "IOException", e.getLocalizedMessage()); //$NON-NLS-1$
-			System.err.println(Messages.bind(Messages.ExceptionSkip ,errorMessage));
+			System.err.println(Messages.bind(Messages.ExceptionSkip, errorMessage));
 		} catch (BadLocationException e) {
-			String errorMessage = Messages.bind(Messages.CaughtException, "BadLocationException", e.getLocalizedMessage()); //$NON-NLS-1$
-			System.err.println(Messages.bind(Messages.ExceptionSkip ,errorMessage));
+			String errorMessage = Messages.bind(Messages.CaughtException, "BadLocationException", //$NON-NLS-1$
+					e.getLocalizedMessage());
+			System.err.println(Messages.bind(Messages.ExceptionSkip, errorMessage));
 		}
 	}
 
@@ -165,72 +167,67 @@ public class CodeFormatterApplication implements IApplication {
 		loop: while (index < argCount) {
 			String currentArg = argsArray[index++];
 
-			switch(mode) {
-				case DEFAULT_MODE :
-					if (ARG_HELP.equals(currentArg)) {
-						displayHelp();
-						return null;
-					}
-					if (ARG_VERBOSE.equals(currentArg)) {
-						this.verbose = true;
-						continue loop;
-					}
-					if (ARG_QUIET.equals(currentArg)) {
-						this.quiet = true;
-						continue loop;
-					}
-					if (ARG_CONFIG.equals(currentArg)) {
-						mode = CONFIG_MODE;
-						continue loop;
-					}
-					// the current arg should be a file or a directory name
-					File file = new File(currentArg);
-					if (file.exists()) {
-						filesToFormat.add(file);
-					} else {
-						String canonicalPath;
-						try {
-							canonicalPath = file.getCanonicalPath();
-						} catch(IOException e2) {
-							canonicalPath = file.getAbsolutePath();
-						}
-						String errorMsg = file.isAbsolute() ?
-										  Messages.bind(Messages.CommandLineErrorFile, canonicalPath):
-										  Messages.bind(Messages.CommandLineErrorFileTryFullPath, canonicalPath);
-						displayHelp(errorMsg);
-						return null;
-					}
-					break;
-				case CONFIG_MODE :
-					this.configName = currentArg;
-					this.options = readConfig(currentArg);
-					boolean validConfig = false;
-					if (this.options != null && !this.options.isEmpty()) {
-						@SuppressWarnings("unchecked")
-						Iterator<String> it = this.options.keySet().iterator();
-						// at least 1 property key starts with org.eclipse.cdt.core.formatter
-						while (it.hasNext()) {
-							if (it.next().startsWith(this.getClass().getPackage().getName())) {
-								validConfig = true;
-								break;
-							}
-						}
-					}
-					if (!validConfig) {
-						displayHelp(Messages.bind(Messages.CommandLineErrorConfig, currentArg));
-						return null;
-					}
-					mode = DEFAULT_MODE;
+			switch (mode) {
+			case DEFAULT_MODE:
+				if (ARG_HELP.equals(currentArg)) {
+					displayHelp();
+					return null;
+				}
+				if (ARG_VERBOSE.equals(currentArg)) {
+					this.verbose = true;
 					continue loop;
+				}
+				if (ARG_QUIET.equals(currentArg)) {
+					this.quiet = true;
+					continue loop;
+				}
+				if (ARG_CONFIG.equals(currentArg)) {
+					mode = CONFIG_MODE;
+					continue loop;
+				}
+				// the current arg should be a file or a directory name
+				File file = new File(currentArg);
+				if (file.exists()) {
+					filesToFormat.add(file);
+				} else {
+					String canonicalPath;
+					try {
+						canonicalPath = file.getCanonicalPath();
+					} catch (IOException e2) {
+						canonicalPath = file.getAbsolutePath();
+					}
+					String errorMsg = file.isAbsolute() ? Messages.bind(Messages.CommandLineErrorFile, canonicalPath)
+							: Messages.bind(Messages.CommandLineErrorFileTryFullPath, canonicalPath);
+					displayHelp(errorMsg);
+					return null;
+				}
+				break;
+			case CONFIG_MODE:
+				this.configName = currentArg;
+				this.options = readConfig(currentArg);
+				boolean validConfig = false;
+				if (this.options != null && !this.options.isEmpty()) {
+					@SuppressWarnings("unchecked")
+					Iterator<String> it = this.options.keySet().iterator();
+					// at least 1 property key starts with org.eclipse.cdt.core.formatter
+					while (it.hasNext()) {
+						if (it.next().startsWith(this.getClass().getPackage().getName())) {
+							validConfig = true;
+							break;
+						}
+					}
+				}
+				if (!validConfig) {
+					displayHelp(Messages.bind(Messages.CommandLineErrorConfig, currentArg));
+					return null;
+				}
+				mode = DEFAULT_MODE;
+				continue loop;
 			}
 		}
 
 		if (this.quiet && this.verbose) {
-			displayHelp(
-				Messages.bind(
-					Messages.CommandLineErrorQuietVerbose,
-					new String[] { ARG_QUIET, ARG_VERBOSE }
-				));
+			displayHelp(Messages.bind(Messages.CommandLineErrorQuietVerbose, new String[] { ARG_QUIET, ARG_VERBOSE }));
 			return null;
 		}
 		if (filesToFormat.isEmpty()) {
@@ -254,15 +251,14 @@ public class CodeFormatterApplication implements IApplication {
 			String canonicalPath = null;
 			try {
 				canonicalPath = configFile.getCanonicalPath();
-			} catch(IOException e2) {
+			} catch (IOException e2) {
 				canonicalPath = configFile.getAbsolutePath();
 			}
 			String errorMessage;
 			if (!configFile.exists() && !configFile.isAbsolute()) {
-				errorMessage = Messages.bind(Messages.ConfigFileNotFoundErrorTryFullPath, new Object[] {
-					canonicalPath,
-					System.getProperty("user.dir") //$NON-NLS-1$
-				});
+				errorMessage = Messages.bind(Messages.ConfigFileNotFoundErrorTryFullPath,
+						new Object[] { canonicalPath, System.getProperty("user.dir") //$NON-NLS-1$
+						});
 
 			} else {
 				errorMessage = Messages.bind(Messages.ConfigFileReadingError, canonicalPath);
@@ -276,23 +272,24 @@ public class CodeFormatterApplication implements IApplication {
 	 * Checks if given file name ends with e.g. .c .cpp or .h
 	 */
 	private boolean hasSuitableFileExtension(File file) {
-		IContentType ct= CCorePlugin.getContentType(null, file.getName());
+		IContentType ct = CCorePlugin.getContentType(null, file.getName());
 		if (ct != null) {
 			String id = ct.getId();
-			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) ||
-					CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)
+					|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Runs the code formatter application
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
-		File[] filesToFormat = processCommandLine((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
+		File[] filesToFormat = processCommandLine(
+				(String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
 
 		if (filesToFormat == null) {
 			return IApplication.EXIT_OK;
@@ -322,7 +319,7 @@ public class CodeFormatterApplication implements IApplication {
 
 		return IApplication.EXIT_OK;
 	}
-	
+
 	@Override
 	public void stop() {
 		// do nothing

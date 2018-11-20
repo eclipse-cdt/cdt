@@ -40,55 +40,56 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for enumerations in C.
  */
 public class CEnumeration extends PlatformObject implements IEnumeration, ICInternalBinding {
-    private IASTName[] declarations = null;
-    private IASTName definition = null;
+	private IASTName[] declarations = null;
+	private IASTName definition = null;
 	private Long fMinValue;
 	private Long fMaxValue;
-    public CEnumeration(IASTName enumeration) {
-        ASTNodeProperty prop = enumeration.getPropertyInParent();
-        if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-        	declarations = new IASTName[] { enumeration };
-        else
-            definition = enumeration;
-        enumeration.setBinding(this);
+
+	public CEnumeration(IASTName enumeration) {
+		ASTNodeProperty prop = enumeration.getPropertyInParent();
+		if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
+			declarations = new IASTName[] { enumeration };
+		else
+			definition = enumeration;
+		enumeration.setBinding(this);
 	}
 
 	public void addDeclaration(IASTName decl) {
 		if (!decl.isActive())
 			return;
 
-        if (decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME)
-            return;
+		if (decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME)
+			return;
 
-        decl.setBinding(this);
-        if (declarations == null) {
-            declarations = new IASTName[] { decl };
-        	return;
-        }
-        for (int i = 0; i < declarations.length; i++) {
-            if (declarations[i] == null) {
-                declarations[i] = decl;
-                return;
-            }
-        }
-        IASTName tmp[] = new IASTName[declarations.length * 2];
-        System.arraycopy(declarations, 0, tmp, 0, declarations.length);
-        tmp[declarations.length] = decl;
-        declarations = tmp;
-    }
+		decl.setBinding(this);
+		if (declarations == null) {
+			declarations = new IASTName[] { decl };
+			return;
+		}
+		for (int i = 0; i < declarations.length; i++) {
+			if (declarations[i] == null) {
+				declarations[i] = decl;
+				return;
+			}
+		}
+		IASTName tmp[] = new IASTName[declarations.length * 2];
+		System.arraycopy(declarations, 0, tmp, 0, declarations.length);
+		tmp[declarations.length] = decl;
+		declarations = tmp;
+	}
 
-    @Override
+	@Override
 	public IASTNode getPhysicalNode() {
-        if (definition != null)
-            return definition;
+		if (definition != null)
+			return definition;
 
-        return declarations[0];
-    }
+		return declarations[0];
+	}
 
 	private void checkForDefinition() {
 		IASTDeclSpecifier spec = CVisitor.findDefinition((ICASTElaboratedTypeSpecifier) declarations[0].getParent());
 		if (spec != null && spec instanceof ICASTEnumerationSpecifier) {
-		    ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) spec;
+			ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) spec;
 
 			enumSpec.getName().setBinding(this);
 			definition = enumSpec.getName();
@@ -96,81 +97,83 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
+	 */
+	@Override
 	public String getName() {
-        if (definition != null)
-            return definition.toString();
+		if (definition != null)
+			return definition.toString();
 
-        return declarations[0].toString();
-    }
-    @Override
+		return declarations[0].toString();
+	}
+
+	@Override
 	public char[] getNameCharArray() {
-        if (definition != null)
-            return definition.toCharArray();
+		if (definition != null)
+			return definition.toCharArray();
 
-        return declarations[0].toCharArray();
-    }
+		return declarations[0].toCharArray();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
+	 */
+	@Override
 	public IScope getScope() {
-        return CVisitor.getContainingScope(definition != null ? definition : declarations[0].getParent());
-    }
+		return CVisitor.getContainingScope(definition != null ? definition : declarations[0].getParent());
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return t;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
+	 */
+	@Override
 	public IEnumerator[] getEnumerators() {
-        if (definition == null) {
-            checkForDefinition();
-            if (definition == null)
-                return new IEnumerator[] { new CEnumerator.CEnumeratorProblem(declarations[0], IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, declarations[0].toCharArray()) };
-        }
+		if (definition == null) {
+			checkForDefinition();
+			if (definition == null)
+				return new IEnumerator[] { new CEnumerator.CEnumeratorProblem(declarations[0],
+						IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, declarations[0].toCharArray()) };
+		}
 
-        IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) definition.getParent();
-        IASTEnumerationSpecifier.IASTEnumerator[] enums = enumSpec.getEnumerators();
-        IEnumerator[] bindings = new IEnumerator[enums.length];
+		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) definition.getParent();
+		IASTEnumerationSpecifier.IASTEnumerator[] enums = enumSpec.getEnumerators();
+		IEnumerator[] bindings = new IEnumerator[enums.length];
 
-        for (int i = 0; i < enums.length; i++) {
-            bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
-        }
-        return bindings;
-    }
+		for (int i = 0; i < enums.length; i++) {
+			bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
+		}
+		return bindings;
+	}
 
 	public void addDefinition(IASTName name) {
 		if (name.isActive())
 			definition = name;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+	 */
+	@Override
 	public boolean isSameType(IType type) {
-        if (type == this)
-            return true;
-        if (type instanceof ITypedef || type instanceof IIndexBinding)
-            return type.isSameType(this);
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef || type instanceof IIndexBinding)
+			return type.isSameType(this);
 
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public ILinkage getLinkage() {
@@ -189,9 +192,9 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 
 	@Override
 	public IBinding getOwner() {
-		IASTNode node= definition;
+		IASTNode node = definition;
 		if (node == null && declarations != null && declarations.length > 0) {
-			node= declarations[0];
+			node = declarations[0];
 		}
 		// either local or global, never part of structs
 		return CVisitor.findEnclosingFunction(node);
@@ -208,7 +211,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 			return fMinValue.longValue();
 
 		long minValue = SemanticUtil.computeMinValue(this);
-		fMinValue= minValue;
+		fMinValue = minValue;
 		return minValue;
 	}
 
@@ -218,7 +221,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 			return fMaxValue.longValue();
 
 		long maxValue = SemanticUtil.computeMaxValue(this);
-		fMaxValue= maxValue;
+		fMaxValue = maxValue;
 		return maxValue;
 	}
 }

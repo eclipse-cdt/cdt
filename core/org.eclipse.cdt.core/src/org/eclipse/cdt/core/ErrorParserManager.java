@@ -81,10 +81,10 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	private static final Pattern ANSI_ESCAPE_RE = Pattern.compile("\\e\\[[\\d;]*[^\\d;]"); //$NON-NLS-1$
 
 	private int nOpens;
-	private int lineCounter=0;
-	
-	private int errorCounter=0;
-	private int warningCounter=0;
+	private int lineCounter = 0;
+
+	private int errorCounter = 0;
+	private int warningCounter = 0;
 
 	private final IProject fProject;
 	private final IMarkerGenerator fMarkerGenerator;
@@ -138,7 +138,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @param parsersIDs - array of error parsers' IDs.
 	 */
 	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, (URI)null, markerGenerator, parsersIDs);
+		this(project, (URI) null, markerGenerator, parsersIDs);
 	}
 
 	/**
@@ -151,9 +151,10 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @deprecated use {@link #ErrorParserManager(IProject, URI, IMarkerGenerator, String[])} instead
 	 */
 	@Deprecated
-	public ErrorParserManager(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, (workingDirectory == null || workingDirectory.isEmpty()) ? null : org.eclipse.core.filesystem.URIUtil.toURI(workingDirectory),
-				markerGenerator, parsersIDs);
+	public ErrorParserManager(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator,
+			String[] parsersIDs) {
+		this(project, (workingDirectory == null || workingDirectory.isEmpty()) ? null
+				: org.eclipse.core.filesystem.URIUtil.toURI(workingDirectory), markerGenerator, parsersIDs);
 	}
 
 	/**
@@ -165,7 +166,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @param parsersIDs - array of error parsers' IDs.
 	 * @since 5.1
 	 */
-	public ErrorParserManager(IProject project, URI baseDirectoryURI, IMarkerGenerator markerGenerator, String[] parsersIDs) {
+	public ErrorParserManager(IProject project, URI baseDirectoryURI, IMarkerGenerator markerGenerator,
+			String[] parsersIDs) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
 		fDirectoryStack = new Vector<URI>();
@@ -176,8 +178,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 			fBaseDirectoryURI = baseDirectoryURI;
 		} else if (project != null) {
 			fBaseDirectoryURI = project.getLocationURI();
-		}
-		else {
+		} else {
 			fBaseDirectoryURI = org.eclipse.core.filesystem.URIUtil.toURI(System.getProperty("user.dir")); // CWD  //$NON-NLS-1$
 		}
 	}
@@ -189,8 +190,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parserIDs.length);
 		for (String parsersID : parserIDs) {
 			IErrorParser errorParser = getErrorParserCopy(parsersID);
-			if (errorParser!=null) {
-				fErrorParsers.put(parsersID, new IErrorParser[] {errorParser} );
+			if (errorParser != null) {
+				fErrorParsers.put(parsersID, new IErrorParser[] { errorParser });
 			}
 		}
 	}
@@ -335,14 +336,13 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		String lineTrimmed = ANSI_ESCAPE_RE.matcher(line).replaceAll("").trim(); //$NON-NLS-1$
 		lineCounter++;
 
-		ProblemMarkerInfo marker=null;
+		ProblemMarkerInfo marker = null;
 
-outer:
-		for (IErrorParser[] parsers : fErrorParsers.values()) {
+		outer: for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser parser : parsers) {
 				IErrorParser curr = parser;
 				if (parser instanceof ErrorParserNamedWrapper) {
-					curr = ((ErrorParserNamedWrapper)parser).getErrorParser();
+					curr = ((ErrorParserNamedWrapper) parser).getErrorParser();
 				}
 				int types = IErrorParser2.NONE;
 				if (curr instanceof IErrorParser2) {
@@ -356,7 +356,7 @@ outer:
 				}
 				// standard behavior (pre 5.1) is to trim the line
 				String lineToParse = lineTrimmed;
-				if ((types & IErrorParser2.KEEP_UNTRIMMED) !=0 ) {
+				if ((types & IErrorParser2.KEEP_UNTRIMMED) != 0) {
 					// untrimmed lines
 					lineToParse = line;
 				}
@@ -367,8 +367,8 @@ outer:
 				// It should not stop parsing of the rest of output.
 				try {
 					consume = curr.processLine(lineToParse, this);
-				} catch (Exception e){
-					String id = "";  //$NON-NLS-1$
+				} catch (Exception e) {
+					String id = ""; //$NON-NLS-1$
 					if (parser instanceof IErrorParserNamed) {
 						id = ((IErrorParserNamed) parser).getId();
 					}
@@ -377,7 +377,7 @@ outer:
 					CCorePlugin.log(message, e);
 				} finally {
 					if (fErrors.size() > 0) {
-						if (marker==null) {
+						if (marker == null) {
 							marker = fErrors.get(0);
 						}
 						fErrors.clear();
@@ -399,12 +399,12 @@ outer:
 	 * supports error markers, use it, otherwise use conventional stream
 	 */
 	private void outputLine(String line, ProblemMarkerInfo marker) {
-		String l = line + "\n";  //$NON-NLS-1$
-		if ( outputStream == null ) {
+		String l = line + "\n"; //$NON-NLS-1$
+		if (outputStream == null) {
 			return;
 		}
 		try {
-			if ( outputStream instanceof IErrorMarkeredOutputStream ) {
+			if (outputStream instanceof IErrorMarkeredOutputStream) {
 				IErrorMarkeredOutputStream s = (IErrorMarkeredOutputStream) outputStream;
 				s.write(l, marker);
 			} else {
@@ -441,8 +441,8 @@ outer:
 	 * @return - file in the workspace or {@code null}.
 	 */
 	public IFile findFileName(String partialLoc) {
-		if (partialLoc.equals(cachedFileName) && cachedWorkingDirectory != null &&
-				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory)) {
+		if (partialLoc.equals(cachedFileName) && cachedWorkingDirectory != null
+				&& org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory)) {
 			return cachedFile;
 		}
 
@@ -453,7 +453,7 @@ outer:
 		IFile file = findFileInWorkspace(path);
 
 		// Try to find best match considering known partial path
-		if (file==null) {
+		if (file == null) {
 			path = path.setDevice(null);
 			IFile[] files = null;
 			if (fProject != null) {
@@ -476,7 +476,7 @@ outer:
 		}
 
 		// Could be cygwin path
-		if (file==null && isCygwin && path.isAbsolute()) {
+		if (file == null && isCygwin && path.isAbsolute()) {
 			file = findCygwinFile(partialLoc);
 		}
 
@@ -525,7 +525,7 @@ outer:
 	 */
 	@Deprecated
 	public boolean isConflictingName(String fileName) {
-		return ResourceLookup.findFilesByName(new Path(fileName), new IProject[] {fProject}, false).length > 1;
+		return ResourceLookup.findFilesByName(new Path(fileName), new IProject[] { fProject }, false).length > 1;
 	}
 
 	/**
@@ -552,7 +552,7 @@ outer:
 	}
 
 	private IFile findCygwinFile(String filePath) {
-		IFile file=null;
+		IFile file = null;
 		try {
 			IPath path = new Path(Cygwin.cygwinToWindowsPath(filePath));
 			file = findFileInWorkspace(path);
@@ -590,10 +590,12 @@ outer:
 	 * @param varName - variable name.
 	 * @param externalPath - external path pointing to a file outside the workspace.
 	 */
-	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName, IPath externalPath) {
+	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName,
+			IPath externalPath) {
 		if (file == null)
 			file = fProject;
-		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath);
+		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, desc, severity, varName,
+				externalPath);
 		this.addProblemMarker(problemMarkerInfo);
 	}
 
@@ -603,8 +605,8 @@ outer:
 	 * @param problemMarkerInfo - The marker to be added.
 	 * @since 5.4
 	 */
-	public void addProblemMarker(ProblemMarkerInfo problemMarkerInfo){
-		if ( ! ProblemMarkerFilterManager.getInstance().acceptMarker(problemMarkerInfo) )
+	public void addProblemMarker(ProblemMarkerInfo problemMarkerInfo) {
+		if (!ProblemMarkerFilterManager.getInstance().acceptMarker(problemMarkerInfo))
 			return;
 		fErrors.add(problemMarkerInfo);
 		problemMarkerInfo.setDeferDeDuplication(deferDeDuplication);
@@ -613,7 +615,7 @@ outer:
 				|| problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
 			hasErrors = true;
 			errorCounter++;
-		} else if (problemMarkerInfo.severity ==  IMarkerGenerator.SEVERITY_WARNING){
+		} else if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_WARNING) {
 			warningCounter++;
 		}
 	}
@@ -703,7 +705,7 @@ outer:
 			String line = buffer.substring(0, i);
 			// get rid of any trailing '\r'
 			if (line.endsWith("\r")) { //$NON-NLS-1$
-				line=line.substring(0,line.length()-1);
+				line = line.substring(0, line.length() - 1);
 			}
 			processLine(line);
 			previousLine = line;
@@ -736,10 +738,10 @@ outer:
 	}
 
 	/**
-     * Converts a location {@link IPath} to an {@link URI}.
-     * The returned URI uses the scheme and authority of the current working directory
-     * as returned by {@link #getWorkingDirectoryURI()}
-     *
+	 * Converts a location {@link IPath} to an {@link URI}.
+	 * The returned URI uses the scheme and authority of the current working directory
+	 * as returned by {@link #getWorkingDirectoryURI()}
+	 *
 	 * @param path - the path to convert to URI.
 	 * @return URI
 	 * @since 5.1
@@ -886,9 +888,9 @@ outer:
 	 * @since 5.2
 	 */
 	public static String toDelimitedString(String[] ids) {
-		String result=""; //$NON-NLS-1$
+		String result = ""; //$NON-NLS-1$
 		for (String id : ids) {
-			if (result.length()==0) {
+			if (result.length() == 0) {
 				result = id;
 			} else {
 				result += ERROR_PARSER_DELIMITER + id;
@@ -910,14 +912,14 @@ outer:
 			}
 		}
 	}
-	
+
 	/**
 	 * @since 6.5
 	 */
 	public int getErrorCount() {
 		return errorCounter;
 	}
-	
+
 	/**
 	 * @since 6.5
 	 */

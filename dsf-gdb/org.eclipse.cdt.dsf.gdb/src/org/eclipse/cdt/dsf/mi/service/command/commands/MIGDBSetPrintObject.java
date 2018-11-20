@@ -28,6 +28,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  */
 public class MIGDBSetPrintObject extends MIGDBSet {
 	public MIGDBSetPrintObject(ICommandControlDMContext ctx, boolean enable) {
-		super(ctx, new String[] {"print", "object", enable ? "on" : "off"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		super(ctx, new String[] { "print", "object", enable ? "on" : "off" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

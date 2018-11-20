@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
-
 import java.util.Iterator;
-
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -35,7 +33,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-
 /*
  * This dialog is intended to verify a dialogs in a testing
  * environment.  The tester can test for sizing, initial focus,
@@ -43,28 +40,27 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VerifyDialog extends TitleAreaDialog {
 	private int SIZING_WIDTH = 400;
-	
-	static int      TEST_TYPE;
+
+	static int TEST_TYPE;
 	public static final int TEST_SIZING = 0;
-	public static final int TEST_FOCUS  = 1;
+	public static final int TEST_FOCUS = 1;
 	public static final int TEST_ACCESS = 2;
 	private IDialogTestPass _dialogTests[] = new IDialogTestPass[3];
 
-
 	private Dialog _testDialog; //the dialog to test
-	private Point  _testDialogSize;
-	
-	private Label  _queryLabel;
+	private Point _testDialogSize;
+
+	private Label _queryLabel;
 	Button _yesButton;
 	private Button _checkList[];
 	private String _failureText;
-	
+
 	/*
 	 * Create an instance of the verification dialog.
 	 */
 	public VerifyDialog(Shell parent) {
 		super(parent);
-		if ( !(TEST_TYPE <= 2) && !(TEST_TYPE >= 0) ) {
+		if (!(TEST_TYPE <= 2) && !(TEST_TYPE >= 0)) {
 			TEST_TYPE = TEST_SIZING;
 		}
 		_failureText = "";
@@ -72,7 +68,7 @@ public class VerifyDialog extends TitleAreaDialog {
 		_dialogTests[1] = new FocusTestPass();
 		_dialogTests[2] = new AccessibilityTestPass();
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
@@ -82,6 +78,7 @@ public class VerifyDialog extends TitleAreaDialog {
 		newShell.setText("Dialog Verification");
 		setShellStyle(SWT.NONE);
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -90,6 +87,7 @@ public class VerifyDialog extends TitleAreaDialog {
 		_yesButton = createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
 		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -105,14 +103,14 @@ public class VerifyDialog extends TitleAreaDialog {
 			handleFailure();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// top level composite
-		Composite parentComposite = (Composite)super.createDialogArea(parent);
-
+		Composite parentComposite = (Composite) super.createDialogArea(parent);
 
 		// create a composite with standard margins and spacing
 		Composite composite = new Composite(parentComposite, SWT.NONE);
@@ -125,30 +123,29 @@ public class VerifyDialog extends TitleAreaDialog {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-
 		createTestSelectionGroup(composite);
 		createCheckListGroup(composite);
 
-
 		_queryLabel = new Label(composite, SWT.NONE);
 		_queryLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		initializeTest();
 		return composite;
 	}
+
 	/*
 	 * Group for selecting type of test.
 	 */
 	private void createTestSelectionGroup(Composite parent) {
 		Group group = new Group(parent, SWT.SHADOW_NONE);
 		group.setText("Testing:");
-		group.setLayout( new GridLayout() );
+		group.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
-		
+
 		for (int i = 0; i < _dialogTests.length; i++) {
 			Button radio = new Button(group, SWT.RADIO);
-			radio.setText( _dialogTests[i].label() );
+			radio.setText(_dialogTests[i].label());
 			final int testID = _dialogTests[i].getID();
 			radio.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -158,21 +155,22 @@ public class VerifyDialog extends TitleAreaDialog {
 					_yesButton.setEnabled(true);
 				}
 			});
-			if ( TEST_TYPE == _dialogTests[i].getID() ) {
+			if (TEST_TYPE == _dialogTests[i].getID()) {
 				radio.setSelection(true);
 			}
 		}
 	}
+
 	/*
 	 * Initializes the checklist with empty checks.
 	 */
 	private void createCheckListGroup(Composite parent) {
 		Group group = new Group(parent, SWT.SHADOW_NONE);
 		group.setText("Verify that:");
-		group.setLayout( new GridLayout() );
+		group.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
-		
+
 		int checkListSize = 0;
 		for (int i = 0; i < _dialogTests.length; i++) {
 			int size = _dialogTests[i].checkListTexts().size();
@@ -193,8 +191,9 @@ public class VerifyDialog extends TitleAreaDialog {
 			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			data.grabExcessHorizontalSpace = true;
 			_checkList[i].setLayoutData(data);
-		}		
+		}
 	}
+
 	/*
 	 * Disables the yes button if any of the items in the checklist
 	 * are unchecked.  Enables the yes button otherwise.
@@ -202,23 +201,24 @@ public class VerifyDialog extends TitleAreaDialog {
 	void checkYesEnable() {
 		boolean enable = true;
 		for (int i = 0; i < _checkList.length; i++) {
-			if ( !_checkList[i].getSelection() ) {
+			if (!_checkList[i].getSelection()) {
 				enable = false;
-			}			
+			}
 		}
 		_yesButton.setEnabled(enable);
 	}
+
 	/*
 	 * Initializes the checklist, banner texts, and query label
 	 */
 	void initializeTest() {
 		IDialogTestPass test = _dialogTests[TEST_TYPE];
-		setTitle( test.title() );
-		setMessage( test.description() );
+		setTitle(test.title());
+		setMessage(test.description());
 		Iterator iterator = test.checkListTexts().iterator();
 		for (int i = 0; i < _checkList.length; i++) {
-			if ( iterator.hasNext() ) {
-				_checkList[i].setText( iterator.next().toString() );
+			if (iterator.hasNext()) {
+				_checkList[i].setText(iterator.next().toString());
 				_checkList[i].setVisible(true);
 				_checkList[i].update();
 			} else {
@@ -227,11 +227,13 @@ public class VerifyDialog extends TitleAreaDialog {
 			}
 			_checkList[i].setSelection(true);
 		}
-		_queryLabel.setText( test.queryText() );
+		_queryLabel.setText(test.queryText());
 	}
+
 	public String getFailureText() {
 		return _failureText;
 	}
+
 	/*
 	 * Can't open the verification dialog without a specified
 	 * test dialog, this simply returns a failure and prevents
@@ -243,6 +245,7 @@ public class VerifyDialog extends TitleAreaDialog {
 		_failureText = "Testing dialog is required, use VerifyDialog::open(Dialog)";
 		return IDialogConstants.NO_ID;
 	}
+
 	/*
 	 * Opens the verification dialog to test the specified dialog.
 	 */
@@ -258,9 +261,10 @@ public class VerifyDialog extends TitleAreaDialog {
 		}
 		_testDialogSize = _testDialog.getShell().getSize();
 		openNewTestDialog();
-		
+
 		return super.open();
 	}
+
 	/*
 	 * Opens the dialog to be verified.
 	 */
@@ -273,13 +277,14 @@ public class VerifyDialog extends TitleAreaDialog {
 		_testDialog.getShell().setSize(_testDialogSize);
 		_testDialog.getShell().addShellListener(new ShellAdapter() {
 			@Override
-			public void shellClosed(ShellEvent e) {				
+			public void shellClosed(ShellEvent e) {
 				e.doit = false;
 			}
-		
-		});		
+
+		});
 		_testDialog.open();
 	}
+
 	/*
 	 * The test dialog failed, open the failure dialog.
 	 */
@@ -287,23 +292,19 @@ public class VerifyDialog extends TitleAreaDialog {
 		IDialogTestPass test = _dialogTests[TEST_TYPE];
 		StringBuilder text = new StringBuilder();
 		String label = test.label();
-		label = label.substring(0, label.indexOf("&")) +
-		        label.substring(label.indexOf("&") + 1);
-		text.append(label).
-		     append(" failed on the ").
-		     append(SWT.getPlatform()).
-		     append(" platform:\n");
-		
+		label = label.substring(0, label.indexOf("&")) + label.substring(label.indexOf("&") + 1);
+		text.append(label).append(" failed on the ").append(SWT.getPlatform()).append(" platform:\n");
+
 		String failureMessages[] = test.failureTexts();
 		for (int i = 0; i < test.checkListTexts().size(); i++) {
-			if ( !_checkList[i].getSelection() ) {
+			if (!_checkList[i].getSelection()) {
 				text.append("- ").append(failureMessages[i]).append("\n");
 			}
 		}
-		FailureDialog dialog = new FailureDialog( getShell() );
+		FailureDialog dialog = new FailureDialog(getShell());
 		dialog.create();
 		//String temp = text.toString();
-		dialog.setText( text.toString() );
+		dialog.setText(text.toString());
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			_failureText = dialog.toString();
 			setReturnCode(IDialogConstants.NO_ID);
@@ -313,6 +314,7 @@ public class VerifyDialog extends TitleAreaDialog {
 			close();
 		}
 	}
+
 	/*
 	 * In case the shell was closed by a means other than
 	 * the NO button.
@@ -322,5 +324,3 @@ public class VerifyDialog extends TitleAreaDialog {
 		handleFailure();
 	}
 }
-
-

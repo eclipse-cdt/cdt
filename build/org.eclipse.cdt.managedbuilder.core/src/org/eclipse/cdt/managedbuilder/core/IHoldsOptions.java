@@ -25,13 +25,13 @@ package org.eclipse.cdt.managedbuilder.core;
  */
 public interface IHoldsOptions extends IBuildObject {
 
-	public static final String OPTION = "option";	//$NON-NLS-1$
-	public static final String OPTION_CAT = "optionCategory";	//$NON-NLS-1$
-	public static final String OPTION_REF = "optionReference";	//$NON-NLS-1$
+	public static final String OPTION = "option"; //$NON-NLS-1$
+	public static final String OPTION_CAT = "optionCategory"; //$NON-NLS-1$
+	public static final String OPTION_REF = "optionReference"; //$NON-NLS-1$
 	/*
 	 *  M E T H O D S   M O V E D   F R O M   I T O O L   I N   3 . 0
 	 */
-		
+
 	/**
 	 * Creates a child Option
 	 * 
@@ -89,7 +89,7 @@ public interface IHoldsOptions extends IBuildObject {
 	 * @since 3.0
 	 */
 	public IOption getOptionBySuperClassId(String id);
-	
+
 	/**
 	 * Returns the complete list of options that are available for this object.
 	 * The list is a merging of the options specified for this object with the 
@@ -98,8 +98,8 @@ public interface IHoldsOptions extends IBuildObject {
 	 * 
 	 * @return IOption[]
 	 */
-	public IOption[] getOptions();	
-	
+	public IOption[] getOptions();
+
 	/**
 	 * Returns the option category children of this tool.
 	 * 
@@ -110,7 +110,7 @@ public interface IHoldsOptions extends IBuildObject {
 	/*
 	 *  M E T H O D S   M O V E D   F R O M   T O O L   I N   3 . 0
 	 */
-			
+
 	/**
 	 * Adds the <code>IOptionCategory</code> to this Option Holder's 
 	 * list of Option Categories. 
@@ -118,11 +118,11 @@ public interface IHoldsOptions extends IBuildObject {
 	 * @param category  The option category to be added
 	 */
 	public void addOptionCategory(IOptionCategory category);
-	
+
 	/*
 	 *  N E W   M E T H O D S   A D D E D   I N   3 . 0
 	 */
-	
+
 	/**
 	 * Answers the <code>IOptionCategory</code> that has the unique identifier 
 	 * specified in the argument. 
@@ -142,9 +142,9 @@ public interface IHoldsOptions extends IBuildObject {
 	 * @since 3.0
 	 */
 	public void createOptions(IHoldsOptions superClass);
-	
-	/**
 
+	/**
+	
 	* This method should be called in order to obtain the option whose value and attributes could be directly changed/adjusted
 	* 
 	* @param option -the option to be modified
@@ -158,14 +158,14 @@ public interface IHoldsOptions extends IBuildObject {
 	* Note: changing this option will affect all non-extension configurations using this option!
 	*/
 	IOption getOptionToSet(IOption option, boolean adjustExtension) throws BuildException;
-	
+
 	/**
 	 * specifies whether the option holder is modified and needs rebuild
 	 * 
 	 * @return boolean
 	 */
 	public boolean needsRebuild();
-	
+
 	/**
 	 * sets the holder rebuild state
 	 */

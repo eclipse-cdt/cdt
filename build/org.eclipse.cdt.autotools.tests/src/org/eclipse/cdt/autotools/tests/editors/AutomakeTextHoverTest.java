@@ -35,7 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class AutomakeTextHoverTest {
 
 	private ProjectTools tools;
@@ -51,27 +50,24 @@ public class AutomakeTextHoverTest {
 			// ie. '\techo ' == 6 characters
 			"MACRO = case1" + "\n" +
 			// 14
-			"target1:" + "\n" +
-			// 23 (before the tab)
-			// 32 is after the M in MACRO
-			"\t" + "echo $(MACRO)" + "\n" +
-			// 38 (before the tab)
-			"\t" + "echo $@" + "\n" +
-			"\n" +
-			// 48
-			"target2: target1" + "\n" +
-			// 65 (before the tab)
-			"\t" + "echo ${MACRO}" + "\n" +
-			// 80 (before the tab)
-			"\t" + "echo $@" + "\n" +
-			// 89 (before the tab)
-			"\t" + "echo $<" + "\n" +
-			"\n" +
-			// 99
-			"target3: target1 target2" + "\n" +
-			// 124 (before the tab)
-			"\t" + "echo $?" + "\n" +
-			"";
+					"target1:" + "\n" +
+					// 23 (before the tab)
+					// 32 is after the M in MACRO
+					"\t" + "echo $(MACRO)" + "\n" +
+					// 38 (before the tab)
+					"\t" + "echo $@" + "\n" + "\n" +
+					// 48
+					"target2: target1" + "\n" +
+					// 65 (before the tab)
+					"\t" + "echo ${MACRO}" + "\n" +
+					// 80 (before the tab)
+					"\t" + "echo $@" + "\n" +
+					// 89 (before the tab)
+					"\t" + "echo $<" + "\n" + "\n" +
+					// 99
+					"target3: target1 target2" + "\n" +
+					// 124 (before the tab)
+					"\t" + "echo $?" + "\n" + "";
 	private IWorkbench workbench;
 
 	@Before
@@ -82,7 +78,7 @@ public class AutomakeTextHoverTest {
 
 		project = ProjectTools.createProject("testProjectATHT");
 
-		if(project == null) {
+		if (project == null) {
 			fail("Unable to create test project");
 		}
 
@@ -131,6 +127,7 @@ public class AutomakeTextHoverTest {
 			assertEquals("target1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
+
 	@Test
 	public void testGetHoverInfoTargetName2() {
 		// hover between the $ and the @ in target2
@@ -149,6 +146,7 @@ public class AutomakeTextHoverTest {
 			assertEquals("target2", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
+
 	@Test
 	public void testGetHoverInfoForTargetDependency() {
 		// hover between the $ and the < in target2
@@ -167,6 +165,7 @@ public class AutomakeTextHoverTest {
 			assertEquals("target1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
+
 	@Test
 	public void testGetHoverInfoForTargetDependencies() {
 		// hover between the $ and the ? in target3
@@ -186,6 +185,7 @@ public class AutomakeTextHoverTest {
 					textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
+
 	@Test
 	public void testGetHoverForMacro1() {
 		Display.getDefault().syncExec(() -> {
@@ -204,6 +204,7 @@ public class AutomakeTextHoverTest {
 			assertEquals("case1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
+
 	@Test
 	public void testGetHoverForMacro2() {
 		// hover between the M and the A in the ${MACRO} reference in target2

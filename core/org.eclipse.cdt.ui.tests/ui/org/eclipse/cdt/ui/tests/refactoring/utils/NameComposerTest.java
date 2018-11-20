@@ -27,13 +27,11 @@ public class NameComposerTest extends TestCase {
 	private static final int CAPITALIZATION_LOWER_CASE = PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CASE;
 	private static final int CAPITALIZATION_CAMEL_CASE = PreferenceConstants.NAME_STYLE_CAPITALIZATION_CAMEL_CASE;
 	private static final int CAPITALIZATION_LOWER_CAMEL_CASE = PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE;
-	
-	private NameComposer assertCreatedByExample(String seedName, String composedName,
-			int defaultCapitalization, String defaultDelimiter) {
-		NameComposer composer =
-				createByExample(seedName, composedName, defaultCapitalization, defaultDelimiter);
-		assertNotNull("Failed to create a name composer for \"" + seedName + "\", \"" + composedName + "\".",
-				composer);
+
+	private NameComposer assertCreatedByExample(String seedName, String composedName, int defaultCapitalization,
+			String defaultDelimiter) {
+		NameComposer composer = createByExample(seedName, composedName, defaultCapitalization, defaultDelimiter);
+		assertNotNull("Failed to create a name composer for \"" + seedName + "\", \"" + composedName + "\".", composer);
 		assertEquals(composedName, composer.compose(seedName));
 		return composer;
 	}
@@ -72,18 +70,18 @@ public class NameComposerTest extends TestCase {
 		assertEquals("F", trimFieldName("F_"));
 		assertEquals("oo", trimFieldName("F_oo"));
 		assertEquals("o", trimFieldName("f_o"));
-		
+
 		assertEquals("M", trimFieldName("a_M_"));
 		assertEquals("bs", trimFieldName("a_bs_"));
 		assertEquals("foo_bar", trimFieldName("foo_bar"));
 		assertEquals("foo_bar", trimFieldName("foo_bar_"));
-		
+
 		assertEquals("foo_b", trimFieldName("foo_b_"));
-		
+
 		assertEquals("foo", trimFieldName("foo"));
 		assertEquals("foo", trimFieldName("_foo"));
 		assertEquals("bar", trimFieldName("_f_bar"));
-		
+
 		assertEquals("f", trimFieldName("f__"));
 		assertEquals("f", trimFieldName("__f"));
 		assertEquals("O__b", trimFieldName("fO__b"));
@@ -91,14 +89,14 @@ public class NameComposerTest extends TestCase {
 		assertEquals("O", trimFieldName("fO"));
 		assertEquals("MyStatic", trimFieldName("sMyStatic"));
 		assertEquals("MyMember", trimFieldName("mMyMember"));
-		
+
 		assertEquals("8", trimFieldName("_8"));
-		
+
 		assertEquals("8bar", trimFieldName("_8bar_"));
 		assertEquals("8bar_8", trimFieldName("_8bar_8"));
 		assertEquals("8bAr", trimFieldName("_8bAr"));
 		assertEquals("b8Ar", trimFieldName("_b8Ar"));
-		
+
 		assertEquals("Id", trimFieldName("Id"));
 		assertEquals("ID", trimFieldName("ID"));
 		assertEquals("IDS", trimFieldName("IDS"));

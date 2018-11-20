@@ -34,9 +34,9 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 
 	// Widgets and bookeeping variables
 	private Combo optionSelector;
-	private String [] options = new String[0];
-	private String selected; 
-	
+	private String[] options = new String[0];
+	private String selected;
+
 	/**
 	 * @param name
 	 * @param label
@@ -44,7 +44,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	 * @param sel
 	 * @param parent
 	 */
-	public BuildOptionComboFieldEditor (String name, String label, String [] opts, String sel, Composite parent) {
+	public BuildOptionComboFieldEditor(String name, String label, String[] opts, String sel, Composite parent) {
 		init(name, label);
 		setOptions(opts);
 		selected = sel;
@@ -60,10 +60,12 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	 * @param sel
 	 * @param parent
 	 */
-	public BuildOptionComboFieldEditor(String name, String label, String tooltip, String contextId, String [] opts, String sel, Composite parent) {
+	public BuildOptionComboFieldEditor(String name, String label, String tooltip, String contextId, String[] opts,
+			String sel, Composite parent) {
 		this(name, label, opts, sel, parent);
 		setToolTip(tooltip);
-		if (!contextId.isEmpty()) PlatformUI.getWorkbench().getHelpSystem().setHelp(optionSelector, contextId);
+		if (!contextId.isEmpty())
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(optionSelector, contextId);
 	}
 
 	/**
@@ -81,7 +83,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		optionSelector.setToolTipText(tooltip);
 		getLabelControl().setToolTipText(tooltip);
 	}
-	
+
 	/**
 	 * Returns the field editor's tool tip text, or null if it has
 	 * not been set.
@@ -103,7 +105,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		// For now grab the excess space
-		GridData gd = (GridData)optionSelector.getLayoutData();
+		GridData gd = (GridData) optionSelector.getLayoutData();
 		gd.horizontalSpan = numColumns - 1;
 		gd.grabExcessHorizontalSpace = true;
 	}
@@ -116,14 +118,14 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = numColumns;
 		parent.setLayoutData(gd);
-		
+
 		// Add the label
 		Label label = getLabelControl(parent);
 		GridData labelData = new GridData();
 		labelData.horizontalSpan = 1;
 		labelData.grabExcessHorizontalSpace = false;
 		label.setLayoutData(labelData);
-		
+
 		// Now add the combo selector
 		optionSelector = ControlFactory.createSelectCombo(parent, getOptions(), selected);
 		GridData selectorData = (GridData) optionSelector.getLayoutData();
@@ -137,7 +139,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 				int index = optionSelector.getSelectionIndex();
 				selected = index == -1 ? "" : optionSelector.getItem(index); //$NON-NLS-1$
 				setPresentsDefaultValue(false);
-				fireValueChanged(VALUE, oldValue, selected);					
+				fireValueChanged(VALUE, oldValue, selected);
 			}
 		});
 	}
@@ -153,7 +155,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 
 		// get the selected option from preference store
 		selected = getPreferenceStore().getString(getPreferenceName());
-		
+
 		// Set the index of selection in the combo box
 		int index = optionSelector.indexOf(selected);
 		optionSelector.select(index >= 0 ? index : 0);
@@ -177,11 +179,11 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		selected = index == -1 ? "" : optionSelector.getItem(index); //$NON-NLS-1$
 		getPreferenceStore().setValue(getPreferenceName(), selected);
 	}
-	
-	public String getSelection(){
+
+	public String getSelection() {
 		return selected;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
 	 */
@@ -191,7 +193,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		return 2;
 	}
 
-    /**
+	/**
 	 * Returns this field editor's text control.
 	 *
 	 * @return the text control, or <code>null</code> if no
@@ -200,7 +202,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	protected Combo getComboControl() {
 		return optionSelector;
 	}
-	
+
 	/**
 	 * Returns this field editor's text control.
 	 *
@@ -212,32 +214,34 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		return optionSelector;
 	}
 
-    /**
-     * Set whether or not the controls in the field editor
-     * are enabled.
-     * @param enabled The enabled state.
-     * @param parent The parent of the controls in the group.
-     *  Used to create the controls if required.
-     */
-    @Override
+	/**
+	 * Set whether or not the controls in the field editor
+	 * are enabled.
+	 * @param enabled The enabled state.
+	 * @param parent The parent of the controls in the group.
+	 *  Used to create the controls if required.
+	 */
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
-        getLabelControl(parent).setEnabled(enabled);
-        optionSelector.setEnabled(enabled);
-    }
-    /**
-    * Set the list of enum values for this combo field editor
-    */
-    public void setOptions(String[] options){
-    	//bug 235327
-    	for (int i = 0; i < options.length; i++) {
-    		options[i] = TextProcessor.process(options[i]);
-    	}
-    	this.options = options;
-    }
-    /**
-     * Set the list of enum values for this combo field editor
-     */
-    public String[] getOptions(){
-    	return options;
-    }
+		getLabelControl(parent).setEnabled(enabled);
+		optionSelector.setEnabled(enabled);
+	}
+
+	/**
+	* Set the list of enum values for this combo field editor
+	*/
+	public void setOptions(String[] options) {
+		//bug 235327
+		for (int i = 0; i < options.length; i++) {
+			options[i] = TextProcessor.process(options[i]);
+		}
+		this.options = options;
+	}
+
+	/**
+	 * Set the list of enum values for this combo field editor
+	 */
+	public String[] getOptions() {
+		return options;
+	}
 }

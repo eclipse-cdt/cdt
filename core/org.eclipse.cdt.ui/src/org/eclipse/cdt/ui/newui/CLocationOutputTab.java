@@ -33,26 +33,30 @@ public class CLocationOutputTab extends CLocationTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		label.setText(Messages.CLocationOutputTab_0); 
+		label.setText(Messages.CLocationOutputTab_0);
 	}
 
 	@Override
 	public ICExclusionPatternPathEntry[] getEntries(ICResourceDescription cfgd) {
 		return cfgd.getConfiguration().getBuildSetting().getOutputDirectories();
 	}
+
 	@Override
 	public void setEntries(ICResourceDescription cfgd, ICExclusionPatternPathEntry[] data) {
 		ICOutputEntry[] out = null;
 		if (data != null) {
 			out = new ICOutputEntry[data.length];
-			for (int i=0; i<out.length; i++) out[i] = (ICOutputEntry)data[i];
+			for (int i = 0; i < out.length; i++)
+				out[i] = (ICOutputEntry) data[i];
 		}
 		cfgd.getConfiguration().getBuildSetting().setOutputDirectories(out);
 	}
+
 	@Override
 	public ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean isWorkspacePath) {
 		return new COutputEntry(p, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
+
 	@Override
 	public ICExclusionPatternPathEntry newEntry(IFolder f, IPath[] ex, boolean isWorkspacePath) {
 		return new COutputEntry(f, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);

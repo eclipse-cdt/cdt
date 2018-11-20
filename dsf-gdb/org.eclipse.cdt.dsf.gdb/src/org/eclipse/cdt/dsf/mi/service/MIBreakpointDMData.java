@@ -25,18 +25,18 @@ import org.eclipse.cdt.utils.Addr64;
 
 public class MIBreakpointDMData implements IBreakpointDMData {
 
-    /**
-     * MI-specific breakpoint attributes markers.
-     */
+	/**
+	 * MI-specific breakpoint attributes markers.
+	 */
 	public static final String DSFMIBREAKPOINT = "org.eclipse.cdt.dsf.debug.breakpoint.mi"; //$NON-NLS-1$
-	public static final String NUMBER       = DSFMIBREAKPOINT + ".number";      //$NON-NLS-1$
-	public static final String TYPE         = DSFMIBREAKPOINT + ".type";        //$NON-NLS-1$
-	public static final String THREAD_ID    = DSFMIBREAKPOINT + ".threadId";    //$NON-NLS-1$
-	public static final String FULL_NAME    = DSFMIBREAKPOINT + ".fullName";    //$NON-NLS-1$
-	public static final String HITS         = DSFMIBREAKPOINT + ".hits";        //$NON-NLS-1$
+	public static final String NUMBER = DSFMIBREAKPOINT + ".number"; //$NON-NLS-1$
+	public static final String TYPE = DSFMIBREAKPOINT + ".type"; //$NON-NLS-1$
+	public static final String THREAD_ID = DSFMIBREAKPOINT + ".threadId"; //$NON-NLS-1$
+	public static final String FULL_NAME = DSFMIBREAKPOINT + ".fullName"; //$NON-NLS-1$
+	public static final String HITS = DSFMIBREAKPOINT + ".hits"; //$NON-NLS-1$
 	public static final String IS_TEMPORARY = DSFMIBREAKPOINT + ".isTemporary"; //$NON-NLS-1$
-	public static final String IS_HARDWARE  = DSFMIBREAKPOINT + ".isHardware";  //$NON-NLS-1$
-	public static final String LOCATION     = DSFMIBREAKPOINT + ".location";    //$NON-NLS-1$
+	public static final String IS_HARDWARE = DSFMIBREAKPOINT + ".isHardware"; //$NON-NLS-1$
+	public static final String LOCATION = DSFMIBREAKPOINT + ".location"; //$NON-NLS-1$
 
 	// Back-end breakpoint object
 	private final MIBreakpoint fBreakpoint;
@@ -98,62 +98,64 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		if (properties != null) {
 			fProperties = properties;
 		} else {
-			fProperties = new HashMap<String,Object>();
+			fProperties = new HashMap<String, Object>();
 
 			if (dsfMIBreakpoint.isTracepoint()) {
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
-				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
-				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
-				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
-				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
-				fProperties.put(MIBreakpoints.PASS_COUNT,      dsfMIBreakpoint.getPassCount());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
-				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
-	
+				fProperties.put(MIBreakpoints.FILE_NAME, dsfMIBreakpoint.getFile());
+				fProperties.put(MIBreakpoints.LINE_NUMBER, dsfMIBreakpoint.getLine());
+				fProperties.put(MIBreakpoints.FUNCTION, dsfMIBreakpoint.getFunction());
+				fProperties.put(MIBreakpoints.ADDRESS, dsfMIBreakpoint.getAddress());
+				fProperties.put(MIBreakpoints.CONDITION, dsfMIBreakpoint.getCondition());
+				fProperties.put(MIBreakpoints.PASS_COUNT, dsfMIBreakpoint.getPassCount());
+				fProperties.put(MIBreakpoints.IS_ENABLED, Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS, dsfMIBreakpoint.getCommands());
+
 				// MI-specific breakpoint attributes
-				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
-				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
-				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
-				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
-				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
+				fProperties.put(NUMBER, dsfMIBreakpoint.getNumber());
+				fProperties.put(TYPE, dsfMIBreakpoint.getType());
+				fProperties.put(THREAD_ID, dsfMIBreakpoint.getThreadId());
+				fProperties.put(FULL_NAME, dsfMIBreakpoint.getFullName());
+				fProperties.put(HITS, dsfMIBreakpoint.getTimes());
 				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
-				fProperties.put(LOCATION,     formatLocation());
-	
+				fProperties.put(IS_HARDWARE, Boolean.valueOf(dsfMIBreakpoint.isHardware()));
+				fProperties.put(LOCATION, formatLocation());
+
 			} else if (dsfMIBreakpoint.isDynamicPrintf()) {
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
-				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
-				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
-				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
-				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
-				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
-				fProperties.put(MIBreakpoints.PRINTF_STRING,   dsfMIBreakpoint.getPrintfString());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
-				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
-	
+				fProperties.put(MIBreakpoints.FILE_NAME, dsfMIBreakpoint.getFile());
+				fProperties.put(MIBreakpoints.LINE_NUMBER, dsfMIBreakpoint.getLine());
+				fProperties.put(MIBreakpoints.FUNCTION, dsfMIBreakpoint.getFunction());
+				fProperties.put(MIBreakpoints.ADDRESS, dsfMIBreakpoint.getAddress());
+				fProperties.put(MIBreakpoints.CONDITION, dsfMIBreakpoint.getCondition());
+				fProperties.put(MIBreakpoints.PRINTF_STRING, dsfMIBreakpoint.getPrintfString());
+				fProperties.put(MIBreakpoints.IS_ENABLED, Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS, dsfMIBreakpoint.getCommands());
+
 				// MI-specific breakpoint attributes
-				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
-				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
-				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
-				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
-				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
+				fProperties.put(NUMBER, dsfMIBreakpoint.getNumber());
+				fProperties.put(TYPE, dsfMIBreakpoint.getType());
+				fProperties.put(THREAD_ID, dsfMIBreakpoint.getThreadId());
+				fProperties.put(FULL_NAME, dsfMIBreakpoint.getFullName());
+				fProperties.put(HITS, dsfMIBreakpoint.getTimes());
 				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
-				fProperties.put(LOCATION,     formatLocation());
-	
+				fProperties.put(IS_HARDWARE, Boolean.valueOf(dsfMIBreakpoint.isHardware()));
+				fProperties.put(LOCATION, formatLocation());
+
 			} else if (dsfMIBreakpoint.isWatchpoint()) {
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.WATCHPOINT);
 				fProperties.put(MIBreakpoints.EXPRESSION, dsfMIBreakpoint.getExpression());
-				fProperties.put(MIBreakpoints.READ,       dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isReadWatchpoint());
-				fProperties.put(MIBreakpoints.WRITE,      dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isWriteWatchpoint());
-	
+				fProperties.put(MIBreakpoints.READ,
+						dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isReadWatchpoint());
+				fProperties.put(MIBreakpoints.WRITE,
+						dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isWriteWatchpoint());
+
 				// MI-specific breakpoint attributes
-				fProperties.put(NUMBER,     dsfMIBreakpoint.getNumber());
-	
+				fProperties.put(NUMBER, dsfMIBreakpoint.getNumber());
+
 			} else if (dsfMIBreakpoint.isCatchpoint()) {
 				// Because gdb doesn't support catchpoints in mi, we end up using
 				// CLI to set the catchpoint. The sort of MIBreakpoint we create
@@ -167,43 +169,42 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				// list, we'll unfortunately end up creating an MIBreakpoint of type 
 				// BREAKPOINT. Maybe one day gdb will treats catchpoints like first
 				// class citizens and this messy situation will go away.
-				
+
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 				fProperties.put(MIBreakpoints.CATCHPOINT_TYPE, dsfMIBreakpoint.getCatchpointType());
-				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());				
-	
+				fProperties.put(NUMBER, dsfMIBreakpoint.getNumber());
+
 			} else {
 				// For all other breakpoint types, use MIBreakpoints.BREAKPOINT.
-				
+
 				// Note that this may in fact be a catchpoint. See comment above in
 				// isCatchpoint case
-				
+
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
-				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
-				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
-				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
-				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
-				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getIgnoreCount());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
-				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
-			
+				fProperties.put(MIBreakpoints.FILE_NAME, dsfMIBreakpoint.getFile());
+				fProperties.put(MIBreakpoints.LINE_NUMBER, dsfMIBreakpoint.getLine());
+				fProperties.put(MIBreakpoints.FUNCTION, dsfMIBreakpoint.getFunction());
+				fProperties.put(MIBreakpoints.ADDRESS, dsfMIBreakpoint.getAddress());
+				fProperties.put(MIBreakpoints.CONDITION, dsfMIBreakpoint.getCondition());
+				fProperties.put(MIBreakpoints.IGNORE_COUNT, dsfMIBreakpoint.getIgnoreCount());
+				fProperties.put(MIBreakpoints.IS_ENABLED, Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS, dsfMIBreakpoint.getCommands());
+
 				// MI-specific breakpoint attributes
-				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
-				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
-				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
-				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
-				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
+				fProperties.put(NUMBER, dsfMIBreakpoint.getNumber());
+				fProperties.put(TYPE, dsfMIBreakpoint.getType());
+				fProperties.put(THREAD_ID, dsfMIBreakpoint.getThreadId());
+				fProperties.put(FULL_NAME, dsfMIBreakpoint.getFullName());
+				fProperties.put(HITS, dsfMIBreakpoint.getTimes());
 				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
-				fProperties.put(LOCATION,     formatLocation());
-	
+				fProperties.put(IS_HARDWARE, Boolean.valueOf(dsfMIBreakpoint.isHardware()));
+				fProperties.put(LOCATION, formatLocation());
+
 			}
 		}
 	}
 
-	
 	/**
 	 * Constructs a DsfMIBreakpoint from a back-end object. Create the object by calling
 	 * {@link MIBreakpoints#createMIBreakpointDMData(MIBreakpoint)} to ensure correct version is called.
@@ -236,7 +237,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	protected MIBreakpoint getBreakpoint() {
 		return fBreakpoint;
 	}
-	
+
 	/**
 	 * Formats the LOCATION synthetic property from the existing fields
 	 *  
@@ -248,15 +249,15 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		String location = fBreakpoint.getAddress();
 
 		// Get the relevant parameters
-		String  fileName   = fBreakpoint.getFile();
+		String fileName = fBreakpoint.getFile();
 		Integer lineNumber = fBreakpoint.getLine();
-		String  function   = fBreakpoint.getFunction();
+		String function = fBreakpoint.getFunction();
 
 		if (!fileName.isEmpty()) {
 			if (lineNumber != -1) {
 				location = fileName + ":" + lineNumber; //$NON-NLS-1$
 			} else {
-				location = fileName + ":" + function;   //$NON-NLS-1$
+				location = fileName + ":" + function; //$NON-NLS-1$
 			}
 		}
 
@@ -275,16 +276,18 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	@Override
 	public boolean equals(Object other) {
-		if (this == other) return true;
-		if (!(other instanceof MIBreakpointDMData)) return false;
-		return equals((MIBreakpointDMData)other);
+		if (this == other)
+			return true;
+		if (!(other instanceof MIBreakpointDMData))
+			return false;
+		return equals((MIBreakpointDMData) other);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return fProperties.hashCode();
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	// IBreakpointDMData
 	///////////////////////////////////////////////////////////////////////////
@@ -344,21 +347,21 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	///////////////////////////////////////////////////////////////////////////
 	// MIBreakpointDMData
 	///////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * @since 3.0
 	 */
 	public int getPassCount() {
 		return fBreakpoint.getPassCount();
 	}
-	
+
 	/**
 	 * @since 4.4
 	 */
 	public String getPrintfString() {
 		return fBreakpoint.getPrintfString();
 	}
-	
+
 	/**
 	 * @since 3.0
 	 */
@@ -384,7 +387,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	public void setGroupIds(String[] groups) {
 		fBreakpoint.setGroupIds(groups);
 	}
-	
+
 	public boolean isTemporary() {
 		return fBreakpoint.isTemporary();
 	}
@@ -423,7 +426,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		fBreakpoint.setEnabled(isEnabled);
 		fProperties.put(MIBreakpoints.IS_ENABLED, isEnabled);
 	}
-	
+
 	/**
 	 * @since 3.0
 	 */
@@ -439,7 +442,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		fBreakpoint.setCommands(commands);
 		fProperties.put(MIBreakpoints.COMMANDS, commands);
 	}
-	
+
 	public boolean isReadWatchpoint() {
 		return fBreakpoint.isReadWatchpoint();
 	}

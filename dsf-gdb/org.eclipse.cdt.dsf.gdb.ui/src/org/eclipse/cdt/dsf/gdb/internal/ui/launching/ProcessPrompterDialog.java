@@ -50,14 +50,13 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 
 	private final ILabelProvider elementRenderer;
 
-	public ProcessPrompterDialog(Shell parent, ILabelProvider elementRenderer,
-			ILabelProvider qualifierRenderer) {
+	public ProcessPrompterDialog(Shell parent, ILabelProvider elementRenderer, ILabelProvider qualifierRenderer) {
 		super(parent, elementRenderer, qualifierRenderer);
 		this.elementRenderer = elementRenderer;
 		setDialogBoundsSettings(getDialogBoundsSettings(), Dialog.DIALOG_PERSISTSIZE);
 		setFilter(getFilterFromDialogSetting());
 	}
-	
+
 	@Override
 	protected FilteredList createFilteredList(Composite parent) {
 		FilteredList list = super.createFilteredList(parent);
@@ -72,16 +71,16 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 					pattern = ""; //$NON-NLS-1$
 				}
 
-				if (! pattern.startsWith("*")) { //$NON-NLS-1$
+				if (!pattern.startsWith("*")) { //$NON-NLS-1$
 					pattern = "*" + pattern; //$NON-NLS-1$
 				}
 
 				int rules = SearchPattern.RULE_BLANK_MATCH | SearchPattern.RULE_PREFIX_MATCH;
-				if (! ignoreCase) {
+				if (!ignoreCase) {
 					rules |= SearchPattern.RULE_CASE_SENSITIVE;
 				}
 
-				if (! ignoreWildCards) {
+				if (!ignoreWildCards) {
 					rules |= SearchPattern.RULE_PATTERN_MATCH;
 				}
 				matcher = new SearchPattern(rules);
@@ -100,56 +99,56 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 	/*
 	 * The result should be every selected element.
 	 */
-    @Override
-    protected void computeResult() {
-        setResult(Arrays.asList(getSelectedElements()));
-    }
+	@Override
+	protected void computeResult() {
+		setResult(Arrays.asList(getSelectedElements()));
+	}
 
-    /*
-     * Disable the ability to select items in the bottom pane.
-     */
-    @Override
-    protected Table createLowerList(Composite parent) {
-    	final Table list = super.createLowerList(parent);
-    	
-    	// First remove listeners such as the double click.
-    	// We don't want the user to trigger the action by
-    	// double-clicking on the bottom pane.
-    	int[] events = { SWT.Selection, SWT.MouseDoubleClick };
-    	for (int event : events) {
-    		Listener[] selectionListeners = list.getListeners(event);
-    		for (Listener listener : selectionListeners) {
-    			list.removeListener(event, listener);
-    		}
-    	}
-    	
-    	// Now add a listener to prevent selection
-    	list.addListener(SWT.EraseItem, new Listener() {
-            @Override
-    	    public void handleEvent(Event event) {
-    	    	if ((event.detail & SWT.SELECTED) != 0) {
-    	    		event.detail &= ~SWT.SELECTED;
-    	    		// Removing the SELECTED event did not work properly.
-    	    		// The foreground text became invisible.
-    	    		// Let's simply deselect everything
-    	    		list.deselectAll();
-    	    	}
-    	    }
-    	});
-    	return list;
-    }
+	/*
+	 * Disable the ability to select items in the bottom pane.
+	 */
+	@Override
+	protected Table createLowerList(Composite parent) {
+		final Table list = super.createLowerList(parent);
 
-    /*
-     * Allow a double-click to work without any selection
-     * in the bottom list.
-     */
-    @Override
+		// First remove listeners such as the double click.
+		// We don't want the user to trigger the action by
+		// double-clicking on the bottom pane.
+		int[] events = { SWT.Selection, SWT.MouseDoubleClick };
+		for (int event : events) {
+			Listener[] selectionListeners = list.getListeners(event);
+			for (Listener listener : selectionListeners) {
+				list.removeListener(event, listener);
+			}
+		}
+
+		// Now add a listener to prevent selection
+		list.addListener(SWT.EraseItem, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if ((event.detail & SWT.SELECTED) != 0) {
+					event.detail &= ~SWT.SELECTED;
+					// Removing the SELECTED event did not work properly.
+					// The foreground text became invisible.
+					// Let's simply deselect everything
+					list.deselectAll();
+				}
+			}
+		});
+		return list;
+	}
+
+	/*
+	 * Allow a double-click to work without any selection
+	 * in the bottom list.
+	 */
+	@Override
 	protected void handleDefaultSelected() {
-        if (validateCurrentSelection()) {
+		if (validateCurrentSelection()) {
 			buttonPressed(IDialogConstants.OK_ID);
 		}
-    }
-    
+	}
+
 	/**
 	 * Validate only upper selected elements. Lower list is always disabled.
 	 * 

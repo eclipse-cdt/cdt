@@ -59,8 +59,7 @@ public class ActivateWorkingSetConfigsContribution extends AbstractWorkingSetCon
 		private IWorkingSetConfiguration workingSetConfig;
 
 		ActivateConfigAction(IWorkingSetConfiguration workingSetConfig, int ordinal) {
-			super(NLS.bind(WorkingSetMessages.WorkingSetMenus_enumPattern, ordinal, workingSetConfig
-					.getName()));
+			super(NLS.bind(WorkingSetMessages.WorkingSetMenus_enumPattern, ordinal, workingSetConfig.getName()));
 
 			this.workingSetConfig = workingSetConfig;
 		}

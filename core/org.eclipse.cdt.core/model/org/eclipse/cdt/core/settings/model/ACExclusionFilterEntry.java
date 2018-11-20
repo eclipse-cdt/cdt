@@ -25,8 +25,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	/** Calculated value, does not have to be final */
 	char[][] fullCharExclusionPatterns = UNINIT_PATTERNS;
 
-
-	ACExclusionFilterEntry(IPath path, IPath exclusionPatterns[] , int flags) {
+	ACExclusionFilterEntry(IPath path, IPath exclusionPatterns[], int flags) {
 		super(path, flags);
 		this.exclusionPatterns = exclusionPatterns != null ? (IPath[]) exclusionPatterns.clone() : new IPath[0];
 	}
@@ -71,8 +70,8 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 				path = getLocation();
 			IPath prefixPath = path.removeTrailingSeparator();
 			for (int i = 0; i < length; i++) {
-				this.fullCharExclusionPatterns[i] =
-					prefixPath.append(this.exclusionPatterns[i]).toString().toCharArray();
+				this.fullCharExclusionPatterns[i] = prefixPath.append(this.exclusionPatterns[i]).toString()
+						.toCharArray();
 			}
 		}
 		return this.fullCharExclusionPatterns;
@@ -105,7 +104,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		if (!super.equalsByContents(entry))
 			return false;
 
-		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry)entry;
+		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry) entry;
 		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
 	}
 

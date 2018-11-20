@@ -42,12 +42,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GDBBreakpointsManager_HEAD extends GDBBreakpointsManager_7_2 {
 	public GDBBreakpointsManager_HEAD(DsfSession session, String debugModelId) {
 		super(session, debugModelId);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_2_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_2_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}

@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.resources;
 
 import java.util.EventListener;
 
-
 /**
  * An interface to be implemented by objects interested in path variable
  * creation, removal and value change events.

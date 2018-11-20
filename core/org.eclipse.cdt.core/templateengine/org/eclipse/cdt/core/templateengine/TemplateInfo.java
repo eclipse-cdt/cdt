@@ -30,7 +30,7 @@ public class TemplateInfo {
 	private String icon;
 	private String templateId;
 	private List<?> configs; /*IConfiguration This seems to be used for storing build-system specific configurations*/
-	
+
 	/**
 	 * 
 	 * @param templateId
@@ -42,9 +42,8 @@ public class TemplateInfo {
 	 * @param extraPagesProvider an IPagesAfterTemplateSelectionProvider or null
 	 * @param isCategory
 	 */
-	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath, 
-			String pluginId, Set<String> toolChainIdSet, 
-			Object extraPagesProvider, boolean isCategory) {
+	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath,
+			String pluginId, Set<String> toolChainIdSet, Object extraPagesProvider, boolean isCategory) {
 		this.templateId = templateId;
 		this.filterPattern = filterPattern;
 		this.templatePath = templatePath;
@@ -83,14 +82,14 @@ public class TemplateInfo {
 	public String getFilterPattern() {
 		return filterPattern;
 	}
-	
+
 	/**
 	 * @return an IPagesAfterTemplateSelectionProvider or null
 	 */
 	public Object getExtraPagesProvider() {
 		return pagesProvider;
 	}
-	
+
 	/**
 	 * @return the projectTypeIds
 	 */
@@ -108,15 +107,15 @@ public class TemplateInfo {
 	public void setToolChainSet(Set<String> toolChainIdSet) {
 		this.toolChainIdSet = toolChainIdSet;
 	}
-	
+
 	public List<?/*IConfiguration*/> getConfigurations() {
 		return configs;
 	}
-	
+
 	public void setConfigurations(List<?/*IConfiguration*/> configs) {
 		this.configs = configs;
 	}
-	
+
 	/**
 	 * @return whether this template is a category
 	 */
@@ -138,11 +137,11 @@ public class TemplateInfo {
 	public boolean equals(Object obj) {
 		if (obj instanceof TemplateInfo) {
 			TemplateInfo info = (TemplateInfo) obj;
-			return projectTypeId.equals(info.projectTypeId) && templatePath.equals(info.templatePath) && pluginId.equals(info.pluginId)
-				&& (((filterPattern == null || info.filterPattern == null) && filterPattern == info.filterPattern)
-						|| filterPattern.equals(info.filterPattern))
-				&& ((toolChainIdSet.equals(info.toolChainIdSet)))
-				&& ((isCategory == info.isCategory));
+			return projectTypeId.equals(info.projectTypeId) && templatePath.equals(info.templatePath)
+					&& pluginId.equals(info.pluginId)
+					&& (((filterPattern == null || info.filterPattern == null) && filterPattern == info.filterPattern)
+							|| filterPattern.equals(info.filterPattern))
+					&& ((toolChainIdSet.equals(info.toolChainIdSet))) && ((isCategory == info.isCategory));
 		}
 		return false;
 	}

@@ -40,102 +40,100 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * the root of a hierarchy.  It does not implement the label provider
  * functionality, so the default adapters should be used to retrieve the label.  
  */
-public class LaunchRootVMNode extends RootVMNode 
-    implements IRootVMNode
-{
-    public static class LaunchesEvent {
-        public enum Type { ADDED, REMOVED, CHANGED, TERMINATED }
-        public final ILaunch[] fLaunches;
-        public final Type fType;
-        
-        public LaunchesEvent(ILaunch[] launches, Type type) {
-            fLaunches = launches;
-            fType = type;
-        }            
-    }
-    
-    
-    public LaunchRootVMNode(AbstractVMProvider provider) {
-        super(provider);
-    }
+public class LaunchRootVMNode extends RootVMNode implements IRootVMNode {
+	public static class LaunchesEvent {
+		public enum Type {
+			ADDED, REMOVED, CHANGED, TERMINATED
+		}
 
-    @Override
-    public String toString() {
-        return "LaunchRootVMNode";  //$NON-NLS-1$ 
-    }
+		public final ILaunch[] fLaunches;
+		public final Type fType;
 
-    @Override
-    public boolean isDeltaEvent(Object rootObject, Object e) {
-        if (e instanceof DebugEvent) {
-            DebugEvent de = (DebugEvent)e;
-            if (de.getSource() instanceof IProcess && 
-                !((IProcess)de.getSource()).getLaunch().equals(rootObject) ) 
-            {
-                return false;
-            } 
-            else if (de.getSource() instanceof IDebugElement && 
-                     !rootObject.equals(((IDebugElement)de.getSource()).getLaunch()))
-            {
-                return false;
-            }
-        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
-        	return true;
-        }
-        
-        return super.isDeltaEvent(rootObject, e);
-    }
-    
-    @Override
-    public int getDeltaFlags(Object e) {
-        int flags = 0;
-        if (e instanceof LaunchesEvent) {
-            LaunchesEvent le = (LaunchesEvent)e;
-            if (le.fType == LaunchesEvent.Type.CHANGED || le.fType == LaunchesEvent.Type.TERMINATED) {
-                flags = IModelDelta.STATE | IModelDelta.CONTENT;
-            }
-        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
-        	flags = IModelDelta.EXPAND | IModelDelta.SELECT;
-        }
-        
-        return flags;
-    }
+		public LaunchesEvent(ILaunch[] launches, Type type) {
+			fLaunches = launches;
+			fType = type;
+		}
+	}
 
-    @Override
-    public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
-        if (!(rootObject instanceof ILaunch)) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Invalid root element configured with launch root node.", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-        }
-        
-        ILaunch rootLaunch = (ILaunch)rootObject;
-        
-        /*
-         * Create the root of the delta.  Since the launch object is not at the 
-         * root of the view, create the delta with the path to the launch.
-         */
-        ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-        List<ILaunch> launchList = Arrays.asList(manager.getLaunches());
-        final VMDelta viewRootDelta = new VMDelta(manager, 0, IModelDelta.NO_CHANGE, launchList.size());
-        final VMDelta rootDelta = viewRootDelta.addNode(rootLaunch, launchList.indexOf(rootLaunch), IModelDelta.NO_CHANGE);
+	public LaunchRootVMNode(AbstractVMProvider provider) {
+		super(provider);
+	}
 
-        // Generate delta for launch node.
-        if (event instanceof LaunchesEvent) {
-            LaunchesEvent le = (LaunchesEvent)event;
-            for (ILaunch launch : le.fLaunches) {
-                if (rootLaunch == launch) {
-                    if (le.fType == LaunchesEvent.Type.CHANGED) {
-                        rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.STATE | IModelDelta.CONTENT);
-                    } else if (le.fType == LaunchesEvent.Type.TERMINATED) {
-                        rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.STATE | IModelDelta.CONTENT);
-                    }
-                }
-            }
-        } else if (event instanceof ModelProxyInstalledEvent || event instanceof DataModelInitializedEvent) {
-            rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND | IModelDelta.SELECT);
-        }
-        rm.setData(rootDelta);
-        rm.done();
-    }
-    
+	@Override
+	public String toString() {
+		return "LaunchRootVMNode"; //$NON-NLS-1$ 
+	}
+
+	@Override
+	public boolean isDeltaEvent(Object rootObject, Object e) {
+		if (e instanceof DebugEvent) {
+			DebugEvent de = (DebugEvent) e;
+			if (de.getSource() instanceof IProcess && !((IProcess) de.getSource()).getLaunch().equals(rootObject)) {
+				return false;
+			} else if (de.getSource() instanceof IDebugElement
+					&& !rootObject.equals(((IDebugElement) de.getSource()).getLaunch())) {
+				return false;
+			}
+		} else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+			return true;
+		}
+
+		return super.isDeltaEvent(rootObject, e);
+	}
+
+	@Override
+	public int getDeltaFlags(Object e) {
+		int flags = 0;
+		if (e instanceof LaunchesEvent) {
+			LaunchesEvent le = (LaunchesEvent) e;
+			if (le.fType == LaunchesEvent.Type.CHANGED || le.fType == LaunchesEvent.Type.TERMINATED) {
+				flags = IModelDelta.STATE | IModelDelta.CONTENT;
+			}
+		} else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+			flags = IModelDelta.EXPAND | IModelDelta.SELECT;
+		}
+
+		return flags;
+	}
+
+	@Override
+	public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
+		if (!(rootObject instanceof ILaunch)) {
+			rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+					"Invalid root element configured with launch root node.", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		ILaunch rootLaunch = (ILaunch) rootObject;
+
+		/*
+		 * Create the root of the delta.  Since the launch object is not at the 
+		 * root of the view, create the delta with the path to the launch.
+		 */
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		List<ILaunch> launchList = Arrays.asList(manager.getLaunches());
+		final VMDelta viewRootDelta = new VMDelta(manager, 0, IModelDelta.NO_CHANGE, launchList.size());
+		final VMDelta rootDelta = viewRootDelta.addNode(rootLaunch, launchList.indexOf(rootLaunch),
+				IModelDelta.NO_CHANGE);
+
+		// Generate delta for launch node.
+		if (event instanceof LaunchesEvent) {
+			LaunchesEvent le = (LaunchesEvent) event;
+			for (ILaunch launch : le.fLaunches) {
+				if (rootLaunch == launch) {
+					if (le.fType == LaunchesEvent.Type.CHANGED) {
+						rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.STATE | IModelDelta.CONTENT);
+					} else if (le.fType == LaunchesEvent.Type.TERMINATED) {
+						rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.STATE | IModelDelta.CONTENT);
+					}
+				}
+			}
+		} else if (event instanceof ModelProxyInstalledEvent || event instanceof DataModelInitializedEvent) {
+			rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND | IModelDelta.SELECT);
+		}
+		rm.setData(rootDelta);
+		rm.done();
+	}
+
 }

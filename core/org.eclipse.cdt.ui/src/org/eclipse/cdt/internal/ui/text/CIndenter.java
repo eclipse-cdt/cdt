@@ -83,7 +83,7 @@ public final class CIndenter {
 		final boolean prefHasTemplates;
 		final String prefTabChar;
 		final boolean prefTabsOnlyForLeadingIndents;
-		
+
 		private final IPreferencesService preferenceService;
 		private final IScopeContext[] preferenceContexts;
 		private final ICProject fProject;
@@ -108,45 +108,45 @@ public final class CIndenter {
 
 		CorePrefs(ICProject project) {
 			preferenceService = Platform.getPreferencesService();
-			preferenceContexts = project != null ?
-					new IScopeContext[] { new ProjectScope(project.getProject()),
-										  InstanceScope.INSTANCE, DefaultScope.INSTANCE } :
-					new IScopeContext[] { InstanceScope.INSTANCE, DefaultScope.INSTANCE };
-			fProject= project;
-			prefUseTabs= prefUseTabs();
-			prefTabSize= prefTabSize();
-			prefIndentationSize= prefIndentationSize();
-			prefArrayDimensionsDeepIndent= prefArrayDimensionsDeepIndent();
-			prefContinuationIndent= prefContinuationIndent();
-			prefBlockIndent= prefBlockIndent();
-			prefArrayIndent= prefArrayIndent();
-			prefArrayDeepIndent= prefArrayDeepIndent();
-			prefTernaryDeepAlign= false;
-			prefTernaryIndent= prefContinuationIndent();
-			prefCaseIndent= prefCaseIndent();
-			prefCaseBlockIndent= prefCaseBlockIndent();
-			prefAssignmentIndent= prefAssignmentIndent();
-			prefIndentBracesForBlocks= prefIndentBracesForBlocks();
-			prefSimpleIndent= prefSimpleIndent();
-			prefBracketIndent= prefBracketIndent();
-			prefMethodDeclDeepIndent= prefMethodDeclDeepIndent();
-			prefMethodDeclFirstParameterDeepIndent= prefMethodDeclFirstParameterDeepIndent();
-			prefMethodDeclIndent= prefMethodDeclIndent();
-			prefMethodCallDeepIndent= prefMethodCallDeepIndent();
-			prefMethodCallFirstParameterDeepIndent= prefMethodCallFirstParameterDeepIndent();
-			prefMethodCallIndent= prefMethodCallIndent();
-			prefParenthesisDeepIndent= prefParenthesisDeepIndent();
-			prefParenthesisIndent= prefParenthesisIndent();
-			prefMethodBodyIndent= prefMethodBodyIndent();
-			prefTypeIndent= prefTypeIndent();
-			prefAccessSpecifierIndent= prefAccessSpecifierIndent();
-			prefAccessSpecifierExtraSpaces= prefAccessSpecifierExtraSpaces();
-			prefNamespaceBodyIndent= prefNamespaceBodyIndent();
-			prefIndentBracesForArrays= prefIndentBracesForArrays();
-			prefIndentBracesForMethods= prefIndentBracesForMethods();
-			prefIndentBracesForTypes= prefIndentBracesForTypes();
-			prefHasTemplates= hasTemplates();
-			prefTabChar= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+			preferenceContexts = project != null
+					? new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE,
+							DefaultScope.INSTANCE }
+					: new IScopeContext[] { InstanceScope.INSTANCE, DefaultScope.INSTANCE };
+			fProject = project;
+			prefUseTabs = prefUseTabs();
+			prefTabSize = prefTabSize();
+			prefIndentationSize = prefIndentationSize();
+			prefArrayDimensionsDeepIndent = prefArrayDimensionsDeepIndent();
+			prefContinuationIndent = prefContinuationIndent();
+			prefBlockIndent = prefBlockIndent();
+			prefArrayIndent = prefArrayIndent();
+			prefArrayDeepIndent = prefArrayDeepIndent();
+			prefTernaryDeepAlign = false;
+			prefTernaryIndent = prefContinuationIndent();
+			prefCaseIndent = prefCaseIndent();
+			prefCaseBlockIndent = prefCaseBlockIndent();
+			prefAssignmentIndent = prefAssignmentIndent();
+			prefIndentBracesForBlocks = prefIndentBracesForBlocks();
+			prefSimpleIndent = prefSimpleIndent();
+			prefBracketIndent = prefBracketIndent();
+			prefMethodDeclDeepIndent = prefMethodDeclDeepIndent();
+			prefMethodDeclFirstParameterDeepIndent = prefMethodDeclFirstParameterDeepIndent();
+			prefMethodDeclIndent = prefMethodDeclIndent();
+			prefMethodCallDeepIndent = prefMethodCallDeepIndent();
+			prefMethodCallFirstParameterDeepIndent = prefMethodCallFirstParameterDeepIndent();
+			prefMethodCallIndent = prefMethodCallIndent();
+			prefParenthesisDeepIndent = prefParenthesisDeepIndent();
+			prefParenthesisIndent = prefParenthesisIndent();
+			prefMethodBodyIndent = prefMethodBodyIndent();
+			prefTypeIndent = prefTypeIndent();
+			prefAccessSpecifierIndent = prefAccessSpecifierIndent();
+			prefAccessSpecifierExtraSpaces = prefAccessSpecifierExtraSpaces();
+			prefNamespaceBodyIndent = prefNamespaceBodyIndent();
+			prefIndentBracesForArrays = prefIndentBracesForArrays();
+			prefIndentBracesForMethods = prefIndentBracesForMethods();
+			prefIndentBracesForTypes = prefIndentBracesForTypes();
+			prefHasTemplates = hasTemplates();
+			prefTabChar = getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 			prefTabsOnlyForLeadingIndents = prefTabsOnlyForLeadingIndents();
 		}
 
@@ -167,7 +167,8 @@ public final class CIndenter {
 		}
 
 		private int prefArrayIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST);
 			try {
 				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
@@ -179,9 +180,11 @@ public final class CIndenter {
 		}
 
 		private boolean prefArrayDeepIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST);
 			try {
-				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+				return DefaultCodeFormatterConstants
+						.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -190,14 +193,16 @@ public final class CIndenter {
 		}
 
 		private int prefCaseIndent() {
-			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH)))
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH)))
 				return 1;
 			else
 				return 0;
 		}
 
 		private int prefCaseBlockIndent() {
-			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES)))
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES)))
 				return 1;
 			else
 				return 0;
@@ -219,7 +224,8 @@ public final class CIndenter {
 		}
 
 		private boolean prefMethodDeclDeepIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
 			try {
 				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
 				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
@@ -231,13 +237,14 @@ public final class CIndenter {
 		}
 
 		private boolean prefMethodDeclFirstParameterDeepIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
 			try {
 				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
 				int wrappingStyle = DefaultCodeFormatterConstants.getWrappingStyle(option);
-				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN &&
-				    	(wrappingStyle == DefaultCodeFormatterConstants.WRAP_COMPACT_FIRST_BREAK ||
-				    	wrappingStyle == DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE);
+				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN
+						&& (wrappingStyle == DefaultCodeFormatterConstants.WRAP_COMPACT_FIRST_BREAK
+								|| wrappingStyle == DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE);
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -246,7 +253,8 @@ public final class CIndenter {
 		}
 
 		private int prefMethodDeclIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
 			try {
 				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
@@ -259,7 +267,8 @@ public final class CIndenter {
 		}
 
 		private boolean prefMethodCallDeepIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
 			try {
 				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
 				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
@@ -270,13 +279,14 @@ public final class CIndenter {
 		}
 
 		private boolean prefMethodCallFirstParameterDeepIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
 			try {
 				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
 				int wrappingStyle = DefaultCodeFormatterConstants.getWrappingStyle(option);
-				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN &&
-				    	(wrappingStyle == DefaultCodeFormatterConstants.WRAP_COMPACT_FIRST_BREAK ||
-				        wrappingStyle == DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE);
+				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN
+						&& (wrappingStyle == DefaultCodeFormatterConstants.WRAP_COMPACT_FIRST_BREAK
+								|| wrappingStyle == DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE);
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -284,7 +294,8 @@ public final class CIndenter {
 		}
 
 		private int prefMethodCallIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
 			try {
 				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
@@ -299,12 +310,12 @@ public final class CIndenter {
 
 		private boolean prefParenthesisDeepIndent() {
 			// don't do parenthesis deep indentation
-//			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
-//			try {
-//				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
-//			} catch (IllegalArgumentException e) {
-//				// ignore and return default
-//			}
+			//			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
+			//			try {
+			//				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+			//			} catch (IllegalArgumentException e) {
+			//				// ignore and return default
+			//			}
 
 			return false;
 		}
@@ -314,7 +325,8 @@ public final class CIndenter {
 		}
 
 		private int prefBlockIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK);
 			if (DefaultCodeFormatterConstants.FALSE.equals(option))
 				return 0;
 
@@ -322,71 +334,81 @@ public final class CIndenter {
 		}
 
 		private int prefMethodBodyIndent() {
-			if (DefaultCodeFormatterConstants.FALSE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY)))
+			if (DefaultCodeFormatterConstants.FALSE.equals(
+					getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY)))
 				return 0;
 
 			return 1; // sensible default
 		}
 
 		private int prefTypeIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER);
+			String option = getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER);
 			if (DefaultCodeFormatterConstants.FALSE.equals(option))
 				return 0;
 
 			return 1; // sensible default
 		}
-		
+
 		private int prefAccessSpecifierIndent() {
-			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER)))
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER)))
 				return 1;
 			else
 				return 0;
 		}
 
 		private int prefAccessSpecifierExtraSpaces() {
-			return getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_EXTRA_SPACES, 0);
+			return getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_EXTRA_SPACES,
+					0);
 		}
 
 		private int prefNamespaceBodyIndent() {
-			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER)))
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER)))
 				return prefBlockIndent();
 			else
 				return 0;
 		}
 
 		private boolean prefIndentBracesForBlocks() {
-			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED
+					.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK));
 		}
 
 		private boolean prefIndentBracesForArrays() {
-			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST));
 		}
 
 		private boolean prefIndentBracesForMethods() {
-			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION));
 		}
 
 		private boolean prefIndentBracesForTypes() {
-			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION));
 		}
 
 		private int prefContinuationIndent() {
 			try {
-				return Integer.parseInt(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION));
+				return Integer.parseInt(
+						getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION));
 			} catch (NumberFormatException e) {
 				// ignore and return default
 			}
 
 			return 2; // sensible default
 		}
-		
+
 		private boolean hasTemplates() {
 			return true;
 		}
 
 		private boolean prefTabsOnlyForLeadingIndents() {
-			return DefaultCodeFormatterConstants.TRUE.equals(
-					getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_USE_TABS_ONLY_FOR_LEADING_INDENTATIONS));
+			return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_USE_TABS_ONLY_FOR_LEADING_INDENTATIONS));
 		}
 	}
 
@@ -443,9 +465,9 @@ public final class CIndenter {
 	public CIndenter(IDocument document, CHeuristicScanner scanner, ICProject project) {
 		Assert.isNotNull(document);
 		Assert.isNotNull(scanner);
-		fDocument= document;
-		fScanner= scanner;
-		fPrefs= new CorePrefs(project);
+		fDocument = document;
+		fScanner = scanner;
+		fPrefs = new CorePrefs(project);
 	}
 
 	/**
@@ -470,8 +492,7 @@ public final class CIndenter {
 	 *         if it cannot be determined
 	 */
 	private StringBuilder getReferenceIndentation(int offset, boolean assumeOpeningBrace) {
-		int unit= findReferencePosition(offset,
-				assumeOpeningBrace ? Symbols.TokenLBRACE : peekToken(offset));
+		int unit = findReferencePosition(offset, assumeOpeningBrace ? Symbols.TokenLBRACE : peekToken(offset));
 
 		// if we were unable to find anything, return null
 		if (unit == NOT_FOUND)
@@ -502,14 +523,14 @@ public final class CIndenter {
 	 *         determined
 	 */
 	public StringBuilder computeIndentation(int offset, boolean assumeOpeningBrace) {
-		StringBuilder reference= getReferenceIndentation(offset, assumeOpeningBrace);
+		StringBuilder reference = getReferenceIndentation(offset, assumeOpeningBrace);
 
 		// handle special alignment
 		if (fAlign != NOT_FOUND) {
 			try {
 				// a special case has been detected.
-				IRegion line= fDocument.getLineInformationOfOffset(fAlign);
-				int lineOffset= line.getOffset();
+				IRegion line = fDocument.getLineInformationOfOffset(fAlign);
+				int lineOffset = line.getOffset();
 				return createIndent(lineOffset, fAlign, !fPrefs.prefTabsOnlyForLeadingIndents);
 			} catch (BadLocationException e) {
 				return null;
@@ -533,15 +554,15 @@ public final class CIndenter {
 	 * @throws BadLocationException
 	 */
 	public StringBuilder computeContinuationLineIndentation(int offset) throws BadLocationException {
-		StringBuilder reference= getLeadingWhitespace(offset);
-		IRegion line= fDocument.getLineInformationOfOffset(offset);
-		String string= fDocument.get(line.getOffset(), offset - line.getOffset());
+		StringBuilder reference = getLeadingWhitespace(offset);
+		IRegion line = fDocument.getLineInformationOfOffset(offset);
+		String string = fDocument.get(line.getOffset(), offset - line.getOffset());
 		if (string.trim().isEmpty())
 			return reference;
 		// Add additional indent
 		return createReusingIndent(reference, fPrefs.prefContinuationIndent, 0);
 	}
-	
+
 	/**
 	 * Computes the length of a <code>CharacterSequence</code>, counting
 	 * a tab character as the size until the next tab stop and every other
@@ -551,14 +572,14 @@ public final class CIndenter {
 	 * @return the visual length in characters
 	 */
 	private int computeVisualLength(CharSequence indent) {
-		final int tabSize= fPrefs.prefTabSize;
-		int length= 0;
-		for (int i= 0; i < indent.length(); i++) {
-			char ch= indent.charAt(i);
+		final int tabSize = fPrefs.prefTabSize;
+		int length = 0;
+		for (int i = 0; i < indent.length(); i++) {
+			char ch = indent.charAt(i);
 			switch (ch) {
 			case '\t':
 				if (tabSize > 0) {
-					int reminder= length % tabSize;
+					int reminder = length % tabSize;
 					length += tabSize - reminder;
 				}
 				break;
@@ -579,16 +600,16 @@ public final class CIndenter {
 	 * @return the stripped <code>reference</code>
 	 */
 	private StringBuilder stripExceedingChars(StringBuilder reference, int indentLength) {
-		final int tabSize= fPrefs.prefTabSize;
-		int measured= 0;
-		int chars= reference.length();
-		int i= 0;
+		final int tabSize = fPrefs.prefTabSize;
+		int measured = 0;
+		int chars = reference.length();
+		int i = 0;
 		for (; measured < indentLength && i < chars; i++) {
-			char ch= reference.charAt(i);
+			char ch = reference.charAt(i);
 			switch (ch) {
 			case '\t':
 				if (tabSize > 0) {
-					int reminder= measured % tabSize;
+					int reminder = measured % tabSize;
 					measured += tabSize - reminder;
 				}
 				break;
@@ -597,7 +618,7 @@ public final class CIndenter {
 				break;
 			}
 		}
-		int deleteFrom= measured > indentLength ? i - 1 : i;
+		int deleteFrom = measured > indentLength ? i - 1 : i;
 
 		return reference.delete(deleteFrom, chars);
 	}
@@ -612,11 +633,11 @@ public final class CIndenter {
 	 * 		   <code>offset</code> is located
 	 */
 	private StringBuilder getLeadingWhitespace(int offset) {
-		StringBuilder indent= new StringBuilder();
+		StringBuilder indent = new StringBuilder();
 		try {
-			IRegion line= fDocument.getLineInformationOfOffset(offset);
-			int lineOffset= line.getOffset();
-			int nonWS= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, lineOffset + line.getLength());
+			IRegion line = fDocument.getLineInformationOfOffset(offset);
+			int lineOffset = line.getOffset();
+			int nonWS = fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, lineOffset + line.getLength());
 			indent.append(fDocument.get(lineOffset, nonWS - lineOffset));
 			return indent;
 		} catch (BadLocationException e) {
@@ -645,21 +666,21 @@ public final class CIndenter {
 	 *         by <code>start</code> and <code>indent</code>
 	 */
 	private StringBuilder createIndent(int start, final int indent, final boolean convertSpaceRunsToTabs) {
-		final boolean convertTabs= fPrefs.prefUseTabs && convertSpaceRunsToTabs;
-		final int tabLen= fPrefs.prefTabSize;
-		final StringBuilder ret= new StringBuilder();
+		final boolean convertTabs = fPrefs.prefUseTabs && convertSpaceRunsToTabs;
+		final int tabLen = fPrefs.prefTabSize;
+		final StringBuilder ret = new StringBuilder();
 		try {
-			int spaces= 0;
+			int spaces = 0;
 			while (start < indent) {
-				char ch= fDocument.getChar(start);
+				char ch = fDocument.getChar(start);
 				if (ch == '\t') {
 					ret.append('\t');
-					spaces= 0;
+					spaces = 0;
 				} else if (convertTabs) {
 					spaces++;
 					if (spaces == tabLen) {
 						ret.append('\t');
-						spaces= 0;
+						spaces = 0;
 					}
 				} else {
 					ret.append(' ');
@@ -688,30 +709,30 @@ public final class CIndenter {
 	 *         adapted to <code>additional</code>
 	 */
 	public StringBuilder createReusingIndent(StringBuilder buffer, int additional, int extraSpaces) {
-		int refLength= computeVisualLength(buffer);
-		int addLength= fPrefs.prefIndentationSize * additional + extraSpaces; // may be < 0
-		int totalLength= Math.max(0, refLength + addLength);
+		int refLength = computeVisualLength(buffer);
+		int addLength = fPrefs.prefIndentationSize * additional + extraSpaces; // may be < 0
+		int totalLength = Math.max(0, refLength + addLength);
 
 		// copy the reference indentation for the indent up to the last tab
 		// stop within the maxCopy area
-		int minLength= Math.min(totalLength, refLength);
-		int tabSize= fPrefs.prefTabSize;
-		int maxCopyLength= tabSize > 0 ? minLength - minLength % tabSize : minLength; // maximum indent to copy
+		int minLength = Math.min(totalLength, refLength);
+		int tabSize = fPrefs.prefTabSize;
+		int maxCopyLength = tabSize > 0 ? minLength - minLength % tabSize : minLength; // maximum indent to copy
 		stripExceedingChars(buffer, maxCopyLength);
 
 		// add additional indent
-		int missing= totalLength - maxCopyLength;
+		int missing = totalLength - maxCopyLength;
 		final int tabs, spaces;
 		if (CCorePlugin.SPACE.equals(fPrefs.prefTabChar)) {
-			tabs= 0;
-			spaces= missing;
+			tabs = 0;
+			spaces = missing;
 		} else {
-			tabs= tabSize > 0 ? missing / tabSize : 0;
-			spaces= tabSize > 0 ? missing % tabSize : missing;
+			tabs = tabSize > 0 ? missing / tabSize : 0;
+			spaces = tabSize > 0 ? missing % tabSize : missing;
 		}
-		for (int i= 0; i < tabs; i++)
+		for (int i = 0; i < tabs; i++)
 			buffer.append('\t');
-		for (int i= 0; i < spaces; i++)
+		for (int i = 0; i < spaces; i++)
 			buffer.append(' ');
 		return buffer;
 	}
@@ -748,9 +769,9 @@ public final class CIndenter {
 	private int peekToken(int offset) {
 		if (offset < fDocument.getLength()) {
 			try {
-				IRegion line= fDocument.getLineInformationOfOffset(offset);
-				int lineEnd= line.getOffset() + line.getLength();
-				int next= fScanner.nextToken(offset, lineEnd);
+				IRegion line = fDocument.getLineInformationOfOffset(offset);
+				int lineEnd = line.getOffset() + line.getLength();
+				int next = fScanner.nextToken(offset, lineEnd);
 				return next;
 			} catch (BadLocationException e) {
 			}
@@ -768,8 +789,8 @@ public final class CIndenter {
 	private int peekSecondToken(int offset) {
 		if (offset < fDocument.getLength()) {
 			try {
-				IRegion line= fDocument.getLineInformationOfOffset(offset);
-				int lineEnd= line.getOffset() + line.getLength();
+				IRegion line = fDocument.getLineInformationOfOffset(offset);
+				int lineEnd = line.getOffset() + line.getLength();
 				fScanner.nextToken(offset, lineEnd);
 				int next = fScanner.nextToken(fScanner.getPosition(), lineEnd);
 				return next;
@@ -806,9 +827,9 @@ public final class CIndenter {
 	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND NOT_FOUND}
 	 */
 	public int findReferencePosition(int offset, int nextToken) {
-		boolean danglingElse= false;
-		boolean cancelIndent= false; // If set to true, fIndent is ignored.
-		int extraIndent= 0; // Can be either positive or negative.
+		boolean danglingElse = false;
+		boolean cancelIndent = false; // If set to true, fIndent is ignored.
+		int extraIndent = 0; // Can be either positive or negative.
 		MatchMode matchMode = MatchMode.REGULAR;
 
 		// Account for un-indentation characters already typed in, but after position.
@@ -817,45 +838,45 @@ public final class CIndenter {
 		// Also account for a dangling else.
 		if (offset < fDocument.getLength()) {
 			try {
-				IRegion line= fDocument.getLineInformationOfOffset(offset);
-				int lineOffset= line.getOffset();
-				int prevPos= Math.max(offset - 1, 0);
-				boolean isFirstTokenOnLine=
-						fDocument.get(lineOffset, prevPos + 1 - lineOffset).trim().length() == 0;
-				int prevToken= fScanner.previousToken(prevPos, CHeuristicScanner.UNBOUND);
-				boolean bracelessBlockStart= fScanner.isBracelessBlockStart(prevPos, CHeuristicScanner.UNBOUND);
+				IRegion line = fDocument.getLineInformationOfOffset(offset);
+				int lineOffset = line.getOffset();
+				int prevPos = Math.max(offset - 1, 0);
+				boolean isFirstTokenOnLine = fDocument.get(lineOffset, prevPos + 1 - lineOffset).trim().length() == 0;
+				int prevToken = fScanner.previousToken(prevPos, CHeuristicScanner.UNBOUND);
+				boolean bracelessBlockStart = fScanner.isBracelessBlockStart(prevPos, CHeuristicScanner.UNBOUND);
 
 				switch (nextToken) {
 				case Symbols.TokenELSE:
-					danglingElse= true;
+					danglingElse = true;
 					break;
-					
+
 				case Symbols.TokenCASE:
 				case Symbols.TokenDEFAULT:
 					if (isFirstTokenOnLine)
 						matchMode = MatchMode.MATCH_CASE;
 					break;
-					
+
 				case Symbols.TokenPUBLIC:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:
 					if (isFirstTokenOnLine && peekSecondToken(offset) != Symbols.TokenIDENT)
 						matchMode = MatchMode.MATCH_ACCESS_SPECIFIER;
 					break;
-					
+
 				case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
 					if (bracelessBlockStart) {
-						extraIndent= fPrefs.prefIndentBracesForBlocks ? 0 : -1;
+						extraIndent = fPrefs.prefIndentBracesForBlocks ? 0 : -1;
 					} else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks) {
-						extraIndent= -1;
-					} else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) &&
-							!fPrefs.prefIndentBracesForArrays) {
-						cancelIndent= true;
-					} else if ((prevToken == Symbols.TokenRPAREN || prevToken == Symbols.TokenCONST) && fPrefs.prefIndentBracesForMethods) {
-						extraIndent= 1;
+						extraIndent = -1;
+					} else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET)
+							&& !fPrefs.prefIndentBracesForArrays) {
+						cancelIndent = true;
+					} else if ((prevToken == Symbols.TokenRPAREN || prevToken == Symbols.TokenCONST)
+							&& fPrefs.prefIndentBracesForMethods) {
+						extraIndent = 1;
 					} else if (prevToken == Symbols.TokenIDENT) {
 						if (fPrefs.prefIndentBracesForTypes) {
-							extraIndent= 1;
+							extraIndent = 1;
 						}
 						int pos = fPosition;
 						fPosition = offset;
@@ -865,12 +886,12 @@ public final class CIndenter {
 						fPosition = pos;
 					}
 					break;
-					
+
 				case Symbols.TokenRBRACE: // closing braces get unindented
 					if (isFirstTokenOnLine || prevToken != Symbols.TokenLBRACE)
 						matchMode = MatchMode.MATCH_BRACE;
 					break;
-					
+
 				case Symbols.TokenRPAREN:
 					if (isFirstTokenOnLine)
 						matchMode = MatchMode.MATCH_PAREN;
@@ -880,14 +901,14 @@ public final class CIndenter {
 			}
 		} else {
 			// Don't assume an else could come if we are at the end of file.
-			danglingElse= false;
+			danglingElse = false;
 		}
 
-		int ref= findReferencePosition(offset, danglingElse, matchMode);
+		int ref = findReferencePosition(offset, danglingElse, matchMode);
 		if (cancelIndent) {
 			fIndent = 0;
 		} else if (extraIndent > 0) {
-			fAlign= NOT_FOUND;
+			fAlign = NOT_FOUND;
 			fIndent += extraIndent;
 		} else {
 			fIndent += extraIndent;
@@ -945,10 +966,10 @@ public final class CIndenter {
 	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
 	 */
 	public int findReferencePosition(int offset, boolean danglingElse, MatchMode matchMode) {
-		fIndent= 0; // The indentation modification
-		fExtraSpaces= 0;
-		fAlign= NOT_FOUND;
-		fPosition= offset;
+		fIndent = 0; // The indentation modification
+		fExtraSpaces = 0;
+		fAlign = NOT_FOUND;
+		fPosition = offset;
 
 		// Forward cases.
 		// An unindentation happens sometimes if the next token is special, namely on braces,
@@ -959,22 +980,21 @@ public final class CIndenter {
 			if (skipScope(Symbols.TokenLBRACE, Symbols.TokenRBRACE)) {
 				try {
 					// Align with the opening brace that is on a line by its own
-					int lineOffset= fDocument.getLineOffset(fLine);
-					if (lineOffset <= fPosition &&
-							fDocument.get(lineOffset, fPosition - lineOffset).trim().isEmpty()) {
+					int lineOffset = fDocument.getLineOffset(fLine);
+					if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().isEmpty()) {
 						return fPosition;
 					}
 				} catch (BadLocationException e) {
 					// Concurrent modification - walk default path
 				}
 				// If the opening brace is not on the start of the line, skip to the start.
-				int pos= skipToStatementStart(true, true);
-				fIndent= 0; // indent is aligned with reference position
+				int pos = skipToStatementStart(true, true);
+				fIndent = 0; // indent is aligned with reference position
 				return pos;
 			} else {
 				// If we can't find the matching brace, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, MatchMode.REGULAR);
+				int pos = findReferencePosition(offset, danglingElse, MatchMode.REGULAR);
 				fIndent--;
 				return pos;
 			}
@@ -986,7 +1006,7 @@ public final class CIndenter {
 			} else {
 				// If we can't find the matching paren, the heuristic is to unindent by one
 				// against the normal position.
-				int pos= findReferencePosition(offset, danglingElse, MatchMode.REGULAR);
+				int pos = findReferencePosition(offset, danglingElse, MatchMode.REGULAR);
 				fIndent--;
 				return pos;
 			}
@@ -1011,7 +1031,7 @@ public final class CIndenter {
 		}
 
 		if (peekToken(offset) == Symbols.TokenCOLON) {
-			int pos= fPosition;
+			int pos = fPosition;
 			if (looksLikeTypeInheritanceDecl()) {
 				fIndent = fPrefs.prefContinuationIndent;
 				return fPosition;
@@ -1025,15 +1045,15 @@ public final class CIndenter {
 			nextToken();
 		}
 
-		int line= fLine;
+		int line = fLine;
 		switch (fToken) {
 		case Symbols.TokenGREATERTHAN:
 		case Symbols.TokenRBRACE:
 			// Skip the block and fall through.
 			// If we can't complete the scope, reset the scan position
-			int pos= fPosition;
+			int pos = fPosition;
 			if (!skipScope())
-				fPosition= pos;
+				fPosition = pos;
 			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenSEMICOLON:
@@ -1055,39 +1075,39 @@ public final class CIndenter {
 
 		case Symbols.TokenEQUAL:
 			// indent assignments
-			fIndent= fPrefs.prefAssignmentIndent;
+			fIndent = fPrefs.prefAssignmentIndent;
 			return fPosition;
 
 		case Symbols.TokenCOLON:
-			pos= fPosition;
+			pos = fPosition;
 			if (looksLikeCaseStatement()) {
-				fIndent= fPrefs.prefCaseBlockIndent;
+				fIndent = fPrefs.prefCaseBlockIndent;
 				return pos;
 			}
-			fPosition= pos;
+			fPosition = pos;
 			if (looksLikeTypeInheritanceDecl()) {
-				fIndent= fPrefs.prefContinuationIndent;
+				fIndent = fPrefs.prefContinuationIndent;
 				return pos;
 			}
-			fPosition= pos;
+			fPosition = pos;
 			if (looksLikeConstructorInitializer()) {
-				fIndent= fPrefs.prefBlockIndent;
+				fIndent = fPrefs.prefBlockIndent;
 				return pos;
 			}
-			fPosition= pos;
+			fPosition = pos;
 			if (isConditional()) {
-				fPosition= offset;
-				fLine= line;
+				fPosition = offset;
+				fLine = line;
 				return skipToPreviousListItemOrListStart();
 			}
-			fPosition= pos;
+			fPosition = pos;
 			return skipToPreviousListItemOrListStart();
 
 		case Symbols.TokenQUESTIONMARK:
 			if (fPrefs.prefTernaryDeepAlign) {
 				setFirstElementAlignment(fPosition, offset + 1);
 			} else {
-				fIndent= fPrefs.prefTernaryIndent;
+				fIndent = fPrefs.prefTernaryIndent;
 			}
 			return fPosition;
 
@@ -1095,7 +1115,7 @@ public final class CIndenter {
 		case Symbols.TokenDO:
 		case Symbols.TokenWHILE:
 		case Symbols.TokenELSE:
-			fIndent= fPrefs.prefSimpleIndent;
+			fIndent = fPrefs.prefSimpleIndent;
 			return fPosition;
 
 		case Symbols.TokenTRY:
@@ -1116,16 +1136,16 @@ public final class CIndenter {
 			//$FALL-THROUGH$
 		case Symbols.TokenRPAREN:
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
-				int scope= fPosition;
+				int scope = fPosition;
 				nextToken();
 				if (fToken == Symbols.TokenIF || fToken == Symbols.TokenWHILE || fToken == Symbols.TokenFOR) {
-					fIndent= fPrefs.prefSimpleIndent;
+					fIndent = fPrefs.prefSimpleIndent;
 					return fPosition;
 				}
 				if (fToken == Symbols.TokenSWITCH) {
 					return fPosition;
 				}
-				fPosition= scope;
+				fPosition = scope;
 				// "noexcept" at this point would be a noexcept-with-argument, which should be
 				// attached to a method declaration:
 				if (looksLikeMethodDecl() || fToken == Symbols.TokenNOEXCEPT) {
@@ -1134,14 +1154,14 @@ public final class CIndenter {
 				if (fToken == Symbols.TokenCATCH) {
 					return skipToStatementStart(danglingElse, false);
 				}
-				fPosition= scope;
+				fPosition = scope;
 				if (looksLikeAnonymousTypeDecl()) {
 					return skipToStatementStart(danglingElse, false);
 				}
 			}
 			// restore
-			fPosition= offset;
-			fLine= line;
+			fPosition = offset;
+			fLine = line;
 			// else: fall through to default
 			return skipToPreviousListItemOrListStart();
 
@@ -1177,20 +1197,15 @@ public final class CIndenter {
 	private int matchTypeDeclaration() {
 		while (true) {
 			nextToken();
-			if (fToken == Symbols.TokenIDENT
-					|| fToken == Symbols.TokenCOMMA
-					|| fToken == Symbols.TokenCOLON
-					|| fToken == Symbols.TokenPUBLIC
-					|| fToken == Symbols.TokenPROTECTED
+			if (fToken == Symbols.TokenIDENT || fToken == Symbols.TokenCOMMA || fToken == Symbols.TokenCOLON
+					|| fToken == Symbols.TokenPUBLIC || fToken == Symbols.TokenPROTECTED
 					|| fToken == Symbols.TokenPRIVATE) {
 				continue;
 			}
-			if (fToken == Symbols.TokenCLASS
-					|| fToken == Symbols.TokenSTRUCT
-					|| fToken == Symbols.TokenUNION) {
+			if (fToken == Symbols.TokenCLASS || fToken == Symbols.TokenSTRUCT || fToken == Symbols.TokenUNION) {
 				// inside a type declaration?  Only so if not preceded by '(' or ',' as in
 				// a parameter list.  To be safe, only accept ';' or EOF
-				int pos= fPosition;
+				int pos = fPosition;
 				nextToken();
 				if (fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenEOF) {
 					return pos;
@@ -1294,15 +1309,15 @@ public final class CIndenter {
 		case Symbols.TokenCOLON:
 			nextToken();
 			switch (fToken) {
-			case Symbols.TokenCOLON:  // A::A() :
-			case Symbols.TokenPUBLIC:  // public: A() :
+			case Symbols.TokenCOLON: // A::A() :
+			case Symbols.TokenPUBLIC: // public: A() :
 			case Symbols.TokenPROTECTED:
 			case Symbols.TokenPRIVATE:
 				return true;
 			}
 			return false;
-			
-		case Symbols.TokenLBRACE:  // class A { A() :
+
+		case Symbols.TokenLBRACE: // class A { A() :
 		case Symbols.TokenRBRACE:
 		case Symbols.TokenSEMICOLON:
 			return true;
@@ -1332,14 +1347,13 @@ public final class CIndenter {
 		return false;
 	}
 
-
 	/**
 	 * Test whether the colon at the current position marks an access specifier.
 	 * 
 	 * @return <code>true</code> if current position marks an access specifier
 	 */
 	private boolean isAccessSpecifier() {
-		int pos= fPosition;
+		int pos = fPosition;
 		int token = fToken;
 		nextToken();
 		switch (fToken) {
@@ -1349,7 +1363,7 @@ public final class CIndenter {
 			return true;
 		}
 		fToken = token;
-		fPosition= pos;
+		fPosition = pos;
 		return false;
 	}
 
@@ -1362,14 +1376,14 @@ public final class CIndenter {
 	 * @return the reference offset of the start of the statement
 	 */
 	private int skipToStatementStart(boolean danglingElse, boolean isInBlock) {
-		final int NOTHING= 0;
-		final int READ_PARENS= 1;
-		final int READ_IDENT= 2;
-		int mayBeMethodBody= NOTHING;
-		boolean isTypeBody= false;
+		final int NOTHING = 0;
+		final int READ_PARENS = 1;
+		final int READ_IDENT = 2;
+		int mayBeMethodBody = NOTHING;
+		boolean isTypeBody = false;
 		int startLine = fLine;
 		while (true) {
-			int prevToken= fToken;
+			int prevToken = fToken;
 			nextToken();
 
 			if (isInBlock) {
@@ -1387,11 +1401,11 @@ public final class CIndenter {
 				case Symbols.TokenCLASS:
 				case Symbols.TokenSTRUCT:
 				case Symbols.TokenUNION:
-					isTypeBody= true;
+					isTypeBody = true;
 					break;
 
 				case Symbols.TokenSWITCH:
-					fIndent= fPrefs.prefCaseIndent;
+					fIndent = fPrefs.prefCaseIndent;
 					return fPosition;
 				}
 			}
@@ -1408,7 +1422,7 @@ public final class CIndenter {
 			// -> the next token is the start of the statement (i.e. previousPos when backward scanning)
 			case Symbols.TokenLPAREN:
 				if (peekToken() == Symbols.TokenFOR) {
-					nextToken();  // Consume 'for'
+					nextToken(); // Consume 'for'
 					fIndent = fPrefs.prefContinuationIndent;
 					return fPosition;
 				}
@@ -1418,7 +1432,7 @@ public final class CIndenter {
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenEOF:
 				if (isInBlock)
-					fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
+					fIndent = getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
 				return fPreviousPos;
 
 			case Symbols.TokenCOLON:
@@ -1438,7 +1452,7 @@ public final class CIndenter {
 						continue;
 					}
 				}
-				int pos= fPreviousPos;
+				int pos = fPreviousPos;
 				if (!isConditional())
 					return pos;
 				break;
@@ -1446,7 +1460,7 @@ public final class CIndenter {
 			case Symbols.TokenRBRACE:
 				// RBRACE is a little tricky: it can be the end of an array definition, but
 				// usually it is the end of a previous block
-				pos= fPreviousPos; // store state
+				pos = fPreviousPos; // store state
 				if (skipScope()) {
 					if (looksLikeArrayInitializerIntro()) {
 						continue; // it's an array
@@ -1457,29 +1471,29 @@ public final class CIndenter {
 					}
 				}
 				if (isInBlock)
-					fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
+					fIndent = getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
 				return pos; // it's not - do as with all the above
 
 			// scopes: skip them
 			case Symbols.TokenRPAREN:
 				if (isInBlock)
-					mayBeMethodBody= READ_PARENS;
+					mayBeMethodBody = READ_PARENS;
 				// fall thru
-				pos= fPreviousPos;
+				pos = fPreviousPos;
 				if (skipScope())
 					break;
 				else
 					return pos;
 			case Symbols.TokenRBRACKET:
-				pos= fPreviousPos;
+				pos = fPreviousPos;
 				if (skipScope())
 					break;
 				else
 					return pos;
 
-			// IF / ELSE: align the position after the conditional block with the if
-			// so we are ready for an else, except if danglingElse is false
-			// in order for this to work, we must skip an else to its if
+				// IF / ELSE: align the position after the conditional block with the if
+				// so we are ready for an else, except if danglingElse is false
+				// in order for this to work, we must skip an else to its if
 			case Symbols.TokenIF:
 				if (danglingElse)
 					return fPosition;
@@ -1487,7 +1501,7 @@ public final class CIndenter {
 					break;
 			case Symbols.TokenELSE:
 				// skip behind the next if, as we have that one covered
-				pos= fPosition;
+				pos = fPosition;
 				if (skipNextIF())
 					break;
 				else
@@ -1500,18 +1514,18 @@ public final class CIndenter {
 			case Symbols.TokenWHILE:
 				// this one is tricky: while can be the start of a while loop
 				// or the end of a do - while
-				pos= fPosition;
+				pos = fPosition;
 				if (hasMatchingDo()) {
 					// continue searching from the DO on
 					break;
 				} else {
 					// continue searching from the WHILE on
-					fPosition= pos;
+					fPosition = pos;
 					break;
 				}
 			case Symbols.TokenIDENT:
 				if (mayBeMethodBody == READ_PARENS)
-					mayBeMethodBody= READ_IDENT;
+					mayBeMethodBody = READ_IDENT;
 				break;
 
 			default:
@@ -1538,7 +1552,7 @@ public final class CIndenter {
 	 */
 	private boolean isConditional() {
 		while (true) {
-			int previous= fToken;
+			int previous = fToken;
 			nextToken();
 			switch (fToken) {
 			// search for case labels, which consist of (possibly qualified) identifiers or numbers
@@ -1553,10 +1567,10 @@ public final class CIndenter {
 			case Symbols.TokenMINUS:
 			case Symbols.TokenPLUS:
 				continue;
-				
+
 			case Symbols.TokenQUESTIONMARK:
 				return true;
-				
+
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenLBRACE:
 			case Symbols.TokenRBRACE:
@@ -1594,16 +1608,16 @@ public final class CIndenter {
 			case Symbols.TokenLBRACKET:
 			case Symbols.TokenEOF:
 				return fPosition;
-				
+
 			case Symbols.TokenSWITCH:
 				// start of switch statement
-				fIndent= fPrefs.prefCaseIndent;
+				fIndent = fPrefs.prefCaseIndent;
 				return fPosition;
-				
+
 			case Symbols.TokenCASE:
 			case Symbols.TokenDEFAULT:
 				// align with previous label
-				fIndent= 0;
+				fIndent = 0;
 				return fPosition;
 
 			// scopes: skip them
@@ -1639,12 +1653,12 @@ public final class CIndenter {
 			case Symbols.TokenLBRACKET:
 			case Symbols.TokenEOF:
 				return fPosition;
-				
+
 			case Symbols.TokenLBRACE:
 				// opening brace of class body
-				int pos= fPosition;
-				int typeDeclPos= matchTypeDeclaration();
-				fIndent= fPrefs.prefAccessSpecifierIndent;
+				int pos = fPosition;
+				int typeDeclPos = matchTypeDeclaration();
+				fIndent = fPrefs.prefAccessSpecifierIndent;
 				fExtraSpaces = fPrefs.prefAccessSpecifierExtraSpaces;
 				if (typeDeclPos != NOT_FOUND) {
 					return typeDeclPos;
@@ -1654,7 +1668,7 @@ public final class CIndenter {
 			case Symbols.TokenPROTECTED:
 			case Symbols.TokenPRIVATE:
 				// align with previous access specifier
-				fIndent= 0;
+				fIndent = 0;
 				return fPosition;
 
 			// scopes: skip them
@@ -1682,12 +1696,11 @@ public final class CIndenter {
 	 * that has its own indentation, or the list introduction start.
 	 */
 	private int skipToPreviousListItemOrListStart() {
-		int startLine= fLine;
-		int startPosition= fPosition;
+		int startLine = fLine;
+		int startPosition = fPosition;
 		int linesSkippedInsideScopes = 0;
-		boolean continuationLineCandidate =
-				fToken == Symbols.TokenEQUAL || fToken == Symbols.TokenSHIFTLEFT ||
-				fToken == Symbols.TokenRPAREN;
+		boolean continuationLineCandidate = fToken == Symbols.TokenEQUAL || fToken == Symbols.TokenSHIFTLEFT
+				|| fToken == Symbols.TokenRPAREN;
 		while (true) {
 			int previous = fToken;
 			nextToken();
@@ -1695,17 +1708,18 @@ public final class CIndenter {
 			// If any line item comes with its own indentation, adapt to it
 			if (fLine < startLine - linesSkippedInsideScopes) {
 				try {
-					int lineOffset= fDocument.getLineOffset(startLine);
-					int bound= Math.min(fDocument.getLength(), startPosition + 1);
-					if ((fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenRBRACE ||
-							fToken == Symbols.TokenLBRACE && !looksLikeArrayInitializerIntro() && !looksLikeEnumDeclaration()) &&
-							continuationLineCandidate) {
+					int lineOffset = fDocument.getLineOffset(startLine);
+					int bound = Math.min(fDocument.getLength(), startPosition + 1);
+					if ((fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenRBRACE
+							|| fToken == Symbols.TokenLBRACE && !looksLikeArrayInitializerIntro()
+									&& !looksLikeEnumDeclaration())
+							&& continuationLineCandidate) {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
-						fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
+						fAlign = fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
 						// If the reference line starts with a colon, skip the colon.  
 						if (peekToken(fAlign) == Symbols.TokenCOLON) {
-							fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(fAlign + 1, bound);
+							fAlign = fScanner.findNonWhitespaceForwardInAnyPartition(fAlign + 1, bound);
 						}
 					}
 				} catch (BadLocationException e) {
@@ -1739,7 +1753,7 @@ public final class CIndenter {
 				if (fPrefs.prefTernaryDeepAlign) {
 					setFirstElementAlignment(fPosition - 1, fPosition + 1);
 				} else {
-					fIndent= fPrefs.prefTernaryIndent;
+					fIndent = fPrefs.prefTernaryIndent;
 				}
 				return fPosition;
 
@@ -1794,29 +1808,29 @@ public final class CIndenter {
 		case Symbols.TokenGREATERTHAN:
 			if (!fPrefs.prefHasTemplates)
 				return false;
-			int storedPosition= fPosition;
-			int storedToken= fToken;
+			int storedPosition = fPosition;
+			int storedToken = fToken;
 			nextToken();
 			switch (fToken) {
-				case Symbols.TokenIDENT:
-					fPosition = storedPosition;
-					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
-						return true;
-					break;
-				case Symbols.TokenQUESTIONMARK:
-				case Symbols.TokenGREATERTHAN:
-					fPosition = storedPosition;
-					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
-						return true;
-					break;
+			case Symbols.TokenIDENT:
+				fPosition = storedPosition;
+				if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
+					return true;
+				break;
+			case Symbols.TokenQUESTIONMARK:
+			case Symbols.TokenGREATERTHAN:
+				fPosition = storedPosition;
+				if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
+					return true;
+				break;
 			}
 			// <> are harder to detect - restore the position if we fail
-			fPosition= storedPosition;
-			fToken= storedToken;
+			fPosition = storedPosition;
+			fToken = storedToken;
 			return false;
 
 		default:
-			 // programming error
+			// programming error
 			Assert.isTrue(false);
 			return false;
 		}
@@ -1851,7 +1865,7 @@ public final class CIndenter {
 	 * @return the indent
 	 */
 	private int handleScopeIntroduction(int bound, boolean firstToken) {
-		int pos= fPosition; // store
+		int pos = fPosition; // store
 
 		switch (fToken) {
 		// scope introduction: special treat who special is
@@ -1861,16 +1875,16 @@ public final class CIndenter {
 				if (firstToken ? fPrefs.prefMethodDeclFirstParameterDeepIndent : fPrefs.prefMethodDeclDeepIndent) {
 					return setFirstElementAlignment(pos, bound);
 				} else {
-					fIndent= fPrefs.prefMethodDeclIndent;
+					fIndent = fPrefs.prefMethodDeclIndent;
 					return pos;
 				}
 			} else {
-				fPosition= pos;
+				fPosition = pos;
 				if (looksLikeMethodCall()) {
 					if (firstToken ? fPrefs.prefMethodCallFirstParameterDeepIndent : fPrefs.prefMethodCallDeepIndent) {
 						return setFirstElementAlignment(pos, bound);
 					} else {
-						fIndent= fPrefs.prefMethodCallIndent;
+						fIndent = fPrefs.prefMethodCallIndent;
 						return pos;
 					}
 				} else if (fPrefs.prefParenthesisDeepIndent) {
@@ -1879,34 +1893,34 @@ public final class CIndenter {
 			}
 
 			// normal: return the parenthesis as reference
-			fIndent= fPrefs.prefParenthesisIndent;
+			fIndent = fPrefs.prefParenthesisIndent;
 			return pos;
 
 		case Symbols.TokenLBRACE:
-			final boolean looksLikeArrayInitializerIntro= looksLikeArrayInitializerIntro();
+			final boolean looksLikeArrayInitializerIntro = looksLikeArrayInitializerIntro();
 			// special: array initializer
 			if (looksLikeArrayInitializerIntro) {
 				if (fPrefs.prefArrayDeepIndent)
 					return setFirstElementAlignment(pos, bound);
 				else
-					fIndent= fPrefs.prefArrayIndent;
+					fIndent = fPrefs.prefArrayIndent;
 			} else if (isNamespace() || isLinkageSpec()) {
-				fIndent= fPrefs.prefNamespaceBodyIndent;
+				fIndent = fPrefs.prefNamespaceBodyIndent;
 			} else if (looksLikeEnumDeclaration()) {
 				fIndent = fPrefs.prefTypeIndent;
 			} else {
 				int typeDeclPos = matchTypeDeclaration();
 				if (typeDeclPos == NOT_FOUND) {
-					fIndent= fPrefs.prefBlockIndent;
+					fIndent = fPrefs.prefBlockIndent;
 				} else {
-					fIndent= fPrefs.prefAccessSpecifierIndent + fPrefs.prefTypeIndent;
+					fIndent = fPrefs.prefAccessSpecifierIndent + fPrefs.prefTypeIndent;
 				}
 			}
 
 			// normal: skip to the statement start before the scope introducer
 			// opening braces are often on differently ending indents than e.g. a method definition
 			if (!looksLikeArrayInitializerIntro) {
-				fPosition= pos; // restore
+				fPosition = pos; // restore
 				return skipToStatementStart(true, true); // set to true to match the first if
 			} else {
 				return pos;
@@ -1919,7 +1933,7 @@ public final class CIndenter {
 			}
 
 			// normal: return the bracket as reference
-			fIndent= fPrefs.prefBracketIndent;
+			fIndent = fPrefs.prefBracketIndent;
 			return pos; // restore
 
 		default:
@@ -1940,15 +1954,15 @@ public final class CIndenter {
 	 * @return the reference position
 	 */
 	private int setFirstElementAlignment(int scopeIntroducerOffset, int bound) {
-		int firstPossible= scopeIntroducerOffset + 1; // align with the first position after the scope intro
-		fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(firstPossible, bound);
+		int firstPossible = scopeIntroducerOffset + 1; // align with the first position after the scope intro
+		fAlign = fScanner.findNonWhitespaceForwardInAnyPartition(firstPossible, bound);
 		if (fAlign == NOT_FOUND) {
-			fAlign= firstPossible;
+			fAlign = firstPossible;
 		} else {
 			try {
 				IRegion lineRegion = fDocument.getLineInformationOfOffset(scopeIntroducerOffset);
 				if (fAlign > lineRegion.getOffset() + lineRegion.getLength()) {
-					fAlign= firstPossible; 
+					fAlign = firstPossible;
 				}
 			} catch (BadLocationException e) {
 				// Ignore.
@@ -1965,7 +1979,7 @@ public final class CIndenter {
 	 * @return <code>true</code> if the next elements look like the start of an array definition
 	 */
 	private boolean looksLikeArrayInitializerIntro() {
-		int pos= fPosition;
+		int pos = fPosition;
 		nextToken();
 		switch (fToken) {
 		case Symbols.TokenEQUAL:
@@ -1974,15 +1988,15 @@ public final class CIndenter {
 			return skipBrackets();
 		case Symbols.TokenLBRACE:
 			if (looksLikeArrayInitializerIntro()) {
-				fPosition= pos;
+				fPosition = pos;
 				return true;
 			}
 			return false;
 		case Symbols.TokenCOMMA:
-			fPosition= pos;
+			fPosition = pos;
 			return true;
 		}
-		fPosition= pos;
+		fPosition = pos;
 		return false;
 	}
 
@@ -1997,12 +2011,12 @@ public final class CIndenter {
 		nextToken();
 		if (fToken == Symbols.TokenNAMESPACE) {
 			fPosition = pos;
-			return true;		// Anonymous namespace
+			return true; // Anonymous namespace
 		} else if (fToken == Symbols.TokenIDENT) {
-			nextToken();		// Get previous token
+			nextToken(); // Get previous token
 			if (fToken == Symbols.TokenNAMESPACE) {
 				fPosition = pos;
-				return true;	// Named namespace
+				return true; // Named namespace
 			}
 		}
 		fPosition = pos;
@@ -2098,7 +2112,7 @@ public final class CIndenter {
 	 */
 	private boolean skipPointerOperators() {
 		if (fToken == Symbols.TokenOTHER) {
-			CharSequence token= getTokenContent().toString().trim();
+			CharSequence token = getTokenContent().toString().trim();
 			if (token.length() == 1 && token.charAt(0) == '*' || token.charAt(0) == '&') {
 				return true;
 			}
@@ -2158,13 +2172,13 @@ public final class CIndenter {
 	 * @param start the start offset from which to scan backwards
 	 */
 	private void nextToken(int start) {
-		fToken= fScanner.previousToken(start - 1, CHeuristicScanner.UNBOUND);
-		fPreviousPos= start;
-		fPosition= fScanner.getPosition() + 1;
+		fToken = fScanner.previousToken(start - 1, CHeuristicScanner.UNBOUND);
+		fPreviousPos = start;
+		fPosition = fScanner.getPosition() + 1;
 		try {
-			fLine= fDocument.getLineOfOffset(fPosition);
+			fLine = fDocument.getLineOfOffset(fPosition);
 		} catch (BadLocationException e) {
-			fLine= -1;
+			fLine = -1;
 		}
 	}
 
@@ -2189,7 +2203,7 @@ public final class CIndenter {
 		nextToken();
 		switch (fToken) {
 		case Symbols.TokenIDENT: // method name
-			int pos= fPosition;
+			int pos = fPosition;
 			nextToken();
 			// check destructor tilde
 			if (fToken == Symbols.TokenTILDE) {
@@ -2210,11 +2224,11 @@ public final class CIndenter {
 				return true;
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenRBRACE:
-				fPosition= pos;
+				fPosition = pos;
 				return true;
 			case Symbols.TokenLBRACE:
 				if (fScanner.looksLikeCompositeTypeDefinitionBackward(fPosition, CHeuristicScanner.UNBOUND)) {
-					fPosition= pos;
+					fPosition = pos;
 					return true;
 				}
 				break;
@@ -2233,7 +2247,7 @@ public final class CIndenter {
 				case Symbols.TokenPUBLIC:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:
-					fPosition= pos;
+					fPosition = pos;
 					return true;
 				case Symbols.TokenRPAREN:
 					// constructor initializer
@@ -2351,7 +2365,7 @@ public final class CIndenter {
 	 *         otherwise
 	 */
 	private boolean skipScope(int openToken, int closeToken) {
-		int depth= 1;
+		int depth = 1;
 
 		while (true) {
 			nextToken();

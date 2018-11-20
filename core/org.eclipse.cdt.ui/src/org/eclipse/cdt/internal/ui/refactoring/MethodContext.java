@@ -35,7 +35,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  * if two methods are in the same class.
  */
 public class MethodContext {
-	public enum ContextType { NONE, FUNCTION, METHOD }
+	public enum ContextType {
+		NONE, FUNCTION, METHOD
+	}
 
 	private ContextType type;
 	private IASTName declarationName;
@@ -88,10 +90,10 @@ public class MethodContext {
 	public static boolean isSameOrSubClass(MethodContext context1, MethodContext contextOfSameOrSubclass) {
 		ICPPInternalBinding bind1 = getICPPInternalBinding(context1);
 		ICPPInternalBinding subclassBind = getICPPInternalBinding(contextOfSameOrSubclass);
-		if (isSameClass(bind1,subclassBind)) {
+		if (isSameClass(bind1, subclassBind)) {
 			return true;
 		}
-		return isSubclass(bind1,subclassBind);
+		return isSubclass(bind1, subclassBind);
 	}
 
 	private static boolean isSubclass(ICPPInternalBinding bind1, ICPPInternalBinding subclassBind) {
@@ -100,7 +102,7 @@ public class MethodContext {
 			ICPPBase[] bases;
 			bases = classType.getBases();
 			for (ICPPBase base : bases) {
-				if (isSameClass(base,bind1)) {
+				if (isSameClass(base, bind1)) {
 					return true;
 				}
 			}
@@ -111,7 +113,7 @@ public class MethodContext {
 	public static boolean isSameClass(MethodContext context1, MethodContext context2) {
 		ICPPInternalBinding bind1 = getICPPInternalBinding(context1);
 		ICPPInternalBinding bind2 = getICPPInternalBinding(context2);
-		return isSameClass(bind1,bind2);
+		return isSameClass(bind1, bind2);
 	}
 
 	private static boolean isSameClass(ICPPBase base, ICPPInternalBinding bind2) {
@@ -198,8 +200,8 @@ public class MethodContext {
 
 	private static ICPPClassType getClassBinding(IASTName declName1) {
 		if (declName1.getParent().getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
-			ICPPASTCompositeTypeSpecifier compTypeSpec =
-					(ICPPASTCompositeTypeSpecifier) declName1.getParent().getParent().getParent();
+			ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) declName1.getParent()
+					.getParent().getParent();
 			return (ICPPClassType) compTypeSpec.getName().resolveBinding();
 		}
 		return null;

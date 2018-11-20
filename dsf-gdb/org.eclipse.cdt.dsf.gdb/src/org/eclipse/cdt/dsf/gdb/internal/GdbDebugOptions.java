@@ -56,7 +56,6 @@ public class GdbDebugOptions implements DebugOptionsListener {
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}
 
-
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		fgDebugTrace = options.newDebugTrace(GdbPlugin.getUniqueIdentifier());
@@ -73,7 +72,7 @@ public class GdbDebugOptions implements DebugOptionsListener {
 	public static void trace(String option, String message, Throwable throwable) {
 		trace(option, message, 100, throwable);
 	}
-	
+
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if started)
 	 * @param option the option or <code>null</code>
@@ -88,17 +87,17 @@ public class GdbDebugOptions implements DebugOptionsListener {
 		} else if (lineMax < 100) {
 			lineMax = 100;
 		}
-		
+
 		//divide the string into substrings of 'lineMax' chars or less for printing to console
 		String systemPrintableMessage = message;
 		while (systemPrintableMessage.length() > lineMax) {
-			String partial = systemPrintableMessage.substring(0, lineMax); 
+			String partial = systemPrintableMessage.substring(0, lineMax);
 			systemPrintableMessage = systemPrintableMessage.substring(lineMax);
 			System.out.println(partial + "\\"); //$NON-NLS-1$
 		}
 		System.out.print(systemPrintableMessage);
 		//then pass the original message to be traced into a file
-		if(fgDebugTrace != null) {
+		if (fgDebugTrace != null) {
 			fgDebugTrace.trace(option, message, throwable);
 		}
 	}

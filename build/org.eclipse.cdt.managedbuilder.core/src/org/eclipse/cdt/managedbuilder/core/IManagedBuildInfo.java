@@ -37,14 +37,14 @@ import org.eclipse.core.runtime.IPath;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IManagedBuildInfo {
-	public static final String DEFAULT_CONFIGURATION = "defaultConfig";	//$NON-NLS-1$
-	public static final String DEFAULT_TARGET = "defaultTarget";	//$NON-NLS-1$
+	public static final String DEFAULT_CONFIGURATION = "defaultConfig"; //$NON-NLS-1$
+	public static final String DEFAULT_TARGET = "defaultTarget"; //$NON-NLS-1$
 
 	/*
 	 * Note:  "Target" routines are only currently applicable when loading a CDT 2.0
 	 *        or earlier managed build project file (.cdtbuild)
 	 */
-	
+
 	/**
 	 * Add a new target to the build information for the receiver
 	 * 
@@ -52,7 +52,7 @@ public interface IManagedBuildInfo {
 	 */
 	@Deprecated
 	public void addTarget(ITarget target);
-		
+
 	/**
 	 * @return <code>true</code> if the build system knows how to 
 	 * build a file with the extension passed in the argument.
@@ -80,8 +80,8 @@ public interface IManagedBuildInfo {
 	 * @deprecated - use generateToolCommandLineInfo instead
 	 */
 	@Deprecated
-	public IManagedCommandLineInfo generateCommandLineInfo( String sourceExtension, String[] flags, 
-			String outputFlag, String outputPrefix, String outputName, String[] inputResources );
+	public IManagedCommandLineInfo generateCommandLineInfo(String sourceExtension, String[] flags, String outputFlag,
+			String outputPrefix, String outputName, String[] inputResources);
 
 	/**
 	 * Returns <code>IManagedCommandLineInfo</code> for source with extension
@@ -93,8 +93,9 @@ public interface IManagedBuildInfo {
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved
 	 */
-	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
-			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation );
+	public IManagedCommandLineInfo generateToolCommandLineInfo(String sourceExtension, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation,
+			IPath outputLocation);
 
 	/**
 	 * Answers a <code>String</code> containing the arguments to be passed to make. 
@@ -105,14 +106,13 @@ public interface IManagedBuildInfo {
 	 */
 	public String getBuildArguments();
 
-	
 	/**
 	 * Answers the file extension for the receivers build goal without a separator.
 	 * 
 	 * @return the extension or an empty string if none is defined
 	 */
 	public String getBuildArtifactExtension();
-	
+
 	/**
 	 * Returns the name of the artifact to build for the receiver.
 	 * 
@@ -128,34 +128,34 @@ public interface IManagedBuildInfo {
 	public String getBuildCommand();
 
 	/**
-     * Answers the prebuild step for the default configuration 
-     * 
-     * @return String 
-     */ 
-    public String getPrebuildStep(); 
-       
-    /** 
-     * Answers the postbuild step for the default configuration 
-     * 
-     * @return String 
-     */ 
-    public String getPostbuildStep(); 
-       
-    /** 
-     * Answers the display string associated with the prebuild step for the default configuration 
-     * 
-     * @return String 
-     */ 
-    public String getPreannouncebuildStep(); 
- 
-    /** 
-     * Answers the display string associated with the postbuild step for the default configuration 
-     * 
-     * @return String 
-     */ 
-    public String getPostannouncebuildStep();
-	
-    /** 
+	 * Answers the prebuild step for the default configuration 
+	 * 
+	 * @return String 
+	 */
+	public String getPrebuildStep();
+
+	/** 
+	 * Answers the postbuild step for the default configuration 
+	 * 
+	 * @return String 
+	 */
+	public String getPostbuildStep();
+
+	/** 
+	 * Answers the display string associated with the prebuild step for the default configuration 
+	 * 
+	 * @return String 
+	 */
+	public String getPreannouncebuildStep();
+
+	/** 
+	 * Answers the display string associated with the postbuild step for the default configuration 
+	 * 
+	 * @return String 
+	 */
+	public String getPostannouncebuildStep();
+
+	/** 
 	 * Answers the command needed to remove files on the build machine
 	 */
 	public String getCleanCommand();
@@ -167,7 +167,7 @@ public interface IManagedBuildInfo {
 	 * @return String name of default configuration
 	 */
 	public String getConfigurationName();
-	
+
 	/**
 	 * Answers a <code>String</code> array containing the names of all the configurations
 	 * defined for the project.
@@ -182,7 +182,7 @@ public interface IManagedBuildInfo {
 	 * @return IConfiguration default
 	 */
 	public IConfiguration getDefaultConfiguration();
-	
+
 	public IManagedDependencyGeneratorType getDependencyGenerator(String sourceExtension);
 
 	/**
@@ -200,7 +200,7 @@ public interface IManagedBuildInfo {
 	 */
 	@Deprecated
 	public String getFlagsForConfiguration(String extension);
-	
+
 	/**
 	 * Returns a <code>String</code> containing the flags, including 
 	 * those overridden by the user, for the tool in the configuration
@@ -253,14 +253,14 @@ public interface IManagedBuildInfo {
 	 * 
 	 * @return IManagedProject
 	 */
-	public IManagedProject getManagedProject( );
-	
+	public IManagedProject getManagedProject();
+
 	/**
 	 * Answers the extension that will be built by the current configuration
 	 * for the extension passed in the argument or <code>null</code>.
 	 */
 	public String getOutputExtension(String resourceExtension);
-	
+
 	/**
 	 * Answers the flag to be passed to the build tool to produce a specific output 
 	 * or an empty <code>String</code> if there is no special flag. For example, the
@@ -268,7 +268,7 @@ public interface IManagedBuildInfo {
 	 * 		gcc -c foo.c -o foo.o
 	 */
 	public String getOutputFlag(String outputExt);
-	
+
 	/**
 	 * Answers the prefix that should be prepended to the name of the build 
 	 * artifact. For example, a library foo, should have the prefix 'lib' and 
@@ -277,7 +277,7 @@ public interface IManagedBuildInfo {
 	 * @return the prefix or an empty string
 	 */
 	public String getOutputPrefix(String outputExtension);
-	
+
 	/**
 	 * Returns the currently selected configuration.  This is used while the project
 	 * property pages are displayed
@@ -320,7 +320,7 @@ public interface IManagedBuildInfo {
 	 * @return a String containing the command line invocation for the tool
 	 */
 	public String getToolForSource(String sourceExtension);
-	
+
 	/**
 	 * Returns a <code>ITool</code> for the tool associated with the 
 	 * input extension.
@@ -329,7 +329,7 @@ public interface IManagedBuildInfo {
 	 * @return ITool
 	 */
 	public ITool getToolFromInputExtension(String extension);
-	
+
 	/**
 	 * Returns a <code>ITool</code> for the tool associated with the 
 	 * output extension.
@@ -347,21 +347,20 @@ public interface IManagedBuildInfo {
 	 */
 	public String[] getUserObjectsForConfiguration(String extension);
 
-	
 	/**
 	 * Answers the version of the build information in the format 
 	 * @return a <code>String</code> containing the build information 
 	 * version
 	 */
 	public String getVersion();
-	
+
 	/**
 	 * Answers true if the build model has been changed by the user.
 	 * 
 	 * @return boolean
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Answers <code>true</code> if the extension matches one of the special 
 	 * file extensions the tools for the configuration consider to be a header file. 
@@ -370,7 +369,7 @@ public interface IManagedBuildInfo {
 	 * @return boolean
 	 */
 	public boolean isHeaderFile(String ext);
-	
+
 	/**
 	 * Gets the read only status of Managed Build Info
 	 * 
@@ -378,7 +377,7 @@ public interface IManagedBuildInfo {
 	 * otherwise returns <code>false</code>
 	 */
 	public boolean isReadOnly();
-	
+
 	/**
 	 * Gets the "valid" status of Managed Build Info.  Managed Build Info is invalid
 	 * if the loading of, or conversion to, the Managed Build Info failed. 
@@ -387,7 +386,7 @@ public interface IManagedBuildInfo {
 	 * otherwise returns <code>false</code>
 	 */
 	public boolean isValid();
-	
+
 	/**
 	 * Answers whether the receiver has been changed and requires the 
 	 * project to be rebuilt. When a project is first created, it is 
@@ -405,7 +404,7 @@ public interface IManagedBuildInfo {
 	public boolean needsRebuild();
 
 	public void removeTarget(String id);
-	
+
 	/**
 	 * Set the primary configuration for the receiver.
 	 * 
@@ -413,17 +412,17 @@ public interface IManagedBuildInfo {
 	 * for all building.
 	 */
 	public void setDefaultConfiguration(IConfiguration configuration);
-	
+
 	/**
 	 * @return boolean indicating if setDefaultConfiguration was successful
 	 */
 	public boolean setDefaultConfiguration(String configName);
-	
+
 	/**
 	 * Sets the dirty flag for the build model to the value of the argument.
 	 */
 	public void setDirty(boolean isDirty);
-	
+
 	/**
 	 * Sets the valid flag for the build model to the value of the argument.
 	 */
@@ -433,12 +432,12 @@ public interface IManagedBuildInfo {
 	 * Sets the ManagedProject associated with this build info
 	 */
 	public void setManagedProject(IManagedProject project);
-	
+
 	/**
 	 * sets the read only status of Managed Build Info
 	 */
 	public void setReadOnly(boolean readOnly);
-	
+
 	/**
 	 * Sets the rebuild state in the receiver to the value of the argument. 
 	 * This is a potentially expensive option, so setting it to true should 
@@ -448,7 +447,7 @@ public interface IManagedBuildInfo {
 	 * @param rebuild <code>true</code> will force a rebuild the next time the project builds
 	 */
 	public void setRebuildState(boolean rebuild);
-	
+
 	/**
 	 * Sets the currently selected configuration. This is used while the project 
 	 * property pages are displayed

@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 import com.ibm.icu.text.MessageFormat;
- 
+
 /**
  * The source container that maps a backend path to the local filesystem path.
  */
@@ -95,12 +95,12 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 			String device = null;
 			String missingfile = path.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			int idx = missingfile.indexOf(":"); //$NON-NLS-1$
-			if ( idx > 0 ) {
+			if (idx > 0) {
 				device = missingfile.substring(0, idx + 1);
 				missingfile = missingfile.substring(idx + 1);
 			}
 			return new Path(device, missingfile);
-		}		
+		}
 
 		int idx = 0;
 		// Cygwin or UNC path
@@ -115,8 +115,8 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 				path = ""; //$NON-NLS-1$
 			}
 			return new Path(network, path).makeUNC(true);
-		}		
-		
+		}
+
 		// fallthrough
 		return new Path(path);
 	}
@@ -162,7 +162,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 						break;
 				}
 			}
-			if (list.size() > 0) 
+			if (list.size() > 0)
 				return list.toArray();
 
 			File file = path.toFile();
@@ -172,20 +172,22 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 			if (director != null && file.exists() && file.isFile()) {
 				ILaunchConfiguration launchConfiguration = director.getLaunchConfiguration();
 				if (launchConfiguration != null) {
-					String projectName = launchConfiguration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+					String projectName = launchConfiguration
+							.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 					if (projectName.length() > 0) {
 						ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
 						if (project != null) {
 							String id;
 							try {
-								final IPath location= Path.fromOSString(file.getCanonicalPath());
+								final IPath location = Path.fromOSString(file.getCanonicalPath());
 								id = CoreModel.getRegistedContentTypeId(project.getProject(), location.lastSegment());
-								return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, location, id) };
+								return new ExternalTranslationUnit[] {
+										new ExternalTranslationUnit(project, location, id) };
 							} catch (IOException e) {
 								CDebugCorePlugin.log(e);
 							}
 						}
-					}									
+					}
 				}
 			}
 
@@ -205,7 +207,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-	
+
 	public IPath getLocalPath() {
 		return fLocalPath;
 	}
@@ -226,7 +228,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	public boolean equals(Object o) {
 		if (!(o instanceof MapEntrySourceContainer))
 			return false;
-		MapEntrySourceContainer entry = (MapEntrySourceContainer)o;
+		MapEntrySourceContainer entry = (MapEntrySourceContainer) o;
 		return (entry.getBackendPathStr().equals(getBackendPathStr()) && entry.getLocalPath().equals(getLocalPath()));
 	}
 

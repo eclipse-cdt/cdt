@@ -28,7 +28,7 @@ public class MIRunControlEventProcessor_7_12 extends MIRunControlEventProcessor_
 
 {
 	private final AbstractMIControl fCommandControl;
-	private final ICommandControlDMContext fControlDmc; 
+	private final ICommandControlDMContext fControlDmc;
 
 	public MIRunControlEventProcessor_7_12(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
 		super(connection, controlDmc);
@@ -38,7 +38,7 @@ public class MIRunControlEventProcessor_7_12 extends MIRunControlEventProcessor_
 
 	@Override
 	public void eventReceived(Object output) {
-		for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
+		for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
 			if (oobr instanceof MIConsoleStreamOutput) {
 				MIConsoleStreamOutput stream = (MIConsoleStreamOutput) oobr;
 				if (stream.getCString().indexOf("(y or n)") != -1 && //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class MIRunControlEventProcessor_7_12 extends MIRunControlEventProcessor_
 					// we can't be sure it is the right answer, but it is better
 					// than simply hanging there forever.
 					fCommandControl.queueCommand(new RawCommand(fControlDmc, "y"), //$NON-NLS-1$
-							                     new ImmediateDataRequestMonitor<MIInfo>());
+							new ImmediateDataRequestMonitor<MIInfo>());
 				}
 			}
 		}

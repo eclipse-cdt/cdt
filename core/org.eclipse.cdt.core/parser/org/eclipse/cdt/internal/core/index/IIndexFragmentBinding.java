@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IIndexFragmentBinding extends IIndexBinding {
-	IIndexFragmentBinding[] EMPTY_INDEX_BINDING_ARRAY= {};
+	IIndexFragmentBinding[] EMPTY_INDEX_BINDING_ARRAY = {};
 
 	/**
 	 * Returns the owner of the binding.
@@ -33,15 +33,15 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	ILinkage getLinkage();
 
 	/**
-     * Returns whether this binding has any definitions associated with it
-     * in its associated fragment.
-     */
+	 * Returns whether this binding has any definitions associated with it
+	 * in its associated fragment.
+	 */
 	boolean hasDefinition() throws CoreException;
 
 	/**
-     * Returns whether this binding has a declaration or definition associated with
-     * it in its associated fragment.
-     */
+	 * Returns whether this binding has a declaration or definition associated with
+	 * it in its associated fragment.
+	 */
 	boolean hasDeclaration() throws CoreException;
 
 	/**

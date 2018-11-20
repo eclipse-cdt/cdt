@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.ui.view.TestsHierarchyViewer;
 import org.eclipse.jface.action.Action;
@@ -40,4 +39,3 @@ public class ShowNextFailureAction extends Action {
 		testsHierarchyViewer.showNextFailure();
 	}
 }
-

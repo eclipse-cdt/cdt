@@ -37,22 +37,22 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 	public TypeOfDependentExpression(ICPPEvaluation evaluation) {
 		this(evaluation, true);
 	}
-	
+
 	public TypeOfDependentExpression(ICPPEvaluation evaluation, boolean isForDecltype) {
 		super(null);
 		fEvaluation = evaluation;
 		fIsForDecltype = isForDecltype;
 		fIsForTemplateAuto = false;
 	}
-	
+
 	public ICPPEvaluation getEvaluation() {
 		return fEvaluation;
 	}
-	
+
 	public boolean isForDecltype() {
 		return fIsForDecltype;
 	}
-	
+
 	public void setIsForDecltype(boolean isForDecltype) {
 		fIsForDecltype = isForDecltype;
 	}
@@ -101,7 +101,7 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation eval= buffer.unmarshalEvaluation();
+		ICPPEvaluation eval = buffer.unmarshalEvaluation();
 		if (eval != null) {
 			boolean isForDecltype = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 			boolean isForTemplateAuto = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;

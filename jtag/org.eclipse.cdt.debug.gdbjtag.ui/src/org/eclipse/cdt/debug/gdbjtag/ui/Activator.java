@@ -40,7 +40,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -86,6 +86,7 @@ public class Activator extends AbstractUIPlugin {
 	static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+
 	/**
 	 * Logs an internal error with the specified message.
 	 * 
@@ -105,7 +106,7 @@ public class Activator extends AbstractUIPlugin {
 	static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
 	}
-	
+
 	private void setDefaultLaunchDelegates() {
 		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
@@ -124,6 +125,7 @@ public class Activator extends AbstractUIPlugin {
 					}
 				}
 			}
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
 }

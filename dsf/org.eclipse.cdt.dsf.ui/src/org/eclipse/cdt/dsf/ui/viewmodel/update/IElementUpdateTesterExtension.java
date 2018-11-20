@@ -25,15 +25,15 @@ import org.eclipse.jface.viewers.TreePath;
  * @since 2.1
  */
 public interface IElementUpdateTesterExtension extends IElementUpdateTester {
-    
-    /**
-     * Returns the properties that should be flushed for the element.
-     * 
-     * @param viewerInput The input to the viewer for the given cache entry.
-     * @param path The viewer tree path for the given cache entry.
-     * @param isDirty <code>true</code> if the given cache entry is already dirty
-     * @return Collection of properties which should be flushed, or 
-     * <code>null</code> if none.
-     */
-    Collection<String> getPropertiesToFlush(Object viewerInput, TreePath path, boolean isDirty);
+
+	/**
+	 * Returns the properties that should be flushed for the element.
+	 * 
+	 * @param viewerInput The input to the viewer for the given cache entry.
+	 * @param path The viewer tree path for the given cache entry.
+	 * @param isDirty <code>true</code> if the given cache entry is already dirty
+	 * @return Collection of properties which should be flushed, or 
+	 * <code>null</code> if none.
+	 */
+	Collection<String> getPropertiesToFlush(Object viewerInput, TreePath path, boolean isDirty);
 }

@@ -84,5 +84,5 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 		}
 		return changed;
 	}
- 
+
 }

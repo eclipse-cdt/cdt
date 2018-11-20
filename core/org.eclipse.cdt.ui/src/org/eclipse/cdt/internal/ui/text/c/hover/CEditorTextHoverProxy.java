@@ -32,7 +32,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 	private ICEditorTextHover fHover;
 
 	public CEditorTextHoverProxy(CEditorTextHoverDescriptor descriptor, IEditorPart editor) {
-		fHoverDescriptor= descriptor;
+		fHoverDescriptor = descriptor;
 		setEditor(editor);
 	}
 
@@ -61,7 +61,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 
 		return null;
 	}
-	
+
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
@@ -74,7 +74,6 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 		return null;
 	}
 
-	
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 * @since 5.0
@@ -85,7 +84,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 		if (ensureHoverCreated()) {
 			if (fHover instanceof ITextHoverExtension2)
 				return ((ITextHoverExtension2) fHover).getHoverInfo2(textViewer, hoverRegion);
-			
+
 			return fHover.getHoverInfo(textViewer, hoverRegion);
 		}
 
@@ -103,7 +102,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 	}
 
 	private boolean createHover() {
-		fHover= fHoverDescriptor.createTextHover();
+		fHover = fHoverDescriptor.createTextHover();
 		if (fHover != null)
 			fHover.setEditor(getEditor());
 		return isCreated();
@@ -116,7 +115,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (ensureHoverCreated() && (fHover instanceof ITextHoverExtension))
-			return ((ITextHoverExtension)fHover).getHoverControlCreator();
+			return ((ITextHoverExtension) fHover).getHoverControlCreator();
 
 		return null;
 	}

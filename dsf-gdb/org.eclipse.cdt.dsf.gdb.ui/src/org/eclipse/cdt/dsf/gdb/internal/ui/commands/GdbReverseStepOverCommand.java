@@ -29,7 +29,8 @@ public class GdbReverseStepOverCommand extends GdbAbstractReverseStepCommand imp
 
 	@Override
 	protected final StepType getStepType() {
-		boolean instructionSteppingEnabled = getSteppingMode() != null && getSteppingMode().isInstructionSteppingEnabled();
+		boolean instructionSteppingEnabled = getSteppingMode() != null
+				&& getSteppingMode().isInstructionSteppingEnabled();
 		return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_OVER : StepType.STEP_OVER;
 	}
 }

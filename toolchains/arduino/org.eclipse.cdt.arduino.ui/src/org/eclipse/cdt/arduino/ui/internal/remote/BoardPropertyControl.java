@@ -50,7 +50,7 @@ public class BoardPropertyControl extends Composite {
 
 	private List<SelectionListener> listeners = Collections.synchronizedList(new ArrayList<SelectionListener>());
 	private List<Control> menuControls = new ArrayList<>();
-	
+
 	private Label programmerLabel;
 	private Combo programmerCombo;
 
@@ -162,7 +162,7 @@ public class BoardPropertyControl extends Composite {
 				combo.select(0);
 			}
 		}
-		
+
 		try {
 			HierarchicalProperties programmers = board.getPlatform().getProgrammers();
 			if (programmers != null && programmers.getChildren() != null) {
@@ -235,7 +235,7 @@ public class BoardPropertyControl extends Composite {
 				}
 			}
 		}
-		
+
 		if (programmerCombo != null && !programmerCombo.isDisposed()) {
 			@SuppressWarnings("unchecked")
 			String programmer = ((List<String>) programmerCombo.getData()).get(programmerCombo.getSelectionIndex());

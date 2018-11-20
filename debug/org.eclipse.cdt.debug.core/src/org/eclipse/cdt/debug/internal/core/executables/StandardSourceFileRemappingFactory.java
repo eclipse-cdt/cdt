@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.executables.ISourceFileRemapping;
 import org.eclipse.cdt.debug.core.executables.ISourceFileRemappingFactory;
 
-public class StandardSourceFileRemappingFactory implements ISourceFileRemappingFactory{
+public class StandardSourceFileRemappingFactory implements ISourceFileRemappingFactory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.ISourceFileRemappingFactory#createRemapper(org.eclipse.cdt.core.model.IBinary)

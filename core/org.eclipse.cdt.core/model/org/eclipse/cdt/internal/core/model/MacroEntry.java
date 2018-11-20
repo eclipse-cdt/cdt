@@ -22,9 +22,10 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	String macroName;
 	String macroValue;
 
-	public MacroEntry (IPath path, IPath baseRef, String macroName, String macroValue, IPath[] exclusionPatterns, boolean isExported) {
+	public MacroEntry(IPath path, IPath baseRef, String macroName, String macroValue, IPath[] exclusionPatterns,
+			boolean isExported) {
 		super(IPathEntry.CDT_MACRO, null, baseRef, path, exclusionPatterns, isExported);
-		if ( macroName == null) {
+		if (macroName == null) {
 			throw new IllegalArgumentException("Macro name cannot be null"); //$NON-NLS-1$
 		}
 		this.macroName = macroName;
@@ -53,17 +54,15 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((macroName == null) ? 0 : macroName.hashCode());
-		result = prime * result
-				+ ((macroValue == null) ? 0 : macroValue.hashCode());
+		result = prime * result + ((macroName == null) ? 0 : macroName.hashCode());
+		result = prime * result + ((macroValue == null) ? 0 : macroValue.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IMacroEntry) {
-			IMacroEntry otherEntry = (IMacroEntry)obj;
+			IMacroEntry otherEntry = (IMacroEntry) obj;
 			if (!super.equals(otherEntry)) {
 				return false;
 			}

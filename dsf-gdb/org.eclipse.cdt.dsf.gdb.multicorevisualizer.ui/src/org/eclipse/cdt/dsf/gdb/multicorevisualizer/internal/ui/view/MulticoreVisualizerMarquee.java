@@ -21,10 +21,8 @@ import org.eclipse.swt.graphics.GC;
 /**
  * MulticoreVisualizer "marquee" (selection box) object.
  */
-public class MulticoreVisualizerMarquee extends MulticoreVisualizerGraphicObject
-{
+public class MulticoreVisualizerMarquee extends MulticoreVisualizerGraphicObject {
 	// --- members ---
-	
 
 	// --- constructors/destructors ---
 
@@ -32,32 +30,29 @@ public class MulticoreVisualizerMarquee extends MulticoreVisualizerGraphicObject
 	public MulticoreVisualizerMarquee() {
 		setVisible(false);
 	}
-	
+
 	/** Dispose method */
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
-	
-	
+
 	// --- Object methods ---
-	
+
 	/** Returns string representation of element */
 	@Override
 	public String toString() {
-		return "MarqueeGraphicObject[" +   //$NON-NLS-1$
-				m_bounds.x + "," +         //$NON-NLS-1$
-				m_bounds.y + "," +         //$NON-NLS-1$
-				m_bounds.width + "," +     //$NON-NLS-1$
-				m_bounds.height + "]";     //$NON-NLS-1$
+		return "MarqueeGraphicObject[" + //$NON-NLS-1$
+				m_bounds.x + "," + //$NON-NLS-1$
+				m_bounds.y + "," + //$NON-NLS-1$
+				m_bounds.width + "," + //$NON-NLS-1$
+				m_bounds.height + "]"; //$NON-NLS-1$
 	}
-	
-	
+
 	// --- accessors ---
-	
-	
+
 	// --- methods ---
-	
+
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {

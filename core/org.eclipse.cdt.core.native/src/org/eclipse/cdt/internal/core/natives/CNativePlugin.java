@@ -56,7 +56,7 @@ public class CNativePlugin extends Plugin {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static void log(Throwable e) {
-		String msg= e.getMessage();
+		String msg = e.getMessage();
 		if (msg == null) {
 			log("Error", e); //$NON-NLS-1$
 		} else {

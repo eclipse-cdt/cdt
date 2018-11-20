@@ -38,12 +38,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTArraySubscriptExpression extends ASTNode
 		implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
-    private ICPPASTExpression arrayExpression;
-    private ICPPASTInitializerClause subscriptExp;
-    private ICPPEvaluation evaluation;
-    private IASTImplicitName[] implicitNames;
+	private ICPPASTExpression arrayExpression;
+	private ICPPASTInitializerClause subscriptExp;
+	private ICPPEvaluation evaluation;
+	private IASTImplicitName[] implicitNames;
 
-    public CPPASTArraySubscriptExpression() {
+	public CPPASTArraySubscriptExpression() {
 	}
 
 	public CPPASTArraySubscriptExpression(IASTExpression arrayExpression, IASTInitializerClause operand) {
@@ -66,53 +66,53 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 
 	@Override
 	public ICPPASTExpression getArrayExpression() {
-        return arrayExpression;
-    }
+		return arrayExpression;
+	}
 
-    @Override
+	@Override
 	public void setArrayExpression(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression != null) {
-        	if (!(expression instanceof ICPPASTExpression))
-        		throw new IllegalArgumentException(expression.getClass().getName());
+		assertNotFrozen();
+		if (expression != null) {
+			if (!(expression instanceof ICPPASTExpression))
+				throw new IllegalArgumentException(expression.getClass().getName());
 			expression.setParent(this);
 			expression.setPropertyInParent(ARRAY);
 		}
-        arrayExpression = (ICPPASTExpression) expression;
-    }
+		arrayExpression = (ICPPASTExpression) expression;
+	}
 
-    @Override
+	@Override
 	public ICPPASTInitializerClause getArgument() {
-        return subscriptExp;
-    }
+		return subscriptExp;
+	}
 
-    @Override
+	@Override
 	public void setArgument(IASTInitializerClause arg) {
-        assertNotFrozen();
-        if (arg != null) {
-        	if (!(arg instanceof ICPPASTInitializerClause))
-        		throw new IllegalArgumentException(arg.getClass().getName());
-        	arg.setParent(this);
-        	arg.setPropertyInParent(SUBSCRIPT);
+		assertNotFrozen();
+		if (arg != null) {
+			if (!(arg instanceof ICPPASTInitializerClause))
+				throw new IllegalArgumentException(arg.getClass().getName());
+			arg.setParent(this);
+			arg.setPropertyInParent(SUBSCRIPT);
 		}
-        subscriptExp = (ICPPASTInitializerClause) arg;
-    }
+		subscriptExp = (ICPPASTInitializerClause) arg;
+	}
 
-    @Override
+	@Override
 	@Deprecated
-    public IASTExpression getSubscriptExpression() {
-    	if (subscriptExp instanceof IASTExpression)
-    		return (IASTExpression) subscriptExp;
-    	return null;
-    }
+	public IASTExpression getSubscriptExpression() {
+		if (subscriptExp instanceof IASTExpression)
+			return (IASTExpression) subscriptExp;
+		return null;
+	}
 
-    @Override
+	@Override
 	@Deprecated
-    public void setSubscriptExpression(IASTExpression expression) {
-    	setArgument(expression);
-    }
+	public void setSubscriptExpression(IASTExpression expression) {
+		setArgument(expression);
+	}
 
-    @Override
+	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
@@ -150,55 +150,61 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (arrayExpression != null && !arrayExpression.accept(action))
-        	return false;
+		if (arrayExpression != null && !arrayExpression.accept(action))
+			return false;
 
-        IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
+		IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
 
-        if (implicits != null && implicits.length > 0 && !implicits[0].accept(action))
-        	return false;
+		if (implicits != null && implicits.length > 0 && !implicits[0].accept(action))
+			return false;
 
-        if (subscriptExp != null && !subscriptExp.accept(action))
-        	return false;
+		if (subscriptExp != null && !subscriptExp.accept(action))
+			return false;
 
-        if (implicits != null && implicits.length > 0 && !implicits[1].accept(action))
-        	return false;
+		if (implicits != null && implicits.length > 0 && !implicits[1].accept(action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == subscriptExp) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            subscriptExp  = (ICPPASTExpression) other;
-        }
-        if (child == arrayExpression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            arrayExpression  = (ICPPASTExpression) other;
-        }
-    }
+		if (child == subscriptExp) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			subscriptExp = (ICPPASTExpression) other;
+		}
+		if (child == arrayExpression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			arrayExpression = (ICPPASTExpression) other;
+		}
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (evaluation == null)
-			evaluation= computeEvaluation();
+			evaluation = computeEvaluation();
 
 		return evaluation;
 	}
@@ -206,16 +212,14 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 	private ICPPEvaluation computeEvaluation() {
 		if (arrayExpression == null || subscriptExp == null)
 			return EvalFixed.INCOMPLETE;
-		return new EvalBinary(EvalBinary.op_arrayAccess,
-							 arrayExpression.getEvaluation(),
-							 subscriptExp.getEvaluation(),
-							 this);
+		return new EvalBinary(EvalBinary.op_arrayAccess, arrayExpression.getEvaluation(), subscriptExp.getEvaluation(),
+				this);
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {

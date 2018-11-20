@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -75,33 +74,28 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	//	private int fTotalTracingBufferSize = 0;
 
-	protected static final String EXEC_NAME       = "TracepointTestApp.exe";
-	protected static final String SOURCE_NAME     = "TracepointTestApp.cc";
+	protected static final String EXEC_NAME = "TracepointTestApp.exe";
+	protected static final String SOURCE_NAME = "TracepointTestApp.cc";
 
 	// Breakpoint tags in TracepointTestApp.cc
-	public static final String[] LINE_TAGS = new String[] {
-			"1_BYTE",
-			"2_BYTE",
-			"3_BYTE",
-			"4_BYTE",
-			"5_BYTE"
-	};
+	public static final String[] LINE_TAGS = new String[] { "1_BYTE", "2_BYTE", "3_BYTE", "4_BYTE", "5_BYTE" };
 
-	protected static final String NO_CONDITION    = "";
-	protected static final String NO_COMMANDS     = "";
+	protected static final String NO_CONDITION = "";
+	protected static final String NO_COMMANDS = "";
 	//    private static final int    LAST_LINE_NUMBER   = 94;
 	//
 	// private static final int TOTAL_FRAMES_TO_BE_COLLECTED = 1 + 1 + 10 + 1 + 10000;
 
-	protected final static int[] PASS_COUNTS = {12, 2, 32, 6, 128, 0, 0, 0, 0, 0, 0, 0};
-	protected final static String[] CONDITIONS = {"gIntVar == 543", "gBoolVar == false", "x == 3", "x > 4", "x > 2 && gIntVar == 12345"};
+	protected final static int[] PASS_COUNTS = { 12, 2, 32, 6, 128, 0, 0, 0, 0, 0, 0, 0 };
+	protected final static String[] CONDITIONS = { "gIntVar == 543", "gBoolVar == false", "x == 3", "x > 4",
+			"x > 2 && gIntVar == 12345" };
 
 	protected static CollectAction[] COLLECT_ACTIONS = new CollectAction[10];
 	protected static EvaluateAction[] EVAL_ACTIONS = new EvaluateAction[10];
 	// private static WhileSteppingAction[] STEPPING_ACTION_1 = new WhileSteppingAction[3];
 
 	@BeforeClass
-    public static void initializeActions() {
+	public static void initializeActions() {
 		TracepointActionManager tracepointActionMgr = TracepointActionManager.getInstance();
 
 		int index = 0;
@@ -141,7 +135,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		tracepointActionMgr.addAction(COLLECT_ACTIONS[index]);
 		index++;
 
-		index=0;
+		index = 0;
 		EVAL_ACTIONS[index] = new EvaluateAction();
 		EVAL_ACTIONS[index].setEvalString("$count=$count+1");
 		EVAL_ACTIONS[index].setName("Eval increment count");
@@ -161,7 +155,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		index++;
 
 		//TODO do while stepping actions
-		index=0;
+		index = 0;
 
 	}
 
@@ -178,11 +172,10 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 			public void run() {
 				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-
 				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
 				fGdbControl = fServicesTracker.getService(IGDBControl.class);
 				fCommandFactory = fGdbControl.getCommandFactory();
-				
+
 				//        		fTraceService = fServicesTracker.getService(ITraceControl.class);
 				fSession.addServiceEventListener(GDBRemoteTracepointsTest.this, null);
 
@@ -197,7 +190,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-		assert(fBreakpointsDmc != null);
+		assert (fBreakpointsDmc != null);
 		//                fTraceTargetDmc = DMContexts.getAncestorOfType(containerDmc, ITraceTargetDMContext.class);
 
 	}
@@ -228,14 +221,18 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	// Below are utility methods.
 	// *********************************************************************
 	private static Boolean lock = true;
-	enum Events {BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT}
-	final int BP_ADDED   = Events.BP_ADDED.ordinal();
+
+	enum Events {
+		BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT
+	}
+
+	final int BP_ADDED = Events.BP_ADDED.ordinal();
 	final int BP_UPDATED = Events.BP_UPDATED.ordinal();
 	final int BP_REMOVED = Events.BP_REMOVED.ordinal();
-	final int BP_HIT     = Events.BP_HIT.ordinal();
-	private int[]   fBreakpointEvents = new int[Events.values().length];
+	final int BP_HIT = Events.BP_HIT.ordinal();
+	private int[] fBreakpointEvents = new int[Events.values().length];
 	private boolean fBreakpointEvent;
-	private int     fBreakpointEventCount;
+	private int fBreakpointEventCount;
 
 	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsAddedEvent e) {
@@ -305,97 +302,89 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	// Breakpoint service methods (to use with tracepoints).
 	// *********************************************************************
 
-	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context, final Map<String,Object> attributes)
-			throws Throwable
-	{
-        Query<IBreakpointDMContext> query = new Query<IBreakpointDMContext>() {
+	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
+			final Map<String, Object> attributes) throws Throwable {
+		Query<IBreakpointDMContext> query = new Query<IBreakpointDMContext>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IBreakpointDMContext> rm) {
 				fBreakpointService.insertBreakpoint(context, attributes, rm);
 			}
-        };
+		};
 
-        fBreakpointService.getExecutor().execute(query);
-        try {
-        	return query.get(1, TimeUnit.SECONDS);
-        } catch (ExecutionException e) {
-        	assert false : e.getCause().getMessage();
-        }
-        return null;
+		fBreakpointService.getExecutor().execute(query);
+		try {
+			return query.get(1, TimeUnit.SECONDS);
+		} catch (ExecutionException e) {
+			assert false : e.getCause().getMessage();
+		}
+		return null;
 	}
 
-	protected void removeBreakpoint(final IBreakpointDMContext breakpoint)
-			throws Throwable
-	{
-        Query<Object> query = new Query<Object>() {
+	protected void removeBreakpoint(final IBreakpointDMContext breakpoint) throws Throwable {
+		Query<Object> query = new Query<Object>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
 				fBreakpointService.removeBreakpoint(breakpoint, rm);
 			}
-        };
+		};
 
-        fBreakpointService.getExecutor().execute(query);
-        try {
-        	query.get(1, TimeUnit.SECONDS);
-        } catch (ExecutionException e) {
-        	assert false : e.getCause().getMessage();
-        }
+		fBreakpointService.getExecutor().execute(query);
+		try {
+			query.get(1, TimeUnit.SECONDS);
+		} catch (ExecutionException e) {
+			assert false : e.getCause().getMessage();
+		}
 	}
 
 	protected void updateBreakpoint(final IBreakpointDMContext breakpoint, final Map<String, Object> delta)
-			throws Throwable
-	{
-        Query<Object> query = new Query<Object>() {
+			throws Throwable {
+		Query<Object> query = new Query<Object>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
 			}
-        };
+		};
 
-        fBreakpointService.getExecutor().execute(query);
-        try {
-        	query.get(1, TimeUnit.SECONDS);
-        } catch (ExecutionException e) {
-        	assert false : e.getCause().getMessage();
-        }
+		fBreakpointService.getExecutor().execute(query);
+		try {
+			query.get(1, TimeUnit.SECONDS);
+		} catch (ExecutionException e) {
+			assert false : e.getCause().getMessage();
+		}
 	}
 
-	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint)
-			throws Throwable
-	{
-        Query<IBreakpointDMData> query = new Query<IBreakpointDMData>() {
+	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws Throwable {
+		Query<IBreakpointDMData> query = new Query<IBreakpointDMData>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMData> rm) {
 				fBreakpointService.getBreakpointDMData(breakpoint, rm);
 			}
-        };
+		};
 
-        fBreakpointService.getExecutor().execute(query);
-        try {
-        	return query.get(1, TimeUnit.SECONDS);
-        } catch (ExecutionException e) {
-        	assert false : e.getCause().getMessage();
-        }
-        return null;
+		fBreakpointService.getExecutor().execute(query);
+		try {
+			return query.get(1, TimeUnit.SECONDS);
+		} catch (ExecutionException e) {
+			assert false : e.getCause().getMessage();
+		}
+		return null;
 	}
 
-	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context)
-			throws Throwable
-	{
-        Query<IBreakpointDMContext[]> query = new Query<IBreakpointDMContext[]>() {
+	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context) throws Throwable {
+		Query<IBreakpointDMContext[]> query = new Query<IBreakpointDMContext[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMContext[]> rm) {
 				fBreakpointService.getBreakpoints(context, rm);
 			}
-        };
+		};
 
-        fBreakpointService.getExecutor().execute(query);
-        try {
-        	return query.get(1, TimeUnit.SECONDS);
-        } catch (ExecutionException e) {
-        	assert false : e.getCause().getMessage();
-        }
-        return null;
+		fBreakpointService.getExecutor().execute(query);
+		try {
+			return query.get(1, TimeUnit.SECONDS);
+		} catch (ExecutionException e) {
+			assert false : e.getCause().getMessage();
+		}
+		return null;
 	}
 
 	// *********************************************************************
@@ -593,7 +582,8 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 			this(SOURCE_NAME, line, cond, pass, isEnabled, cmds, fast);
 		}
 
-		public TracepointData(String file, int line, String cond, int pass, boolean isEnabled, String cmds, boolean fast) {
+		public TracepointData(String file, int line, String cond, int pass, boolean isEnabled, String cmds,
+				boolean fast) {
 			sourceFile = file;
 			lineNumber = line;
 			condition = cond;
@@ -610,75 +600,82 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 		// Fetch the tp list from the backend
 		IBreakpointDMContext[] tracepoints = getBreakpoints(fBreakpointsDmc);
-		assertEquals("expected " + numTracepoints + " breakpoint(s), received "
-				+ tracepoints.length, numTracepoints, tracepoints.length);
+		assertEquals("expected " + numTracepoints + " breakpoint(s), received " + tracepoints.length, numTracepoints,
+				tracepoints.length);
 
-		for (int i=0; i<numTracepoints; i++) {
+		for (int i = 0; i < numTracepoints; i++) {
 			TracepointData data = dataArray[i];
 
 			// Ensure that the tracepoints were correctly installed
 			MIBreakpointDMData tp = (MIBreakpointDMData) getBreakpoint(fTracepoints[i]);
-			assertEquals("tracepoint "+i+" is not a tracepoint but a " + tp.getBreakpointType(),
+			assertEquals("tracepoint " + i + " is not a tracepoint but a " + tp.getBreakpointType(),
 					MIBreakpoints.TRACEPOINT, tp.getBreakpointType());
-			assertEquals("tracepoint "+i+" should be a " + (data.isFastTp?"fast":"normal")+" tracepoint but is not",
-					data.isFastTp, tp.getType().equals("fast tracepoint"));
-			assertEquals("tracepoint "+i+" mismatch (wrong file name) got " + tp.getFileName(),
-					data.sourceFile, tp.getFileName());
-			assertEquals("tracepoint "+i+" mismatch (wrong line number) got " + tp.getLineNumber(),
-					data.lineNumber, tp.getLineNumber());
-			assertEquals("tracepoint "+i+" mismatch (wrong condition) got " + tp.getCondition(),
-					data.condition, tp.getCondition());
-			assertEquals("tracepoint "+i+" mismatch (wrong pass count) got " + tp.getPassCount(),
-					data.passcount, tp.getPassCount());
-			assertEquals("tracepoint "+i+" mismatch (wrong enablement) got " + tp.isEnabled(),
-					data.enabled, tp.isEnabled());
-			assertEquals("tracepoint "+i+" mismatch (wrong actions) got " + tp.getCommands(),
-					data.commands, tp.getCommands());
+			assertEquals("tracepoint " + i + " should be a " + (data.isFastTp ? "fast" : "normal")
+					+ " tracepoint but is not", data.isFastTp, tp.getType().equals("fast tracepoint"));
+			assertEquals("tracepoint " + i + " mismatch (wrong file name) got " + tp.getFileName(), data.sourceFile,
+					tp.getFileName());
+			assertEquals("tracepoint " + i + " mismatch (wrong line number) got " + tp.getLineNumber(), data.lineNumber,
+					tp.getLineNumber());
+			assertEquals("tracepoint " + i + " mismatch (wrong condition) got " + tp.getCondition(), data.condition,
+					tp.getCondition());
+			assertEquals("tracepoint " + i + " mismatch (wrong pass count) got " + tp.getPassCount(), data.passcount,
+					tp.getPassCount());
+			assertEquals("tracepoint " + i + " mismatch (wrong enablement) got " + tp.isEnabled(), data.enabled,
+					tp.isEnabled());
+			assertEquals("tracepoint " + i + " mismatch (wrong actions) got " + tp.getCommands(), data.commands,
+					tp.getCommands());
 
-			assertEquals("tracepoint "+i+" mismatch",
-					getBreakpoint(tracepoints[i]), tp);
+			assertEquals("tracepoint " + i + " mismatch", getBreakpoint(tracepoints[i]), tp);
 		}
 	}
 
 	protected void checkTracepoints(boolean useCond, boolean useCount, boolean enabled, boolean useActions)
 			throws Throwable {
 		TracepointData[] dataArray = new TracepointData[] {
-			new TracepointData(getLineForTag("1_BYTE"), useCond ? CONDITIONS[0] : NO_CONDITION, useCount ? PASS_COUNTS[0] : 0, enabled, useActions ? COLLECT_ACTIONS[0].toString() : NO_COMMANDS, false),
-			new TracepointData(getLineForTag("2_BYTE"), useCond ? CONDITIONS[1] : NO_CONDITION, useCount ? PASS_COUNTS[1] : 0, enabled, useActions ? COLLECT_ACTIONS[1].toString() : NO_COMMANDS, false),
-			new TracepointData(getLineForTag("3_BYTE"), useCond ? CONDITIONS[2] : NO_CONDITION, useCount ? PASS_COUNTS[2] : 0, enabled, useActions ? COLLECT_ACTIONS[2].toString() : NO_COMMANDS, false),
-			new TracepointData(getLineForTag("4_BYTE"), useCond ? CONDITIONS[3] : NO_CONDITION, useCount ? PASS_COUNTS[3] : 0, enabled, useActions ? COLLECT_ACTIONS[3].toString() : NO_COMMANDS, acceptsFastTpOnFourBytes()),
-			new TracepointData(getLineForTag("5_BYTE"), useCond ? CONDITIONS[4] : NO_CONDITION, useCount ? PASS_COUNTS[4] : 0, enabled, useActions ? COLLECT_ACTIONS[4].toString() : NO_COMMANDS, fastTracepointsSupported()),
-		};
+				new TracepointData(getLineForTag("1_BYTE"), useCond ? CONDITIONS[0] : NO_CONDITION,
+						useCount ? PASS_COUNTS[0] : 0, enabled,
+						useActions ? COLLECT_ACTIONS[0].toString() : NO_COMMANDS, false),
+				new TracepointData(getLineForTag("2_BYTE"), useCond ? CONDITIONS[1] : NO_CONDITION,
+						useCount ? PASS_COUNTS[1] : 0, enabled,
+						useActions ? COLLECT_ACTIONS[1].toString() : NO_COMMANDS, false),
+				new TracepointData(getLineForTag("3_BYTE"), useCond ? CONDITIONS[2] : NO_CONDITION,
+						useCount ? PASS_COUNTS[2] : 0, enabled,
+						useActions ? COLLECT_ACTIONS[2].toString() : NO_COMMANDS, false),
+				new TracepointData(getLineForTag("4_BYTE"), useCond ? CONDITIONS[3] : NO_CONDITION,
+						useCount ? PASS_COUNTS[3] : 0, enabled,
+						useActions ? COLLECT_ACTIONS[3].toString() : NO_COMMANDS, acceptsFastTpOnFourBytes()),
+				new TracepointData(getLineForTag("5_BYTE"), useCond ? CONDITIONS[4] : NO_CONDITION,
+						useCount ? PASS_COUNTS[4] : 0, enabled,
+						useActions ? COLLECT_ACTIONS[4].toString() : NO_COMMANDS, fastTracepointsSupported()), };
 
 		checkTracepoints(dataArray);
 	}
 
 	protected void createTracepoints(boolean useCond, boolean useCount, boolean enabled, boolean useActions)
-			throws Throwable
-	{
+			throws Throwable {
 		Map<String, Object> attributes = null;
 
-		int[] lineNumbers = {
-				getLineForTag("1_BYTE"),
-				getLineForTag("2_BYTE"),
-				getLineForTag("3_BYTE"),
-				getLineForTag("4_BYTE"),
-				getLineForTag("5_BYTE") };
+		int[] lineNumbers = { getLineForTag("1_BYTE"), getLineForTag("2_BYTE"), getLineForTag("3_BYTE"),
+				getLineForTag("4_BYTE"), getLineForTag("5_BYTE") };
 
 		for (int i = 0; i < lineNumbers.length; i++) {
 			attributes = new HashMap<String, Object>();
 			attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 			attributes.put(MIBreakpoints.LINE_NUMBER, lineNumbers[i]);
-			if (!enabled) attributes.put(MIBreakpoints.IS_ENABLED, enabled);
-			if (useCount) attributes.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[i]);
-			if (useCond) attributes.put(MIBreakpoints.CONDITION, CONDITIONS[i]);
-			if (useActions) attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[i].getName());
+			if (!enabled)
+				attributes.put(MIBreakpoints.IS_ENABLED, enabled);
+			if (useCount)
+				attributes.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[i]);
+			if (useCond)
+				attributes.put(MIBreakpoints.CONDITION, CONDITIONS[i]);
+			if (useActions)
+				attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[i].getName());
 
 			fTracepoints[i] = insertBreakpoint(fBreakpointsDmc, attributes);
 
 			waitForBreakpointEvent();
-			assertEquals("Incorrect number of breakpoint events", 1,  fBreakpointEventCount);
+			assertEquals("Incorrect number of breakpoint events", 1, fBreakpointEventCount);
 			assertEquals("Incorrect number of breakpoint added events", 1, getBreakpointEventCount(BP_ADDED));
 			clearEventCounters();
 		}
@@ -744,7 +741,8 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 			}
 			assertEquals("Some byte length were not seen", new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5)), passed);
 		} catch (AssertionError | Exception e) {
-			throw new AssertionError("Failed to verify instruction lengths. Output from GDB's disassemble:\n" + miInfo.toString(), e);
+			throw new AssertionError(
+					"Failed to verify instruction lengths. Output from GDB's disassemble:\n" + miInfo.toString(), e);
 		}
 	}
 
@@ -769,14 +767,15 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		createTracepoints();
 		// Delete all tracepoints
 		for (IBreakpointDMContext tp : fTracepoints) {
-			if (tp == null) break;
+			if (tp == null)
+				break;
 			removeBreakpoint(tp);
 		}
 
 		// Fetch the bp list from the backend
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
-		assertTrue("BreakpointService problem: expected " + 0 + " breakpoints, received "
-				+ breakpoints.length, breakpoints.length == 0);
+		assertTrue("BreakpointService problem: expected " + 0 + " breakpoints, received " + breakpoints.length,
+				breakpoints.length == 0);
 	}
 
 	/**
@@ -790,7 +789,8 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		delta.put(MIBreakpoints.IS_ENABLED, false);
 		// Disable all tracepoints
 		for (IBreakpointDMContext tp : fTracepoints) {
-			if (tp == null) break;
+			if (tp == null)
+				break;
 			updateBreakpoint(tp, delta);
 		}
 
@@ -808,7 +808,8 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		delta.put(MIBreakpoints.IS_ENABLED, true);
 		// Enable all tracepoints
 		for (IBreakpointDMContext tp : fTracepoints) {
-			if (tp == null) break;
+			if (tp == null)
+				break;
 			updateBreakpoint(tp, delta);
 		}
 
@@ -824,9 +825,11 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 		Map<String, Object> delta = new HashMap<String, Object>();
 		// Set passcount for all tracepoints
-		for (int i=0; i<fTracepoints.length; i++) {
-			if (fTracepoints[i] == null) break;
-			if (PASS_COUNTS[i] == 0) continue;
+		for (int i = 0; i < fTracepoints.length; i++) {
+			if (fTracepoints[i] == null)
+				break;
+			if (PASS_COUNTS[i] == 0)
+				continue;
 			delta.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[i]);
 			updateBreakpoint(fTracepoints[i], delta);
 		}
@@ -843,9 +846,11 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 		Map<String, Object> delta = new HashMap<String, Object>();
 		// Set conditions for all tracepoints
-		for (int i=0; i<fTracepoints.length; i++) {
-			if (fTracepoints[i] == null) break;
-			if (CONDITIONS[i].equals(NO_CONDITION)) continue;
+		for (int i = 0; i < fTracepoints.length; i++) {
+			if (fTracepoints[i] == null)
+				break;
+			if (CONDITIONS[i].equals(NO_CONDITION))
+				continue;
 			delta.put(MIBreakpoints.CONDITION, CONDITIONS[i]);
 			updateBreakpoint(fTracepoints[i], delta);
 		}
@@ -862,9 +867,11 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 		Map<String, Object> delta = new HashMap<String, Object>();
 		// Set conditions for all tracepoints
-		for (int i=0; i<fTracepoints.length; i++) {
-			if (fTracepoints[i] == null) break;
-			if (COLLECT_ACTIONS[i].equals(NO_COMMANDS)) continue;
+		for (int i = 0; i < fTracepoints.length; i++) {
+			if (fTracepoints[i] == null)
+				break;
+			if (COLLECT_ACTIONS[i].equals(NO_COMMANDS))
+				continue;
 			delta.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[i].getName());
 			updateBreakpoint(fTracepoints[i], delta);
 		}
@@ -910,38 +917,36 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void createTracepointWithMultipleCommands() throws Throwable {
 
-		String commandsNames1 = COLLECT_ACTIONS[0].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[1].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[3].getName();
-		String commandsResult1 = COLLECT_ACTIONS[0].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[1].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[3].toString();
+		String commandsNames1 = COLLECT_ACTIONS[0].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[1].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[3].getName();
+		String commandsResult1 = COLLECT_ACTIONS[0].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[1].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[3].toString();
 
-		String commandsNames2 = COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[1].getName();
-		String commandsResult2 = COLLECT_ACTIONS[2].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[2].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[1].toString();
+		String commandsNames2 = COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[1].getName();
+		String commandsResult2 = COLLECT_ACTIONS[2].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[2].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[1].toString();
 
-		String commandsNames3 = COLLECT_ACTIONS[4].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[0].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[1].getName();
-		String commandsResult3 = COLLECT_ACTIONS[4].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[0].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
-				COLLECT_ACTIONS[1].toString();
+		String commandsNames3 = COLLECT_ACTIONS[4].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[0].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[1].getName();
+		String commandsResult3 = COLLECT_ACTIONS[4].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[0].toString() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
+				+ COLLECT_ACTIONS[1].toString();
 
-		String cmdNames[] = new String[] { commandsNames1, COLLECT_ACTIONS[0].getName(), commandsNames2, COLLECT_ACTIONS[2].getName(), commandsNames3 };
-		String cmdResults[] = new String[] { commandsResult1, COLLECT_ACTIONS[0].toString(), commandsResult2, COLLECT_ACTIONS[2].toString(), commandsResult3};
+		String cmdNames[] = new String[] { commandsNames1, COLLECT_ACTIONS[0].getName(), commandsNames2,
+				COLLECT_ACTIONS[2].getName(), commandsNames3 };
+		String cmdResults[] = new String[] { commandsResult1, COLLECT_ACTIONS[0].toString(), commandsResult2,
+				COLLECT_ACTIONS[2].toString(), commandsResult3 };
 
 		Map<String, Object> attributes = null;
 
-		int[] lineNumbers = {
-				getLineForTag("1_BYTE"),
-				getLineForTag("2_BYTE"),
-				getLineForTag("3_BYTE"),
-				getLineForTag("4_BYTE"),
-				getLineForTag("5_BYTE") };
+		int[] lineNumbers = { getLineForTag("1_BYTE"), getLineForTag("2_BYTE"), getLineForTag("3_BYTE"),
+				getLineForTag("4_BYTE"), getLineForTag("5_BYTE") };
 
 		for (int i = 0; i < lineNumbers.length; i++) {
 			attributes = new HashMap<String, Object>();
@@ -953,7 +958,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 			fTracepoints[i] = insertBreakpoint(fBreakpointsDmc, attributes);
 
 			waitForBreakpointEvent();
-			assertEquals("Incorrect number of breakpoint events", 1,  fBreakpointEventCount);
+			assertEquals("Incorrect number of breakpoint events", 1, fBreakpointEventCount);
 			assertEquals("Incorrect number of breakpoint added events", 1, getBreakpointEventCount(BP_ADDED));
 			clearEventCounters();
 		}
@@ -962,11 +967,12 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 				new TracepointData(getLineForTag("1_BYTE"), NO_CONDITION, 0, true, cmdResults[0], false),
 				new TracepointData(getLineForTag("2_BYTE"), NO_CONDITION, 0, true, cmdResults[1], false),
 				new TracepointData(getLineForTag("3_BYTE"), NO_CONDITION, 0, true, cmdResults[2], false),
-				new TracepointData(getLineForTag("4_BYTE"), NO_CONDITION, 0, true, cmdResults[3], acceptsFastTpOnFourBytes()),
-				new TracepointData(getLineForTag("5_BYTE"), NO_CONDITION, 0, true, cmdResults[4], fastTracepointsSupported()),
-			};
+				new TracepointData(getLineForTag("4_BYTE"), NO_CONDITION, 0, true, cmdResults[3],
+						acceptsFastTpOnFourBytes()),
+				new TracepointData(getLineForTag("5_BYTE"), NO_CONDITION, 0, true, cmdResults[4],
+						fastTracepointsSupported()), };
 
-			checkTracepoints(dataArray);
+		checkTracepoints(dataArray);
 	}
 
 	/**
@@ -1197,17 +1203,18 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	protected boolean acceptsFastTpOnFourBytes() {
 		String gdbVersion = getGdbVersion();
 		boolean isLower = LaunchUtils.compareVersions(ITestConstants.SUFFIX_GDB_7_4, gdbVersion) > 0;
-		if (isLower) return false;
+		if (isLower)
+			return false;
 		// With GDB 7.4, fast tracepoints only need an
 		// instruction of 4 bytes or more when on a 32bit architecture, instead of 5.
-	    if (Platform.getOS().equals(Platform.ARCH_X86)) {
-	    	return true;
-	    }
-	    return false;
+		if (Platform.getOS().equals(Platform.ARCH_X86)) {
+			return true;
+		}
+		return false;
 	}
 
 	protected boolean fastTracepointsSupported() {
-		return  LaunchUtils.compareVersions(getGdbVersion(), ITestConstants.SUFFIX_GDB_7_2) >= 0;
+		return LaunchUtils.compareVersions(getGdbVersion(), ITestConstants.SUFFIX_GDB_7_2) >= 0;
 	}
 
 	/**
@@ -1244,12 +1251,13 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		updateBreakpoint(fTracepoints[4], delta);
 
 		TracepointData[] dataArray = new TracepointData[] {
-			new TracepointData(getLineForTag("1_BYTE"), NO_CONDITION, 0, true, action1.toString(), false),
-			new TracepointData(getLineForTag("2_BYTE"), NO_CONDITION, 0, true, action2.toString(), false),
-			new TracepointData(getLineForTag("3_BYTE"), NO_CONDITION, 0, true, action1.toString(), false),
-			new TracepointData(getLineForTag("4_BYTE"), NO_CONDITION, 0, true, action1.toString(), acceptsFastTpOnFourBytes()),
-			new TracepointData(getLineForTag("5_BYTE"), NO_CONDITION, 0, true, action2.toString(), fastTracepointsSupported()),
-		};
+				new TracepointData(getLineForTag("1_BYTE"), NO_CONDITION, 0, true, action1.toString(), false),
+				new TracepointData(getLineForTag("2_BYTE"), NO_CONDITION, 0, true, action2.toString(), false),
+				new TracepointData(getLineForTag("3_BYTE"), NO_CONDITION, 0, true, action1.toString(), false),
+				new TracepointData(getLineForTag("4_BYTE"), NO_CONDITION, 0, true, action1.toString(),
+						acceptsFastTpOnFourBytes()),
+				new TracepointData(getLineForTag("5_BYTE"), NO_CONDITION, 0, true, action2.toString(),
+						fastTracepointsSupported()), };
 
 		checkTracepoints(dataArray);
 	}

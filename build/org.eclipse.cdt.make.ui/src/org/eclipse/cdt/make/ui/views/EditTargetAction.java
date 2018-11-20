@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
-
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -49,7 +48,9 @@ public class EditTargetAction extends SelectionListenerAction {
 				dialog = new MakeTargetDialog(shell, (IMakeTarget) getStructuredSelection().getFirstElement());
 				dialog.open();
 			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("EditTargetAction.exception.internalError"), MakeUIPlugin.getResourceString("EditTargetAction.exception.errorEditingTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
+				MakeUIPlugin.errorDialog(shell,
+						MakeUIPlugin.getResourceString("EditTargetAction.exception.internalError"), //$NON-NLS-1$
+						MakeUIPlugin.getResourceString("EditTargetAction.exception.errorEditingTarget"), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -61,7 +62,7 @@ public class EditTargetAction extends SelectionListenerAction {
 
 	private boolean canRename() {
 		List<?> elements = getStructuredSelection().toList();
-		if (elements.size()==1 && (elements.get(0) instanceof IMakeTarget)) {
+		if (elements.size() == 1 && (elements.get(0) instanceof IMakeTarget)) {
 			return true;
 		}
 		return false;

@@ -22,5 +22,5 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * @since 1.1
  */
 public interface IDsfDebugServicesFactory {
-	<V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments);
+	<V> V createService(Class<V> clazz, DsfSession session, Object... optionalArguments);
 }

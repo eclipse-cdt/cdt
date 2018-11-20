@@ -31,28 +31,28 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTAlignmentSpecifier extends IASTNode {
 	public static final IASTAlignmentSpecifier[] EMPTY_ALIGNMENT_SPECIFIER_ARRAY = {};
-	
+
 	public static final ASTNodeProperty ALIGNMENT_EXPRESSION = new ASTNodeProperty(
-			"IASTAlignmentSpecifier.ALIGNMENT_EXPRESSION - Expression in alignment specifier");  //$NON-NLS-1$
-	
+			"IASTAlignmentSpecifier.ALIGNMENT_EXPRESSION - Expression in alignment specifier"); //$NON-NLS-1$
+
 	public static final ASTNodeProperty ALIGNMENT_TYPEID = new ASTNodeProperty(
-			"IASTAlignmentSpecifier.ALIGNMENT_TYPEID - Type-id in alignment specifier");  //$NON-NLS-1$
-	
+			"IASTAlignmentSpecifier.ALIGNMENT_TYPEID - Type-id in alignment specifier"); //$NON-NLS-1$
+
 	/**
 	 * If the specifier is of the form 'alignas(<expression>)' or '_Alignas(<expression>)',
 	 * returns the enclosed expression. Otherwise, returns null.
 	 */
 	IASTExpression getExpression();
-	
+
 	/**
 	 * If the specifier is of the form 'alignas(<type-id>)' or '_Alignas(<type-id>)',
 	 * returns the enclosed type-id. Otherwise, returns null.
 	 */
 	IASTTypeId getTypeId();
-	
+
 	@Override
 	public IASTAlignmentSpecifier copy();
-	
+
 	@Override
 	public IASTAlignmentSpecifier copy(CopyStyle style);
 }

@@ -25,7 +25,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionTemplateDeclaration;
 import org.eclipse.cdt.internal.core.model.Template;
 
-public class FunctionTemplateDeclarationHandle extends FunctionDeclarationHandle implements IFunctionTemplateDeclaration {
+public class FunctionTemplateDeclarationHandle extends FunctionDeclarationHandle
+		implements IFunctionTemplateDeclaration {
 	Template fTemplate;
 
 	public FunctionTemplateDeclarationHandle(ICElement parent, ICPPFunctionTemplate func) throws DOMException {
@@ -36,31 +37,33 @@ public class FunctionTemplateDeclarationHandle extends FunctionDeclarationHandle
 		this(parent, ICElement.C_TEMPLATE_FUNCTION_DECLARATION, func);
 	}
 
-	protected FunctionTemplateDeclarationHandle(ICElement parent, int type, ICPPFunctionTemplate func) throws DOMException {
+	protected FunctionTemplateDeclarationHandle(ICElement parent, int type, ICPPFunctionTemplate func)
+			throws DOMException {
 		super(parent, type, func);
-		fTemplate= new Template(func.getName());
+		fTemplate = new Template(func.getName());
 		ICPPTemplateParameter[] tpars = func.getTemplateParameters();
-		String[] args= new String[tpars.length];
+		String[] args = new String[tpars.length];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= tpars[i].getName();
+			args[i] = tpars[i].getName();
 		}
 		fTemplate.setTemplateInfo(null, args);
 	}
 
-	protected FunctionTemplateDeclarationHandle(ICElement parent, int type, ICPPTemplateInstance func) throws DOMException {
+	protected FunctionTemplateDeclarationHandle(ICElement parent, int type, ICPPTemplateInstance func)
+			throws DOMException {
 		super(parent, type, (IFunction) func);
-		fTemplate= new Template(func.getName());
+		fTemplate = new Template(func.getName());
 		ICPPTemplateArgument[] targs = func.getTemplateArguments();
-		String[] args= new String[targs.length];
+		String[] args = new String[targs.length];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= ASTTypeUtil.getArgumentString(targs[i], false);
+			args[i] = ASTTypeUtil.getArgumentString(targs[i], false);
 		}
 		fTemplate.setTemplateInfo(null, args);
 	}
 
 	@Override
 	public String[] getTemplateArguments() {
-		return  fTemplate.getTemplateArguments();
+		return fTemplate.getTemplateArguments();
 	}
 
 	@Override

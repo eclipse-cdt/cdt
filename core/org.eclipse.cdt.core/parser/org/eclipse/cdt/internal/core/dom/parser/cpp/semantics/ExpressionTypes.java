@@ -52,9 +52,9 @@ public class ExpressionTypes {
 	}
 
 	public static ValueCategory valueCategoryFromReturnType(IType r) {
-		r= SemanticUtil.getNestedType(r, TDEF);
+		r = SemanticUtil.getNestedType(r, TDEF);
 		if (r instanceof ICPPReferenceType) {
-			ICPPReferenceType refType= (ICPPReferenceType) r;
+			ICPPReferenceType refType = (ICPPReferenceType) r;
 			if (!refType.isRValueReference()) {
 				return ValueCategory.LVALUE;
 			}
@@ -67,9 +67,9 @@ public class ExpressionTypes {
 	}
 
 	public static IType typeFromFunctionCall(IType functionType) {
-		IType t= SemanticUtil.getNestedType(functionType, TDEF | REF | CVTYPE);
+		IType t = SemanticUtil.getNestedType(functionType, TDEF | REF | CVTYPE);
 		if (t instanceof IPointerType) {
-			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
+			t = SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}
 		if (t instanceof IFunctionType) {
 			t = typeFromReturnType(((IFunctionType) t).getReturnType());
@@ -84,7 +84,7 @@ public class ExpressionTypes {
 	}
 
 	public static IType typeFromReturnType(IType type) {
-		IType t= SemanticUtil.getNestedType(type, TDEF);
+		IType t = SemanticUtil.getNestedType(type, TDEF);
 		if (t instanceof ICPPReferenceType) {
 			return glvalueType(type);
 		}
@@ -131,8 +131,8 @@ public class ExpressionTypes {
 	private static IType makeConst(IType type) {
 		if (type instanceof ICQualifierType) {
 			ICQualifierType qualifierType = ((ICQualifierType) type);
-			return new CQualifierType(qualifierType.getType(),
-					true, qualifierType.isVolatile(), qualifierType.isRestrict());
+			return new CQualifierType(qualifierType.getType(), true, qualifierType.isVolatile(),
+					qualifierType.isRestrict());
 		}
 		return new CQualifierType(type, true, false, false);
 	}
@@ -140,8 +140,8 @@ public class ExpressionTypes {
 	private static IType makeVolatile(IType type) {
 		if (type instanceof ICQualifierType) {
 			ICQualifierType qualifierType = ((ICQualifierType) type);
-			return new CQualifierType(qualifierType.getType(),
-					qualifierType.isConst(), true, qualifierType.isRestrict());
+			return new CQualifierType(qualifierType.getType(), qualifierType.isConst(), true,
+					qualifierType.isRestrict());
 		}
 		return new CQualifierType(type, false, true, false);
 	}

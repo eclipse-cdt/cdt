@@ -46,16 +46,17 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	private IPreferenceStore fStore;
 	protected OverlayPreferenceStore fOverlayStore;
 	private OverlayKey[] fKeys;
-	protected Map<Button, String> fCheckBoxes= new HashMap<Button, String>();
+	protected Map<Button, String> fCheckBoxes = new HashMap<Button, String>();
 
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
+	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
-			String key= fCheckBoxes.get(button);
+			Button button = (Button) e.widget;
+			String key = fCheckBoxes.get(button);
 			fOverlayStore.setValue(key, button.getSelection());
 			updateEnablement(key);
 		}
@@ -65,28 +66,38 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	private Button fNonDocCommentsFoldingCheckBox;
 	private Button fHeaderCommentsFoldingCheckBox;
 
-
 	public DefaultCFoldingPreferenceBlock() {
-		fStore= CUIPlugin.getDefault().getPreferenceStore();
-		fKeys= createKeys();
-		fOverlayStore= new OverlayPreferenceStore(fStore, fKeys);
+		fStore = CUIPlugin.getDefault().getPreferenceStore();
+		fKeys = createKeys();
+		fOverlayStore = new OverlayPreferenceStore(fStore, fKeys);
 	}
-	
-	private OverlayKey[] createKeys() {
-		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_MACROS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_FUNCTIONS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_METHODS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_STRUCTURES));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_COMMENTS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_HEADERS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_STATEMENTS));
-		
+	private OverlayKey[] createKeys() {
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_MACROS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_FUNCTIONS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_METHODS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_STRUCTURES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_HEADERS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_FOLDING_STATEMENTS));
+
 		return overlayKeys.toArray(new OverlayKey[overlayKeys.size()]);
 	}
 
@@ -97,53 +108,65 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	public Control createControl(Composite composite) {
 		fOverlayStore.load();
 		fOverlayStore.start();
-		
-		Composite inner= new Composite(composite, SWT.NONE);
-		GridLayout layout= new GridLayout(1, true);
-		layout.verticalSpacing= 3;
-		layout.marginWidth= 0;
+
+		Composite inner = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout(1, true);
+		layout.verticalSpacing = 3;
+		layout.marginWidth = 0;
 		inner.setLayout(layout);
 
-		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_preprocessor_enabled, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, 1);
-		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_statements_enabled, PreferenceConstants.EDITOR_FOLDING_STATEMENTS, 1);
+		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_preprocessor_enabled,
+				PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, 1);
+		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_statements_enabled,
+				PreferenceConstants.EDITOR_FOLDING_STATEMENTS, 1);
 		ControlFactory.createEmptySpace(inner);
 
-		Composite group= ControlFactory.createGroup(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_title, 1);
+		Composite group = ControlFactory.createGroup(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_title, 1);
 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_macros, PreferenceConstants.EDITOR_FOLDING_MACROS, 0); 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_functions, PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, 0); 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_methods, PreferenceConstants.EDITOR_FOLDING_METHODS, 0); 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_structures, PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0); 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_comments, PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); 
-		fDocCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_doc_comments, PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS, 20);
-		fNonDocCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_non_doc_comments, PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS, 20);
-		fHeaderCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers, PreferenceConstants.EDITOR_FOLDING_HEADERS, 20);
-		fInactiveCodeFoldingCheckBox= addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_inactive_code, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0);
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_macros,
+				PreferenceConstants.EDITOR_FOLDING_MACROS, 0);
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_functions,
+				PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, 0);
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_methods,
+				PreferenceConstants.EDITOR_FOLDING_METHODS, 0);
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_structures,
+				PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0);
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_comments,
+				PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0);
+		fDocCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_doc_comments,
+				PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS, 20);
+		fNonDocCommentsFoldingCheckBox = addCheckBox(group,
+				FoldingMessages.DefaultCFoldingPreferenceBlock_non_doc_comments,
+				PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS, 20);
+		fHeaderCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers,
+				PreferenceConstants.EDITOR_FOLDING_HEADERS, 20);
+		fInactiveCodeFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_inactive_code,
+				PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0);
 
 		return inner;
 	}
-	
-	private Button addCheckBox(Composite parent, String label, String key, int indentation) {		
-		Button checkBox= new Button(parent, SWT.CHECK);
+
+	private Button addCheckBox(Composite parent, String label, String key, int indentation) {
+		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
-		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		gd.horizontalSpan= 1;
-		gd.grabExcessVerticalSpace= false;
+
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
+		gd.horizontalSpan = 1;
+		gd.grabExcessVerticalSpace = false;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(fCheckBoxListener);
-		
+
 		fCheckBoxes.put(checkBox, key);
-		
+
 		return checkBox;
 	}
-	
+
 	private void initializeFields() {
-		Iterator<Button> it= fCheckBoxes.keySet().iterator();
+		Iterator<Button> it = fCheckBoxes.keySet().iterator();
 		while (it.hasNext()) {
-			Button b= it.next();
-			String key= fCheckBoxes.get(b);
+			Button b = it.next();
+			String key = fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 			updateEnablement(key);
 		}
@@ -169,8 +192,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	public void performOk() {
 		fOverlayStore.propagate();
 	}
-	
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#initialize()
 	 */
@@ -178,7 +200,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	public void initialize() {
 		initializeFields();
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#performDefaults()
 	 */
@@ -187,7 +209,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		fOverlayStore.loadDefaults();
 		initializeFields();
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#dispose()
 	 */

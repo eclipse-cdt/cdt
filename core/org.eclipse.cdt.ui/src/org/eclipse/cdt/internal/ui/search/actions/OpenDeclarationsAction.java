@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
  * Navigates to the definition of a name, or to the declaration if invoked on the definition.
  */
 public class OpenDeclarationsAction extends SelectionParseAction {
-	public static boolean sDisallowAmbiguousInput = false;	
+	public static boolean sDisallowAmbiguousInput = false;
 
 	ITextSelection fTextSelection;
 
@@ -47,9 +47,9 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	 */
 	public OpenDeclarationsAction(ICModelBasedEditor editor) {
 		super(editor);
-		setText(CEditorMessages.OpenDeclarations_label); 
-		setToolTipText(CEditorMessages.OpenDeclarations_tooltip); 
-		setDescription(CEditorMessages.OpenDeclarations_description); 
+		setText(CEditorMessages.OpenDeclarations_label);
+		setToolTipText(CEditorMessages.OpenDeclarations_tooltip);
+		setDescription(CEditorMessages.OpenDeclarations_description);
 	}
 
 	@Override
@@ -67,6 +67,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		if (job != null)
 			job.performNavigation(new NullProgressMonitor());
 	}
+
 	public void runSync(ITargetDisambiguator targetDisambiguator) throws CoreException {
 		OpenDeclarationsJob job = createJob(targetDisambiguator);
 		if (job != null)
@@ -74,28 +75,27 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	}
 
 	private OpenDeclarationsJob createJob(ITargetDisambiguator targetDisambiguator) {
-		String text= computeSelectedWord();
-		OpenDeclarationsJob job= null;
-		ICElement elem= fEditor.getTranslationUnit();
+		String text = computeSelectedWord();
+		OpenDeclarationsJob job = null;
+		ICElement elem = fEditor.getTranslationUnit();
 		if (elem instanceof ITranslationUnit && fTextSelection != null) {
-			job= new OpenDeclarationsJob(this, (ITranslationUnit) elem, fTextSelection, text, 
-					targetDisambiguator);
+			job = new OpenDeclarationsJob(this, (ITranslationUnit) elem, fTextSelection, text, targetDisambiguator);
 		}
 		return job;
 	}
 
 	private String computeSelectedWord() {
 		fTextSelection = getSelectedStringFromEditor();
-		String text= null;
+		String text = null;
 		if (fTextSelection != null) {
 			if (fTextSelection.getLength() > 0) {
-				text= fTextSelection.getText();
+				text = fTextSelection.getText();
 			} else {
-				IDocument document= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-				IRegion reg= CWordFinder.findWord(document, fTextSelection.getOffset());
+				IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+				IRegion reg = CWordFinder.findWord(document, fTextSelection.getOffset());
 				if (reg != null && reg.getLength() > 0) {
 					try {
-						text= document.get(reg.getOffset(), reg.getLength());
+						text = document.get(reg.getOffset(), reg.getLength());
 					} catch (BadLocationException e) {
 						CUIPlugin.log(e);
 					}
@@ -104,7 +104,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		}
 		return text;
 	}
-	
+
 	/**
 	 * Used to diambiguate between multiple candidate targets for this action.
 	 */
@@ -119,10 +119,12 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		@Override
 		public ICElement disambiguateTargets(ICElement[] targets, SelectionParseAction action) {
 			return OpenActionUtil.selectCElement(targets, action.getSite().getShell(),
-					CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
-					CElementLabels.ALL_DEFAULT | CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
+					CEditorMessages.OpenDeclarationsAction_dialog_title,
+					CEditorMessages.OpenDeclarationsAction_selectMessage, CElementLabels.ALL_DEFAULT
+							| CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED,
+					0);
 		}
 	}
-	
+
 	private static final ITargetDisambiguator sDefaultDisambiguator = new DialogTargetDisambiguator();
 }

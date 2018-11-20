@@ -28,4 +28,3 @@ public class RemoveUnusedDeclarationsWizard extends RefactoringWizard {
 	protected void addUserInputPages() {
 	}
 }
-

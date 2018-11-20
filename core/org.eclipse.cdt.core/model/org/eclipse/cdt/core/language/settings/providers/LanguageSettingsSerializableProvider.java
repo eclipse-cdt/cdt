@@ -50,7 +50,8 @@ import org.w3c.dom.NodeList;
  *
  * @since 5.4
  */
-public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsBroadcastingProvider {
+public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider
+		implements ILanguageSettingsBroadcastingProvider {
 	protected static final String ATTR_ID = LanguageSettingsProvidersSerializer.ATTR_ID;
 	protected static final String ATTR_NAME = LanguageSettingsProvidersSerializer.ATTR_NAME;
 	protected static final String ATTR_CLASS = LanguageSettingsProvidersSerializer.ATTR_CLASS;
@@ -88,13 +89,14 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	@Override
-	public void configureProvider(String id, String name, List<String> languages, List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
+	public void configureProvider(String id, String name, List<String> languages, List<ICLanguageSettingEntry> entries,
+			Map<String, String> properties) {
 		// do not pass entries to super, keep them in local storage
 		super.configureProvider(id, name, languages, null, properties);
 
 		fStorage.clear();
 
-		if (entries!=null) {
+		if (entries != null) {
 			// note that these entries are intended to be retrieved by LanguageSettingsManager.getSettingEntriesUpResourceTree()
 			// when the whole resource hierarchy has been traversed up
 			setSettingEntries(null, null, null, entries);
@@ -148,10 +150,11 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 */
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId,
 			List<? extends ICLanguageSettingEntry> entries) {
-		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
+		String rcProjectPath = rc != null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
 		if (cfgDescription != null) {
-			CommandLauncherManager.getInstance().setLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+			CommandLauncherManager.getInstance()
+					.setLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
 		}
 	}
 
@@ -166,17 +169,19 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * identical copies (deep comparison is used) are replaced with the same one instance.
 	 */
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId) {
+		String rcProjectPath = rc != null ? rc.getProjectRelativePath().toString() : null;
 		List<ICLanguageSettingEntry> entries = fStorage.getSettingEntries(rcProjectPath, languageId);
 		if (entries == null) {
 			if (languageId != null && (languageScope == null || languageScope.contains(languageId))) {
 				entries = fStorage.getSettingEntries(rcProjectPath, null);
 			}
 		}
-		
+
 		if (cfgDescription != null) {
-			entries = CommandLauncherManager.getInstance().getLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+			entries = CommandLauncherManager.getInstance()
+					.getLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
 		}
 
 		return entries;
@@ -231,11 +236,12 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			attributes.add(entry.getValue());
 		}
 
-		Element elementProvider = XmlUtil.appendElement(parentElement, ELEM_PROVIDER, attributes.toArray(new String[0]));
+		Element elementProvider = XmlUtil.appendElement(parentElement, ELEM_PROVIDER,
+				attributes.toArray(new String[0]));
 
-		if (languageScope!=null) {
+		if (languageScope != null) {
 			for (String langId : languageScope) {
-				XmlUtil.appendElement(elementProvider, ELEM_LANGUAGE_SCOPE, new String[] {ATTR_ID, langId});
+				XmlUtil.appendElement(elementProvider, ELEM_LANGUAGE_SCOPE, new String[] { ATTR_ID, langId });
 			}
 		}
 		return elementProvider;
@@ -270,7 +276,8 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 				LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 			}
 		} catch (CoreException e) {
-			status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e); //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
+					"Error serializing language settings", e); //$NON-NLS-1$
 			CCorePlugin.log(status);
 		}
 		return status;
@@ -302,7 +309,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	private boolean isLanguageSettingsProviderStoreChanged(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription instanceof IInternalCCfgInfo) {
 			try {
-				CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfgDescription).getSpecSettings();
+				CConfigurationSpecSettings ss = ((IInternalCCfgInfo) cfgDescription).getSpecSettings();
 				if (ss != null) {
 					return ss.isLanguageSettingsProviderStoreChanged(this);
 				}
@@ -328,7 +335,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		languageScope = null;
 
 		// provider/configuration/language/resource/entry
-		if (providerNode!=null) {
+		if (providerNode != null) {
 			loadAttributes(providerNode);
 			loadEntries(providerNode);
 		}
@@ -338,7 +345,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * Determine and set language scope from given XML node.
 	 */
 	private void loadLanguageScopeElement(Node parentNode) {
-		if (languageScope==null) {
+		if (languageScope == null) {
 			languageScope = new ArrayList<String>();
 		}
 		String id = XmlUtil.determineAttributeValue(parentNode, ATTR_ID);
@@ -356,9 +363,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 		properties.clear();
 		NamedNodeMap attrs = providerNode.getAttributes();
-		for (int i=0; i<attrs.getLength(); i++) {
+		for (int i = 0; i < attrs.getLength(); i++) {
 			Node attr = attrs.item(i);
-			if (attr.getNodeType()==Node.ATTRIBUTE_NODE) {
+			if (attr.getNodeType() == Node.ATTRIBUTE_NODE) {
 				String key = attr.getNodeName();
 				if (!key.equals(ATTR_ID) && !key.equals(ATTR_NAME) && !key.equals(ATTR_CLASS)) {
 					String value = attr.getNodeValue();
@@ -371,9 +378,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		this.setName(providerName);
 
 		NodeList nodes = providerNode.getChildNodes();
-		for (int i=0;i<nodes.getLength();i++) {
+		for (int i = 0; i < nodes.getLength(); i++) {
 			Node elementNode = nodes.item(i);
-			if(elementNode.getNodeType() != Node.ELEMENT_NODE)
+			if (elementNode.getNodeType() != Node.ELEMENT_NODE)
 				continue;
 
 			if (ELEM_LANGUAGE_SCOPE.equals(elementNode.getNodeName())) {
@@ -426,8 +433,8 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * {@link #clone()} via {@link #cloneShallow()}. Do not inline to "optimize"!
 	 */
 	private LanguageSettingsSerializableProvider cloneShallowInternal() throws CloneNotSupportedException {
-		LanguageSettingsSerializableProvider clone = (LanguageSettingsSerializableProvider)super.clone();
-		if (languageScope!=null)
+		LanguageSettingsSerializableProvider clone = (LanguageSettingsSerializableProvider) super.clone();
+		if (languageScope != null)
 			clone.languageScope = new ArrayList<String>(languageScope);
 		clone.properties = new HashMap<String, String>(properties);
 

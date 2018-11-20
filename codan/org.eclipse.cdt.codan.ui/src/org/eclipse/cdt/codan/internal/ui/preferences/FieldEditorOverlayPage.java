@@ -225,8 +225,8 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 		// Set workspace/project radio buttons
 		try {
 			IPreferenceStore preferences = getPreferenceStore();
-			if (!preferences.contains(PreferenceConstants.P_USE_PARENT) ||
-					preferences.getBoolean(PreferenceConstants.P_USE_PARENT)) {
+			if (!preferences.contains(PreferenceConstants.P_USE_PARENT)
+					|| preferences.getBoolean(PreferenceConstants.P_USE_PARENT)) {
 				useWorkspaceSettingsButton.setSelection(true);
 			} else {
 				useProjectSettingsButton.setSelection(true);

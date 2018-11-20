@@ -45,14 +45,14 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	 */
 	public CPathContainerDefaultPage() {
 		super("CPathContainerDefaultPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.CPathContainerDefaultPage_title); 
-		setDescription(CPathEntryMessages.CPathContainerDefaultPage_description); 
+		setTitle(CPathEntryMessages.CPathContainerDefaultPage_title);
+		setDescription(CPathEntryMessages.CPathContainerDefaultPage_description);
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
-		
-		fUsedPaths= new ArrayList<IPath>();
-		
-		fEntryField= new StringDialogField();
-		fEntryField.setLabelText(CPathEntryMessages.CPathContainerDefaultPage_path_label); 
+
+		fUsedPaths = new ArrayList<IPath>();
+
+		fEntryField = new StringDialogField();
+		fEntryField.setLabelText(CPathEntryMessages.CPathContainerDefaultPage_path_label);
 		fEntryField.setDialogFieldListener(new IDialogFieldListener() {
 			@Override
 			public void dialogFieldChanged(DialogField field) {
@@ -63,18 +63,18 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	}
 
 	protected void validatePath() {
-		StatusInfo status= new StatusInfo();
-		String str= fEntryField.getText();
+		StatusInfo status = new StatusInfo();
+		String str = fEntryField.getText();
 		if (str.length() == 0) {
-			status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_enterpath); 
+			status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_enterpath);
 		} else if (!Path.ROOT.isValidPath(str)) {
-			status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_invalidpath); 
+			status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_invalidpath);
 		} else {
-			IPath path= new Path(str);
+			IPath path = new Path(str);
 			if (path.segmentCount() == 0) {
-				status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_needssegment); 
+				status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_needssegment);
 			} else if (fUsedPaths.contains(path)) {
-				status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_alreadyexists); 
+				status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_alreadyexists);
 			}
 		}
 		updateStatus(status);
@@ -85,19 +85,19 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
 		composite.setLayout(layout);
-		
+
 		fEntryField.doFillIntoGrid(composite, 2);
 		LayoutUtil.setHorizontalGrabbing(fEntryField.getTextControl(null), true);
-		
+
 		fEntryField.setFocus();
-		
+
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-//		WorkbenchHelp.setHelp(composite, IJavaHelpContextIds.CLASSPATH_CONTAINER_DEFAULT_PAGE);
+		//		WorkbenchHelp.setHelp(composite, IJavaHelpContextIds.CLASSPATH_CONTAINER_DEFAULT_PAGE);
 	}
 
 	/* (non-Javadoc)
@@ -107,27 +107,27 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	public boolean finish() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IClasspathContainerPage#getSelection()
 	 */
 	@Override
 	public IContainerEntry[] getNewContainers() {
-		return new IContainerEntry[] {CoreModel.newContainerEntry(new Path(fEntryField.getText()))};
+		return new IContainerEntry[] { CoreModel.newContainerEntry(new Path(fEntryField.getText())) };
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension#initialize(org.eclipse.jdt.core.IJavaProject, org.eclipse.jdt.core.IClasspathEntry)
 	 */
 	@Override
 	public void initialize(ICProject project, IPathEntry[] currentEntries) {
-		for (int i= 0; i < currentEntries.length; i++) {
-			IPathEntry curr= currentEntries[i];
+		for (int i = 0; i < currentEntries.length; i++) {
+			IPathEntry curr = currentEntries[i];
 			if (curr.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 				fUsedPaths.add(curr.getPath());
 			}
 		}
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see IClasspathContainerPage#setSelection(IClasspathEntry)

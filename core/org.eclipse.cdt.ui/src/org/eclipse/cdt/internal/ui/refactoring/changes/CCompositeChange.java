@@ -24,7 +24,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
  */
 public class CCompositeChange extends CompositeChange {
 	private RefactoringChangeDescriptor desc;
-	
+
 	public CCompositeChange(String name, Change[] children) {
 		super(name, children);
 	}

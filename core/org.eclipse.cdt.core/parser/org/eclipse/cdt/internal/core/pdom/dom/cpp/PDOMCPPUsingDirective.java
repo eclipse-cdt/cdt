@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,28 +35,28 @@ import org.eclipse.core.runtime.CoreException;
  * When parsing a file the directives from headers that are skipped are collected.
  */
 public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
-	private static final int CONTAINER_NAMESPACE 	= 0;
-	private static final int NOMINATED_NAMESPACE    = 4;
-	private static final int PREV_DIRECTIVE_OF_FILE	= 8;
-	private static final int FILE_OFFSET	        = 12;
-	private static final int RECORD_SIZE 			= 16;
+	private static final int CONTAINER_NAMESPACE = 0;
+	private static final int NOMINATED_NAMESPACE = 4;
+	private static final int PREV_DIRECTIVE_OF_FILE = 8;
+	private static final int FILE_OFFSET = 12;
+	private static final int RECORD_SIZE = 16;
 
 	private final PDOMCPPLinkage fLinkage;
 	private final long fRecord;
 
 	PDOMCPPUsingDirective(PDOMCPPLinkage pdom, long record) {
-		fLinkage= pdom;
-		fRecord= record;
+		fLinkage = pdom;
+		fRecord = record;
 	}
 
-	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, long prevRecInFile, PDOMCPPNamespace containerNS, 
+	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, long prevRecInFile, PDOMCPPNamespace containerNS,
 			PDOMBinding nominated, int fileOffset) throws CoreException {
-		final Database db= linkage.getDB();
-		final long containerRec= containerNS == null ? 0 : containerNS.getRecord();
-		final long nominatedRec= nominated.getRecord();
-		
-		fLinkage= linkage;
-		fRecord= db.malloc(RECORD_SIZE);
+		final Database db = linkage.getDB();
+		final long containerRec = containerNS == null ? 0 : containerNS.getRecord();
+		final long nominatedRec = nominated.getRecord();
+
+		fLinkage = linkage;
+		fRecord = db.malloc(RECORD_SIZE);
 		db.putRecPtr(fRecord + CONTAINER_NAMESPACE, containerRec);
 		db.putRecPtr(fRecord + NOMINATED_NAMESPACE, nominatedRec);
 		db.putRecPtr(fRecord + PREV_DIRECTIVE_OF_FILE, prevRecInFile);
@@ -67,7 +67,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	public ICPPNamespaceScope getNominatedScope() {
 		try {
 			long rec = fLinkage.getDB().getRecPtr(fRecord + NOMINATED_NAMESPACE);
-			PDOMNode node= PDOMNode.load(fLinkage.getPDOM(), rec);
+			PDOMNode node = PDOMNode.load(fLinkage.getPDOM(), rec);
 			if (node instanceof ICPPNamespace) {
 				return ((ICPPNamespace) node).getNamespaceScope();
 			}
@@ -82,7 +82,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 		try {
 			long rec = fLinkage.getDB().getRecPtr(fRecord + CONTAINER_NAMESPACE);
 			if (rec != 0) {
-				PDOMNode node= PDOMNode.load(fLinkage.getPDOM(), rec);
+				PDOMNode node = PDOMNode.load(fLinkage.getPDOM(), rec);
 				if (node instanceof PDOMCPPNamespace) {
 					return (PDOMCPPNamespace) node;
 				}
@@ -95,7 +95,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 
 	@Override
 	public int getPointOfDeclaration() {
-		final Database db= fLinkage.getDB();
+		final Database db = fLinkage.getDB();
 		try {
 			return db.getInt(fRecord + FILE_OFFSET);
 		} catch (CoreException e) {
@@ -108,7 +108,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	}
 
 	public long getPreviousRec() throws CoreException {
-		final Database db= fLinkage.getDB();
+		final Database db = fLinkage.getDB();
 		return db.getRecPtr(fRecord + PREV_DIRECTIVE_OF_FILE);
 	}
 

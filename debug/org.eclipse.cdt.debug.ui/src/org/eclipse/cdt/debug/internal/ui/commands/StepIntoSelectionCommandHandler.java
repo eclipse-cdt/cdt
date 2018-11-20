@@ -16,7 +16,6 @@ package org.eclipse.cdt.debug.internal.ui.commands;
 import org.eclipse.cdt.debug.core.model.IStepIntoSelectionHandler;
 import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
-
 public class StepIntoSelectionCommandHandler extends DebugCommandHandler {
 	@Override
 	protected Class<?> getCommandType() {

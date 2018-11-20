@@ -11,7 +11,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.managedbuilder.tests.suite;
+package org.eclipse.cdt.managedbuilder.tests.suite;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -58,8 +58,10 @@ public class Preconditions extends TestCase {
 		IContentType contentTypeC = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
 		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
 
-		Set<String> expectedExts = new TreeSet<String>(Arrays.asList(new String[] {"C", "c", "c++", "cc", "cpp", "cxx"}));
-		assertEquals("Precodition FAILED - Content Types do not match expected defaults.", expectedExts.toString(), fileExts.toString());
+		Set<String> expectedExts = new TreeSet<String>(
+				Arrays.asList(new String[] { "C", "c", "c++", "cc", "cpp", "cxx" }));
+		assertEquals("Precodition FAILED - Content Types do not match expected defaults.", expectedExts.toString(),
+				fileExts.toString());
 	}
 
 }

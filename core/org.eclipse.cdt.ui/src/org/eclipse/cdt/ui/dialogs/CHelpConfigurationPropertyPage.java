@@ -51,8 +51,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class CHelpConfigurationPropertyPage extends PropertyPage implements
-		IWorkbenchPreferencePage {
+public class CHelpConfigurationPropertyPage extends PropertyPage implements IWorkbenchPreferencePage {
 	private CHelpSettingsDisplay fCHelpSettingsDisplay;
 
 	private class CHelpBookListLabelProvider extends LabelProvider {
@@ -60,14 +59,14 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		private ImageDescriptorRegistry fRegistry;
 
 		public CHelpBookListLabelProvider() {
-			fRegistry= CUIPlugin.getImageDescriptorRegistry();
-			fHelpProviderIcon= CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
+			fRegistry = CUIPlugin.getImageDescriptorRegistry();
+			fHelpProviderIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
 		}
 
 		@Override
 		public String getText(Object element) {
 			if (element instanceof CHelpBookDescriptor) {
-				return ((CHelpBookDescriptor)element).getCHelpBook().getTitle();
+				return ((CHelpBookDescriptor) element).getCHelpBook().getTitle();
 			}
 			return super.getText(element);
 		}
@@ -88,45 +87,50 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 
 		public CHelpSettingsDisplay() {
 
-			String[] buttonLabels= new String[] {
-				/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
-				/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll
-			};
+			String[] buttonLabels = new String[] {
+					/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
+					/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll };
 
-			fCHelpBookList= new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels, new CHelpBookListLabelProvider());
+			fCHelpBookList = new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels,
+					new CHelpBookListLabelProvider());
 			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks);
 			fCHelpBookList.setCheckAllButtonIndex(0);
 			fCHelpBookList.setUncheckAllButtonIndex(1);
 		}
 
-		public Control createControl(Composite parent){
-			PixelConverter converter= new PixelConverter(parent);
+		public Control createControl(Composite parent) {
+			PixelConverter converter = new PixelConverter(parent);
 
-			Composite composite= new Composite(parent, SWT.NONE);
+			Composite composite = new Composite(parent, SWT.NONE);
 
 			LayoutUtil.doDefaultLayout(composite, new DialogField[] { fCHelpBookList }, true);
 			LayoutUtil.setHorizontalGrabbing(fCHelpBookList.getListControl(null), true);
 
-			int buttonBarWidth= converter.convertWidthInCharsToPixels(24);
+			int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 			fCHelpBookList.setButtonsMinWidth(buttonBarWidth);
 
 			return composite;
 		}
 
 		public void init(final IResource resource) {
-			if(!(resource instanceof IProject))
+			if (!(resource instanceof IProject))
 				return;
-			fProject = (IProject)resource;
-			fCHelpBookDescriptors = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
-				@Override
-				public IProject getProject(){return (IProject)resource;}
-				@Override
-				public ITranslationUnit getTranslationUnit(){return null;}
-				}
-			);
+			fProject = (IProject) resource;
+			fCHelpBookDescriptors = CHelpProviderManager.getDefault()
+					.getCHelpBookDescriptors(new ICHelpInvocationContext() {
+						@Override
+						public IProject getProject() {
+							return (IProject) resource;
+						}
 
-			List<CHelpBookDescriptor> allTopicsList= Arrays.asList(fCHelpBookDescriptors);
-			List<CHelpBookDescriptor> enabledTopicsList= getEnabledEntries(allTopicsList);
+						@Override
+						public ITranslationUnit getTranslationUnit() {
+							return null;
+						}
+					});
+
+			List<CHelpBookDescriptor> allTopicsList = Arrays.asList(fCHelpBookDescriptors);
+			List<CHelpBookDescriptor> enabledTopicsList = getEnabledEntries(allTopicsList);
 
 			fCHelpBookList.setElements(allTopicsList);
 			fCHelpBookList.setCheckedElements(enabledTopicsList);
@@ -134,32 +138,37 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 
 		private List<CHelpBookDescriptor> getEnabledEntries(List<CHelpBookDescriptor> list) {
 			int size = list.size();
-			List<CHelpBookDescriptor> desList= new ArrayList<CHelpBookDescriptor>();
+			List<CHelpBookDescriptor> desList = new ArrayList<CHelpBookDescriptor>();
 
-			for (int i= 0; i < size; i++) {
+			for (int i = 0; i < size; i++) {
 				CHelpBookDescriptor el = list.get(i);
-				if(el.isEnabled())
+				if (el.isEnabled())
 					desList.add(el);
 			}
 			return desList;
 		}
 
-		public void performOk(){
+		public void performOk() {
 			List<CHelpBookDescriptor> list = fCHelpBookList.getElements();
 			final IProject project = fProject;
 
-			for(int i = 0; i < list.size(); i++){
+			for (int i = 0; i < list.size(); i++) {
 				Object obj = list.get(i);
-				if(obj != null && obj instanceof CHelpBookDescriptor){
-					((CHelpBookDescriptor)obj).enable(fCHelpBookList.isChecked(obj));
+				if (obj != null && obj instanceof CHelpBookDescriptor) {
+					((CHelpBookDescriptor) obj).enable(fCHelpBookList.isChecked(obj));
 				}
 			}
-			CHelpProviderManager.getDefault().serialize(new ICHelpInvocationContext(){
+			CHelpProviderManager.getDefault().serialize(new ICHelpInvocationContext() {
 				@Override
-				public IProject getProject(){return project;}
+				public IProject getProject() {
+					return project;
+				}
+
 				@Override
-				public ITranslationUnit getTranslationUnit(){return null;}
-				});
+				public ITranslationUnit getTranslationUnit() {
+					return null;
+				}
+			});
 		}
 	}
 
@@ -168,15 +177,15 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		fCHelpSettingsDisplay= new CHelpSettingsDisplay();
+		fCHelpSettingsDisplay = new CHelpSettingsDisplay();
 		fCHelpSettingsDisplay.init(getResource());
 		return fCHelpSettingsDisplay.createControl(parent);
 	}
 
 	private IResource getResource() {
-		IAdaptable element= getElement();
+		IAdaptable element = getElement();
 		if (element instanceof IResource) {
-			return (IResource)element;
+			return (IResource) element;
 		}
 		return element.getAdapter(IResource.class);
 	}

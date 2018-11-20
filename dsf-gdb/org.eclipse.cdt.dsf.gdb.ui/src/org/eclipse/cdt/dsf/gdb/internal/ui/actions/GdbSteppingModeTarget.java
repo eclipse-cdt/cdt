@@ -32,41 +32,41 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * @since 2.0
  */
 public class GdbSteppingModeTarget extends DsfSteppingModeTarget {
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fTracker;
-    
-    public GdbSteppingModeTarget(DsfSession session) {
-        fExecutor = session.getExecutor();
-        fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-    }    
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fTracker;
 
-    public void dispose() {
-        fTracker.dispose();
-    }
+	public GdbSteppingModeTarget(DsfSession session) {
+		fExecutor = session.getExecutor();
+		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+	}
+
+	public void dispose() {
+		fTracker.dispose();
+	}
 
 	@Override
 	public boolean supportsInstructionStepping() {
-    	Query<Boolean> supportInstructionStepping = new Query<Boolean>() {
-    		@Override
-    		protected void execute(DataRequestMonitor<Boolean> rm) {
-    			IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+		Query<Boolean> supportInstructionStepping = new Query<Boolean>() {
+			@Override
+			protected void execute(DataRequestMonitor<Boolean> rm) {
+				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 				if (backend != null) {
 					// PostMortem sessions do not support instruction stepping
 					rm.setData(backend.getSessionType() != SessionType.CORE);
 				} else {
 					rm.setData(false);
 				}
-				
-				rm.done();
-    		}
-    	};
 
-    	fExecutor.execute(supportInstructionStepping);
-        try {
-        	return supportInstructionStepping.get();
-        } catch (InterruptedException e1) {
-        } catch (ExecutionException e1) {
-        }
-        return false;
+				rm.done();
+			}
+		};
+
+		fExecutor.execute(supportInstructionStepping);
+		try {
+			return supportInstructionStepping.get();
+		} catch (InterruptedException e1) {
+		} catch (ExecutionException e1) {
+		}
+		return false;
 	}
 }

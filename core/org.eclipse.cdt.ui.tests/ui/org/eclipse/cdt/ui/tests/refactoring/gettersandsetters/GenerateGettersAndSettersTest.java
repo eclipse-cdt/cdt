@@ -58,7 +58,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 		super.tearDown();
 		resetPreferences();
 	}
-	
+
 	@Override
 	protected CRefactoring createRefactoring() {
 		if (ascendingVisibilityOrder) {
@@ -1656,7 +1656,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	};
 	//	};
 	//}
-	
+
 	//A.cpp
 	//#include "A.h"
 	//
@@ -1668,7 +1668,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//}
 	public void testNestedClasses_Bug316083() throws Exception {
 		definitionSeparate = true;
-		selectedGetters = new String[] {"a"};
+		selectedGetters = new String[] { "a" };
 		assertRefactoringSuccess();
 	}
 }

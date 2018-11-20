@@ -36,7 +36,8 @@ import org.eclipse.osgi.util.NLS;
  */
 public class CodanRunner {
 	/** Do not instantiate. All methods are static */
-	private CodanRunner() {}
+	private CodanRunner() {
+	}
 
 	/**
 	 * Runs all checkers that support "run as you type" mode.
@@ -61,8 +62,8 @@ public class CodanRunner {
 		processResource(resource, null, checkerLaunchMode, monitor);
 	}
 
-	private static void processResource(IResource resource, Object model,
-			CheckerLaunchMode checkerLaunchMode, IProgressMonitor monitor) {
+	private static void processResource(IResource resource, Object model, CheckerLaunchMode checkerLaunchMode,
+			IProgressMonitor monitor) {
 		CheckersRegistry chegistry = CheckersRegistry.getInstance();
 		int checkers = chegistry.getCheckersSize();
 		IResource[] children = null;
@@ -113,8 +114,8 @@ public class CodanRunner {
 				//CheckersTimeStats.getInstance().printStats();
 			}
 
-			if (children != null &&
-					(checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD || checkerLaunchMode == CheckerLaunchMode.RUN_ON_DEMAND)) {
+			if (children != null && (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD
+					|| checkerLaunchMode == CheckerLaunchMode.RUN_ON_DEMAND)) {
 				for (IResource child : children) {
 					if (monitor.isCanceled())
 						return;

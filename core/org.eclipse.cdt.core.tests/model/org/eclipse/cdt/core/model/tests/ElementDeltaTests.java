@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
@@ -54,40 +52,40 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 	private Vector addedElements;
 	private Vector removedElements;
 	private Vector changedElements;
-	
+
 	public static void main(String[] args) {
 		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), WorkingCopyTests.class, args);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(ElementDeltaTests.class.getName());
+		TestSuite suite = new TestSuite(ElementDeltaTests.class.getName());
 		suite.addTest(new ElementDeltaTests("testElementDeltas"));
 		return suite;
-	}		
-	
+	}
+
 	public ElementDeltaTests(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
+		fCProject = CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
 		//Path filePath = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString()+ fCProject.getPath().toString()+ "/WorkingCopyTest.h");
 		headerFile = fCProject.getProject().getFile("WorkingCopyTest.h");
 		if (!headerFile.exists()) {
-			try{
+			try {
 				FileInputStream fileIn = new FileInputStream(
-						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/WorkingCopyTestStart.h"))); 
-				headerFile.create(fileIn,false, monitor);
+						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/WorkingCopyTestStart.h")));
+				headerFile.create(fileIn, false, monitor);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// register with the model manager to listen to delta changes
 		CModelManager.getDefault().addElementChangedListener(this);
 		addedElements = new Vector(10);
@@ -96,27 +94,26 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 	}
 
 	@Override
-	protected void tearDown()  {
-		  CProjectHelper.delete(fCProject);
-	}	
-		
-		
+	protected void tearDown() {
+		CProjectHelper.delete(fCProject);
+	}
+
 	public void testElementDeltas() throws Exception {
 		//ITranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		ICElement celement = CoreModel.getDefault().create(headerFile);
 		ITranslationUnit tu = null;
 		if (celement instanceof ITranslationUnit) {
-			tu = (ITranslationUnit)celement;
+			tu = (ITranslationUnit) celement;
 		}
-		assertNotNull (tu);
+		assertNotNull(tu);
 		IWorkingCopy wc = tu.getWorkingCopy();
-		assertNotNull (wc);
-		assertNotNull (wc.getBuffer());
-		assertTrue (wc.exists());
-		
+		assertNotNull(wc);
+		assertNotNull(wc.getBuffer());
+		assertTrue(wc.exists());
+
 		// add the class Hello
 		IBuffer wcBuf = wc.getBuffer();
-		wcBuf.setContents ("\n class Hello{ \n};");
+		wcBuf.setContents("\n class Hello{ \n};");
 		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
@@ -126,10 +123,10 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertAddedElement(ICElement.C_CLASS, "Hello");
 		assertRemovedElement(ICElement.C_INCLUDE, "stdio.h");
 		assertEmptyDelta();
-		
+
 		// add the field x		
-		wcBuf.setContents ("\n class Hello{\n int x; \n};");
-		wc.reconcile();		
+		wcBuf.setContents("\n class Hello{\n int x; \n};");
+		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
@@ -138,10 +135,10 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_FIELD, "x");
 		assertEmptyDelta();
-		
+
 		// add the method setValue
-		wcBuf.setContents ("\n class Hello{\n int x; \n void setValue(int val); \n};");
-		wc.reconcile();		
+		wcBuf.setContents("\n class Hello{\n int x; \n void setValue(int val); \n};");
+		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
@@ -150,11 +147,11 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_METHOD_DECLARATION, "setValue");
 		assertEmptyDelta();
-		
+
 		// rename x to y
 		// this is not a change, this is add and remove
-		wcBuf.setContents ("\n class Hello{\n int y; \n void setValue(int val); \n};");
-		wc.reconcile();		
+		wcBuf.setContents("\n class Hello{\n int y; \n void setValue(int val); \n};");
+		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
@@ -166,8 +163,8 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertEmptyDelta();
 
 		// remove the method
-		wcBuf.setContents ("\n class Hello{\n String y; \n};");
-		wc.reconcile();		
+		wcBuf.setContents("\n class Hello{\n String y; \n};");
+		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
@@ -177,9 +174,9 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertChangedElement(ICElement.C_FIELD, "y");
 		assertRemovedElement(ICElement.C_METHOD_DECLARATION, "setValue");
 		assertEmptyDelta();
-				
+
 		// remove the field		
-		wcBuf.setContents ("\n class Hello{ \n};");
+		wcBuf.setContents("\n class Hello{ \n};");
 		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
@@ -191,7 +188,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertEmptyDelta();
 
 		// remove the class
-		wcBuf.setContents ("");
+		wcBuf.setContents("");
 		wc.reconcile();
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
@@ -202,90 +199,93 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertEmptyDelta();
 
 		wc.destroy();
-		assertFalse(wc.exists());		
+		assertFalse(wc.exists());
 	}
-	
-	public void assertAddedElement(int elementType, String elementName){
-		if(!isElementInList(elementType, elementName, addedElements))
+
+	public void assertAddedElement(int elementType, String elementName) {
+		if (!isElementInList(elementType, elementName, addedElements))
 			fail("Element NOT found in Added list");
 	}
-	public void assertRemovedElement(int elementType, String elementName){
-		if(!isElementInList(elementType, elementName, removedElements))
+
+	public void assertRemovedElement(int elementType, String elementName) {
+		if (!isElementInList(elementType, elementName, removedElements))
 			fail("Element NOT found in Removed list");
 	}
-	public void assertChangedElement(int elementType, String elementName){
-		if(!isElementInList(elementType, elementName, changedElements))
+
+	public void assertChangedElement(int elementType, String elementName) {
+		if (!isElementInList(elementType, elementName, changedElements))
 			fail("Element NOT found in Changed list");
 	}
+
 	public void assertEmptyDelta() {
 		assertTrue(addedElements.isEmpty());
 		assertTrue(removedElements.isEmpty());
 		assertTrue(changedElements.isEmpty());
 	}
+
 	public boolean isElementInList(int elementType, String elementName, Vector elementList) {
 		boolean found = false;
 		Iterator i = elementList.iterator();
-		while( i.hasNext()){
-			ICElement element = (ICElement)i.next();
+		while (i.hasNext()) {
+			ICElement element = (ICElement) i.next();
 
-			if ((element.getElementName().equals(elementName)) && 
-				(element.getElementType() == elementType)){
-					// return true;
-					// just to print the whole list
-					found = true;
-					// Remove the element
-					elementList.remove(element);
-					break;
-				}
+			if ((element.getElementName().equals(elementName)) && (element.getElementType() == elementType)) {
+				// return true;
+				// just to print the whole list
+				found = true;
+				// Remove the element
+				elementList.remove(element);
+				break;
+			}
 		}
 		//return false;
-		return found;						
+		return found;
 	}
-	
+
 	@Override
-	public void elementChanged(ElementChangedEvent event){
+	public void elementChanged(ElementChangedEvent event) {
 		try {
 			addedElements.clear();
 			removedElements.clear();
 			changedElements.clear();
 			ICElementDelta delta = event.getDelta();
 			processDelta(delta);
-		} catch(CModelException e) {
-		}		
+		} catch (CModelException e) {
+		}
 	}
 
 	protected void processDelta(ICElementDelta delta) throws CModelException {
 		// check the delta elements
-		int kind= delta.getKind();
-		int flags= delta.getFlags();
-		ICElement element= delta.getElement();
-		
+		int kind = delta.getKind();
+		int flags = delta.getFlags();
+		ICElement element = delta.getElement();
+
 		// handle open and closing of a solution or project
 		if ((flags & ICElementDelta.F_CLOSED) != 0) {
 		}
 		if ((flags & ICElementDelta.F_OPENED) != 0) {
 		}
 		if (kind == ICElementDelta.REMOVED) {
-			removedElements.add(element);			
+			removedElements.add(element);
 		}
 		if (kind == ICElementDelta.ADDED) {
-			addedElements.add(element);			
+			addedElements.add(element);
 		}
 		if (kind == ICElementDelta.CHANGED) {
 			changedElements.add(element);
-				
-			if (flags == ICElementDelta.F_MODIFIERS)	{	
+
+			if (flags == ICElementDelta.F_MODIFIERS) {
 			}
-			if (flags == ICElementDelta.F_CONTENT)	{	
+			if (flags == ICElementDelta.F_CONTENT) {
 			}
-			if (flags == ICElementDelta.F_CHILDREN)	{	
+			if (flags == ICElementDelta.F_CHILDREN) {
 			}
 		}
 
-		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
-		for (int i= 0; i < affectedChildren.length; i++) {
+		ICElementDelta[] affectedChildren = delta.getAffectedChildren();
+		for (int i = 0; i < affectedChildren.length; i++) {
 			processDelta(affectedChildren[i]);
 		}
 	}
-	
+
 }

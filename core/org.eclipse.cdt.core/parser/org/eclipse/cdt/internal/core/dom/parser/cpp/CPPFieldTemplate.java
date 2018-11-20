@@ -42,10 +42,10 @@ public class CPPFieldTemplate extends CPPVariableTemplate implements ICPPFieldTe
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		IScope scope= getScope();
+		IScope scope = getScope();
 		if (scope instanceof ICPPTemplateScope) {
 			try {
-				scope= scope.getParent();
+				scope = scope.getParent();
 			} catch (DOMException e) {
 				return null;
 			}

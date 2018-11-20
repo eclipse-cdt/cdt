@@ -57,12 +57,12 @@ public class SelectionConverter {
 	 */
 	public static IStructuredSelection getStructuredSelection(IWorkbenchPart part) throws CModelException {
 		if (part instanceof CEditor)
-			return new StructuredSelection(codeResolve((CEditor)part));
-		ISelectionProvider provider= part.getSite().getSelectionProvider();
+			return new StructuredSelection(codeResolve((CEditor) part));
+		ISelectionProvider provider = part.getSite().getSelectionProvider();
 		if (provider != null) {
-			ISelection selection= provider.getSelection();
+			ISelection selection = provider.getSelection();
 			if (selection instanceof IStructuredSelection)
-				return (IStructuredSelection)selection;
+				return (IStructuredSelection) selection;
 		}
 		return StructuredSelection.EMPTY;
 	}
@@ -74,7 +74,7 @@ public class SelectionConverter {
 	 * @param s The structured selection
 	 * @return The converted selection
 	 */
-	 	public static IStructuredSelection convertSelectionToCElements(ISelection s) {
+	public static IStructuredSelection convertSelectionToCElements(ISelection s) {
 		return convertSelectionToCElements(s, false);
 	}
 
@@ -84,8 +84,7 @@ public class SelectionConverter {
 	 * @param keepNonCElements Whether to keep objects in selection if they cannot be converted
 	 * @return The converted selection
 	 */
-	public static IStructuredSelection convertSelectionToCElements(ISelection s,
-			boolean keepNonCElements) {
+	public static IStructuredSelection convertSelectionToCElements(ISelection s, boolean keepNonCElements) {
 		List<Object> converted = new ArrayList<Object>();
 		if (s instanceof IStructuredSelection) {
 			Object[] elements = ((IStructuredSelection) s).toArray();
@@ -222,7 +221,8 @@ public class SelectionConverter {
 	}
 
 	public static ICElement getInput(ITextEditor editor) {
-		if (editor == null) return null;
+		if (editor == null)
+			return null;
 		IEditorInput input = editor.getEditorInput();
 		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 		return manager.getWorkingCopy(input);
@@ -246,7 +246,7 @@ public class SelectionConverter {
 	}
 
 	public static ICElement[] codeResolve(CEditor editor) throws CModelException {
-		return codeResolve(getInput(editor), (ITextSelection)editor.getSelectionProvider().getSelection());
+		return codeResolve(getInput(editor), (ITextSelection) editor.getSelectionProvider().getSelection());
 	}
 
 	public static ICElement[] codeResolve(ICElement input, ITextSelection selection) throws CModelException {
@@ -259,28 +259,28 @@ public class SelectionConverter {
 					}
 				}
 			}
-	        ICElement[] elems = tunit.getElementsAtOffset(selection.getOffset());
-	        if (elems != null) {
-	            for (int i = 0; i < elems.length; ++i) {
-	                ICElement elem = elems[i];
-	                if (elem instanceof ISourceReference) {
-	                    String text = selection.getText();
-	                    if (text.equals(elem.getElementName())) {
-	                        return new ICElement[] { elem };
-	                    }
-	                }
-	            }
-	            for (int i = 0; i < elems.length; ++i) {
-	                ICElement elem = elems[i];
-	                if (elem instanceof ISourceReference) {
-	                    ISourceRange range = ((ISourceReference)elem).getSourceRange();
-	                    if (range.getStartPos() == selection.getOffset()) {
-	                        return new ICElement[] { elem };
-	                    }
-	                }
-	            }
-	        }
-	    }
+			ICElement[] elems = tunit.getElementsAtOffset(selection.getOffset());
+			if (elems != null) {
+				for (int i = 0; i < elems.length; ++i) {
+					ICElement elem = elems[i];
+					if (elem instanceof ISourceReference) {
+						String text = selection.getText();
+						if (text.equals(elem.getElementName())) {
+							return new ICElement[] { elem };
+						}
+					}
+				}
+				for (int i = 0; i < elems.length; ++i) {
+					ICElement elem = elems[i];
+					if (elem instanceof ISourceReference) {
+						ISourceRange range = ((ISourceReference) elem).getSourceRange();
+						if (range.getStartPos() == selection.getOffset()) {
+							return new ICElement[] { elem };
+						}
+					}
+				}
+			}
+		}
 		return ICElement.EMPTY_ARRAY;
 	}
 
@@ -289,13 +289,14 @@ public class SelectionConverter {
 	 * asking the user if code resolve returned more than one result. If the selection
 	 * doesn't cover a Java element <code>null</code> is returned.
 	 */
-	public static ICElement codeResolve(CEditor editor, Shell shell, String title, String message) throws CModelException {
-	    ICElement[] elements= codeResolve(editor);
+	public static ICElement codeResolve(CEditor editor, Shell shell, String title, String message)
+			throws CModelException {
+		ICElement[] elements = codeResolve(editor);
 		if (elements == null || elements.length == 0)
 			return null;
-		ICElement candidate= elements[0];
+		ICElement candidate = elements[0];
 		if (elements.length > 1) {
-			candidate= OpenActionUtil.selectCElement(elements, shell, title, message);
+			candidate = OpenActionUtil.selectCElement(elements, shell, title, message);
 		}
 		return candidate;
 	}
@@ -306,11 +307,11 @@ public class SelectionConverter {
 	 * length is greater than 0 the method returns the editor's input element.
 	 */
 	public static ICElement[] codeResolveOrInput(CEditor editor) throws CModelException {
-	    ICElement input= getInput(editor);
-		ITextSelection selection= (ITextSelection)editor.getSelectionProvider().getSelection();
-		ICElement[] result= codeResolve(input, selection);
+		ICElement input = getInput(editor);
+		ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
+		ICElement[] result = codeResolve(input, selection);
 		if (result.length == 0) {
-			result= new ICElement[] {input};
+			result = new ICElement[] { input };
 		}
 		return result;
 	}
@@ -318,7 +319,7 @@ public class SelectionConverter {
 	public static ICElement[] codeResolveOrInputHandled(CEditor editor, Shell shell, String title) {
 		try {
 			return codeResolveOrInput(editor);
-		} catch(CModelException e) {
+		} catch (CModelException e) {
 			ExceptionHandler.handle(e, shell, title, ActionMessages.SelectionConverter_codeResolve_failed);
 		}
 		return null;

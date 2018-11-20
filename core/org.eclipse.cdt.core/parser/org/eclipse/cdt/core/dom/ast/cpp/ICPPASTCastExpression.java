@@ -46,7 +46,7 @@ public interface ICPPASTCastExpression extends IASTCastExpression, ICPPASTExpres
 	 * <code>op_last</code> is for subinterfaces to extend.
 	 */
 	public static final int op_last = op_const_cast;
-	
+
 	/**
 	 * @since 5.1
 	 */

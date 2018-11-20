@@ -33,15 +33,9 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 	public final static String MAKEFILE_DEF_BLOCK_PARTITION = "makefile_def_block"; //$NON-NLS-1$
 	public final static String MAKEFILE_OTHER_PARTITION = "makefile_other"; //$NON-NLS-1$
 
-	final static String[] MAKE_PARTITIONS =
-		new String[] {
-			MAKEFILE_COMMENT_PARTITION,
-			MAKEFILE_MACRO_ASSIGNEMENT_PARTITION,
-			MAKEFILE_INCLUDE_BLOCK_PARTITION,
-			MAKEFILE_IF_BLOCK_PARTITION,
-			MAKEFILE_DEF_BLOCK_PARTITION,
-			MAKEFILE_OTHER_PARTITION,
-	};
+	final static String[] MAKE_PARTITIONS = new String[] { MAKEFILE_COMMENT_PARTITION,
+			MAKEFILE_MACRO_ASSIGNEMENT_PARTITION, MAKEFILE_INCLUDE_BLOCK_PARTITION, MAKEFILE_IF_BLOCK_PARTITION,
+			MAKEFILE_DEF_BLOCK_PARTITION, MAKEFILE_OTHER_PARTITION, };
 
 	/** The predefined delimiters of this tracker */
 	private char[][] fModDelimiters = { { '\r', '\n' }, { '\r' }, { '\n' } };

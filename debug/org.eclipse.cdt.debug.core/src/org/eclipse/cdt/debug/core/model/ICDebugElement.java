@@ -27,7 +27,6 @@ public interface ICDebugElement extends IDebugElement {
 	 */
 	public CDebugElementState getState();
 
-
 	/**
 	 * Returns the info object associated with the current state.
 	 * 

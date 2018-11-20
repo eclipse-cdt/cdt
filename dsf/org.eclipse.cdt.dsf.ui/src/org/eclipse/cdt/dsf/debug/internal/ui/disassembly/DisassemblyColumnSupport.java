@@ -49,9 +49,9 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	public DisassemblyColumnSupport(DisassemblyPart disassembly, RulerColumnRegistry registry) {
 		Assert.isLegal(disassembly != null);
 		Assert.isLegal(registry != null);
-		fDisassembly= disassembly;
-		fRegistry= registry;
-		fColumns= new ArrayList<IContributedRulerColumn>();
+		fDisassembly = disassembly;
+		fRegistry = registry;
+		fColumns = new ArrayList<IContributedRulerColumn>();
 	}
 
 	/*
@@ -61,12 +61,12 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	public final void setColumnVisible(RulerColumnDescriptor descriptor, boolean visible) {
 		Assert.isLegal(descriptor != null);
 
-		final CompositeRuler ruler= getRuler();
+		final CompositeRuler ruler = getRuler();
 		if (ruler == null)
 			return;
 
 		if (!isColumnSupported(descriptor))
-			visible= false;
+			visible = false;
 
 		if (isColumnVisible(descriptor)) {
 			if (!visible)
@@ -79,12 +79,12 @@ class DisassemblyColumnSupport implements IColumnSupport {
 
 	private void addColumn(final CompositeRuler ruler, final RulerColumnDescriptor descriptor) {
 
-		final int idx= computeIndex(ruler, descriptor);
+		final int idx = computeIndex(ruler, descriptor);
 
-		SafeRunnable runnable= new SafeRunnable() {
+		SafeRunnable runnable = new SafeRunnable() {
 			@Override
 			public void run() throws Exception {
-				IContributedRulerColumn column= descriptor.createColumn(fDisassembly);
+				IContributedRulerColumn column = descriptor.createColumn(fDisassembly);
 				fColumns.add(column);
 				initializeColumn(column);
 				ruler.addDecorator(idx, column);
@@ -109,7 +109,7 @@ class DisassemblyColumnSupport implements IColumnSupport {
 
 	private void removeColumn(final CompositeRuler ruler, final IContributedRulerColumn rulerColumn) {
 		if (rulerColumn != null) {
-			SafeRunnable runnable= new SafeRunnable() {
+			SafeRunnable runnable = new SafeRunnable() {
 				@Override
 				public void run() throws Exception {
 					if (ruler != null)
@@ -130,11 +130,11 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	 * @return the matching column or <code>null</code>
 	 */
 	private IContributedRulerColumn getVisibleColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
-		for (Iterator<?> it= ruler.getDecoratorIterator(); it.hasNext();) {
-			IVerticalRulerColumn column= (IVerticalRulerColumn)it.next();
+		for (Iterator<?> it = ruler.getDecoratorIterator(); it.hasNext();) {
+			IVerticalRulerColumn column = (IVerticalRulerColumn) it.next();
 			if (column instanceof IContributedRulerColumn) {
-				IContributedRulerColumn rulerColumn= (IContributedRulerColumn)column;
-				RulerColumnDescriptor rcd= rulerColumn.getDescriptor();
+				IContributedRulerColumn rulerColumn = (IContributedRulerColumn) column;
+				RulerColumnDescriptor rcd = rulerColumn.getDescriptor();
 				if (descriptor.equals(rcd))
 					return rulerColumn;
 			}
@@ -150,13 +150,13 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	 * @return the insertion index for a new column
 	 */
 	private int computeIndex(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
-		int index= 0;
-		List<?> all= fRegistry.getColumnDescriptors();
-		int newPos= all.indexOf(descriptor);
-		for (Iterator<?> it= ruler.getDecoratorIterator(); it.hasNext();) {
-			IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
+		int index = 0;
+		List<?> all = fRegistry.getColumnDescriptors();
+		int newPos = all.indexOf(descriptor);
+		for (Iterator<?> it = ruler.getDecoratorIterator(); it.hasNext();) {
+			IVerticalRulerColumn column = (IVerticalRulerColumn) it.next();
 			if (column instanceof IContributedRulerColumn) {
-				RulerColumnDescriptor rcd= ((IContributedRulerColumn)column).getDescriptor();
+				RulerColumnDescriptor rcd = ((IContributedRulerColumn) column).getDescriptor();
 				if (rcd != null && all.indexOf(rcd) > newPos)
 					break;
 			}
@@ -168,7 +168,7 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	@Override
 	public final boolean isColumnVisible(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
-		CompositeRuler ruler= getRuler();
+		CompositeRuler ruler = getRuler();
 		return ruler != null && getVisibleColumn(ruler, descriptor) != null;
 	}
 
@@ -188,7 +188,7 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	 * @return the disassembly part's {@link CompositeRuler} or <code>null</code>
 	 */
 	private CompositeRuler getRuler() {
-		Object ruler= fDisassembly.getAdapter(IVerticalRulerInfo.class);
+		Object ruler = fDisassembly.getAdapter(IVerticalRulerInfo.class);
 		if (ruler instanceof CompositeRuler)
 			return (CompositeRuler) ruler;
 		return null;
@@ -202,7 +202,8 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	 */
 	@Override
 	public void dispose() {
-		for (Iterator<IContributedRulerColumn> iter= new ArrayList<IContributedRulerColumn>(fColumns).iterator(); iter.hasNext();)
+		for (Iterator<IContributedRulerColumn> iter = new ArrayList<IContributedRulerColumn>(fColumns).iterator(); iter
+				.hasNext();)
 			removeColumn(getRuler(), iter.next());
 		fColumns.clear();
 	}

@@ -30,7 +30,6 @@ public abstract class AbstractCOptionPage extends DialogPage implements ICOption
 	private boolean bIsValid = true;
 	private ICOptionContainer fContainer;
 
-
 	protected Button createPushButton(Composite parent, String label, Image image) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());

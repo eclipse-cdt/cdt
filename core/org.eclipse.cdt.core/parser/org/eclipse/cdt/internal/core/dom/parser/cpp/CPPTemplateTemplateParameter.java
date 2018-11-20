@@ -48,8 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * A template template parameter.
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter
-		implements ICPPTemplateTemplateParameter, ICPPInternalTemplate, ICPPUnknownBinding,
-		ICPPUnknownType {
+		implements ICPPTemplateTemplateParameter, ICPPInternalTemplate, ICPPUnknownBinding, ICPPUnknownType {
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
 	private ICPPScope unknownScope;
@@ -57,7 +56,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 
 	public CPPTemplateTemplateParameter(IASTName name, boolean isPack) {
 		super(name);
-		fIsParameterPack= isPack;
+		fIsParameterPack = isPack;
 	}
 
 	@Override
@@ -67,20 +66,21 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 
 	@Override
 	public ICPPScope asScope() {
-	    if (unknownScope == null) {
-	    	IASTName n = null;
-	    	IASTNode[] nodes = getDeclarations();
-	    	if (nodes != null && nodes.length > 0)
-	    		n = (IASTName) nodes[0];
-	        unknownScope = new CPPUnknownTypeScope(this, n);
-	    }
-	    return unknownScope;
+		if (unknownScope == null) {
+			IASTName n = null;
+			IASTNode[] nodes = getDeclarations();
+			if (nodes != null && nodes.length > 0)
+				n = (IASTName) nodes[0];
+			unknownScope = new CPPUnknownTypeScope(this, n);
+		}
+		return unknownScope;
 	}
 
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (templateParameters == null) {
-			ICPPASTTemplatedTypeTemplateParameter template = (ICPPASTTemplatedTypeTemplateParameter) getPrimaryDeclaration().getParent();
+			ICPPASTTemplatedTypeTemplateParameter template = (ICPPASTTemplatedTypeTemplateParameter) getPrimaryDeclaration()
+					.getParent();
 			ICPPASTTemplateParameter[] params = template.getTemplateParameters();
 			ICPPTemplateParameter[] result = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
 			for (ICPPASTTemplateParameter param : params) {
@@ -103,7 +103,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	public IType getDefault() {
 		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
-		    return null;
+			return null;
 		for (IASTName nd : nds) {
 			if (nd != null) {
 				IASTNode parent = nd.getParent();
@@ -112,8 +112,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 					ICPPASTTemplatedTypeTemplateParameter param = (ICPPASTTemplatedTypeTemplateParameter) parent;
 					IASTExpression value = param.getDefaultValue();
 					if (value instanceof IASTIdExpression) {
-						IASTName name= ((IASTIdExpression) value).getName();
-						IBinding b= name.resolveBinding();
+						IASTName name = ((IASTIdExpression) value).getName();
+						IBinding b = name.resolveBinding();
 						if (b instanceof IType) {
 							return (IType) b;
 						}
@@ -126,7 +126,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
-		IType d= getDefault();
+		IType d = getDefault();
 		if (d == null)
 			return null;
 
@@ -172,6 +172,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
+
 	@Override
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
@@ -181,7 +182,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
@@ -197,7 +198,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 		return null;
 	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
@@ -218,14 +219,14 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
-		String key= ASTTypeUtil.getArgumentListString(arguments, true);
+		String key = ASTTypeUtil.getArgumentListString(arguments, true);
 		instances.put(key, instance);
 	}
 
 	@Override
 	public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
-			String key= ASTTypeUtil.getArgumentListString(arguments, true);
+			String key = ASTTypeUtil.getArgumentListString(arguments, true);
 			return (ICPPTemplateInstance) instances.get(key);
 		}
 		return null;
@@ -234,9 +235,9 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
-			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i=0; i < instances.size(); i++) {
-				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			ICPPTemplateInstance[] result = new ICPPTemplateInstance[instances.size()];
+			for (int i = 0; i < instances.size(); i++) {
+				result[i] = (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;
 		}
@@ -260,6 +261,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 
 	@Override
 	public int getVisibility(IBinding member) {
-		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName());  //$NON-NLS-1$
+		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
 	}
 }

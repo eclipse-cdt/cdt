@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.core.index.IIndexManager;

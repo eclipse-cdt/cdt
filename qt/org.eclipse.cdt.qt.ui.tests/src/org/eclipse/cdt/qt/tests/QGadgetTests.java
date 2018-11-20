@@ -29,7 +29,7 @@ public class QGadgetTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQGadget qgadget = qtIndex.findQGadget(new String[]{ "G" });
+		IQGadget qgadget = qtIndex.findQGadget(new String[] { "G" });
 		if (!isIndexOk("G", qgadget))
 			return;
 		assertNotNull(qgadget);
@@ -63,7 +63,7 @@ public class QGadgetTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQGadget qgadget = qtIndex.findQGadget(new String[]{ "G" });
+		IQGadget qgadget = qtIndex.findQGadget(new String[] { "G" });
 		if (!isIndexOk("G", qgadget))
 			return;
 		assertNotNull(qgadget);
@@ -71,7 +71,7 @@ public class QGadgetTests extends BaseQtTestCase {
 		Collection<IQEnum> qEnums = qgadget.getEnums();
 		assertNotNull(qEnums);
 		assertEquals(3, qEnums.size());
-		for(IQEnum qEnum : qEnums) {
+		for (IQEnum qEnum : qEnums) {
 			String name = qEnum.getName();
 			assertFalse(qEnum.isFlag());
 			if ("E0".equals(name)) {
@@ -87,7 +87,7 @@ public class QGadgetTests extends BaseQtTestCase {
 					else
 						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
 				}
-			} else if("E1".equals(name)) {
+			} else if ("E1".equals(name)) {
 				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
 				assertNotNull(enumerators);
 				assertEquals(2, enumerators.size());
@@ -100,7 +100,7 @@ public class QGadgetTests extends BaseQtTestCase {
 					else
 						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
 				}
-			} else if("G0::EB".equals(name)) {
+			} else if ("G0::EB".equals(name)) {
 				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
 				assertNotNull(enumerators);
 				assertEquals(1, enumerators.size());
@@ -137,7 +137,7 @@ public class QGadgetTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQGadget qgadget = qtIndex.findQGadget(new String[]{ "G" });
+		IQGadget qgadget = qtIndex.findQGadget(new String[] { "G" });
 		if (!isIndexOk("G", qgadget))
 			return;
 		assertNotNull(qgadget);
@@ -146,7 +146,7 @@ public class QGadgetTests extends BaseQtTestCase {
 		assertNotNull(qEnums);
 		assertEquals(2, qEnums.size());
 
-		for(IQEnum qEnum : qEnums) {
+		for (IQEnum qEnum : qEnums) {
 			assertNotNull(qEnum);
 			assertTrue(qEnum.isFlag());
 			if ("Flag".equals(qEnum.getName())) {
@@ -154,7 +154,7 @@ public class QGadgetTests extends BaseQtTestCase {
 				assertNotNull(enumerators);
 				assertEquals(1, enumerators.size());
 				assertEquals("e0", enumerators.iterator().next().getName());
-			} else if("Flag2".equals(qEnum.getName())) {
+			} else if ("Flag2".equals(qEnum.getName())) {
 				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
 				assertNotNull(enumerators);
 				assertEquals(1, enumerators.size());

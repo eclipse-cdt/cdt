@@ -23,9 +23,9 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
  * and signal its removal through a delta.
  */
 public class DestroyWorkingCopyOperation extends CModelOperation {
-	
+
 	public DestroyWorkingCopyOperation(ICElement workingCopy) {
-		super(new ICElement[] {workingCopy});
+		super(new ICElement[] { workingCopy });
 	}
 
 	/**
@@ -36,15 +36,16 @@ public class DestroyWorkingCopyOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		WorkingCopy workingCopy = getWorkingCopy();
 		workingCopy.close();
-		
+
 		// If original element is not on classpath flush it from the cache.
 		ITranslationUnit originalElement = workingCopy.getOriginalElement();
 		if (!workingCopy.getParent().exists()) {
 			originalElement.close();
 		}
-		
+
 		// Remove working copy from the cache if it is shared.
-		IWorkingCopy wc = CModelManager.getDefault().removeSharedWorkingCopy(workingCopy.bufferFactory, originalElement);
+		IWorkingCopy wc = CModelManager.getDefault().removeSharedWorkingCopy(workingCopy.bufferFactory,
+				originalElement);
 		if (wc != null) {
 			//System.out.println("Destroying shared working copy " + workingCopy.toStringWithAncestors());//$NON-NLS-1$
 			//CModelManager.getDefault().fire(delta, ElementChangedEvent.POST_RECONCILE);
@@ -61,8 +62,9 @@ public class DestroyWorkingCopyOperation extends CModelOperation {
 	 * Returns the working copy this operation is working on.
 	 */
 	protected WorkingCopy getWorkingCopy() {
-		return (WorkingCopy)getElementToProcess();
+		return (WorkingCopy) getElementToProcess();
 	}
+
 	/**
 	 * @see CModelOperation#isReadOnly
 	 */

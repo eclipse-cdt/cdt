@@ -16,10 +16,9 @@ package org.eclipse.cdt.debug.ui.memory.search;
 
 import java.math.BigInteger;
 
-public class MemoryMatch 
-{
+public class MemoryMatch {
 	BigInteger fStartAddress;
-	
+
 	public BigInteger getStartAddress() {
 		return fStartAddress;
 	}
@@ -37,15 +36,13 @@ public class MemoryMatch
 	}
 
 	BigInteger fLength;
-	
-	public MemoryMatch(BigInteger startAddress, BigInteger length)
-	{
+
+	public MemoryMatch(BigInteger startAddress, BigInteger length) {
 		fStartAddress = startAddress;
 		fLength = length;
 	}
-	
-	public BigInteger getEndAddress()
-	{
+
+	public BigInteger getEndAddress() {
 		return getStartAddress().add(getLength());
 	}
 }

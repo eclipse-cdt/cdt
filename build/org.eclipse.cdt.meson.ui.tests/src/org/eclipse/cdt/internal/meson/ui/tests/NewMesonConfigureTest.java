@@ -124,7 +124,7 @@ public class NewMesonConfigureTest {
 		// Make sure it has the right nature
 		assertTrue(project.hasNature(MesonNature.ID));
 	}
-	
+
 	@Test
 	public void attemptMesonConfiguration() throws Exception {
 		String projectName = "MesonTestProj2";
@@ -138,49 +138,49 @@ public class NewMesonConfigureTest {
 		explorer.show();
 		explorer.setFocus();
 		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
-		
+
 		proj.contextMenu("Properties").click();
-		
+
 		bot.waitUntil(Conditions.shellIsActive("Properties for MesonTestProj2"));
 
 		SWTBotShell propertiesShell = bot.shell("Properties for MesonTestProj2").activate();
 
 		propertiesShell.bot().tree().getTreeItem("Meson").click();
-		
+
 		propertiesShell.bot().textInGroup("Environment").setText("CFLAGS=\"-DJeff\"");
-		
+
 		propertiesShell.bot().checkBox("werror").click();
-		
+
 		propertiesShell.bot().comboBoxWithLabel("buildtype").setSelection("debug");
-		
+
 		propertiesShell.bot().comboBoxWithLabel("warnlevel").setSelection("2");
-		
+
 		bot.sleep(2000);
-		
+
 		propertiesShell.bot().button("Apply and Close").click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(propertiesShell));
-		
+
 		proj = explorer.bot().tree().getTreeItem(projectName).select();
-		
+
 		proj.contextMenu("Properties").click();
-		
+
 		bot.waitUntil(Conditions.shellIsActive("Properties for MesonTestProj2"));
 
 		propertiesShell = bot.shell("Properties for MesonTestProj2").activate();
 
 		propertiesShell.bot().tree().getTreeItem("Meson").click();
-		
+
 		assertEquals("CFLAGS=\"-DJeff\"", propertiesShell.bot().textInGroup("Environment").getText());
-		
+
 		assertTrue(propertiesShell.bot().checkBox("werror").isChecked());
-		
+
 		assertEquals("debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
-		
+
 		assertEquals("2", propertiesShell.bot().comboBoxWithLabel("warnlevel").getText());
 
 		propertiesShell.bot().button("Cancel").click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(propertiesShell));
 	}
 
@@ -190,7 +190,7 @@ public class NewMesonConfigureTest {
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		ICProject cproject = CoreModel.getDefault().create(project);
-		
+
 		IPath projectPath = project.getLocation();
 
 		// open C++ perspective
@@ -210,27 +210,30 @@ public class NewMesonConfigureTest {
 		while (!indexManager.isProjectContentSynced(cproject)) {
 			Thread.sleep(1000);
 		}
-		
+
 		// check the build console output
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
 		console.setFocus();
-		
+
 		String[] lines = new String[0];
-		
+
 		int counter = 0;
 		while (lines.length < 18 && counter++ < 100) {
 			String output = console.bot().styledText().getText();
 			lines = output.split("\\r?\\n"); //$NON-NLS-1$
 			bot.sleep(2000);
 		}
-		
+
 		assertTrue(lines.length > 17);
-		
+
 		bot.sleep(2000);
-		
+
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
-		assertEquals("env CFLAGS=\"-DJeff\" sh -c \"meson --backend=ninja --buildtype=debug --unity=off --werror --layout=mirror --default-library=shared --warnlevel=2   " + projectPath + "\"", lines[1]);
+		assertEquals(
+				"env CFLAGS=\"-DJeff\" sh -c \"meson --backend=ninja --buildtype=debug --unity=off --werror --layout=mirror --default-library=shared --warnlevel=2   "
+						+ projectPath + "\"",
+				lines[1]);
 		assertEquals("The Meson build system", lines[2]);
 		assertTrue(lines[3].startsWith("Version:"));
 		assertEquals("Source dir: " + projectPath, lines[4]);
@@ -243,21 +246,21 @@ public class NewMesonConfigureTest {
 		if (!lines[13].startsWith("[1/2]")) {
 			index = 1;
 		}
-		assertTrue(lines[13+index].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
-		assertTrue(lines[13+index].contains("-Werror"));
-		assertTrue(lines[14+index].startsWith("FAILED"));
-		assertTrue(lines[17+index].contains("Werror=unused-parameter"));
-		
-	    int i = 0;
-	    while (i < 10 && !lines[lines.length-1].startsWith("Build complete")) {
-	    	String output = console.bot().styledText().getText();
-	    	lines = output.split("\\r?\\n"); //$NON-NLS-1$
-	    	bot.sleep(1000);
-	    	++i;
-	    }
-		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
+		assertTrue(lines[13 + index].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
+		assertTrue(lines[13 + index].contains("-Werror"));
+		assertTrue(lines[14 + index].startsWith("FAILED"));
+		assertTrue(lines[17 + index].contains("Werror=unused-parameter"));
+
+		int i = 0;
+		while (i < 10 && !lines[lines.length - 1].startsWith("Build complete")) {
+			String output = console.bot().styledText().getText();
+			lines = output.split("\\r?\\n"); //$NON-NLS-1$
+			bot.sleep(1000);
+			++i;
+		}
+		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length - 1]);
 	}
-	
+
 	@Test
 	public void configureAfterBuild() throws Exception {
 		String projectName = "MesonTestProj2";
@@ -272,63 +275,63 @@ public class NewMesonConfigureTest {
 		explorer.show();
 		explorer.setFocus();
 		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
-		
+
 		proj.contextMenu("Properties").click();
-		
+
 		bot.waitUntil(Conditions.shellIsActive("Properties for MesonTestProj2"));
 
 		SWTBotShell propertiesShell = bot.shell("Properties for MesonTestProj2").activate();
 
 		propertiesShell.bot().tree().getTreeItem("Meson").click();
-		
+
 		assertEquals("true", propertiesShell.bot().comboBoxWithLabel("werror").getText());
-		
+
 		assertEquals("2", propertiesShell.bot().comboBoxWithLabel("warning_level").getText());
-		
+
 		assertEquals("debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
-		
+
 		assertEquals("-DJeff", propertiesShell.bot().textWithLabel("c_args").getText());
-		
+
 		propertiesShell.bot().comboBoxWithLabel("warning_level").setSelection("1");
-		
+
 		propertiesShell.bot().comboBoxWithLabel("werror").setSelection("false");
-		
+
 		bot.sleep(2000);
-		
+
 		propertiesShell.bot().button("Apply and Close").click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(propertiesShell));
-		
+
 		proj = explorer.bot().tree().getTreeItem(projectName).select();
-		
+
 		proj.contextMenu("Properties").click();
-		
+
 		bot.waitUntil(Conditions.shellIsActive("Properties for MesonTestProj2"));
 
 		propertiesShell = bot.shell("Properties for MesonTestProj2").activate();
 
 		propertiesShell.bot().tree().getTreeItem("Meson").click();
-		
+
 		assertEquals("-DJeff", propertiesShell.bot().textWithLabel("c_args").getText());
-		
+
 		assertEquals("false", propertiesShell.bot().comboBoxWithLabel("werror").getText());
-		
+
 		assertEquals("debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
-		
+
 		assertEquals("1", propertiesShell.bot().comboBoxWithLabel("warning_level").getText());
 
 		propertiesShell.bot().button("Cancel").click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(propertiesShell));
 	}
-	
+
 	@Test
 	public void rebuildMesonProject() throws Exception {
 		String projectName = "MesonTestProj2";
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		ICProject cproject = CoreModel.getDefault().create(project);
-		
+
 		IPath projectPath = project.getLocation();
 
 		// open C++ perspective
@@ -356,7 +359,7 @@ public class NewMesonConfigureTest {
 			bot.sleep(1000);
 		}
 		assertTrue(foundExecutable);
-		
+
 		// check the build console output
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
@@ -364,7 +367,7 @@ public class NewMesonConfigureTest {
 		String output = console.bot().styledText().getText();
 
 		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
-		
+
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals("The Meson build system", lines[2]);
 		assertTrue(lines[3].startsWith("Version:"));
@@ -374,9 +377,9 @@ public class NewMesonConfigureTest {
 		assertEquals("Project name: MesonTestProj2", lines[7]);
 		assertTrue(lines[8].startsWith("Native C compiler: cc"));
 		assertEquals("Build targets in project: 1", lines[11]);
-		assertTrue(lines[lines.length-3].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
-		assertTrue(lines[lines.length-2].startsWith("[2/2] cc  -o MesonTestProj2"));
-		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
+		assertTrue(lines[lines.length - 3].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
+		assertTrue(lines[lines.length - 2].startsWith("[2/2] cc  -o MesonTestProj2"));
+		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length - 1]);
 	}
 
 	@Test
@@ -399,16 +402,16 @@ public class NewMesonConfigureTest {
 
 		proj.expand();
 		proj.expandNode("Binaries");
-		
+
 		SWTBotTreeItem binaries = proj.getNode("Binaries").select();
 		binaries.getNode(0).contextMenu("Run As").menu(withRegex(".*Local C.*"), false, 0).click();
 		bot.sleep(4000);
-		
+
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
 		console.setFocus();
 		String output = "";
-		
+
 		boolean done = false;
 		while (!done) {
 			// check the build console output

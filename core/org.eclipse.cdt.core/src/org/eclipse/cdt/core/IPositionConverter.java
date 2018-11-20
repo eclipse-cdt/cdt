@@ -10,12 +10,11 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core;
 
 import org.eclipse.jface.text.IRegion;
-
 
 /**
  * Allows for converting character ranges of files previously stored on disk to the 
@@ -40,21 +39,21 @@ import org.eclipse.jface.text.IRegion;
  */
 
 public interface IPositionConverter {
-    /** 
-     * Converts an actual character range to the range where the underlying text 
-     * was originally found.
-     * @param actualPosition a range as found in the current text buffer for the file.
-     * @return a range suitable for the version of the file for which the converter
-     * was obtained.
-     */
-    IRegion actualToHistoric(IRegion actualPosition);
+	/** 
+	 * Converts an actual character range to the range where the underlying text 
+	 * was originally found.
+	 * @param actualPosition a range as found in the current text buffer for the file.
+	 * @return a range suitable for the version of the file for which the converter
+	 * was obtained.
+	 */
+	IRegion actualToHistoric(IRegion actualPosition);
 
-    /** 
-     * Converts a historic character range to the range where the underlying text 
-     * currently can be found.
-     * @param historicPosition a range as found in the version of the file for which
-     * the converter was obtained.
-     * @return a range suitable for the current text buffer of the file.
-     */
-    IRegion historicToActual(IRegion historicPosition);
+	/** 
+	 * Converts a historic character range to the range where the underlying text 
+	 * currently can be found.
+	 * @param historicPosition a range as found in the version of the file for which
+	 * the converter was obtained.
+	 * @return a range suitable for the current text buffer of the file.
+	 */
+	IRegion historicToActual(IRegion historicPosition);
 }

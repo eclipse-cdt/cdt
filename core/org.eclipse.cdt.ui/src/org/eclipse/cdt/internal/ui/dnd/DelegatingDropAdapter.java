@@ -38,7 +38,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 */
 	public DelegatingDropAdapter(TransferDropTargetListener[] listeners) {
 		Assert.isNotNull(listeners);
-		fListeners= listeners;
+		fListeners = listeners;
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 */
 	@Override
 	public void dragEnter(DropTargetEvent event) {
-		fOriginalDropType= event.detail;
+		fOriginalDropType = event.detail;
 		updateCurrentListener(event);
 	}
 
@@ -77,10 +77,10 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 */
 	@Override
 	public void dragOperationChanged(final DropTargetEvent event) {
-		fOriginalDropType= event.detail;
-		TransferDropTargetListener oldListener= getCurrentListener();
+		fOriginalDropType = event.detail;
+		TransferDropTargetListener oldListener = getCurrentListener();
 		updateCurrentListener(event);
-		final TransferDropTargetListener newListener= getCurrentListener();
+		final TransferDropTargetListener newListener = getCurrentListener();
 		// only notify the current listener if it hasn't changed based on the
 		// operation change. otherwise the new listener would get a dragEnter
 		// followed by a dragOperationChanged with the exact same event.
@@ -105,9 +105,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 */
 	@Override
 	public void dragOver(final DropTargetEvent event) {
-		TransferDropTargetListener oldListener= getCurrentListener();
+		TransferDropTargetListener oldListener = getCurrentListener();
 		updateCurrentListener(event);
-		final TransferDropTargetListener newListener= getCurrentListener();
+		final TransferDropTargetListener newListener = getCurrentListener();
 
 		// only notify the current listener if it hasn't changed based on the
 		// drag over. otherwise the new listener would get a dragEnter
@@ -183,7 +183,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 *         <code>null</code>.
 	 */
 	private TransferData getSupportedTransferType(TransferData[] dataTypes, TransferDropTargetListener listener) {
-		for (int i= 0; i < dataTypes.length; i++) {
+		for (int i = 0; i < dataTypes.length; i++) {
 			if (listener.getTransfer().isSupportedType(dataTypes[i])) {
 				return dataTypes[i];
 			}
@@ -198,9 +198,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @return the combined set of <code>Transfer</code> types
 	 */
 	public Transfer[] getTransfers() {
-		Transfer[] types= new Transfer[fListeners.length];
-		for (int i= 0; i < fListeners.length; i++) {
-			types[i]= fListeners[i].getTransfer();
+		Transfer[] types = new Transfer[fListeners.length];
+		for (int i = 0; i < fListeners.length; i++) {
+			types[i] = fListeners[i].getTransfer();
 		}
 		return types;
 	}
@@ -223,7 +223,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 				}
 			});
 		}
-		fCurrentListener= listener;
+		fCurrentListener = listener;
 		if (fCurrentListener != null) {
 			SafeRunner.run(new SafeRunnable() {
 				@Override
@@ -247,33 +247,33 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 */
 	private void updateCurrentListener(DropTargetEvent event) {
-		int originalDetail= event.detail;
+		int originalDetail = event.detail;
 		// Revert the detail to the "original" drop type that the User
 		// indicated. This is necessary because the previous listener 
 		// may have changed the detail to something other than what the 
 		// user indicated.
-		event.detail= fOriginalDropType;
+		event.detail = fOriginalDropType;
 
-		for (int i= 0; i < fListeners.length; i++) {
-			TransferDropTargetListener listener= fListeners[i];
-			TransferData dataType= getSupportedTransferType(event.dataTypes, listener);
+		for (int i = 0; i < fListeners.length; i++) {
+			TransferDropTargetListener listener = fListeners[i];
+			TransferData dataType = getSupportedTransferType(event.dataTypes, listener);
 			if (dataType != null) {
-				TransferData originalDataType= event.currentDataType;
+				TransferData originalDataType = event.currentDataType;
 				// set the data type supported by the drop listener
-				event.currentDataType= dataType;
+				event.currentDataType = dataType;
 				if (listener.isEnabled(event)) {
 					// if the listener stays the same, set its previously
 					// determined
 					// event detail
 					if (!setCurrentListener(listener, event))
-						event.detail= originalDetail;
+						event.detail = originalDetail;
 					return;
 				}
-				event.currentDataType= originalDataType;
+				event.currentDataType = originalDataType;
 			}
 		}
 		setCurrentListener(null, event);
-		event.detail= DND.DROP_NONE;
+		event.detail = DND.DROP_NONE;
 	}
 
 }

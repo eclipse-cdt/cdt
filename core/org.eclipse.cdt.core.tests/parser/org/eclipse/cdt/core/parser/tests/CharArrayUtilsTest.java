@@ -48,21 +48,20 @@ public class CharArrayUtilsTest extends TestCase {
 		assertEquals(-1, CharArrayUtils.lastIndexOf('a', "array".toCharArray(), 4));
 		assertEquals(3, CharArrayUtils.lastIndexOf('a', "array".toCharArray(), 3));
 
-		assertEquals(8, CharArrayUtils.lastIndexOf("aaabbbaa".toCharArray(),
-				"aaabbbaaaaabbbaabbbaa".toCharArray()));
-		assertEquals(-1, CharArrayUtils.lastIndexOf("aaabbbaa".toCharArray(),
-				"aabbbaabbbaa".toCharArray()));
+		assertEquals(8, CharArrayUtils.lastIndexOf("aaabbbaa".toCharArray(), "aaabbbaaaaabbbaabbbaa".toCharArray()));
+		assertEquals(-1, CharArrayUtils.lastIndexOf("aaabbbaa".toCharArray(), "aabbbaabbbaa".toCharArray()));
 		assertEquals(6, CharArrayUtils.lastIndexOf("".toCharArray(), "123456".toCharArray()));
 		assertEquals(4, CharArrayUtils.lastIndexOf("56".toCharArray(), "123456".toCharArray()));
 		assertEquals(-1, CharArrayUtils.lastIndexOf("123".toCharArray(), "".toCharArray()));
 
 		char[] buffer = "A::B::C".toCharArray();
 
-        assertEquals(CharArrayUtils.lastIndexOf("::".toCharArray(), buffer), 4);
-        assertTrue(CharArrayUtils.equals(CharArrayUtils.lastSegment(buffer, "::".toCharArray()), "C".toCharArray()));
+		assertEquals(CharArrayUtils.lastIndexOf("::".toCharArray(), buffer), 4);
+		assertTrue(CharArrayUtils.equals(CharArrayUtils.lastSegment(buffer, "::".toCharArray()), "C".toCharArray()));
 
-        buffer = "A::B::C:foo".toCharArray();
-        assertEquals(CharArrayUtils.lastIndexOf("::".toCharArray(), buffer), 4);
-        assertTrue(CharArrayUtils.equals(CharArrayUtils.lastSegment(buffer, "::".toCharArray()), "C:foo".toCharArray()));
+		buffer = "A::B::C:foo".toCharArray();
+		assertEquals(CharArrayUtils.lastIndexOf("::".toCharArray(), buffer), 4);
+		assertTrue(
+				CharArrayUtils.equals(CharArrayUtils.lastSegment(buffer, "::".toCharArray()), "C:foo".toCharArray()));
 	}
 }

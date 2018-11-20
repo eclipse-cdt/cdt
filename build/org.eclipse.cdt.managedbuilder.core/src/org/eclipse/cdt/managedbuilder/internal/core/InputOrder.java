@@ -132,10 +132,10 @@ public class InputOrder implements IInputOrder {
 		fOrder = SafeStringInterner.safeIntern(element.getAttribute(IInputOrder.ORDER));
 
 		// excluded
-        String isEx = element.getAttribute(IInputOrder.EXCLUDED);
-        if (isEx != null){
-    		fExcluded = Boolean.parseBoolean(isEx);
-        }
+		String isEx = element.getAttribute(IInputOrder.EXCLUDED);
+		if (isEx != null) {
+			fExcluded = Boolean.parseBoolean(isEx);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -158,7 +158,7 @@ public class InputOrder implements IInputOrder {
 		// excluded
 		if (element.getAttribute(IInputOrder.EXCLUDED) != null) {
 			String isEx = element.getAttribute(IInputOrder.EXCLUDED);
-			if (isEx != null){
+			if (isEx != null) {
 				fExcluded = Boolean.parseBoolean(isEx);
 			}
 		}
@@ -213,7 +213,8 @@ public class InputOrder implements IInputOrder {
 	 */
 	@Override
 	public void setPath(String newPath) {
-		if (fPath == null && newPath == null) return;
+		if (fPath == null && newPath == null)
+			return;
 		if (fPath == null || newPath == null || !(fPath.equals(newPath))) {
 			fPath = newPath;
 			fIsDirty = true;
@@ -234,7 +235,8 @@ public class InputOrder implements IInputOrder {
 	 */
 	@Override
 	public void setOrder(String newOrder) {
-		if (fOrder == null && newOrder == null) return;
+		if (fOrder == null && newOrder == null)
+			return;
 		if (fOrder == null || newOrder == null || !(fOrder.equals(newOrder))) {
 			fOrder = newOrder;
 			fIsDirty = true;
@@ -262,7 +264,6 @@ public class InputOrder implements IInputOrder {
 		}
 	}
 
-
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
@@ -280,7 +281,8 @@ public class InputOrder implements IInputOrder {
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension InputOrder
- 		if (fIsExtensionInputOrder) return false;
+		if (fIsExtensionInputOrder)
+			return false;
 		return fIsDirty;
 	}
 
@@ -301,12 +303,12 @@ public class InputOrder implements IInputOrder {
 		}
 	}
 
-	public boolean needsRebuild(){
+	public boolean needsRebuild() {
 		return fRebuildState;
 	}
 
-	public void setRebuildState(boolean rebuild){
-		if(isExtensionElement() && rebuild)
+	public void setRebuildState(boolean rebuild) {
+		if (isExtensionElement() && rebuild)
 			return;
 
 		fRebuildState = rebuild;

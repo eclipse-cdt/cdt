@@ -34,14 +34,13 @@ public class PartitionDamager implements IPresentationDamager {
 	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
 	 */
 	@Override
-	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event,
-			boolean documentPartitioningChanged) {
+	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event, boolean documentPartitioningChanged) {
 		if (!documentPartitioningChanged && event.getOffset() == partition.getOffset() + partition.getLength()) {
 			IRegion lineRegion;
 			try {
 				lineRegion = event.fDocument.getLineInformationOfOffset(event.getOffset());
-				int start= partition.getOffset();
-				int end= lineRegion.getOffset() + lineRegion.getLength();
+				int start = partition.getOffset();
+				int end = lineRegion.getOffset() + lineRegion.getLength();
 				return new Region(start, end - start);
 			} catch (BadLocationException exc) {
 				// ignore

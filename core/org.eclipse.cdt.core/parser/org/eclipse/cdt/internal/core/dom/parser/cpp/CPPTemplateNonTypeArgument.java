@@ -34,16 +34,14 @@ public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 
 	public CPPTemplateNonTypeArgument(ICPPEvaluation evaluation) {
 		Assert.isNotNull(evaluation);
-		if (evaluation instanceof EvalFixed || 
-				evaluation.isTypeDependent() || evaluation.isValueDependent()) {
-			fEvaluation= evaluation;
+		if (evaluation instanceof EvalFixed || evaluation.isTypeDependent() || evaluation.isValueDependent()) {
+			fEvaluation = evaluation;
 		} else {
 			IValue value = evaluation.getValue();
 			if (value == IntegralValue.ERROR) {
 				fEvaluation = EvalFixed.INCOMPLETE;
 			} else {
-				fEvaluation= new EvalFixed(evaluation.getType(),
-						evaluation.getValueCategory(), value);
+				fEvaluation = new EvalFixed(evaluation.getType(), evaluation.getValueCategory(), value);
 			}
 		}
 	}
@@ -96,7 +94,7 @@ public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	public ICPPTemplateArgument getExpansionPattern() {
 		IType type = fEvaluation.getType();
 		if (type instanceof ICPPParameterPackType) {
-			IType t= ((ICPPParameterPackType) type).getType();
+			IType t = ((ICPPParameterPackType) type).getType();
 			if (t != null) {
 				ICPPEvaluation evaluation;
 				if (fEvaluation instanceof EvalPackExpansion) {

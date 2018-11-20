@@ -17,20 +17,25 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 public class AutomakeIfElse extends Parent {
 	String condition;
 	String type;
+
 	public AutomakeIfElse(Directive parent, String type, String condition) {
 		super(parent);
 		this.type = type;
 		this.condition = condition;
 	}
+
 	public String getCondition() {
 		return condition;
 	}
+
 	public void setCondition(String condition) {
 		this.condition = condition;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}

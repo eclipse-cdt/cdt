@@ -32,11 +32,11 @@ public class WrapLinesAction extends Action {
 	 * @param viewer - console viewer.
 	 */
 	public WrapLinesAction(BuildConsoleViewer viewer) {
-		super(ConsoleMessages.WrapLinesAction_WrapLines); 
+		super(ConsoleMessages.WrapLinesAction_WrapLines);
 		fConsoleViewer = viewer;
 		propertyChange();
 		setToolTipText(ConsoleMessages.WrapLinesAction_WrapLines);
-		setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_WRAP_LINE)); 
+		setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_WRAP_LINE));
 	}
 
 	public void propertyChange() {

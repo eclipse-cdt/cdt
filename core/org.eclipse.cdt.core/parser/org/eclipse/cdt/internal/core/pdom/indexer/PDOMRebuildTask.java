@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -39,22 +39,22 @@ import org.eclipse.osgi.util.NLS;
  * A task for rebuilding an index, works for all indexers.
  */
 public class PDOMRebuildTask implements IPDOMIndexerTask {
-	protected static final String TRUE= String.valueOf(true);
+	protected static final String TRUE = String.valueOf(true);
 	protected static final ITranslationUnit[] NO_TUS = {};
-	
+
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
 	private volatile IPDOMIndexerTask fDelegate;
 	private IProgressMonitor fProgressMonitor;
 
 	public PDOMRebuildTask(IPDOMIndexer indexer) {
-		fIndexer= indexer;
-		fProgress= createProgress();
+		fIndexer = indexer;
+		fProgress = createProgress();
 	}
 
 	private IndexerProgress createProgress() {
-		IndexerProgress progress= new IndexerProgress();
-		progress.fTimeEstimate= 1000;
+		IndexerProgress progress = new IndexerProgress();
+		progress.fTimeEstimate = 1000;
 		return progress;
 	}
 
@@ -67,14 +67,15 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	public void run(IProgressMonitor monitor) throws InterruptedException {
 		fProgressMonitor = monitor;
 		try {
-			monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 
-					fIndexer.getProject().getElementName()));
-	
-			ICProject cproject= fIndexer.getProject();
-			IProject project= cproject.getProject();
+			monitor.subTask(
+					NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, fIndexer.getProject().getElementName()));
+
+			ICProject cproject = fIndexer.getProject();
+			IProject project = cproject.getProject();
 			if (project.isOpen() && project.exists()) {
 				try {
-					IWritableIndex index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(cproject);
+					IWritableIndex index = ((IWritableIndexManager) CCorePlugin.getIndexManager())
+							.getWritableIndex(cproject);
 					if (index != null) {
 						clearIndex(cproject, index);
 						if (!IPDOMManager.ID_NO_INDEXER.equals(fIndexer.getID())) {
@@ -84,11 +85,11 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 					// Remove task-tags.
 					TodoTaskUpdater.removeTasksFor(project);
 				} catch (CoreException e) {
-					CCorePlugin.log(NLS.bind(Messages.PDOMRebuildTask_0, cproject.getElementName() ), e);
+					CCorePlugin.log(NLS.bind(Messages.PDOMRebuildTask_0, cproject.getElementName()), e);
 				} catch (InterruptedException e) {
 				}
 			}
-			
+
 			if (fDelegate != null) {
 				fDelegate.run(monitor);
 			}
@@ -96,13 +97,13 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 			fProgressMonitor = null;
 		}
 	}
-	
+
 	private void clearIndex(ICProject project, IWritableIndex index) throws CoreException, InterruptedException {
 		// First clear the pdom
 		index.acquireWriteLock(fProgressMonitor);
 		try {
 			index.clear();
-			IWritableIndexFragment wf= index.getWritableFragment();
+			IWritableIndexFragment wf = index.getWritableFragment();
 			if (wf instanceof WritablePDOM) {
 				PDOMManager.writeProjectPDOMProperties((WritablePDOM) wf, project.getProject());
 			}
@@ -112,22 +113,22 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	}
 
 	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
-		boolean allFiles = 
-			TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) || 
-			TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
-		List<ITranslationUnit> sources= new ArrayList<>();
-		List<ITranslationUnit> headers= allFiles ? sources : null;
-		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);
+		boolean allFiles = TRUE
+				.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))
+				|| TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
+		List<ITranslationUnit> sources = new ArrayList<>();
+		List<ITranslationUnit> headers = allFiles ? sources : null;
+		TranslationUnitCollector collector = new TranslationUnitCollector(sources, headers, monitor);
 		project.accept(collector);
-		ITranslationUnit[] tus= sources.toArray(new ITranslationUnit[sources.size()]);
-		IPDOMIndexerTask delegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
+		ITranslationUnit[] tus = sources.toArray(new ITranslationUnit[sources.size()]);
+		IPDOMIndexerTask delegate = fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (delegate instanceof PDOMIndexerTask) {
 			final PDOMIndexerTask pdomIndexerTask = (PDOMIndexerTask) delegate;
 			pdomIndexerTask.setUpdateFlags(IIndexManager.UPDATE_ALL);
 			pdomIndexerTask.setWriteInfoToLog();
 		}
 		synchronized (this) {
-			fDelegate= delegate;
+			fDelegate = delegate;
 		}
 	}
 

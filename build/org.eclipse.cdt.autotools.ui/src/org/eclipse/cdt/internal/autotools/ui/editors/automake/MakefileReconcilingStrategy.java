@@ -27,31 +27,27 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
-
 public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 
-
 	private int fLastRegionOffset;
-	private ITextEditor fEditor;	
+	private ITextEditor fEditor;
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
 	private MakefileContentOutlinePage fOutliner;
 	private IReconcilingParticipant fMakefileReconcilingParticipant;
 
 	public MakefileReconcilingStrategy(MakefileEditor editor) {
-		fOutliner= editor.getOutlinePage();
+		fOutliner = editor.getOutlinePage();
 		fLastRegionOffset = Integer.MAX_VALUE;
-		fEditor= editor;
-		fManager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
-		fDocumentProvider= AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
-		fMakefileReconcilingParticipant= (IReconcilingParticipant)fEditor;
+		fEditor = editor;
+		fManager = AutomakeEditorFactory.getDefault().getWorkingCopyManager();
+		fDocumentProvider = AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
+		fMakefileReconcilingParticipant = (IReconcilingParticipant) fEditor;
 	}
-	
+
 	@Override
 	public void setDocument(IDocument document) {
-	}	
-
+	}
 
 	@Override
 	public void reconcile(IRegion region) {
@@ -59,7 +55,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		// on a file when it gets changed. This is because this gets called
 		// multiple times with different regions of the file, we do a 
 		// complete parse on the first region.
-		if(region.getOffset() <= fLastRegionOffset) {
+		if (region.getOffset() <= fLastRegionOffset) {
 			reconcile();
 		}
 		fLastRegionOffset = region.getOffset();
@@ -71,7 +67,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		// the contentouline viewer.
 		//reconcile();
 	}
-	
+
 	private void reconcile() {
 		try {
 			IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
@@ -82,7 +78,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 					makefile.parse(makefile.getFileURI(), reader);
 				} catch (IOException e) {
 				}
-				
+
 				fOutliner.update();
 			}
 		} finally {
@@ -94,5 +90,5 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 				//
 			}
 		}
- 	}	
+	}
 }

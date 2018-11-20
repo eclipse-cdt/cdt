@@ -29,14 +29,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * The standard template parameter (template<typename T> or template<class T>).
  */
-public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
-		ICPPTemplateTypeParameter, ICPPUnknownType, ICPPUnknownBinding {
+public class CPPTemplateTypeParameter extends CPPTemplateParameter
+		implements ICPPTemplateTypeParameter, ICPPUnknownType, ICPPUnknownBinding {
 	private ICPPScope unknownScope;
 	private final boolean fIsParameterPack;
 
 	public CPPTemplateTypeParameter(IASTName name, boolean isPack) {
 		super(name);
-		fIsParameterPack= isPack;
+		fIsParameterPack = isPack;
 	}
 
 	@Override
@@ -46,21 +46,21 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 
 	@Override
 	public ICPPScope asScope() {
-	    if (unknownScope == null) {
-	    	IASTName n = null;
-	    	IASTNode[] nodes = getDeclarations();
-	    	if (nodes != null && nodes.length > 0)
-	    		n = (IASTName) nodes[0];
-	        unknownScope = new CPPUnknownTypeScope(this, n);
-	    }
-	    return unknownScope;
+		if (unknownScope == null) {
+			IASTName n = null;
+			IASTNode[] nodes = getDeclarations();
+			if (nodes != null && nodes.length > 0)
+				n = (IASTName) nodes[0];
+			unknownScope = new CPPUnknownTypeScope(this, n);
+		}
+		return unknownScope;
 	}
 
 	@Override
 	public IType getDefault() {
 		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
-		    return null;
+			return null;
 		for (IASTName nd : nds) {
 			if (nd != null) {
 				IASTNode parent = nd.getParent();
@@ -77,22 +77,22 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
-		IType t= getDefault();
+		IType t = getDefault();
 		if (t == null)
 			return null;
 
 		return new CPPTemplateTypeArgument(t);
 	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType type) {
-        if (type == this)
-            return true;
-        if (type instanceof ITypedef)
-            return type.isSameType(this);
-        if (!(type instanceof ICPPTemplateTypeParameter))
-        	return false;
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef)
+			return type.isSameType(this);
+		if (!(type instanceof ICPPTemplateTypeParameter))
+			return false;
 
-        return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
-    }
+		return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
+	}
 }

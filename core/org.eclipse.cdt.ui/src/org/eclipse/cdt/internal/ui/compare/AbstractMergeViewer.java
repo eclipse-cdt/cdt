@@ -34,7 +34,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-
 /**
  * Abstract implementation of a merge viewer.
  */
@@ -69,11 +68,11 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 
 		IPreferenceStore store = getPreferenceStore();
 
-		fUseSystemColors= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-		if (! fUseSystemColors) {
-			RGB bg= createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+		fUseSystemColors = store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+		if (!fUseSystemColors) {
+			RGB bg = createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 			setBackgroundColor(bg);
-			RGB fg= createColor(store, ICColorConstants.C_DEFAULT);
+			RGB fg = createColor(store, ICColorConstants.C_DEFAULT);
 			setForegroundColor(fg);
 		}
 
@@ -81,8 +80,8 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 
 	protected IPreferenceStore getPreferenceStore() {
 		if (fPreferenceStore == null) {
-			fPreferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
-			fPreferenceChangeListener= new IPropertyChangeListener() {
+			fPreferenceStore = CUIPlugin.getDefault().getCombinedPreferenceStore();
+			fPreferenceChangeListener = new IPropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					handlePropertyChange(event);
@@ -97,38 +96,39 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 	protected void handleDispose(DisposeEvent event) {
 		if (fPreferenceChangeListener != null) {
 			fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
-			fPreferenceChangeListener= null;
+			fPreferenceChangeListener = null;
 		}
 		super.handleDispose(event);
 	}
 
 	protected void handlePropertyChange(PropertyChangeEvent event) {
-		
-		String key= event.getProperty();
-		
+
+		String key = event.getProperty();
+
 		if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
-	
+
 			if (!fUseSystemColors) {
-				RGB bg= createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+				RGB bg = createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 				setBackgroundColor(bg);
 			}
-						
+
 		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
-	
-			fUseSystemColors= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+
+			fUseSystemColors = fPreferenceStore
+					.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
 			if (fUseSystemColors) {
 				setBackgroundColor(null);
 				setForegroundColor(null);
 			} else {
-				RGB bg= createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+				RGB bg = createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 				setBackgroundColor(bg);
-				RGB fg= createColor(fPreferenceStore, ICColorConstants.C_DEFAULT);
+				RGB fg = createColor(fPreferenceStore, ICColorConstants.C_DEFAULT);
 				setForegroundColor(fg);
 			}
 		} else if (key.equals(ICColorConstants.C_DEFAULT)) {
-	
+
 			if (!fUseSystemColors) {
-				RGB fg= createColor(fPreferenceStore, ICColorConstants.C_DEFAULT);
+				RGB fg = createColor(fPreferenceStore, ICColorConstants.C_DEFAULT);
 				setForegroundColor(fg);
 			}
 		}
@@ -142,7 +142,7 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
-			((SourceViewer)textViewer).configure(getSourceViewerConfiguration());
+			((SourceViewer) textViewer).configure(getSourceViewerConfiguration());
 		}
 	}
 

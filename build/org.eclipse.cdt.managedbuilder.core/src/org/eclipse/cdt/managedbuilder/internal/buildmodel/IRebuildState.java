@@ -16,8 +16,8 @@ package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 public interface IRebuildState {
 	public static final int NEED_REBUILD = 1;
 	public static final int REMOVED = 1 << 1;
-	
+
 	int getState();
-	
+
 	void setState(int state);
 }

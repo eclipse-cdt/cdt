@@ -52,18 +52,17 @@ public class MethodDefinitionInsertLocationFinder {
 	// might want to find multiple insert locations in the same translation unit. This prevents
 	// many redundant calls to DefinitionFinder.getDefinition and speeds up the process quite
 	// a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
-	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition =
-			new HashMap<IASTSimpleDeclaration, IASTName>();
+	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<IASTSimpleDeclaration, IASTName>();
 
 	public InsertLocation find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
 			IASTNode parent, CRefactoringContext refactoringContext, IProgressMonitor pm) throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation insertLocation = new InsertLocation();
 
-		Collection<IASTSimpleDeclaration> allPreviousSimpleDeclarationsFromClassInReverseOrder =
-				getAllPreviousSimpleDeclarationsFromClassInReverseOrder(declarations, methodDeclarationLocation, pm);
-		Collection<IASTSimpleDeclaration> allFollowingSimpleDeclarationsFromClass =
-				getAllFollowingSimpleDeclarationsFromClass(declarations, methodDeclarationLocation, pm);
+		Collection<IASTSimpleDeclaration> allPreviousSimpleDeclarationsFromClassInReverseOrder = getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
+				declarations, methodDeclarationLocation, pm);
+		Collection<IASTSimpleDeclaration> allFollowingSimpleDeclarationsFromClass = getAllFollowingSimpleDeclarationsFromClass(
+				declarations, methodDeclarationLocation, pm);
 
 		for (IASTSimpleDeclaration simpleDeclaration : allPreviousSimpleDeclarationsFromClassInReverseOrder) {
 			if (pm != null && pm.isCanceled()) {
@@ -77,14 +76,14 @@ public class MethodDefinitionInsertLocationFinder {
 				IASTName name = simpleDeclaration.getDeclarators()[0].getName();
 				definition = DefinitionFinder.getDefinition(name, refactoringContext, pm);
 				if (definition != null) {
-					cachedDeclarationToDefinition.put(simpleDeclaration, definition);	
+					cachedDeclarationToDefinition.put(simpleDeclaration, definition);
 				}
 			}
 
- 			if (definition != null) {
- 				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(
- 						definition), definition.getTranslationUnit().getOriginatingTranslationUnit());
- 			}
+			if (definition != null) {
+				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(definition),
+						definition.getTranslationUnit().getOriginatingTranslationUnit());
+			}
 		}
 
 		for (IASTSimpleDeclaration simpleDeclaration : allFollowingSimpleDeclarationsFromClass) {
@@ -111,8 +110,8 @@ public class MethodDefinitionInsertLocationFinder {
 
 		if (insertLocation.getTranslationUnit() == null) {
 			if (declarationTu.isHeaderUnit()) {
-				ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(
-						declarationTu, refactoringContext);
+				ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(declarationTu,
+						refactoringContext);
 				if (partner != null) {
 					insertLocation.setParentNode(refactoringContext.getAST(partner, null), partner);
 				}
@@ -185,18 +184,17 @@ public class MethodDefinitionInsertLocationFinder {
 				if (pm != null && pm.isCanceled()) {
 					return outputDeclarations;
 				}
-				if (isMemberFunctionDeclaration(decl) &&
-						decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {
+				if (isMemberFunctionDeclaration(decl)
+						&& decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber()) {
 					outputDeclarations.add((IASTSimpleDeclaration) decl);
 				}
 			}
 		}
 		return outputDeclarations;
 	}
-	
+
 	private static boolean isMemberFunctionDeclaration(IASTDeclaration decl) {
-		return decl instanceof IASTSimpleDeclaration &&
-				((IASTSimpleDeclaration) decl).getDeclarators().length > 0 &&
-				((IASTSimpleDeclaration) decl).getDeclarators()[0] instanceof IASTFunctionDeclarator;
+		return decl instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) decl).getDeclarators().length > 0
+				&& ((IASTSimpleDeclaration) decl).getDeclarators()[0] instanceof IASTFunctionDeclarator;
 	}
 }

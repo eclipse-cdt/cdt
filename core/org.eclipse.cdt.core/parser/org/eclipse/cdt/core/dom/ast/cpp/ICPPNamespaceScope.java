@@ -36,7 +36,7 @@ public interface ICPPNamespaceScope extends ICPPScope {
 	 * namespaces during lookup. 
 	 */
 	public ICPPUsingDirective[] getUsingDirectives();
-	
+
 	/**
 	 * Returns the inline namespaces that are members of this scope.
 	 * @since 5.3

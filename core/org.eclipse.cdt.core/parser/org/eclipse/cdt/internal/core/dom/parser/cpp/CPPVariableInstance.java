@@ -29,8 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 /**
  * An instance of a variable template.
  */
-public class CPPVariableInstance extends CPPSpecialization
-		implements ICPPVariableInstance, ICPPInternalVariable {
+public class CPPVariableInstance extends CPPSpecialization implements ICPPVariableInstance, ICPPInternalVariable {
 	private ICPPTemplateArgument[] templateArguments;
 	private IType type;
 	private IValue initialValue;

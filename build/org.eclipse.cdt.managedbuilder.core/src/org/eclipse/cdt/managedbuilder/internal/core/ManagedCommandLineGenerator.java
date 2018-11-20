@@ -17,23 +17,22 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 
-public class ManagedCommandLineGenerator implements
-		IManagedCommandLineGenerator {
+public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator {
 
-	public final String AT = "@";	//$NON-NLS-1$
-	public final String COLON = ":";	//$NON-NLS-1$
-	public final String DOT = ".";	//$NON-NLS-1$
-	public final String ECHO = "echo";	//$NON-NLS-1$
-	public final String IN_MACRO = "$<";	//$NON-NLS-1$
-	public final String LINEBREAK = "\\\n";	//$NON-NLS-1$
-	public final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
-	public final String OUT_MACRO = "$@";	//$NON-NLS-1$
-	public final String SEPARATOR = "/";	//$NON-NLS-1$
-	public final String SINGLE_QUOTE = "'";	//$NON-NLS-1$
+	public final String AT = "@"; //$NON-NLS-1$
+	public final String COLON = ":"; //$NON-NLS-1$
+	public final String DOT = "."; //$NON-NLS-1$
+	public final String ECHO = "echo"; //$NON-NLS-1$
+	public final String IN_MACRO = "$<"; //$NON-NLS-1$
+	public final String LINEBREAK = "\\\n"; //$NON-NLS-1$
+	public final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
+	public final String OUT_MACRO = "$@"; //$NON-NLS-1$
+	public final String SEPARATOR = "/"; //$NON-NLS-1$
+	public final String SINGLE_QUOTE = "'"; //$NON-NLS-1$
 	public final String DOUBLE_QUOTE = "\""; //$NON-NLS-1$
-	public final String TAB = "\t";	//$NON-NLS-1$
-	public final String WHITESPACE = " ";	//$NON-NLS-1$
-	public final String WILDCARD = "%";	//$NON-NLS-1$
+	public final String TAB = "\t"; //$NON-NLS-1$
+	public final String WHITESPACE = " "; //$NON-NLS-1$
+	public final String WILDCARD = "%"; //$NON-NLS-1$
 	public final String UNDERLINE = "_"; //$NON-NLS-1$
 	public final String EMPTY = ""; //$NON-NLS-1$
 
@@ -56,36 +55,35 @@ public class ManagedCommandLineGenerator implements
 	}
 
 	public static ManagedCommandLineGenerator getCommandLineGenerator() {
-		if( cmdLineGen == null ) cmdLineGen = new ManagedCommandLineGenerator();
+		if (cmdLineGen == null)
+			cmdLineGen = new ManagedCommandLineGenerator();
 		return cmdLineGen;
 	}
 
 	private String makeVariable(String variableName) {
-		return "${"+variableName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "${" + variableName + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator#getCommandLineInfo(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String[], java.lang.String)
 	 */
 	@Override
-	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool,
-			String commandName, String[] flags, String outputFlag,
-			String outputPrefix, String outputName,
-			String[] inputResources, String commandLinePattern)
-	{
-		if( commandLinePattern == null || commandLinePattern.length() <= 0 )
+	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool, String commandName, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources,
+			String commandLinePattern) {
+		if (commandLinePattern == null || commandLinePattern.length() <= 0)
 			commandLinePattern = Tool.DEFAULT_PATTERN;
 
 		// if the output name isn't a variable then quote it
-		if(outputName.length()>0 && outputName.indexOf("$(") != 0) //$NON-NLS-1$
+		if (outputName.length() > 0 && outputName.indexOf("$(") != 0) //$NON-NLS-1$
 			outputName = DOUBLE_QUOTE + outputName + DOUBLE_QUOTE;
 
-		String inputsStr=""; //$NON-NLS-1$
-		if (inputResources!=null) {
+		String inputsStr = ""; //$NON-NLS-1$
+		if (inputResources != null) {
 			for (String inp : inputResources) {
-				if(inp!=null && inp.length()>0) {
+				if (inp != null && inp.length() > 0) {
 					// if the input resource isn't a variable then quote it
-					if(inp.indexOf("$(") != 0) { //$NON-NLS-1$
+					if (inp.indexOf("$(") != 0) { //$NON-NLS-1$
 						inp = DOUBLE_QUOTE + inp + DOUBLE_QUOTE;
 					}
 					inputsStr = inputsStr + inp + WHITESPACE;
@@ -116,11 +114,12 @@ public class ManagedCommandLineGenerator implements
 				outputFlag, outputPrefix, outputName, stringArrayToString(inputResources));
 	}
 
-	private String stringArrayToString( String[] array ) {
-		if( array == null || array.length <= 0 ) return ""; //$NON-NLS-1$
+	private String stringArrayToString(String[] array) {
+		if (array == null || array.length <= 0)
+			return ""; //$NON-NLS-1$
 		StringBuilder sb = new StringBuilder();
-		for( int i = 0; i < array.length; i++ ) {
-			if(i > 0) // we add whitespace after each but not first so .trim() is a no-op
+		for (int i = 0; i < array.length; i++) {
+			if (i > 0) // we add whitespace after each but not first so .trim() is a no-op
 				sb.append(WHITESPACE);
 			sb.append(array[i]);
 		}

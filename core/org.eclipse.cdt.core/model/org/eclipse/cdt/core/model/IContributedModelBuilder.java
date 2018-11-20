@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Interface supported by model builders for contributed languages.
  * 
@@ -30,7 +29,7 @@ package org.eclipse.cdt.core.model;
  * @author Jeff Overbey
  */
 public interface IContributedModelBuilder {
-	
+
 	/**
 	 * A factory to create a model builder for a translation unit.
 	 * 

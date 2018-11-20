@@ -20,7 +20,7 @@ package org.eclipse.cdt.make.core.makefile;
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 7.3
  */
-public interface IBuiltinFunction  extends IDirective {
+public interface IBuiltinFunction extends IDirective {
 
 	/**
 	 * @return the name of the function

@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.model.Structure;
 /**
  * Filters out anonymous structs and enums.
  */
-public class AnonymousStructFilter  extends ViewerFilter {
+public class AnonymousStructFilter extends ViewerFilter {
 	/**
 	 * Returns the result of this filter, when applied to the
 	 * given inputs.

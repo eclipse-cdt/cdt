@@ -24,11 +24,11 @@ public class XlcLRSemanticsTests extends LRSemanticsTests {
 	public static TestSuite suite() {
 		return suite(XlcLRSemanticsTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

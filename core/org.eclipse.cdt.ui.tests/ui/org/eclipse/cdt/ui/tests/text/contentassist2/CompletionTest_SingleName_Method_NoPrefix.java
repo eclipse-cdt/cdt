@@ -12,6 +12,7 @@
  * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -22,54 +23,35 @@ import junit.framework.TestSuite;
  * Lookup.THIS
  *
  */
-public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_SingleName_Method_NoPrefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart5.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	
-	private final String[] expectedResults = {
-			"AStruct",
-			"XStruct",
-			"aClass",
-			"aFirstEnum",
-			"aFunction(void) bool",
-			"aNamespace",
-			"aSecondEnum",
-			"aThirdEnum",
-			"aVariable : int",
-			"anEnumeration",
-			"anotherClass",
-			"anotherField : int",
-			"anotherFunction(void) void",
-			"anotherMethod(void) void",
-			"xEnumeration",
-			"xFirstEnum",
-			"xFunction(void) bool",
-			"xNamespace",
-			"xOtherClass",
-			"xOtherFunction(void) void",
-			"xSecondEnum",
-			"xThirdEnum",
-			"xVariable : int",
-			"~anotherClass(void) " 
+
+	private final String[] expectedResults = { "AStruct", "XStruct", "aClass", "aFirstEnum", "aFunction(void) bool",
+			"aNamespace", "aSecondEnum", "aThirdEnum", "aVariable : int", "anEnumeration", "anotherClass",
+			"anotherField : int", "anotherFunction(void) void", "anotherMethod(void) void", "xEnumeration",
+			"xFirstEnum", "xFunction(void) bool", "xNamespace", "xOtherClass", "xOtherFunction(void) void",
+			"xSecondEnum", "xThirdEnum", "xVariable : int", "~anotherClass(void) "
 			// extra result
 			// "operator =(const anotherClass &) anotherClass &",
 	};
-	
+
 	public CompletionTest_SingleName_Method_NoPrefix(String name) {
 		super(name);
 		// operators should not be proposed
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172304
 		setExpectFailure(172304);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_SingleName_Method_NoPrefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_SingleName_Method_NoPrefix.class.getName());
 		suite.addTest(new CompletionTest_SingleName_Method_NoPrefix("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -109,6 +91,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

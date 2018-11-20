@@ -33,36 +33,42 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * </p>
  */
 @ThreadSafe
-@SuppressWarnings({"restriction"})
-public class PDAAdapterFactory implements IAdapterFactory 
-{
-    // This IAdapterFactory method returns adapters for the PDA launch object only.
-    @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (!(adaptableObject instanceof PDALaunch)) return null;
+@SuppressWarnings({ "restriction" })
+public class PDAAdapterFactory implements IAdapterFactory {
+	// This IAdapterFactory method returns adapters for the PDA launch object only.
+	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
+	public Object getAdapter(Object adaptableObject, Class adapterType) {
+		if (!(adaptableObject instanceof PDALaunch))
+			return null;
 
-        PDALaunch launch = (PDALaunch)adaptableObject;
+		PDALaunch launch = (PDALaunch) adaptableObject;
 
-        // Check for valid session.  
-        // Note: even if the session is no longer active, the adapter set 
-        // should still be returned.  This is because the view model may still
-        // need to show elements representing a terminated process/thread/etc.
-        DsfSession session = launch.getSession();
-        if (session == null) return null;
+		// Check for valid session.  
+		// Note: even if the session is no longer active, the adapter set 
+		// should still be returned.  This is because the view model may still
+		// need to show elements representing a terminated process/thread/etc.
+		DsfSession session = launch.getSession();
+		if (session == null)
+			return null;
 
-        SessionAdapterSet adapterSet = PDAUIPlugin.getDefault().getAdapterSet(launch);
-        if (adapterSet == null) return null;
-        
-        // Returns the adapter type for the launch object.
-        if (adapterType.equals(IElementContentProvider.class)) return adapterSet.fViewModelAdapter;
-        else if (adapterType.equals(IModelProxyFactory.class)) return adapterSet.fViewModelAdapter;
-        else if (adapterType.equals(ISuspendTrigger.class)) return adapterSet.fSuspendTrigger;
-        else return null;
-    }
+		SessionAdapterSet adapterSet = PDAUIPlugin.getDefault().getAdapterSet(launch);
+		if (adapterSet == null)
+			return null;
 
-    @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
-    public Class[] getAdapterList() {
-        return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class };
-    }
+		// Returns the adapter type for the launch object.
+		if (adapterType.equals(IElementContentProvider.class))
+			return adapterSet.fViewModelAdapter;
+		else if (adapterType.equals(IModelProxyFactory.class))
+			return adapterSet.fViewModelAdapter;
+		else if (adapterType.equals(ISuspendTrigger.class))
+			return adapterSet.fSuspendTrigger;
+		else
+			return null;
+	}
+
+	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
+	public Class[] getAdapterList() {
+		return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class };
+	}
 
 }

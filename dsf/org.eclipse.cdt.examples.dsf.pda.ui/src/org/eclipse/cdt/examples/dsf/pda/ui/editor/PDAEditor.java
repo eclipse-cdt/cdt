@@ -26,27 +26,27 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * PDA editor
  */
 public class PDAEditor extends AbstractDecoratedTextEditor {
-    
-    /**
-     * Creates a PDE editor
-     */
-    public PDAEditor() {
-        super();
-        setSourceViewerConfiguration(new PDASourceViewerConfiguration());
-        setRulerContextMenuId("pda.editor.rulerMenu");
-        setEditorContextMenuId("pda.editor.editorMenu");
-    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
-     */
-    protected void createActions() {
-        super.createActions();
-        ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.cdt.examples.dsf.pda.ui.editor.PDAEditorMessages"); //$NON-NLS-1$
-        IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
-        action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-        setAction("ContentAssistProposal", action); //$NON-NLS-1$
-    }
-    
-    
+	/**
+	 * Creates a PDE editor
+	 */
+	public PDAEditor() {
+		super();
+		setSourceViewerConfiguration(new PDASourceViewerConfiguration());
+		setRulerContextMenuId("pda.editor.rulerMenu");
+		setEditorContextMenuId("pda.editor.editorMenu");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
+	 */
+	protected void createActions() {
+		super.createActions();
+		ResourceBundle bundle = ResourceBundle
+				.getBundle("org.eclipse.cdt.examples.dsf.pda.ui.editor.PDAEditorMessages"); //$NON-NLS-1$
+		IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", action); //$NON-NLS-1$
+	}
+
 }

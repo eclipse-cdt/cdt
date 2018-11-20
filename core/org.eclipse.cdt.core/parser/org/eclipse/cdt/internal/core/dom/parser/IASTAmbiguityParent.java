@@ -16,5 +16,5 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 public interface IASTAmbiguityParent {
-    public void replace(IASTNode child, IASTNode other);
+	public void replace(IASTNode child, IASTNode other);
 }

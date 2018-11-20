@@ -24,14 +24,14 @@ import org.eclipse.swt.widgets.Display;
 
 public class ColorManager implements ISharedTextColors {
 
-	public static final String MAKE_COMMENT_COLOR ="org.eclipse.cdt.autotools.ui.automake.editor.comment"; //$NON-NLS-1$
+	public static final String MAKE_COMMENT_COLOR = "org.eclipse.cdt.autotools.ui.automake.editor.comment"; //$NON-NLS-1$
 	public static final String MAKE_KEYWORD_COLOR = "org.eclipse.cdt.autotools.ui.automake.editor.keyword"; //$NON-NLS-1$
 	public static final String MAKE_FUNCTION_COLOR = "org.eclipse.cdt.autotools.ui.automake.editor.function"; //$NON-NLS-1$
 	public static final String MAKE_MACRO_REF_COLOR = "org.eclipse.cdt.autotools.ui.automake.editor.macro_ref"; //$NON-NLS-1$
 	public static final String MAKE_MACRO_DEF_COLOR = "org.eclipse.cdt.autotools.ui.automake.editor.macro_def"; //$NON-NLS-1$
 	public static final String MAKE_DEFAULT_COLOR = "org.eclipse.cdt.autotools.ui.automake.editor.default"; //$NON-NLS-1$
 
-	public static final String AUTOCONF_COMMENT_COLOR ="org.eclipse.cdt.autotools.ui.autoconf.editor.comment"; //$NON-NLS-1$
+	public static final String AUTOCONF_COMMENT_COLOR = "org.eclipse.cdt.autotools.ui.autoconf.editor.comment"; //$NON-NLS-1$
 	public static final String AUTOCONF_KEYWORD_COLOR = "org.eclipse.cdt.autotools.ui.autoconf.editor.keyword"; //$NON-NLS-1$
 	public static final String AUTOCONF_VAR_REF_COLOR = "org.eclipse.cdt.autotools.ui.autoconf.editor.var_ref"; //$NON-NLS-1$
 	public static final String AUTOCONF_VAR_SET_COLOR = "org.eclipse.cdt.autotools.ui.autoconf.editor.var_set"; //$NON-NLS-1$
@@ -57,13 +57,13 @@ public class ColorManager implements ISharedTextColors {
 	public static final RGB AUTOCONF_DEFAULT_RGB = new RGB(0, 0, 0);
 
 	private static ColorManager fgColorManager;
-	
+
 	private ColorManager() {
 	}
-	
+
 	public static ColorManager getDefault() {
 		if (fgColorManager == null) {
-			fgColorManager= new ColorManager();
+			fgColorManager = new ColorManager();
 		}
 		return fgColorManager;
 	}
@@ -74,7 +74,7 @@ public class ColorManager implements ISharedTextColors {
 	public void dispose() {
 		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
-			 e.next().dispose();
+			e.next().dispose();
 	}
 
 	@Override

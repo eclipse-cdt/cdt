@@ -28,26 +28,26 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
  */
 public class MIResumeActionEnabler implements IResumeActionEnabler {
 
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fServiceTracker;
-    private final IExecutionDMContext fContext;
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fServiceTracker;
+	private final IExecutionDMContext fContext;
 
-    public MIResumeActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
-        fExecutor = executor;
-        fServiceTracker = serviceTracker;
-        fContext = (IExecutionDMContext) context;
-    }
+	public MIResumeActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
+		fExecutor = executor;
+		fServiceTracker = serviceTracker;
+		fContext = (IExecutionDMContext) context;
+	}
 
 	@Override
-    public void resume() throws Exception {
-    	fExecutor.execute(new DsfRunnable() { 
-    		@Override
-    		public void run() {
-    			final IRunControl runControlService = fServiceTracker.getService(IRunControl.class);
-    			if (runControlService != null) {
-    				runControlService.resume(fContext, new RequestMonitor(fExecutor, null));
-    			}	
-    		}
-    	});
-    }
+	public void resume() throws Exception {
+		fExecutor.execute(new DsfRunnable() {
+			@Override
+			public void run() {
+				final IRunControl runControlService = fServiceTracker.getService(IRunControl.class);
+				if (runControlService != null) {
+					runControlService.resume(fContext, new RequestMonitor(fExecutor, null));
+				}
+			}
+		});
+	}
 }

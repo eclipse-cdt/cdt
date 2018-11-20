@@ -57,8 +57,7 @@ import org.osgi.framework.Version;
  * This class represents a set of configurations
  * to be edited simultaneously on property pages.
  */
-public class MultiConfiguration extends MultiItemsHolder implements
-		IMultiConfiguration {
+public class MultiConfiguration extends MultiItemsHolder implements IMultiConfiguration {
 	private static final String[] EMPTY_STR_ARRAY = new String[0];
 
 	protected IConfiguration[] fCfgs = null;
@@ -66,8 +65,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 
 	public MultiConfiguration(IConfiguration[] cfs) {
 		fCfgs = cfs;
-		for (int i=0; i<fCfgs.length; i++)
-			if (((Configuration)fCfgs[i]).getConfigurationDescription().isActive()) {
+		for (int i = 0; i < fCfgs.length; i++)
+			if (((Configuration) fCfgs[i]).getConfigurationDescription().isActive()) {
 				curr = i;
 				break;
 			}
@@ -79,11 +78,10 @@ public class MultiConfiguration extends MultiItemsHolder implements
 
 	public static IConfiguration[] cfds2cfs(ICConfigurationDescription[] cfgds) {
 		IConfiguration[] cfs = new IConfiguration[cfgds.length];
-		for (int i=0; i<cfgds.length; i++)
+		for (int i = 0; i < cfgds.length; i++)
 			cfs[i] = ManagedBuildManager.getConfigurationForDescription(cfgds[i]);
 		return cfs;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.MultiItemsHolder#getItems()
@@ -114,7 +112,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void changeBuilder(IBuilder newBuilder, String id, String name) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].changeBuilder(newBuilder, id, name);
 	}
 
@@ -142,8 +140,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#createFileInfo(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IFolderInfo, org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IFileInfo createFileInfo(IPath path, IFolderInfo base,
-			ITool baseTool, String id, String name) {
+	public IFileInfo createFileInfo(IPath path, IFolderInfo base, ITool baseTool, String id, String name) {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfiguration.createFileInfo(5)"); //$NON-NLS-1$
 		return null; // curr().createFileInfo(path, base, baseTool, id, name);
@@ -203,10 +200,9 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#createToolChain(org.eclipse.cdt.managedbuilder.core.IToolChain, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public IToolChain createToolChain(IToolChain superClass, String Id,
-			String name, boolean isExtensionElement) {
+	public IToolChain createToolChain(IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		if (DEBUG)
-			System.out.println("Bad multi access: MultiConfiguration.createToolChain()");		 //$NON-NLS-1$
+			System.out.println("Bad multi access: MultiConfiguration.createToolChain()"); //$NON-NLS-1$
 		return null; // do nothing
 	}
 
@@ -214,26 +210,13 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#generateToolCommandLineInfo(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[], org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
 	 */
 	@Override
-	public IManagedCommandLineInfo generateToolCommandLineInfo(
-			String sourceExtension,
-			String[] flags,
-			String outputFlag,
-			String outputPrefix,
-			String outputName,
-			String[] inputResources,
-			IPath inputLocation,
+	public IManagedCommandLineInfo generateToolCommandLineInfo(String sourceExtension, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation,
 			IPath outputLocation) {
 		if (DEBUG)
 			System.out.println("Strange multi access: MultiConfiguration.generateToolCommandLineInfo()"); //$NON-NLS-1$
-		return curr().generateToolCommandLineInfo(
-				sourceExtension,
-				flags,
-				outputFlag,
-				outputPrefix,
-				outputName,
-				inputResources,
-				inputLocation,
-				outputLocation);
+		return curr().generateToolCommandLineInfo(sourceExtension, flags, outputFlag, outputPrefix, outputName,
+				inputResources, inputLocation, outputLocation);
 	}
 
 	/* (non-Javadoc)
@@ -242,15 +225,15 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public String getArtifactExtension() {
 		String s = fCfgs[0].getArtifactExtension();
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getArtifactExtension()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getArtifactExtension()))
 				return EMPTY_STR;
 		return s;
 	}
 
 	public String[] getArtifactExtensions() {
 		String[] s = new String[fCfgs.length];
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			s[i] = fCfgs[i].getArtifactExtension();
 		return s;
 	}
@@ -261,14 +244,15 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public String getArtifactName() {
 		String s = fCfgs[0].getArtifactName();
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getArtifactName()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getArtifactName()))
 				return EMPTY_STR;
 		return s;
 	}
+
 	public String[] getArtifactNames() {
 		String[] s = new String[fCfgs.length];
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			s[i] = fCfgs[i].getArtifactName();
 		return s;
 	}
@@ -301,8 +285,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IBuildPropertyValue b = fCfgs[0].getBuildArtefactType();
 		if (b == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! b.equals(fCfgs[i].getBuildArtefactType()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!b.equals(fCfgs[i].getBuildArtefactType()))
 				return null;
 		return b;
 	}
@@ -315,8 +299,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getBuildCommand();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getBuildCommand()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getBuildCommand()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -339,8 +323,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IConfigurationBuildMacroSupplier ms = fCfgs[0].getBuildMacroSupplier();
 		if (ms == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! ms.equals(fCfgs[i].getBuildMacroSupplier()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!ms.equals(fCfgs[i].getBuildMacroSupplier()))
 				return null;
 		return ms;
 	}
@@ -353,8 +337,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IBuilder b = fCfgs[0].getBuilder();
 		if (b == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! b.matches(fCfgs[i].getBuilder()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!b.matches(fCfgs[i].getBuilder()))
 				return null;
 		return b;
 	}
@@ -365,8 +349,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public String getCleanCommand() {
 		String s = fCfgs[0].getCleanCommand();
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getCleanCommand()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getCleanCommand()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -387,8 +371,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public String getDescription() {
 		String s = fCfgs[0].getDescription();
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getDescription()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getDescription()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -409,8 +393,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IConfigurationEnvironmentVariableSupplier vs = fCfgs[0].getEnvironmentVariableSupplier();
 		if (vs == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! vs.equals(fCfgs[i].getEnvironmentVariableSupplier()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!vs.equals(fCfgs[i].getEnvironmentVariableSupplier()))
 				return null;
 		return vs;
 	}
@@ -424,8 +408,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getErrorParserIds();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getErrorParserIds()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getErrorParserIds()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -438,15 +422,16 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String[] s = fCfgs[0].getErrorParserList();
 		if (s == null || s.length == 0)
 			return EMPTY_STR_ARRAY;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! Arrays.equals(s, fCfgs[i].getErrorParserList()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!Arrays.equals(s, fCfgs[i].getErrorParserList()))
 				return EMPTY_STR_ARRAY;
 		return s;
 	}
 
 	@Override
 	public String[] getDefaultLanguageSettingsProviderIds() {
-		ManagedBuilderCorePlugin.error("Default Language Settings Providers are not supported in multiconfiguration mode"); //$NON-NLS-1$
+		ManagedBuilderCorePlugin
+				.error("Default Language Settings Providers are not supported in multiconfiguration mode"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -467,8 +452,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String[] s = fCfgs[0].getLibs(extension);
 		if (s == null || s.length == 0)
 			return EMPTY_STR_ARRAY;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! Arrays.equals(s, fCfgs[i].getLibs(extension)))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!Arrays.equals(s, fCfgs[i].getLibs(extension)))
 				return EMPTY_STR_ARRAY;
 		return s;
 	}
@@ -481,8 +466,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IManagedProject s = fCfgs[0].getManagedProject();
 		if (s == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getManagedProject()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getManagedProject()))
 				return null;
 		return s;
 	}
@@ -495,8 +480,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getOutputExtension(resourceExtension);
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getOutputExtension(resourceExtension)))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getOutputExtension(resourceExtension)))
 				return EMPTY_STR;
 		return s;
 	}
@@ -509,8 +494,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getOutputFlag(outputExt);
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getOutputFlag(outputExt)))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getOutputFlag(outputExt)))
 				return EMPTY_STR;
 		return s;
 	}
@@ -523,8 +508,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getOutputPrefix(outputExtension);
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getOutputPrefix(outputExtension)))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getOutputPrefix(outputExtension)))
 				return EMPTY_STR;
 		return s;
 	}
@@ -537,8 +522,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IResource s = fCfgs[0].getOwner();
 		if (s == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getOwner()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getOwner()))
 				return null;
 		return s;
 	}
@@ -561,8 +546,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getPostannouncebuildStep();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getPostannouncebuildStep()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getPostannouncebuildStep()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -575,8 +560,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getPostbuildStep();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getPostbuildStep()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getPostbuildStep()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -589,8 +574,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getPreannouncebuildStep();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getPreannouncebuildStep()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getPreannouncebuildStep()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -603,8 +588,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].getPrebuildStep();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getPrebuildStep()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].getPrebuildStep()))
 				return EMPTY_STR;
 		return s;
 	}
@@ -646,9 +631,9 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	public IResourceInfo getResourceInfo(IPath path, boolean exactPath) {
 		IResourceInfo ris[] = new IResourceInfo[fCfgs.length];
 		boolean isFolder = true;
-		for (int i=0; i<fCfgs.length; i++) {
+		for (int i = 0; i < fCfgs.length; i++) {
 			ris[i] = fCfgs[i].getResourceInfo(path, exactPath);
-			if (! (ris[i] instanceof IFolderInfo))
+			if (!(ris[i] instanceof IFolderInfo))
 				isFolder = false;
 		}
 		if (isFolder) {
@@ -675,7 +660,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public IResourceInfo[] getResourceInfos() {
 		ArrayList<IResourceInfo> ri = new ArrayList<IResourceInfo>();
-		for (int i=0; i<fCfgs.length; i++) {
+		for (int i = 0; i < fCfgs.length; i++) {
 			IResourceInfo[] ris = fCfgs[i].getResourceInfos();
 			ri.addAll(Arrays.asList(ris));
 		}
@@ -688,7 +673,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public IFolderInfo getRootFolderInfo() {
 		IFolderInfo ris[] = new IFolderInfo[fCfgs.length];
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			ris[i] = fCfgs[i].getRootFolderInfo();
 		return new MultiFolderInfo(ris, this);
 	}
@@ -794,7 +779,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean hasOverriddenBuildCommand() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].hasOverriddenBuildCommand())
 				return true;
 		return false;
@@ -805,8 +790,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isBuilderCompatible(IBuilder builder) {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].isBuilderCompatible(builder))
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].isBuilderCompatible(builder))
 				return false;
 		return true;
 	}
@@ -816,7 +801,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isDirty() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].isDirty())
 				return true;
 		return false;
@@ -847,15 +832,15 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isManagedBuildOn() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].isManagedBuildOn())
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].isManagedBuildOn())
 				return false;
 		return true;
 	}
 
 	public boolean[] isManagedBuildOnMulti() {
 		boolean[] b = new boolean[fCfgs.length];
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			b[i] = fCfgs[i].isManagedBuildOn();
 		return b;
 	}
@@ -865,7 +850,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isSupported() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].isSupported())
 				return true;
 		return false;
@@ -876,8 +861,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isSystemObject() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].isSystemObject())
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].isSystemObject())
 				return false;
 		return true;
 	}
@@ -887,8 +872,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isTemporary() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].isTemporary())
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].isTemporary())
 				return false;
 		return true;
 	}
@@ -898,7 +883,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean needsFullRebuild() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].needsFullRebuild())
 				return true;
 		return false;
@@ -909,7 +894,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean needsRebuild() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].needsRebuild())
 				return true;
 		return false;
@@ -920,7 +905,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void removeResourceConfiguration(IResourceInfo resConfig) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeResourceConfiguration(resConfig);
 	}
 
@@ -929,7 +914,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void removeResourceInfo(IPath path) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeResourceInfo(path);
 	}
 
@@ -938,7 +923,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setArtifactExtension(String extension) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setArtifactExtension(extension);
 	}
 
@@ -947,7 +932,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setArtifactName(String name) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setArtifactName(name);
 	}
 
@@ -956,7 +941,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setBuildArguments(String makeArgs) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setBuildArguments(makeArgs);
 	}
 
@@ -965,7 +950,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setBuildArtefactType(String id) throws BuildException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setBuildArtefactType(id);
 	}
 
@@ -974,7 +959,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setBuildCommand(String command) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setBuildCommand(command);
 	}
 
@@ -983,7 +968,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setCleanCommand(String command) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setCleanCommand(command);
 	}
 
@@ -992,7 +977,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setDescription(String description) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setDescription(description);
 	}
 
@@ -1001,7 +986,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setDirty(boolean isDirty) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setDirty(isDirty);
 	}
 
@@ -1010,7 +995,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setErrorParserIds(String ids) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setErrorParserIds(ids);
 	}
 
@@ -1019,7 +1004,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setErrorParserList(String[] ids) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setErrorParserList(ids);
 	}
 
@@ -1028,7 +1013,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setManagedBuildOn(boolean on) throws BuildException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setManagedBuildOn(on);
 	}
 
@@ -1036,17 +1021,17 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(String name) {} // do nothing
+	public void setName(String name) {
+	} // do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, boolean)
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		IOption op = null;
-		for (int i=0; i<fCfgs.length; i++)
-			 op = fCfgs[i].setOption(parent, option, value);
+		for (int i = 0; i < fCfgs.length; i++)
+			op = fCfgs[i].setOption(parent, option, value);
 		return op;
 	}
 
@@ -1054,11 +1039,10 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, java.lang.String)
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, String value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException {
 		IOption op = null;
-		for (int i=0; i<fCfgs.length; i++)
-			 op = fCfgs[i].setOption(parent, option, value);
+		for (int i = 0; i < fCfgs.length; i++)
+			op = fCfgs[i].setOption(parent, option, value);
 		return op;
 	}
 
@@ -1066,11 +1050,10 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, java.lang.String[])
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option,
-			String[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException {
 		IOption op = null;
-		for (int i=0; i<fCfgs.length; i++)
-			 op = fCfgs[i].setOption(parent, option, value);
+		for (int i = 0; i < fCfgs.length; i++)
+			op = fCfgs[i].setOption(parent, option, value);
 		return op;
 	}
 
@@ -1079,7 +1062,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setPostannouncebuildStep(String announceStep) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setPostannouncebuildStep(announceStep);
 	}
 
@@ -1088,7 +1071,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setPostbuildStep(String step) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setPostbuildStep(step);
 	}
 
@@ -1097,7 +1080,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setPreannouncebuildStep(String announceStep) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setPreannouncebuildStep(announceStep);
 	}
 
@@ -1106,7 +1089,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setPrebuildStep(String step) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setPrebuildStep(step);
 	}
 
@@ -1115,7 +1098,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setRebuildState(boolean rebuild) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setRebuildState(rebuild);
 	}
 
@@ -1124,7 +1107,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setSourceEntries(entries);
 	}
 
@@ -1133,7 +1116,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setToolCommand(ITool tool, String command) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setToolCommand(tool, command);
 	}
 
@@ -1142,8 +1125,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean supportsBuild(boolean managed) {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].supportsBuild(managed))
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].supportsBuild(managed))
 				return false;
 		return true;
 	}
@@ -1198,7 +1181,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
 	 */
 	@Override
-	public void setVersion(Version version) {} // do nothing
+	public void setVersion(Version version) {
+	} // do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObjectPropertiesContainer#getBuildProperties()
@@ -1220,7 +1204,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	public boolean getParallelDef() {
 		for (IConfiguration cfg : fCfgs) {
 			if (cfg instanceof Configuration) {
-				if (!((Configuration)cfg).getParallelDef())
+				if (!((Configuration) cfg).getParallelDef())
 					return false;
 			} else
 				return false;
@@ -1232,7 +1216,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	public void setParallelDef(boolean parallel) {
 		for (IConfiguration cfg : fCfgs) {
 			if (cfg instanceof Configuration)
-				((Configuration)cfg).setParallelDef(parallel);
+				((Configuration) cfg).setParallelDef(parallel);
 		}
 	}
 
@@ -1241,7 +1225,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		int res = 0;
 		for (IConfiguration cfg : fCfgs) {
 			if (cfg instanceof Configuration) {
-				int num = ((Configuration)cfg).getParallelNumber();
+				int num = ((Configuration) cfg).getParallelNumber();
 				Assert.isTrue(num != 0); // can't be 0, see IMakeCommonBuildInfo.getParallelizationNum()
 
 				if (res == 0)
@@ -1258,7 +1242,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	public void setParallelNumber(int num) {
 		for (IConfiguration cfg : fCfgs) {
 			if (cfg instanceof Configuration)
-				((Configuration)cfg).setParallelNumber(num);
+				((Configuration) cfg).setParallelNumber(num);
 		}
 	}
 
@@ -1269,9 +1253,9 @@ public class MultiConfiguration extends MultiItemsHolder implements
 
 	@Override
 	public boolean isInternalBuilderEnabled() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i] instanceof Configuration) {
-				if (!((Configuration)fCfgs[i]).isInternalBuilderEnabled())
+				if (!((Configuration) fCfgs[i]).isInternalBuilderEnabled())
 					return false;
 			} else
 				return false;
@@ -1280,9 +1264,9 @@ public class MultiConfiguration extends MultiItemsHolder implements
 
 	@Override
 	public boolean canEnableInternalBuilder(boolean v) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i] instanceof Configuration) {
-				if (!((Configuration)fCfgs[i]).canEnableInternalBuilder(v))
+				if (!((Configuration) fCfgs[i]).canEnableInternalBuilder(v))
 					return false;
 			} else
 				return false;
@@ -1291,9 +1275,9 @@ public class MultiConfiguration extends MultiItemsHolder implements
 
 	@Override
 	public void enableInternalBuilder(boolean v) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i] instanceof Configuration)
-				((Configuration)fCfgs[i]).enableInternalBuilder(v);
+				((Configuration) fCfgs[i]).enableInternalBuilder(v);
 	}
 
 	/**
@@ -1308,27 +1292,25 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String s = fCfgs[0].calculateTargetTool().getOutputPrefix();
 		if (s == null || s.length() == 0)
 			return EMPTY_STR;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].calculateTargetTool().getOutputPrefix()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!s.equals(fCfgs[i].calculateTargetTool().getOutputPrefix()))
 				return EMPTY_STR;
 		return s;
 	}
 
 	@Override
 	public void setOutputPrefixForPrimaryOutput(String pref) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].calculateTargetTool().setOutputPrefixForPrimaryOutput(pref);
 	}
 
 	@Override
 	public IBuildProperty getBuildProperty(String id) {
 		IBuildProperty b = fCfgs[0].getBuildProperties().getProperty(id);
-		if (b == null )
+		if (b == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! b.getValue().getId().equals(
-				fCfgs[i].getBuildProperties().getProperty(id).getValue().getId())
-			)
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!b.getValue().getId().equals(fCfgs[i].getBuildProperties().getProperty(id).getValue().getId()))
 				return null;
 		return b;
 	}
@@ -1340,13 +1322,13 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		if (a == null || a.length == 0)
 			return new IBuildPropertyValue[0];
 		int cnt = a.length;
-		for (int i=1; i<fCfgs.length; i++) {
+		for (int i = 1; i < fCfgs.length; i++) {
 			IBuildPropertyValue[] b = fCfgs[i].getBuildProperties().getSupportedValues(id);
-			for (int x=0; x<a.length; x++) {
+			for (int x = 0; x < a.length; x++) {
 				if (a[x] == null)
 					continue;
 				boolean found = false;
-				for (int y=0; y<b.length; y++) {
+				for (int y = 0; y < b.length; y++) {
 					if (a[x].equals(b[y])) {
 						found = true;
 						break;
@@ -1361,7 +1343,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		if (cnt > 0) {
 			IBuildPropertyValue[] b = new IBuildPropertyValue[cnt];
 			int pos = 0;
-			for (int x=0; x<a.length && pos < cnt; x++) {
+			for (int x = 0; x < a.length && pos < cnt; x++) {
 				if (a[x] != null)
 					b[pos++] = a[x];
 			}
@@ -1374,7 +1356,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public void setBuildProperty(String id, String val) {
 		try {
-			for (int i=0; i<fCfgs.length; i++)
+			for (int i = 0; i < fCfgs.length; i++)
 				fCfgs[i].getBuildProperties().setProperty(id, val);
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
@@ -1386,10 +1368,10 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IBuilder b = fCfgs[0].getBuilder();
 		if (b != null)
 			res = b.getBuildAttribute(name, defValue);
-		for (int i=1; i<fCfgs.length; i++) {
+		for (int i = 1; i < fCfgs.length; i++) {
 			b = fCfgs[i].getBuilder();
 			if (b != null)
-				if (! res.equals(b.getBuildAttribute(name, defValue)))
+				if (!res.equals(b.getBuildAttribute(name, defValue)))
 					return defValue;
 		}
 		return res;

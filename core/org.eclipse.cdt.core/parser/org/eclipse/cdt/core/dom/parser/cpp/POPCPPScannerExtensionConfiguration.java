@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -21,16 +21,18 @@ import org.eclipse.cdt.core.parser.IToken;
  * @since 5.1
  */
 public class POPCPPScannerExtensionConfiguration extends GPPScannerExtensionConfiguration {
-	private static POPCPPScannerExtensionConfiguration sInstance= new POPCPPScannerExtensionConfiguration();
+	private static POPCPPScannerExtensionConfiguration sInstance = new POPCPPScannerExtensionConfiguration();
+
 	public static POPCPPScannerExtensionConfiguration getInstance() {
 		return sInstance;
 	}
+
 	@SuppressWarnings("nls")
 	protected POPCPPScannerExtensionConfiguration() {
 		addMacro("@pack(...)", "");
-		addMacro("__concat__(x,y)",  "x##y"); 
-		addMacro("__xconcat__(x,y)",  "__concat__(x,y)"); 
-		addMacro("@",  "; void __xconcat__(@, __LINE__)()");
+		addMacro("__concat__(x,y)", "x##y");
+		addMacro("__xconcat__(x,y)", "__concat__(x,y)");
+		addMacro("@", "; void __xconcat__(@, __LINE__)()");
 
 		addKeyword("parclass".toCharArray(), IToken.t_class);
 	}

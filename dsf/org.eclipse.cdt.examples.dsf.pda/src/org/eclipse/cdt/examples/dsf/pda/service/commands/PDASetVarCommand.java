@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDASetVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetVarCommand(PDAThreadDMContext thread, int frame, String variable, String value) {
-        super(thread, "setvar " + thread.getID() + " " + frame + " " + variable + " " + value);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASetVarCommand(PDAThreadDMContext thread, int frame, String variable, String value) {
+		super(thread, "setvar " + thread.getID() + " " + frame + " " + variable + " " + value);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

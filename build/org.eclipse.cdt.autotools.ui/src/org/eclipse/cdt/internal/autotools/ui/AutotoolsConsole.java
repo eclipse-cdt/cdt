@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.autotools.ui;
 public class AutotoolsConsole extends Console {
 	private static final String CONTEXT_MENU_ID = "CAutotoolsConsole"; //$NON-NLS-1$
 	private static final String CONSOLE_NAME = ConsoleMessages.getString("AutotoolsConsole.name"); //$NON-NLS-1$
-	
+
 	public AutotoolsConsole() {
 		super(CONSOLE_NAME, CONTEXT_MENU_ID);
 	}

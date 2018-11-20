@@ -30,40 +30,40 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext> {
 
-    final private String sigName;
-    final private String sigMeaning;
+	final private String sigName;
+	final private String sigMeaning;
 
-    /**
-     * @since 1.1
-     */
-    public MIInferiorSignalExitEvent(ICommandControlDMContext ctx, int token, MIResult[] results, String sigName, String sigMeaning) {
-        super(ctx, token, results);
-        this.sigName = sigName;
-        this.sigMeaning = sigMeaning;
-    }
-    
-    public String getName() {
-    	return sigName;
-    }
+	/**
+	 * @since 1.1
+	 */
+	public MIInferiorSignalExitEvent(ICommandControlDMContext ctx, int token, MIResult[] results, String sigName,
+			String sigMeaning) {
+		super(ctx, token, results);
+		this.sigName = sigName;
+		this.sigMeaning = sigMeaning;
+	}
 
-    public String getMeaning() {
-    	return sigMeaning;
-    }
-    
-    /**
-     * @since 1.1
-     */
-    public static MIInferiorSignalExitEvent parse(ICommandControlDMContext ctx, int token, MIResult[] results) 
-    {
-        String sigName = ""; //$NON-NLS-1$
-        String sigMeaning = ""; //$NON-NLS-1$
+	public String getName() {
+		return sigName;
+	}
+
+	public String getMeaning() {
+		return sigMeaning;
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	public static MIInferiorSignalExitEvent parse(ICommandControlDMContext ctx, int token, MIResult[] results) {
+		String sigName = ""; //$NON-NLS-1$
+		String sigMeaning = ""; //$NON-NLS-1$
 
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
 			String str = ""; //$NON-NLS-1$
 			if (value instanceof MIConst) {
-				str = ((MIConst)value).getString();
+				str = ((MIConst) value).getString();
 			}
 
 			if (var.equals("signal-name")) { //$NON-NLS-1$
@@ -73,5 +73,5 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
 			}
 		}
 		return new MIInferiorSignalExitEvent(ctx, token, results, sigName, sigMeaning);
-    }
+	}
 }

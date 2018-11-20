@@ -31,7 +31,7 @@ import org.eclipse.debug.core.DebugException;
  * @author Alain Lee
  */
 public interface IRecurringDebugContext {
-	
+
 	/**
 	 * Returns the unique identifier associated with this recurring context. If
 	 * this context re-appears in a future debug session, it should return the

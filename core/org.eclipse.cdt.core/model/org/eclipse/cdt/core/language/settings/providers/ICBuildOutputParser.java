@@ -31,10 +31,12 @@ public interface ICBuildOutputParser extends IConsoleParser {
 	 * @param cwdTracker - tracker to keep track of current working directory.
 	 * @throws CoreException if anything goes wrong.
 	 */
-	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException;
+	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker)
+			throws CoreException;
 
 	@Override
 	public boolean processLine(String line);
+
 	@Override
 	public void shutdown();
 

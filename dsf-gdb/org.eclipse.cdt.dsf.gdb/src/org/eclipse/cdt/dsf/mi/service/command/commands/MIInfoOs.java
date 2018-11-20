@@ -33,14 +33,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class MIInfoOs extends MICommand<MIInfoOsInfo> {
 
-	public MIInfoOs(IDMContext ctx)
-	{
+	public MIInfoOs(IDMContext ctx) {
 		super(ctx, "-info-os"); //$NON-NLS-1$
 	}
 
-	public MIInfoOs(IDMContext ctx, String resourceClass)
-	{
-		super(ctx, "-info-os", new String[]{resourceClass}); //$NON-NLS-1$
+	public MIInfoOs(IDMContext ctx, String resourceClass) {
+		super(ctx, "-info-os", new String[] { resourceClass }); //$NON-NLS-1$
 		specificResource = true;
 	}
 

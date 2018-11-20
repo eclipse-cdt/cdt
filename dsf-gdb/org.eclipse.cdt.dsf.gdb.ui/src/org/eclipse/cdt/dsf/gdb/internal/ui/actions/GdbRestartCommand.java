@@ -34,91 +34,91 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.IRestartHandler;
 
 public class GdbRestartCommand implements IRestartHandler {
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fTracker;
-    private final ILaunch fLaunch;
-    
-    public GdbRestartCommand(DsfSession session, ILaunch launch) {
-        fExecutor = session.getExecutor();
-        fLaunch = launch;
-        fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-    }    
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fTracker;
+	private final ILaunch fLaunch;
 
-    public void dispose() {
-        fTracker.dispose();
-    }
-
-    @Override
-    public void canExecute(final IEnabledStateRequest request) {
-        if (request.getElements().length != 1) {
-            request.setEnabled(false);
-            request.done();
-            return;
-        }
-
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
-            @Override public void doExecute() {
-                IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(), IContainerDMContext.class);
-            	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
-
-                if (procService != null) {
-                	procService.canRestart(
-                			containerDmc,
-                			new DataRequestMonitor<Boolean>(fExecutor, null) {
-                				@Override
-                				protected void handleCompleted() {
-                					request.setEnabled(isSuccess() && getData());
-                					request.done();
-                				}
-                			});
-                } else {
-                	request.setEnabled(false);
-					request.done();
-       			}
-            }
-        });
+	public GdbRestartCommand(DsfSession session, ILaunch launch) {
+		fExecutor = session.getExecutor();
+		fLaunch = launch;
+		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
 	}
-    
-    @Override
-    public boolean execute(final IDebugCommandRequest request) {
-        if (request.getElements().length != 1) {
-            request.done();
-            return false;
-        }
-        
-        Object element = request.getElements()[0];
-        if (!(element instanceof IDMVMContext)) {
-            request.done();
-            return false;
-        }
-        
-        final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(((IDMVMContext)element).getDMContext(), 
-        																	  IContainerDMContext.class);
-        
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-			public void run() {
-            	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
 
-                if (procService != null) {
-                	Map<String, Object> attributes = null;
+	public void dispose() {
+		fTracker.dispose();
+	}
+
+	@Override
+	public void canExecute(final IEnabledStateRequest request) {
+		if (request.getElements().length != 1) {
+			request.setEnabled(false);
+			request.done();
+			return;
+		}
+
+		fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
+			@Override
+			public void doExecute() {
+				IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(),
+						IContainerDMContext.class);
+				IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+
+				if (procService != null) {
+					procService.canRestart(containerDmc, new DataRequestMonitor<Boolean>(fExecutor, null) {
+						@Override
+						protected void handleCompleted() {
+							request.setEnabled(isSuccess() && getData());
+							request.done();
+						}
+					});
+				} else {
+					request.setEnabled(false);
+					request.done();
+				}
+			}
+		});
+	}
+
+	@Override
+	public boolean execute(final IDebugCommandRequest request) {
+		if (request.getElements().length != 1) {
+			request.done();
+			return false;
+		}
+
+		Object element = request.getElements()[0];
+		if (!(element instanceof IDMVMContext)) {
+			request.done();
+			return false;
+		}
+
+		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(),
+				IContainerDMContext.class);
+
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+
+				if (procService != null) {
+					Map<String, Object> attributes = null;
 					try {
 						attributes = fLaunch.getLaunchConfiguration().getAttributes();
-					} catch (CoreException e) {}
-					
-                	procService.restart(containerDmc, attributes, 
-                						new DataRequestMonitor<IContainerDMContext>(fExecutor, null) {
-                							@Override
-                							protected void handleCompleted() {
-                								request.done();
-                							};
-                						});
-                } else {
-                	request.done();
-       			}
-			}
-        });
-        return false;
-    }
-}
+					} catch (CoreException e) {
+					}
 
+					procService.restart(containerDmc, attributes,
+							new DataRequestMonitor<IContainerDMContext>(fExecutor, null) {
+								@Override
+								protected void handleCompleted() {
+									request.done();
+								};
+							});
+				} else {
+					request.done();
+				}
+			}
+		});
+		return false;
+	}
+}

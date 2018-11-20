@@ -29,7 +29,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
  */
 public class TargetSourceContainer {
 	private IContainer container;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -39,7 +39,7 @@ public class TargetSourceContainer {
 		IWorkspaceRoot wspRoot = ResourcesPlugin.getWorkspace().getRoot();
 		container = wspRoot.getFolder(srcEntry.getFullPath());
 	}
-	
+
 	/**
 	 * Returns resource container associated with the source entry.
 	 * 

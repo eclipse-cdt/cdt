@@ -34,8 +34,8 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 		return data.getBuilderCWD();
 	}
 
-	private CBuildData getBuildData(boolean write){
-		return (CBuildData)getData(write);
+	private CBuildData getBuildData(boolean write) {
+		return (CBuildData) getData(write);
 	}
 
 	@Override
@@ -69,12 +69,12 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 	public void setOutputDirectories(ICOutputEntry[] entries) {
 		CBuildData data = getBuildData(true);
 		IProject project = getProject();
-		if(entries != null){
+		if (entries != null) {
 			entries = CDataUtil.adjustEntries(entries, false, project);
 		}
 
 		data.setOutputDirectories(entries);
-		if(entries == null){
+		if (entries == null) {
 			CExternalSettingsManager.getInstance().restoreOutputEntryDefaults(getConfiguration());
 		}
 	}

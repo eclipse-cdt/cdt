@@ -37,7 +37,6 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
 
-
 /**
  * This gives a Label and StringList Widget.
  *
@@ -118,7 +117,7 @@ public class UIStringListWidget extends InputUIElement {
 		gd.verticalIndent = 5;
 		label.setLayoutData(gd);
 
-		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null) {
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$, $NON-NLS-2$
 			label.setToolTipText(tipText);
@@ -131,7 +130,7 @@ public class UIStringListWidget extends InputUIElement {
 		fileListControl = new FileListControl(flcComposite, uiAttributes.get(InputUIElement.WIDGETLABEL), 0);
 		fileListControl.setList(itemsList.toArray(new String[itemsList.size()]));
 		fileListControl.setSelection(0);
-		fileListControl.addChangeListener(new IFileListChangeListener(){
+		fileListControl.addChangeListener(new IFileListChangeListener() {
 			@Override
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
 				itemsList.clear();
@@ -144,7 +143,7 @@ public class UIStringListWidget extends InputUIElement {
 	}
 
 	protected PatternEvent createPatternEvent() {
-		String msg= MessageFormat.format("Please add an item to {0}", label.getText()); //$NON-NLS-1$
+		String msg = MessageFormat.format("Please add an item to {0}", label.getText()); //$NON-NLS-1$
 		return new PatternEvent(this, msg, isValid());
 	}
 
@@ -161,7 +160,8 @@ public class UIStringListWidget extends InputUIElement {
 		boolean retVal = true;
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 
-		if ((itemsList == null || itemsList.size() == 0) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
+		if ((itemsList == null || itemsList.size() == 0)
+				&& (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
 			retVal = false;
 		}
 		return retVal;

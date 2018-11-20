@@ -24,7 +24,7 @@ public class UPCLanguageKeywords extends CLanguageKeywords {
 	}
 
 	private static String[] upcKeywords = UPCKeyword.getAllKeywords();
-	
+
 	@Override
 	public String[] getKeywords() {
 		return upcKeywords;

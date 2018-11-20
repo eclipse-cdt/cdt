@@ -16,7 +16,6 @@ package org.eclipse.cdt.core.settings.model;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * This class is intended to hold "similar" Language Setting objects.
  * Normally, they should have the same name.
@@ -43,10 +42,10 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 */
 	public ICLanguageSettingEntry[][] getSettingEntriesM(int kind) {
 		ICLanguageSettingEntry[][] le = new ICLanguageSettingEntry[items.length][];
-		for (int i=0; i<items.length; i++)
+		for (int i = 0; i < items.length; i++)
 			le[i] = items[i].getSettingEntries(kind);
 		return le;
-//		return conv2LSE(getListForDisplay(le, comp));
+		//		return conv2LSE(getListForDisplay(le, comp));
 	}
 
 	/* (non-Javadoc)
@@ -61,8 +60,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getSourceContentTypeIds()
 	 */
 	public String[][] getSourceContentTypeIdsM() {
-	    String[][] ss = new String[items.length][];
-		for (int i=0; i<items.length; i++)
+		String[][] ss = new String[items.length][];
+		for (int i = 0; i < items.length; i++)
 			ss[i] = items[i].getSourceContentTypeIds();
 		return ss;
 	}
@@ -71,8 +70,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getSourceExtensions()
 	 */
 	public String[][] getSourceExtensionsM() {
-	    String[][] ss = new String[items.length][];
-		for (int i=0; i<items.length; i++)
+		String[][] ss = new String[items.length][];
+		for (int i = 0; i < items.length; i++)
 			ss[i] = items[i].getSourceExtensions();
 		return ss;
 	}
@@ -92,7 +91,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setLanguageId(java.lang.String)
 	 */
 	@Override
-	public void setLanguageId(String id) {} // Do nothing
+	public void setLanguageId(String id) {
+	} // Do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSettingEntries(int, org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry[])
@@ -137,7 +137,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	public boolean supportsEntryKind(int kind) {
 		for (ICLanguageSetting item : items)
 			if (item.supportsEntryKind(kind))
-					return true;
+				return true;
 		return false;
 	}
 
@@ -187,7 +187,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 		int x = items[0].getType();
 		for (ICLanguageSetting item : items)
 			if (x != item.getType())
-					return 0;
+				return 0;
 		return x;
 	}
 
@@ -196,9 +196,9 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 */
 	@Override
 	public boolean isReadOnly() {
-		for (int i=0; i<items.length; i++)
-			if (! items[i].isReadOnly())
-					return false;
+		for (int i = 0; i < items.length; i++)
+			if (!items[i].isReadOnly())
+				return false;
 		return true;
 	}
 
@@ -207,9 +207,9 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 */
 	@Override
 	public boolean isValid() {
-		for (int i=0; i<items.length; i++)
-			if (! items[i].isValid())
-					return false;
+		for (int i = 0; i < items.length; i++)
+			if (!items[i].isValid())
+				return false;
 		return true;
 	}
 

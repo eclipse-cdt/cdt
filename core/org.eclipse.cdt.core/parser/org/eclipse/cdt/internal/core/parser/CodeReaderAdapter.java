@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.parser.FileContent;
@@ -33,17 +33,17 @@ public abstract class CodeReaderAdapter {
 		if (!(content instanceof InternalFileContent)) {
 			throw new IllegalArgumentException("Invalid file content object!"); //$NON-NLS-1$
 		}
-		AbstractCharArray source= ((InternalFileContent) content).getSource();
+		AbstractCharArray source = ((InternalFileContent) content).getSource();
 		if (source instanceof CharArray) {
-			return ((CharArray)source).getArray();
+			return ((CharArray) source).getArray();
 		}
-		int len= source.tryGetLength();
+		int len = source.tryGetLength();
 		if (len < 0) {
-			len=0;
+			len = 0;
 			while (source.isValidOffset(len))
 				len++;
 		}
-		char[] result= new char[len];
+		char[] result = new char[len];
 		source.arraycopy(0, result, 0, len);
 		return result;
 	}

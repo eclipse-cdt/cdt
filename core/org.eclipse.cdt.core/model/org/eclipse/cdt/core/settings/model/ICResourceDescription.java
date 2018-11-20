@@ -15,18 +15,18 @@ package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.core.runtime.IPath;
 
-public interface ICResourceDescription extends ICSettingContainer, ICSettingObject{
+public interface ICResourceDescription extends ICSettingContainer, ICSettingObject {
 	IPath getPath();
-	
-//	IPath getLocation();
-	
+
+	//	IPath getLocation();
+
 	boolean isExcluded();
-	
-	void setExcluded(boolean excluded) throws WriteAccessException ;
-	
-	void setPath(IPath path) throws WriteAccessException ;
-	
+
+	void setExcluded(boolean excluded) throws WriteAccessException;
+
+	void setPath(IPath path) throws WriteAccessException;
+
 	ICFolderDescription getParentFolderDescription();
-	
+
 	boolean canExclude(boolean exclude);
 }

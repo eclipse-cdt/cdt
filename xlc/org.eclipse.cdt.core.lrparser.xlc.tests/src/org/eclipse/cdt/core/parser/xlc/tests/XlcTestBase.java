@@ -25,11 +25,11 @@ public class XlcTestBase extends TestCase {
 
 	public XlcTestBase() {
 	}
-	
+
 	public XlcTestBase(String name) {
 		super(name);
 	}
-	
+
 	protected IASTTranslationUnit parse(String code, ILanguage language, boolean checkBindings) {
 		ParseHelper.Options options = new ParseHelper.Options();
 		options.setCheckSyntaxProblems(true);
@@ -37,13 +37,13 @@ public class XlcTestBase extends TestCase {
 		options.setCheckBindings(checkBindings);
 		return ParseHelper.parse(code, language, options);
 	}
-    
-    protected XlcCLanguage getCLanguage() {
-    	return XlcCLanguage.getDefault();
-    }
-    
-    protected XlcCPPLanguage getCPPLanguage() {
-    	return XlcCPPLanguage.getDefault();
-    }
-	
+
+	protected XlcCLanguage getCLanguage() {
+		return XlcCLanguage.getDefault();
+	}
+
+	protected XlcCPPLanguage getCPPLanguage() {
+		return XlcCPPLanguage.getDefault();
+	}
+
 }

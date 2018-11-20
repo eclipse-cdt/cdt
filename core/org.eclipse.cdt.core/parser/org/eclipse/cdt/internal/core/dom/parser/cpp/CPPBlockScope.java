@@ -36,15 +36,15 @@ public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
 
 	@Override
 	public IName getScopeName() {
-	    IASTNode node = getPhysicalNode();
-	    if (node instanceof IASTCompoundStatement) {
-	    	final IASTNode parent= node.getParent();
-	    	if (parent instanceof IASTFunctionDefinition) {
-	    		IASTDeclarator dtor= ((IASTFunctionDefinition) parent).getDeclarator();
-	    		dtor = ASTQueries.findInnermostDeclarator(dtor);
+		IASTNode node = getPhysicalNode();
+		if (node instanceof IASTCompoundStatement) {
+			final IASTNode parent = node.getParent();
+			if (parent instanceof IASTFunctionDefinition) {
+				IASTDeclarator dtor = ((IASTFunctionDefinition) parent).getDeclarator();
+				dtor = ASTQueries.findInnermostDeclarator(dtor);
 				return dtor.getName();
-	    	}
-	    }
-	    return null;
+			}
+		}
+		return null;
 	}
 }

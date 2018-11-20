@@ -26,28 +26,28 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
  * @see IProcessList
  */
 public class ProcessList implements IProcessList {
-	
+
 	ProcessInfo[] empty = new ProcessInfo[0];
-	
+
 	public ProcessList() {
 	}
-	
+
 	/**
 	 * Insert the method's description here.
 	 * @see IProcessList#getProcessList
 	 */
-	public IProcessInfo [] getProcessList()  {
+	public IProcessInfo[] getProcessList() {
 		Process ps;
 		BufferedReader psOutput;
-		String[] args = {"/bin/ps", "-a", "-c", "-x", "-o", "pid,command"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		String[] args = { "/bin/ps", "-a", "-c", "-x", "-o", "pid,command" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
 		try {
 			ps = ProcessFactory.getFactory().exec(args);
 			psOutput = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return new IProcessInfo[0];
 		}
-		
+
 		//Read the output and parse it into an array list
 		ArrayList procInfo = new ArrayList();
 
@@ -70,12 +70,12 @@ public class ProcessList implements IProcessList {
 				}
 			}
 			psOutput.close();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			/* Ignore */
 		}
-		
+
 		ps.destroy();
-		return (IProcessInfo [])procInfo.toArray(new IProcessInfo[procInfo.size()]);
+		return (IProcessInfo[]) procInfo.toArray(new IProcessInfo[procInfo.size()]);
 	}
-	
+
 }

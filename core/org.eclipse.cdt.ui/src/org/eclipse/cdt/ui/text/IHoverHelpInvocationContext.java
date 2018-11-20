@@ -24,10 +24,10 @@ import org.eclipse.jface.text.IRegion;
  * @since 5.1
  */
 public interface IHoverHelpInvocationContext extends ICHelpInvocationContext {
-	
+
 	/**
 	 * @return the hover region or null
 	 */
 	IRegion getHoverRegion();
-	
+
 }

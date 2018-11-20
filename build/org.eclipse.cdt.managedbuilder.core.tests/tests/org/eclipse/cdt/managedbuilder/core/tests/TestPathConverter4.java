@@ -34,8 +34,7 @@ public class TestPathConverter4 extends TestPathConverter1 {
 	public IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool) {
 		String convertedString = toolSpecificPath.substring("file://".length());
 		IPath path = new Path(convertedString);
-		return path ;
+		return path;
 	}
 
-	
 }

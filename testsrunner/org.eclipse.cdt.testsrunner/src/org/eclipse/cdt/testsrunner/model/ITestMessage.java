@@ -25,25 +25,22 @@ public interface ITestMessage {
 	 * The level of the test message.
 	 */
 	public enum Level {
-		Info(ModelMessages.MessageLevel_info),
-		Message(ModelMessages.MessageLevel_message),
-		Warning(ModelMessages.MessageLevel_warning),
-		Error(ModelMessages.MessageLevel_error),
-		FatalError(ModelMessages.MessageLevel_fatal_error),
-		Exception(ModelMessages.MessageLevel_exception);
-		
+		Info(ModelMessages.MessageLevel_info), Message(ModelMessages.MessageLevel_message),
+		Warning(ModelMessages.MessageLevel_warning), Error(ModelMessages.MessageLevel_error),
+		FatalError(ModelMessages.MessageLevel_fatal_error), Exception(ModelMessages.MessageLevel_exception);
+
 		String stringRepr;
-		
+
 		Level(String stringRepr) {
 			this.stringRepr = stringRepr;
 		}
-		
+
 		@Override
 		public String toString() {
 			return stringRepr;
 		}
 	}
-	
+
 	/**
 	 * Returns the location of the test message.
 	 * 

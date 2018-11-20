@@ -26,8 +26,8 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
 public class ExtractConstantRefactoringContribution extends CRefactoringContribution {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public RefactoringDescriptor createDescriptor(String id, String project, String description,
-			String comment, Map arguments, int flags) throws IllegalArgumentException {
+	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment,
+			Map arguments, int flags) throws IllegalArgumentException {
 		if (id.equals(ExtractConstantRefactoring.ID)) {
 			return new ExtractConstantRefactoringDescriptor(project, description, comment, arguments);
 		}

@@ -32,68 +32,75 @@ import org.eclipse.core.resources.IFile;
 
 @SuppressWarnings("restriction")
 public class LRSelectionParseTest extends AST2SelectionParseTest {
-	
+
 	public static TestSuite suite() {
-    	return new TestSuite(LRSelectionParseTest.class);
-    }
-	
-	public LRSelectionParseTest() {}
-	public LRSelectionParseTest(String name) { super(name); }
+		return new TestSuite(LRSelectionParseTest.class);
+	}
+
+	public LRSelectionParseTest() {
+	}
+
+	public LRSelectionParseTest(String name) {
+		super(name);
+	}
 
 	@Override
 	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length) throws ParserException {
 		return parse(code, lang, false, false, offset, length);
 	}
-	
+
 	@Override
 	protected IASTNode parse(IFile file, ParserLanguage lang, int offset, int length) throws ParserException {
 		IASTTranslationUnit tu = parse(file, lang, false, false);
 		return tu.selectNodeForLocation(tu.getFilePath(), offset, length);
 	}
-	
+
 	@Override
-	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length, boolean expectedToPass) throws ParserException {
+	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length, boolean expectedToPass)
+			throws ParserException {
 		return parse(code, lang, false, expectedToPass, offset, length);
 	}
-	
+
 	@Override
-	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, int offset, int length) throws ParserException {
+	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems,
+			int offset, int length) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setCheckSyntaxProblems(expectNoProblems);
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setCheckSyntaxProblems(expectNoProblems);
 		IASTTranslationUnit tu = ParseHelper.parse(code, language, options);
 		return tu.selectNodeForLocation(tu.getFilePath(), offset, length);
-	}	
-	
-	protected IASTTranslationUnit parse( IFile file, ParserLanguage lang, IScannerInfo scanInfo, boolean useGNUExtensions, boolean expectNoProblems ) {
+	}
+
+	protected IASTTranslationUnit parse(IFile file, ParserLanguage lang, IScannerInfo scanInfo,
+			boolean useGNUExtensions, boolean expectNoProblems) {
 
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	
+
 		String fileName = file.getLocation().toOSString();
 		ICodeReaderFactory fileCreator = SavedCodeReaderFactory.getInstance();
 		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(fileName);
-		
+
 		ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setCheckSyntaxProblems(expectNoProblems);
-    	options.setCheckBindings(true);
-		
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setCheckSyntaxProblems(expectNoProblems);
+		options.setCheckBindings(true);
+
 		return ParseHelper.parse(reader, language, scanInfo, fileCreator, options);
 	}
 
 	@Override
-	protected IASTTranslationUnit parse( IFile file, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) 
-	    throws ParserException {
+	protected IASTTranslationUnit parse(IFile file, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
 		return parse(file, lang, new ScannerInfo(), useGNUExtensions, expectNoProblems);
 	}
-	
+
 	protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-	
+		return GCCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
-	
+
 }

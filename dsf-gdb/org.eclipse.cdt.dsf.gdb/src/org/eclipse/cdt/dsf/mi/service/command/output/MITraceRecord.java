@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * -trace-find result.
  * @since 3.0
  */
 public class MITraceRecord extends MIInfo {
-	
+
 	private MIFrame fStackFrame = null;
 	private Integer fTracepoint = null;
 	private Integer fRecordIndex = null;
@@ -46,28 +45,30 @@ public class MITraceRecord extends MIInfo {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("traceframe")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fRecordIndex = Integer.parseInt(((MIConst)val).getString());
-							} catch (NumberFormatException e) {}
+								fRecordIndex = Integer.parseInt(((MIConst) val).getString());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("tracepoint")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fTracepoint = Integer.parseInt(((MIConst)val).getString());
-							} catch (NumberFormatException e) {}
+								fTracepoint = Integer.parseInt(((MIConst) val).getString());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("frame")) { //$NON-NLS-1$
-			               MIValue value = results[i].getMIValue();
-			                if (value instanceof MITuple) {
-			                	fStackFrame = new MIFrame((MITuple)value);
-			                }
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MITuple) {
+							fStackFrame = new MIFrame((MITuple) value);
+						}
 					}
 				}
 			}

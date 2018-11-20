@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import org.eclipse.jface.wizard.Wizard;
 
-
 /**
  * @deprecated as of CDT 4.0. This class does not seem to be used,
  * probably remnant of 3.X style projects or earlier.

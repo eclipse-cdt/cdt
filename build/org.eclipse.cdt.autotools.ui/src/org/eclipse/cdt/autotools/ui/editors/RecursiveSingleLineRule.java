@@ -23,7 +23,7 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
 public class RecursiveSingleLineRule extends SingleLineRule {
-	
+
 	private List<IRule> rules;
 	private int evalIndex;
 	private int startIndex;
@@ -31,6 +31,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 	private int endBoundary;
 	private String startSequence;
 	private String endSequence;
+
 	/**
 	 * Creates a rule for the given starting and ending sequence
 	 * which, if detected, will return the specified token.
@@ -72,7 +73,8 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 	 * @param breaksOnEOF indicates whether the end of the file successfully terminates this rule
 	 * @since 2.1
 	 */
-	public RecursiveSingleLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOF) {
+	public RecursiveSingleLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter,
+			boolean breaksOnEOF) {
 		super(startSequence, endSequence, token, escapeCharacter, breaksOnEOF);
 		this.startSequence = startSequence;
 		this.endSequence = endSequence;
@@ -99,7 +101,8 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 	 *        terminate the line, even if <code>breakOnEOL</code> is true
 	 * @since 3.0
 	 */
-	public RecursiveSingleLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOF, boolean escapeContinuesLine) {
+	public RecursiveSingleLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter,
+			boolean breaksOnEOF, boolean escapeContinuesLine) {
 		super(startSequence, endSequence, token, escapeCharacter, breaksOnEOF, escapeContinuesLine);
 		this.startSequence = startSequence;
 		this.endSequence = endSequence;
@@ -107,29 +110,29 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 		startIndex = 0;
 		endIndex = 0;
 	}
-	
+
 	public void addRule(SingleLineRule rule) {
 		rules.add(rule);
 	}
-	
+
 	@Override
 	public IToken getSuccessToken() {
 		// We need to be aware of what success token we are referring to.
 		// The current internal rule index will help us determine which
 		// one.
 		if (evalIndex < rules.size()) {
-			SingleLineRule x = (SingleLineRule)rules.get(evalIndex);
+			SingleLineRule x = (SingleLineRule) rules.get(evalIndex);
 			return x.getSuccessToken();
 		}
 		return super.getSuccessToken();
 	}
-	
+
 	protected void backupScanner(ICharacterScanner scanner, int position) {
 		int count = scanner.getColumn() - position;
 		while (count-- > 0)
 			scanner.unread();
 	}
-	
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		int column = scanner.getColumn();
@@ -153,8 +156,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 					// Back up scanner to just after start sequence.
 					backupScanner(scanner, startIndex + startSequence.length());
 					return super.getSuccessToken();
-				}
-				else
+				} else
 					// Outer rule doesn't hold.
 					return Token.UNDEFINED;
 			}
@@ -163,12 +165,12 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 		// At this point, we want to subdivide up the area covered by the
 		// outer rule into success tokens for internal areas separated by
 		// areas of the outer rule.
-		
+
 		int start = scanner.getColumn();
 		column = start;
 		while (column < endBoundary) {
 			while (evalIndex < rules.size()) {
-				SingleLineRule x = (SingleLineRule)rules.get(evalIndex);
+				SingleLineRule x = (SingleLineRule) rules.get(evalIndex);
 				IToken token = x.evaluate(scanner, false);
 				if (!token.isUndefined()) {
 					// Found internal token.  If we had to read to get
@@ -190,7 +192,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 			scanner.read();
 			++column;
 		}
-		
+
 		// Outside internal area.  Read until end of outer area and return
 		// outer token.
 		while (column++ < endIndex)

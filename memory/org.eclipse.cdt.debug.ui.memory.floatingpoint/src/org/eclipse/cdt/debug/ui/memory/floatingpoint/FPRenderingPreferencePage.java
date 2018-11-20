@@ -36,54 +36,61 @@ import org.eclipse.ui.PlatformUI;
  * preferences can be accessed directly via the preference store.
  */
 
-public class FPRenderingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage
-{
-    public FPRenderingPreferencePage()
-    {
-        super(GRID);
-        setPreferenceStore(FPRenderingPlugin.getDefault().getPreferenceStore());
-        setDescription("Floating Point Memory Rendering"); //$NON-NLS-1$
-    }
+public class FPRenderingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	public FPRenderingPreferencePage() {
+		super(GRID);
+		setPreferenceStore(FPRenderingPlugin.getDefault().getPreferenceStore());
+		setDescription("Floating Point Memory Rendering"); //$NON-NLS-1$
+	}
 
-    @Override
-    public void createControl(Composite parent)
-    {
-        super.createControl(parent);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), FPRenderingPlugin.getUniqueIdentifier() + ".FPRenderingPreferencePage_context"); //$NON-NLS-1$
-    }
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				FPRenderingPlugin.getUniqueIdentifier() + ".FPRenderingPreferencePage_context"); //$NON-NLS-1$
+	}
 
-    /**
-     * Creates the field editors. Field editors are abstractions of the common
-     * GUI blocks needed to manipulate various types of preferences. Each field
-     * editor knows how to save and restore itself.
-     */
-    @Override
-    public void createFieldEditors()
-    {
-        addField(new BooleanFieldEditor(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT, "Use Global Te&xt Color", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_TEXT, "&Text Color:", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ScaleFieldEditor(FPRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "Brighten Alternate Cells", getFieldEditorParent(), 0, 8, 1, 1)); //$NON-NLS-1$
-        addField(new BooleanFieldEditor(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, "Use Global B&ackground Color", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, "&Background Color:", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_CHANGED, "&Changed Color:", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_EDIT, "&Edit Color:", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new BooleanFieldEditor(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, "Use Global Se&lection Color", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_SELECTION, "&Selection Color:", getFieldEditorParent())); //$NON-NLS-1$
-        addField(new RadioGroupFieldEditor(FPRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, "Edit Buffer", 1, new String[][] //$NON-NLS-1$
-            { { "Save on E&nter, Cancel on Focus Lost", "saveOnEnterCancelOnFocusLost" }, //$NON-NLS-1$ //$NON-NLS-2$
-              { "Save on Enter or Focus L&ost", "saveOnEnterOrFocusLost" } }, getFieldEditorParent())); //$NON-NLS-1$ //$NON-NLS-2$
-        addField(new ScaleFieldEditor(FPRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "History &Trail Levels", getFieldEditorParent(), 1, 10, 1, 1)); //$NON-NLS-1$
-    }
+	/**
+	 * Creates the field editors. Field editors are abstractions of the common
+	 * GUI blocks needed to manipulate various types of preferences. Each field
+	 * editor knows how to save and restore itself.
+	 */
+	@Override
+	public void createFieldEditors() {
+		addField(new BooleanFieldEditor(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT, "Use Global Te&xt Color", //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_TEXT, "&Text Color:", //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new ScaleFieldEditor(FPRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS,
+				"Brighten Alternate Cells", getFieldEditorParent(), 0, 8, 1, 1)); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND,
+				"Use Global B&ackground Color", getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, "&Background Color:", //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_CHANGED, "&Changed Color:", //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_EDIT, "&Edit Color:", //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION,
+				"Use Global Se&lection Color", getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(FPRenderingPreferenceConstants.MEM_COLOR_SELECTION, "&Selection Color:", //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor(FPRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, "Edit Buffer", 1, //$NON-NLS-1$
+				new String[][] { { "Save on E&nter, Cancel on Focus Lost", "saveOnEnterCancelOnFocusLost" }, //$NON-NLS-1$ //$NON-NLS-2$
+						{ "Save on Enter or Focus L&ost", "saveOnEnterOrFocusLost" } }, //$NON-NLS-1$//$NON-NLS-2$
+				getFieldEditorParent()));
+		addField(new ScaleFieldEditor(FPRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "History &Trail Levels", //$NON-NLS-1$
+				getFieldEditorParent(), 1, 10, 1, 1));
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
-    @Override
-    public void init(IWorkbench workbench)
-    {
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	@Override
+	public void init(IWorkbench workbench) {
+	}
 
 }

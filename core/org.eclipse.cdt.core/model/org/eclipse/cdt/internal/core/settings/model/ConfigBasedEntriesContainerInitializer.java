@@ -19,14 +19,12 @@ import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-public class ConfigBasedEntriesContainerInitializer extends
-		PathEntryContainerInitializer {
+public class ConfigBasedEntriesContainerInitializer extends PathEntryContainerInitializer {
 
 	@Override
-	public void initialize(IPath containerPath, ICProject project)
-			throws CoreException {
+	public void initialize(IPath containerPath, ICProject project) throws CoreException {
 		ConfigBasedPathEntryContainer container = ConfigBasedPathEntryStore.createContainer(project.getProject());
-		CoreModel.setPathEntryContainer(new ICProject[]{project}, container, null);
+		CoreModel.setPathEntryContainer(new ICProject[] { project }, container, null);
 	}
 
 }

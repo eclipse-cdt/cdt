@@ -106,45 +106,43 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 	private static final int STATUS_CODE_COMMAND_TIMED_OUT = 20100;
 
-    /**
-     * Event indicating that the back end process has started.
-     */
-    private static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
-        implements ICommandControlInitializedDMEvent
-    {
-        public GDBControlInitializedDMEvent(ICommandControlDMContext context) {
-            super(context);
-        }
-    }
-    
-    /**
-     * Event indicating that the CommandControl (back end process) has terminated.
-     */
-    private static class GDBControlShutdownDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
-        implements ICommandControlShutdownDMEvent
-    {
-        public GDBControlShutdownDMEvent(ICommandControlDMContext context) {
-            super(context);
-        }
-    }
+	/**
+	 * Event indicating that the back end process has started.
+	 */
+	private static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext>
+			implements ICommandControlInitializedDMEvent {
+		public GDBControlInitializedDMEvent(ICommandControlDMContext context) {
+			super(context);
+		}
+	}
+
+	/**
+	 * Event indicating that the CommandControl (back end process) has terminated.
+	 */
+	private static class GDBControlShutdownDMEvent extends AbstractDMEvent<ICommandControlDMContext>
+			implements ICommandControlShutdownDMEvent {
+		public GDBControlShutdownDMEvent(ICommandControlDMContext context) {
+			super(context);
+		}
+	}
 
 	private class TimeoutListener implements ICommandTimeoutListener {
 
 		@Override
 		public void commandTimedOut(final ICommandToken token) {
 			getExecutor().execute(new DsfRunnable() {
-				
+
 				@Override
 				public void run() {
 					GDBControl.this.commandTimedOut(token);
 				}
 			});
-		}		
+		}
 	}
 
 	/**
 	 * An event processor that handles some GDB life cycle events.
-     * Currently, it detects a lost connection with the remote.
+	 * Currently, it detects a lost connection with the remote.
 	 */
 	private class ControlEventProcessor implements IEventProcessor {
 
@@ -152,26 +150,26 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			addCommandListener(this);
 			addEventListener(this);
 		}
-		
+
 		@Override
 		public void dispose() {
-    		removeEventListener(this);
-    		removeCommandListener(this);			
+			removeEventListener(this);
+			removeCommandListener(this);
 		}
-		
+
 		@Override
 		public void eventReceived(Object output) {
 			if (output instanceof MIOutput) {
-				verifyConnectionLost((MIOutput)output);
+				verifyConnectionLost((MIOutput) output);
 			} else {
 				assert false;
 			}
 		}
 
 		@Override
-	    public void commandDone(ICommandToken token, ICommandResult cmdResult) {
+		public void commandDone(ICommandToken token, ICommandResult cmdResult) {
 			if (cmdResult instanceof MIInfo) {
-				verifyConnectionLost(((MIInfo)cmdResult).getMIOutput());
+				verifyConnectionLost(((MIInfo) cmdResult).getMIOutput());
 			} else {
 				assert false;
 			}
@@ -189,30 +187,30 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		public void commandRemoved(ICommandToken token) {
 		}
 	}
-	
-    private ICommandControlDMContext fControlDmc;
 
-    private IGDBBackend fMIBackend;
-        
-    private IEventProcessor fMIEventProcessor;
-    private IEventProcessor fCLICommandProcessor;
-    private IEventProcessor fControlEventProcessor;
-    private IEventProcessor fMIAsyncErrorProcessor;
-    private Process fBackendProcess;
+	private ICommandControlDMContext fControlDmc;
 
-    private GdbCommandTimeoutManager fCommandTimeoutManager;
+	private IGDBBackend fMIBackend;
 
-    private ICommandTimeoutListener fTimeoutListener = new TimeoutListener();
+	private IEventProcessor fMIEventProcessor;
+	private IEventProcessor fCLICommandProcessor;
+	private IEventProcessor fControlEventProcessor;
+	private IEventProcessor fMIAsyncErrorProcessor;
+	private Process fBackendProcess;
 
-    /**
-     * GDBControl is only used for GDB earlier that 7.0. Although -list-features
-     * is available in 6.8, it does not report anything we care about, so
-     * return empty list.
-     */
+	private GdbCommandTimeoutManager fCommandTimeoutManager;
+
+	private ICommandTimeoutListener fTimeoutListener = new TimeoutListener();
+
+	/**
+	 * GDBControl is only used for GDB earlier that 7.0. Although -list-features
+	 * is available in 6.8, it does not report anything we care about, so
+	 * return empty list.
+	 */
 	private final List<String> fFeatures = new ArrayList<String>();
 
 	private Sequence fInitializationSequence;
-	
+
 	/**
 	 * Indicator to distinguish whether this service is initialized.
 	 * <code>fInitializationSequence</code> can not be used for this 
@@ -221,64 +219,65 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 */
 	private boolean fInitialized = false;
 
-    private boolean fTerminated;
+	private boolean fTerminated;
 
-    /**
-     * @since 3.0
-     */
-    public GDBControl(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	this(session, false, config, factory);
-    }
+	/**
+	 * @since 3.0
+	 */
+	public GDBControl(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+		this(session, false, config, factory);
+	}
 
-    /**
+	/**
 	 * @since 4.1
 	 */
-    protected GDBControl(DsfSession session, boolean useThreadAndFrameOptions, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, useThreadAndFrameOptions, factory);
-    }
-
-    @Override
-    protected BundleContext getBundleContext() {
-        return GdbPlugin.getBundleContext();
-    }
-    
-    @Override
-    public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize( new ImmediateRequestMonitor(requestMonitor) {
-            @Override
-            protected void handleSuccess() {
-                doInitialize(requestMonitor);
-            }
-        });
-    }
-
-    private void doInitialize(final RequestMonitor requestMonitor) {
-
-        fMIBackend = getServicesTracker().getService(IGDBBackend.class);
-    	
-        // getId, called to create this context, uses the MIBackend service, 
-        // which is why we must wait until we have MIBackend, before we can create the below context.
-        fControlDmc = createComandControlContext(); 
-
-        getExecutor().execute(getStartupSequence(requestMonitor));
-    }
-
-    @Override
-    public void shutdown(final RequestMonitor requestMonitor) {
-        getExecutor().execute(getShutdownSequence(new RequestMonitor(getExecutor(), requestMonitor) {
-
-        	@Override
-        	protected void handleCompleted() {
-				GDBControl.super.shutdown(requestMonitor);
-        	}
-        }));
-    }        
+	protected GDBControl(DsfSession session, boolean useThreadAndFrameOptions, ILaunchConfiguration config,
+			CommandFactory factory) {
+		super(session, useThreadAndFrameOptions, factory);
+	}
 
 	@Override
-    public String getId() {
-        return fMIBackend.getId();
-    }
-    
+	protected BundleContext getBundleContext() {
+		return GdbPlugin.getBundleContext();
+	}
+
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
+			@Override
+			protected void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
+	}
+
+	private void doInitialize(final RequestMonitor requestMonitor) {
+
+		fMIBackend = getServicesTracker().getService(IGDBBackend.class);
+
+		// getId, called to create this context, uses the MIBackend service, 
+		// which is why we must wait until we have MIBackend, before we can create the below context.
+		fControlDmc = createComandControlContext();
+
+		getExecutor().execute(getStartupSequence(requestMonitor));
+	}
+
+	@Override
+	public void shutdown(final RequestMonitor requestMonitor) {
+		getExecutor().execute(getShutdownSequence(new RequestMonitor(getExecutor(), requestMonitor) {
+
+			@Override
+			protected void handleCompleted() {
+				GDBControl.super.shutdown(requestMonitor);
+			}
+		}));
+	}
+
+	@Override
+	public String getId() {
+		return fMIBackend.getId();
+	}
+
 	/**
 	 * Create the commandControl context.
 	 * This method can be overridden to provide a different context.
@@ -287,99 +286,95 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	protected ICommandControlDMContext createComandControlContext() {
 		return new GDBControlDMContext(getSession().getId(), getId());
 	}
-	
+
 	@Deprecated
-    @Override
-    public MIControlDMContext getControlDMContext() {
+	@Override
+	public MIControlDMContext getControlDMContext() {
 		assert fControlDmc instanceof MIControlDMContext;
 		if (fControlDmc instanceof MIControlDMContext) {
-			return (MIControlDMContext)fControlDmc;
+			return (MIControlDMContext) fControlDmc;
 		}
 		return null;
-    }
-    
-	@Override
-    public ICommandControlDMContext getContext() {
-        return fControlDmc;
-    }
-    
-	@Override
-    public void terminate(final RequestMonitor rm) {
-        if (fTerminated) {
-            rm.done();
-            return;
-        }
-        fTerminated = true;
+	}
 
-        // If the initialization sequence is still running mark it as cancelled,
-        // to avoid reporting errors to the user, since we are terminating anyway.
-        if (fInitializationSequence != null) {
-        	fInitializationSequence.getRequestMonitor().cancel();
-        }
-        
-       // To fix bug 234467:
-       // Interrupt GDB in case the inferior is running.
-       // That way, the inferior will also be killed when we exit GDB.
-       //
+	@Override
+	public ICommandControlDMContext getContext() {
+		return fControlDmc;
+	}
+
+	@Override
+	public void terminate(final RequestMonitor rm) {
+		if (fTerminated) {
+			rm.done();
+			return;
+		}
+		fTerminated = true;
+
+		// If the initialization sequence is still running mark it as cancelled,
+		// to avoid reporting errors to the user, since we are terminating anyway.
+		if (fInitializationSequence != null) {
+			fInitializationSequence.getRequestMonitor().cancel();
+		}
+
+		// To fix bug 234467:
+		// Interrupt GDB in case the inferior is running.
+		// That way, the inferior will also be killed when we exit GDB.
+		//
 		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
 		if (runControl != null && !runControl.isTargetAcceptingCommands()) {
-           fMIBackend.interrupt();
-       }
-       
-        // Schedule a runnable to be executed 2 seconds from now.
-        // If we don't get a response to the quit command, this 
-        // runnable will kill the task.
-        final Future<?> forceQuitTask = getExecutor().schedule(
-            new DsfRunnable() {
-            	@Override
-                public void run() {
-                    fMIBackend.destroy();
-                    rm.done();
-                }
-                
-                @Override
-                protected boolean isExecutionRequired() {
-                    return false;
-                }
-            }, 
-            getGDBExitWaitTime(), TimeUnit.SECONDS);
-        
-        queueCommand(
-       		getCommandFactory().createMIGDBExit(getContext()),
-            new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
-                @Override
-                public void handleCompleted() {
-                    if (isSuccess()) {
-                        // Cancel the time out runnable (if it hasn't run yet).
-                        if (forceQuitTask.cancel(false)) {
-                        	rm.done();
-                        }
-                    }
-                    // else: the forceQuitTask has or will handle it.
-                    // It is good to wait for the forceQuitTask to trigger
-                    // to leave enough time for the interrupt() to complete.
-                }
-            }
-        );
-    }
+			fMIBackend.interrupt();
+		}
+
+		// Schedule a runnable to be executed 2 seconds from now.
+		// If we don't get a response to the quit command, this 
+		// runnable will kill the task.
+		final Future<?> forceQuitTask = getExecutor().schedule(new DsfRunnable() {
+			@Override
+			public void run() {
+				fMIBackend.destroy();
+				rm.done();
+			}
+
+			@Override
+			protected boolean isExecutionRequired() {
+				return false;
+			}
+		}, getGDBExitWaitTime(), TimeUnit.SECONDS);
+
+		queueCommand(getCommandFactory().createMIGDBExit(getContext()),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+					@Override
+					public void handleCompleted() {
+						if (isSuccess()) {
+							// Cancel the time out runnable (if it hasn't run yet).
+							if (forceQuitTask.cancel(false)) {
+								rm.done();
+							}
+						}
+						// else: the forceQuitTask has or will handle it.
+						// It is good to wait for the forceQuitTask to trigger
+						// to leave enough time for the interrupt() to complete.
+					}
+				});
+	}
 
 	/**
 	 * @deprecated Replaced by {@link #getGDBBackendProcess()}
 	 */
 	@Deprecated
 	@Override
-    public AbstractCLIProcess getCLIProcess() {
+	public AbstractCLIProcess getCLIProcess() {
 		if (fBackendProcess instanceof AbstractCLIProcess) {
-			return (AbstractCLIProcess)fBackendProcess;			
+			return (AbstractCLIProcess) fBackendProcess;
 		}
 		return null;
-    }
-    
+	}
+
 	/** @since 5.2 */
 	@Override
-    public Process getGDBBackendProcess() {
+	public Process getGDBBackendProcess() {
 		return fBackendProcess;
-    }
+	}
 
 	/**
 	 * @since 2.0
@@ -388,7 +383,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	public void setTracingStream(OutputStream tracingStream) {
 		setMITracingStream(tracingStream);
 	}
-	
+
 	/** @since 3.0 */
 	@Override
 	public void setEnvironment(Properties props, boolean clear, final RequestMonitor rm) {
@@ -398,38 +393,38 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		// First clear the environment if requested.
 		if (clear) {
 			count++;
-			queueCommand(
-					getCommandFactory().createCLIUnsetEnv(getContext()),
-					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));	
+			queueCommand(getCommandFactory().createCLIUnsetEnv(getContext()),
+					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));
 		}
-		
+
 		// Now set the new variables
-		for (Entry<Object,Object> property : props.entrySet()) {
+		for (Entry<Object, Object> property : props.entrySet()) {
 			count++;
-			String name = (String)property.getKey();
-			String value = (String)property.getValue();
-			queueCommand(
-					getCommandFactory().createMIGDBSetEnv(getContext(), name, value),
-					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));	
+			String name = (String) property.getKey();
+			String value = (String) property.getValue();
+			queueCommand(getCommandFactory().createMIGDBSetEnv(getContext(), name, value),
+					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));
 		}
 		countingRm.setDoneCount(count);
 	}
-	 
+
 	/**
 	 * @since 4.0
 	 */
 	@Override
 	public void completeInitialization(final RequestMonitor rm) {
 		// We take the attributes from the launchConfiguration
-		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
-    	Map<String, Object> attributes = null;
+		ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
+		Map<String, Object> attributes = null;
 		try {
 			attributes = launch.getLaunchConfiguration().getAttributes();
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 
 		// We need a RequestMonitorWithProgress, if we don't have one, we create one.
-		IProgressMonitor monitor = (rm instanceof RequestMonitorWithProgress) ?				
-				((RequestMonitorWithProgress)rm).getProgressMonitor() : new NullProgressMonitor();
+		IProgressMonitor monitor = (rm instanceof RequestMonitorWithProgress)
+				? ((RequestMonitorWithProgress) rm).getProgressMonitor()
+				: new NullProgressMonitor();
 		RequestMonitorWithProgress progressRm = new RequestMonitorWithProgress(getExecutor(), monitor) {
 
 			@Override
@@ -442,14 +437,14 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 				} else {
 					rm.cancel();
 				}
-    			rm.done();
+				rm.done();
 			}
 		};
 
 		fInitializationSequence = getCompleteInitializationSequence(attributes, progressRm);
 		ImmediateExecutor.getInstance().execute(fInitializationSequence);
 	}
-	
+
 	/**
 	 * Return the sequence that is to be used to complete the initialization of GDB.
 	 * 
@@ -459,218 +454,227 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 * 
 	 * @since 4.0
 	 */
-	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence(getSession(), attributes, rm);
 	}
-	
-    @DsfServiceEventHandler 
-    public void eventDispatched(ICommandControlShutdownDMEvent e) {
-    	// Handle our "GDB Exited" event and stop processing commands.
-    	stopCommandProcessing();
 
-    	// Before GDB 7.0, we have to send the containerExited event ourselves
-    	IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
-        if (procService != null) {
-    		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(getContext(), MIProcesses.UNIQUE_GROUP_ID);
-    		getSession().dispatchEvent(
-    				new ContainerExitedDMEvent(processContainerDmc), getProperties());
-        }
-    }
-    
-    @DsfServiceEventHandler 
-    public void eventDispatched(BackendStateChangedEvent e) {
-        if (e.getState() == IMIBackend.State.TERMINATED && e.getBackendId().equals(fMIBackend.getId())) {
-            // Handle "GDB Exited" event, just relay to following event.
-            getSession().dispatchEvent(new GDBControlShutdownDMEvent(getContext()), getProperties());
-        }
-    }
-    
-    public static class InitializationShutdownStep extends Sequence.Step {
-        public enum Direction { INITIALIZING, SHUTTING_DOWN }
-        
-        private Direction fDirection;
-        public InitializationShutdownStep(Direction direction) { fDirection = direction; }
-        
-        @Override
-        final public void execute(RequestMonitor requestMonitor) {
-            if (fDirection == Direction.INITIALIZING) {
-                initialize(requestMonitor);
-            } else {
-                shutdown(requestMonitor);
-            }
-        }
-        
-        @Override
-        final public void rollBack(RequestMonitor requestMonitor) {
-            if (fDirection == Direction.INITIALIZING) {
-                shutdown(requestMonitor);
-            } else {
-                super.rollBack(requestMonitor);
-            }
-        }
-        
-        protected void initialize(RequestMonitor requestMonitor) {
-            requestMonitor.done();
-        }
-        
-        protected void shutdown(RequestMonitor requestMonitor) {
-            requestMonitor.done();
-        }
-    }
-    
-    protected class CommandMonitoringStep extends InitializationShutdownStep {
-        CommandMonitoringStep(Direction direction) { super(direction); }
+	@DsfServiceEventHandler
+	public void eventDispatched(ICommandControlShutdownDMEvent e) {
+		// Handle our "GDB Exited" event and stop processing commands.
+		stopCommandProcessing();
 
-        @Override
-        protected void initialize(final RequestMonitor requestMonitor) {
-        	doCommandMonitoringStep(requestMonitor);
-        }
-
-        @Override
-        protected void shutdown(RequestMonitor requestMonitor) {
-            undoCommandMonitoringStep(requestMonitor);
-        }
-    }
-    
-    /** @since 5.1 */
-    protected void doCommandMonitoringStep(final RequestMonitor requestMonitor) {
-    	InputStream errorStream = null;
-    	if (fMIBackend instanceof IMIBackend2) {
-    		errorStream = ((IMIBackend2)fMIBackend).getMIErrorStream();
-    	}
-    	startCommandProcessing(fMIBackend.getMIInputStream(), fMIBackend.getMIOutputStream(), errorStream);
-    	requestMonitor.done();
-    }
-    
-    /** @since 5.1 */
-    protected void undoCommandMonitoringStep(RequestMonitor requestMonitor) {
-    	stopCommandProcessing();
-    	requestMonitor.done();
-    }
-
-    protected class CommandProcessorsStep extends InitializationShutdownStep {
-        CommandProcessorsStep(Direction direction) { super(direction); }
-
-        @Override
-        public void initialize(final RequestMonitor requestMonitor) {
-            doCommandProcessorsStep(requestMonitor);
-        }
-
-        @Override
-        protected void shutdown(RequestMonitor requestMonitor) {
-        	undoCommandProcessorsStep(requestMonitor);
-        }
-    }
-    
-    /** @since 5.1 */
-    protected void doCommandProcessorsStep(final RequestMonitor requestMonitor) {
-        try {
-            fBackendProcess = createBackendProcess();
-        }
-        catch(IOException e) {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
-            requestMonitor.done();
-            return;
-        }
-        
-        fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
-        fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
-        fControlEventProcessor = createControlEventProcessor();
-        fMIAsyncErrorProcessor = createMIAsyncErrorProcessor(GDBControl.this);
-
-        requestMonitor.done();
+		// Before GDB 7.0, we have to send the containerExited event ourselves
+		IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
+		if (procService != null) {
+			IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(getContext(),
+					MIProcesses.UNIQUE_GROUP_ID);
+			getSession().dispatchEvent(new ContainerExitedDMEvent(processContainerDmc), getProperties());
+		}
 	}
 
-    /** @since 5.1 */
-    protected void undoCommandProcessorsStep(RequestMonitor requestMonitor) {
-		fControlEventProcessor.dispose();
-    	fCLICommandProcessor.dispose();
-        fMIEventProcessor.dispose();
-        fMIAsyncErrorProcessor.dispose();
-        if (fBackendProcess instanceof AbstractCLIProcess) {
-        	((AbstractCLIProcess)fBackendProcess).dispose();
-        }
-
-        requestMonitor.done();
+	@DsfServiceEventHandler
+	public void eventDispatched(BackendStateChangedEvent e) {
+		if (e.getState() == IMIBackend.State.TERMINATED && e.getBackendId().equals(fMIBackend.getId())) {
+			// Handle "GDB Exited" event, just relay to following event.
+			getSession().dispatchEvent(new GDBControlShutdownDMEvent(getContext()), getProperties());
+		}
 	}
 
-    /**
-	 * @since 4.1
-	 */
-    protected class CommandTimeoutStep extends InitializationShutdownStep {
-		CommandTimeoutStep( Direction direction ) {
-			super( direction );
+	public static class InitializationShutdownStep extends Sequence.Step {
+		public enum Direction {
+			INITIALIZING, SHUTTING_DOWN
+		}
+
+		private Direction fDirection;
+
+		public InitializationShutdownStep(Direction direction) {
+			fDirection = direction;
 		}
 
 		@Override
-		public void initialize( final RequestMonitor requestMonitor ) {
+		final public void execute(RequestMonitor requestMonitor) {
+			if (fDirection == Direction.INITIALIZING) {
+				initialize(requestMonitor);
+			} else {
+				shutdown(requestMonitor);
+			}
+		}
+
+		@Override
+		final public void rollBack(RequestMonitor requestMonitor) {
+			if (fDirection == Direction.INITIALIZING) {
+				shutdown(requestMonitor);
+			} else {
+				super.rollBack(requestMonitor);
+			}
+		}
+
+		protected void initialize(RequestMonitor requestMonitor) {
+			requestMonitor.done();
+		}
+
+		protected void shutdown(RequestMonitor requestMonitor) {
+			requestMonitor.done();
+		}
+	}
+
+	protected class CommandMonitoringStep extends InitializationShutdownStep {
+		CommandMonitoringStep(Direction direction) {
+			super(direction);
+		}
+
+		@Override
+		protected void initialize(final RequestMonitor requestMonitor) {
+			doCommandMonitoringStep(requestMonitor);
+		}
+
+		@Override
+		protected void shutdown(RequestMonitor requestMonitor) {
+			undoCommandMonitoringStep(requestMonitor);
+		}
+	}
+
+	/** @since 5.1 */
+	protected void doCommandMonitoringStep(final RequestMonitor requestMonitor) {
+		InputStream errorStream = null;
+		if (fMIBackend instanceof IMIBackend2) {
+			errorStream = ((IMIBackend2) fMIBackend).getMIErrorStream();
+		}
+		startCommandProcessing(fMIBackend.getMIInputStream(), fMIBackend.getMIOutputStream(), errorStream);
+		requestMonitor.done();
+	}
+
+	/** @since 5.1 */
+	protected void undoCommandMonitoringStep(RequestMonitor requestMonitor) {
+		stopCommandProcessing();
+		requestMonitor.done();
+	}
+
+	protected class CommandProcessorsStep extends InitializationShutdownStep {
+		CommandProcessorsStep(Direction direction) {
+			super(direction);
+		}
+
+		@Override
+		public void initialize(final RequestMonitor requestMonitor) {
+			doCommandProcessorsStep(requestMonitor);
+		}
+
+		@Override
+		protected void shutdown(RequestMonitor requestMonitor) {
+			undoCommandProcessorsStep(requestMonitor);
+		}
+	}
+
+	/** @since 5.1 */
+	protected void doCommandProcessorsStep(final RequestMonitor requestMonitor) {
+		try {
+			fBackendProcess = createBackendProcess();
+		} catch (IOException e) {
+			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED,
+					"Failed to create CLI Process", e)); //$NON-NLS-1$
+			requestMonitor.done();
+			return;
+		}
+
+		fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
+		fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
+		fControlEventProcessor = createControlEventProcessor();
+		fMIAsyncErrorProcessor = createMIAsyncErrorProcessor(GDBControl.this);
+
+		requestMonitor.done();
+	}
+
+	/** @since 5.1 */
+	protected void undoCommandProcessorsStep(RequestMonitor requestMonitor) {
+		fControlEventProcessor.dispose();
+		fCLICommandProcessor.dispose();
+		fMIEventProcessor.dispose();
+		fMIAsyncErrorProcessor.dispose();
+		if (fBackendProcess instanceof AbstractCLIProcess) {
+			((AbstractCLIProcess) fBackendProcess).dispose();
+		}
+
+		requestMonitor.done();
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected class CommandTimeoutStep extends InitializationShutdownStep {
+		CommandTimeoutStep(Direction direction) {
+			super(direction);
+		}
+
+		@Override
+		public void initialize(final RequestMonitor requestMonitor) {
 			doCommandTimeoutStep(requestMonitor);
 		}
 
 		@Override
-		protected void shutdown( RequestMonitor requestMonitor ) {
+		protected void shutdown(RequestMonitor requestMonitor) {
 			undoCommandTimeoutStep(requestMonitor);
 		}
 	}
 
-    /** @since 5.1 */
-    protected void doCommandTimeoutStep(final RequestMonitor requestMonitor) {
-    	fCommandTimeoutManager = createCommandTimeoutManager( GDBControl.this );
-    	if (fCommandTimeoutManager != null) {
-    		fCommandTimeoutManager.addCommandTimeoutListener(fTimeoutListener);
-    	}
-    	requestMonitor.done();
-    }
-    
-    /** @since 5.1 */
-    protected void undoCommandTimeoutStep(RequestMonitor requestMonitor) {
-    	if ( fCommandTimeoutManager != null ) {
-    		fCommandTimeoutManager.removeCommandTimeoutListener(fTimeoutListener);
-    		fCommandTimeoutManager.dispose();
-    	}
-    	requestMonitor.done();
-    }
-
-    protected class RegisterStep extends InitializationShutdownStep {
-        RegisterStep(Direction direction) { super(direction); }
-        @Override
-        public void initialize(final RequestMonitor requestMonitor) {
-            doRegisterStep(requestMonitor);
-        }
-
-        @Override
-        protected void shutdown(RequestMonitor requestMonitor) {
-            undoRegisterStep(requestMonitor);
-        }
-    }
-
-    /** @since 5.1 */
-    protected void doRegisterStep(final RequestMonitor requestMonitor) {
-		getSession().addServiceEventListener(GDBControl.this, null);
-        register(
-            new String[]{ ICommandControl.class.getName(), 
-                          ICommandControlService.class.getName(), 
-                          IMICommandControl.class.getName(),
-                          AbstractMIControl.class.getName(),
-                          IGDBControl.class.getName() }, 
-            new Hashtable<String,String>());
-        getSession().dispatchEvent(new GDBControlInitializedDMEvent(getContext()), getProperties());
-        requestMonitor.done();
+	/** @since 5.1 */
+	protected void doCommandTimeoutStep(final RequestMonitor requestMonitor) {
+		fCommandTimeoutManager = createCommandTimeoutManager(GDBControl.this);
+		if (fCommandTimeoutManager != null) {
+			fCommandTimeoutManager.addCommandTimeoutListener(fTimeoutListener);
+		}
+		requestMonitor.done();
 	}
 
-    /** @since 5.1 */
-    protected void undoRegisterStep(RequestMonitor requestMonitor) {
-    	unregister();
-    	getSession().removeServiceEventListener(GDBControl.this);
-    	requestMonitor.done();
-    }
+	/** @since 5.1 */
+	protected void undoCommandTimeoutStep(RequestMonitor requestMonitor) {
+		if (fCommandTimeoutManager != null) {
+			fCommandTimeoutManager.removeCommandTimeoutListener(fTimeoutListener);
+			fCommandTimeoutManager.dispose();
+		}
+		requestMonitor.done();
+	}
+
+	protected class RegisterStep extends InitializationShutdownStep {
+		RegisterStep(Direction direction) {
+			super(direction);
+		}
+
+		@Override
+		public void initialize(final RequestMonitor requestMonitor) {
+			doRegisterStep(requestMonitor);
+		}
+
+		@Override
+		protected void shutdown(RequestMonitor requestMonitor) {
+			undoRegisterStep(requestMonitor);
+		}
+	}
+
+	/** @since 5.1 */
+	protected void doRegisterStep(final RequestMonitor requestMonitor) {
+		getSession().addServiceEventListener(GDBControl.this, null);
+		register(new String[] { ICommandControl.class.getName(), ICommandControlService.class.getName(),
+				IMICommandControl.class.getName(), AbstractMIControl.class.getName(), IGDBControl.class.getName() },
+				new Hashtable<String, String>());
+		getSession().dispatchEvent(new GDBControlInitializedDMEvent(getContext()), getProperties());
+		requestMonitor.done();
+	}
+
+	/** @since 5.1 */
+	protected void undoRegisterStep(RequestMonitor requestMonitor) {
+		unregister();
+		getSession().removeServiceEventListener(GDBControl.this);
+		requestMonitor.done();
+	}
 
 	/** @since 4.0 */
 	@Override
 	public List<String> getFeatures() {
 		return fFeatures;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */
@@ -678,7 +682,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	public void enablePrettyPrintingForMIVariableObjects(RequestMonitor rm) {
 		rm.done();
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */
@@ -691,44 +695,50 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 * @since 4.1
 	 */
 	protected Sequence getStartupSequence(final RequestMonitor requestMonitor) {
-        final Sequence.Step[] initializeSteps = new Sequence.Step[] {
-                new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new CommandTimeoutStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
-            };
+		final Sequence.Step[] initializeSteps = new Sequence.Step[] {
+				new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
+				new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
+				new CommandTimeoutStep(InitializationShutdownStep.Direction.INITIALIZING),
+				new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING), };
 
-        return new Sequence(getExecutor(), requestMonitor) {
-            @Override public Step[] getSteps() { return initializeSteps; }
-        };
+		return new Sequence(getExecutor(), requestMonitor) {
+			@Override
+			public Step[] getSteps() {
+				return initializeSteps;
+			}
+		};
 	}
 
 	/**
 	 * @since 4.1
 	 */
 	protected Sequence getShutdownSequence(RequestMonitor requestMonitor) {
-        final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
-                new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandTimeoutStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-            };
-        return new Sequence(getExecutor(), requestMonitor) {
-            @Override public Step[] getSteps() { return shutdownSteps; }
-        };
+		final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
+				new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new CommandTimeoutStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN), };
+		return new Sequence(getExecutor(), requestMonitor) {
+			@Override
+			public Step[] getSteps() {
+				return shutdownSteps;
+			}
+		};
 	}
 
 	/**
 	 * @since 4.1
 	 */
-	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection, ICommandControlDMContext controlDmc) {
+	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection,
+			ICommandControlDMContext controlDmc) {
 		return new CLIEventProcessor(connection, controlDmc);
 	}
 
 	/**
 	 * @since 4.1
 	 */
-	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
+	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection,
+			ICommandControlDMContext controlDmc) {
 		return new MIRunControlEventProcessor(connection, controlDmc);
 	}
 
@@ -746,16 +756,16 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 	/** @since 5.2 */
 	protected Process createBackendProcess() throws IOException {
-	   	if (fMIBackend.isFullGdbConsoleSupported()) {
-	   		// If the full GDB console is supported, which uses the GDB process itself,
-	   		// we return a GDBBackendProcess that does not take care of I/O
-    		return new GDBBackendProcessWithoutIO(this, fMIBackend);
-    	}
-	   	// If the full GDB console is not supported according to the backend service,
-	   	// then we create a special GDBBackendProcess that handles the CLI
+		if (fMIBackend.isFullGdbConsoleSupported()) {
+			// If the full GDB console is supported, which uses the GDB process itself,
+			// we return a GDBBackendProcess that does not take care of I/O
+			return new GDBBackendProcessWithoutIO(this, fMIBackend);
+		}
+		// If the full GDB console is not supported according to the backend service,
+		// then we create a special GDBBackendProcess that handles the CLI
 		return new GDBBackendCLIProcess(this, fMIBackend);
 	}
-	
+
 	/**
 	 * @since 4.1
 	 */
@@ -763,7 +773,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		fFeatures.clear();
 		fFeatures.addAll(features);
 	}
-	
+
 	/**
 	 * @since 4.1
 	 */
@@ -783,33 +793,28 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			commandText = commandText.substring(0, commandText.length() - 1);
 		final String errorMessage = String.format("Command '%s' is timed out", commandText); //$NON-NLS-1$
 		commandFailed(token, STATUS_CODE_COMMAND_TIMED_OUT, errorMessage);
-		
+
 		// If the timeout occurs while the launch sequence is running 
 		// the error will be reported by the launcher's error reporting mechanism.
 		// We need to show the error message only when the session is initialized.
 		if (isInitialized()) {
 			// The session is terminated if a command is timed out.
 			terminate(new RequestMonitor(getExecutor(), null) {
-				
+
 				@Override
 				protected void handleErrorOrWarning() {
 					GdbPlugin.getDefault().getLog().log(getStatus());
 					super.handleErrorOrWarning();
 				};
-			} );
+			});
 
-			IStatus status = new Status( 
-					IStatus.ERROR, 
-					GdbPlugin.PLUGIN_ID, 
-					IGdbDebugConstants.STATUS_HANDLER_CODE, 
-					String.format( Messages.GDBControl_Session_is_terminated, errorMessage ), 
-					null);
+			IStatus status = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE,
+					String.format(Messages.GDBControl_Session_is_terminated, errorMessage), null);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 			if (statusHandler != null) {
 				try {
 					statusHandler.handleStatus(status, null);
-				}
-				catch(CoreException e) {
+				} catch (CoreException e) {
 					GdbPlugin.getDefault().getLog().log(e.getStatus());
 				}
 			}
@@ -828,7 +833,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	protected boolean verifyConnectionLost(MIOutput output) {
 		boolean connectionLost = false;
 		String reason = null;
-		
+
 		// Check if any command has a result that indicates a lost connection.
 		// This can happen as a normal command result, or as an out-of-band event.
 		// The out-of-band case can happen when GDB sends another response to 
@@ -846,7 +851,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 					if (var.equals("msg")) { //$NON-NLS-1$
 						MIValue value = result.getMIValue();
 						if (value instanceof MIConst) {
-							String str = ((MIConst)value).getCString();
+							String str = ((MIConst) value).getCString();
 							if (str != null && str.startsWith("Remote connection closed")) { //$NON-NLS-1$
 								connectionLost = true;
 								reason = str;
@@ -891,13 +896,13 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		}
 
 		if (connectionLost) {
-    		connectionLost(reason);
-    		return true;
-    	}
-    	
-    	return false;
+			connectionLost(reason);
+			return true;
+		}
+
+		return false;
 	}
-	
+
 	/**
 	 * Handle the loss of the connection to the remote.
 	 * The default implementation terminates the debug session.
@@ -914,7 +919,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			};
 		});
 	}
-	
+
 	/**
 	 * @since 4.1
 	 */

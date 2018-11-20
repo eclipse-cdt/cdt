@@ -14,7 +14,7 @@
  *     Texas Instruments - added extension point for source container type (279473) 
  *     Sergey Prigogin (Google)
 *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -94,8 +94,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 				fSupportedTypes = new HashSet<String>();
 				String name = CDebugCorePlugin.PLUGIN_ID + ".supportedSourceContainerTypes"; //$NON-NLS-1$; 
 				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(name);
-				if (extensionPoint != null) {  
-					for (IExtension extension : extensionPoint.getExtensions()) { 
+				if (extensionPoint != null) {
+					for (IExtension extension : extensionPoint.getExtensions()) {
 						for (IConfigurationElement configurationElements : extension.getConfigurationElements()) {
 							String id = configurationElements.getAttribute("id"); //$NON-NLS-1$;
 							if (id != null)

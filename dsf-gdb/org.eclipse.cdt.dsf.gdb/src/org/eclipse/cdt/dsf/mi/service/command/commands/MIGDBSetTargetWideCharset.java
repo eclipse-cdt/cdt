@@ -29,6 +29,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  */
 public class MIGDBSetTargetWideCharset extends MIGDBSet {
 	public MIGDBSetTargetWideCharset(ICommandControlDMContext ctx, String targetWideCharset) {
-		super(ctx, new String[] {"target-wide-charset", targetWideCharset}); //$NON-NLS-1$
+		super(ctx, new String[] { "target-wide-charset", targetWideCharset }); //$NON-NLS-1$
 	}
 }

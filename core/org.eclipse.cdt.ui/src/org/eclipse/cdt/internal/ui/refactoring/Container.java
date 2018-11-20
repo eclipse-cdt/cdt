@@ -23,7 +23,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
  */
 public class Container<T> {
 	private T object;
-	
+
 	public Container(T object) {
 		this.object = object;
 	}

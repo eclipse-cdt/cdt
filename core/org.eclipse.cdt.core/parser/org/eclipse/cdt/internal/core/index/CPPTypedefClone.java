@@ -78,7 +78,7 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 			return false;
 
 		if (type instanceof ITypedef) {
-			type= ((ITypedef) type).getType();
+			type = ((ITypedef) type).getType();
 		}
 		return myrtype.isSameType(type);
 	}

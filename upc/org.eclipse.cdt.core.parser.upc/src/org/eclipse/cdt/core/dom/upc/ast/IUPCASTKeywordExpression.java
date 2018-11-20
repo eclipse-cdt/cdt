@@ -23,11 +23,9 @@ public interface IUPCASTKeywordExpression extends IASTExpression {
 
 	public static final int kw_upc_max_block_size = 3;
 
-
 	public int getKeywordKind();
 
 	public void setKeywordKind(int kind);
-
 
 	@Override
 	public IUPCASTKeywordExpression copy();

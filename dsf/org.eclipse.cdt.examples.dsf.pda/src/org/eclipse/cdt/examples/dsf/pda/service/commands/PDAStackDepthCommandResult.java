@@ -15,21 +15,21 @@ package org.eclipse.cdt.examples.dsf.pda.service.commands;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 
-
 /**
  * @see PDADataCommand
  */
 @Immutable
 public class PDAStackDepthCommandResult extends PDACommandResult {
-    
-    final public int fDepth;
-    
-    PDAStackDepthCommandResult(String response) {
-        super(response);
-        int depth = 1; // default to something that won't cause NPEs
-        try {
-            depth = Integer.parseInt(response);
-        } catch (NumberFormatException e) {}
-        fDepth = depth;
-    }
+
+	final public int fDepth;
+
+	PDAStackDepthCommandResult(String response) {
+		super(response);
+		int depth = 1; // default to something that won't cause NPEs
+		try {
+			depth = Integer.parseInt(response);
+		} catch (NumberFormatException e) {
+		}
+		fDepth = depth;
+	}
 }

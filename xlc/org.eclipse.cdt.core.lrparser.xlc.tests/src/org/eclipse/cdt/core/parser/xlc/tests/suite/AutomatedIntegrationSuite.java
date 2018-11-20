@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests.suite;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -23,9 +22,11 @@ import org.eclipse.cdt.core.parser.xlc.tests.base.XlcLRParserTestSuite;
 public class AutomatedIntegrationSuite extends TestSuite {
 
 	public static Test suite() {
-		return new TestSuite() {{
-			addTest(XlcExtensionsTestSuite.suite());
-			addTest(XlcLRParserTestSuite.suite());
-		}};
+		return new TestSuite() {
+			{
+				addTest(XlcExtensionsTestSuite.suite());
+				addTest(XlcLRParserTestSuite.suite());
+			}
+		};
 	}
 }

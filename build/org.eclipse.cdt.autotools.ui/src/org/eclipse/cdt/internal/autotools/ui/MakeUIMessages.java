@@ -25,6 +25,7 @@ public class MakeUIMessages {
 	private MakeUIMessages() {
 
 	}
+
 	public static String getResourceString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
@@ -32,7 +33,7 @@ public class MakeUIMessages {
 			return '!' + key + '!';
 		}
 	}
-	
+
 	/**
 	 * Returns the plugin's resource bundle,
 	 */

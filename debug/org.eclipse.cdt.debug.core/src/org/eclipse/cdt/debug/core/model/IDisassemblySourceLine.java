@@ -20,6 +20,6 @@ import java.io.File;
  * Represents a source line in disassembly.
  */
 public interface IDisassemblySourceLine extends IAsmSourceLine, IDisassemblyLine {
-    
-    public File getFile();
+
+	public File getFile();
 }

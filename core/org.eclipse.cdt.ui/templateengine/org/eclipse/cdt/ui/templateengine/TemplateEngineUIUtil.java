@@ -32,8 +32,8 @@ public class TemplateEngineUIUtil {
 	 * Shows the error message in a Dialog Box.
 	 * @param message
 	 * @param t
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
 	public static void showError(String message, Throwable t) {
 		TemplateEngineUtil.log(t);
@@ -48,14 +48,17 @@ public class TemplateEngineUIUtil {
 						if (p instanceof ProcessFailureException) {
 							statuses = ((ProcessFailureException) p).getStatuses();
 						}
-					} while ((statuses == null || statuses.isEmpty()) && p != null && p instanceof ProcessFailureException);
+					} while ((statuses == null || statuses.isEmpty()) && p != null
+							&& p instanceof ProcessFailureException);
 					if (statuses == null || statuses.isEmpty()) {
 						status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, t.getMessage(), t);
 					} else {
-						status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR, statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
+						status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR,
+								statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
 					}
 				} else {
-					status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR, statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
+					status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR,
+							statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
 				}
 			} else if (t instanceof CoreException) {
 				status = ((CoreException) t).getStatus();
@@ -63,29 +66,31 @@ public class TemplateEngineUIUtil {
 					message = null;
 				}
 			} else {
-				status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1, Messages.getString("TemplateEngine.internalError") + message, t);	 //$NON-NLS-1$
+				status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1,
+						Messages.getString("TemplateEngine.internalError") + message, t); //$NON-NLS-1$
 			}
 		} else {
-			status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1, Messages.getString("TemplateEngine.internalError") + message, null);	 //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1,
+					Messages.getString("TemplateEngine.internalError") + message, null); //$NON-NLS-1$
 		}
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window == null){
+		if (window == null) {
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			window = windows[0];
 		}
 		ErrorDialog.openError(window.getShell(), Messages.getString("TemplateEngine.templateEngine"), message, status); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Shows the Status message in Dialog Box.
 	 * @param message
 	 * @param status
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
 	public static void showStatusDialog(String message, IStatus status) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window == null){
+		if (window == null) {
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			window = windows[0];
 		}

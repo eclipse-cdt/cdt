@@ -31,10 +31,10 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Global retargettable move to line action.
  */
 public class RetargetMoveToLineAction extends RetargetAction {
-	
+
 	private DebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
-	
+
 	class DebugContextListener implements IDebugContextListener {
 
 		protected void contextActivated(ISelection selection) {
@@ -42,8 +42,8 @@ public class RetargetMoveToLineAction extends RetargetAction {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-                    fTargetElement = (ISuspendResume)
-                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
+					fTargetElement = (ISuspendResume) DebugPlugin.getAdapter(ss.getFirstElement(),
+							ISuspendResume.class);
 				}
 			}
 			IAction action = getAction();
@@ -57,7 +57,7 @@ public class RetargetMoveToLineAction extends RetargetAction {
 			contextActivated(event.getContext());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -66,6 +66,7 @@ public class RetargetMoveToLineAction extends RetargetAction {
 		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fContextListener);
 		super.dispose();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -77,36 +78,36 @@ public class RetargetMoveToLineAction extends RetargetAction {
 		ISelection activeContext = service.getActiveContext();
 		fContextListener.contextActivated(activeContext);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
-	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
-		return fTargetElement != null &&
-			((IMoveToLineTarget)target).canMoveToLine(part, selection, fTargetElement);
+	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
+		return fTargetElement != null && ((IMoveToLineTarget) target).canMoveToLine(part, selection, fTargetElement);
 	}
-	
+
 	@Override
 	protected Class<?> getAdapterClass() {
 		return IMoveToLineTarget.class;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
-		((IMoveToLineTarget)target).moveToLine(part, selection, fTargetElement);
+		((IMoveToLineTarget) target).moveToLine(part, selection, fTargetElement);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
 	 */
 	@Override
 	protected String getOperationUnavailableMessage() {
 		return ActionMessages.getString("RetargetMoveToLineAction.0"); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

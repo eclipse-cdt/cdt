@@ -130,7 +130,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		private ICProject fProject;
 
 		public PCL(ICProject prj) {
-			fProject= prj;
+			fProject = prj;
 		}
 
 		@Override
@@ -141,95 +141,94 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
+	private static final QualifiedName dbNameProperty = new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
 
-	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = {
-		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
-	};
-	public static final int[] IDS_FOR_LINKAGES_TO_INDEX_C_FIRST = {
-		ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
-	};
+	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID,
+			ILinkage.FORTRAN_LINKAGE_ID };
+	public static final int[] IDS_FOR_LINKAGES_TO_INDEX_C_FIRST = { ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID,
+			ILinkage.FORTRAN_LINKAGE_ID };
 
-	private final ArrayDeque<ICProject> fProjectQueue= new ArrayDeque<>();
+	private final ArrayDeque<ICProject> fProjectQueue = new ArrayDeque<>();
 	private final PDOMSetupJob fSetupJob;
 	/**
 	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
 	 */
 	private final ArrayDeque<IPDOMIndexerTask> fTaskQueue = new ArrayDeque<>();
-    private final PDOMIndexerJob fIndexerJob;
+	private final PDOMIndexerJob fIndexerJob;
 	private IPDOMIndexerTask fCurrentTask;
 	private int fSourceCount, fHeaderCount, fTickCount;
 
-	private final ArrayDeque<Runnable> fChangeEvents= new ArrayDeque<>();
+	private final ArrayDeque<Runnable> fChangeEvents = new ArrayDeque<>();
 	private final Job fNotificationJob;
 
-	private final AtomicMultiSet<IIndexFileLocation> fFilesIndexedUnconditionlly= new AtomicMultiSet<>();
+	private final AtomicMultiSet<IIndexFileLocation> fFilesIndexedUnconditionlly = new AtomicMultiSet<>();
 
-    /**
-     * Stores mapping from pdom to project, used to serialize creation of new pdoms.
-     */
-    private Map<IProject, IPDOM> fProjectToPDOM= new HashMap<>();
-    private Map<File, ICProject> fFileToProject= new HashMap<>();
-	private ListenerList<IIndexChangeListener> fChangeListeners= new ListenerList<>();
-	private ListenerList<IIndexerStateListener> fStateListeners= new ListenerList<>();
+	/**
+	 * Stores mapping from pdom to project, used to serialize creation of new pdoms.
+	 */
+	private Map<IProject, IPDOM> fProjectToPDOM = new HashMap<>();
+	private Map<File, ICProject> fFileToProject = new HashMap<>();
+	private ListenerList<IIndexChangeListener> fChangeListeners = new ListenerList<>();
+	private ListenerList<IIndexerStateListener> fStateListeners = new ListenerList<>();
 
-	private IndexChangeEvent fIndexChangeEvent= new IndexChangeEvent();
-	private IndexerStateEvent fIndexerStateEvent= new IndexerStateEvent();
+	private IndexChangeEvent fIndexChangeEvent = new IndexChangeEvent();
+	private IndexerStateEvent fIndexerStateEvent = new IndexerStateEvent();
 
-	private CModelListener fCModelListener= new CModelListener(this);
+	private CModelListener fCModelListener = new CModelListener(this);
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
 	private LanguageSettingsChangeListener fLanguageSettingsChangeListener = new LanguageSettingsChangeListener(this);
 	private final ICProjectDescriptionListener fProjectDescriptionListener;
 	private final JobChangeListener fJobChangeListener;
 	private final IPreferenceChangeListener fPreferenceChangeListener;
 
-	private IndexFactory fIndexFactory= new IndexFactory(this);
-    private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
+	private IndexFactory fIndexFactory = new IndexFactory(this);
+	private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
 
 	/**
 	 * Serializes creation of new indexer, when acquiring the lock you are
 	 * not allowed to hold a lock on fPDOMs.
 	 */
-	private Map<ICProject, IndexUpdatePolicy> fUpdatePolicies= new HashMap<>();
-	private Set<String> fClosingProjects= new HashSet<>();
+	private Map<ICProject, IndexUpdatePolicy> fUpdatePolicies = new HashMap<>();
+	private Set<String> fClosingProjects = new HashSet<>();
 
-	private Map<IProject, PCL> fPrefListeners= new HashMap<>();
-	private List<IndexerSetupParticipant> fSetupParticipants= new ArrayList<>();
-	private Set<ICProject> fPostponedProjects= new HashSet<>();
-	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
+	private Map<IProject, PCL> fPrefListeners = new HashMap<>();
+	private List<IndexerSetupParticipant> fSetupParticipants = new ArrayList<>();
+	private Set<ICProject> fPostponedProjects = new HashSet<>();
+	private int fLastNotifiedState = IndexerStateEvent.STATE_IDLE;
 	private boolean fInShutDown;
 
 	boolean fTraceIndexerSetup;
 
 	public PDOMManager() {
-		PDOM.sDEBUG_LOCKS= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$
-		IndexFileSet.sDEBUG=
-				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/IndexFileSet"));  //$NON-NLS-1$
+		PDOM.sDEBUG_LOCKS = Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks")); //$NON-NLS-1$
+		IndexFileSet.sDEBUG = Boolean
+				.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/IndexFileSet")); //$NON-NLS-1$
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
-		fProjectDescriptionListener= new CProjectDescriptionListener(this);
-		fJobChangeListener= new JobChangeListener(this);
-		fPreferenceChangeListener= new IPreferenceChangeListener() {
+		fProjectDescriptionListener = new CProjectDescriptionListener(this);
+		fJobChangeListener = new JobChangeListener(this);
+		fPreferenceChangeListener = new IPreferenceChangeListener() {
 			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				onPreferenceChange(event);
 			}
 		};
-		fSetupJob= new PDOMSetupJob(this);
-		fIndexerJob= new PDOMIndexerJob(this);
-		fNotificationJob= createNotifyJob();
+		fSetupJob = new PDOMSetupJob(this);
+		fIndexerJob = new PDOMIndexerJob(this);
+		fNotificationJob = createNotifyJob();
 	}
 
 	public Job startup() {
-		fInShutDown= false;
+		fInShutDown = false;
 		// Set path canonicalization strategy early on to avoid a race condition.
 		updatePathCanonicalizationStrategy();
 
-		Job postStartupJob= new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
+		Job postStartupJob = new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				postStartup();
 				return Status.OK_STATUS;
 			}
+
 			@Override
 			public boolean belongsTo(Object family) {
 				return family == PDOMManager.this;
@@ -251,17 +250,18 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		updatePathCanonicalizationStrategy();
 		fIndexProviderManager.startup();
 
-		fTraceIndexerSetup= String.valueOf(true).equals(Platform.getDebugOption(TRACE_INDEXER_SETUP));
+		fTraceIndexerSetup = String.valueOf(true).equals(Platform.getDebugOption(TRACE_INDEXER_SETUP));
 		final CoreModel model = CoreModel.getDefault();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
 		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
 		LanguageSettingsManager.registerLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
-		final int types= CProjectDescriptionEvent.APPLIED;
-		CCorePlugin.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fProjectDescriptionListener, types);
+		final int types = CProjectDescriptionEvent.APPLIED;
+		CCorePlugin.getDefault().getProjectDescriptionManager()
+				.addCProjectDescriptionListener(fProjectDescriptionListener, types);
 
 		try {
-			ICProject[] projects= model.getCModel().getCProjects();
+			ICProject[] projects = model.getCModel().getCProjects();
 			for (ICProject project : projects) {
 				addProject(project);
 			}
@@ -271,18 +271,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	public void shutdown() {
-		fInShutDown= true;
+		fInShutDown = true;
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).removePreferenceChangeListener(fPreferenceChangeListener);
-		CCorePlugin.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(fProjectDescriptionListener);
+		CCorePlugin.getDefault().getProjectDescriptionManager()
+				.removeCProjectDescriptionListener(fProjectDescriptionListener);
 		final CoreModel model = CoreModel.getDefault();
 		model.removeElementChangedListener(fCModelListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fCModelListener);
 		LanguageSettingsManager.unregisterLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
 		LanguageManager.getInstance().unregisterLanguageChangeListener(fLanguageChangeListener);
-		PDOMIndexerJob jobToCancel= null;
+		PDOMIndexerJob jobToCancel = null;
 		synchronized (fTaskQueue) {
 			fTaskQueue.clear();
-			jobToCancel= fIndexerJob;
+			jobToCancel = fIndexerJob;
 		}
 
 		if (jobToCancel != null) {
@@ -297,9 +298,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (prop.equals(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT)
 				|| prop.equals(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB)) {
 			adjustCacheSize();
-		} else if (prop.equals(CCorePreferenceConstants.TODO_TASK_TAGS) ||
-				prop.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES) ||
-				prop.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
+		} else if (prop.equals(CCorePreferenceConstants.TODO_TASK_TAGS)
+				|| prop.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES)
+				|| prop.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
 			reindexAll();
 		} else if (prop.equals(CCorePreferenceConstants.FILE_PATH_CANONICALIZATION)) {
 			updatePathCanonicalizationStrategy();
@@ -309,18 +310,20 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	protected void adjustCacheSize() {
 		IPreferencesService prefs = Platform.getPreferencesService();
-		int cachePct= prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, 10, null);
-		int cacheMax= prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, 64, null);
-		cachePct= Math.max(1, Math.min(50, cachePct));   // 1%-50%
-		cacheMax= Math.max(1, cacheMax);                 // >= 1mb
-		long m1= Runtime.getRuntime().maxMemory() / 100L * cachePct;
-		long m2= Math.min(m1, cacheMax * 1024L * 1024L);
+		int cachePct = prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, 10, null);
+		int cacheMax = prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, 64,
+				null);
+		cachePct = Math.max(1, Math.min(50, cachePct)); // 1%-50%
+		cacheMax = Math.max(1, cacheMax); // >= 1mb
+		long m1 = Runtime.getRuntime().maxMemory() / 100L * cachePct;
+		long m2 = Math.min(m1, cacheMax * 1024L * 1024L);
 		ChunkCache.getSharedInstance().setMaxSize(m2);
 	}
 
 	private void updatePathCanonicalizationStrategy() {
 		IPreferencesService prefs = Platform.getPreferencesService();
-		boolean canonicalize = prefs.getBoolean(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true, null);
+		boolean canonicalize = prefs.getBoolean(CCorePlugin.PLUGIN_ID,
+				CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true, null);
 		PathCanonicalizationStrategy.setPathCanonicalization(canonicalize);
 	}
 
@@ -337,7 +340,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			IProject rproject = project.getProject();
 			IPDOM pdom = fProjectToPDOM.get(rproject);
 			if (pdom == null) {
-				pdom= new PDOMProxy();
+				pdom = new PDOMProxy();
 				fProjectToPDOM.put(rproject, pdom);
 			}
 			return pdom;
@@ -354,58 +357,59 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private WritablePDOM getOrCreatePDOM(ICProject cProject, IProgressMonitor monitor) throws CoreException {
 		synchronized (fProjectToPDOM) {
 			IProject project = cProject.getProject();
-			IPDOM pdomProxy= fProjectToPDOM.get(project);
+			IPDOM pdomProxy = fProjectToPDOM.get(project);
 			if (pdomProxy instanceof WritablePDOM) {
 				return (WritablePDOM) pdomProxy;
 			}
 
-			String dbName= project.getPersistentProperty(dbNameProperty);
-			File dbFile= null;
+			String dbName = project.getPersistentProperty(dbNameProperty);
+			File dbFile = null;
 			if (dbName != null) {
-				dbFile= fileFromDatabaseName(dbName);
+				dbFile = fileFromDatabaseName(dbName);
 				if (!dbFile.exists()) {
-					dbFile= null;
-					dbName= null;
+					dbFile = null;
+					dbName = null;
 				} else {
-					ICProject currentCOwner= fFileToProject.get(dbFile);
+					ICProject currentCOwner = fFileToProject.get(dbFile);
 					if (currentCOwner != null) {
-						IProject currentOwner= currentCOwner.getProject();
+						IProject currentOwner = currentCOwner.getProject();
 						if (!currentOwner.exists()) {
 							fFileToProject.remove(dbFile);
 							dbFile.delete();
 						}
-						dbName= null;
-						dbFile= null;
+						dbName = null;
+						dbFile = null;
 					}
 				}
 			}
 
-			boolean fromScratch= false;
+			boolean fromScratch = false;
 			if (dbName == null) {
 				dbName = createNewDatabaseName(cProject);
-				dbFile= fileFromDatabaseName(dbName);
+				dbFile = fileFromDatabaseName(dbName);
 				storeDatabaseName(project, dbName);
-				fromScratch= true;
+				fromScratch = true;
 			}
 
 			WritablePDOM pdom;
 			try {
-				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
+				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
 			} catch (CoreException | RuntimeException e) {
 				// Index file is likely corrupted. Recover by rebuilding the index.
 				// See http://bugs.eclipse.org/510054
 				CCorePlugin.log("Failed to open C/C++ index file " + dbFile.getAbsolutePath() //$NON-NLS-1$
 						+ " - rebuilding the index", e); //$NON-NLS-1$
 				dbFile.delete();
-				fromScratch= true;
-				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
+				fromScratch = true;
+				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
 			}
 
 			if (!pdom.isSupportedVersion() || fromScratch) {
 				try {
 					pdom.acquireWriteLock(monitor);
 				} catch (InterruptedException e) {
-					throw new CoreException(CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
+					throw new CoreException(
+							CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
 				}
 				try {
 					if (fromScratch) {
@@ -441,13 +445,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private String createNewDatabaseName(ICProject project) {
 		String dbName;
-		long time= System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		File file;
 		do {
-			dbName= getDefaultName(project, time++);
-			file= fileFromDatabaseName(dbName);
-		}
-		while (file.exists());
+			dbName = getDefaultName(project, time++);
+			file = fileFromDatabaseName(dbName);
+		} while (file.exists());
 		return dbName;
 	}
 
@@ -456,7 +459,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	private String getDefaultName(ICProject project, long time) {
-		return project.getElementName() + "." + time + ".pdom";  //$NON-NLS-1$//$NON-NLS-2$
+		return project.getElementName() + "." + time + ".pdom"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	@Override
@@ -469,19 +472,20 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		IndexerPreferences.setDefaultIndexerId(indexerId);
 	}
 
-    @Override
+	@Override
 	public String getIndexerId(ICProject project) {
-    	IProject prj= project != null ? project.getProject() : null;
-    	return IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
-    }
+		IProject prj = project != null ? project.getProject() : null;
+		return IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
+	}
 
-    @Override
+	@Override
 	public void setIndexerId(final ICProject project, String indexerId) {
-    	IProject prj= project.getProject();
-    	IndexerPreferences.set(prj, IndexerPreferences.KEY_INDEXER_ID, indexerId);
-    	CCoreInternals.savePreferences(prj, IndexerPreferences.getScope(prj) == IndexerPreferences.SCOPE_PROJECT_SHARED);
+		IProject prj = project.getProject();
+		IndexerPreferences.set(prj, IndexerPreferences.KEY_INDEXER_ID, indexerId);
+		CCoreInternals.savePreferences(prj,
+				IndexerPreferences.getScope(prj) == IndexerPreferences.SCOPE_PROJECT_SHARED);
 		changeIndexer(project);
-    }
+	}
 
 	protected void onPreferenceChange(ICProject cproject, PreferenceChangeEvent event) {
 		if (IndexerPreferences.KEY_UPDATE_POLICY.equals(event.getKey())) {
@@ -494,9 +498,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private void changeUpdatePolicy(ICProject cproject) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fUpdatePolicies) {
-			IndexUpdatePolicy policy= getPolicy(cproject);
+			IndexUpdatePolicy policy = getPolicy(cproject);
 			if (policy != null) {
-				IPDOMIndexerTask task= policy.changePolicy(IndexerPreferences.getUpdatePolicy(cproject.getProject()));
+				IPDOMIndexerTask task = policy.changePolicy(IndexerPreferences.getUpdatePolicy(cproject.getProject()));
 				if (task != null) {
 					enqueue(task);
 				}
@@ -505,7 +509,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	private void changeIndexer(ICProject cproject) {
-		IProject prj= cproject.getProject();
+		IProject prj = cproject.getProject();
 		if (!prj.exists() || !prj.isOpen())
 			return;
 
@@ -513,19 +517,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			assert !Thread.holdsLock(fProjectToPDOM);
 
 			// If there is no indexer, don't touch the preferences.
-			IPDOMIndexer oldIndexer= getIndexer(cproject);
+			IPDOMIndexer oldIndexer = getIndexer(cproject);
 			if (oldIndexer == null) {
 				return;
 			}
 
-			String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
-			Properties props= IndexerPreferences.getProperties(prj);
+			String newid = IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
+			Properties props = IndexerPreferences.getProperties(prj);
 
 			synchronized (fUpdatePolicies) {
 				if (fClosingProjects.contains(prj.getName())) {
 					return;
 				}
-				oldIndexer= getIndexer(cproject);
+				oldIndexer = getIndexer(cproject);
 				if (oldIndexer != null) {
 					if (oldIndexer.getID().equals(newid)) {
 						if (!oldIndexer.needsToRebuildForProperties(props)) {
@@ -533,12 +537,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 							return;
 						}
 					}
-					IPDOMIndexer indexer= newIndexer(newid, props);
+					IPDOMIndexer indexer = newIndexer(newid, props);
 					registerIndexer(cproject, indexer);
 					createPolicy(cproject).clearTUs();
 					if (oldIndexer instanceof AbstractPDOMIndexer) {
-						if (IndexerPreferences.preferDefaultLanguage(((AbstractPDOMIndexer) oldIndexer).getProperties()) !=
-							IndexerPreferences.preferDefaultLanguage(props)) {
+						if (IndexerPreferences.preferDefaultLanguage(
+								((AbstractPDOMIndexer) oldIndexer).getProperties()) != IndexerPreferences
+										.preferDefaultLanguage(props)) {
 							enqueue(new NotifyCModelManagerTask(cproject.getProject()));
 						}
 					}
@@ -567,7 +572,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	IPDOMIndexer getIndexer(ICProject project) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fUpdatePolicies) {
-			IndexUpdatePolicy policy= getPolicy(project);
+			IndexUpdatePolicy policy = getPolicy(project);
 			if (policy != null) {
 				return policy.getIndexer();
 			}
@@ -576,7 +581,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	void createIndexer(ICProject project, IProgressMonitor pm) throws InterruptedException {
-		final IProject prj= project.getProject();
+		final IProject prj = project.getProject();
 		final String name = prj.getName();
 		if (fTraceIndexerSetup)
 			System.out.println("Indexer: Creation for project " + name); //$NON-NLS-1$
@@ -590,35 +595,33 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					return;
 				}
 
-				WritablePDOM pdom= getOrCreatePDOM(project, pm);
-				Properties props= IndexerPreferences.getProperties(prj);
-				IPDOMIndexer indexer= newIndexer(getIndexerId(project), props);
-				IndexUpdatePolicy policy= createPolicy(project);
+				WritablePDOM pdom = getOrCreatePDOM(project, pm);
+				Properties props = IndexerPreferences.getProperties(prj);
+				IPDOMIndexer indexer = newIndexer(getIndexerId(project), props);
+				IndexUpdatePolicy policy = createPolicy(project);
 
-				boolean rebuild=
-						pdom.isClearedBecauseOfVersionMismatch() ||
-						pdom.isCreatedFromScratch() ||
-						policy.isInitialRebuildRequested();
+				boolean rebuild = pdom.isClearedBecauseOfVersionMismatch() || pdom.isCreatedFromScratch()
+						|| policy.isInitialRebuildRequested();
 				if (rebuild) {
 					if (IPDOMManager.ID_NO_INDEXER.equals(indexer.getID())) {
-						rebuild= false;
+						rebuild = false;
 					}
 					pdom.setClearedBecauseOfVersionMismatch(false);
 					pdom.setCreatedFromScratch(false);
 				}
 				if (!rebuild) {
 					registerIndexer(project, indexer);
-					IPDOMIndexerTask task= policy.createTask();
+					IPDOMIndexerTask task = policy.createTask();
 					if (task != null) {
 						enqueue(task);
 					} else {
 						enqueue(new TriggerNotificationTask(this, pdom));
 					}
 					if (policy.isAutomatic()) {
-						boolean resume= false;
+						boolean resume = false;
 						pdom.acquireReadLock();
 						try {
-							resume= Boolean.parseBoolean(pdom.getProperty(IIndexFragment.PROPERTY_RESUME_INDEXER));
+							resume = Boolean.parseBoolean(pdom.getProperty(IIndexFragment.PROPERTY_RESUME_INDEXER));
 						} finally {
 							pdom.releaseReadLock();
 						}
@@ -635,7 +638,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 
 			// rebuild is required, try import first.
-			TeamPDOMImportOperation operation= new TeamPDOMImportOperation(project);
+			TeamPDOMImportOperation operation = new TeamPDOMImportOperation(project);
 			operation.run(pm);
 
 			synchronized (fUpdatePolicies) {
@@ -645,24 +648,24 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					return;
 				}
 
-				Properties props= IndexerPreferences.getProperties(prj);
+				Properties props = IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer = newIndexer(getIndexerId(project), props);
 				registerIndexer(project, indexer);
-				final IndexUpdatePolicy policy= createPolicy(project);
+				final IndexUpdatePolicy policy = createPolicy(project);
 				policy.clearTUs();
 
-				IPDOMIndexerTask task= null;
+				IPDOMIndexerTask task = null;
 				if (policy.isAutomatic() || policy.isInitialRebuildRequested()) {
 					policy.clearInitialFlags();
 					if (operation.wasSuccessful()) {
 						if (fTraceIndexerSetup)
 							System.out.println("Indexer: Imported shared index for project " + name); //$NON-NLS-1$
-						task= new PDOMUpdateTask(indexer,
+						task = new PDOMUpdateTask(indexer,
 								IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 					} else {
 						if (fTraceIndexerSetup)
 							System.out.println("Indexer: Rebuiding for project " + name); //$NON-NLS-1$
-						task= new PDOMRebuildTask(indexer);
+						task = new PDOMRebuildTask(indexer);
 					}
 					enqueue(task);
 				}
@@ -675,85 +678,85 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-    private IPDOMIndexer newIndexer(String indexerId, Properties props) throws CoreException  {
-    	IPDOMIndexer indexer = null;
-    	// Look up in extension point
-    	IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
-    	if (indexerExt != null) {
-    		IConfigurationElement[] elements = indexerExt.getConfigurationElements();
-    		for (IConfigurationElement element : elements) {
-    			if ("run".equals(element.getName())) { //$NON-NLS-1$
-    				try {
+	private IPDOMIndexer newIndexer(String indexerId, Properties props) throws CoreException {
+		IPDOMIndexer indexer = null;
+		// Look up in extension point
+		IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
+		if (indexerExt != null) {
+			IConfigurationElement[] elements = indexerExt.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				if ("run".equals(element.getName())) { //$NON-NLS-1$
+					try {
 						indexer = (IPDOMIndexer) element.createExecutableExtension("class"); //$NON-NLS-1$
 						indexer.setProperties(props);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					}
-    				break;
-    			}
-    		}
-    	}
+					break;
+				}
+			}
+		}
 
-    	// Unknown index, default to the null one
-    	if (indexer == null)
-    		indexer = new PDOMNullIndexer();
+		// Unknown index, default to the null one
+		if (indexer == null)
+			indexer = new PDOMNullIndexer();
 
 		return indexer;
-    }
+	}
 
 	public void enqueue(IPDOMIndexerTask subjob) {
-    	synchronized (fTaskQueue) {
-    		if (fCurrentTask != null && fCurrentTask.acceptUrgentTask(subjob)) {
-    			return;
-    		}
-    		for (IPDOMIndexerTask task : fTaskQueue) {
+		synchronized (fTaskQueue) {
+			if (fCurrentTask != null && fCurrentTask.acceptUrgentTask(subjob)) {
+				return;
+			}
+			for (IPDOMIndexerTask task : fTaskQueue) {
 				if (task.acceptUrgentTask(subjob)) {
 					return;
 				}
 			}
-    		fTaskQueue.addLast(subjob);
-    		fIndexerJob.schedule();
+			fTaskQueue.addLast(subjob);
+			fIndexerJob.schedule();
 		}
-    }
+	}
 
 	IPDOMIndexerTask getNextTask() {
-		IPDOMIndexerTask result= null;
-    	synchronized (fTaskQueue) {
-    		if (fTaskQueue.isEmpty()) {
-    			fCurrentTask= null;
-    			fSourceCount= fHeaderCount= fTickCount= 0;
-    		} else {
-    			if (fCurrentTask != null) {
-    				IndexerProgress info= fCurrentTask.getProgressInformation();
-    				fSourceCount += info.fCompletedSources;
-    				fHeaderCount += info.fCompletedHeaders;
-    				// for the ticks we don't consider additional headers
-    				fTickCount += info.fCompletedSources + info.fPrimaryHeaderCount;
-    			}
-    			result= fCurrentTask= fTaskQueue.removeFirst();
-    		}
+		IPDOMIndexerTask result = null;
+		synchronized (fTaskQueue) {
+			if (fTaskQueue.isEmpty()) {
+				fCurrentTask = null;
+				fSourceCount = fHeaderCount = fTickCount = 0;
+			} else {
+				if (fCurrentTask != null) {
+					IndexerProgress info = fCurrentTask.getProgressInformation();
+					fSourceCount += info.fCompletedSources;
+					fHeaderCount += info.fCompletedHeaders;
+					// for the ticks we don't consider additional headers
+					fTickCount += info.fCompletedSources + info.fPrimaryHeaderCount;
+				}
+				result = fCurrentTask = fTaskQueue.removeFirst();
+			}
 		}
-    	return result;
-    }
+		return result;
+	}
 
-    void indexerJobCanceled(boolean byManager) {
-    	synchronized (fTaskQueue) {
-    		fCurrentTask= null;
-    		if (!byManager) {
-    			fTaskQueue.clear();
-    		}
-    		if (!fTaskQueue.isEmpty()) {
-    			fIndexerJob.schedule();
-    		}
-    	}
-    }
+	void indexerJobCanceled(boolean byManager) {
+		synchronized (fTaskQueue) {
+			fCurrentTask = null;
+			if (!byManager) {
+				fTaskQueue.clear();
+			}
+			if (!fTaskQueue.isEmpty()) {
+				fIndexerJob.schedule();
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public boolean isIndexerIdle() {
-    	synchronized (fTaskQueue) {
-        	return fTaskQueue.isEmpty() && Job.getJobManager().find(this).length == 0;
+		synchronized (fTaskQueue) {
+			return fTaskQueue.isEmpty() && Job.getJobManager().find(this).length == 0;
 		}
-    }
+	}
 
 	void addProject(final ICProject cproject) {
 		final String name = cproject.getProject().getName();
@@ -787,18 +790,18 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	private void registerPreferenceListener(ICProject project) {
-		IProject prj= project.getProject();
-		PCL pcl= fPrefListeners.get(prj);
+		IProject prj = project.getProject();
+		PCL pcl = fPrefListeners.get(prj);
 		if (pcl == null) {
-			pcl= new PCL(project);
+			pcl = new PCL(project);
 			fPrefListeners.put(prj, pcl);
 		}
 		IndexerPreferences.addChangeListener(prj, pcl);
 	}
 
 	private void unregisterPreferenceListener(ICProject project) {
-		IProject prj= project.getProject();
-		PCL pcl= fPrefListeners.remove(prj);
+		IProject prj = project.getProject();
+		PCL pcl = fPrefListeners.remove(prj);
 		if (pcl != null) {
 			IndexerPreferences.removeChangeListener(prj, pcl);
 		}
@@ -855,9 +858,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private IndexUpdatePolicy createPolicy(final ICProject project) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fUpdatePolicies) {
-			IndexUpdatePolicy policy= fUpdatePolicies.get(project);
+			IndexUpdatePolicy policy = fUpdatePolicies.get(project);
 			if (policy == null) {
-				policy= new IndexUpdatePolicy(project, IndexerPreferences.getUpdatePolicy(project.getProject()));
+				policy = new IndexUpdatePolicy(project, IndexerPreferences.getUpdatePolicy(project.getProject()));
 				fUpdatePolicies.put(project, policy);
 			}
 			return policy;
@@ -881,7 +884,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private void preRemoveProject(ICProject cproject, final boolean delete) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 
-		final IProject rproject= cproject.getProject();
+		final IProject rproject = cproject.getProject();
 		final String name = rproject.getName();
 
 		if (fTraceIndexerSetup)
@@ -891,47 +894,47 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		synchronized (fUpdatePolicies) {
 			// Prevent recreating the indexer.
 			fClosingProjects.add(name);
-			indexer= getIndexer(cproject);
+			indexer = getIndexer(cproject);
 		}
 
 		if (indexer != null) {
 			stopIndexer(indexer);
 		}
-    	unregisterPreferenceListener(cproject);
-    	Object pdom= null;
-    	synchronized (fProjectToPDOM) {
-    		pdom = fProjectToPDOM.remove(rproject);
-    		// If the project is closed allow to reuse the pdom.
-    		if (pdom instanceof WritablePDOM && !delete) {
-    			fFileToProject.remove(((WritablePDOM) pdom).getDB().getLocation());
-    		}
-    	}
+		unregisterPreferenceListener(cproject);
+		Object pdom = null;
+		synchronized (fProjectToPDOM) {
+			pdom = fProjectToPDOM.remove(rproject);
+			// If the project is closed allow to reuse the pdom.
+			if (pdom instanceof WritablePDOM && !delete) {
+				fFileToProject.remove(((WritablePDOM) pdom).getDB().getLocation());
+			}
+		}
 
-    	if (pdom instanceof WritablePDOM) {
-    		final WritablePDOM finalpdom= (WritablePDOM) pdom;
-    		Job job= new Job(Messages.PDOMManager_ClosePDOMJob) {
-    			@Override
+		if (pdom instanceof WritablePDOM) {
+			final WritablePDOM finalpdom = (WritablePDOM) pdom;
+			Job job = new Job(Messages.PDOMManager_ClosePDOMJob) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-        			try {
-        				finalpdom.acquireWriteLock(monitor);
-        				try {
-        					finalpdom.close();
-        					if (delete) {
-        						finalpdom.getDB().getLocation().delete();
-        					}
-        				} catch (CoreException e) {
-        					CCorePlugin.log(e);
-        				} finally {
-        					finalpdom.releaseWriteLock();
-        				}
-        			} catch (InterruptedException e) {
-        			}
-    				return Status.OK_STATUS;
-    			}
-    		};
-    		job.setSystem(true);
-    		job.schedule();
-    	}
+					try {
+						finalpdom.acquireWriteLock(monitor);
+						try {
+							finalpdom.close();
+							if (delete) {
+								finalpdom.getDB().getLocation().delete();
+							}
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+						} finally {
+							finalpdom.releaseWriteLock();
+						}
+					} catch (InterruptedException e) {
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.schedule();
+		}
 
 		synchronized (fUpdatePolicies) {
 			fUpdatePolicies.remove(cproject);
@@ -939,19 +942,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	void removeProject(ICProject cproject, ICElementDelta delta) {
-    	synchronized (fProjectToPDOM) {
-			IProject rproject= cproject.getProject();
+		synchronized (fProjectToPDOM) {
+			IProject rproject = cproject.getProject();
 			fProjectToPDOM.remove(rproject);
 			// don't remove the location, because it may not be reused when the project was deleted.
-    	}
+		}
 	}
 
 	private void stopIndexer(IPDOMIndexer indexer) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		assert !Thread.holdsLock(fUpdatePolicies);
-		ICProject project= indexer.getProject();
+		ICProject project = indexer.getProject();
 		synchronized (fUpdatePolicies) {
-			IndexUpdatePolicy policy= getPolicy(project);
+			IndexUpdatePolicy policy = getPolicy(project);
 			if (policy != null) {
 				if (policy.getIndexer() == indexer) {
 					policy.clearTUs();
@@ -963,15 +966,15 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	private void cancelIndexerJobs(IPDOMIndexer indexer) {
-		PDOMIndexerJob jobToCancel= null;
+		PDOMIndexerJob jobToCancel = null;
 		synchronized (fTaskQueue) {
 			for (Iterator<IPDOMIndexerTask> iter = fTaskQueue.iterator(); iter.hasNext();) {
-				IPDOMIndexerTask task= iter.next();
+				IPDOMIndexerTask task = iter.next();
 				if (task.getIndexer() == indexer) {
 					iter.remove();
 				}
 			}
-			jobToCancel= fIndexerJob;
+			jobToCancel = fIndexerJob;
 		}
 
 		if (jobToCancel != null) {
@@ -994,12 +997,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	@Override
 	public void reindex(final ICProject project) {
-		Job job= new Job(Messages.PDOMManager_notifyJob_label) {
+		Job job = new Job(Messages.PDOMManager_notifyJob_label) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				IPDOMIndexer indexer= null;
+				IPDOMIndexer indexer = null;
 				synchronized (fUpdatePolicies) {
-					indexer= getIndexer(project);
+					indexer = getIndexer(project);
 					if (indexer == null) {
 						createPolicy(project).requestInitialReindex();
 						return Status.OK_STATUS;
@@ -1009,7 +1012,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				cancelIndexerJobs(indexer);
 
 				synchronized (fUpdatePolicies) {
-					indexer= getIndexer(project);
+					indexer = getIndexer(project);
 					if (indexer != null) {
 						createPolicy(project).clearTUs();
 						enqueue(new PDOMRebuildTask(indexer));
@@ -1047,8 +1050,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		fStateListeners.remove(listener);
 	}
 
-    private Job createNotifyJob() {
-    	Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
+	private Job createNotifyJob() {
+		Job notify = new Job(Messages.PDOMManager_notifyJob_label) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				while (true) {
@@ -1057,7 +1060,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 						if (fChangeEvents.isEmpty()) {
 							return Status.OK_STATUS;
 						}
-						r= fChangeEvents.removeFirst();
+						r = fChangeEvents.removeFirst();
 					}
 					r.run();
 				}
@@ -1065,7 +1068,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		};
 		notify.setSystem(true);
 		return notify;
-    }
+	}
 
 	private void scheduleNotification(Runnable notify) {
 		if (fInShutDown)
@@ -1077,39 +1080,38 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		fNotificationJob.schedule();
 	}
 
-
-    void fireStateChange(final int state) {
-    	synchronized (fStateListeners) {
-    		if (fLastNotifiedState == state) {
-    			return;
-    		}
-    		fLastNotifiedState= state;
-    		if (fStateListeners.isEmpty()) {
-    			return;
-    		}
-    		Runnable notify= new Runnable() {
-    			@Override
+	void fireStateChange(final int state) {
+		synchronized (fStateListeners) {
+			if (fLastNotifiedState == state) {
+				return;
+			}
+			fLastNotifiedState = state;
+			if (fStateListeners.isEmpty()) {
+				return;
+			}
+			Runnable notify = new Runnable() {
+				@Override
 				public void run() {
-    				fIndexerStateEvent.setState(state);
-    				Object[] listeners= fStateListeners.getListeners();
-    				for (Object listener2 : listeners) {
-    					final IIndexerStateListener listener = (IIndexerStateListener) listener2;
-    					SafeRunner.run(new ISafeRunnable() {
-    						@Override
+					fIndexerStateEvent.setState(state);
+					Object[] listeners = fStateListeners.getListeners();
+					for (Object listener2 : listeners) {
+						final IIndexerStateListener listener = (IIndexerStateListener) listener2;
+						SafeRunner.run(new ISafeRunnable() {
+							@Override
 							public void handleException(Throwable exception) {
-    							CCorePlugin.log(exception);
-    						}
+								CCorePlugin.log(exception);
+							}
 
-    						@Override
+							@Override
 							public void run() throws Exception {
-    							listener.indexChanged(fIndexerStateEvent);
-    						}
-    					});
-    				}
-    			}
-    		};
-    		scheduleNotification(notify);
-    	}
+								listener.indexChanged(fIndexerStateEvent);
+							}
+						});
+					}
+				}
+			};
+			scheduleNotification(notify);
+		}
 	}
 
 	@Override
@@ -1124,12 +1126,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 
 		if (project != null) {
-			final ICProject finalProject= project;
-			Runnable notify= new Runnable() {
+			final ICProject finalProject = project;
+			Runnable notify = new Runnable() {
 				@Override
 				public void run() {
 					fIndexChangeEvent.setAffectedProject(finalProject, e);
-					Object[] listeners= fChangeListeners.getListeners();
+					Object[] listeners = fChangeListeners.getListeners();
 					for (Object listener2 : listeners) {
 						final IIndexChangeListener listener = (IIndexChangeListener) listener2;
 						SafeRunner.run(new ISafeRunnable() {
@@ -1146,7 +1148,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					}
 				}
 			};
-    		scheduleNotification(notify);
+			scheduleNotification(notify);
 		}
 	}
 
@@ -1195,22 +1197,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		assert !Thread.holdsLock(fTaskQueue);
 
 		int sourceCount, sourceEstimate, headerCount, tickCount, tickEstimate;
-		String detail= null;
+		String detail = null;
 		synchronized (fTaskQueue) {
 			// Add historic data.
-			sourceCount= sourceEstimate= fSourceCount;
-			headerCount= fHeaderCount;
-			tickCount= tickEstimate= fTickCount;
+			sourceCount = sourceEstimate = fSourceCount;
+			headerCount = fHeaderCount;
+			tickCount = tickEstimate = fTickCount;
 
 			// Add future data.
 			for (IPDOMIndexerTask task : fTaskQueue) {
-				final IndexerProgress info= task.getProgressInformation();
+				final IndexerProgress info = task.getProgressInformation();
 				sourceEstimate += info.fRequestedFilesCount;
 				tickEstimate += info.getEstimatedTicks();
 			}
 			// Add current data.
 			if (fCurrentTask != null) {
-				final IndexerProgress info= fCurrentTask.getProgressInformation();
+				final IndexerProgress info = fCurrentTask.getProgressInformation();
 				sourceCount += info.fCompletedSources;
 				sourceEstimate += info.fRequestedFilesCount - info.fPrimaryHeaderCount;
 				headerCount += info.fCompletedHeaders;
@@ -1226,26 +1228,26 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					int additionalHeaders = info.fCompletedHeaders - info.fPrimaryHeaderCount;
 					tickEstimate += info.fRequestedFilesCount;
 					tickCount += additionalHeaders;
-					tickEstimate += additionalHeaders * Math.sqrt((double) info.fRequestedFilesCount / Math.max(completedPrimary, 1));
+					tickEstimate += additionalHeaders
+							* Math.sqrt((double) info.fRequestedFilesCount / Math.max(completedPrimary, 1));
 				} else {
 					// For the ticks we don't consider additional headers.
 					tickCount += completedPrimary;
 					tickEstimate += info.fTimeEstimate;
 				}
-				detail= PDOMIndexerJob.sMonitorDetail;
+				detail = PDOMIndexerJob.sMonitorDetail;
 			}
 		}
 
-		String msg= MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, new Object[] {
-					Integer.valueOf(sourceCount), Integer.valueOf(sourceEstimate),
-					Integer.valueOf(headerCount)});
+		String msg = MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, new Object[] {
+				Integer.valueOf(sourceCount), Integer.valueOf(sourceEstimate), Integer.valueOf(headerCount) });
 		if (detail != null) {
-			msg += ": " + detail;  //$NON-NLS-1$
+			msg += ": " + detail; //$NON-NLS-1$
 		}
 
 		job.subTask(msg);
 		if (tickCount > 0 && tickCount <= tickEstimate) {
-			int newTick= tickCount * base / tickEstimate;
+			int newTick = tickCount * base / tickEstimate;
 			if (newTick > currentTicks) {
 				job.worked(newTick - currentTicks);
 				return newTick;
@@ -1280,20 +1282,20 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	/**
-     * Exports the project PDOM to the specified location, rewriting locations with
-     * the specified location converter.
-     * <br>
-     * Note. This will acquire a write lock while the pdom is exported
+	 * Exports the project PDOM to the specified location, rewriting locations with
+	 * the specified location converter.
+	 * <br>
+	 * Note. This will acquire a write lock while the pdom is exported
 	 * @param targetLocation a location that does not currently exist
 	 * @param newConverter
 	 * @param monitor 
 	 * @throws CoreException
 	 * @throws IllegalArgumentException if a file exists at targetLocation
 	 */
-	public void exportProjectPDOM(ICProject cproject, File targetLocation,
-			final IIndexLocationConverter newConverter, IProgressMonitor monitor) throws CoreException {
+	public void exportProjectPDOM(ICProject cproject, File targetLocation, final IIndexLocationConverter newConverter,
+			IProgressMonitor monitor) throws CoreException {
 		if (targetLocation.exists()) {
-			boolean deleted= targetLocation.delete();
+			boolean deleted = targetLocation.delete();
 			if (!deleted) {
 				throw new IllegalArgumentException(
 						MessageFormat.format(Messages.PDOMManager_ExistingFileCollides, targetLocation));
@@ -1301,11 +1303,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		try {
 			// Copy it.
-			PDOM pdom= getOrCreatePDOM(cproject, monitor);
+			PDOM pdom = getOrCreatePDOM(cproject, monitor);
 			pdom.acquireReadLock();
-			String oldID= null;
+			String oldID = null;
 			try {
-				oldID= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+				oldID = pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 				pdom.flush();
 				FileOutputStream stream = new FileOutputStream(targetLocation);
 				pdom.getDB().transferTo(stream.getChannel());
@@ -1315,8 +1317,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 
 			// Overwrite internal location representations.
-			final WritablePDOM newPDOM =
-					new WritablePDOM(targetLocation, pdom.getLocationConverter(), getLinkageFactories());
+			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter(),
+					getLinkageFactories());
 			newPDOM.acquireWriteLock(null);
 			try {
 				newPDOM.rewriteLocations(newConverter);
@@ -1345,14 +1347,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public void importProjectPDOM(ICProject project, InputStream stream, IProgressMonitor monitor)
 			throws CoreException, IOException {
 		// make a copy of the database
-		String newName= createNewDatabaseName(project);
-		File newFile= fileFromDatabaseName(newName);
-		OutputStream out= new FileOutputStream(newFile);
+		String newName = createNewDatabaseName(project);
+		File newFile = fileFromDatabaseName(newName);
+		OutputStream out = new FileOutputStream(newFile);
 		try {
-			int version= 0;
-			for (int i= 0; i < 4; i++) {
-				byte b= (byte) stream.read();
-				version= (version << 8) + (b & 0xff);
+			int version = 0;
+			for (int i = 0; i < 4; i++) {
+				byte b = (byte) stream.read();
+				version = (version << 8) + (b & 0xff);
 				out.write(b);
 			}
 			if (version > PDOM.getMaxSupportedVersion()) {
@@ -1365,16 +1367,16 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 						CCorePlugin.getResourceString("PDOMManager.unsupportedVersion"), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
-			byte[] buffer= new byte[2048];
+			byte[] buffer = new byte[2048];
 			int read;
-			while ((read= stream.read(buffer)) >= 0) {
+			while ((read = stream.read(buffer)) >= 0) {
 				out.write(buffer, 0, read);
 			}
 		} finally {
 			out.close();
 		}
 
-		WritablePDOM pdom= (WritablePDOM) getPDOM(project);
+		WritablePDOM pdom = (WritablePDOM) getPDOM(project);
 		try {
 			pdom.acquireWriteLock(monitor);
 		} catch (InterruptedException e) {
@@ -1391,7 +1393,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	@Override
 	public void export(ICProject project, String location, int options, IProgressMonitor monitor) throws CoreException {
-		TeamPDOMExportOperation operation= new TeamPDOMExportOperation(project);
+		TeamPDOMExportOperation operation = new TeamPDOMExportOperation(project);
 		operation.setTargetLocation(location);
 		operation.setOptions(options);
 		operation.run(monitor);
@@ -1405,7 +1407,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 */
 	public static void writeProjectPDOMProperties(WritablePDOM pdom, IProject project) throws CoreException {
 		String DELIM = "\0"; //$NON-NLS-1$
-		String id= CCorePlugin.PLUGIN_ID + ".pdom.project." + DELIM + project.getName() + DELIM; //$NON-NLS-1$
+		String id = CCorePlugin.PLUGIN_ID + ".pdom.project." + DELIM + project.getName() + DELIM; //$NON-NLS-1$
 		pdom.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, id);
 	}
 
@@ -1423,7 +1425,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	@Override
 	public void update(ICElement[] tuSelection, int options) throws CoreException {
-		Map<ICProject, List<ICElement>> projectsToElements= splitSelection(tuSelection);
+		Map<ICProject, List<ICElement>> projectsToElements = splitSelection(tuSelection);
 		for (Map.Entry<ICProject, List<ICElement>> entry : projectsToElements.entrySet()) {
 			ICProject project = entry.getKey();
 			List<ICElement> filesAndFolders = entry.getValue();
@@ -1437,18 +1439,18 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * set of folders and files specifying the selection.
 	 */
 	private Map<ICProject, List<ICElement>> splitSelection(ICElement[] tuSelection) {
-		HashMap<ICProject, List<ICElement>> result= new HashMap<>();
+		HashMap<ICProject, List<ICElement>> result = new HashMap<>();
 		allElements: for (int i = 0; i < tuSelection.length; i++) {
 			ICElement element = tuSelection[i];
 			if (element instanceof ICProject || element instanceof ICContainer || element instanceof ITranslationUnit) {
-				ICProject project= element.getCProject();
-				List<ICElement> set= result.get(project);
+				ICProject project = element.getCProject();
+				List<ICElement> set = result.get(project);
 				if (set == null) {
-					set= new ArrayList<>();
+					set = new ArrayList<>();
 					result.put(project, set);
 				}
-				for (int j= 0; j < set.size(); j++) {
-					ICElement other= set.get(j);
+				for (int j = 0; j < set.size(); j++) {
+					ICElement other = set.get(j);
 					if (contains(other, element)) {
 						continue allElements;
 					} else if (contains(element, other)) {
@@ -1466,7 +1468,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (a.equals(b)) {
 			return true;
 		}
-		b= b.getParent();
+		b = b.getParent();
 		if (b == null) {
 			return false;
 		}
@@ -1494,8 +1496,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					}
 				}
 			}
-			IPDOMIndexer indexer= getIndexer(project);
-			PDOMUpdateTask task= new PDOMUpdateTask(indexer, options);
+			IPDOMIndexer indexer = getIndexer(project);
+			PDOMUpdateTask task = new PDOMUpdateTask(indexer, options);
 			task.setTranslationUnitSelection(filesAndFolders);
 			if (indexer != null) {
 				enqueue(task);
@@ -1507,7 +1509,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fUpdatePolicies) {
 			for (IndexUpdatePolicy policy : fUpdatePolicies.values()) {
-				IPDOMIndexerTask task= policy.createTask();
+				IPDOMIndexerTask task = policy.createTask();
 				if (task != null) {
 					enqueue(task);
 				}
@@ -1524,8 +1526,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 			}
 			fPostponedProjects.remove(cproject);
-			final IndexerSetupParticipant[] participants= fSetupParticipants.toArray(new IndexerSetupParticipant[fSetupParticipants.size()]);
-			Runnable notify= new Runnable() {
+			final IndexerSetupParticipant[] participants = fSetupParticipants
+					.toArray(new IndexerSetupParticipant[fSetupParticipants.size()]);
+			Runnable notify = new Runnable() {
 				@Override
 				public void run() {
 					for (final IndexerSetupParticipant p : participants) {
@@ -1552,7 +1555,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @param participant
 	 * @param project
 	 */
-	public void notifyIndexerSetup(IndexerSetupParticipant participant,	ICProject project) {
+	public void notifyIndexerSetup(IndexerSetupParticipant participant, ICProject project) {
 		if (fInShutDown)
 			return;
 		synchronized (fSetupParticipants) {
@@ -1610,21 +1613,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws CoreException in case of a file access or other internal error
 	 */
 	public IStatus getProjectContentSyncState(ICProject cproject) throws CoreException {
-		if (!Boolean.parseBoolean(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))
+		if (!Boolean.parseBoolean(
+				IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))
 			return null; // No check is performed in this case
 
-		Set<ITranslationUnit> sources= new HashSet<>();
+		Set<ITranslationUnit> sources = new HashSet<>();
 		cproject.accept(new TranslationUnitCollector(sources, null, new NullProgressMonitor()));
 		IStatus syncStatus = null;
 
 		try {
-			IIndex index= getIndex(cproject);
+			IIndex index = getIndex(cproject);
 			index.acquireReadLock();
 			try {
 				for (ITranslationUnit tu : sources) {
-					IResource resource= tu.getResource();
+					IResource resource = tu.getResource();
 					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
-						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile) resource);
+						IIndexFileLocation location = IndexLocationFactory.getWorkspaceIFL((IFile) resource);
 						syncStatus = areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location);
 						if (syncStatus != null) {
 							return syncStatus;
@@ -1660,12 +1664,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 *    or a MultiStatus indicating the file found to be not in sync along with it include trail.
 	 * @throws CoreException
 	 */
-	private static MultiStatus areSynchronized(Set<IIndexFileLocation> trail, IIndex index,
-			IResource resource, IIndexFileLocation location) throws CoreException {
+	private static MultiStatus areSynchronized(Set<IIndexFileLocation> trail, IIndex index, IResource resource,
+			IIndexFileLocation location) throws CoreException {
 		if (!trail.contains(location)) {
 			trail.add(location);
 
-			IIndexFile[] files= index.getFiles(location);
+			IIndexFile[] files = index.getFiles(location);
 
 			if (files.length <= 0)
 				return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK, "No index file found for: " + location, null); //$NON-NLS-1$
@@ -1673,23 +1677,20 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			for (IIndexFile file : files) {
 				long diff = resource.getLocalTimeStamp() - file.getTimestamp();
 				if (diff != 0) {
-					return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK,
-							"Index timestamp for '" //$NON-NLS-1$
-							+ file.getLocation().getFullPath()
-							+ "' is " + diff + " msec older than " //$NON-NLS-1$ //$NON-NLS-2$
-							+ location
-							+ "(" + SimpleDateFormat.getDateTimeInstance().format(new Date(resource.getLocalTimeStamp())) //$NON-NLS-1$
-							+ ")", null); //$NON-NLS-1$
+					return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK, "Index timestamp for '" //$NON-NLS-1$
+							+ file.getLocation().getFullPath() + "' is " + diff + " msec older than " //$NON-NLS-1$ //$NON-NLS-2$
+							+ location + "(" //$NON-NLS-1$
+							+ SimpleDateFormat.getDateTimeInstance().format(new Date(resource.getLocalTimeStamp())) + ")", null); //$NON-NLS-1$
 				}
 
 				// If it is up-to-date, the includes have not changed and may be read from the index.
-				IIndexInclude[] includes= index.findIncludes(file);
+				IIndexInclude[] includes = index.findIncludes(file);
 				for (IIndexInclude inc : includes) {
-					IIndexFileLocation newLocation= inc.getIncludesLocation();
+					IIndexFileLocation newLocation = inc.getIncludesLocation();
 					if (newLocation != null) {
-						String path= newLocation.getFullPath();
+						String path = newLocation.getFullPath();
 						if (path != null) {
-							IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+							IResource newResource = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
 							MultiStatus m = areSynchronized(trail, index, newResource, newLocation);
 							if (m != null) {
 								m.add(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID,

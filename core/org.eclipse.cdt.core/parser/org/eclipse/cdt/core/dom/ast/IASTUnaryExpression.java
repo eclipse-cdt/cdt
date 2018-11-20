@@ -109,7 +109,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 */
 	@Deprecated
 	public static final int op_typeof = 14;
-	
+
 	/**
 	 * For GCC parsers, only. {@code op_alignOf} is used for __alignOf( unaryExpression ) type
 	 * expressions.
@@ -138,9 +138,8 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 * {@code OPERAND} represents the relationship between an {@code IASTUnaryExpression} and
 	 * it's nested {@code IASTExpression}.
 	 */
-	public static final ASTNodeProperty OPERAND =
-			new ASTNodeProperty("IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
-
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+			"IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
 
 	/**
 	 * Returns the operator/kind.

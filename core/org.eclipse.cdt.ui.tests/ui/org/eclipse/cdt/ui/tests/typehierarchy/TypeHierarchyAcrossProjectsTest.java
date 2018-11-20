@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
 import junit.framework.Test;
@@ -30,9 +30,8 @@ import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
-
 public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
-	
+
 	private ICProject fCProject2;
 
 	public TypeHierarchyAcrossProjectsTest(String name) {
@@ -42,19 +41,20 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 	public static Test suite() {
 		return suite(TypeHierarchyAcrossProjectsTest.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		fCProject2= CProjectHelper.createCCProject("__thTest_2__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		IProjectDescription desc= fCProject2.getProject().getDescription();
-		desc.setReferencedProjects(new IProject[]{fCProject.getProject()});
+		fCProject2 = CProjectHelper.createCCProject("__thTest_2__", "bin", IPDOMManager.ID_FAST_INDEXER);
+		IProjectDescription desc = fCProject2.getProject().getDescription();
+		desc.setReferencedProjects(new IProject[] { fCProject.getProject() });
 		fCProject2.getProject().setDescription(desc, new NullProgressMonitor());
-		
+
 		CCorePlugin.getIndexManager().reindex(fCProject2);
-		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCProject2});
-		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
+		fIndex = CCorePlugin.getIndexManager().getIndex(new ICProject[] { fCProject, fCProject2 });
+		TestScannerProvider.sIncludes = new String[] { fCProject.getProject().getLocation().toOSString(),
+				fCProject2.getProject().getLocation().toOSString() };
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 	//    int field2;
 	//    int method2();
 	// };
-	
+
 	// #include "simpleHeader.h"
 	// class Simple3 : public Simple2 {
 	// public:
@@ -88,80 +88,77 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 	//    int method4();
 	// };
 	public void testSimpleInheritanceAcross() throws Exception {
-		CharSequence[] content= getContentsForTest(2);
-		String header= content[0].toString();
+		CharSequence[] content = getContentsForTest(2);
+		String header = content[0].toString();
 		String source = content[1].toString();
-		IFile headerFile= createFile(fCProject.getProject(), "simpleHeader.h", header);
+		IFile headerFile = createFile(fCProject.getProject(), "simpleHeader.h", header);
 		waitUntilFileIsIndexed(fIndex, headerFile);
-		IFile sourceFile= createFile(fCProject2.getProject(), "simple.cpp", source);
+		IFile sourceFile = createFile(fCProject2.getProject(), "simple.cpp", source);
 		waitUntilFileIsIndexed(fIndex, sourceFile);
-		
-		CEditor editor= openEditor(sourceFile);
+
+		CEditor editor = openEditor(sourceFile);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
-		
+
 		editor.selectAndReveal(source.indexOf("Simple1"), 1);
 		openTypeHierarchy(editor);
 		getHierarchyViewer().expandAll();
-		tree= getHierarchyViewer().getTree();
-		
-		item1= checkTreeNode(tree, 0, "Simple1");
+		tree = getHierarchyViewer().getTree();
+
+		item1 = checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
-		
-		item2= checkTreeNode(item1, 0, "Simple2");
-		item4= checkTreeNode(item1, 1, "Simple4");
+
+		item2 = checkTreeNode(item1, 0, "Simple2");
+		item4 = checkTreeNode(item1, 1, "Simple4");
 		assertEquals(2, item1.getItemCount());
-		
-		item3= checkTreeNode(item2, 0, "Simple3");
+
+		item3 = checkTreeNode(item2, 0, "Simple3");
 		assertEquals(1, item2.getItemCount());
-		
+
 		assertEquals(0, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
+		checkMethodTable(new String[] { "field1 : int", "method1() : int" });
 
-		
 		editor.selectAndReveal(source.indexOf("Simple2"), 1);
 		openTypeHierarchy(editor);
-		tree= getHierarchyViewer().getTree();
-		item1= checkTreeNode(tree, 0, "Simple1");
+		tree = getHierarchyViewer().getTree();
+		item1 = checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
-		
-		item2= checkTreeNode(item1, 0, "Simple2");
-		assertEquals(1, item1.getItemCount());
-		
-		item3= checkTreeNode(item2, 0, "Simple3");
-		assertEquals(1, item2.getItemCount());
-		
-		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
-		
+		item2 = checkTreeNode(item1, 0, "Simple2");
+		assertEquals(1, item1.getItemCount());
+
+		item3 = checkTreeNode(item2, 0, "Simple3");
+		assertEquals(1, item2.getItemCount());
+
+		assertEquals(0, item3.getItemCount());
+		checkMethodTable(new String[] { "field2 : int", "method2() : int" });
+
 		editor.selectAndReveal(source.indexOf("Simple3"), 1);
 		openTypeHierarchy(editor);
-		tree= getHierarchyViewer().getTree();
-		item1= checkTreeNode(tree, 0, "Simple1");
+		tree = getHierarchyViewer().getTree();
+		item1 = checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
-		
-		item2= checkTreeNode(item1, 0, "Simple2");
-		assertEquals(1, item1.getItemCount());
-		
-		item3= checkTreeNode(item2, 0, "Simple3");
-		assertEquals(1, item2.getItemCount());
-		
-		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
-		
+		item2 = checkTreeNode(item1, 0, "Simple2");
+		assertEquals(1, item1.getItemCount());
+
+		item3 = checkTreeNode(item2, 0, "Simple3");
+		assertEquals(1, item2.getItemCount());
+
+		assertEquals(0, item3.getItemCount());
+		checkMethodTable(new String[] { "field3 : int", "method3() : int" });
+
 		editor.selectAndReveal(source.indexOf("Simple4"), 1);
 		openTypeHierarchy(editor);
-		tree= getHierarchyViewer().getTree();
-		item1= checkTreeNode(tree, 0, "Simple1");
+		tree = getHierarchyViewer().getTree();
+		item1 = checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
-		
-		item4= checkTreeNode(item1, 0, "Simple4");
+
+		item4 = checkTreeNode(item1, 0, "Simple4");
 		assertEquals(1, item1.getItemCount());
-		
+
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
+		checkMethodTable(new String[] { "field4 : int", "method4() : int" });
 	}
 }

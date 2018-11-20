@@ -38,11 +38,14 @@ public final class QMakeEnvInfo {
 	 * @param sensitiveFiles the list of IFile that needs to be tracked by IQMakeProjectInfo since their change might affect
 	 *                       an environment for running qmake.
 	 */
-	public QMakeEnvInfo(IFile proFile, String qmakeFilePath, Map<String,String> environment, Collection<IFile> sensitiveFiles) {
+	public QMakeEnvInfo(IFile proFile, String qmakeFilePath, Map<String, String> environment,
+			Collection<IFile> sensitiveFiles) {
 		this.proFile = proFile;
 		this.qmakeFilePath = qmakeFilePath;
-		this.environment = environment != null ? new HashMap<String,String>(environment) : Collections.<String,String>emptyMap();
-		this.sensitiveFiles = sensitiveFiles != null ? new HashSet<IFile>(sensitiveFiles) : Collections.<IFile>emptySet();
+		this.environment = environment != null ? new HashMap<String, String>(environment)
+				: Collections.<String, String>emptyMap();
+		this.sensitiveFiles = sensitiveFiles != null ? new HashSet<IFile>(sensitiveFiles)
+				: Collections.<IFile>emptySet();
 	}
 
 	/**

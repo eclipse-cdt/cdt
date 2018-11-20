@@ -29,14 +29,13 @@ public class ConfigurationNameProvider implements IConfigurationNameProvider {
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider#getUniqueConfigurationName(org.eclipse.cdt.managedbuilder.core.IConfiguration, java.lang.String[])
 	 */
 	@Override
-	public String getNewConfigurationName(IConfiguration configuration,
-			String[] usedConfigurationNames) {
+	public String getNewConfigurationName(IConfiguration configuration, String[] usedConfigurationNames) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public static ConfigurationNameProvider getConfigurationNameProvider() {
-		if( configurationNameProvider == null)
+		if (configurationNameProvider == null)
 			configurationNameProvider = new ConfigurationNameProvider();
 		return configurationNameProvider;
 	}

@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -50,13 +50,14 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	 */
 	public static class Definition {
 		Definition(IASTName name, IASTNode node) {
-			fName= name;
-			fNode= node;
+			fName = name;
+			fNode = node;
 		}
-		IASTName fName;  // The name of the entity being defined.
-		IASTNode fNode;  // The AST node for the entire definition.
-		List<Definition> fChildren;  // Definitions contained within this one.
-		
+
+		IASTName fName; // The name of the entity being defined.
+		IASTNode fNode; // The AST node for the entire definition.
+		List<Definition> fChildren; // Definitions contained within this one.
+
 		/**
 		 * Search the subtree of definitions rooted at this one for the nearest
 		 * definition that encloses the range defined by 'offset' and 'length'.
@@ -73,7 +74,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 			}
 			return fName;
 		}
-		
+
 		/**
 		 * Check whether this definition encloses the range defined by 'offset' and 'length'.
 		 */
@@ -87,25 +88,25 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 			return nodeOffset <= offset && (nodeOffset + nodeLength) >= (offset + length);
 		}
 	}
-	
+
 	private IASTName fDefinitionName;
 	private IASTNode fDefinitionNode;
-	private ArrayList<Definition> fStack= new ArrayList<Definition>();
-	private ArrayList<IASTProblem> fProblems= new ArrayList<IASTProblem>();
+	private ArrayList<Definition> fStack = new ArrayList<Definition>();
+	private ArrayList<IASTProblem> fProblems = new ArrayList<IASTProblem>();
 
 	public IndexerASTVisitor(boolean visitImplicitNames) {
-		shouldVisitNames= true;
+		shouldVisitNames = true;
 		shouldVisitImplicitNames = visitImplicitNames;
-		shouldVisitDeclarations= true;
-		shouldVisitInitializers= true;
-		shouldVisitDeclSpecifiers= true;
-		shouldVisitProblems= true;
-		shouldVisitExpressions= true;
-		
+		shouldVisitDeclarations = true;
+		shouldVisitInitializers = true;
+		shouldVisitDeclSpecifiers = true;
+		shouldVisitProblems = true;
+		shouldVisitExpressions = true;
+
 		// Root node representing the entire file
 		fStack.add(new Definition(null, null));
 	}
-	
+
 	public List<IASTProblem> getProblems() {
 		return fProblems;
 	}
@@ -132,8 +133,8 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		parent.fChildren.add(def);
 		fStack.add(def);
 		name = getLastInQualified(name);
-		fDefinitionName= name;
-		fDefinitionNode= node;
+		fDefinitionName = name;
+		fDefinitionNode = node;
 	}
 
 	private IASTName getLastInQualified(IASTName name) {
@@ -145,13 +146,12 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 			assert !fStack.isEmpty();
 			fStack.remove(fStack.size() - 1);
 			if (fStack.isEmpty()) {
-				fDefinitionName= null;
-				fDefinitionNode= null;
-			}
-			else {
-				Definition old= fStack.get(fStack.size()-1);
-				fDefinitionName= old.fName;
-				fDefinitionNode= old.fNode;
+				fDefinitionName = null;
+				fDefinitionNode = null;
+			} else {
+				Definition old = fStack.get(fStack.size() - 1);
+				fDefinitionName = old.fName;
+				fDefinitionNode = old.fNode;
 			}
 		}
 	}
@@ -160,29 +160,28 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition) {
-			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
-			final IASTFunctionDeclarator declarator= fdef.getDeclarator();
-			IASTDeclarator nestedDeclarator= declarator;
+			IASTFunctionDefinition fdef = (IASTFunctionDefinition) decl;
+			final IASTFunctionDeclarator declarator = fdef.getDeclarator();
+			IASTDeclarator nestedDeclarator = declarator;
 			while (nestedDeclarator.getNestedDeclarator() != null) {
-				nestedDeclarator= nestedDeclarator.getNestedDeclarator();
+				nestedDeclarator = nestedDeclarator.getNestedDeclarator();
 			}
-			IASTName name= getLastInQualified(nestedDeclarator.getName());
+			IASTName name = getLastInQualified(nestedDeclarator.getName());
 			visit(name, fDefinitionName);
 			push(name, decl);
 		} else if (decl instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) decl;
+			IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
 			if (sdecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-				IASTDeclarator[] declarators= sdecl.getDeclarators();
+				IASTDeclarator[] declarators = sdecl.getDeclarators();
 				for (IASTDeclarator declarator : declarators) {
-					if (declarator.getPointerOperators().length == 0 &&
-							declarator.getNestedDeclarator() == null) {
-						IASTName name= getLastInQualified(declarator.getName());
+					if (declarator.getPointerOperators().length == 0 && declarator.getNestedDeclarator() == null) {
+						IASTName name = getLastInQualified(declarator.getName());
 						visit(name, fDefinitionName);
 						push(name, decl);
 					}
 				}
 			}
-		} 
+		}
 		return PROCESS_CONTINUE;
 	}
 
@@ -196,13 +195,13 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclSpecifier declspec) {
 		if (declspec instanceof ICPPASTCompositeTypeSpecifier) {
-			ICPPASTCompositeTypeSpecifier cts= (ICPPASTCompositeTypeSpecifier) declspec;
+			ICPPASTCompositeTypeSpecifier cts = (ICPPASTCompositeTypeSpecifier) declspec;
 			IASTName name = getLastInQualified(cts.getName());
 			visit(name, fDefinitionName);
 			push(name, declspec);
 		}
 		if (declspec instanceof ICASTCompositeTypeSpecifier) {
-			ICASTCompositeTypeSpecifier cts= (ICASTCompositeTypeSpecifier) declspec;
+			ICASTCompositeTypeSpecifier cts = (ICASTCompositeTypeSpecifier) declspec;
 			IASTName name = cts.getName();
 			visit(name, fDefinitionName);
 			push(name, declspec);
@@ -215,7 +214,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		pop(declspec);
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTProblem problem) {
 		fProblems.add(problem);
@@ -226,21 +225,21 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTInitializer initializer) {
 		if (!(fDefinitionNode instanceof IASTFunctionDefinition)) {
-			IASTNode cand= initializer.getParent();
+			IASTNode cand = initializer.getParent();
 			if (cand instanceof IASTDeclarator) {
-				cand= ASTQueries.findInnermostDeclarator((IASTDeclarator) cand);
+				cand = ASTQueries.findInnermostDeclarator((IASTDeclarator) cand);
 				push(((IASTDeclarator) cand).getName(), initializer);
 			}
 		}
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int leave(IASTInitializer initializer) {
 		pop(initializer);
 		return PROCESS_CONTINUE;
 	}
-	
+
 	// Lambda expressions
 	@Override
 	public int visit(IASTExpression expr) {
@@ -249,12 +248,12 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		}
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public Definition getDefinitionTree() {
 		assert !fStack.isEmpty();
 		return fStack.get(0);
 	}
-	
+
 	private int visit(final ICPPASTLambdaExpression lambdaExpr) {
 		// Captures 
 		for (ICPPASTCapture cap : lambdaExpr.getCaptures()) {
@@ -265,28 +264,27 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		final IASTName closureName = lambdaExpr.getClosureTypeName();
 		visit(closureName, fDefinitionName);
 
-		
 		// Definition of call operator and conversion operator (if applicable)
 		IASTName[] ops = lambdaExpr.getImplicitNames();
 		for (IASTName op : ops) {
 			visit(op, closureName);
-			
+
 		}
-		
+
 		IBinding owner = CPPVisitor.findDeclarationOwner(lambdaExpr, true);
 		boolean localToFunction = owner instanceof IFunction;
 		if (!localToFunction)
 			// Local closures don't appear in the index, so don't refer to them.
-			push(lambdaExpr.getFunctionCallOperatorName(), lambdaExpr); 
+			push(lambdaExpr.getFunctionCallOperatorName(), lambdaExpr);
 
 		ICPPASTFunctionDeclarator dtor = lambdaExpr.getDeclarator();
 		if (dtor != null && !dtor.accept(this))
 			return PROCESS_ABORT;
-		
+
 		IASTCompoundStatement body = lambdaExpr.getBody();
 		if (body != null && !body.accept(this))
 			return PROCESS_ABORT;
-		
+
 		if (!localToFunction)
 			pop(lambdaExpr);
 		return PROCESS_SKIP;

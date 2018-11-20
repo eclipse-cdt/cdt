@@ -62,7 +62,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private final IType fInputType;
 	private final ICPPEvaluation[] fArguments;
 	private final boolean fRepresentsNewExpression;
-	private boolean fUsesBracedInitList;  // Whether the constructor call uses { ... } instead of (...).
+	private boolean fUsesBracedInitList; // Whether the constructor call uses { ... } instead of (...).
 	private IType fOutputType;
 
 	private ICPPFunction fConstructor = CPPFunction.UNINITIALIZED_FUNCTION;
@@ -71,29 +71,27 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private boolean fCheckedIsConstantExpression;
 	private boolean fIsConstantExpression;
 
-	public EvalTypeId(IType type, IASTNode pointOfDefinition, boolean usesBracedInitList,
-			ICPPEvaluation... arguments) {
+	public EvalTypeId(IType type, IASTNode pointOfDefinition, boolean usesBracedInitList, ICPPEvaluation... arguments) {
 		this(type, findEnclosingTemplate(pointOfDefinition), false, usesBracedInitList, arguments);
 	}
 
-	public EvalTypeId(IType type, IBinding templateDefinition, boolean forNewExpression,
-			boolean usesBracedInitList, ICPPEvaluation... arguments) {
+	public EvalTypeId(IType type, IBinding templateDefinition, boolean forNewExpression, boolean usesBracedInitList,
+			ICPPEvaluation... arguments) {
 		super(templateDefinition);
 		if (arguments == null)
 			throw new NullPointerException("arguments"); //$NON-NLS-1$
 
 		if (!CPPTemplates.isDependentType(type))
 			type = SemanticUtil.getNestedType(type, TDEF);
-		fInputType= type;
-		fArguments= arguments;
+		fInputType = type;
+		fArguments = arguments;
 		fRepresentsNewExpression = forNewExpression;
 		fUsesBracedInitList = usesBracedInitList;
 	}
 
-	public static EvalTypeId createForNewExpression(IType type, IASTNode pointOfDefinition,
-			boolean usesBracedInitList, ICPPEvaluation... arguments) {
-		return new EvalTypeId(type, findEnclosingTemplate(pointOfDefinition), true, usesBracedInitList,
-				arguments);
+	public static EvalTypeId createForNewExpression(IType type, IASTNode pointOfDefinition, boolean usesBracedInitList,
+			ICPPEvaluation... arguments) {
+		return new EvalTypeId(type, findEnclosingTemplate(pointOfDefinition), true, usesBracedInitList, arguments);
 	}
 
 	public IType getInputType() {
@@ -125,7 +123,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public IType getType() {
 		if (fOutputType == null) {
-			fOutputType= computeType();
+			fOutputType = computeType();
 		}
 		return fOutputType;
 	}
@@ -156,12 +154,12 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			if (EvalUtil.isCompilerGeneratedCtor(ctor)) {
 				return CompositeValue.create(classType);
 			} else if (ctor == AGGREGATE_INITIALIZATION) {
-				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), 
-						classType);
+				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), classType);
 			} else if (ctor != null) {
-				EvalConstructor evalCtor = new EvalConstructor(classType, (ICPPConstructor) ctor,
-						fArguments, getTemplateDefinition());
-				ICPPEvaluation computedEvalCtor = evalCtor.computeForFunctionCall(new ActivationRecord(), new ConstexprEvaluationContext());
+				EvalConstructor evalCtor = new EvalConstructor(classType, (ICPPConstructor) ctor, fArguments,
+						getTemplateDefinition());
+				ICPPEvaluation computedEvalCtor = evalCtor.computeForFunctionCall(new ActivationRecord(),
+						new ConstexprEvaluationContext());
 				return computedEvalCtor.getValue();
 			} else {
 				return IntegralValue.ERROR;
@@ -170,22 +168,22 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (fArguments.length == 0 || isEmptyInitializerList(fArguments)) {
 			if (inputType instanceof ICPPBasicType) {
 				switch (((ICPPBasicType) inputType).getKind()) {
-					case eInt:
-					case eInt128:
-					case eDouble:
-					case eBoolean:
-					case eFloat:
-					case eFloat128:
-					case eNullPtr:
-					case eChar:
-					case eChar16:
-					case eChar32:
-					case eWChar:
-						return IntegralValue.create(0l);
-					case eUnspecified:
-					case eVoid:
-					default:
-						return IntegralValue.UNKNOWN;
+				case eInt:
+				case eInt128:
+				case eDouble:
+				case eBoolean:
+				case eFloat:
+				case eFloat128:
+				case eNullPtr:
+				case eChar:
+				case eChar16:
+				case eChar32:
+				case eWChar:
+					return IntegralValue.create(0l);
+				case eUnspecified:
+				case eVoid:
+				default:
+					return IntegralValue.UNKNOWN;
 				}
 			}
 		}
@@ -196,7 +194,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	private boolean isEmptyInitializerList(ICPPEvaluation[] arguments) {
-		return arguments.length == 1 && arguments[0] instanceof EvalInitList && ((EvalInitList) arguments[0]).getClauses().length == 0;
+		return arguments.length == 1 && arguments[0] instanceof EvalInitList
+				&& ((EvalInitList) arguments[0]).getClauses().length == 0;
 	}
 
 	@Override
@@ -229,8 +228,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return !fRepresentsNewExpression
-				&& areAllConstantExpressions(fArguments)
+		return !fRepresentsNewExpression && areAllConstantExpressions(fArguments)
 				&& isNullOrConstexprFunc(getConstructor());
 	}
 
@@ -240,12 +238,11 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalTypeId o = (EvalTypeId) other;
-		return fInputType.isSameType(o.fInputType)
-			&& areEquivalentEvaluations(fArguments, o.fArguments)
-			&& fRepresentsNewExpression == o.fRepresentsNewExpression
-			&& fUsesBracedInitList == o.fUsesBracedInitList;
+		return fInputType.isSameType(o.fInputType) && areEquivalentEvaluations(fArguments, o.fArguments)
+				&& fRepresentsNewExpression == o.fRepresentsNewExpression
+				&& fUsesBracedInitList == o.fUsesBracedInitList;
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return valueCategoryFromReturnType(fInputType);
@@ -294,8 +291,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				}
 			}
 
-			LookupData data = new LookupData(classType.getNameCharArray(), null, 
-					CPPSemantics.getCurrentLookupPoint());
+			LookupData data = new LookupData(classType.getNameCharArray(), null, CPPSemantics.getCurrentLookupPoint());
 			data.foundItems = constructors;
 			data.setFunctionArguments(false, arguments);
 			try {
@@ -339,8 +335,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 					IType type = parameterTypes[0];
 					if (type instanceof ICPPSpecialization) {
 						IBinding specialized = ((ICPPSpecialization) type).getSpecializedBinding();
-						if (specialized instanceof ICPPClassTemplate
-								&& template.isSameType((IType) specialized)) {
+						if (specialized instanceof ICPPClassTemplate && template.isSameType((IType) specialized)) {
 							result = ArrayUtil.append(result, ctor);
 						}
 					}
@@ -367,32 +362,30 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
-			throws CoreException {
-		IType type= buffer.unmarshalType();
-		ICPPEvaluation[] args= null;
-		int len= buffer.getInt();
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		IType type = buffer.unmarshalType();
+		ICPPEvaluation[] args = null;
+		int len = buffer.getInt();
 		args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= buffer.unmarshalEvaluation();
+			args[i] = buffer.unmarshalEvaluation();
 		}
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		boolean forNewExpression = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		boolean usesBracedInitList = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
-		EvalTypeId result = new EvalTypeId(type, templateDefinition, forNewExpression, usesBracedInitList,
-				args);
+		EvalTypeId result = new EvalTypeId(type, templateDefinition, forNewExpression, usesBracedInitList, args);
 		return result;
 	}
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		ICPPEvaluation[] args= instantiateCommaSeparatedSubexpressions(fArguments, context, maxDepth);
+		ICPPEvaluation[] args = instantiateCommaSeparatedSubexpressions(fArguments, context, maxDepth);
 		IType type = CPPTemplates.instantiateType(fInputType, context);
 		if (args == fArguments && type == fInputType)
 			return this;
 
-		EvalTypeId result = new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression,
-				fUsesBracedInitList, args);
+		EvalTypeId result = new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression, fUsesBracedInitList,
+				args);
 
 		if (!result.isTypeDependent()) {
 			IType simplifiedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
@@ -410,12 +403,11 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(ActivationRecord record,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPFunction constructor = getConstructor();
 		if (constructor != null && constructor instanceof ICPPConstructor) {
-			return new EvalConstructor(fInputType, (ICPPConstructor) constructor, fArguments,
-					getTemplateDefinition()).computeForFunctionCall(record, context);
+			return new EvalConstructor(fInputType, (ICPPConstructor) constructor, fArguments, getTemplateDefinition())
+					.computeForFunctionCall(record, context);
 		}
 
 		ICPPEvaluation[] args = fArguments;

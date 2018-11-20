@@ -30,9 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * e.g.: int a[]= {1,2,3};
  */
 public class CASTInitializerList extends ASTNode implements IASTInitializerList, IASTAmbiguityParent {
-    private IASTInitializerClause[] initializers;
-    private int initializersPos = -1;
-    private int actualSize;
+	private IASTInitializerClause[] initializers;
+	private int initializersPos = -1;
+	private int actualSize;
 
 	@Override
 	public CASTInitializerList copy() {
@@ -65,20 +65,20 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 	@Override
 	@Deprecated
 	public IASTInitializer[] getInitializers() {
-		IASTInitializerClause[] clauses= getClauses();
+		IASTInitializerClause[] clauses = getClauses();
 		if (clauses.length == 0)
 			return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
 
-		IASTInitializer[] inits= new IASTInitializer[clauses.length];
+		IASTInitializer[] inits = new IASTInitializer[clauses.length];
 		for (int i = 0; i < inits.length; i++) {
-			IASTInitializerClause clause= clauses[i];
+			IASTInitializerClause clause = clauses[i];
 			if (clause instanceof IASTInitializer) {
-				inits[i]= (IASTInitializer) clause;
+				inits[i] = (IASTInitializer) clause;
 			} else if (clause instanceof IASTExpression) {
 				final CASTEqualsInitializer initExpr = new CASTEqualsInitializer(((IASTExpression) clause).copy());
 				initExpr.setParent(this);
 				initExpr.setPropertyInParent(NESTED_INITIALIZER);
-				inits[i]= initExpr;
+				inits[i] = initExpr;
 			}
 		}
 		return inits;
@@ -86,51 +86,57 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 
 	@Override
 	public void addClause(IASTInitializerClause d) {
-        assertNotFrozen();
-    	if (d != null) {
-    		initializers = ArrayUtil.appendAt(IASTInitializerClause.class, initializers, ++initializersPos, d);
-    		d.setParent(this);
+		assertNotFrozen();
+		if (d != null) {
+			initializers = ArrayUtil.appendAt(IASTInitializerClause.class, initializers, ++initializersPos, d);
+			d.setParent(this);
 			d.setPropertyInParent(NESTED_INITIALIZER);
-    	}
-    	actualSize++;
-    }
+		}
+		actualSize++;
+	}
 
 	@Override
 	@Deprecated
 	public void addInitializer(IASTInitializer d) {
-        assertNotFrozen();
-        if (d instanceof IASTInitializerClause) {
-        	addClause((IASTInitializerClause) d);
-        } else if (d instanceof IASTEqualsInitializer) {
-        	addClause(((IASTEqualsInitializer) d).getInitializerClause());
-        } else {
-        	addClause(null);
-        }
-    }
+		assertNotFrozen();
+		if (d instanceof IASTInitializerClause) {
+			addClause((IASTInitializerClause) d);
+		} else if (d instanceof IASTEqualsInitializer) {
+			addClause(((IASTEqualsInitializer) d).getInitializerClause());
+		} else {
+			addClause(null);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitInitializers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default : break;
-	        }
+		if (action.shouldVisitInitializers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		IASTInitializerClause[] list = getClauses();
 		for (IASTInitializerClause clause : list) {
 			if (!clause.accept(action))
 				return false;
 		}
-        if (action.shouldVisitInitializers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitInitializers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {

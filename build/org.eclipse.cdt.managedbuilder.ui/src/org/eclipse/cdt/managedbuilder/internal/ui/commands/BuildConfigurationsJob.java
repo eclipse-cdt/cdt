@@ -46,7 +46,7 @@ public class BuildConfigurationsJob extends Job {
 					new Object[] { cfgDescriptions.length, firstProjectName, firstConfigurationName });
 		}
 	}
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -71,7 +71,7 @@ public class BuildConfigurationsJob extends Job {
 		CUIPlugin.getDefault().startGlobalConsole();
 
 		IConfiguration[] cfgs = new IConfiguration[cfgDescriptions.length];
-		for (int i= 0; i < cfgDescriptions.length; i++) {
+		for (int i = 0; i < cfgDescriptions.length; i++) {
 			cfgs[i] = ManagedBuildManager.getConfigurationForDescription(cfgDescriptions[i]);
 		}
 		try {

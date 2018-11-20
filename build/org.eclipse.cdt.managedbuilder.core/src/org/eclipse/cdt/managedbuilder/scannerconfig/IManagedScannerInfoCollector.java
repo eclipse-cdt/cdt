@@ -35,8 +35,7 @@ public interface IManagedScannerInfoCollector extends IScannerInfoCollector {
 	 * @return a <code>Map</code> of defined symbols and values
 	 */
 	public Map<String, String> getDefinedSymbols();
-	
-	
+
 	/**
 	 * Answers a <code>List</code> of unique built-in includes paths that have been 
 	 * collected for the receiver. The paths are stored as <code>String</code> in the proper 
@@ -45,7 +44,7 @@ public interface IManagedScannerInfoCollector extends IScannerInfoCollector {
 	 * @return a <code>List</code> of built-in compiler include search paths.  
 	 */
 	public List<String> getIncludePaths();
-	
+
 	/**
 	 * Sets the <code>IProject</code> for the receiver.
 	 */

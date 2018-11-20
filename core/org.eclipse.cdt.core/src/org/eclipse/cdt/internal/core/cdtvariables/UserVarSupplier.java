@@ -49,8 +49,7 @@ public class UserVarSupplier implements IUserVarSupplier {
 	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#createMacro(java.lang.String, int, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public ICdtVariable createMacro(String macroName, int type, String value,
-			ICConfigurationDescription contextData) {
+	public ICdtVariable createMacro(String macroName, int type, String value, ICConfigurationDescription contextData) {
 		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(macroName, type, value, CTX, contextData);
 	}
 
@@ -96,8 +95,7 @@ public class UserVarSupplier implements IUserVarSupplier {
 	@Override
 	public boolean isDynamic(ICdtVariable v) {
 		if (v instanceof EclipseVariablesVariableSupplier.EclipseVarMacro) {
-			EclipseVariablesVariableSupplier.EclipseVarMacro evar =
-				(EclipseVariablesVariableSupplier.EclipseVarMacro)v;
+			EclipseVariablesVariableSupplier.EclipseVarMacro evar = (EclipseVariablesVariableSupplier.EclipseVarMacro) v;
 			if (evar.getVariable() instanceof IDynamicVariable)
 				return true;
 		}
@@ -115,10 +113,9 @@ public class UserVarSupplier implements IUserVarSupplier {
 	}
 
 	@Override
-	public boolean setWorkspaceVariables(IStorableCdtVariables vars)
-			throws CoreException {
+	public boolean setWorkspaceVariables(IStorableCdtVariables vars) throws CoreException {
 		if (vars instanceof StorableCdtVariables)
-			return CdtVariableManager.fUserDefinedMacroSupplier.setWorkspaceVariables((StorableCdtVariables)vars);
+			return CdtVariableManager.fUserDefinedMacroSupplier.setWorkspaceVariables((StorableCdtVariables) vars);
 		else
 			return false;
 	}

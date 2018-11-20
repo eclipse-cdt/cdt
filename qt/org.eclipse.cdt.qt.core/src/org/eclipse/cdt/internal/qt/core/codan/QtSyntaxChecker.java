@@ -47,10 +47,8 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 	public void initPreferences(IProblemWorkingCopy problem) {
 		// don't run on full or incremental builds
 		getTopLevelPreference(problem);
-		getLaunchModePreference(problem).enableInLaunchModes(
-				CheckerLaunchMode.RUN_ON_FILE_OPEN,
-        		CheckerLaunchMode.RUN_AS_YOU_TYPE,
-                CheckerLaunchMode.RUN_ON_DEMAND );
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_ON_FILE_OPEN,
+				CheckerLaunchMode.RUN_AS_YOU_TYPE, CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
 	@Override
@@ -80,7 +78,7 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 
 			Collection<QtMethodReference> refs = QtFunctionCall.getReferences(fncall);
 			if (refs != null)
-				for(QtMethodReference ref : refs) {
+				for (QtMethodReference ref : refs) {
 					IQMethod method = ref.getMethod();
 					if (method != null)
 						continue;
@@ -89,7 +87,8 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 					if (ref.getRawSignature().isEmpty())
 						report(ref, Messages.QtConnect_macro_without_method_1, ref.getType().macroName);
 					else
-						report(ref, Messages.QtConnect_macro_method_not_found_3, ref.getType().paramName, ref.getContainingType().getName(), ref.getRawSignature());
+						report(ref, Messages.QtConnect_macro_method_not_found_3, ref.getType().paramName,
+								ref.getContainingType().getName(), ref.getRawSignature());
 				}
 
 			return PROCESS_CONTINUE;

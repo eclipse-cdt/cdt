@@ -26,7 +26,7 @@ public interface IVariableDeclaration extends IDeclaration {
 	 * @throws CModelException
 	 */
 	public String getTypeName() throws CModelException;
-	
+
 	/**
 	 * Sets the variable declaration type name.
 	 * @param type

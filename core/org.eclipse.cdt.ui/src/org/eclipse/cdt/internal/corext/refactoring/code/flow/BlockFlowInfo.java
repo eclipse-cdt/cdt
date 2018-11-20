@@ -19,5 +19,3 @@ class BlockFlowInfo extends GenericSequentialFlowInfo {
 	public BlockFlowInfo() {
 	}
 }
-
-

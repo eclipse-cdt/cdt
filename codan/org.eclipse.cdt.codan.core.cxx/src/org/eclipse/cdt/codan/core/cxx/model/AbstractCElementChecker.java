@@ -28,7 +28,7 @@ import org.eclipse.core.resources.IResource;
  * Clients may extend this class.
  * @since 3.3
  */
-public abstract class AbstractCElementChecker extends AbstractCheckerWithProblemPreferences  implements ICIndexChecker {
+public abstract class AbstractCElementChecker extends AbstractCheckerWithProblemPreferences implements ICIndexChecker {
 	@Override
 	public synchronized boolean processResource(IResource resource) {
 		ICElement model = CoreModel.getDefault().create(resource);
@@ -46,12 +46,9 @@ public abstract class AbstractCElementChecker extends AbstractCheckerWithProblem
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		getTopLevelPreference(problem); // initialize
-		getLaunchModePreference(problem).enableInLaunchModes(
-				CheckerLaunchMode.RUN_ON_FILE_OPEN, 
-				CheckerLaunchMode.RUN_ON_FILE_SAVE,
-				CheckerLaunchMode.RUN_ON_DEMAND, 
-				CheckerLaunchMode.RUN_ON_FULL_BUILD, 
-				CheckerLaunchMode.RUN_ON_INC_BUILD);
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_ON_FILE_OPEN,
+				CheckerLaunchMode.RUN_ON_FILE_SAVE, CheckerLaunchMode.RUN_ON_DEMAND,
+				CheckerLaunchMode.RUN_ON_FULL_BUILD, CheckerLaunchMode.RUN_ON_INC_BUILD);
 	}
 
 	@Override

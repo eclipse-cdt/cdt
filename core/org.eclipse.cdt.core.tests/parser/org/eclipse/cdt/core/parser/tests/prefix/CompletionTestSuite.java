@@ -19,8 +19,8 @@ import junit.framework.TestSuite;
 
 public class CompletionTestSuite extends TestCase {
 
-	public static Test suite() { 
-		TestSuite suite= new TestSuite(CompletionTestSuite.class.getName());
+	public static Test suite() {
+		TestSuite suite = new TestSuite(CompletionTestSuite.class.getName());
 		suite.addTestSuite(BasicCompletionTest.class);
 		return suite;
 	}

@@ -51,14 +51,15 @@ import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction.ITarget
  */
 public abstract class BaseSelectionTests extends BaseUITestCase {
 	private IProgressMonitor monitor = new NullProgressMonitor();
-	
+
 	public BaseSelectionTests() {
 		super();
 	}
+
 	public BaseSelectionTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Derived classes should override this to return 'true' if they run tests where the
 	 * OpenDeclarationsAction can open a different editor than the one from which the action was invoked. 
@@ -66,7 +67,7 @@ public abstract class BaseSelectionTests extends BaseUITestCase {
 	protected boolean shouldUpdateEditor() {
 		return false;
 	}
-	
+
 	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
 		return testF3(file, offset, 0, null);
 	}
@@ -74,88 +75,90 @@ public abstract class BaseSelectionTests extends BaseUITestCase {
 	private static class TargetChooser implements ITargetDisambiguator {
 		private int fIndex;
 		private boolean fDisambiguationRequested = false;
-		
+
 		public TargetChooser(int index) {
 			fIndex = index;
 		}
-		
+
 		@Override
 		public ICElement disambiguateTargets(ICElement[] targets, SelectionParseAction action) {
 			fDisambiguationRequested = true;
 			return targets[fIndex];
 		}
-		
+
 		public boolean disambiguationRequested() {
 			return fDisambiguationRequested;
 		}
 	}
-	
+
 	protected IASTNode testF3(IFile file, int offset, int length) throws ParserException, CoreException {
 		return testF3(file, offset, length, null);
 	}
-	
-	protected IASTNode testF3WithAmbiguity(IFile file, int offset, int targetChoiceIndex) 
+
+	protected IASTNode testF3WithAmbiguity(IFile file, int offset, int targetChoiceIndex)
 			throws ParserException, CoreException {
 		TargetChooser chooser = new TargetChooser(targetChoiceIndex);
 		OpenDeclarationsAction.sDisallowAmbiguousInput = false;
 		IASTNode result = testF3(file, offset, 0, chooser);
 		OpenDeclarationsAction.sDisallowAmbiguousInput = true;
-		assertTrue(chooser.disambiguationRequested());  // Make sure there actually was an ambiguity
+		assertTrue(chooser.disambiguationRequested()); // Make sure there actually was an ambiguity
 		return result;
 	}
 
-    protected IASTNode testF3(IFile file, int offset, int length, ITargetDisambiguator disambiguator) 
-    		throws ParserException, CoreException {
+	protected IASTNode testF3(IFile file, int offset, int length, ITargetDisambiguator disambiguator)
+			throws ParserException, CoreException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
-		
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IEditorPart part = null;
-        try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
-        } catch (PartInitException e) {
-            assertFalse(true);
-        }
-        
-        if (part instanceof CEditor) {
-        	CEditor editor= (CEditor) part;
-        	EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
-            editor.getSelectionProvider().setSelection(new TextSelection(offset,length));
-            
-            final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$
-            if (disambiguator == null) {
-            	action.runSync();
-            } else {
-            	action.runSync(disambiguator);
-            }
-            
-            if (shouldUpdateEditor()) {
-            	// update the file/part to point to the newly opened IFile/IEditorPart
-                part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
-                assertTrue (part instanceof CEditor);
-                editor= (CEditor) part;
-        		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 0, 5000, 10);
-            }
-        
-            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
-            ISelection sel = editor.getSelectionProvider().getSelection();
-            
-            final IASTName[] result= { null };
-            if (sel instanceof ITextSelection) {
-            	final ITextSelection textSel = (ITextSelection)sel;
-            	ITranslationUnit tu= (ITranslationUnit) editor.getInputCElement();
-        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, monitor, new ASTRunnable() {
-        			@Override
-					public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-        				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());        	
-        				return Status.OK_STATUS;
-        			}
-        		});
-        		assertTrue(ok.isOK());
+
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IEditorPart part = null;
+		try {
+			part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+		} catch (PartInitException e) {
+			assertFalse(true);
+		}
+
+		if (part instanceof CEditor) {
+			CEditor editor = (CEditor) part;
+			EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
+			editor.getSelectionProvider().setSelection(new TextSelection(offset, length));
+
+			final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$
+			if (disambiguator == null) {
+				action.runSync();
+			} else {
+				action.runSync(disambiguator);
+			}
+
+			if (shouldUpdateEditor()) {
+				// update the file/part to point to the newly opened IFile/IEditorPart
+				part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				assertTrue(part instanceof CEditor);
+				editor = (CEditor) part;
+				EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 0, 5000, 10);
+			}
+
+			// the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
+			ISelection sel = editor.getSelectionProvider().getSelection();
+
+			final IASTName[] result = { null };
+			if (sel instanceof ITextSelection) {
+				final ITextSelection textSel = (ITextSelection) sel;
+				ITranslationUnit tu = (ITranslationUnit) editor.getInputCElement();
+				IStatus ok = ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, monitor,
+						new ASTRunnable() {
+							@Override
+							public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
+								result[0] = ast.getNodeSelector(null).findName(textSel.getOffset(),
+										textSel.getLength());
+								return Status.OK_STATUS;
+							}
+						});
+				assertTrue(ok.isOK());
 				return result[0];
-            }
-        }
-        
-        return null;
-    }
+			}
+		}
+
+		return null;
+	}
 }

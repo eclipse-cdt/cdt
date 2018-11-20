@@ -25,7 +25,6 @@ import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
 import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
-
 /**
  * By extending Composite we can create our own Container. UIComposite can act
  * as the bridge between the UIPage and the UIWidgets contained in that page.

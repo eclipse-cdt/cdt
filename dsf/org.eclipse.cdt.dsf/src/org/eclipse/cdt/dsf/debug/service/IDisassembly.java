@@ -27,7 +27,8 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  */
 public interface IDisassembly extends IDsfService {
 
-    public interface IDisassemblyDMContext extends IDMContext {}
+	public interface IDisassemblyDMContext extends IDMContext {
+	}
 
 	/**
 	 * Gets a block of disassembled code given an address range.
@@ -44,11 +45,8 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getInstructions(
-            IDisassemblyDMContext context,
-            BigInteger startAddress, 
-            BigInteger endAddress,
-            DataRequestMonitor<IInstruction[]> drm);
+	public void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IInstruction[]> drm);
 
 	/**
 	 * Gets a block of disassembled code given a filename, line number, and line
@@ -69,12 +67,8 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getInstructions(
-            IDisassemblyDMContext context,
-            String filename, 
-            int    linenum, 
-            int    instrtuctionCount,
-            DataRequestMonitor<IInstruction[]> drm);
+	public void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int instrtuctionCount,
+			DataRequestMonitor<IInstruction[]> drm);
 
 	/**
 	 * Gets a block of mixed disassembled code given an address range.
@@ -89,11 +83,8 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getMixedInstructions(
-            IDisassemblyDMContext context,
-            BigInteger startAddress, 
-            BigInteger endAddress,
-            DataRequestMonitor<IMixedInstruction[]> drm);
+	public void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IMixedInstruction[]> drm);
 
 	/**
 	 * Gets a block of mixed disassembled code given a filename, line number, and line count.
@@ -112,11 +103,7 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getMixedInstructions(
-            IDisassemblyDMContext context,
-            String filename, 
-            int    linenum, 
-            int    instructionCount,
-            DataRequestMonitor<IMixedInstruction[]> drm);
+	public void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int instructionCount,
+			DataRequestMonitor<IMixedInstruction[]> drm);
 
 }

@@ -31,7 +31,7 @@ public interface IMILaunchConfigurationComponent {
 	 * 
 	 * @param parent the parent composite
 	 */
-	public void createControl( Composite parent );
+	public void createControl(Composite parent);
 
 	/**
 	 * Returns the top level control for this component.
@@ -49,7 +49,7 @@ public interface IMILaunchConfigurationComponent {
 	 * 
 	 * @param configuration launch configuration
 	 */
-	public void setDefaults( ILaunchConfigurationWorkingCopy configuration );
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
 	 * Initializes this component's controls with values from the given 
@@ -57,7 +57,7 @@ public interface IMILaunchConfigurationComponent {
 	 * 
 	 * @param configuration launch configuration
 	 */
-	public void initializeFrom( ILaunchConfiguration configuration );
+	public void initializeFrom(ILaunchConfiguration configuration);
 
 	/**
 	 * Notifies this component that it has been disposed. 
@@ -71,7 +71,7 @@ public interface IMILaunchConfigurationComponent {
 	 * 
 	 * @param configuration launch configuration
 	 */
-	public void performApply( ILaunchConfigurationWorkingCopy configuration );
+	public void performApply(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
 	 * Returns whether this component is in a valid state in the context 

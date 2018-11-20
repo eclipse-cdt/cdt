@@ -25,7 +25,8 @@ public class ExecFor implements ICPPExecution {
 	private final ICPPEvaluation iterationEval;
 	private final ICPPExecution bodyExec;
 
-	public ExecFor(ICPPExecution initializerExec, ICPPEvaluation conditionExprEval, ExecSimpleDeclaration conditionDeclExec, ICPPEvaluation iterationEval, ICPPExecution bodyExec) {
+	public ExecFor(ICPPExecution initializerExec, ICPPEvaluation conditionExprEval,
+			ExecSimpleDeclaration conditionDeclExec, ICPPEvaluation iterationEval, ICPPExecution bodyExec) {
 		this.initializerExec = initializerExec;
 		this.conditionExprEval = conditionExprEval;
 		this.conditionDeclExec = conditionDeclExec;
@@ -35,7 +36,8 @@ public class ExecFor implements ICPPExecution {
 
 	@Override
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
-		for (evaluateInitializationStatement(record, context); conditionSatisfied(record, context); evaluateIterationExpression(record, context)) {
+		for (evaluateInitializationStatement(record, context); conditionSatisfied(record,
+				context); evaluateIterationExpression(record, context)) {
 			if (context.getStepsPerformed() >= ConstexprEvaluationContext.MAX_CONSTEXPR_EVALUATION_STEPS) {
 				return ExecIncomplete.INSTANCE;
 			}
@@ -75,19 +77,23 @@ public class ExecFor implements ICPPExecution {
 
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
-		ICPPExecution newInitializerExec = initializerExec != null ? initializerExec.instantiate(context, maxDepth) : null;
-		ICPPEvaluation newConditionExprEval = conditionExprEval != null ? conditionExprEval.instantiate(context, maxDepth) : null;
-		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null ? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth) : null;
+		ICPPExecution newInitializerExec = initializerExec != null ? initializerExec.instantiate(context, maxDepth)
+				: null;
+		ICPPEvaluation newConditionExprEval = conditionExprEval != null
+				? conditionExprEval.instantiate(context, maxDepth)
+				: null;
+		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null
+				? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth)
+				: null;
 		ICPPEvaluation newIterationEval = iterationEval != null ? iterationEval.instantiate(context, maxDepth) : null;
 		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
-		if (newInitializerExec == initializerExec &&
-			newConditionExprEval == conditionExprEval &&
-			newConditionDeclExec == conditionDeclExec &&
-			newIterationEval == iterationEval &&
-			newBodyExec == bodyExec) {
+		if (newInitializerExec == initializerExec && newConditionExprEval == conditionExprEval
+				&& newConditionDeclExec == conditionDeclExec && newIterationEval == iterationEval
+				&& newBodyExec == bodyExec) {
 			return this;
 		}
-		return new ExecFor(newInitializerExec, newConditionExprEval, newConditionDeclExec, newIterationEval, newBodyExec);
+		return new ExecFor(newInitializerExec, newConditionExprEval, newConditionDeclExec, newIterationEval,
+				newBodyExec);
 	}
 
 	@Override

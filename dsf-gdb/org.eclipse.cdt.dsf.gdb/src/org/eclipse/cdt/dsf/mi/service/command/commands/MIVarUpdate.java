@@ -35,14 +35,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
 public class MIVarUpdate extends MICommand<MIVarUpdateInfo> {
 
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarUpdate(ICommandControlDMContext dmc, String name) {
 		super(dmc, "-var-update", new String[] { "1", name }); //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
-    @Override
-    public MIVarUpdateInfo getResult(MIOutput out) {
-        return new MIVarUpdateInfo(out);
-    }
+
+	@Override
+	public MIVarUpdateInfo getResult(MIOutput out) {
+		return new MIVarUpdateInfo(out);
+	}
 }

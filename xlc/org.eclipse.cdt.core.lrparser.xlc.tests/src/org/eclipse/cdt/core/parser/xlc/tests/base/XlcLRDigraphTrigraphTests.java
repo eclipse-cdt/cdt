@@ -25,11 +25,11 @@ public class XlcLRDigraphTrigraphTests extends LRDigraphTrigraphTests {
 	public static TestSuite suite() {
 		return new TestSuite(XlcLRDigraphTrigraphTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

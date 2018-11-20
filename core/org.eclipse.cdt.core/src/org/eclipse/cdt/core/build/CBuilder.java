@@ -20,15 +20,14 @@ import org.eclipse.core.runtime.Status;
 public class CBuilder extends IncrementalProjectBuilder {
 
 	private static final String ID = CCorePlugin.PLUGIN_ID + ".cBuilder"; //$NON-NLS-1$
-	
+
 	public static void setupBuilder(ICommand command) {
 		command.setBuilderName(CBuilder.ID);
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 	}
-	
+
 	@Override
-	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
-			throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		try {
 			IProject project = getProject();
 

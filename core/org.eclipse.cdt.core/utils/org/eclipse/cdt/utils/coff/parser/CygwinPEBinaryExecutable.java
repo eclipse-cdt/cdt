@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
-
 public class CygwinPEBinaryExecutable extends CygwinPEBinaryObject implements IBinaryExecutable {
 
 	/**

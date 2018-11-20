@@ -22,41 +22,42 @@ import org.eclipse.ui.texteditor.IUpdate;
  * TextOperationAction
  */
 public class TextOperationAction extends Action implements IUpdate {
-	
-		private int fOperationCode= -1;
-		private ITextOperationTarget fOperationTarget;
-	
-		public TextOperationAction(ITextViewer viewer, int operationCode) {
-			fOperationCode= operationCode;
-			fOperationTarget= viewer.getTextOperationTarget();
-			update();
-		}
-	
-		/**
-		 * Updates the enabled state of the action.
-		 * Fires a property change if the enabled state changes.
-		 * 
-		 * @see Action#firePropertyChange(String, Object, Object)
-		 */
-		@Override
-		public void update() {
-	
-			boolean wasEnabled= isEnabled();
-			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
-			setEnabled(isEnabled);
-	
-			if (wasEnabled != isEnabled) {
-				firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE, isEnabled ? Boolean.TRUE : Boolean.FALSE);
-			}
-		}
-		
-		/**
-		 * @see Action#run()
-		 */
-		@Override
-		public void run() {
-			if (fOperationCode != -1 && fOperationTarget != null) {
-				fOperationTarget.doOperation(fOperationCode);
-			}
+
+	private int fOperationCode = -1;
+	private ITextOperationTarget fOperationTarget;
+
+	public TextOperationAction(ITextViewer viewer, int operationCode) {
+		fOperationCode = operationCode;
+		fOperationTarget = viewer.getTextOperationTarget();
+		update();
+	}
+
+	/**
+	 * Updates the enabled state of the action.
+	 * Fires a property change if the enabled state changes.
+	 * 
+	 * @see Action#firePropertyChange(String, Object, Object)
+	 */
+	@Override
+	public void update() {
+
+		boolean wasEnabled = isEnabled();
+		boolean isEnabled = (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
+		setEnabled(isEnabled);
+
+		if (wasEnabled != isEnabled) {
+			firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE,
+					isEnabled ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
+
+	/**
+	 * @see Action#run()
+	 */
+	@Override
+	public void run() {
+		if (fOperationCode != -1 && fOperationTarget != null) {
+			fOperationTarget.doOperation(fOperationCode);
+		}
+	}
+}

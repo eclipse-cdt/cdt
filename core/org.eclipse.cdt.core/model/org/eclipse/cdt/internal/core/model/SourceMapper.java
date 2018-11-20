@@ -34,28 +34,28 @@ public class SourceMapper {
 	public ITranslationUnit findTranslationUnit(String filename) {
 		return findTranslationUnit(cproject, filename);
 	}
-	
+
 	public ITranslationUnit findTranslationUnit(IParent container, String filename) {
 		try {
 			List<?> list = container.getChildrenOfType(ICElement.C_UNIT);
 			for (int i = 0; i < list.size(); i++) {
 				Object o = list.get(i);
 				if (o instanceof ITranslationUnit) {
-					ITranslationUnit tu = (ITranslationUnit)o;
+					ITranslationUnit tu = (ITranslationUnit) o;
 					// TODO: What about non case sensitive filesystems.
 					if (filename.equals(tu.getElementName())) {
 						return tu;
 					}
 				}
 			}
-			
+
 			// TODO: This to simple, we are not protected against
 			// loop in the file system symbolic links etc ..
 			list = container.getChildrenOfType(ICElement.C_CCONTAINER);
 			for (int i = 0; i < list.size(); i++) {
 				Object o = list.get(i);
 				if (o instanceof ICContainer) {
-					ITranslationUnit tu = findTranslationUnit((ICContainer)o, filename);
+					ITranslationUnit tu = findTranslationUnit((ICContainer) o, filename);
 					if (tu != null) {
 						return tu;
 					}

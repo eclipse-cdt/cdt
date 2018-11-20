@@ -65,7 +65,6 @@ public class Include extends Parent implements IInclude {
 		return null;
 	}
 
-
 	@Override
 	public IDirective[] getDirectives() {
 		clearDirectives();
@@ -95,13 +94,14 @@ public class Include extends Parent implements IInclude {
 			} else if (dirs != null) {
 				for (int j = 0; j < dirs.length; j++) {
 					try {
-						IPath testIncludeFilePath= new Path(dirs[j]).append(includeFilePath);
+						IPath testIncludeFilePath = new Path(dirs[j]).append(includeFilePath);
 						String uriPath = testIncludeFilePath.toString();
 						if (testIncludeFilePath.getDevice() != null) {
 							// special case: device prefix is seen as relative path by URI
 							uriPath = '/' + uriPath;
 						}
-						URI includeURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uriPath, null, null);
+						URI includeURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(),
+								uriPath, null, null);
 						if (!isAlreadyIncluded(includeURI)) {
 							GNUMakefile gnu = new GNUMakefile();
 							gnu.parse(includeURI, makefileReaderProvider);

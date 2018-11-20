@@ -18,7 +18,9 @@ package org.eclipse.cdt.core;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICOwnerInfo {
-	public String getID();	
+	public String getID();
+
 	public String getName();
+
 	public String getPlatform();
 }

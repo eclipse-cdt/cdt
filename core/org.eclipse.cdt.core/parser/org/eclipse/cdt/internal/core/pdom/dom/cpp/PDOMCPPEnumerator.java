@@ -34,16 +34,16 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for a c++ enumerator in the index.
  */
 class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
-	private static final int VALUE= PDOMCPPBinding.RECORD_SIZE;
-	private static final int INTERNAL_TYPE= VALUE + Database.VALUE_SIZE;
-	
+	private static final int VALUE = PDOMCPPBinding.RECORD_SIZE;
+	private static final int INTERNAL_TYPE = VALUE + Database.VALUE_SIZE;
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = INTERNAL_TYPE + Database.TYPE_SIZE;
-		
+
 	public PDOMCPPEnumerator(PDOMLinkage linkage, PDOMNode parent, ICPPInternalEnumerator enumerator)
 			throws CoreException {
 		super(linkage, parent, enumerator.getNameCharArray());
-		IValue value= enumerator.getValue();
+		IValue value = enumerator.getValue();
 		if (value != null) {
 			linkage.storeValue(record + VALUE, value);
 		}
@@ -61,7 +61,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPENUMERATOR;
@@ -70,7 +70,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IEnumerator) {
-			IValue value= ((IEnumerator) newBinding).getValue();
+			IValue value = ((IEnumerator) newBinding).getValue();
 			if (value != null) {
 				getLinkage().storeValue(record + VALUE, value);
 			}

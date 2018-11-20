@@ -38,24 +38,24 @@ public class MakeRecon extends OutputStream {
 	class MyList extends ArrayList<String> {
 		private static final long serialVersionUID = 1L;
 
-		public void removeInterval (int start, int len) {
+		public void removeInterval(int start, int len) {
 			removeRange(start, len);
 		}
 	}
 
-	public MakeRecon(IPath buildCommand, String[] buildArguments,
-		String[] env, IPath workingDirectory, IProgressMonitor mon, OutputStream cos) {
-		this(buildCommand, new String[]{"-n"}, buildArguments, env, workingDirectory, mon, cos); //$NON-NLS-1$
+	public MakeRecon(IPath buildCommand, String[] buildArguments, String[] env, IPath workingDirectory,
+			IProgressMonitor mon, OutputStream cos) {
+		this(buildCommand, new String[] { "-n" }, buildArguments, env, workingDirectory, mon, cos); //$NON-NLS-1$
 	}
 
-	public MakeRecon(IPath buildCommand, String[] options, String[] buildArguments,
-		String[] env, IPath workingDirectory, IProgressMonitor mon, OutputStream cos) {
+	public MakeRecon(IPath buildCommand, String[] options, String[] buildArguments, String[] env,
+			IPath workingDirectory, IProgressMonitor mon, OutputStream cos) {
 
 		make = buildCommand;
 
 		args = new String[0];
 		if (options != null) {
-			String[]array = new String[args.length + options.length];
+			String[] array = new String[args.length + options.length];
 			System.arraycopy(args, 0, array, 0, args.length);
 			System.arraycopy(options, 0, array, args.length, options.length);
 			args = array;

@@ -50,7 +50,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 		if (headers.size() == 1)
 			return headers.iterator().next();
 
-		Set<IPath> cacheKey = new HashSet<IPath>(headers); 
+		Set<IPath> cacheKey = new HashSet<IPath>(headers);
 		// Check the decision cache. If the cache doesn't help, ask the user.
 		// Query the cache.
 		if (userChoiceCache.containsKey(cacheKey)) {
@@ -64,8 +64,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 			@Override
 			public void run() {
 				if (!shell.isDisposed()) {
-					ElementListSelectionDialog dialog =
-							new ElementListSelectionDialog(shell, new LabelProvider());
+					ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());
 					dialog.setElements(elemArray);
 					dialog.setTitle(title);
 					dialog.setMessage(NLS.bind(CEditorMessages.OrganizeIncludes_choose_header, bindingName));

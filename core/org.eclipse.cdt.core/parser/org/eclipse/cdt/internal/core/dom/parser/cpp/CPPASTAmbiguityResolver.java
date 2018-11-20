@@ -50,14 +50,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Visitor to resolve AST ambiguities in the right order
  */
 final class CPPASTAmbiguityResolver extends ASTVisitor {
-	private int fSkipInitializers= 0;
+	private int fSkipInitializers = 0;
 	/*
 	 * The current nesting level of class definitions.
 	 * Used to handle processing of method bodies, which are deferred
 	 * until the end of the outermost class definition.
 	 */
-	private int fClassNestingLevel= 0;
-	private HashSet<IASTDeclaration> fRepopulate= new HashSet<>();
+	private int fClassNestingLevel = 0;
+	private HashSet<IASTDeclaration> fRepopulate = new HashSet<>();
 	/*
 	 * Nodes that have been deferred for later processing.
 	 * Currently used only for method bodies.
@@ -74,17 +74,17 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 
 	public CPPASTAmbiguityResolver() {
 		super(false);
-		includeInactiveNodes= true;
-		shouldVisitAmbiguousNodes= true;
-		shouldVisitDeclarations= true;
-		shouldVisitDeclSpecifiers= true;
-		shouldVisitInitializers= true;
-		shouldVisitTranslationUnit= true;
+		includeInactiveNodes = true;
+		shouldVisitAmbiguousNodes = true;
+		shouldVisitDeclarations = true;
+		shouldVisitDeclSpecifiers = true;
+		shouldVisitInitializers = true;
+		shouldVisitTranslationUnit = true;
 	}
 
 	@Override
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
-		IASTNode node= astAmbiguousNode.resolveAmbiguity(this);
+		IASTNode node = astAmbiguousNode.resolveAmbiguity(this);
 		if (node instanceof IASTDeclarator) {
 			while (node != null) {
 				if (node instanceof IASTDeclaration) {
@@ -94,11 +94,11 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				if (node instanceof IASTParameterDeclaration) {
 					// If the parameter declaration belongs to a function declaration or
 					// function definition we need to update the scope.
-					IASTNode parent= node.getParent();
+					IASTNode parent = node.getParent();
 					if (parent instanceof IASTDeclarator) {
-						IASTDeclarator dtor= (IASTDeclarator) parent;
-						if (dtor == ASTQueries.findTypeRelevantDeclarator(dtor) &&
-								ASTQueries.findOutermostDeclarator(dtor).getParent() instanceof IASTDeclaration) {
+						IASTDeclarator dtor = (IASTDeclarator) parent;
+						if (dtor == ASTQueries.findTypeRelevantDeclarator(dtor)
+								&& ASTQueries.findOutermostDeclarator(dtor).getParent() instanceof IASTDeclaration) {
 							repopulateScope((IASTParameterDeclaration) node);
 						}
 					}
@@ -107,7 +107,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				if (node instanceof IASTExpression) {
 					break;
 				}
-				node= node.getParent();
+				node = node.getParent();
 			}
 		} else if (node instanceof IASTDeclaration) {
 			repopulateScope((IASTDeclaration) node);
@@ -154,7 +154,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition && !shouldProcessNow((IASTFunctionDefinition) decl)) {
-			final IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
+			final IASTFunctionDefinition fdef = (IASTFunctionDefinition) decl;
 
 			// Visit the declarator first, it may contain ambiguous template arguments needed
 			// for associating the template declarations.
@@ -194,21 +194,20 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 		// We need to create class bindings for all definitions and for the specializations.
 		// Otherwise, name resolution cannot access members or correct specialization.
 		if (declaration instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) declaration;
-			IASTName name= null;
+			IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) declaration;
+			IASTName name = null;
 			IASTDeclSpecifier declspec = sdecl.getDeclSpecifier();
 			if (declspec instanceof IASTCompositeTypeSpecifier) {
 				// Definition of a class[template[specialization]]
-				name= ((IASTCompositeTypeSpecifier) declspec).getName().getLastName();
-			} else if (declspec instanceof ICPPASTElaboratedTypeSpecifier
-					&& sdecl.getDeclarators().length == 0) {
+				name = ((IASTCompositeTypeSpecifier) declspec).getName().getLastName();
+			} else if (declspec instanceof ICPPASTElaboratedTypeSpecifier && sdecl.getDeclarators().length == 0) {
 				ASTNodeProperty prop = declaration.getPropertyInParent();
 				if (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION
 						|| prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION) {
-					ICPPASTElaboratedTypeSpecifier elab= (ICPPASTElaboratedTypeSpecifier) declspec;
+					ICPPASTElaboratedTypeSpecifier elab = (ICPPASTElaboratedTypeSpecifier) declspec;
 					if (!elab.isFriend()) {
 						// Declaration of a class template specialization.
-						name= elab.getName().getLastName();
+						name = elab.getName().getLastName();
 					}
 				}
 			}
@@ -238,14 +237,14 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	private void repopulateScope(IASTDeclaration declaration) {
-		IScope scope= CPPVisitor.getContainingNonTemplateScope(declaration);
+		IScope scope = CPPVisitor.getContainingNonTemplateScope(declaration);
 		if (scope instanceof ICPPASTInternalScope) {
 			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
 		}
 	}
 
 	private void repopulateScope(IASTParameterDeclaration declaration) {
-		IScope scope= CPPVisitor.getContainingNonTemplateScope(declaration);
+		IScope scope = CPPVisitor.getContainingNonTemplateScope(declaration);
 		if (scope instanceof ICPPASTInternalScope) {
 			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
 		}

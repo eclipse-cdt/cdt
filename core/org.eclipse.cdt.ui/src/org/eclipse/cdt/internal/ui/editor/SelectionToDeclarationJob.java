@@ -78,7 +78,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
  * Based on class OpenDeclarationsJob
  * @author Alvaro Sanchez-Leon
  * @since 5.6
- */ 
+ */
 public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 	private enum NameKind {
 		REFERENCE, DECLARATION, USING_DECL, DEFINITION
@@ -91,12 +91,13 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 
 	public SelectionToDeclarationJob(ITextEditor editor, ITextSelection textSelection) throws CoreException {
 		super(CEditorMessages.OpenDeclarations_dialog_title);
-		
+
 		if (!(editor instanceof CEditor)) {
-			IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, ICStatusConstants.INTERNAL_ERROR, "Action not supportted outside the context of the C Editor", null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, ICStatusConstants.INTERNAL_ERROR,
+					"Action not supportted outside the context of the C Editor", null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
-		
+
 		fTranslationUnit = ((CEditor) editor).getInputCElement();
 		fTextSelection = textSelection;
 	}
@@ -115,8 +116,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 		if (fIndex != null)
 			return Status.CANCEL_STATUS;
 
-		fIndex = CCorePlugin.getIndexManager()
-				.getIndex(fTranslationUnit.getCProject(), IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT | IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fTranslationUnit.getCProject(), IIndexManager.ADD_DEPENDENCIES
+				| IIndexManager.ADD_DEPENDENT | IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
 
 		try {
 			fIndex.acquireReadLock();
@@ -148,7 +149,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 
 		IASTName sourceName = nodeSelector.findEnclosingName(selectionStart, selectionLength);
 		if (sourceName == null) {
-			IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, CEditorMessages.StepIntoSelection_unable_to_resolve_name);
+			IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+					CEditorMessages.StepIntoSelection_unable_to_resolve_name);
 			throw new CoreException(status);
 		}
 
@@ -174,7 +176,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 				IName[] names = findDeclNames(ast, kind, binding);
 				for (final IName name : names) {
 					if (name != null) {
-						if (name instanceof IIndexName && filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
+						if (name instanceof IIndexName
+								&& filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
 							// Exclude index names from the current file.
 						} else if (areOverlappingNames(name, sourceName)) {
 							// Exclude the current location.
@@ -235,7 +238,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 		return declNames;
 	}
 
-	private IName[] findNames(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
+	private IName[] findNames(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding)
+			throws CoreException {
 		IName[] declNames;
 		if (kind == NameKind.DEFINITION) {
 			declNames = findDeclarations(index, ast, binding);
@@ -253,7 +257,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 		return declNames;
 	}
 
-	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
+	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding)
+			throws CoreException {
 		List<IASTName> declNames = new ArrayList<IASTName>();
 		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
@@ -314,7 +319,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 	/**
 	 * Returns definitions of bindings referenced by implicit name at the given location.
 	 */
-	private IName[] findImplicitTargets(IASTTranslationUnit ast, IASTNodeSelector nodeSelector, int offset, int length) throws CoreException {
+	private IName[] findImplicitTargets(IASTTranslationUnit ast, IASTNodeSelector nodeSelector, int offset, int length)
+			throws CoreException {
 		IName[] definitions = IName.EMPTY_ARRAY;
 		IASTName firstName = nodeSelector.findEnclosingImplicitName(offset, length);
 		if (firstName != null) {
@@ -366,7 +372,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 		if (loc1 == null || loc2 == null)
 			return false;
 		return loc1.getFileName().equals(loc2.getFileName())
-				&& max(loc1.getNodeOffset(), loc2.getNodeOffset()) < min(loc1.getNodeOffset() + loc1.getNodeLength(), loc2.getNodeOffset() + loc2.getNodeLength());
+				&& max(loc1.getNodeOffset(), loc2.getNodeOffset()) < min(loc1.getNodeOffset() + loc1.getNodeLength(),
+						loc2.getNodeOffset() + loc2.getNodeLength());
 	}
 
 	private static boolean isInSameFunction(IASTName refName, IName funcDeclName) {
@@ -399,7 +406,8 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 		return (IASTDeclaration) node;
 	}
 
-	private void filterToFunctions(ICProject project, IIndex index, IName[] declNames, List<IFunctionDeclaration> functionElements) {
+	private void filterToFunctions(ICProject project, IIndex index, IName[] declNames,
+			List<IFunctionDeclaration> functionElements) {
 		for (IName declName : declNames) {
 			try {
 				ICElement elem = getCElementForName(project, index, declName);

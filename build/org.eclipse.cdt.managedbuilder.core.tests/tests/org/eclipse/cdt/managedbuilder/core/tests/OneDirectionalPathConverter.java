@@ -23,10 +23,9 @@ public class OneDirectionalPathConverter implements IOptionPathConverter {
 	public static Path PREFIX = new Path("/test");
 
 	@Override
-	public IPath convertToPlatformLocation(String toolSpecificPath,
-			IOption option, ITool tool) {
+	public IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool) {
 		IPath path = new Path(toolSpecificPath);
-		if(path.isAbsolute())
+		if (path.isAbsolute())
 			return PREFIX.append(toolSpecificPath);
 		return path;
 	}

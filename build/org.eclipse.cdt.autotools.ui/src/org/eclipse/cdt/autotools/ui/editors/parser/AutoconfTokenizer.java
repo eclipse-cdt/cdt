@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-
 /**
  * This tokenizer traverses autotools-style text (m4 or configure.ac) to support the
  * autoconf parser.  It tracks the current context (m4 macro call or shell commands)
@@ -47,7 +46,7 @@ public class AutoconfTokenizer {
 	public static final String UNMATCHED_RIGHT_QUOTE = "UnmatchedRightQuote"; //$NON-NLS-1$
 	public static final String UNMATCHED_LEFT_QUOTE = "UnmatchedLeftQuote"; //$NON-NLS-1$
 	public static final String UNMATCHED_CLOSE_COMMENT = "UnmatchedCloseComment"; //$NON-NLS-1$
-	
+
 	private IDocument document;
 	private int offset;
 	private String m4OpenQuote;
@@ -66,18 +65,18 @@ public class AutoconfTokenizer {
 			throw new IllegalArgumentException();
 		this.document = document;
 		this.errorHandler = errorHandler;
-		
+
 		this.chars = document.get().toCharArray();
 		this.offset = 0;
-		
+
 		this.eofToken = new Token(ITokenConstants.EOF, "", document, chars.length, 0);
-		
+
 		this.m4OpenQuote = "`"; //$NON-NLS-1$
 		this.m4CloseQuote = "'"; //$NON-NLS-1$
 		this.m4OpenComment = "#"; //$NON-NLS-1$
 		this.m4CloseComment = "\n"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tell whether the tokenizer considers itself to be in an m4 context.
 	 * This determines what kinds of tokens it returns.
@@ -86,7 +85,7 @@ public class AutoconfTokenizer {
 	public boolean isM4Context() {
 		return isM4Context;
 	}
-	
+
 	/**
 	 * Switch the tokenizer into or out of m4 context.
 	 * @return
@@ -94,7 +93,7 @@ public class AutoconfTokenizer {
 	public void setM4Context(boolean flag) {
 		isM4Context = flag;
 	}
-	
+
 	/** 
 	 * Set the m4 quote delimiters
 	 */
@@ -110,7 +109,7 @@ public class AutoconfTokenizer {
 		this.m4OpenComment = open;
 		this.m4CloseComment = close;
 	}
-	
+
 	/** Push back the given token.  This allows the tokenizer to restart from its start position,
 	 * potentially in a different context. */
 	public void unreadToken(Token token) {
@@ -118,14 +117,14 @@ public class AutoconfTokenizer {
 			throw new IllegalStateException();
 		offset = token.getOffset();
 	}
-	
+
 	/** Read the next token. Returns an EOF token at EOF. */
 	public Token readToken() {
 		if (offset >= chars.length)
 			return eofToken;
-		
+
 		char ch = chars[offset];
-		
+
 		// skip whitespace (but not EOL)
 		while (isWhitespace(ch)) {
 			offset++;
@@ -142,7 +141,7 @@ public class AutoconfTokenizer {
 					break;
 				offset++;
 			}
-			
+
 			// keep inside doc if we didn't find that EOL
 			if (offset >= chars.length)
 				offset--;
@@ -150,7 +149,7 @@ public class AutoconfTokenizer {
 
 		startOffset = offset;
 		StringBuilder buffer = new StringBuilder();
-		
+
 		// check EOL
 		if (ch == '\r' || ch == '\n') {
 			buffer.append(ch);
@@ -160,12 +159,12 @@ public class AutoconfTokenizer {
 			}
 			return makeToken(ITokenConstants.EOL, buffer.toString());
 		}
-		
+
 		// TODO: this parser always uses fixed logic for identifier reading, ignoring m4's "changeword"
 		if (isLeadIdentifierChar(ch)) {
 			return parseWord(ch);
 		}
-		
+
 		// check comments and quotes
 		if (isM4Context) {
 			if (lookAhead(m4OpenComment)) {
@@ -179,17 +178,17 @@ public class AutoconfTokenizer {
 					offset++;
 				}
 				if (!found) {
-					handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNMATCHED_CLOSE_COMMENT, 
+					handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNMATCHED_CLOSE_COMMENT,
 							m4CloseComment.equals("\n") ? "newline" : m4CloseComment)); //$NON-NLS-1$
 				}
 				return makeToken(ITokenConstants.M4_COMMENT);
 			}
-			
+
 			if (lookAhead(m4OpenQuote)) {
 				return parseQuote();
 			}
 		}
-		
+
 		// check shell punctuation
 		if (!isM4Context) {
 			if (ch == ';' && offset + 1 < chars.length && chars[offset + 1] == ';') {
@@ -229,7 +228,7 @@ public class AutoconfTokenizer {
 				return parseString(ITokenConstants.SH_STRING_BACKTICK, ch);
 			}
 		}
-		
+
 		// check common punctuation
 		if (ch == ';') {
 			offset++;
@@ -247,7 +246,7 @@ public class AutoconfTokenizer {
 			offset++;
 			return makeToken(ITokenConstants.RPAREN);
 		}
-		
+
 		// unknown text
 		offset++;
 		return makeToken(ITokenConstants.TEXT);
@@ -255,7 +254,7 @@ public class AutoconfTokenizer {
 
 	private Token parseWord(char ch) {
 		StringBuilder buffer = new StringBuilder();
-		
+
 		buffer.append(ch);
 		offset++;
 		do {
@@ -267,9 +266,9 @@ public class AutoconfTokenizer {
 			buffer.append(ch);
 			offset++;
 		} while (true);
-		
+
 		String text = buffer.toString();
-		
+
 		if (!isM4Context) {
 			// detect sh tokens
 			if ("case".equals(text))
@@ -301,16 +300,16 @@ public class AutoconfTokenizer {
 			if ("fi".equals(text))
 				return makeToken(ITokenConstants.SH_FI, text);
 		}
-		
+
 		// other identifier-looking word
 		return makeToken(ITokenConstants.WORD, text);
 	}
-	
+
 	private Token parseQuote() {
 		// read text, honoring nested quotes, but don't put the outermost quotes in the token  
-		
+
 		StringBuilder buffer = new StringBuilder();
-		
+
 		int quoteLevel = 1;
 		// keep reading until the close quote
 		while (offset < chars.length) {
@@ -327,22 +326,24 @@ public class AutoconfTokenizer {
 				offset++;
 			}
 		}
-		
+
 		if (quoteLevel > 0) {
-			handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNMATCHED_LEFT_QUOTE, m4CloseQuote));
+			handleError(startOffset, offset,
+					AutoconfEditorMessages.getFormattedString(UNMATCHED_LEFT_QUOTE, m4CloseQuote));
 		} else if (quoteLevel < 0) {
-			handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNMATCHED_RIGHT_QUOTE, m4OpenQuote));
+			handleError(startOffset, offset,
+					AutoconfEditorMessages.getFormattedString(UNMATCHED_RIGHT_QUOTE, m4OpenQuote));
 		}
-		
+
 		return makeToken(ITokenConstants.M4_STRING, buffer.toString());
 	}
 
 	private Token parseString(int type, char terminal) {
 		startOffset = offset;
 		offset++;
-		
+
 		StringBuilder buffer = new StringBuilder();
-		
+
 		char ch = 0;
 		while (offset < chars.length) {
 			ch = chars[offset++];
@@ -361,12 +362,11 @@ public class AutoconfTokenizer {
 		if (ch != terminal) {
 			handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNTERMINATED_STRING, "" + ch));
 		}
-		
+
 		return makeToken(type, buffer.toString());
 	}
 
-	private void handleError(int start, int end,
-			String message) {
+	private void handleError(int start, int end, String message) {
 		if (errorHandler != null) {
 			int lineNumber = 0;
 			int startColumn = 0;
@@ -379,11 +379,7 @@ public class AutoconfTokenizer {
 			} catch (BadLocationException e) {
 				// Don't care if we blow up trying to issue marker
 			}
-			errorHandler.handleError(new ParseException(
-					message,
-					start, end,
-					lineNumber, 
-					startColumn, endColumn,
+			errorHandler.handleError(new ParseException(message, start, end, lineNumber, startColumn, endColumn,
 					IMarker.SEVERITY_ERROR));
 		}
 	}
@@ -413,9 +409,8 @@ public class AutoconfTokenizer {
 	}
 
 	private Token makeToken(int type) {
-		return new Token(type,
-				new String(chars, startOffset, offset - startOffset),
-				document, startOffset, offset - startOffset);
+		return new Token(type, new String(chars, startOffset, offset - startOffset), document, startOffset,
+				offset - startOffset);
 	}
 
 	private Token makeToken(int type, String text) {
@@ -427,9 +422,9 @@ public class AutoconfTokenizer {
 	}
 
 	private boolean isLeadIdentifierChar(char ch) {
-		return (ch >= 'A' &&  ch <= 'Z') || (ch >= 'a' && ch <= 'z') || ch == '_';
+		return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || ch == '_';
 	}
-	
+
 	public Token peekToken() {
 		Token token = readToken();
 		unreadToken(token);

@@ -73,8 +73,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 */
 	@Override
 	public boolean isSupportedType(TransferData transferType) {
-		return super.isSupportedType(transferType)
-				|| ResourceTransfer.getInstance().isSupportedType(transferType)
+		return super.isSupportedType(transferType) || ResourceTransfer.getInstance().isSupportedType(transferType)
 				|| FileTransfer.getInstance().isSupportedType(transferType);
 	}
 
@@ -82,31 +81,26 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handleDrop(org.eclipse.ui.navigator.CommonDropAdapter, org.eclipse.swt.dnd.DropTargetEvent, java.lang.Object)
 	 */
 	@Override
-	public IStatus handleDrop(CommonDropAdapter dropAdapter,
-			DropTargetEvent event, Object target) {
+	public IStatus handleDrop(CommonDropAdapter dropAdapter, DropTargetEvent event, Object target) {
 
 		try {
 			// drop in folder
-			if (target instanceof ICContainer || 
-					target instanceof ICProject || 
-					target instanceof IContainer ||
-					(dropAdapter.getCurrentOperation() == DND.DROP_COPY && (
-							target instanceof IFile ||
-							target instanceof ITranslationUnit))) {
-	
-				final Object data= event.data;
+			if (target instanceof ICContainer || target instanceof ICProject || target instanceof IContainer
+					|| (dropAdapter.getCurrentOperation() == DND.DROP_COPY
+							&& (target instanceof IFile || target instanceof ITranslationUnit))) {
+
+				final Object data = event.data;
 				if (data == null) {
 					return Status.CANCEL_STATUS;
 				}
-				final IContainer destination= getDestination(target);
+				final IContainer destination = getDestination(target);
 				if (destination == null) {
 					return Status.CANCEL_STATUS;
 				}
 				IResource[] resources = null;
 				TransferData currentTransfer = dropAdapter.getCurrentTransfer();
 				final int dropOperation = dropAdapter.getCurrentOperation();
-				if (LocalSelectionTransfer.getTransfer().isSupportedType(
-						currentTransfer)) {
+				if (LocalSelectionTransfer.getTransfer().isSupportedType(currentTransfer)) {
 					resources = getSelectedResources();
 					if (target instanceof ITranslationUnit) {
 						if (handleDropCopy(target, event).isOK()) {
@@ -114,8 +108,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 							return Status.OK_STATUS;
 						}
 					}
-				} else if (ResourceTransfer.getInstance().isSupportedType(
-						currentTransfer)) {
+				} else if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
 					resources = (IResource[]) event.data;
 				}
 				if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
@@ -127,35 +120,35 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 						@Override
 						public void run() {
 							getShell().forceActive();
-							CopyFilesAndFoldersOperation op= new CopyFilesAndFoldersOperation(getShell());
+							CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(getShell());
 							op.copyOrLinkFiles(names, destination, dropOperation);
 						}
 					});
 				} else if (event.detail == DND.DROP_COPY || event.detail == DND.DROP_LINK) {
 					return performResourceCopy(dropAdapter, getShell(), resources);
 				} else {
-					ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
-						getShell(), 
-						"Move Resource Action",	//$NON-NLS-1$
-						"Move Resource Action");//$NON-NLS-1$	
+					ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(), "Move Resource Action", //$NON-NLS-1$
+							"Move Resource Action");//$NON-NLS-1$	
 					resources = checker.checkReadOnlyResources(resources);
 					MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
 					operation.copyResources(resources, destination);
 				}
 				return Status.OK_STATUS;
 			}
-		
-			switch(event.detail) {
-				case DND.DROP_MOVE:
-					return handleDropMove(target, event);
-				case DND.DROP_COPY:
-					return handleDropCopy(target, event);
+
+			switch (event.detail) {
+			case DND.DROP_MOVE:
+				return handleDropMove(target, event);
+			case DND.DROP_COPY:
+				return handleDropCopy(target, event);
 			}
-		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
+		} catch (CModelException e) {
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title,
+					CViewMessages.SelectionTransferDropAdapter_error_message);
 			return e.getStatus();
-		} catch(InvocationTargetException e) {
-			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_exception); 
+		} catch (InvocationTargetException e) {
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title,
+					CViewMessages.SelectionTransferDropAdapter_error_exception);
 			return Status.CANCEL_STATUS;
 		} catch (InterruptedException e) {
 			//ok
@@ -163,7 +156,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			// The drag source listener must not perform any operation
 			// since this drop adapter did the remove of the source even
 			// if we moved something.
-			event.detail= DND.DROP_NONE;
+			event.detail = DND.DROP_NONE;
 		}
 		return Status.CANCEL_STATUS;
 	}
@@ -172,22 +165,17 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
 	@Override
-	public IStatus validateDrop(Object target, int operation,
-			TransferData transferType) {
+	public IStatus validateDrop(Object target, int operation, TransferData transferType) {
 
 		// drop in folder
-		if (target instanceof ICContainer || 
-				target instanceof ICProject || 
-				target instanceof IContainer ||
-				(operation == DND.DROP_COPY && (
-						target instanceof IFile ||
-						target instanceof ITranslationUnit))) {
-			IContainer destination= getDestination(target);
+		if (target instanceof ICContainer || target instanceof ICProject || target instanceof IContainer
+				|| (operation == DND.DROP_COPY && (target instanceof IFile || target instanceof ITranslationUnit))) {
+			IContainer destination = getDestination(target);
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
-				IResource[] selectedResources= getSelectedResources();
+				IResource[] selectedResources = getSelectedResources();
 				if (selectedResources.length > 0) {
 					for (IResource res : selectedResources) {
-						if(res instanceof IProject) {
+						if (res instanceof IProject) {
 							// drop of projects not supported on other IResources
 							// "Path for project must have only one segment."
 							return Status.CANCEL_STATUS;
@@ -213,10 +201,8 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 					// Fixes bug 29778
 					sourceNames = new String[0];
 				}
-				CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(
-						getShell());
-				if (null != copyOperation.validateImportDestination(destination,
-						sourceNames)) {
+				CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
+				if (null != copyOperation.validateImportDestination(destination, sourceNames)) {
 					return Status.CANCEL_STATUS;
 				}
 				return Status.OK_STATUS;
@@ -225,33 +211,34 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 			try {
-				switch(operation) {
-					case DND.DROP_DEFAULT:
-						return handleValidateMove(target); 
-					case DND.DROP_COPY:
-						return handleValidateCopy(target);
-					case DND.DROP_MOVE:
-						return handleValidateMove(target);
+				switch (operation) {
+				case DND.DROP_DEFAULT:
+					return handleValidateMove(target);
+				case DND.DROP_COPY:
+					return handleValidateCopy(target);
+				case DND.DROP_MOVE:
+					return handleValidateMove(target);
 				}
-			} catch (CModelException e){
-				ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
+			} catch (CModelException e) {
+				ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title,
+						CViewMessages.SelectionTransferDropAdapter_error_message);
 			}
 		}
 		return Status.CANCEL_STATUS;
 	}
 
-	private IStatus handleValidateCopy(Object target) throws CModelException{
+	private IStatus handleValidateCopy(Object target) throws CModelException {
 		if (target != null) {
 
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-			ICElement[] cElements= getCElements(selection);
-			
+			ICElement[] cElements = getCElements(selection);
+
 			if (cElements == null || cElements.length == 0) {
-				return Status.CANCEL_STATUS;	
+				return Status.CANCEL_STATUS;
 			}
 			if (!canCopyElements(cElements))
-				return Status.CANCEL_STATUS;	
-	
+				return Status.CANCEL_STATUS;
+
 			if (target instanceof ISourceReference) {
 				for (ICElement cElement : cElements) {
 					if (cElement.getElementType() <= ICElement.C_UNIT) {
@@ -260,7 +247,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 				return Status.OK_STATUS;
 			}
-		
+
 		}
 		return Status.CANCEL_STATUS;
 	}
@@ -269,16 +256,16 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		if (target != null) {
 
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-			ICElement[] cElements= getCElements(selection);
+			ICElement[] cElements = getCElements(selection);
 
 			if (cElements == null || cElements.length == 0) {
-				return Status.CANCEL_STATUS;	
+				return Status.CANCEL_STATUS;
 			}
 			if (Arrays.asList(cElements).contains(target)) {
-				return Status.CANCEL_STATUS;	
+				return Status.CANCEL_STATUS;
 			}
 			if (!canMoveElements(cElements)) {
-				return Status.CANCEL_STATUS;	
+				return Status.CANCEL_STATUS;
 			}
 			if (target instanceof ISourceReference) {
 				for (ICElement cElement : cElements) {
@@ -288,7 +275,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 				return Status.OK_STATUS;
 			}
-		
+
 		}
 		return Status.CANCEL_STATUS;
 	}
@@ -297,13 +284,12 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 * Performs a resource copy.
 	 * Cloned from ResourceDropAdapterAssistant to support linked resources (bug 319405).
 	 */
-	private IStatus performResourceCopy(CommonDropAdapter dropAdapter,
-			Shell shell, IResource[] sources) {
+	private IStatus performResourceCopy(CommonDropAdapter dropAdapter, Shell shell, IResource[] sources) {
 		IContainer target = getDestination(dropAdapter.getCurrentTarget());
 		if (target == null) {
 			return Status.CANCEL_STATUS;
 		}
-		
+
 		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
@@ -335,7 +321,8 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			// if all sources are either links or groups, copy then normally,
 			// don't show the dialog
 			if (!allSourceAreLinksOrVirtualFolders) {
-				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
+				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources,
+						target);
 				dialog.setResource(target);
 				if (dialog.open() == Window.OK) {
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
@@ -354,12 +341,13 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		return Status.OK_STATUS;
 	}
 
-	private IStatus handleDropCopy(final Object target, DropTargetEvent event) throws CModelException, InvocationTargetException, InterruptedException{
+	private IStatus handleDropCopy(final Object target, DropTargetEvent event)
+			throws CModelException, InvocationTargetException, InterruptedException {
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-		final ICElement[] cElements= getCElements(selection);
+		final ICElement[] cElements = getCElements(selection);
 
 		if (target instanceof ICElement && cElements.length > 0) {
-			ICElement cTarget = (ICElement)target;
+			ICElement cTarget = (ICElement) target;
 			ICElement parent = cTarget;
 			boolean isTargetTranslationUnit = cTarget instanceof ITranslationUnit;
 			if (!isTargetTranslationUnit) {
@@ -393,12 +381,13 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		return Status.CANCEL_STATUS;
 	}
 
-	private IStatus handleDropMove(final Object target, DropTargetEvent event) throws CModelException, InvocationTargetException, InterruptedException{
+	private IStatus handleDropMove(final Object target, DropTargetEvent event)
+			throws CModelException, InvocationTargetException, InterruptedException {
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-		final ICElement[] cElements= getCElements(selection);
-		
+		final ICElement[] cElements = getCElements(selection);
+
 		if (target instanceof ICElement) {
-			ICElement cTarget = (ICElement)target;
+			ICElement cTarget = (ICElement) target;
 			ICElement parent = cTarget;
 			boolean isTargetTranslationUnit = cTarget instanceof ITranslationUnit;
 			if (!isTargetTranslationUnit) {
@@ -433,7 +422,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	}
 
 	public void run(IRunnableWithProgress runnable) throws InterruptedException, InvocationTargetException {
-		IRunnableContext context= new ProgressMonitorDialog(getShell());
+		IRunnableContext context = new ProgressMonitorDialog(getShell());
 		context.run(true, true, runnable);
 	}
 
@@ -441,8 +430,8 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		if (!(selection instanceof IStructuredSelection)) {
 			return null;
 		}
-		List<?> elements = ((IStructuredSelection)selection).toList();
-		List<Object> resources= new ArrayList<Object>(elements.size());
+		List<?> elements = ((IStructuredSelection) selection).toList();
+		List<Object> resources = new ArrayList<Object>(elements.size());
 		for (Object element : elements) {
 			if (element instanceof ITranslationUnit) {
 				continue;
@@ -458,25 +447,24 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			return hasCommonParent(cElements);
 		}
 		return false;
-	}		
-	
+	}
+
 	private static boolean canMoveElements(ICElement[] cElements) {
 		if (cElements != null) {
 			return hasCommonParent(cElements);
 		}
 		return false;
-	}		
-	
+	}
+
 	private static boolean hasCommonParent(ICElement[] elements) {
 		if (elements.length > 1) {
 			ICElement parent = elements[0];
 			for (int i = 0; i < elements.length; ++i) {
 				ICElement p = elements[i].getParent();
 				if (parent == null) {
-					if (p!= null) 
+					if (p != null)
 						return false;
-				} 
-				else if (!parent.equals(p))
+				} else if (!parent.equals(p))
 					return false;
 			}
 		}
@@ -485,11 +473,11 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	private IContainer getDestination(Object dropTarget) {
 		if (dropTarget instanceof IContainer) {
-			return (IContainer)dropTarget;
+			return (IContainer) dropTarget;
 		} else if (dropTarget instanceof ICElement) {
-			return getDestination(((ICElement)dropTarget).getResource());
+			return getDestination(((ICElement) dropTarget).getResource());
 		} else if (dropTarget instanceof IFile) {
-			return ((IFile)dropTarget).getParent();
+			return ((IFile) dropTarget).getParent();
 		}
 		return null;
 	}
@@ -501,11 +489,10 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 */
 	private IResource[] getSelectedResources() {
 
-		ISelection selection = LocalSelectionTransfer.getTransfer()
-				.getSelection();
+		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 		if (selection instanceof IStructuredSelection) {
-			return getSelectedResources((IStructuredSelection)selection);
-		} 
+			return getSelectedResources((IStructuredSelection) selection);
+		}
 		return NO_RESOURCES;
 	}
 
@@ -529,8 +516,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 			}
 		}
-		return selectedResources
-				.toArray(new IResource[selectedResources.size()]);
+		return selectedResources.toArray(new IResource[selectedResources.size()]);
 	}
 
 }

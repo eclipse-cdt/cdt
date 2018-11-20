@@ -65,18 +65,22 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 		}
 
 		@Override
-		public String[] getCores() { return fCores; }
+		public String[] getCores() {
+			return fCores;
+		}
 
 		@Override
-		public String getOwner() { return null; }
+		public String getOwner() {
+			return null;
+		}
 	}
 
-    private CommandFactory fCommandFactory;
-    // This cache is used when we send command to get the cores.
-    // The value of the cores can change at any time, but we provide
-    // an updated value whenever there is a suspended event.
-    private CommandCache fCommandForCoresCache;
-    private IGDBControl fCommandControl;
+	private CommandFactory fCommandFactory;
+	// This cache is used when we send command to get the cores.
+	// The value of the cores can change at any time, but we provide
+	// an updated value whenever there is a suspended event.
+	private CommandCache fCommandForCoresCache;
+	private IGDBControl fCommandControl;
 
 	public GDBProcesses_7_1(DsfSession session) {
 		super(session);
@@ -111,19 +115,19 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 		// To solve this, we use a bufferedCommandControl that will delay the command
 		// result by two scheduling of the executor.
 		// See bug 280461
-        fCommandForCoresCache = new CommandCache(getSession(), 
-        		new BufferedCommandControl(fCommandControl, getExecutor(), 2));
-        fCommandForCoresCache.setContextAvailable(fCommandControl.getContext(), true);
+		fCommandForCoresCache = new CommandCache(getSession(),
+				new BufferedCommandControl(fCommandControl, getExecutor(), 2));
+		fCommandForCoresCache.setContextAvailable(fCommandControl.getContext(), true);
 
-        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
-        getSession().addServiceEventListener(this, null);
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+		getSession().addServiceEventListener(this, null);
 
-        requestMonitor.done();
+		requestMonitor.done();
 	}
 
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
-        getSession().removeServiceEventListener(this);
+		getSession().removeServiceEventListener(this);
 
 		super.shutdown(requestMonitor);
 	}
@@ -145,12 +149,12 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 						rm.done(firstLevelData);
 						return;
 					}
-					
-					ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-					final String groupId = getGroupFromPid(((IMIProcessDMContext)dmc).getProcId());
 
-					fCommandForCoresCache.execute(
-							fCommandFactory.createMIListThreadGroups(controlDmc),
+					ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc,
+							ICommandControlDMContext.class);
+					final String groupId = getGroupFromPid(((IMIProcessDMContext) dmc).getProcId());
+
+					fCommandForCoresCache.execute(fCommandFactory.createMIListThreadGroups(controlDmc),
 							new ImmediateDataRequestMonitor<MIListThreadGroupsInfo>(rm) {
 								@Override
 								protected void handleCompleted() {
@@ -166,46 +170,46 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 											}
 										}
 									}
-									rm.setData(new MIThreadDMData_7_1(firstLevelData.getName(),
-				                                                      firstLevelData.getId(),
-				                                                      cores));
-									rm.done();	
+									rm.setData(new MIThreadDMData_7_1(firstLevelData.getName(), firstLevelData.getId(),
+											cores));
+									rm.done();
 								}
 							});
-				} 
+				}
 			});
 		} else if (dmc instanceof MIThreadDMC) {
 			// Starting with GDB 7.1, we can obtain the core on which a thread
 			// is currently located.  The info is a new field in -thread-info
-			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
+			final MIThreadDMC threadDmc = (MIThreadDMC) dmc;
 
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 			fCommandForCoresCache.execute(fCommandFactory.createMIThreadInfo(controlDmc, threadDmc.getId()),
 					new ImmediateDataRequestMonitor<MIThreadInfoInfo>(rm) {
-				        @Override
-			          	protected void handleSuccess() {
-				        	IThreadDMData threadData = null;
-				        	if (getData().getThreadList().length != 0) {
-				        		MIThread thread = getData().getThreadList()[0];
-				        		if (thread.getThreadId().equals(threadDmc.getId())) {
-				        			threadData = createThreadDMData(thread);
-				        		}
-				        	}
+						@Override
+						protected void handleSuccess() {
+							IThreadDMData threadData = null;
+							if (getData().getThreadList().length != 0) {
+								MIThread thread = getData().getThreadList()[0];
+								if (thread.getThreadId().equals(threadDmc.getId())) {
+									threadData = createThreadDMData(thread);
+								}
+							}
 
-				        	if (threadData != null) {
-				        		rm.setData(threadData);        	        			
-				        	} else {
-				        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Could not get thread info", null)); //$NON-NLS-1$        	        			
-				        	}
-				        	rm.done();
-				        }
-			});
+							if (threadData != null) {
+								rm.setData(threadData);
+							} else {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+										"Could not get thread info", null)); //$NON-NLS-1$        	        			
+							}
+							rm.done();
+						}
+					});
 		} else {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
 			rm.done();
 		}
 	}
-	
+
 	/**
 	 * @since 4.6
 	 */
@@ -219,17 +223,19 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 		// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
 		final String details = thread.getDetails();
 		if (details != null && !details.isEmpty()) {
-			if (!id.isEmpty()) id += " "; //$NON-NLS-1$
+			if (!id.isEmpty())
+				id += " "; //$NON-NLS-1$
 			id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// We must indicate and empty id by using null
-		if (id.isEmpty()) id = null;
+		if (id.isEmpty())
+			id = null;
 
 		String name = thread.getName();
 		String core = thread.getCore();
 		return new MIThreadDMData_7_1(name == null ? "" : name, id, core == null ? null : new String[] { core }); //$NON-NLS-1$
 	}
-	
+
 	@DsfServiceEventHandler
 	public void eventDispatched_7_1(IResumedDMEvent e) {
 		if (e instanceof IContainerResumedDMEvent) {
@@ -243,32 +249,32 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
 	// Something has suspended, core allocation could have changed
 	// during the time it was running.
-    @DsfServiceEventHandler
-    public void eventDispatched_7_1(ISuspendedDMEvent e) {
-       	if (e instanceof IContainerSuspendedDMEvent) {
-    		// This will happen in all-stop mode
-       		fCommandForCoresCache.setContextAvailable(fCommandControl.getContext(), true);
-       	} else {
-       		// This will happen in non-stop mode
-       	}
-       	
-       	fCommandForCoresCache.reset();
-    }
-    
-    // Event handler when a thread or threadGroup starts, core allocation 
-    // could have changed
-    @DsfServiceEventHandler
-    public void eventDispatched_7_1(IStartedDMEvent e) {
-       	fCommandForCoresCache.reset();
+	@DsfServiceEventHandler
+	public void eventDispatched_7_1(ISuspendedDMEvent e) {
+		if (e instanceof IContainerSuspendedDMEvent) {
+			// This will happen in all-stop mode
+			fCommandForCoresCache.setContextAvailable(fCommandControl.getContext(), true);
+		} else {
+			// This will happen in non-stop mode
+		}
+
+		fCommandForCoresCache.reset();
 	}
-    
-    // Event handler when a thread or a threadGroup exits, core allocation
-    // could have changed
-    @DsfServiceEventHandler
-    public void eventDispatched_7_1(IExitedDMEvent e) {
-       	fCommandForCoresCache.reset();
-    }
-    
+
+	// Event handler when a thread or threadGroup starts, core allocation 
+	// could have changed
+	@DsfServiceEventHandler
+	public void eventDispatched_7_1(IStartedDMEvent e) {
+		fCommandForCoresCache.reset();
+	}
+
+	// Event handler when a thread or a threadGroup exits, core allocation
+	// could have changed
+	@DsfServiceEventHandler
+	public void eventDispatched_7_1(IExitedDMEvent e) {
+		fCommandForCoresCache.reset();
+	}
+
 	@Override
 	public void flushCache(IDMContext context) {
 		fCommandForCoresCache.reset(context);

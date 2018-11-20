@@ -204,9 +204,9 @@ public class TracepointActionsList extends Composite {
 		int[] selectedItems = table.getSelectionIndices();
 		removeButton.setEnabled(selectedItems.length > 0);
 		downButton.setEnabled(selectedItems.length == 1 && selectedItems[0] < (table.getItemCount() - 1));
-		upButton.setEnabled(selectedItems.length == 1 && selectedItems[0] > 0);		
+		upButton.setEnabled(selectedItems.length == 1 && selectedItems[0] > 0);
 	}
-	
+
 	/**
 	 * Update the appearance of given action.
 	 * @param action

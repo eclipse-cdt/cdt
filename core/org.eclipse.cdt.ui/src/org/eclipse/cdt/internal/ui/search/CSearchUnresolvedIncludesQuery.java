@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,9 +44,9 @@ public class CSearchUnresolvedIncludesQuery extends CSearchQuery {
 			for (IIndexFile file : index.getFilesWithUnresolvedIncludes()) {
 				for (IIndexInclude include : file.getIncludes()) {
 					if (include.isActive() && !include.isResolved()) {
-						result.addMatch(new CSearchMatch(new ProblemSearchElement(
-								IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, include.getFullName(),
-								include.getIncludedByLocation()), 
+						result.addMatch(new CSearchMatch(
+								new ProblemSearchElement(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND,
+										include.getFullName(), include.getIncludedByLocation()),
 								include.getNameOffset(), include.getNameLength()));
 					}
 				}
@@ -64,7 +64,8 @@ public class CSearchUnresolvedIncludesQuery extends CSearchQuery {
 
 	@Override
 	public String getResultLabel(int matchCount) {
-		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(matchCount));
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches,
+				Integer.valueOf(matchCount));
 		return getLabel() + " " + countLabel; //$NON-NLS-1$
 	}
 }

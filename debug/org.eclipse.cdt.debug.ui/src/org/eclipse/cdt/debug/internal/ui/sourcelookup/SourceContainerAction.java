@@ -11,7 +11,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,15 +35,15 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	private Button fButton;
 	//the shell used to realize this action's dialog (if any)
 	private Shell fShell;
-	
+
 	/**
 	 * The constructor for the action
 	 * @param label the label for the action's button
 	 */
 	public SourceContainerAction(String label) {
-		super(label);		
+		super(label);
 	}
-	
+
 	/**
 	 * Sets the viewer on which this action operates.
 	 * 
@@ -58,7 +59,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 			update();
 		}
 	}
-	
+
 	/**
 	 * Returns the viewer on which this action operates.
 	 * 
@@ -67,7 +68,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	protected SourceContainerViewer getViewer() {
 		return fViewer;
 	}
-	
+
 	/**
 	 * Returns the selected items in the list, in the order they are
 	 * displayed.
@@ -86,7 +87,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		}
 		return targets;
 	}
-	
+
 	/**
 	 * Returns a list (copy) of the entries in the viewer
 	 */
@@ -98,7 +99,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Updates the entries to the entries in the given list
 	 */
@@ -107,7 +108,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		// update all selection listeners
 		getViewer().setSelection(getViewer().getSelection());
 	}
-	
+
 	/**
 	 * Returns whether the item at the given index in the list
 	 * (visually) is selected.
@@ -126,7 +127,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Sets the button that invokes this action
 	 */
@@ -139,7 +140,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 			}
 		});
 	}
-	
+
 	/**
 	 * @see IAction#setEnabled(boolean)
 	 */
@@ -150,14 +151,14 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 			fButton.setEnabled(enabled);
 		}
 	}
-	
+
 	/**
 	 * Updates the enabled state.
 	 */
 	protected void update() {
 		selectionChanged((IStructuredSelection) getViewer().getSelection());
 	}
-	
+
 	/**
 	 * Returns the shell used to realize this action's dialog (if any).
 	 */
@@ -167,11 +168,11 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		}
 		return fShell;
 	}
-	
+
 	/**
 	 * Sets the shell used to realize this action's dialog (if any).
 	 */
 	public void setShell(Shell shell) {
 		fShell = shell;
-	}	
+	}
 }

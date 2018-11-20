@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 public interface ICPPASTAlignmentSpecifier extends IASTAlignmentSpecifier, ICPPASTAttributeSpecifier {
 	@Override
 	public ICPPASTAlignmentSpecifier copy();
-	
+
 	@Override
 	public ICPPASTAlignmentSpecifier copy(CopyStyle style);
 

@@ -48,7 +48,7 @@ class PDOMCField extends PDOMCVariable implements IField {
 		return IIndexCBindingConstants.CFIELD;
 	}
 
-    @Override
+	@Override
 	public boolean isStatic() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
@@ -75,7 +75,7 @@ class PDOMCField extends PDOMCVariable implements IField {
 	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		try {
-			return (ICompositeType)getParentNode();
+			return (ICompositeType) getParentNode();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

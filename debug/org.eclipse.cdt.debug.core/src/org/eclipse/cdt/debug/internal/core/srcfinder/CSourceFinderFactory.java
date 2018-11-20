@@ -27,7 +27,7 @@ public class CSourceFinderFactory implements IAdapterFactory {
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof IBinary) {
 			if (adapterType.equals(ISourceFinder.class)) {
-				return (T) new CSourceFinder((IBinary)adaptableObject);
+				return (T) new CSourceFinder((IBinary) adaptableObject);
 			}
 		}
 		return null;

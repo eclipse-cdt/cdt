@@ -50,25 +50,19 @@ import org.eclipse.osgi.util.NLS;
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 	@Override
-	public void launch(ILaunchConfiguration config, String mode,
-			ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor)
+			throws CoreException {
 
 		IPath exePath = CDebugUtils.verifyProgramPath(config);
 		ICProject project = CDebugUtils.verifyCProject(config);
 		if (exePath != null) {
 			verifyBinary(project, exePath);
 			String arguments = getProgramArguments(config);
-			String remoteExePath = config.getAttribute(
-					IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-					""); //$NON-NLS-1$
-			String prelaunchCmd = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-							""); //$NON-NLS-1$
+			String remoteExePath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH, ""); //$NON-NLS-1$
+			String prelaunchCmd = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS, ""); //$NON-NLS-1$
 
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
-
 
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100);
@@ -76,15 +70,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				try {
 					// Download the binary to the remote before debugging.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
-					RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
-							remoteExePath, new SubProgressMonitor(monitor, 80));
+					RemoteHelper.remoteFileDownload(config, launch, exePath.toString(), remoteExePath,
+							new SubProgressMonitor(monitor, 80));
 					// Use a remote shell to launch the binary.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
-					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd,
-							remoteExePath, arguments, new SubProgressMonitor(
-									monitor, 20));
-					DebugPlugin.newProcess(launch, remoteProcess,
-							renderProcessLabel(exePath.toOSString()));
+					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd, remoteExePath, arguments,
+							new SubProgressMonitor(monitor, 20));
+					DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toOSString()));
 				} catch (CoreException e) {
 					throw e;
 				} finally {
@@ -92,9 +84,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				}
 
 			} else {
-				IStatus status = new Status(IStatus.ERROR, getPluginID(),
-						IStatus.OK, NLS.bind(
-								Messages.RemoteRunLaunchDelegate_1, mode), null);
+				IStatus status = new Status(IStatus.ERROR, getPluginID(), IStatus.OK,
+						NLS.bind(Messages.RemoteRunLaunchDelegate_1, mode), null);
 				throw new CoreException(status);
 			}
 		}

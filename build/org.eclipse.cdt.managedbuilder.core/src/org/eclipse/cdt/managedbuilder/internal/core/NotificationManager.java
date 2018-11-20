@@ -20,16 +20,16 @@ import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
-public class NotificationManager /*implements ISettingsChangeListener */{
+public class NotificationManager /*implements ISettingsChangeListener */ {
 	private static NotificationManager fInstance;
 	private List<ISettingsChangeListener> fListeners;
-	
-	private NotificationManager(){
+
+	private NotificationManager() {
 		fListeners = new CopyOnWriteArrayList<ISettingsChangeListener>();
 	}
-	
-	public static NotificationManager getInstance(){
-		if(fInstance == null)
+
+	public static NotificationManager getInstance() {
+		if (fInstance == null)
 			fInstance = new NotificationManager();
 		return fInstance;
 	}
@@ -43,26 +43,28 @@ public class NotificationManager /*implements ISettingsChangeListener */{
 		SettingsChangeEvent event = createOptionChangedEvent(rcInfo, holder, option, oldValue);
 		notifyListeners(event);
 	}
-	
-	private void notifyListeners(SettingsChangeEvent event){
+
+	private void notifyListeners(SettingsChangeEvent event) {
 		for (ISettingsChangeListener listener : fListeners)
 			listener.settingsChanged(event);
 	}
-	
-	private static SettingsChangeEvent createOptionChangedEvent(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue){
+
+	private static SettingsChangeEvent createOptionChangedEvent(IResourceInfo rcInfo, IHoldsOptions holder,
+			IOption option, Object oldValue) {
 		return new SettingsChangeEvent(SettingsChangeEvent.CHANGED, rcInfo, holder, option, oldValue);
 	}
 
-	private static SettingsChangeEvent createOptionRemovedEvent(IResourceInfo rcInfo, IHoldsOptions holder, IOption option){
+	private static SettingsChangeEvent createOptionRemovedEvent(IResourceInfo rcInfo, IHoldsOptions holder,
+			IOption option) {
 		return new SettingsChangeEvent(SettingsChangeEvent.REMOVED, rcInfo, holder, option, null);
 	}
 
-	public void subscribe(ISettingsChangeListener listener){
+	public void subscribe(ISettingsChangeListener listener) {
 		fListeners.add(listener);
 	}
-	
-	public void unsubscribe(ISettingsChangeListener listener){
+
+	public void unsubscribe(ISettingsChangeListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 }

@@ -41,17 +41,16 @@ import org.eclipse.core.runtime.Status;
  * 
  * @since 4.0
  */
-public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
-{
+public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS {
 
 	private ICommandControlService fConnection;
 	private CommandFactory fCommandFactory;
-	
+
 	/**
 	 * Keeps track if we are currently visualizing trace data or not
 	 */
 	private boolean fTraceVisualization;
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
@@ -71,14 +70,9 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-		register(new String[]{ IRunControl.class.getName(), 
-				IRunControl2.class.getName(),
-				IMIRunControl.class.getName(),
-				IMultiRunControl.class.getName(),
-				GDBRunControl_7_0_NS.class.getName(),
-				GDBRunControl_7_2_NS.class.getName(),
-		}, 
-		new Hashtable<String,String>());
+		register(new String[] { IRunControl.class.getName(), IRunControl2.class.getName(),
+				IMIRunControl.class.getName(), IMultiRunControl.class.getName(), GDBRunControl_7_0_NS.class.getName(),
+				GDBRunControl_7_2_NS.class.getName(), }, new Hashtable<String, String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 		getSession().addServiceEventListener(this, null);
@@ -101,7 +95,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	protected void setTraceVisualization(boolean visualizing) {
 		fTraceVisualization = visualizing;
 	}
-	
+
 	// Now that the flag --thread-group is globally supported
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262
@@ -109,13 +103,14 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	protected void doSuspend(IMIContainerDMContext context, RequestMonitor rm) {
 		if (!doCanSuspend(context)) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
-				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		
-		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+
+		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
-	
+
 	// Now that the flag --thread-group is globally supported
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262
@@ -124,26 +119,27 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	protected void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
-				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
 		}
 
-		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
-	
-    /**
+
+	/**
 	 * @since 4.1
 	 */
-    @DsfServiceEventHandler
-    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    	setTraceVisualization(e.isVisualizationModeEnabled());
+	@DsfServiceEventHandler
+	public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+		setTraceVisualization(e.isVisualizationModeEnabled());
 
-    	// Disable or re-enable run control operations if we are looking
-    	// at trace data or we are not, respectively.
-    	setRunControlOperationsEnabled(!e.isVisualizationModeEnabled());
-    }
-    
+		// Disable or re-enable run control operations if we are looking
+		// at trace data or we are not, respectively.
+		setRunControlOperationsEnabled(!e.isVisualizationModeEnabled());
+	}
+
 	@Override
 	protected void refreshThreadStates() {
 		// We should not refresh the thread state while we are visualizing trace data.

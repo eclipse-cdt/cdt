@@ -19,7 +19,7 @@ package org.eclipse.cdt.make.core.makefile;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IComment  extends IDirective {
+public interface IComment extends IDirective {
 
 	final public static char POUND = '#';
 

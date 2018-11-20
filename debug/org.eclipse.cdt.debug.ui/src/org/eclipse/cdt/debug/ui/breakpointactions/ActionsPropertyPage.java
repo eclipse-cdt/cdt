@@ -144,7 +144,8 @@ public class ActionsPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		try {
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().saveActionData();
-			breakpointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, actionsList.getActionNames());
+			breakpointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE,
+					actionsList.getActionNames());
 		} catch (CoreException e) {
 		}
 		return super.performOk();

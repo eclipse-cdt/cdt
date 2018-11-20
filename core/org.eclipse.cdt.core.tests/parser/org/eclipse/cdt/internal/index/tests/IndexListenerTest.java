@@ -55,9 +55,9 @@ public class IndexListenerTest extends BaseTestCase {
 	}
 
 	public void testIdleListener() throws Exception {
-		final Object mutex= new Object();
-		final int[] state= new int[] {0, 0, 0};
-		IIndexManager im= CCorePlugin.getIndexManager();
+		final Object mutex = new Object();
+		final int[] state = new int[] { 0, 0, 0 };
+		IIndexManager im = CCorePlugin.getIndexManager();
 		waitForIndexer(fProject1);
 		waitForIndexer(fProject2);
 
@@ -67,11 +67,10 @@ public class IndexListenerTest extends BaseTestCase {
 				synchronized (mutex) {
 					if (event.indexerIsIdle()) {
 						state[0]++;
-						state[2]= 0;
-					}
-					else {
+						state[2] = 0;
+					} else {
 						state[1]++;
-						state[2]= 1;
+						state[2] = 1;
 					}
 					mutex.notify();
 				}
@@ -80,11 +79,11 @@ public class IndexListenerTest extends BaseTestCase {
 
 		im.addIndexerStateListener(listener);
 		try {
-			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
+			IFile file = TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 			synchronized (mutex) {
-				if (state[0]+state[1] < 2) {
+				if (state[0] + state[1] < 2) {
 					mutex.wait(8000);
-					if (state[0]+state[1] < 2) {
+					if (state[0] + state[1] < 2) {
 						mutex.wait(5000);
 					}
 				}
@@ -92,16 +91,15 @@ public class IndexListenerTest extends BaseTestCase {
 				assertEquals(1, state[1]);
 				assertEquals(0, state[2]);
 			}
-		}
-		finally {
+		} finally {
 			im.removeIndexerStateListener(listener);
 		}
 	}
 
 	public void testChangeListener() throws Exception {
-		final Object mutex= new Object();
-		final List projects= new ArrayList();
-		IIndexManager im= CCorePlugin.getIndexManager();
+		final Object mutex = new Object();
+		final List projects = new ArrayList();
+		IIndexManager im = CCorePlugin.getIndexManager();
 
 		waitForIndexer(fProject1);
 		waitForIndexer(fProject2);
@@ -119,7 +117,7 @@ public class IndexListenerTest extends BaseTestCase {
 
 		im.addIndexChangeListener(listener);
 		try {
-			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
+			IFile file = TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 
 			synchronized (mutex) {
 				mutex.wait(8000);
@@ -128,8 +126,8 @@ public class IndexListenerTest extends BaseTestCase {
 			assertTrue(projects.contains(fProject1));
 			projects.clear();
 
-			IFile file1= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int b;");
-			IFile file2= TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int c;");
+			IFile file1 = TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int b;");
+			IFile file2 = TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int c;");
 			synchronized (mutex) {
 				mutex.wait(1000);
 				if (projects.size() < 2) {
@@ -140,8 +138,7 @@ public class IndexListenerTest extends BaseTestCase {
 			assertTrue(projects.contains(fProject1));
 			assertTrue(projects.contains(fProject2));
 			projects.clear();
-		}
-		finally {
+		} finally {
 			im.removeIndexChangeListener(listener);
 		}
 	}

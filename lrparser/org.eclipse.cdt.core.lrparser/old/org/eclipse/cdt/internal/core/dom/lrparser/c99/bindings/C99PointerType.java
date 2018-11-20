@@ -18,24 +18,21 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
-
 @SuppressWarnings("restriction")
 public class C99PointerType implements ITypeContainer, ICPointerType {
 
-	
 	private IType type;
 	private boolean isConst;
 	private boolean isRestrict;
 	private boolean isVolatile;
-	
+
 	public C99PointerType() {
 	}
-	
-	
+
 	public C99PointerType(IType type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;
@@ -72,27 +69,23 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 	public void setVolatile(boolean isVolatile) {
 		this.isVolatile = isVolatile;
 	}
-	
-	
+
 	@Override
 	public boolean isSameType(IType t) {
-		if(t == this)
+		if (t == this)
 			return true;
-		
+
 		if (t instanceof ICPointerType) {
 			ICPointerType pointerType = (ICPointerType) t;
-			if(pointerType.isConst() == isConst &&
-			   pointerType.isRestrict() == isRestrict &&
-			   pointerType.isVolatile() == isVolatile) {
+			if (pointerType.isConst() == isConst && pointerType.isRestrict() == isRestrict
+					&& pointerType.isVolatile() == isVolatile) {
 				return type.isSameType(pointerType.getType());
 			}
 
 		}
 		return false;
 	}
-	
-	
-	
+
 	@Override
 	public C99PointerType clone() {
 		try {
@@ -103,6 +96,6 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 			assert false;
 			return null;
 		}
-		
+
 	}
 }

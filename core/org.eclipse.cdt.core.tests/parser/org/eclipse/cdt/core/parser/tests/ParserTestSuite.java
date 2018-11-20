@@ -30,7 +30,7 @@ import junit.framework.TestSuite;
  */
 public class ParserTestSuite extends TestCase {
 	public static Test suite() {
-		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
+		TestSuite suite = new TestSuite(ParserTestSuite.class.getName());
 		suite.addTestSuite(ArrayUtilTest.class);
 		suite.addTestSuite(CharArrayUtilsTest.class);
 		suite.addTestSuite(SegmentMatcherTest.class);

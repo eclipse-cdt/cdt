@@ -18,27 +18,27 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class EntryNameKey {
 	ICSettingEntry fEntry;
-		
-	public EntryNameKey(ICSettingEntry entry){
+
+	public EntryNameKey(ICSettingEntry entry) {
 		fEntry = entry;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj)
+		if (this == obj)
 			return true;
-		
-		if(!(obj instanceof EntryNameKey))
+
+		if (!(obj instanceof EntryNameKey))
 			return false;
-		return fEntry.equalsByName(((EntryNameKey)obj).fEntry);
+		return fEntry.equalsByName(((EntryNameKey) obj).fEntry);
 	}
 
 	@Override
 	public int hashCode() {
-		return ((ACSettingEntry)fEntry).codeForNameKey();
+		return ((ACSettingEntry) fEntry).codeForNameKey();
 	}
-		
-	public ICSettingEntry getEntry(){
+
+	public ICSettingEntry getEntry() {
 		return fEntry;
 	}
 }

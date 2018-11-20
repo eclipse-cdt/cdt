@@ -42,7 +42,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 
 	private static Map<String, Set<String>> buildExpectedMap(String mocOutput) {
 		Map<String, Set<String>> expected = new HashMap<String, Set<String>>();
-		for(String moc_signature : mocOutput.split("\0")) {
+		for (String moc_signature : mocOutput.split("\0")) {
 			String name = moc_signature.split("\\(")[0];
 			Set<String> set = expected.get(name);
 			if (set == null) {
@@ -74,7 +74,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -83,19 +83,18 @@ public class QtRegressionTests extends BaseQtTestCase {
 		// moc generates two signatures, sig(N::TS::M) and sig(), we just mark optional parameters
 		// with a trailing =.  However, QMethod#getSignature is currently modified to strip the
 		// default value indication.  So, we're only dealing with the full signature here.
-		String moc = "sig_int(int)\0sig_int()\0sig_const_int(int)\0"
-				   + "sig_const_int()\0sig_T(T*)\0sig_T()\0"
-				   + "sig_const_T(T*const)\0sig_const_T()\0";
+		String moc = "sig_int(int)\0sig_int()\0sig_const_int(int)\0" + "sig_const_int()\0sig_T(T*)\0sig_T()\0"
+				+ "sig_const_T(T*const)\0sig_const_T()\0";
 		Map<String, Set<String>> expected = buildExpectedMap(moc);
 
 		IQObject.IMembers<IQMethod> sigs = qobj.getSignals();
 		assertNotNull(sigs);
 		Collection<IQMethod> locals = sigs.locals();
 		assertNotNull(locals);
-		for(IQMethod method : locals) {
+		for (IQMethod method : locals) {
 			Set<String> set = expected.get(method.getName());
 			assertNotNull("unexpected method " + method.getName() + " (" + method.getSignatures() + ')', set);
-			for(String signature : method.getSignatures()) {
+			for (String signature : method.getSignatures()) {
 				assertTrue(set.remove(signature));
 			}
 			assertTrue("did not find all signatures for " + method.getName(), set.isEmpty());
@@ -124,8 +123,8 @@ public class QtRegressionTests extends BaseQtTestCase {
 	// }
 	// typedef N::E N_E;
 	// namespace N2 { typedef N::Ib Ic; }
-    // class Q : public QObject
-    // {
+	// class Q : public QObject
+	// {
 	// Q_OBJECT
 	// public:
 	//     void func();
@@ -187,42 +186,28 @@ public class QtRegressionTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
 
 		// Copy and pasted moc output (signals only) to make sure we're getting an exact match.
-		String moc_output
-			= "sig_int(int)\0"
-			+ "sig_Tl1(Tl1)\0sig_Tl2(Tl2)\0sig_int_ptr(int*)\0"
-			+ "sig_Tl1_ptr(Tl1*)\0sig_Tl2_ptr(Tl2*)\0"
-			+ "sig_qual1(N::E)\0sig_qual2(N::N2::E2)\0"
-			+ "sig_typedef1(N_E)\0sig_typedef2(N::TEa)\0"
-			+ "sig_typedef3(N::TEb)\0sig_typedef4(N::N2_E2)\0"
-			+ "sig_typedef5(N::N2_TE2)\0"
-			+ "sig_typedef6(N::N2::TE2)\0sig_nested1(S::Mb)\0"
-			+ "sig_nested2(N::TS::M)\0sig_nested3(N::Ib)\0"
-			+ "sig_nested4(N::Eb)\0sig_nested5(N2::Ic)\0"
+		String moc_output = "sig_int(int)\0" + "sig_Tl1(Tl1)\0sig_Tl2(Tl2)\0sig_int_ptr(int*)\0"
+				+ "sig_Tl1_ptr(Tl1*)\0sig_Tl2_ptr(Tl2*)\0" + "sig_qual1(N::E)\0sig_qual2(N::N2::E2)\0"
+				+ "sig_typedef1(N_E)\0sig_typedef2(N::TEa)\0" + "sig_typedef3(N::TEb)\0sig_typedef4(N::N2_E2)\0"
+				+ "sig_typedef5(N::N2_TE2)\0" + "sig_typedef6(N::N2::TE2)\0sig_nested1(S::Mb)\0"
+				+ "sig_nested2(N::TS::M)\0sig_nested3(N::Ib)\0" + "sig_nested4(N::Eb)\0sig_nested5(N2::Ic)\0"
 
-		    + "sig_S(S)\0const_S(S)\0S_const(S)\0S_ref(S&)\0"
-		    + "const_S_ref(S)\0S_const_ref(S)\0S_ptr(S*)\0"
-		    + "S_ptr_const(S*const)\0const_S_ptr(const S*)\0"
-		    + "const_S_ptr_const(S*const)\0const_S_ptr_const_def(S*const)\0"
-		    + "const_S_ptr_const_def()\0S_ptr_ref(S*&)\0"
-		    + "S_ptr_const_ref(S*)\0const_S_ptr_const_ref(S*const)\0"
-		    + "S_ptr_ptr(S**)\0S_ptr_const_ptr(S*const*)\0"
-		    + "const_S_ptr_ptr(const S**)\0"
-		    + "const_S_ptr_const_ptr(const S*const*)\0"
-		    + "S_ptr_ptr_const(S**const)\0"
-		    + "S_ptr_const_ptr_const(S*const*const)\0"
-		    + "const_S_ptr_ptr_const(S**const)\0"
-		    + "const_S_ptr_const_ptr_const(S*const*const)\0"
-		    + "S_template_1(S_TEMPLATE<const S*>)\0"
-		    + "S_template_2(S_TEMPLATE<const S*>)\0"
-		    + "S_template_3(S_TEMPLATE<const S*>)\0"
-		    + "S_template_4(S_TEMPLATE<const S*>)\0"
-		    + "S_template_X(S_TEMPLATE<const S*>)";
+				+ "sig_S(S)\0const_S(S)\0S_const(S)\0S_ref(S&)\0" + "const_S_ref(S)\0S_const_ref(S)\0S_ptr(S*)\0"
+				+ "S_ptr_const(S*const)\0const_S_ptr(const S*)\0"
+				+ "const_S_ptr_const(S*const)\0const_S_ptr_const_def(S*const)\0"
+				+ "const_S_ptr_const_def()\0S_ptr_ref(S*&)\0" + "S_ptr_const_ref(S*)\0const_S_ptr_const_ref(S*const)\0"
+				+ "S_ptr_ptr(S**)\0S_ptr_const_ptr(S*const*)\0" + "const_S_ptr_ptr(const S**)\0"
+				+ "const_S_ptr_const_ptr(const S*const*)\0" + "S_ptr_ptr_const(S**const)\0"
+				+ "S_ptr_const_ptr_const(S*const*const)\0" + "const_S_ptr_ptr_const(S**const)\0"
+				+ "const_S_ptr_const_ptr_const(S*const*const)\0" + "S_template_1(S_TEMPLATE<const S*>)\0"
+				+ "S_template_2(S_TEMPLATE<const S*>)\0" + "S_template_3(S_TEMPLATE<const S*>)\0"
+				+ "S_template_4(S_TEMPLATE<const S*>)\0" + "S_template_X(S_TEMPLATE<const S*>)";
 
 		Map<String, Set<String>> expected = buildExpectedMap(moc_output);
 
@@ -230,10 +215,10 @@ public class QtRegressionTests extends BaseQtTestCase {
 		assertNotNull(sigs);
 		Collection<IQMethod> locals = sigs.locals();
 		assertNotNull(locals);
-		for(IQMethod method : locals) {
+		for (IQMethod method : locals) {
 			Set<String> set = expected.get(method.getName());
 			assertNotNull("unexpected signal " + method.getName() + " (" + method.getSignatures() + ')', set);
-			for(String signature : method.getSignatures())
+			for (String signature : method.getSignatures())
 				assertTrue(set.remove(signature));
 			assertTrue("did not find all signatures for " + method.getName(), set.isEmpty());
 			expected.remove(method.getName());
@@ -242,8 +227,8 @@ public class QtRegressionTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-    // class Q : public QObject
-    // {
+	// class Q : public QObject
+	// {
 	// Q_OBJECT
 	// Q_SLOT void const_ref(const QString &);
 	// Q_SLOT void const_val(const QString  );
@@ -260,14 +245,14 @@ public class QtRegressionTests extends BaseQtTestCase {
 	//         connect(this, SIGNAL(signalEnum_const_ref(E),  this, SLOT(reference(QString&))));
 	//         connect(this, SIGNAL(signalEnum_reference(E&), this, SLOT(value(QString))));
 	//     }
-    // };
+	// };
 	public void testBug344931() throws Exception {
 		loadComment("bug344931.hh");
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -279,7 +264,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		assertNotNull(slots);
 		assertEquals(4, slots.size());
 
-		for(IQMethod slot : slots) {
+		for (IQMethod slot : slots) {
 			if ("const_ref".equals(slot.getName()))
 				assertTrue(slot.getSignatures().contains("const_ref(QString)"));
 			else if ("const_val".equals(slot.getName()))
@@ -299,7 +284,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		assertNotNull(signals);
 		assertEquals(3, signals.size());
 
-		for(IQMethod signal : signals) {
+		for (IQMethod signal : signals) {
 			if ("signalEnum_const_ref".equals(signal.getName()))
 				assertTrue(signal.getSignatures().contains("signalEnum_const_ref(E)"));
 			else if ("signalEnum_reference".equals(signal.getName()))
@@ -337,7 +322,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -350,7 +335,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		// make sure that the three slot functions are found, but none of the inherited or
 		// non-slot functions
 		Set<String> expected = new HashSet<String>(Arrays.asList("slot1", "slot2", "slot3"));
-		for(IQMethod method : localSlots)
+		for (IQMethod method : localSlots)
 			assertTrue("unexpected slot " + method.getName(), expected.remove(method.getName()));
 		assertEquals("missing slots " + expected.toString(), 0, expected.size());
 	}
@@ -396,7 +381,8 @@ public class QtRegressionTests extends BaseQtTestCase {
 		assertTrue(sel instanceof ITextSelection);
 
 		// Now a query is created and executed.
-		CSearchTextSelectionQuery query = new CSearchTextSelectionQuery(null, ceditor.getInputCElement(), (ITextSelection) sel, IIndex.FIND_REFERENCES);
+		CSearchTextSelectionQuery query = new CSearchTextSelectionQuery(null, ceditor.getInputCElement(),
+				(ITextSelection) sel, IIndex.FIND_REFERENCES);
 
 		// The query sometimes fails (with Status.CANCEL_STATUS) if the TU is not open.  I
 		// haven't found a way to be notified when the TU gets "opened" -- the test case just
@@ -408,7 +394,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 			if (status == Status.CANCEL_STATUS) {
 				Thread.sleep(100);
 			}
-		} while(!status.isOK() && System.currentTimeMillis() < end_ms);
+		} while (!status.isOK() && System.currentTimeMillis() < end_ms);
 		assertTrue("query failed: " + status.getMessage(), status.isOK());
 
 		// The query should have found two references, one for the function call and another

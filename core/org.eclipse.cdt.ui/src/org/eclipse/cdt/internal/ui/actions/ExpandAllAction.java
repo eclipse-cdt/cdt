@@ -24,20 +24,20 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * Expand all nodes.
  */
 public class ExpandAllAction extends Action {
-	
+
 	private final TreeViewer fViewer;
-	
+
 	public ExpandAllAction(TreeViewer viewer) {
-		super(ActionMessages.ExpandAllAction_label); 
-		setDescription(ActionMessages.ExpandAllAction_description); 
-		setToolTipText(ActionMessages.ExpandAllAction_tooltip); 
+		super(ActionMessages.ExpandAllAction_label);
+		setDescription(ActionMessages.ExpandAllAction_description);
+		setToolTipText(ActionMessages.ExpandAllAction_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_EXPAND_ALL);
 		fViewer = viewer;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.EXPAND_ALL_ACTION);
 	}
- 
+
 	@Override
-	public void run() { 
+	public void run() {
 		try {
 			fViewer.getControl().setRedraw(false);
 			fViewer.expandAll();

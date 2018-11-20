@@ -61,12 +61,13 @@ public class EditorUtility {
 	 */
 	public static final String DEFAULT_TEXT_EDITOR_ID = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 
-	private EditorUtility () {
+	private EditorUtility() {
 	}
 
-	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
+	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate)
+			throws PartInitException {
 		if (input != null) {
-			IWorkbenchPage p= CUIPlugin.getActivePage();
+			IWorkbenchPage p = CUIPlugin.getActivePage();
 			if (p != null) {
 				return p.openEditor(input, editorID, activate);
 			}
@@ -76,31 +77,31 @@ public class EditorUtility {
 
 	private static IEditorInput getEditorInput(ICElement element) {
 		while (element != null) {
- 			if (element instanceof ISourceReference) {
- 				ITranslationUnit tu = ((ISourceReference)element).getTranslationUnit();
- 				if (tu != null) {
- 					element = tu;                    
- 				}
- 			}
-			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy()) 
-				element= ((IWorkingCopy) element).getOriginalElement();
- 
+			if (element instanceof ISourceReference) {
+				ITranslationUnit tu = ((ISourceReference) element).getTranslationUnit();
+				if (tu != null) {
+					element = tu;
+				}
+			}
+			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy())
+				element = ((IWorkingCopy) element).getOriginalElement();
+
 			if (element instanceof ITranslationUnit) {
-				ITranslationUnit unit= (ITranslationUnit) element;
-				IResource resource= unit.getResource();
+				ITranslationUnit unit = (ITranslationUnit) element;
+				IResource resource = unit.getResource();
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				}
 				return new ExternalEditorInput(unit, new FileStorage(unit.getPath()));
 			}
-                        
+
 			if (element instanceof IBinary) {
-				return new ExternalEditorInput(getStorage((IBinary)element), (IPath)null);
+				return new ExternalEditorInput(getStorage((IBinary) element), (IPath) null);
 			}
-                        
-			element= element.getParent();
+
+			element = element.getParent();
 		}
-                
+
 		return null;
 	}
 
@@ -108,11 +109,11 @@ public class EditorUtility {
 		if (input instanceof ICElement) {
 			return getEditorInput((ICElement) input);
 		}
-		if (input instanceof IFile) { 
+		if (input instanceof IFile) {
 			return new FileEditorInput((IFile) input);
 		}
-		if (input instanceof IStorage) { 
-			return new ExternalEditorInput((IStorage)input);
+		if (input instanceof IStorage) {
+			return new ExternalEditorInput((IStorage) input);
 		}
 		return null;
 	}
@@ -127,8 +128,8 @@ public class EditorUtility {
 	 * @throws PartInitException 
 	 */
 	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
-		IEditorInput input= getEditorInputForLocation(location, element);
-		return EditorUtility.openInEditor(input, getEditorID(input, element), true);		
+		IEditorInput input = getEditorInputForLocation(location, element);
+		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
 	}
 
 	/**
@@ -144,11 +145,11 @@ public class EditorUtility {
 	 * @return an editor input
 	 */
 	public static IEditorInput getEditorInputForLocation(IPath location, ICElement context) {
-		IFile resource= getWorkspaceFileAtLocation(location, context);
+		IFile resource = getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
-		} 
-		
+		}
+
 		if (context == null) {
 			// try to synthesize a context for a location appearing on a project's
 			// include paths
@@ -165,15 +166,15 @@ public class EditorUtility {
 				}
 				if (context == null && projects.length > 0) {
 					// last resort: just take any of them
-					context= projects[0];
+					context = projects[0];
 				}
 			} catch (CModelException e) {
 			}
 		}
-		
+
 		if (context != null) {
 			// try to get a translation unit from the location and associated element
-			ICProject cproject= context.getCProject();
+			ICProject cproject = context.getCProject();
 			if (cproject != null) {
 				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
 				if (unit != null) {
@@ -181,13 +182,12 @@ public class EditorUtility {
 				}
 				// no translation unit - still try to get a sensible marker resource
 				// from the associated element
-				IResource markerResource= cproject.getProject();
+				IResource markerResource = cproject.getProject();
 				return new ExternalEditorInput(new FileStorage(location), markerResource);
 			}
 		}
 		return new ExternalEditorInput(new FileStorage(location));
 	}
-
 
 	/**
 	 * Utility method to resolve a file system location to a workspace resource.
@@ -199,28 +199,28 @@ public class EditorUtility {
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */
 	private static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+		IFile file = FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file == null) {
 			// try to find a linked resource
-			IProject project= null;
+			IProject project = null;
 			if (context != null) {
-				ICProject cProject= context.getCProject();
+				ICProject cProject = context.getCProject();
 				if (cProject != null) {
-					project= cProject.getProject();
+					project = cProject.getProject();
 				}
 			}
-			IFile bestMatch= null;
-			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-			IFile[] files= root.findFilesForLocationURI(URIUtil.toURI(location));
-			for (int i= 0; i < files.length; i++) {
-				file= files[i];
+			IFile bestMatch = null;
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IFile[] files = root.findFilesForLocationURI(URIUtil.toURI(location));
+			for (int i = 0; i < files.length; i++) {
+				file = files[i];
 				if (file.isAccessible()) {
 					if (project != null && file.getProject() == project) {
-						bestMatch= file;
+						bestMatch = file;
 						break;
 					}
 					if (bestMatch == null) {
-						bestMatch= file;
+						bestMatch = file;
 						if (project == null) {
 							break;
 						}
@@ -265,26 +265,26 @@ public class EditorUtility {
 
 		ITranslationUnit tunit = null;
 		if (inputObject instanceof ITranslationUnit) {
-			tunit= (ITranslationUnit)inputObject;
+			tunit = (ITranslationUnit) inputObject;
 		} else if (input instanceof IFileEditorInput) {
-			IFileEditorInput editorInput = (IFileEditorInput)input;
+			IFileEditorInput editorInput = (IFileEditorInput) input;
 			IFile file = editorInput.getFile();
 			ICElement celement = CoreModel.getDefault().create(file);
 			if (celement instanceof ITranslationUnit) {
-				tunit = (ITranslationUnit)celement;
+				tunit = (ITranslationUnit) celement;
 			}
 		} else if (input instanceof ITranslationUnitEditorInput) {
-			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput)input;
+			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput) input;
 			tunit = editorInput.getTranslationUnit();
 		}
 
 		if (tunit != null) {
 			// Choose an editor based on the content type
-			String contentTypeId= tunit.getContentTypeId();
+			String contentTypeId = tunit.getContentTypeId();
 			if (contentTypeId != null) {
-				IContentType contentType= Platform.getContentTypeManager().getContentType(contentTypeId);
+				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
 				IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-				IEditorDescriptor desc= registry.getDefaultEditor(input.getName(), contentType);
+				IEditorDescriptor desc = registry.getDefaultEditor(input.getName(), contentType);
 				if (desc != null) {
 					return desc.getId();
 				}
@@ -310,12 +310,12 @@ public class EditorUtility {
 		try {
 			IBuffer buffer = bin.getBuffer();
 			if (buffer != null) {
-				store = new FileStorage (new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
+				store = new FileStorage(new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
 			}
 		} catch (CModelException e) {
 			// nothing;
 		}
 		return store;
 	}
-	
+
 }

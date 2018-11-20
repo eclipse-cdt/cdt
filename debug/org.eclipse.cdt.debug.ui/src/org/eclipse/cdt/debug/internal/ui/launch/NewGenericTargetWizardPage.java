@@ -71,7 +71,7 @@ public class NewGenericTargetWizardPage extends WizardPage {
 				archText.setText(arch);
 			}
 		}
-		
+
 		setControl(comp);
 	}
 

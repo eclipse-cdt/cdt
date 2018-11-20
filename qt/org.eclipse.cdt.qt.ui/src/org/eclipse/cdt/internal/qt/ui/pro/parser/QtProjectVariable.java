@@ -36,7 +36,8 @@ import java.util.regex.Pattern;
 public class QtProjectVariable {
 	private static final Pattern REGEX = Pattern.compile(
 			"(?m)^\\h*((?:[_a-zA-Z][_a-zA-Z0-9]*\\.)*[_a-zA-Z][_a-zA-Z0-9]*)\\h*(=|\\+=|-=|\\*=)\\h*([^#\\v]*?)\\h*((?:(\\\\)\\h*)?(#[^\\v]*)?$)"); //$NON-NLS-1$
-	private static final Pattern LINE_ESCAPE_REGEX = Pattern.compile("(?m)^(\\h*)([^#\\v]*?)\\h*((?:(\\\\)\\h*)?(#[^\\v]*)?$)"); //$NON-NLS-1$
+	private static final Pattern LINE_ESCAPE_REGEX = Pattern
+			.compile("(?m)^(\\h*)([^#\\v]*?)\\h*((?:(\\\\)\\h*)?(#[^\\v]*)?$)"); //$NON-NLS-1$
 
 	private static final int GROUP_VAR_NAME = 1;
 	private static final int GROUP_VAR_ASSIGNMENT = 2;

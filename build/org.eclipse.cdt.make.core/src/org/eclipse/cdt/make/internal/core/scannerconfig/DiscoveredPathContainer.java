@@ -31,64 +31,63 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class DiscoveredPathContainer implements IPathEntryContainer {
-    public static final IPath CONTAINER_ID = new Path("org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"); //$NON-NLS-1$
+	public static final IPath CONTAINER_ID = new Path("org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"); //$NON-NLS-1$
 
-    protected final IProject fProject;
-    private IPathEntry[] fPathEntries;
+	protected final IProject fProject;
+	private IPathEntry[] fPathEntries;
 
-    public DiscoveredPathContainer(IProject project) {
-        fProject = project;
-        fPathEntries = null;
-    }
+	public DiscoveredPathContainer(IProject project) {
+		fProject = project;
+		fPathEntries = null;
+	}
 
-//    public IPathEntry[] getPathEntries() {
-//        IPathEntry[] fPathEntries;
-//        try {
-//            fPathEntries = getPathEntries(getPathEntryMap());
-//        } catch (CoreException e) {
-//            MakeCorePlugin.log(e);
-//            return new IPathEntry[0];
-//        }
-//        return fPathEntries;
-//    }
+	//    public IPathEntry[] getPathEntries() {
+	//        IPathEntry[] fPathEntries;
+	//        try {
+	//            fPathEntries = getPathEntries(getPathEntryMap());
+	//        } catch (CoreException e) {
+	//            MakeCorePlugin.log(e);
+	//            return new IPathEntry[0];
+	//        }
+	//        return fPathEntries;
+	//    }
 
-    @Override
+	@Override
 	public String getDescription() {
-        return MakeMessages.getString("DiscoveredContainer.description"); //$NON-NLS-1$
-    }
+		return MakeMessages.getString("DiscoveredContainer.description"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public IPath getPath() {
-        return CONTAINER_ID;
-    }
+		return CONTAINER_ID;
+	}
 
-    @Override
+	@Override
 	public IPathEntry[] getPathEntries() {
-        if (fPathEntries == null) {
-            try {
-                fPathEntries = computeNewPathEntries();
-            }
-            catch (CoreException e) {
-                MakeCorePlugin.log(e);
-                return new IPathEntry[0];
-            }
-        }
-        return fPathEntries;
-    }
+		if (fPathEntries == null) {
+			try {
+				fPathEntries = computeNewPathEntries();
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e);
+				return new IPathEntry[0];
+			}
+		}
+		return fPathEntries;
+	}
 
-    private IPathEntry[] computeNewPathEntries() throws CoreException {
-        IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
-        IPath[] includes = info.getIncludePaths();
-        Map<String, String> syms = info.getSymbols();
-        List<IPathEntry> entries = new ArrayList<IPathEntry>(includes.length + syms.size());
-        for (IPath inc : includes) {
-            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, inc, true));
-        }
-        Set<Entry<String, String>> entrySet = syms.entrySet();
-        for (Entry<String, String> entry : entrySet) {
-            entries.add(CoreModel.newMacroEntry(Path.EMPTY, entry.getKey(), entry.getValue()));
-        }
-        return entries.toArray(new IPathEntry[entries.size()]);
-    }
+	private IPathEntry[] computeNewPathEntries() throws CoreException {
+		IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+		IPath[] includes = info.getIncludePaths();
+		Map<String, String> syms = info.getSymbols();
+		List<IPathEntry> entries = new ArrayList<IPathEntry>(includes.length + syms.size());
+		for (IPath inc : includes) {
+			entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, inc, true));
+		}
+		Set<Entry<String, String>> entrySet = syms.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			entries.add(CoreModel.newMacroEntry(Path.EMPTY, entry.getKey(), entry.getValue()));
+		}
+		return entries.toArray(new IPathEntry[entries.size()]);
+	}
 
 }

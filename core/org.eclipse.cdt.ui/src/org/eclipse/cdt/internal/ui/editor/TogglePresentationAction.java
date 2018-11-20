@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-
-
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -29,14 +27,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
-
 /**
  * A toolbar action which toggles the presentation model of the
  * connected text editor. The editor shows either the highlight range
  * only or always the whole document.
  */
 public class TogglePresentationAction extends TextEditorAction implements IPropertyChangeListener {
-		
+
 	private IPreferenceStore fStore;
 
 	/**
@@ -46,83 +43,83 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		super(ConstructedCEditorMessages.getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SEGMENT_EDIT);
 		setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,	ICHelpContextIds.TOGGLE_PRESENTATION_ACTION);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.TOGGLE_PRESENTATION_ACTION);
 		update();
 	}
-	
+
 	/*
 	 * @see IAction#actionPerformed
 	 */
 	@Override
 	public void run() {
-		
-		ITextEditor editor= getTextEditor();
+
+		ITextEditor editor = getTextEditor();
 		if (editor == null)
 			return;
-		
-		IRegion remembered= editor.getHighlightRange();
+
+		IRegion remembered = editor.getHighlightRange();
 		editor.resetHighlightRange();
-		
-		boolean showAll= !editor.showsHighlightRangeOnly();
+
+		boolean showAll = !editor.showsHighlightRangeOnly();
 		setChecked(showAll);
-		
+
 		editor.showHighlightRangeOnly(showAll);
 		if (remembered != null)
 			editor.setHighlightRange(remembered.getOffset(), remembered.getLength(), true);
-		
+
 		fStore.removePropertyChangeListener(this);
 		fStore.setValue(PreferenceConstants.EDITOR_SHOW_SEGMENTS, showAll);
 		fStore.addPropertyChangeListener(this);
 	}
-	
+
 	/*
 	 * @see TextEditorAction#update
 	 */
 	@Override
 	public void update() {
-		ITextEditor editor= getTextEditor();
-		boolean checked= (editor != null && editor.showsHighlightRangeOnly());
+		ITextEditor editor = getTextEditor();
+		boolean checked = (editor != null && editor.showsHighlightRangeOnly());
 		setChecked(checked);
 		setEnabled(editor != null);
 	}
-	
+
 	/*
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
 	@Override
 	public void setEditor(ITextEditor editor) {
-		
+
 		super.setEditor(editor);
-		
+
 		if (editor != null) {
-			
+
 			if (fStore == null) {
-				fStore= CUIPlugin.getDefault().getPreferenceStore();
+				fStore = CUIPlugin.getDefault().getPreferenceStore();
 				fStore.addPropertyChangeListener(this);
 			}
 			synchronizeWithPreference(editor);
-			
+
 		} else if (fStore != null) {
 			fStore.removePropertyChangeListener(this);
-			fStore= null;
+			fStore = null;
 		}
-		
+
 		update();
 	}
-	
+
 	/**
 	 * Synchronizes the appearance of the editor with what the preference store tells him.
 	 */
 	private void synchronizeWithPreference(ITextEditor editor) {
-		
+
 		if (editor == null)
 			return;
-		
-		boolean showSegments= fStore.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS);
+
+		boolean showSegments = fStore.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS);
 		setChecked(showSegments);
-		
+
 		if (editor.showsHighlightRangeOnly() != showSegments) {
-			IRegion remembered= editor.getHighlightRange();
+			IRegion remembered = editor.getHighlightRange();
 			editor.resetHighlightRange();
 			editor.showHighlightRangeOnly(showSegments);
 			if (remembered != null)

@@ -32,7 +32,7 @@ public abstract class PathCanonicalizationStrategy {
 	public static String getCanonicalPath(File file) {
 		return instance.getCanonicalPathInternal(file);
 	}
-	
+
 	public static boolean resolvesSymbolicLinks() {
 		return instance.resolvesSymbolicLinksInternal();
 	}
@@ -78,5 +78,6 @@ public abstract class PathCanonicalizationStrategy {
 	}
 
 	protected abstract String getCanonicalPathInternal(File file);
+
 	protected abstract boolean resolvesSymbolicLinksInternal();
 }

@@ -28,15 +28,14 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
-		implements ITypedef, ITypeContainer, IIndexType {
+class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITypedef, ITypeContainer, IIndexType {
 	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE + 0;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TYPE_OFFSET + Database.TYPE_SIZE;
-	
-	public PDOMCPPTypedefSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
-			throws CoreException {
+
+	public PDOMCPPTypedefSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ITypedef typedef,
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) typedef, specialized);
 
 		linkage.storeType(record + TYPE_OFFSET, typedef.getType());
@@ -53,7 +52,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_TYPEDEF_SPECIALIZATION;
@@ -71,28 +70,28 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public boolean isSameType(IType o) {
-        if( this.equals(o) )
-            return true;
-	    if( o instanceof ITypedef ) {
+		if (this.equals(o))
+			return true;
+		if (o instanceof ITypedef) {
 			IType t = getType();
-			if( t != null )
-			    return t.isSameType( ((ITypedef)o).getType());
+			if (t != null)
+				return t.isSameType(((ITypedef) o).getType());
 			return false;
 		}
-	        
-        IType t = getType();
-		if( t != null )
-		    return t.isSameType( o );
-	    return false;
+
+		IType t = getType();
+		if (t != null)
+			return t.isSameType(o);
+		return false;
 	}
 
 	@Override
-	public void setType(IType type) { 
-		throw new UnsupportedOperationException(); 
+	public void setType(IType type) {
+		throw new UnsupportedOperationException();
 	}
 
-    @Override
+	@Override
 	public Object clone() {
 		return new CPPTypedefClone(this);
-    }
+	}
 }

@@ -29,15 +29,15 @@ import org.eclipse.core.resources.IResource;
  */
 public interface IResourceConfiguration extends IResourceInfo {
 	public static final String RESOURCE_CONFIGURATION_ELEMENT_NAME = "resourceConfiguration"; //$NON-NLS-1$
-	public static final String RCBS_APPLICABILITY = "rcbsApplicability";		  //$NON-NLS-1$
-	public static final String TOOLS_TO_INVOKE = "toolsToInvoke";				  //$NON-NLS-1$
-	public static final String APPLY_RCBS_TOOL_AS_OVERRIDE = "override";		  //$NON-NLS-1$
+	public static final String RCBS_APPLICABILITY = "rcbsApplicability"; //$NON-NLS-1$
+	public static final String TOOLS_TO_INVOKE = "toolsToInvoke"; //$NON-NLS-1$
+	public static final String APPLY_RCBS_TOOL_AS_OVERRIDE = "override"; //$NON-NLS-1$
 	public static final int KIND_APPLY_RCBS_TOOL_AS_OVERRIDE = 1;
-	public static final String APPLY_RCBS_TOOL_BEFORE = "before";				  //$NON-NLS-1$
+	public static final String APPLY_RCBS_TOOL_BEFORE = "before"; //$NON-NLS-1$
 	public static final int KIND_APPLY_RCBS_TOOL_BEFORE = 2;
-	public static final String APPLY_RCBS_TOOL_AFTER = "after";					  //$NON-NLS-1$
+	public static final String APPLY_RCBS_TOOL_AFTER = "after"; //$NON-NLS-1$
 	public static final int KIND_APPLY_RCBS_TOOL_AFTER = 3;
-	public static final String DISABLE_RCBS_TOOL = "disable";					  //$NON-NLS-1$
+	public static final String DISABLE_RCBS_TOOL = "disable"; //$NON-NLS-1$
 	public static final int KIND_DISABLE_RCBS_TOOL = 4;
 
 	//TODO:  Set name and ID in the constructors to be
@@ -174,8 +174,7 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
-		throws BuildException;
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException;
 
 	/**
 	 * Sets the value of a string option for this resource configuration.
@@ -190,8 +189,7 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, String value)
-		throws BuildException;
+	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException;
 
 	/**
 	 * Sets the value of a list option for this resource configuration.
@@ -206,9 +204,7 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, String[] value)
-		throws BuildException;
-
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException;
 
 	/**
 	 * Returns the Eclipse project that owns the resource configuration.

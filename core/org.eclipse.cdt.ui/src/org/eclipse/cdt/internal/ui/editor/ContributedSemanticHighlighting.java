@@ -137,8 +137,8 @@ public class ContributedSemanticHighlighting extends SemanticHighlightingWithOwn
 			try {
 				return StringConverter.asRGB(val);
 			} catch (DataFormatException e) {
-				CUIPlugin
-						.log("Error in " + Attr_DefaultTextColor + " attribute of " + extensionId + ' ' + val + " is not a RGB value", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				CUIPlugin.log("Error in " + Attr_DefaultTextColor + " attribute of " + extensionId + ' ' + val //$NON-NLS-1$//$NON-NLS-2$
+						+ " is not a RGB value", e); //$NON-NLS-1$
 			}
 
 		// black by default
@@ -223,7 +223,7 @@ public class ContributedSemanticHighlighting extends SemanticHighlightingWithOwn
 				evalContext.addVariable(Var_projectNature, Arrays.asList(natures));
 
 				ILanguage language = tu.getLanguage();
-				if( language != null )
+				if (language != null)
 					evalContext.addVariable(Var_languageId, language.getId());
 
 				return enablementExpression.evaluate(evalContext) == EvaluationResult.TRUE;

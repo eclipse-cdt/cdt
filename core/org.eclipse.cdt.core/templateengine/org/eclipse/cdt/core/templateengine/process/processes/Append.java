@@ -26,26 +26,27 @@ import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
-
 /**
  * Append the contents to the file. 
  */
 public class Append extends ProcessRunner {
-	
+
 	/**
 	 * This method Appends the contents to a file.
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		ProcessArgument[][] files = args[0].getComplexArrayValue();
-		for(int i=0; i<files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			ProcessArgument[] file = files[i];
 			String sourcePath = file[0].getSimpleValue();
 			URL sourceURL;
 			try {
 				sourceURL = TemplateEngineHelper.getTemplateResourceURLRelativeToTemplate(template, sourcePath);
 				if (sourceURL == null) {
-					throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("Append.0") + sourcePath)); //$NON-NLS-1$
+					throw new ProcessFailureException(
+							getProcessMessage(processId, IStatus.ERROR, Messages.getString("Append.0") + sourcePath)); //$NON-NLS-1$
 				}
 			} catch (IOException e1) {
 				throw new ProcessFailureException(Messages.getString("Append.1") + sourcePath); //$NON-NLS-1$
@@ -59,7 +60,8 @@ public class Append extends ProcessRunner {
 				throw new ProcessFailureException(Messages.getString("Append.3") + sourcePath); //$NON-NLS-1$
 			}
 			if (replaceable) {
-				fileContents = ProcessHelper.getValueAfterExpandingMacros(fileContents, ProcessHelper.getReplaceKeys(fileContents), template.getValueStore());
+				fileContents = ProcessHelper.getValueAfterExpandingMacros(fileContents,
+						ProcessHelper.getReplaceKeys(fileContents), template.getValueStore());
 			}
 			try {
 				ProcessHelper.appendFile(fileContents, targetFile);

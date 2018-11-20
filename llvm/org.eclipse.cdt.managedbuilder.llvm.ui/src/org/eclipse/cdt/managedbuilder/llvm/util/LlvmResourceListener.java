@@ -42,23 +42,23 @@ public class LlvmResourceListener implements IResourceChangeListener {
 			 * history (git and svn) and by manual testing
 			 */
 
-//			//get all projects
-//			IProject[] projects = LlvmToolOptionPathUtil.getProjectsInWorkspace();
-//
-//			//refresh the projects
-//			for (IProject proj : projects) {
-//				try {
-//					proj.refreshLocal(IResource.DEPTH_INFINITE, null);
-//				} catch (CoreException e) {
-//					e.printStackTrace();
-//				}
-//			}
+			//			//get all projects
+			//			IProject[] projects = LlvmToolOptionPathUtil.getProjectsInWorkspace();
+			//
+			//			//refresh the projects
+			//			for (IProject proj : projects) {
+			//				try {
+			//					proj.refreshLocal(IResource.DEPTH_INFINITE, null);
+			//				} catch (CoreException e) {
+			//					e.printStackTrace();
+			//				}
+			//			}
 		} else if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
 			String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 			if (os.indexOf("win") >= 0) { //$NON-NLS-1$
 				LlvmPreferenceStore.addMinGWStdLib();
-//				LlvmToolOptionPathUtil.addMissingCppIncludesForMingw(); //TODO: Remove when Scanner Discovery has been fixed
-			} else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0 /*|| os.indexOf( "mac") >=0 */) { //$NON-NLS-1$ //$NON-NLS-2$
+				//				LlvmToolOptionPathUtil.addMissingCppIncludesForMingw(); //TODO: Remove when Scanner Discovery has been fixed
+			} else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 /*|| os.indexOf( "mac") >=0 */) { //$NON-NLS-1$ //$NON-NLS-2$
 				LlvmPreferenceStore.addStdLibUnix();
 			}
 

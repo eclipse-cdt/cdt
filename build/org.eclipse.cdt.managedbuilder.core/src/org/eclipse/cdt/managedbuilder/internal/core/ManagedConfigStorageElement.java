@@ -27,11 +27,12 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 	private IManagedConfigElement fElement;
 	private List<IManagedConfigElement> fChildList;
 	private ManagedConfigStorageElement fParent;
-	public ManagedConfigStorageElement(IManagedConfigElement el){
+
+	public ManagedConfigStorageElement(IManagedConfigElement el) {
 		this(el, null);
 	}
 
-	public ManagedConfigStorageElement(IManagedConfigElement el, ManagedConfigStorageElement parent){
+	public ManagedConfigStorageElement(IManagedConfigElement el, ManagedConfigStorageElement parent) {
 		fElement = el;
 		fParent = parent;
 	}
@@ -62,8 +63,8 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 		return list.toArray(new ManagedConfigStorageElement[list.size()]);
 	}
 
-	private List<IManagedConfigElement> getChildList(boolean create){
-		if(fChildList == null && create){
+	private List<IManagedConfigElement> getChildList(boolean create) {
+		if (fChildList == null && create) {
 			IManagedConfigElement children[] = fElement.getChildren();
 
 			fChildList = new ArrayList<IManagedConfigElement>(children.length);
@@ -102,8 +103,7 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 	}
 
 	@Override
-	public ICStorageElement importChild(ICStorageElement el)
-			throws UnsupportedOperationException {
+	public ICStorageElement importChild(ICStorageElement el) throws UnsupportedOperationException {
 		throw new WriteAccessException();
 	}
 

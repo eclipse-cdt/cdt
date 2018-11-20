@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
@@ -33,7 +32,6 @@ public class CopySelectedMessagesAction extends Action {
 	private Clipboard clipboard;
 	private TableViewer tableViewer;
 
-
 	public CopySelectedMessagesAction(TableViewer tableViewer, Clipboard clipboard) {
 		super(ActionsMessages.CopySelectedMessagesAction_text);
 		setToolTipText(ActionsMessages.CopySelectedMessagesAction_tooltip);
@@ -44,8 +42,8 @@ public class CopySelectedMessagesAction extends Action {
 
 	@Override
 	public void run() {
-		ITableLabelProvider labelProvider = (ITableLabelProvider)tableViewer.getLabelProvider();
-		IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
+		ITableLabelProvider labelProvider = (ITableLabelProvider) tableViewer.getLabelProvider();
+		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 		if (!selection.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			boolean needEOL = false;
@@ -58,11 +56,8 @@ public class CopySelectedMessagesAction extends Action {
 				}
 				sb.append(labelProvider.getColumnText(item, 0));
 			}
-			clipboard.setContents(
-					new String[]{ sb.toString() },
-					new Transfer[]{ TextTransfer.getInstance() });
+			clipboard.setContents(new String[] { sb.toString() }, new Transfer[] { TextTransfer.getInstance() });
 		}
 	}
-	
-}
 
+}

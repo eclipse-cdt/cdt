@@ -28,9 +28,9 @@ public class MakefileStorageDocumentProvider extends StorageDocumentProvider {
 	@Override
 	protected void setupDocument(Object element, IDocument document) {
 		if (document != null) {
-			IDocumentPartitioner partitioner= createDocumentPartitioner();
+			IDocumentPartitioner partitioner = createDocumentPartitioner();
 			if (document instanceof IDocumentExtension3) {
-				IDocumentExtension3 extension3= (IDocumentExtension3) document;
+				IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 				extension3.setDocumentPartitioner(MakefileDocumentSetupParticipant.MAKEFILE_PARTITIONING, partitioner);
 			} else {
 				document.setDocumentPartitioner(partitioner);
@@ -38,10 +38,9 @@ public class MakefileStorageDocumentProvider extends StorageDocumentProvider {
 			partitioner.connect(document);
 		}
 	}
-	
+
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new FastPartitioner(
-				new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
+		return new FastPartitioner(new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
 	}
 
 }

@@ -58,15 +58,18 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	 */
 	static class SingleTokenScanner extends AbstractMakefileCodeScanner {
 		private final String[] fProperties;
+
 		public SingleTokenScanner(String property) {
-			fProperties= new String[] { property };
+			fProperties = new String[] { property };
 			initialize();
 		}
+
 		@Override
 		protected List<IRule> createRules() {
 			setDefaultReturnToken(getToken(fProperties[0]));
 			return null;
 		}
+
 		@Override
 		protected String[] getTokenProperties() {
 			return fProperties;
@@ -93,8 +96,10 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		if (fEditor != null && fEditor.isEditable()) {
 			ContentAssistant assistant = new ContentAssistant();
 			assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
-			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+					IDocument.DEFAULT_CONTENT_TYPE);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+					MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
 
 			assistant.enableAutoActivation(true);
 			assistant.setAutoActivationDelay(500);
@@ -152,7 +157,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
-			MonoReconciler reconciler= new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
+			MonoReconciler reconciler = new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
 			reconciler.setDelay(1000);
 			reconciler.setProgressMonitor(new NullProgressMonitor());
 			return reconciler;
@@ -162,7 +167,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	@Override
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return new String[]{"#"}; //$NON-NLS-1$
+		return new String[] { "#" }; //$NON-NLS-1$
 	}
 
 	@Override
@@ -172,6 +177,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		}
 		return super.getTextHover(sourceViewer, contentType);
 	}
+
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		if (fEditor != null) {

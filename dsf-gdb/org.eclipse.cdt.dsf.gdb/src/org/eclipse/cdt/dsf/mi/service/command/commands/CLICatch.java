@@ -34,21 +34,21 @@ public class CLICatch extends CLICommand<CLICatchInfo> {
 		}
 		return oper.toString();
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param ctx the context for the command
 	 * @param event the type of event to be caught; one of the keywords documented in 'help catch' 
 	 * @param args zero or more arguments particular to the 'event'
 	 */
-	public CLICatch(IBreakpointsTargetDMContext  ctx, String event, String[] args) {
+	public CLICatch(IBreakpointsTargetDMContext ctx, String event, String[] args) {
 		super(ctx, formOperation(event, args));
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.mi.service.command.commands.MICommand#getResult(org.eclipse.cdt.dsf.mi.service.command.output.MIOutput)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.mi.service.command.commands.MICommand#getResult(org.eclipse.cdt.dsf.mi.service.command.output.MIOutput)
+	 */
+	@Override
 	public MIInfo getResult(MIOutput MIresult) {
 		return new CLICatchInfo(MIresult);
 	}

@@ -36,7 +36,7 @@ public interface IASTName extends IASTNode, IName {
 	 */
 	@Override
 	public char[] toCharArray();
-	
+
 	/**
 	 * Same as {@link #toCharArray()}.
 	 * @since 5.1
@@ -50,7 +50,7 @@ public interface IASTName extends IASTNode, IName {
 	 * @return <code>IBinding</code> if it has been resolved, otherwise null 
 	 */
 	public IBinding getBinding();
-		
+
 	/**
 	 * Resolves the semantic object this name is referring to.
 	 * 
@@ -69,19 +69,19 @@ public interface IASTName extends IASTNode, IName {
 	 * @since 5.0
 	 */
 	public int getRoleOfName(boolean allowResolution);
-	
+
 	/**
 	 * Returns the completion context for this name.
 	 * 
 	 * @return {@code IASTCompletionContext} the context for completion
 	 */
 	public IASTCompletionContext getCompletionContext();
-	
+
 	/**
 	 * Determines the current linkage in which the name has to be resolved.
 	 */
 	public ILinkage getLinkage();
-	
+
 	/**
 	 * Returns the image location for this name or {@code null} if the information is not
 	 * available.
@@ -97,20 +97,20 @@ public interface IASTName extends IASTNode, IName {
 	 * @since 5.0
 	 */
 	public IASTImageLocation getImageLocation();
-	
+
 	/**
 	 * For convenience this method returns the last name of a qualified name or {@code this}
 	 * if this is not a qualified name.
 	 * @since 5.1
 	 */
 	public IASTName getLastName();
-	
+
 	/**
 	 * @since 5.1
 	 */
 	@Override
 	public IASTName copy();
-	
+
 	/**
 	 * @since 5.3
 	 */
@@ -122,7 +122,7 @@ public interface IASTName extends IASTNode, IName {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setBinding(IBinding binding);
-	
+
 	/** 
 	 * Returns the key for looking up this name in a scope.
 	 * @noreference This method is not intended to be referenced by clients.

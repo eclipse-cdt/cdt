@@ -185,13 +185,16 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			public int visit(IASTDeclaration declaration) {
 				if (declaration instanceof ICPPASTFunctionDefinition) {
 					ICPPASTFunctionDefinition functionDefinition = (ICPPASTFunctionDefinition) declaration;
-					ICPPASTConstructorChainInitializer[] memberInitializers = functionDefinition.getMemberInitializers();
+					ICPPASTConstructorChainInitializer[] memberInitializers = functionDefinition
+							.getMemberInitializers();
 					for (ICPPASTConstructorChainInitializer curInitializer : memberInitializers) {
 						IASTName parameterName = factory.newName("a".toCharArray());
 						IASTExpression idExpression = new CPPASTIdExpression(parameterName);
-						IASTInitializer initExpr = factory.newConstructorInitializer(new IASTInitializerClause[] { idExpression });
+						IASTInitializer initExpr = factory
+								.newConstructorInitializer(new IASTInitializerClause[] { idExpression });
 						IASTName initName = factory.newName("alpha".toCharArray());
-						ICPPASTConstructorChainInitializer newInitializer = new CPPASTConstructorChainInitializer(initName, initExpr);
+						ICPPASTConstructorChainInitializer newInitializer = new CPPASTConstructorChainInitializer(
+								initName, initExpr);
 						addModification(null, REPLACE, curInitializer, newInitializer);
 					}
 					return PROCESS_ABORT;
@@ -254,7 +257,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 					IASTName name = factory.newName("c".toCharArray());
 					IASTIdExpression leftOperand = factory.newIdExpression(name);
 					ICPPASTLiteralExpression rightOperand = factory.newLiteralExpression(lk_integer_constant, "9");
-					ICPPASTBinaryExpression binEx = factory.newBinaryExpression(IASTBinaryExpression.op_assign, leftOperand, rightOperand);
+					ICPPASTBinaryExpression binEx = factory.newBinaryExpression(IASTBinaryExpression.op_assign,
+							leftOperand, rightOperand);
 					addModification(null, REPLACE, expressions[1], binEx);
 					return PROCESS_ABORT;
 				}
@@ -477,17 +481,21 @@ public class ReplaceTests extends ChangeGeneratorTest {
 					IASTCompoundStatement newCompoundStatement = factory.newCompoundStatement();
 					IASTNullStatement dummyStatement = factory.newNullStatement();
 					newCompoundStatement.addStatement(dummyStatement);
-					ASTModification compoundReplacement = addModification(null, REPLACE, compoundStatement, newCompoundStatement);
+					ASTModification compoundReplacement = addModification(null, REPLACE, compoundStatement,
+							newCompoundStatement);
 
 					IASTName emptyName = factory.newName();
 					IASTExpression idExpression = factory.newIdExpression(emptyName);
-					IASTExpression incrementExpression = factory.newUnaryExpression(IASTUnaryExpression.op_postFixIncr, idExpression);
+					IASTExpression incrementExpression = factory.newUnaryExpression(IASTUnaryExpression.op_postFixIncr,
+							idExpression);
 					IASTExpressionStatement newStatement = factory.newExpressionStatement(incrementExpression);
 					IASTStatement replacedStatement = compoundStatement.getStatements()[0];
-					ASTModification statementModification = addModification(compoundReplacement, REPLACE, dummyStatement, newStatement);
+					ASTModification statementModification = addModification(compoundReplacement, REPLACE,
+							dummyStatement, newStatement);
 
 					IASTName xName = factory.newName("x".toCharArray());
-					ASTModification nameModification = addModification(statementModification, REPLACE, emptyName, xName);
+					ASTModification nameModification = addModification(statementModification, REPLACE, emptyName,
+							xName);
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -617,9 +625,9 @@ public class ReplaceTests extends ChangeGeneratorTest {
 					IASTName name = factory.newName("i".toCharArray());
 					IASTIdExpression id = factory.newIdExpression(name);
 					IASTLiteralExpression value = factory.newLiteralExpression(lk_integer_constant, "42");
-					ICPPASTBinaryExpression binExpr = factory.newBinaryExpression(IASTBinaryExpression.op_assign, id, value);
-					IASTExpressionStatement insertStmt = new CPPASTExpressionStatement(
-							binExpr);
+					ICPPASTBinaryExpression binExpr = factory.newBinaryExpression(IASTBinaryExpression.op_assign, id,
+							value);
+					IASTExpressionStatement insertStmt = new CPPASTExpressionStatement(binExpr);
 
 					IASTIdExpression incId = new CPPASTIdExpression(new CPPASTName("i".toCharArray()));
 					IASTUnaryExpression incExp = new CPPASTUnaryExpression(IASTUnaryExpression.op_postFixIncr, incId);
@@ -727,7 +735,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 					IASTName name = factory.newName("i".toCharArray());
 					IASTIdExpression id = factory.newIdExpression(name);
-					ICPPASTUnaryExpression unaryExpr = factory.newUnaryExpression(IASTUnaryExpression.op_postFixIncr, id);
+					ICPPASTUnaryExpression unaryExpr = factory.newUnaryExpression(IASTUnaryExpression.op_postFixIncr,
+							id);
 					IASTExpressionStatement expr = factory.newExpressionStatement(unaryExpr);
 					compound.addStatement(expr);
 					addModification(null, REPLACE, ifStatement.getThenClause(), compound);
@@ -814,7 +823,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTIfStatement) {
-					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(),
+							statement);
 				}
 				return super.visit(statement);
 			}
@@ -824,7 +834,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 				if (name.toString().equals("three")) {
 					IASTName newName = factory.newName("two");
 					addModification(parentModification, REPLACE, name, newName);
-					
+
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -863,7 +873,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTIfStatement) {
-					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(),
+							statement);
 				}
 				return super.visit(statement);
 			}
@@ -873,7 +884,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 				if (name.toString().equals("three")) {
 					IASTName newName = factory.newName("two");
 					addModification(parentModification, REPLACE, name, newName);
-					
+
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -912,7 +923,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTIfStatement) {
-					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(),
+							statement);
 				}
 				return super.visit(statement);
 			}
@@ -922,7 +934,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 				if (name.toString().equals("three")) {
 					IASTName newName = factory.newName("two");
 					addModification(parentModification, REPLACE, name, newName);
-					
+
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -961,7 +973,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTIfStatement) {
-					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(),
+							statement);
 				}
 				return super.visit(statement);
 			}
@@ -971,7 +984,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 				if (name.toString().equals("three")) {
 					IASTName newName = factory.newName("two");
 					addModification(parentModification, REPLACE, name, newName);
-					
+
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -1010,7 +1023,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTIfStatement) {
-					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(),
+							statement);
 				}
 				return super.visit(statement);
 			}
@@ -1020,7 +1034,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 				if (name.toString().equals("three")) {
 					IASTName newName = factory.newName("two");
 					addModification(parentModification, REPLACE, name, newName);
-					
+
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -1085,7 +1099,8 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof ICPPASTFunctionDeclarator) {
-					ICPPASTFunctionDeclarator newDeclarator = (ICPPASTFunctionDeclarator) declarator.copy(CopyStyle.withLocations);
+					ICPPASTFunctionDeclarator newDeclarator = (ICPPASTFunctionDeclarator) declarator
+							.copy(CopyStyle.withLocations);
 					newDeclarator.setPureVirtual(true);
 					addModification(null, ModificationKind.REPLACE, declarator, newDeclarator);
 				}

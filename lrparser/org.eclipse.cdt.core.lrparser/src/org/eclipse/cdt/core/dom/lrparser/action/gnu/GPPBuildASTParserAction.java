@@ -40,47 +40,46 @@ import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParsersym;
 
 public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	private final ICPPNodeFactory nodeFactory;
-	
+
 	private final ITokenMap gppTokenMap;
-	
-	public GPPBuildASTParserAction(ITokenStream stream, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory, ICPPSecondaryParserFactory parserFactory) {
+
+	public GPPBuildASTParserAction(ITokenStream stream, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory,
+			ICPPSecondaryParserFactory parserFactory) {
 		super(stream, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
 		this.gppTokenMap = new TokenMap(GPPParsersym.orderedTerminalSymbols, stream.getOrderedTerminalSymbols());
 	}
 
-	
 	/**
 	 * typeof_type_specifier
-     *     ::= 'typeof' unary_expression
-     *   
-     * typeof_declaration_specifiers
-     *     ::= typeof_type_specifier
-     *       | no_type_declaration_specifiers  typeof_type_specifier
-     *       | typeof_declaration_specifiers no_type_declaration_specifier
-     *
-     * declaration_specifiers
-     *     ::= <openscope-ast> typeof_declaration_specifiers
+	 *     ::= 'typeof' unary_expression
+	 *   
+	 * typeof_declaration_specifiers
+	 *     ::= typeof_type_specifier
+	 *       | no_type_declaration_specifiers  typeof_type_specifier
+	 *       | typeof_declaration_specifiers no_type_declaration_specifier
+	 *
+	 * declaration_specifiers
+	 *     ::= <openscope-ast> typeof_declaration_specifiers
 	 */
 	public void consumeDeclarationSpecifiersTypeof() {
 		List<Object> topScope = astStack.closeScope();
-		
+
 		// There's an expression somewhere on the stack, find it		
 		IASTExpression expr = findFirstAndRemove(topScope, IASTExpression.class);
 		//CDT_70_FIX_FROM_50-#7
 		ICPPASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
 		declSpec.setDeclTypeExpression(expr);
-		
+
 		// now apply the rest of the specifiers
-		for(Object token : topScope) {
+		for (Object token : topScope) {
 			setSpecifier(declSpec, token);
 		}
 
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
 	}
-	
-	
+
 	/**
 	 * Replacement for the same method in CPPBuildASTParserAction
 	 */
@@ -89,51 +88,56 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		boolean isComplex = false;
 		boolean isImaginary = false;
 		int numLong = 0;
-		
+
 		List<Object> tokens = astStack.closeScope();
-		
-		for(Object o : tokens) {
-			if(o instanceof IToken) {
-				IToken token = (IToken)o;
-				switch(gppTokenMap.mapKind(token.getKind())) {
-					case GPPParsersym.TK__Complex:   isComplex = true;   break;
-					case GPPParsersym.TK__Imaginary: isImaginary = true; break;
-					case GPPParsersym.TK_long : numLong++; break;
+
+		for (Object o : tokens) {
+			if (o instanceof IToken) {
+				IToken token = (IToken) o;
+				switch (gppTokenMap.mapKind(token.getKind())) {
+				case GPPParsersym.TK__Complex:
+					isComplex = true;
+					break;
+				case GPPParsersym.TK__Imaginary:
+					isImaginary = true;
+					break;
+				case GPPParsersym.TK_long:
+					numLong++;
+					break;
 				}
 			}
 		}
 		//CDT_70_FIX_FROM_50-#7
 		ICPPASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
-		if(isComplex || isImaginary || numLong > 1) {
+		if (isComplex || isImaginary || numLong > 1) {
 			// IGPPASTSimpleDeclSpecifier gppDeclSpec = nodeFactory.newSimpleDeclSpecifierGPP();
 			declSpec.setComplex(isComplex);
 			declSpec.setImaginary(isImaginary);
 			declSpec.setLongLong(numLong > 1);
 			declSpec.setLong(numLong == 1);
 			//declSpec = gppDeclSpec; 
-		}
-		else {
+		} else {
 			declSpec = nodeFactory.newSimpleDeclSpecifier();
 		}
-		
-		for(Object token : tokens) {
+
+		for (Object token : tokens) {
 			setSpecifier(declSpec, token);
 		}
-		
+
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
 	}
 
 	private boolean hasRestrict(List<Object> tokens) {
-		for(Object o : tokens) {
-			IToken t = (IToken)o;
-			if(gppTokenMap.mapKind(t.getKind()) == GPPParsersym.TK_restrict) {
+		for (Object o : tokens) {
+			IToken t = (IToken) o;
+			if (gppTokenMap.mapKind(t.getKind()) == GPPParsersym.TK_restrict) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Restrict is allowed as a keyword.
 	 */
@@ -141,8 +145,8 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	public void consumePointer() {
 		boolean hasRestrict = hasRestrict(astStack.topScope());
 		super.consumePointer();
-		
-		if(hasRestrict) {
+
+		if (hasRestrict) {
 			IASTPointer gppPointer = nodeFactory.newPointer();
 			initializePointer((IASTPointer) astStack.pop(), gppPointer);
 			astStack.push(gppPointer);
@@ -160,16 +164,16 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	public void consumePointerToMember() {
 		boolean hasRestrict = hasRestrict(astStack.topScope());
 		super.consumePointerToMember();
-		
-		if(hasRestrict) {
+
+		if (hasRestrict) {
 			ICPPASTPointerToMember pointer = (ICPPASTPointerToMember) astStack.pop();
 			ICPPASTPointerToMember gppPointer = nodeFactory.newPointerToMember(pointer.getName());
 			initializePointer(pointer, gppPointer);
 			astStack.push(gppPointer);
 		}
-		
+
 	}
-	
+
 	public void consumeTemplateExplicitInstantiationGCC(int modifier) {
 		IASTDeclaration declaration = (IASTDeclaration) astStack.pop();
 		ICPPASTExplicitTemplateInstantiation instantiation = nodeFactory.newExplicitTemplateInstantiation(declaration);

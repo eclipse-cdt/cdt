@@ -37,18 +37,13 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.Preferences;
 
 @SuppressWarnings("restriction")
-public class ContainerCommandLauncher
-		implements ICommandLauncher, ICBuildCommandLauncher,
-		IErrorMessageHolder {
+public class ContainerCommandLauncher implements ICommandLauncher, ICBuildCommandLauncher, IErrorMessageHolder {
 
 	public final static String CONTAINER_BUILD_ENABLED = DockerLaunchUIPlugin.PLUGIN_ID
 			+ ".containerbuild.property.enablement"; //$NON-NLS-1$
-	public final static String CONNECTION_ID = DockerLaunchUIPlugin.PLUGIN_ID
-			+ ".containerbuild.property.connection"; //$NON-NLS-1$
-	public final static String IMAGE_ID = DockerLaunchUIPlugin.PLUGIN_ID
-			+ ".containerbuild.property.image"; //$NON-NLS-1$
-	public final static String VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID
-			+ ".containerbuild.property.volumes"; //$NON-NLS-1$
+	public final static String CONNECTION_ID = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.connection"; //$NON-NLS-1$
+	public final static String IMAGE_ID = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.image"; //$NON-NLS-1$
+	public final static String VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.volumes"; //$NON-NLS-1$
 	public final static String SELECTED_VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID
 			+ ".containerbuild.property.selectedvolumes"; //$NON-NLS-1$
 
@@ -154,9 +149,8 @@ public class ContainerCommandLauncher
 	}
 
 	@Override
-	public Process execute(IPath commandPath, String[] args, String[] env,
-			IPath workingDirectory, IProgressMonitor monitor)
-			throws CoreException {
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory,
+			IProgressMonitor monitor) throws CoreException {
 
 		HashMap<String, String> labels = new HashMap<>();
 		labels.put("org.eclipse.cdt.container-command", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -184,8 +178,7 @@ public class ContainerCommandLauncher
 		cmdList.add(commandString);
 		commandSegments.add(commandString);
 		for (String arg : args) {
-			String realArg = VariablesPlugin.getDefault()
-					.getStringVariableManager().performStringSubstitution(arg);
+			String realArg = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arg);
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
 				// check if file exists and if so, add an additional directory
 				IPath p = new Path(realArg);
@@ -201,8 +194,7 @@ public class ContainerCommandLauncher
 						p = p.removeLastSegments(1);
 					}
 					if (f != null && f.exists()) {
-						additionalDirs.add(
-								"/" + p.toPortableString().replace(':', '/')); //$NON-NLS-1$
+						additionalDirs.add("/" + p.toPortableString().replace(':', '/')); //$NON-NLS-1$
 						realArg = modifiedArg;
 					}
 				}
@@ -223,19 +215,17 @@ public class ContainerCommandLauncher
 			cmdList.add(realArg);
 			commandSegments.add(realArg);
 		}
-		
+
 		commandArgs = commandSegments.toArray(new String[0]);
 
 		IProject[] referencedProjects = fProject.getReferencedProjects();
 		for (IProject referencedProject : referencedProjects) {
-			String referencedProjectPath = referencedProject.getLocation()
-					.toPortableString();
+			String referencedProjectPath = referencedProject.getLocation().toPortableString();
 			if (referencedProject.getLocation().getDevice() != null) {
 				referencedProjectPath = "/" //$NON-NLS-1$
 						+ referencedProjectPath.replace(':', '/');
 			}
-			additionalDirs
-					.add(referencedProjectPath);
+			additionalDirs.add(referencedProjectPath);
 		}
 
 		String workingDir = workingDirectory.makeAbsolute().toPortableString();
@@ -253,11 +243,9 @@ public class ContainerCommandLauncher
 
 		ContainerLauncher launcher = new ContainerLauncher();
 
-		Preferences prefs = InstanceScope.INSTANCE
-				.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
+		Preferences prefs = InstanceScope.INSTANCE.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
 
-		boolean keepContainer = prefs.getBoolean(
-				PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
+		boolean keepContainer = prefs.getBoolean(PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
 
 		ICBuildConfiguration buildCfg = getBuildConfiguration();
 		String selectedVolumeString = null;
@@ -266,29 +254,24 @@ public class ContainerCommandLauncher
 		if (buildCfg != null) {
 			IToolChain toolChain = buildCfg.getToolChain();
 			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
-			connectionName = toolChain
-					.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
-			imageName = toolChain
-					.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+			connectionName = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
+			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 		} else {
-			ICConfigurationDescription cfgd = CoreModel.getDefault()
-					.getProjectDescription(fProject).getActiveConfiguration();
-			IConfiguration cfg = ManagedBuildManager
-					.getConfigurationForDescription(cfgd);
+			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
+					.getActiveConfiguration();
+			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 			if (cfg == null) {
 				return null;
 			}
 			IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 			selectedVolumeString = props.getProperty(SELECTED_VOLUMES_ID);
-			connectionName = props
-					.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+			connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
 		}
 
 		// Add any specified volumes to additional dir list
 		if (selectedVolumeString != null && !selectedVolumeString.isEmpty()) {
-			String[] selectedVolumes = selectedVolumeString
-					.split(VOLUME_SEPARATOR_REGEX);
+			String[] selectedVolumes = selectedVolumeString.split(VOLUME_SEPARATOR_REGEX);
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
 				for (String selectedVolume : selectedVolumes) {
 					IPath path = new Path(selectedVolume);
@@ -311,13 +294,8 @@ public class ContainerCommandLauncher
 		}
 		setImageName(imageName);
 
-		fProcess = launcher.runCommand(connectionName, imageName, fProject,
-				this,
-				cmdList,
-				workingDir,
-				additionalDirs,
-				origEnv, fEnvironment, supportStdin, privilegedMode,
-				labels, keepContainer);
+		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
+				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);
 
 		return fProcess;
 	}
@@ -333,13 +311,11 @@ public class ContainerCommandLauncher
 			} catch (CoreException e) {
 				return imageName;
 			}
-			imageName = toolChain
-					.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 		} else {
-			ICConfigurationDescription cfgd = CoreModel.getDefault()
-					.getProjectDescription(fProject).getActiveConfiguration();
-			IConfiguration cfg = ManagedBuildManager
-					.getConfigurationForDescription(cfgd);
+			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
+					.getActiveConfiguration();
+			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 			if (cfg == null) {
 				return imageName;
 			}
@@ -385,8 +361,7 @@ public class ContainerCommandLauncher
 	}
 
 	@Override
-	public int waitAndRead(OutputStream output, OutputStream err,
-			IProgressMonitor monitor) {
+	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor) {
 		printImageHeader(output);
 
 		if (fShowCommand) {
@@ -442,10 +417,8 @@ public class ContainerCommandLauncher
 	protected void printImageHeader(OutputStream os) {
 		if (os != null) {
 			try {
-				os.write(NLS
-						.bind(Messages.ContainerCommandLauncher_image_msg,
-								((ContainerCommandProcess) fProcess).getImage())
-						.getBytes());
+				os.write(NLS.bind(Messages.ContainerCommandLauncher_image_msg,
+						((ContainerCommandProcess) fProcess).getImage()).getBytes());
 				os.write(NEWLINE.getBytes());
 				os.flush();
 			} catch (IOException e) {
@@ -456,15 +429,13 @@ public class ContainerCommandLauncher
 
 	@Override
 	public String getConsoleHeader() {
-		return NLS.bind(Messages.ContainerCommandLauncher_image_msg,
-				calculateImageName()) + NEWLINE;
+		return NLS.bind(Messages.ContainerCommandLauncher_image_msg, calculateImageName()) + NEWLINE;
 	}
 
 	protected void printCommandLine(OutputStream os) {
 		if (os != null) {
 			try {
-				os.write(getCommandLineQuoted(getCommandArgs(), true)
-						.getBytes());
+				os.write(getCommandLineQuoted(getCommandArgs(), true).getBytes());
 				os.flush();
 			} catch (IOException e) {
 				// ignore;
@@ -477,11 +448,8 @@ public class ContainerCommandLauncher
 		StringBuilder buf = new StringBuilder();
 		if (commandArgs != null) {
 			for (String commandArg : commandArgs) {
-				if (quote && (commandArg.contains(" ")
-						|| commandArg.contains("\"")
-						|| commandArg.contains("\\"))) {
-					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\")
-							.replaceAll("\"", "\\\\\"") + '"';
+				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) {
+					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"';
 				}
 				buf.append(commandArg);
 				buf.append(' ');

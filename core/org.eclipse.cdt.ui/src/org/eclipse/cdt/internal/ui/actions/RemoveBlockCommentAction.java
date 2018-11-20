@@ -48,15 +48,17 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 	public RemoveBlockCommentAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
-	
-	@Override
-	protected void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory) throws BadPartitioningException, BadLocationException {
-		if ( !(docExtension instanceof IDocument) ) return;
 
-		List<Edit> edits= new LinkedList<Edit>();
-		
+	@Override
+	protected void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory)
+			throws BadPartitioningException, BadLocationException {
+		if (!(docExtension instanceof IDocument))
+			return;
+
+		List<Edit> edits = new LinkedList<Edit>();
+
 		int partitionStart = -1;
-		int partitionEnd   = selection.getOffset();
+		int partitionEnd = selection.getOffset();
 
 		do {
 			ITypedRegion partition = docExtension.getPartition(ICPartitions.C_PARTITIONING, partitionEnd, false);
@@ -65,20 +67,19 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 				break;
 			}
 			partitionStart = partition.getOffset();
-			partitionEnd   = partitionStart + partition.getLength();
+			partitionEnd = partitionStart + partition.getLength();
 			if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT
 					|| partition.getType() == ICPartitions.C_MULTI_LINE_DOC_COMMENT) {
-				uncommentPartition((IDocument)docExtension, factory, edits, partitionStart, partitionEnd);
+				uncommentPartition((IDocument) docExtension, factory, edits, partitionStart, partitionEnd);
 			}
-		} while (partitionEnd < selection.getOffset()+selection.getLength());
+		} while (partitionEnd < selection.getOffset() + selection.getLength());
 
 		executeEdits(edits);
 	}
 
-	private void uncommentPartition(IDocument doc, Edit.EditFactory factory,
-			List<Edit> edits, int partitionStart, int partitionEnd)
-			throws BadLocationException {
-		
+	private void uncommentPartition(IDocument doc, Edit.EditFactory factory, List<Edit> edits, int partitionStart,
+			int partitionEnd) throws BadLocationException {
+
 		int startCommentTokenLength = getCommentStart().length();
 		int endCommentTokenLength = getCommentEnd().length();
 
@@ -90,8 +91,8 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 			// start comment tag '/*'
 			if (lineContent.equals(getCommentStart())) {
 				String eol = doc.getLineDelimiter(doc.getLineOfOffset(partitionStart));
-				if (eol!=null) {
-					startCommentTokenLength = startCommentTokenLength+eol.length();
+				if (eol != null) {
+					startCommentTokenLength = startCommentTokenLength + eol.length();
 				}
 			}
 		}
@@ -103,7 +104,7 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 			// end comment tag '*/'
 			if (lineContent.equals(getCommentEnd())) {
 				String eol = doc.getLineDelimiter(doc.getLineOfOffset(partitionEnd));
-				if (eol!=null) {
+				if (eol != null) {
 					endCommentTokenLength = endCommentTokenLength + eol.length();
 				}
 			}
@@ -117,6 +118,5 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 	protected boolean isValidSelection(ITextSelection selection) {
 		return selection != null && !selection.isEmpty() && selection.getLength() > 0;
 	}
-
 
 }

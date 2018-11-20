@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -27,6 +27,5 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTExpression
-		extends IASTExpression, ICPPASTInitializerClause, IASTImplicitDestructorNameOwner {
+public interface ICPPASTExpression extends IASTExpression, ICPPASTInitializerClause, IASTImplicitDestructorNameOwner {
 }

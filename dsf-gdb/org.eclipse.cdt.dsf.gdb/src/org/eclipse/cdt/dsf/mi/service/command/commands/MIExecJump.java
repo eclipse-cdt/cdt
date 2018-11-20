@@ -11,7 +11,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -29,9 +29,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * 
  * @since 3.0
  */
-public class MIExecJump extends MICommand<MIInfo> 
-{
+public class MIExecJump extends MICommand<MIInfo> {
 	public MIExecJump(IExecutionDMContext ctx, String location) {
-        super(ctx, "-exec-jump", null, new String[] { location }); //$NON-NLS-1$
-    }
+		super(ctx, "-exec-jump", null, new String[] { location }); //$NON-NLS-1$
+	}
 }

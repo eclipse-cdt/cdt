@@ -23,7 +23,7 @@ public class Messages {
 
 	private Messages() {
 	}
-	
+
 	public static String OpenFiles_CannotOpen_error;
 	public static String OpenFiles_FileNotExist_error;
 

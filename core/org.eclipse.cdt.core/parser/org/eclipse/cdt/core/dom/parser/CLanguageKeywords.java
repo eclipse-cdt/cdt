@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 public class CLanguageKeywords implements ICLanguageKeywords {
 	private final ParserLanguage language;
 	private final IScannerExtensionConfiguration config;
-	
+
 	// lazily initialized
 	private String[] keywords = null;
 	private String[] builtinTypes = null;
@@ -47,18 +47,18 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 			throw new NullPointerException("language is null"); //$NON-NLS-1$
 		if (config == null)
 			throw new NullPointerException("config is null"); //$NON-NLS-1$
-		
+
 		this.language = language;
 		this.config = config;
 	}
-	
+
 	@Override
 	public String[] getKeywords() {
 		if (keywords == null) {
 			Set<String> keywordSet = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, language));
 			CharArrayIntMap additionalKeywords = config.getAdditionalKeywords();
 			if (additionalKeywords != null) {
-				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext();) {
 					char[] name = iterator.next();
 					keywordSet.add(new String(name));
 				}
@@ -67,7 +67,7 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 		}
 		return keywords;
 	}
-	
+
 	@Override
 	public String[] getBuiltinTypes() {
 		if (builtinTypes == null) {
@@ -81,9 +81,9 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 	public String[] getPreprocessorKeywords() {
 		if (preprocessorKeywords == null) {
 			Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language));
-			CharArrayIntMap additionalKeywords= config.getAdditionalPreprocessorKeywords();
+			CharArrayIntMap additionalKeywords = config.getAdditionalPreprocessorKeywords();
 			if (additionalKeywords != null) {
-				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext();) {
 					char[] name = iterator.next();
 					keywords.add(new String(name));
 				}

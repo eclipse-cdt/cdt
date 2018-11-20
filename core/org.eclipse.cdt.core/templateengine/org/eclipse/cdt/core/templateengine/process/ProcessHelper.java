@@ -50,13 +50,12 @@ public class ProcessHelper {
 	 * @param fileContents contents which are appended to the file.
 	 * @param toFile a file to append contents.
 	 * @throws IOException exception while writing contents into a file
-     * @since 4.0
+	 * @since 4.0
 	 */
 	public static void appendFile(String fileContents, File toFile) throws IOException {
 		RandomAccessFile raf = null;
 		if (!toFile.exists()) {
-			throw new FileNotFoundException(MessageFormat.format(
-					Messages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
+			throw new FileNotFoundException(MessageFormat.format(Messages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
 					toFile.getPath()));
 		} else {
 			try {
@@ -64,7 +63,7 @@ public class ProcessHelper {
 				raf.skipBytes((int) raf.length());
 				raf.writeBytes(fileContents);
 			} finally {
-				if(raf != null) {
+				if (raf != null) {
 					raf.close();
 				}
 			}
@@ -77,7 +76,7 @@ public class ProcessHelper {
 	 * 
 	 * @param str A given string possibly containing markers.
 	 * @return the set of names occurring within markers
-     * @since 4.0
+	 * @since 4.0
 	 */
 	public static Set<String> getReplaceKeys(String str) {
 		return getReplaceKeys(str, START_PATTERN, END_PATTERN);
@@ -91,12 +90,12 @@ public class ProcessHelper {
 	 * @param startPattern token to start macro replacement
 	 * @param endPattern token to end macro replacement
 	 * @return the set of names occurring within markers
-     * @since 5.5
+	 * @since 5.5
 	 */
 	public static Set<String> getReplaceKeys(String str, String startPattern, String endPattern) {
 		Set<String> replaceStrings = new HashSet<String>();
-		int start= 0;
-		int end= 0;
+		int start = 0;
+		int end = 0;
 		while ((start = str.indexOf(startPattern, start)) >= 0) {
 			end = str.indexOf(endPattern, start);
 			if (end != -1) {
@@ -108,22 +107,21 @@ public class ProcessHelper {
 		}
 		return replaceStrings;
 	}
-	
+
 	/**
 	 * This method takes a URL as parameter to read the contents, and to add
 	 * into a string buffer.
 	 * 
 	 * @param source URL to read the contents.
 	 * @return string contents of a file specified in the URL source path.
-     * @since 4.0
+	 * @since 4.0
 	 */
 	public static String readFromFile(URL source) throws IOException {
 		char[] chars = new char[4092];
 		InputStreamReader contentsReader = null;
 		StringBuilder buffer = new StringBuilder();
 		if (!new java.io.File(source.getFile()).exists()) {
-			throw new FileNotFoundException(MessageFormat.format(
-					Messages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
+			throw new FileNotFoundException(MessageFormat.format(Messages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
 					source.getFile()));
 		} else {
 			contentsReader = new InputStreamReader(source.openStream());
@@ -145,7 +143,7 @@ public class ProcessHelper {
 	 * 
 	 * @param source URL to read the contents.
 	 * @param dest destination file to write the contents.
-     * @since 4.0
+	 * @since 4.0
 	 */
 	public static void copyBinaryFile(URL source, File dest) throws IOException {
 		byte[] bytes = new byte[4092];
@@ -179,8 +177,8 @@ public class ProcessHelper {
 	 * @param projectHandle
 	 * @param parentFolder
 	 * @throws CoreException
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
 	public static void mkdirs(IProject projectHandle, IFolder parentFolder) throws CoreException {
 		if (parentFolder.getProjectRelativePath().equals(projectHandle.getProjectRelativePath())) {
@@ -197,10 +195,11 @@ public class ProcessHelper {
 	 * @param macros
 	 * @param valueStore
 	 * @return the macro value after expanding the macros.
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
-	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore) {
+	public static String getValueAfterExpandingMacros(String string, Set<String> macros,
+			Map<String, String> valueStore) {
 		return getValueAfterExpandingMacros(string, macros, valueStore, START_PATTERN, END_PATTERN);
 	}
 
@@ -209,8 +208,8 @@ public class ProcessHelper {
 	 * @param macros
 	 * @param valueStore
 	 * @return the macro value after expanding the macros.
-     * 
-     * @since 5.5
+	 * 
+	 * @since 5.5
 	 */
 	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore,
 			String startPattern, String endPattern) {
@@ -226,11 +225,11 @@ public class ProcessHelper {
 	/**
 	 * @param macro
 	 * @return the replacement marker string
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
 	public static String getReplaceMarker(String macro) {
 		return START_PATTERN + macro + END_PATTERN;
 	}
-	
+
 }

@@ -27,15 +27,16 @@ public class RefactoringStarter {
 	private RefactoringStatus fStatus;
 
 	public boolean activate(RefactoringWizard wizard, Shell parent, String dialogTitle, int saveMode) {
-		RefactoringSaveHelper saveHelper= new RefactoringSaveHelper(saveMode);
+		RefactoringSaveHelper saveHelper = new RefactoringSaveHelper(saveMode);
 		if (!saveHelper.saveEditors(parent))
 			return false;
 
 		try {
-			RefactoringWizardOpenOperation op= new RefactoringWizardOpenOperation(wizard);
-			int result= op.run(parent, dialogTitle);
-			fStatus= op.getInitialConditionCheckingStatus();
-			if (result == IDialogConstants.CANCEL_ID || result == RefactoringWizardOpenOperation.INITIAL_CONDITION_CHECKING_FAILED) {
+			RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
+			int result = op.run(parent, dialogTitle);
+			fStatus = op.getInitialConditionCheckingStatus();
+			if (result == IDialogConstants.CANCEL_ID
+					|| result == RefactoringWizardOpenOperation.INITIAL_CONDITION_CHECKING_FAILED) {
 				saveHelper.triggerIncrementalBuild();
 				return false;
 			} else {

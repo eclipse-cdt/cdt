@@ -71,27 +71,24 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 5.2
  */
-public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocusSynchronizer, IEventListener
-{	
+public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocusSynchronizer, IEventListener {
 	/** This service's opinion of what is the current GDB focus - it can be 
 	 * a process, thread or stack frame context */
 	private IDMContext fCurrentGDBFocus;
-	
+
 	private IStack fStackService;
 	private IGDBProcesses fProcesses;
 	private IGDBControl fGdbcontrol;
 	private CommandFactory fCommandFactory;
-	
+
 	// default initial values
 	private static final String THREAD_ID_DEFAULT = "1"; //$NON-NLS-1$
-		
+
 	public GDBFocusSynchronizer(DsfSession session) {
 		super(session);
 	}
-	
-	private class GDBFocusChangedEvent extends AbstractDMEvent<IDMContext> 
-	implements IGDBFocusChangedEvent 
-	{
+
+	private class GDBFocusChangedEvent extends AbstractDMEvent<IDMContext> implements IGDBFocusChangedEvent {
 		public GDBFocusChangedEvent(IDMContext ctx) {
 			super(ctx);
 		}
@@ -119,13 +116,12 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 		fGdbcontrol = getServicesTracker().getService(IGDBControl.class);
 		fCommandFactory = fGdbcontrol.getCommandFactory();
 
-		register(new String[] { IGDBFocusSynchronizer.class.getName()},
-				 new Hashtable<String, String>());
+		register(new String[] { IGDBFocusSynchronizer.class.getName() }, new Hashtable<String, String>());
 
 		fGdbcontrol.addEventListener(this);
 		getSession().addServiceEventListener(this, null);
-		
-	    // set a sane initial value for current GDB focus. 
+
+		// set a sane initial value for current GDB focus. 
 		// This value will be updated when the session has finished launching. 
 		// See updateContexts() below.
 		fCurrentGDBFocus = createThreadContextFromThreadId(THREAD_ID_DEFAULT);
@@ -136,12 +132,11 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 	public void shutdown(RequestMonitor requestMonitor) {
 		fGdbcontrol.removeEventListener(this);
 		getSession().removeServiceEventListener(this);
-		
+
 		unregister();
 		super.shutdown(requestMonitor);
 	}
-	
-	
+
 	@Override
 	public void setFocus(final IDMContext[] focus, RequestMonitor rm) {
 		assert focus != null;
@@ -150,8 +145,8 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 
 		// new selection is a frame?
 		if (elem instanceof IFrameDMContext) {
-			final IFrameDMContext finalFrameCtx = (IFrameDMContext)elem; 
-			
+			final IFrameDMContext finalFrameCtx = (IFrameDMContext) elem;
+
 			setFrameFocus(finalFrameCtx, new ImmediateRequestMonitor(rm) {
 				@Override
 				public void handleSuccess() {
@@ -163,8 +158,8 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 		}
 		// new selection is a thread?
 		else if (elem instanceof IMIExecutionDMContext) {
-			final IMIExecutionDMContext finalThreadCtx = (IMIExecutionDMContext)elem;
-			
+			final IMIExecutionDMContext finalThreadCtx = (IMIExecutionDMContext) elem;
+
 			setThreadFocus(finalThreadCtx, new ImmediateRequestMonitor(rm) {
 				@Override
 				protected void handleSuccess() {
@@ -176,20 +171,19 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 		}
 		// new selection is a process?
 		else if (elem instanceof IMIContainerDMContext) {
-			setProcessFocus((IMIContainerDMContext)elem, rm);
-		}
-		else {
+			setProcessFocus((IMIContainerDMContext) elem, rm);
+		} else {
 			assert false;
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-					INVALID_HANDLE, "Invalid context to set focus to", null)); //$NON-NLS-1$);
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context to set focus to", //$NON-NLS-1$
+					null)); //);
 			return;
 		}
 	}
 
 	protected void setProcessFocus(IMIContainerDMContext newProc, RequestMonitor rm) {
 		if (newProc == null) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-					INVALID_HANDLE, "GdbFocusSynchronizer unable to resolve process context for the selected element", null)); //$NON-NLS-1$
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+					"GdbFocusSynchronizer unable to resolve process context for the selected element", null)); //$NON-NLS-1$
 			return;
 		}
 		// There is no MI command to set the inferior.  We could use the CLI 'inferior' command, but it would then
@@ -205,7 +199,7 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 				if (getData().length > 0) {
 					IDMContext finalThread = getData()[0];
 					if (finalThread instanceof IMIExecutionDMContext) {
-						setThreadFocus((IMIExecutionDMContext)(finalThread), new ImmediateRequestMonitor(rm) {
+						setThreadFocus((IMIExecutionDMContext) (finalThread), new ImmediateRequestMonitor(rm) {
 							@Override
 							protected void handleSuccess() {
 								// update the current focus, to match new GDB focus
@@ -224,14 +218,15 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 					String miInferiorId = newProc.getGroupId();
 					// Remove the 'i' prefix
 					String cliInferiorId = miInferiorId.substring(1, miInferiorId.length());
-					ICommand<MIInfo> command = fCommandFactory.createCLIInferior(fGdbcontrol.getContext(), cliInferiorId);
-					fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {
+					ICommand<MIInfo> command = fCommandFactory.createCLIInferior(fGdbcontrol.getContext(),
+							cliInferiorId);
+					fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {
 						@Override
 						protected void handleSuccess() {
 							// update the current focus, to match new GDB focus
 							fCurrentGDBFocus = newProc;
 							rm.done();
-						}						
+						}
 					});
 				}
 			}
@@ -240,42 +235,41 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 
 	protected void setThreadFocus(IMIExecutionDMContext newThread, RequestMonitor rm) {
 		if (newThread == null) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-					INVALID_HANDLE, "GdbFocusSynchronizer unable to resolve thread context for the selected element", null)); //$NON-NLS-1$
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+					"GdbFocusSynchronizer unable to resolve thread context for the selected element", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		// Create a mi-thread-select and send the command
-		ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(fGdbcontrol.getContext(), newThread.getThreadId());
-		fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm));
+		ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(fGdbcontrol.getContext(),
+				newThread.getThreadId());
+		fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm));
 	}
 
 	protected void setFrameFocus(IFrameDMContext newFrame, RequestMonitor rm) {
 		if (newFrame == null) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-					INVALID_HANDLE, "GdbFocusSynchronizer unable to resolve frame context for the selected element", null)); //$NON-NLS-1$
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+					"GdbFocusSynchronizer unable to resolve frame context for the selected element", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		// We must specify the thread for which we want to set the frame in the -stack-select-frame command
 		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(newFrame, IMIExecutionDMContext.class);
 		if (isThreadSuspended(threadDmc)) {
 			// Create a mi-stack-select-frame and send the command
 			ICommand<MIInfo> command = fCommandFactory.createMIStackSelectFrame(threadDmc, newFrame.getLevel());
 			fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm));
-		}
-		else {
+		} else {
 			rm.done();
 		}
 	}
-	
+
 	private boolean isThreadSuspended(IExecutionDMContext ctx) {
 		assert ctx != null;
 		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
 		if (runControl != null) {
 			return runControl.isSuspended(ctx);
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -285,111 +279,105 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 	 * When this is detected, generate a DSF event to notify listeners
 	 * 
 	 * example :
-     * =thread-selected,id="7",frame={level="0",addr="0x000000000041eab0",func="main",args=[]}
+	 * =thread-selected,id="7",frame={level="0",addr="0x000000000041eab0",func="main",args=[]}
 	 */
 	@Override
 	public void eventReceived(Object output) {
-		for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
-    		if (oobr instanceof MINotifyAsyncOutput) {
-    			MINotifyAsyncOutput out = (MINotifyAsyncOutput) oobr;
-    			String miEvent = out.getAsyncClass();
-    			if ("thread-selected".equals(miEvent)) { //$NON-NLS-1$
-    				// extract tid
-    				MIResult[] results = out.getMIResults();
-    				String tid = null;
-    				String frameLevel = null;
-    				for (int i = 0; i < results.length; i++) {
-    					String var = results[i].getVariable();
-    					MIValue val = results[i].getMIValue();
-    					
-    					if (var.equals("frame") && val instanceof MITuple) { //$NON-NLS-1$
-    						// dig deeper to get the frame level
-    						MIResult[] res = ((MITuple)val).getMIResults();
-    						
-    						for (int j = 0; j < res.length; j++) {
-    							var = res[j].getVariable();
-    	    					val = res[j].getMIValue();
-    	    					
-    	    					if (var.equals("level")) { //$NON-NLS-1$
-    	    						if (val instanceof MIConst) {
-    	    							frameLevel = ((MIConst) val).getString();
-    	    						}
-    	    					}
-    						}
-    					}
-    					else {
-    						if (var.equals("id")) { //$NON-NLS-1$
-    							if (val instanceof MIConst) {
-    								tid = ((MIConst) val).getString();
-    							}
-    						}
-    					}
-    				}
-    				
-    				// tid should never be null
-    				assert (tid != null);
-    				if (tid == null) {
-    					return;
-    				}
+		for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
+			if (oobr instanceof MINotifyAsyncOutput) {
+				MINotifyAsyncOutput out = (MINotifyAsyncOutput) oobr;
+				String miEvent = out.getAsyncClass();
+				if ("thread-selected".equals(miEvent)) { //$NON-NLS-1$
+					// extract tid
+					MIResult[] results = out.getMIResults();
+					String tid = null;
+					String frameLevel = null;
+					for (int i = 0; i < results.length; i++) {
+						String var = results[i].getVariable();
+						MIValue val = results[i].getMIValue();
 
-    				// update current focus
-    				if (frameLevel == null) {
-    					// thread running - current focus is a thread
-    					fCurrentGDBFocus = createThreadContextFromThreadId(tid);
+						if (var.equals("frame") && val instanceof MITuple) { //$NON-NLS-1$
+							// dig deeper to get the frame level
+							MIResult[] res = ((MITuple) val).getMIResults();
+
+							for (int j = 0; j < res.length; j++) {
+								var = res[j].getVariable();
+								val = res[j].getMIValue();
+
+								if (var.equals("level")) { //$NON-NLS-1$
+									if (val instanceof MIConst) {
+										frameLevel = ((MIConst) val).getString();
+									}
+								}
+							}
+						} else {
+							if (var.equals("id")) { //$NON-NLS-1$
+								if (val instanceof MIConst) {
+									tid = ((MIConst) val).getString();
+								}
+							}
+						}
+					}
+
+					// tid should never be null
+					assert (tid != null);
+					if (tid == null) {
+						return;
+					}
+
+					// update current focus
+					if (frameLevel == null) {
+						// thread running - current focus is a thread
+						fCurrentGDBFocus = createThreadContextFromThreadId(tid);
 						createAndDispatchGDBFocusChangedEvent();
-    				}
-    				else {
-    					// thread suspended - current focus is a stack frame
-    					int intFrameNum = 0;
-    					try {
-    						intFrameNum = Integer.parseInt(frameLevel);
-    					}
-    					catch (NumberFormatException e){
-    						GdbPlugin.log(e);
-    					}
-    					String finalTid = tid;
-    					fStackService.getFrames(
-    							createThreadContextFromThreadId(finalTid), 
-    							intFrameNum, intFrameNum, 
-    							new ImmediateDataRequestMonitor<IFrameDMContext[]>() {
-    						@Override
-    						protected void handleCompleted() {
-    							if (isSuccess() && getData().length > 0) {
-    								fCurrentGDBFocus = getData()[0];
-    							} else {
-    		    					fCurrentGDBFocus = createThreadContextFromThreadId(finalTid);
-    							}
-    							createAndDispatchGDBFocusChangedEvent();
-    						}
-    					});
-    				}
-    			}
-    		}
-    	}
+					} else {
+						// thread suspended - current focus is a stack frame
+						int intFrameNum = 0;
+						try {
+							intFrameNum = Integer.parseInt(frameLevel);
+						} catch (NumberFormatException e) {
+							GdbPlugin.log(e);
+						}
+						String finalTid = tid;
+						fStackService.getFrames(createThreadContextFromThreadId(finalTid), intFrameNum, intFrameNum,
+								new ImmediateDataRequestMonitor<IFrameDMContext[]>() {
+									@Override
+									protected void handleCompleted() {
+										if (isSuccess() && getData().length > 0) {
+											fCurrentGDBFocus = getData()[0];
+										} else {
+											fCurrentGDBFocus = createThreadContextFromThreadId(finalTid);
+										}
+										createAndDispatchGDBFocusChangedEvent();
+									}
+								});
+					}
+				}
+			}
+		}
 	}
 
 	private void createAndDispatchGDBFocusChangedEvent() {
 		assert fCurrentGDBFocus != null;
 
-		fGdbcontrol.getSession().dispatchEvent(new GDBFocusChangedEvent(fCurrentGDBFocus),
-				fGdbcontrol.getProperties());
+		fGdbcontrol.getSession().dispatchEvent(new GDBFocusChangedEvent(fCurrentGDBFocus), fGdbcontrol.getProperties());
 	}
 
-    /**
+	/**
 	 * Creates an execution context from a thread id
 	 * 
 	 * @param tid The thread id on which the execution context is based
 	 */
 	private IMIExecutionDMContext createThreadContextFromThreadId(String tid) {
 		assert tid != null;
-		
-		IContainerDMContext parentContainer = 
-				fProcesses.createContainerContextFromThreadId(fGdbcontrol.getContext(), tid);
-		IProcessDMContext processDmc = 	DMContexts.getAncestorOfType(parentContainer, IProcessDMContext.class);
+
+		IContainerDMContext parentContainer = fProcesses.createContainerContextFromThreadId(fGdbcontrol.getContext(),
+				tid);
+		IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentContainer, IProcessDMContext.class);
 		IThreadDMContext threadDmc = fProcesses.createThreadContext(processDmc, tid);
 		return fProcesses.createExecutionContext(parentContainer, threadDmc, tid);
 	}
-	
+
 	@Override
 	public void sessionSelected() {
 		// get debug view to select this session's current thread/frame
@@ -400,28 +388,27 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 	public IDMContext[] getFocus() {
 		return new IDMContext[] { fCurrentGDBFocus };
 	}
-	
+
 	@DsfServiceEventHandler
 	public void updateContexts(DataModelInitializedEvent event) {
 		// the debug session has finished launching - update the current focus
 		// to something sane. i.e. thread1 or thread1->frame0
 
 		IMIExecutionDMContext threadCtx = createThreadContextFromThreadId(THREAD_ID_DEFAULT);
-	    
-	    if (!isThreadSuspended(threadCtx)) {
-	    	fCurrentGDBFocus = threadCtx;
-	    }
-	    else {
-	    	fStackService.getTopFrame(threadCtx, new ImmediateDataRequestMonitor<IFrameDMContext>() {
-	    		@Override
-	    		protected void handleCompleted() {
-	    			if (isSuccess()) {
-	    				fCurrentGDBFocus = getData();
-	    			} else {
-	    				fCurrentGDBFocus = threadCtx;
-	    			}
-	    		}
-	    	});
-	    }
+
+		if (!isThreadSuspended(threadCtx)) {
+			fCurrentGDBFocus = threadCtx;
+		} else {
+			fStackService.getTopFrame(threadCtx, new ImmediateDataRequestMonitor<IFrameDMContext>() {
+				@Override
+				protected void handleCompleted() {
+					if (isSuccess()) {
+						fCurrentGDBFocus = getData();
+					} else {
+						fCurrentGDBFocus = threadCtx;
+					}
+				}
+			});
+		}
 	}
 }

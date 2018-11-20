@@ -53,19 +53,19 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	 * @since 5.1
 	 */
 	short getTemplateNestingLevel();
-	
+
 	/**
 	 * Returns {@code (getTemplateNestingLevel() << 16) + getParameterPosition()}.
 	 * @since 5.1
 	 */
 	int getParameterID();
-	
+
 	/**
 	 * Returns the default value for this template parameter, or <code>null</code>.
 	 * @since 5.1
 	 */
 	ICPPTemplateArgument getDefaultValue();
-	
+
 	/**
 	 * Returns whether this template parameter is a parameter pack.
 	 * @since 5.2

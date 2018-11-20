@@ -32,9 +32,9 @@ public class BuildTargetHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final BuildTargetAction buildAction= new BuildTargetAction();
-		ISelection selection = HandlerUtil.getCurrentSelection( event );
-		IWorkbenchPart part = HandlerUtil.getActivePart( event );
+		final BuildTargetAction buildAction = new BuildTargetAction();
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		buildAction.setActivePart(null, part);
 		buildAction.selectionChanged(null, selection);
 

@@ -22,6 +22,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 public class MITargetSelectCore extends MITargetSelect {
 
 	public MITargetSelectCore(IDMContext ctx, String coreFilePath) {
-		super(ctx, new String[] { "core", coreFilePath}); //$NON-NLS-1$
+		super(ctx, new String[] { "core", coreFilePath }); //$NON-NLS-1$
 	}
 }

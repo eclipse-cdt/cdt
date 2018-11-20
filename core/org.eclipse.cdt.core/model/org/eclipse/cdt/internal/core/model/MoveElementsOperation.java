@@ -27,6 +27,7 @@ public class MoveElementsOperation extends CopyElementsOperation {
 	public MoveElementsOperation(ICElement[] elementsToMove, ICElement[] destContainers, boolean force) {
 		super(elementsToMove, destContainers, force);
 	}
+
 	/**
 	 * Returns the <code>String</code> to use as the main task name
 	 * for progress monitoring.
@@ -35,6 +36,7 @@ public class MoveElementsOperation extends CopyElementsOperation {
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.moveElementProgress"); //$NON-NLS-1$
 	}
+
 	/**
 	 * @see CopyElementsOperation#isMove()
 	 */

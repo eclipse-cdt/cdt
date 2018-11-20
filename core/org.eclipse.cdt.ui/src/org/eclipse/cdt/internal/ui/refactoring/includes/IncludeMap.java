@@ -36,7 +36,7 @@ public class IncludeMap {
 	private static final String TAG_KEY = "key"; //$NON-NLS-1$
 	private static final String TAG_VALUE = "value"; //$NON-NLS-1$
 
-	private final boolean unconditionalSubstitution;  // Not serialized when saving to a memento.
+	private final boolean unconditionalSubstitution; // Not serialized when saving to a memento.
 	// The order is not crucial but can make a difference when calculating transitive closure.
 	private final LinkedHashMap<IncludeInfo, List<IncludeInfo>> map;
 
@@ -75,7 +75,7 @@ public class IncludeMap {
 	 */
 	protected void addMapping(IncludeInfo from, IncludeInfo to) {
 		if (from.equals(to))
-			return;  // Don't allow mapping to itself.
+			return; // Don't allow mapping to itself.
 		List<IncludeInfo> list = map.get(from);
 		if (list == null) {
 			list = new ArrayList<>(2);
@@ -86,7 +86,7 @@ public class IncludeMap {
 
 	/**
 	 * Indicates that header file {@code to} should be used instead of {@code from}.
-
+	
 	 * @param from The header file to be replaced. The header is represented by an include name
 	 *     optionally surrounded by double quotes or angle brackets. Angle brackets indicate
 	 *     a system include.
@@ -120,7 +120,7 @@ public class IncludeMap {
 	 *
 	 * @param from the header file to remove substitutions for
 	 * @return the previous substitutions associated with the header file, or
-     *         {@code null} if there were no substitutions for the header.
+	 *         {@code null} if there were no substitutions for the header.
 	 */
 	public List<IncludeInfo> removeMapping(String from) {
 		return removeMapping(new IncludeInfo(from));
@@ -131,7 +131,7 @@ public class IncludeMap {
 	 *
 	 * @param from the header file to remove substitutions for
 	 * @return the previous substitutions associated with the header file, or
-     *         {@code null} if there were no substitutions for the header.
+	 *         {@code null} if there were no substitutions for the header.
 	 */
 	public List<IncludeInfo> removeMapping(IncludeInfo from) {
 		return map.remove(from);
@@ -208,7 +208,7 @@ public class IncludeMap {
 			targets.clear();
 			HashSet<IncludeInfo> processed = new HashSet<>();
 			if (!unconditionalSubstitution)
-				processed.add(source);  // Don't allow mapping to itself.
+				processed.add(source); // Don't allow mapping to itself.
 			HashSet<IncludeInfo> seenTargets = new HashSet<>();
 			IncludeInfo target;
 			queueLoop: while ((target = queue.pollFirst()) != null) {
@@ -224,7 +224,7 @@ public class IncludeMap {
 							IncludeInfo newTarget = newTargets.get(i);
 							if (!processed.contains(newTarget)) {
 								if (unconditionalSubstitution && newTarget.equals(source)) {
-									break queueLoop;  // Leave the mapping empty. 
+									break queueLoop; // Leave the mapping empty. 
 								}
 								queue.addFirst(newTarget);
 								added = true;
@@ -257,7 +257,7 @@ public class IncludeMap {
 				if (targets.isEmpty() || (targets.size() == 1 && source.equals(targets.get(0)))) {
 					iter.remove();
 				}
-			}			
+			}
 		}
 	}
 
@@ -277,7 +277,7 @@ public class IncludeMap {
 				if (i > 0)
 					buf.append(", "); //$NON-NLS-1$
 				buf.append(targets.get(i));
-			} 
+			}
 		}
 		return buf.toString();
 	}

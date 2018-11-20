@@ -50,9 +50,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 public class HeaderSubstitutionBlock extends OptionsConfigurationBlock {
 	static final Key KEY_HEADER_SUBSTITUTION = getCDTUIKey(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION);
 
-	private static Key[] ALL_KEYS = {
-		KEY_HEADER_SUBSTITUTION
-	};
+	private static Key[] ALL_KEYS = { KEY_HEADER_SUBSTITUTION };
 
 	private class HeaderMapLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
 
@@ -80,9 +78,8 @@ public class HeaderSubstitutionBlock extends OptionsConfigurationBlock {
 			if (columnIndex == 0) {
 				return map.getName();
 			}
-			return map.isCppOnly() ?
-					PreferencesMessages.HeaderSubstitutionBlock_cpp_only :
-					PreferencesMessages.HeaderSubstitutionBlock_c_and_cpp;
+			return map.isCppOnly() ? PreferencesMessages.HeaderSubstitutionBlock_cpp_only
+					: PreferencesMessages.HeaderSubstitutionBlock_c_and_cpp;
 		}
 
 		@Override
@@ -105,13 +102,11 @@ public class HeaderSubstitutionBlock extends OptionsConfigurationBlock {
 		super(context, project, ALL_KEYS, container);
 
 		ListAdapter adapter = new ListAdapter();
-		String[] buttons = new String[] {
-			PreferencesMessages.HeaderSubstitutionBlock_add_button,
-			PreferencesMessages.HeaderSubstitutionBlock_edit_button,
-			PreferencesMessages.HeaderSubstitutionBlock_remove_button,
-			PreferencesMessages.HeaderSubstitutionBlock_up_button,
-			PreferencesMessages.HeaderSubstitutionBlock_down_button,
-		};
+		String[] buttons = new String[] { PreferencesMessages.HeaderSubstitutionBlock_add_button,
+				PreferencesMessages.HeaderSubstitutionBlock_edit_button,
+				PreferencesMessages.HeaderSubstitutionBlock_remove_button,
+				PreferencesMessages.HeaderSubstitutionBlock_up_button,
+				PreferencesMessages.HeaderSubstitutionBlock_down_button, };
 		fHeaderMapsList = new ListDialogField<HeaderSubstitutionMap>(adapter, buttons, new HeaderMapLabelProvider());
 		fHeaderMapsList.setLabelText(PreferencesMessages.HeaderSubstitutionBlock_header_substitution_maps);
 		fHeaderMapsList.setDialogFieldListener(adapter);
@@ -119,15 +114,10 @@ public class HeaderSubstitutionBlock extends OptionsConfigurationBlock {
 		fHeaderMapsList.setUpButtonIndex(IDX_UP);
 		fHeaderMapsList.setDownButtonIndex(IDX_DOWN);
 
-		String[] columnsHeaders = new String[] {
-			PreferencesMessages.HeaderSubstitutionBlock_name_column_title,
-			PreferencesMessages.HeaderSubstitutionBlock_languages_column_title,
-		};
+		String[] columnsHeaders = new String[] { PreferencesMessages.HeaderSubstitutionBlock_name_column_title,
+				PreferencesMessages.HeaderSubstitutionBlock_languages_column_title, };
 
-		ColumnLayoutData[] columnData = new ColumnLayoutData[] {
-			new ColumnWeightData(5),
-			new ColumnWeightData(2),
-		};
+		ColumnLayoutData[] columnData = new ColumnLayoutData[] { new ColumnWeightData(5), new ColumnWeightData(2), };
 		fHeaderMapsList.setTableColumns(new ListDialogField.ColumnsDescription(columnData, columnsHeaders, true));
 
 		loadHeaderMaps();
@@ -237,8 +227,8 @@ public class HeaderSubstitutionBlock extends OptionsConfigurationBlock {
 			edited = field.getSelectedElements().get(0);
 		}
 		if (index == IDX_ADD || index == IDX_EDIT) {
-			HeaderSubstitutionMapEditDialog dialog =
-					new HeaderSubstitutionMapEditDialog(getShell(), edited, field.getElements());
+			HeaderSubstitutionMapEditDialog dialog = new HeaderSubstitutionMapEditDialog(getShell(), edited,
+					field.getElements());
 			if (dialog.open() == Window.OK) {
 				if (edited != null) {
 					field.replaceElement(edited, dialog.getResult());

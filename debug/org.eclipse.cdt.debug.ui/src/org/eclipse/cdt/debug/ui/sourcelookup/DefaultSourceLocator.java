@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.ui.sourcelookup; 
+package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.w3c.dom.Element;
- 
+
 /**
  * The replacement of the old default source locator. Used only for migration purposes.
  */
@@ -57,7 +57,7 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 		ICSourceLocator csl = old.getAdapter(ICSourceLocator.class);
 		setFindDuplicates(csl.searchForDuplicateFiles());
 		ICSourceLocation[] locations = csl.getSourceLocations();
-		
+
 		// Check if the old source locator includes all referenced projects.
 		// If so, DefaultSpourceContainer should be used.
 		IProject project = csl.getProject();
@@ -69,24 +69,25 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 		}
 		boolean includesDefault = true;
 		for (int i = 0; i < locations.length; ++i) {
-			if (locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation)locations[i]).isGeneric()) {
-				if (!names.contains(((IProjectSourceLocation)locations[i]).getProject().getName())) {
+			if (locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation) locations[i]).isGeneric()) {
+				if (!names.contains(((IProjectSourceLocation) locations[i]).getProject().getName())) {
 					includesDefault = false;
 					break;
 				}
 			}
 		}
-		
+
 		// Generate an array of new source containers including DefaultSourceContainer
 		ArrayList<ICSourceLocation> locs = new ArrayList<ICSourceLocation>(locations.length);
 		for (int i = 0; i < locations.length; ++i) {
-			if (!includesDefault || !(locations[i] instanceof IProjectSourceLocation &&
-					names.contains(((IProjectSourceLocation)locations[i]).getProject().getName()))) {
+			if (!includesDefault || !(locations[i] instanceof IProjectSourceLocation
+					&& names.contains(((IProjectSourceLocation) locations[i]).getProject().getName()))) {
 				locs.add(locations[i]);
 			}
 		}
-		
-		ISourceContainer[] containers = SourceUtils.convertSourceLocations(locs.toArray(new ICSourceLocation[locs.size()]));
+
+		ISourceContainer[] containers = SourceUtils
+				.convertSourceLocations(locs.toArray(new ICSourceLocation[locs.size()]));
 		ArrayList<ISourceContainer> cons = new ArrayList<ISourceContainer>(Arrays.asList(containers));
 		if (includesDefault) {
 			DefaultSourceContainer defaultContainer = new DefaultSourceContainer();

@@ -72,20 +72,23 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	@Override
 	public ExtendedScannerInfo getScannerInformation(IResource rc) {
 		IProject project = rc.getProject();
-		if (project==null)
+		if (project == null)
 			return DUMMY_SCANNER_INFO;
 
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-		if (prjDescription==null)
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				false);
+		if (prjDescription == null)
 			return DUMMY_SCANNER_INFO;
 
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-		if (cfgDescription==null)
+		if (cfgDescription == null)
 			return DUMMY_SCANNER_INFO;
 
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rc, cfgDescription);
 		if (languageIds.isEmpty()) {
-			String msg = NLS.bind(SettingsModelMessages.getString("LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), rc.toString()); //$NON-NLS-1$
+			String msg = NLS.bind(
+					SettingsModelMessages.getString("LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), //$NON-NLS-1$
+					rc.toString());
 			IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception());
 			CCorePlugin.log(status);
 			return DUMMY_SCANNER_INFO;
@@ -98,24 +101,24 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		LinkedHashSet<ICLanguageSettingEntry> macroEntries = new LinkedHashSet<ICLanguageSettingEntry>();
 
 		for (String langId : languageIds) {
-			List<ICLanguageSettingEntry> incSys = LanguageSettingsProvidersSerializer.getSystemSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.INCLUDE_PATH);
+			List<ICLanguageSettingEntry> incSys = LanguageSettingsProvidersSerializer
+					.getSystemSettingEntriesByKind(cfgDescription, rc, langId, ICSettingEntry.INCLUDE_PATH);
 			includePathEntries.addAll(incSys);
 
-			List<ICLanguageSettingEntry> incLocal = LanguageSettingsProvidersSerializer.getLocalSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.INCLUDE_PATH);
+			List<ICLanguageSettingEntry> incLocal = LanguageSettingsProvidersSerializer
+					.getLocalSettingEntriesByKind(cfgDescription, rc, langId, ICSettingEntry.INCLUDE_PATH);
 			includePathLocalEntries.addAll(incLocal);
 
-			List<ICLanguageSettingEntry> incFiles = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.INCLUDE_FILE);
+			List<ICLanguageSettingEntry> incFiles = LanguageSettingsProvidersSerializer
+					.getSettingEntriesByKind(cfgDescription, rc, langId, ICSettingEntry.INCLUDE_FILE);
 			includeFileEntries.addAll(incFiles);
 
-			List<ICLanguageSettingEntry> macroFiles = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.MACRO_FILE);
+			List<ICLanguageSettingEntry> macroFiles = LanguageSettingsProvidersSerializer
+					.getSettingEntriesByKind(cfgDescription, rc, langId, ICSettingEntry.MACRO_FILE);
 			macroFileEntries.addAll(macroFiles);
 
-			List<ICLanguageSettingEntry> macros = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.MACRO);
+			List<ICLanguageSettingEntry> macros = LanguageSettingsProvidersSerializer
+					.getSettingEntriesByKind(cfgDescription, rc, langId, ICSettingEntry.MACRO);
 			macroEntries.addAll(macros);
 		}
 
@@ -126,13 +129,14 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 
 		Map<String, String> definedMacros = new HashMap<String, String>();
 		for (ICLanguageSettingEntry entry : macroEntries) {
-			ICMacroEntry macroEntry = (ICMacroEntry)entry;
+			ICMacroEntry macroEntry = (ICMacroEntry) entry;
 			String name = macroEntry.getName();
 			String value = macroEntry.getValue();
 			definedMacros.put(name, value);
 		}
 
-		ExtendedScannerInfo extendedScannerInfo = new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
+		ExtendedScannerInfo extendedScannerInfo = new ExtendedScannerInfo(definedMacros, includePaths, macroFiles,
+				includeFiles, includePathsLocal);
 		extendedScannerInfo.setParserSettings(new ParserSettings2(project));
 		return extendedScannerInfo;
 	}
@@ -246,12 +250,13 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 * @param cfgDescription - configuration description for resolving entries.
 	 * @return array of the locations.
 	 */
-	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription) {
+	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath,
+			ICConfigurationDescription cfgDescription) {
 		List<String> locations = new ArrayList<String>(entriesPath.size());
 		for (ICLanguageSettingEntry entry : entriesPath) {
-			ICPathEntry entryPath = (ICPathEntry)entry;
+			ICPathEntry entryPath = (ICPathEntry) entry;
 			if (entryPath.isValueWorkspacePath()) {
-				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] {entry};
+				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] { entry };
 				if (!entry.isResolved()) {
 					entries = CDataUtil.resolveEntries(entries, cfgDescription);
 				}

@@ -22,17 +22,16 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
-public class RemoveFunctionBodiesRefactoringRunner extends RefactoringRunner  {
+public class RemoveFunctionBodiesRefactoringRunner extends RefactoringRunner {
 
-	public RemoveFunctionBodiesRefactoringRunner(ICElement element, ISelection selection,
-			IShellProvider shellProvider, ICProject cProject) {
+	public RemoveFunctionBodiesRefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		super(element, selection, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
-		RemoveFunctionBodiesRefactoring refactoring =
-				new RemoveFunctionBodiesRefactoring(element, selection, project);
+		RemoveFunctionBodiesRefactoring refactoring = new RemoveFunctionBodiesRefactoring(element, selection, project);
 		RemoveFunctionBodiesWizard wizard = new RemoveFunctionBodiesWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_NOTHING);
 	}

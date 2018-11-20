@@ -38,12 +38,15 @@ public class HighlightSymbol {
 		semanticHighlightSymbolsMap.put(SymbolKind.Struct.getValue(), SemanticHighlightings.CLASS);
 		semanticHighlightSymbolsMap.put(SymbolKind.TypeParameter.getValue(), SemanticHighlightings.TEMPLATE_PARAMETER);
 		semanticHighlightSymbolsMap.put(CquerySymbolKind.TypeAlias.getValue(), SemanticHighlightings.TYPEDEF);
-		semanticHighlightSymbolsMap.put(CquerySymbolKind.Parameter.getValue(), SemanticHighlightings.PARAMETER_VARIABLE);
-		semanticHighlightSymbolsMap.put(CquerySymbolKind.StaticMethod.getValue(), SemanticHighlightings.STATIC_METHOD_INVOCATION);
+		semanticHighlightSymbolsMap.put(CquerySymbolKind.Parameter.getValue(),
+				SemanticHighlightings.PARAMETER_VARIABLE);
+		semanticHighlightSymbolsMap.put(CquerySymbolKind.StaticMethod.getValue(),
+				SemanticHighlightings.STATIC_METHOD_INVOCATION);
 		semanticHighlightSymbolsMap.put(CquerySymbolKind.Macro.getValue(), SemanticHighlightings.MACRO_DEFINITION);
 	}
 
-	public static String getHighlightingName(ExtendedSymbolKindType kind, ExtendedSymbolKindType parentKind, StorageClass storage) {
+	public static String getHighlightingName(ExtendedSymbolKindType kind, ExtendedSymbolKindType parentKind,
+			StorageClass storage) {
 		String highlightingName = semanticHighlightSymbolsMap.get(kind.getValue());
 		if (highlightingName == null) {
 			if (kind.getValue() == SymbolKind.Variable.getValue()) {
@@ -54,12 +57,12 @@ public class HighlightSymbol {
 					highlightingName = SemanticHighlightings.LOCAL_VARIABLE;
 				} else {
 					highlightingName = SemanticHighlightings.GLOBAL_VARIABLE;
-			}
+				}
 			} else if (kind.getValue() == SymbolKind.Field.getValue()) {
 				if (storage == StorageClass.Static) {
 					highlightingName = SemanticHighlightings.STATIC_FIELD;
 				} else {
-				highlightingName = SemanticHighlightings.FIELD;
+					highlightingName = SemanticHighlightings.FIELD;
 				}
 			}
 		}

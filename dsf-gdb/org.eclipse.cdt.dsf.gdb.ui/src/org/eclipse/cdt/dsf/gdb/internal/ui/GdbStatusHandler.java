@@ -27,43 +27,42 @@ public class GdbStatusHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	@Override
-	public Object handleStatus( final IStatus status, Object source ) throws CoreException {
+	public Object handleStatus(final IStatus status, Object source) throws CoreException {
 		Runnable runnable = null;
-		if ( status.getSeverity() == IStatus.ERROR ) {
+		if (status.getSeverity() == IStatus.ERROR) {
 			runnable = new Runnable() {
-				
+
 				@Override
 				public void run() {
 					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
-					if ( parent != null )
-						MessageDialog.openError( parent, Messages.GdbStatusHandler_Error, status.getMessage() );
+					if (parent != null)
+						MessageDialog.openError(parent, Messages.GdbStatusHandler_Error, status.getMessage());
 				}
 			};
-		}
-		else if ( status.getSeverity() == IStatus.WARNING ) {
+		} else if (status.getSeverity() == IStatus.WARNING) {
 			runnable = new Runnable() {
-				
+
 				@Override
 				public void run() {
 					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
-					if ( parent != null )
-						MessageDialog.openWarning( parent, Messages.GdbStatusHandler_Warning, status.getMessage() );
+					if (parent != null)
+						MessageDialog.openWarning(parent, Messages.GdbStatusHandler_Warning, status.getMessage());
 				}
 			};
-		}
-		else if ( status.getSeverity() == IStatus.INFO ) {
+		} else if (status.getSeverity() == IStatus.INFO) {
 			runnable = new Runnable() {
-				
+
 				@Override
 				public void run() {
 					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
-					if ( parent != null )
-						MessageDialog.openInformation( parent, Messages.GdbStatusHandler_Information, status.getMessage() );
+					if (parent != null)
+						MessageDialog.openInformation(parent, Messages.GdbStatusHandler_Information,
+								status.getMessage());
 				}
 			};
 		}
-		if ( runnable != null )
-			Display.getDefault().asyncExec( runnable );
+		if (runnable != null)
+			Display.getDefault().asyncExec(runnable);
 		return null;
 	}
 }

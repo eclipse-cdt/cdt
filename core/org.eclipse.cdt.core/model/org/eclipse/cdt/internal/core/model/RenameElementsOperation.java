@@ -35,6 +35,7 @@ public class RenameElementsOperation extends MoveElementsOperation {
 		super(elements, destinations, force);
 		setRenamings(newNames);
 	}
+
 	/**
 	 * @see MultiOperation
 	 */
@@ -42,6 +43,7 @@ public class RenameElementsOperation extends MoveElementsOperation {
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.renameElementProgress"); //$NON-NLS-1$
 	}
+
 	/**
 	 * @see CopyElementsOperation#isRename()
 	 */
@@ -49,24 +51,26 @@ public class RenameElementsOperation extends MoveElementsOperation {
 	protected boolean isRename() {
 		return true;
 	}
+
 	/**
 	 * @see MultiOperation
 	 */
 	@Override
 	protected ICModelStatus verify() {
 		ICModelStatus status = super.verify();
-		if (! status.isOK())
+		if (!status.isOK())
 			return status;
 		if (this.fRenamingsList == null || this.fRenamingsList.length == 0)
 			return new CModelStatus(ICModelStatusConstants.NULL_NAME);
 		return CModelStatus.VERIFIED_OK;
 	}
+
 	/**
 	 * @see MultiOperation
 	 */
 	@Override
 	protected void verify(ICElement element) throws CModelException {
-		
+
 		if (element == null || !element.exists())
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
 		else {

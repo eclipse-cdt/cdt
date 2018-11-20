@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.navigator;
 
@@ -28,19 +28,19 @@ import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 public class CNavigatorOpenViewActionProvider extends CommonActionProvider {
 
 	private OpenViewActionGroup fOpenViewActionGroup;
-	
+
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	@Override
 	public void init(ICommonActionExtensionSite site) {
-		ICommonViewerWorkbenchSite workbenchSite= null;
+		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			workbenchSite= (ICommonViewerWorkbenchSite) site.getViewSite();
+			workbenchSite = (ICommonViewerWorkbenchSite) site.getViewSite();
 		}
 		if (workbenchSite != null) {
 			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
-				fOpenViewActionGroup= new OpenViewActionGroup(workbenchSite.getPart());
+				fOpenViewActionGroup = new OpenViewActionGroup(workbenchSite.getPart());
 				// properties action is already provided by resource extensions
 				fOpenViewActionGroup.setSuppressProperties(true);
 			}
@@ -76,7 +76,7 @@ public class CNavigatorOpenViewActionProvider extends CommonActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		if (fOpenViewActionGroup != null) {
 			ISelection selection = getContext().getSelection();
-			if (OpenViewActionGroup.canActionBeAdded(selection)){
+			if (OpenViewActionGroup.canActionBeAdded(selection)) {
 				fOpenViewActionGroup.fillContextMenu(menu);
 			}
 		}

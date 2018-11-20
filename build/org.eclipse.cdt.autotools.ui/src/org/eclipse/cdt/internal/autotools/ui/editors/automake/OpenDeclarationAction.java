@@ -38,7 +38,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
-
 public class OpenDeclarationAction extends TextEditorAction {
 
 	public OpenDeclarationAction() {
@@ -96,7 +95,7 @@ public class OpenDeclarationAction extends TextEditorAction {
 			if (p != null) {
 				IEditorPart editorPart = IDE.openEditor(p, file, true);
 				if (editorPart instanceof MakefileEditor) {
-					((MakefileEditor)editorPart).setSelection(directive, true);
+					((MakefileEditor) editorPart).setSelection(directive, true);
 				}
 				return editorPart;
 			}
@@ -109,11 +108,11 @@ public class OpenDeclarationAction extends TextEditorAction {
 				String editorID = "org.eclipse.cdt.make.editor"; //$NON-NLS-1$
 				IEditorPart editorPart = IDE.openEditor(p, input, editorID, true);
 				if (editorPart instanceof MakefileEditor) {
-					((MakefileEditor)editorPart).setSelection(directive, true);
+					((MakefileEditor) editorPart).setSelection(directive, true);
 				}
 				return editorPart;
 			}
-			
+
 		}
 		return null;
 	}

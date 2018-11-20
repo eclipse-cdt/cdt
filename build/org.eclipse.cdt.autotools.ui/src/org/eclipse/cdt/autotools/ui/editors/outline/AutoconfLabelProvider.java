@@ -31,13 +31,12 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-
 public class AutoconfLabelProvider implements ILabelProvider {
 
 	public AutoconfLabelProvider() {
 		super();
 	}
-	
+
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
@@ -72,9 +71,9 @@ public class AutoconfLabelProvider implements ILabelProvider {
 		else if (element instanceof AutoconfWhileElement)
 			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_WHILE);
 		else if (element instanceof AutoconfUntilElement)
-			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_WHILE);	// TODO
+			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_WHILE); // TODO
 		else if (element instanceof AutoconfSelectElement)
-			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_WHILE);	// TODO
+			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_WHILE); // TODO
 		else if (element instanceof AutoconfMacroElement)
 			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_ACMACRO);
 		else if (element instanceof AutoconfMacroArgumentElement)
@@ -85,7 +84,7 @@ public class AutoconfLabelProvider implements ILabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof AutoconfElement) {
-			AutoconfElement e = (AutoconfElement)element;
+			AutoconfElement e = (AutoconfElement) element;
 			String result;
 			String name = e.getName();
 			if (name.length() > 31)

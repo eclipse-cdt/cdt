@@ -28,6 +28,7 @@ public class CqueryInactiveRegions {
 	public URI getUri() {
 		return uri;
 	}
+
 	public List<Range> getInactiveRegions() {
 		return inactiveRegions;
 	}

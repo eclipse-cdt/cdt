@@ -34,8 +34,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#matches(java
 	 * .util.Map, org.eclipse.debug.core.model.IBreakpoint)
 	 */
-	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint)
-			throws CoreException {
+	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException {
 		if (attributes == null || breakpoint == null) {
 			return false;
 		}
@@ -47,12 +46,10 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 			return false;
 		}
 		if (breakpoint instanceof AbstractLineBreakpoint) {
-			return matchesLineBreakpoint(attributes,
-					(AbstractLineBreakpoint) breakpoint);
+			return matchesLineBreakpoint(attributes, (AbstractLineBreakpoint) breakpoint);
 		}
 		if (breakpoint instanceof AbstractTracepoint) {
-			return matchesTracepoint(attributes,
-					(AbstractTracepoint) breakpoint);
+			return matchesTracepoint(attributes, (AbstractTracepoint) breakpoint);
 		}
 		if (breakpoint instanceof CEventBreakpoint) {
 			return matchesEventBreakpoint(attributes, (CEventBreakpoint) breakpoint);
@@ -68,8 +65,8 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	 * @see org.eclipse.debug.core.model.IBreakpointImportParticipant#verify(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
-	public void verify(IBreakpoint breakpoint) throws CoreException {}
-
+	public void verify(IBreakpoint breakpoint) throws CoreException {
+	}
 
 	/**
 	 * Compares two attributes in a <code>null</code> safe way
@@ -105,8 +102,10 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 		return breakpoint.getLineNumber() == lineNumber
 				&& attributesEqual(breakpoint.getType(), attributes.get(CBreakpoint.TYPE))
 				&& attributesEqual(breakpoint.getSourceHandle(), attributes.get(ICBreakpoint.SOURCE_HANDLE))
-				&& attributesEqual(breakpoint.getMarker().getAttribute(ICLineBreakpoint.ADDRESS), attributes.get(ICLineBreakpoint.ADDRESS))
-				&& attributesEqual(breakpoint.getMarker().getAttribute(ICLineBreakpoint.FUNCTION), attributes.get(ICLineBreakpoint.FUNCTION));
+				&& attributesEqual(breakpoint.getMarker().getAttribute(ICLineBreakpoint.ADDRESS),
+						attributes.get(ICLineBreakpoint.ADDRESS))
+				&& attributesEqual(breakpoint.getMarker().getAttribute(ICLineBreakpoint.FUNCTION),
+						attributes.get(ICLineBreakpoint.FUNCTION));
 	}
 
 	/**
@@ -126,8 +125,10 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 		return tracepoint.getLineNumber() == lineNumber
 				&& attributesEqual(tracepoint.getType(), attributes.get(CBreakpoint.TYPE))
 				&& attributesEqual(tracepoint.getSourceHandle(), attributes.get(ICBreakpoint.SOURCE_HANDLE))
-				&& attributesEqual(tracepoint.getMarker().getAttribute(ICLineBreakpoint.ADDRESS), attributes.get(ICLineBreakpoint.ADDRESS))
-				&& attributesEqual(tracepoint.getMarker().getAttribute(ICLineBreakpoint.FUNCTION), attributes.get(ICLineBreakpoint.FUNCTION));
+				&& attributesEqual(tracepoint.getMarker().getAttribute(ICLineBreakpoint.ADDRESS),
+						attributes.get(ICLineBreakpoint.ADDRESS))
+				&& attributesEqual(tracepoint.getMarker().getAttribute(ICLineBreakpoint.FUNCTION),
+						attributes.get(ICLineBreakpoint.FUNCTION));
 	}
 
 	/**
@@ -141,10 +142,8 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	 */
 	private boolean matchesEventBreakpoint(Map<String, Object> attributes, CEventBreakpoint breakpoint)
 			throws CoreException {
-		return breakpoint.getEventArgument().equals(
-				attributes.get(ICEventBreakpoint.EVENT_ARG))
-				&& attributesEqual(breakpoint.getEventType(),
-						attributes.get(ICEventBreakpoint.EVENT_TYPE_ID));
+		return breakpoint.getEventArgument().equals(attributes.get(ICEventBreakpoint.EVENT_ARG))
+				&& attributesEqual(breakpoint.getEventType(), attributes.get(ICEventBreakpoint.EVENT_TYPE_ID));
 	}
 
 	/**
@@ -156,12 +155,9 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	 *         otherwise
 	 * @throws CoreException
 	 */
-	private boolean matchesWatchpoint(Map<String, Object> attributes, CWatchpoint watchpoint)
-			throws CoreException {
-		return watchpoint.getExpression().equals(
-				attributes.get(CWatchpoint.EXPRESSION))
-				&& attributesEqual(watchpoint.getType(),
-						attributes.get(CBreakpoint.TYPE));
+	private boolean matchesWatchpoint(Map<String, Object> attributes, CWatchpoint watchpoint) throws CoreException {
+		return watchpoint.getExpression().equals(attributes.get(CWatchpoint.EXPRESSION))
+				&& attributesEqual(watchpoint.getType(), attributes.get(CBreakpoint.TYPE));
 	}
 
 }

@@ -42,12 +42,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GDBHardwareAndOS_HEAD extends GDBHardwareAndOS_7_10 {
 	public GDBHardwareAndOS_HEAD(DsfSession session) {
 		super(session);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_10_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_10_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}

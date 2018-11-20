@@ -27,7 +27,7 @@ public class QGadget implements IQGadget {
 		this.name = pdomQGadget.getName();
 
 		this.enums = new ArrayList<IQEnum>();
-		for(QtPDOMQEnum pdom : pdomQGadget.getChildren(QtPDOMQEnum.class))
+		for (QtPDOMQEnum pdom : pdomQGadget.getChildren(QtPDOMQEnum.class))
 			this.enums.add(new QEnum(pdom.getName(), pdom.isFlag(), pdom.getEnumerators()));
 	}
 

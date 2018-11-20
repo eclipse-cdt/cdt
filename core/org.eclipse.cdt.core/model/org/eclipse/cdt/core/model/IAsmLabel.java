@@ -29,5 +29,5 @@ public interface IAsmLabel extends ICElement, ISourceManipulation, ISourceRefere
 	 * @return  <code>true</code> if the label is global
 	 */
 	boolean isGlobal();
-	
+
 }

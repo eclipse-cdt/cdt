@@ -36,13 +36,8 @@ import org.eclipse.ui.actions.ActionDelegate;
  * 
  * @since Sep 19, 2002
  */
-public abstract class AbstractEditorActionDelegate extends ActionDelegate 
-												   implements IWorkbenchWindowActionDelegate,
-															  IEditorActionDelegate,
-															  IPartListener,
-															  ISelectionListener,
-															  INullSelectionListener
-{
+public abstract class AbstractEditorActionDelegate extends ActionDelegate implements IWorkbenchWindowActionDelegate,
+		IEditorActionDelegate, IPartListener, ISelectionListener, INullSelectionListener {
 	private IAction fAction;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IWorkbenchPart fTargetPart;
@@ -51,21 +46,18 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/**
 	 * Constructor for AbstractEditorActionDelegate.
 	 */
-	public AbstractEditorActionDelegate()
-	{
+	public AbstractEditorActionDelegate() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		IWorkbenchWindow win = getWorkbenchWindow();
-		if ( win != null )
-		{
-			win.getPartService().removePartListener( this );
-			win.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		if (win != null) {
+			win.getPartService().removePartListener(this);
+			win.getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 	}
 
@@ -73,16 +65,14 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	@Override
-	public void init( IWorkbenchWindow window )
-	{
-		setWorkbenchWindow( window );
+	public void init(IWorkbenchWindow window) {
+		setWorkbenchWindow(window);
 		IWorkbenchPage page = window.getActivePage();
-		if ( page != null )
-		{
-			setTargetPart( page.getActivePart() );
+		if (page != null) {
+			setTargetPart(page.getActivePart());
 		}
-		window.getPartService().addPartListener( this );
-		window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		window.getPartService().addPartListener(this);
+		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		initializeDebugTarget();
 		update();
 	}
@@ -91,19 +81,16 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	@Override
-	public void setActiveEditor( IAction action, IEditorPart targetEditor )
-	{
-		setAction( action );
-		if ( getWorkbenchWindow() == null )
-		{
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		setAction(action);
+		if (getWorkbenchWindow() == null) {
 			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-			setWorkbenchWindow( window );
-			if ( window != null )
-			{
-				window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+			setWorkbenchWindow(window);
+			if (window != null) {
+				window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 			}
 		}
-		setTargetPart( targetEditor );
+		setTargetPart(targetEditor);
 		initializeDebugTarget();
 		update();
 	}
@@ -112,28 +99,24 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
 	@Override
-	public void partActivated( IWorkbenchPart part )
-	{
-		setTargetPart( part );
+	public void partActivated(IWorkbenchPart part) {
+		setTargetPart(part);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
 	@Override
-	public void partBroughtToTop( IWorkbenchPart part )
-	{
+	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
 	@Override
-	public void partClosed( IWorkbenchPart part )
-	{
-		if ( part == getTargetPart() )
-		{
-			setTargetPart( null );
+	public void partClosed(IWorkbenchPart part) {
+		if (part == getTargetPart()) {
+			setTargetPart(null);
 		}
 	}
 
@@ -141,97 +124,81 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	@Override
-	public void partDeactivated(IWorkbenchPart part)
-	{
+	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
 	@Override
-	public void partOpened( IWorkbenchPart part )
-	{
+	public void partOpened(IWorkbenchPart part) {
 	}
 
 	@Override
-	public abstract void selectionChanged( IWorkbenchPart part, ISelection selection );
+	public abstract void selectionChanged(IWorkbenchPart part, ISelection selection);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
 	@Override
-	public abstract void run( IAction action );
+	public abstract void run(IAction action);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	@Override
-	public void selectionChanged(IAction action, ISelection selection)
-	{
-		setAction( action );
+	public void selectionChanged(IAction action, ISelection selection) {
+		setAction(action);
 		update();
 	}
 
-	protected IWorkbenchPart getTargetPart()
-	{
+	protected IWorkbenchPart getTargetPart() {
 		return fTargetPart;
 	}
 
-	protected void setTargetPart( IWorkbenchPart part )
-	{
+	protected void setTargetPart(IWorkbenchPart part) {
 		fTargetPart = part;
 	}
 
-	protected ISelection getTargetSelection()
-	{
+	protected ISelection getTargetSelection() {
 		IWorkbenchPart part = getTargetPart();
-		if ( part != null )
-		{
+		if (part != null) {
 			ISelectionProvider provider = part.getSite().getSelectionProvider();
-			if ( provider != null )
-			{
+			if (provider != null) {
 				return provider.getSelection();
 			}
 		}
 		return null;
 	}
-	
-	protected void setDebugTarget( IDebugTarget target )
-	{
+
+	protected void setDebugTarget(IDebugTarget target) {
 		fDebugTarget = target;
 	}
-	
-	protected IDebugTarget getDebugTarget()
-	{
+
+	protected IDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
 
-	protected IAction getAction()
-	{
+	protected IAction getAction() {
 		return fAction;
 	}
 
-	protected void setAction( IAction action )
-	{
+	protected void setAction(IAction action) {
 		fAction = action;
 	}
 
-	protected IWorkbenchWindow getWorkbenchWindow()
-	{
+	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
 	}
 
-	protected void setWorkbenchWindow( IWorkbenchWindow workbenchWindow )
-	{
+	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
 		fWorkbenchWindow = workbenchWindow;
 	}
 
-	protected void update()
-	{
+	protected void update() {
 		IAction action = getAction();
-		if ( action != null )
-		{
-			action.setEnabled( getDebugTarget() != null && getTargetPart() != null );
+		if (action != null) {
+			action.setEnabled(getDebugTarget() != null && getTargetPart() != null);
 		}
 	}
 

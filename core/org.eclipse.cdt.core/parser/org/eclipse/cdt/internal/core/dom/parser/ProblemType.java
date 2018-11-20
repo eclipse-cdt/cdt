@@ -37,7 +37,7 @@ public class ProblemType implements IProblemType, ISerializableType {
 	private final int fID;
 
 	public ProblemType(int id) {
-		fID= id;
+		fID = id;
 	}
 
 	@Override

@@ -18,7 +18,8 @@ package org.eclipse.cdt.internal.core.util;
  */
 public class TextUtil {
 	/** Not instantiatable. */
-	private TextUtil() {}
+	private TextUtil() {
+	}
 
 	/**
 	 * Returns the offset of the beginning of the next line after the given offset,
@@ -113,7 +114,7 @@ public class TextUtil {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns an escaped version of the string 'input' where instances of the
 	 * character 'specialChar' are escaped by replacing them with a two instances

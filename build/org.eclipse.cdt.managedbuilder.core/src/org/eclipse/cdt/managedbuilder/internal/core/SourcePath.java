@@ -22,29 +22,29 @@ class SourcePath {
 	static final String ELEMENT_NAME = "sourcePath"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
 	private IPath path;
-	
+
 	SourcePath(IPath path) {
 		this.path = path;
 	}
-	
+
 	SourcePath(ICStorageElement el) {
 		String pathStr = el.getAttribute(ATTRIBUTE_PATH);
-		if(pathStr != null)
+		if (pathStr != null)
 			path = new Path(pathStr);
 	}
 
 	SourcePath(IManagedConfigElement el) {
 		String pathStr = el.getAttribute(ATTRIBUTE_PATH);
-		if(pathStr != null)
+		if (pathStr != null)
 			path = new Path(pathStr);
 	}
 
-	public IPath getPath(){
+	public IPath getPath() {
 		return path;
 	}
-	
-	void serialize(ICStorageElement el){
-		if(path != null){
+
+	void serialize(ICStorageElement el) {
+		if (path != null) {
 			String strPath = path.toString();
 			el.setAttribute(ATTRIBUTE_PATH, strPath);
 		}

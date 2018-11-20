@@ -38,6 +38,6 @@ public class AutotoolsPreferencesMessages {
 		} catch (NullPointerException e) {
 			return '#' + key + '#';
 		}
-	}	
+	}
 
 }

@@ -49,10 +49,11 @@ public class CPPVariableTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
-	
+
 	public void testCPPAutoVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "autoCPPVariable");
 		assertEquals(1, bindings.length);

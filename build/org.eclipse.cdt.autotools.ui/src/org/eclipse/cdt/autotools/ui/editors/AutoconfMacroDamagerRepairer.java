@@ -17,12 +17,12 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 
 public class AutoconfMacroDamagerRepairer extends DefaultDamagerRepairer {
-	
+
 	public final static String UNMATCHED_RIGHT_PARENTHESIS = "UnmatchedRightParenthesis"; //$NON-NLS-1$
 	public final static String UNMATCHED_LEFT_PARENTHESIS = "UnmatchedLeftParenthesis"; //$NON-NLS-1$
 	public final static String UNMATCHED_RIGHT_QUOTE = "UnmatchedRightQuote"; //$NON-NLS-1$
 	public final static String UNMATCHED_LEFT_QUOTE = "UnmatchedLeftQuote"; //$NON-NLS-1$
-	
+
 	/**
 	 * Creates a damager/repairer that uses the given scanner. The scanner may
 	 * not be <code>null</code> and is assumed to return only token that carry
@@ -35,5 +35,4 @@ public class AutoconfMacroDamagerRepairer extends DefaultDamagerRepairer {
 		super(scanner);
 	}
 
-	
 }

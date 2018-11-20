@@ -51,7 +51,7 @@ public class LlvmToolOptionPathUtil {
 
 	//tool input extensions
 	private static final String linkerInputType = "bc"; //$NON-NLS-1$
-	private static final String[] inputTypes = {"cpp", "c"};  //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] inputTypes = { "cpp", "c" }; //$NON-NLS-1$ //$NON-NLS-2$
 	//tool option values
 	public static final int INCLUDE = 1;
 	public static final int LIB = 2;
@@ -127,7 +127,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	private static void addPathToToolOption(String path, int var) {
 		//check if the given path exists
-		if (path.length()>0 && (pathExists(path) || var==LIB)) {
+		if (path.length() > 0 && (pathExists(path) || var == LIB)) {
 			boolean success = false;
 			//get all projects in the workspace
 			IProject[] projects = getProjectsInWorkspace();
@@ -137,7 +137,7 @@ public class LlvmToolOptionPathUtil {
 				//get all build configurations of the IProject
 				configs = getAllBuildConfigs(proj);
 				//if build configurations found
-				if (configs.length>0) {
+				if (configs.length > 0) {
 					for (IConfiguration cf : configs) {
 						//Add path for the Tool's option
 						if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
@@ -164,7 +164,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	private static void addPathToToolOptionCppProjects(String path, int var) {
 		//check if the given path exists
-		if (path.length()>0 && (pathExists(path) || var==LIB)) {
+		if (path.length() > 0 && (pathExists(path) || var == LIB)) {
 			boolean success = false;
 			//get all projects in the workspace
 			IProject[] projects = getProjectsInWorkspace();
@@ -172,13 +172,13 @@ public class LlvmToolOptionPathUtil {
 			String projectPath = null;
 			for (IProject proj : projects) {
 				projectPath = proj.getLocation().toOSString();
-				if (projectPath!=null) {
+				if (projectPath != null) {
 					//only apply to C++ projects
 					if (FileUtil.containsCppFile(new File(projectPath))) {
 						//get all build configurations of the IProject
 						configs = getAllBuildConfigs(proj);
 						//if build configurations found
-						if (configs.length>0) {
+						if (configs.length > 0) {
 							for (IConfiguration cf : configs) {
 								//Add path for the Tool's option
 								if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
@@ -191,21 +191,23 @@ public class LlvmToolOptionPathUtil {
 							if (success) {
 								//save project build info
 								ManagedBuildManager.saveBuildInfo(proj, true);
-								ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
+								ICProjectDescription projectDescription = CoreModel.getDefault()
+										.getProjectDescription(proj);
 								try {
 									CoreModel.getDefault().setProjectDescription(proj, projectDescription);
 								} catch (CoreException e) {
 									e.printStackTrace();
 								}
 								//use refresh scope manager to refresh
-						  		RefreshScopeManager manager = RefreshScopeManager.getInstance();
-						  		IWorkspaceRunnable runnable = manager.getRefreshRunnable(proj);
-						  		try {
-									ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+								RefreshScopeManager manager = RefreshScopeManager.getInstance();
+								IWorkspaceRunnable runnable = manager.getRefreshRunnable(proj);
+								try {
+									ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE,
+											new NullProgressMonitor());
 								} catch (CoreException e) {
 									e.printStackTrace();
 								}
-						  		//rebuilt the project index
+								//rebuilt the project index
 								ProjectIndex.rebuiltIndex(proj);
 							}
 						}
@@ -223,7 +225,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	private static void removePathFromToolOption(String path, int var) {
 		//check if the given path exists
-		if (path.length()>0 && pathExists(path) || var==LIB) {
+		if (path.length() > 0 && pathExists(path) || var == LIB) {
 			boolean success = false;
 			//get all projects in the workspace
 			IProject[] projects = getProjectsInWorkspace();
@@ -232,7 +234,7 @@ public class LlvmToolOptionPathUtil {
 				//get all build configurations of the IProject
 				configs = getAllBuildConfigs(proj);
 				//if build configurations found
-				if (configs.length>0) {
+				if (configs.length > 0) {
 					for (IConfiguration cf : configs) {
 						//remove a path from the Tool's option
 						if (removePathFromSelectedToolOptionBuildConf(cf, path, var)) {
@@ -324,7 +326,7 @@ public class LlvmToolOptionPathUtil {
 		}
 		//info can be null for projects without build info. For example, when creating a project
 		//from Import > C/C++ Executable
-		if(info == null) {
+		if (info == null) {
 			return configurations;
 		}
 		//get ManagedProject associated with build info
@@ -471,7 +473,8 @@ public class LlvmToolOptionPathUtil {
 	 * @param option Tool Option type
 	 * @param newIncludePath Include path to be added to Tool's Include path option
 	 */
-	private static boolean addIncludePathToToolOption(IConfiguration cf, ITool cfTool, IOption option, String newIncludePath) {
+	private static boolean addIncludePathToToolOption(IConfiguration cf, ITool cfTool, IOption option,
+			String newIncludePath) {
 		try {
 			//add path only if it does not exists
 			String[] incPaths = option.getIncludePaths();
@@ -497,7 +500,8 @@ public class LlvmToolOptionPathUtil {
 	 * @param option Tool Option type
 	 * @param removeIncludePath Include path to be removed from Tool's Include path option
 	 */
-	private static void removeIncludePathFromToolOption(IConfiguration cf, ITool cfTool, IOption option, String removeIncludePath) {
+	private static void removeIncludePathFromToolOption(IConfiguration cf, ITool cfTool, IOption option,
+			String removeIncludePath) {
 		try {
 			//remove an include path from linker's Include paths option.
 			removeInputFromToolOption(cf, cfTool, option, removeIncludePath, option.getIncludePaths());
@@ -517,7 +521,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	private static boolean addLibraryToToolOption(IConfiguration cf, ITool cfTool, IOption option, String newLibrary) {
 		try {
-			if(option != null) {
+			if (option != null) {
 				//add library only if it does not exists
 				String[] libraries = option.getLibraries();
 				for (String lib : libraries) {
@@ -543,7 +547,8 @@ public class LlvmToolOptionPathUtil {
 	 * @param option Tool Option type
 	 * @param removeLibrary Library
 	 */
-	private static void removeLibraryFromToolOption(IConfiguration cf, ITool cfTool, IOption option, String removeLibrary) {
+	private static void removeLibraryFromToolOption(IConfiguration cf, ITool cfTool, IOption option,
+			String removeLibrary) {
 		try {
 			//remove a library from linker's Libraries option.
 			removeInputFromToolOption(cf, cfTool, option, removeLibrary, option.getLibraries());
@@ -562,9 +567,10 @@ public class LlvmToolOptionPathUtil {
 	 * @param option Tool Option type
 	 * @param newLibraryPath Library search path
 	 */
-	private static boolean addLibrarySearchPathToToolOption(IConfiguration cf, ITool cfTool, IOption option, String newLibraryPath) {
+	private static boolean addLibrarySearchPathToToolOption(IConfiguration cf, ITool cfTool, IOption option,
+			String newLibraryPath) {
 		try {
-			if(option != null) {
+			if (option != null) {
 				//add path only if it does not exists
 				String[] libPaths = option.getLibraryPaths();
 				for (String libPath : libPaths) {
@@ -591,7 +597,8 @@ public class LlvmToolOptionPathUtil {
 	 * @param option Tool Option type
 	 * @param removeSearchPath Library search path
 	 */
-	private static void removeLibrarySearchPathFromToolOption(IConfiguration cf, ITool cfTool, IOption option, String removeSearchPath) {
+	private static void removeLibrarySearchPathFromToolOption(IConfiguration cf, ITool cfTool, IOption option,
+			String removeSearchPath) {
 		try {
 			//remove a library path from linker's Library search path option.
 			removeInputFromToolOption(cf, cfTool, option, removeSearchPath, option.getLibraryPaths());
@@ -610,15 +617,15 @@ public class LlvmToolOptionPathUtil {
 	 * @param newValue New value to be added to the Option type
 	 * @param existingValues Existing Option type values
 	 */
-	private static void addInputToToolOption(IConfiguration cf, ITool cfTool, IOption option, String newValue, String[] existingValues) {
+	private static void addInputToToolOption(IConfiguration cf, ITool cfTool, IOption option, String newValue,
+			String[] existingValues) {
 		//if Option type is found
 		if (option != null) {
 			//append new value with existing values
 			String[] newValues = addNewPathToExistingPathList(existingValues, newValue);
 			//set new values array for the option for the given build configuration
 			ManagedBuildManager.setOption(cf, cfTool, option, newValues);
-		}
-		else{
+		} else {
 			//log error
 		}
 	}
@@ -632,18 +639,18 @@ public class LlvmToolOptionPathUtil {
 	 * @param removeValue Value to be removed from the Option type
 	 * @param existingValues Existing Option type values
 	 */
-	private static void removeInputFromToolOption(IConfiguration cf, ITool cfTool, IOption option, String removeValue, String[] existingValues) {
+	private static void removeInputFromToolOption(IConfiguration cf, ITool cfTool, IOption option, String removeValue,
+			String[] existingValues) {
 		//if Option type is found
 		if (option != null) {
 			//check that list has values
-			if(existingValues.length>0) {
+			if (existingValues.length > 0) {
 				//remove value from existing values
 				String[] newValues = removePathFromExistingPathList(existingValues, removeValue);
 				//set new values array for the option for the given build configuration
 				ManagedBuildManager.setOption(cf, cfTool, option, newValues);
 			}
-		}
-		else{
+		} else {
 			//log error
 		}
 	}
@@ -655,7 +662,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	private static ITool getLlvmFrontEnd(IConfiguration cf) {
 		//get LLVM front-end according to the input type
-		for(int i=0; i<inputTypes.length; i++) {
+		for (int i = 0; i < inputTypes.length; i++) {
 			ITool tool = getIToolByInputType(cf, inputTypes[i]);
 			if (tool != null) {
 				return tool;
@@ -743,7 +750,7 @@ public class LlvmToolOptionPathUtil {
 		for (IOption opt : options) {
 			try {
 				//try to match option value type
-				if(opt.getValueType()==optionValueType) {
+				if (opt.getValueType() == optionValueType) {
 					//get option id
 					optionId = opt.getId();
 					break;
@@ -776,7 +783,7 @@ public class LlvmToolOptionPathUtil {
 	 * @return String[] List that includes existing paths as well as new paths.
 	 */
 	public static String[] addNewPathToExistingPathList(String[] existingPaths, String newPath) {
-		String pathSep = java.io.File.pathSeparator;  // semicolon for windows, colon for Linux/Mac
+		String pathSep = java.io.File.pathSeparator; // semicolon for windows, colon for Linux/Mac
 		List<String> newPathList = new ArrayList<>();
 		String path;
 		//adds existing paths to new paths list
@@ -836,7 +843,7 @@ public class LlvmToolOptionPathUtil {
 	public static String arrayToString(String[] array) {
 		StringBuilder sB = new StringBuilder();
 		//if array isn't empty and doesn't contain an empty String
-		if (array.length>0 /*&& !array[0].isEmpty()*/) {
+		if (array.length > 0 /*&& !array[0].isEmpty()*/) {
 			for (String i : array) {
 				sB.append(i);
 				sB.append(System.getProperty("path.separator")); //$NON-NLS-1$
@@ -900,7 +907,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	public static void addAllIncludesToBuildConf() {
 		String[] includes = getAllIncludePaths();
-		for(String inc : includes) {
+		for (String inc : includes) {
 			addLlvmIncludePath(inc);
 		}
 	}
@@ -911,10 +918,10 @@ public class LlvmToolOptionPathUtil {
 	 */
 	public static void addAllLibsToBuildConf() {
 		String[] libs = getAllLibraries();
-		for(String lib : libs) {
-//			if (!lib.equalsIgnoreCase("stdc++")) { //$NON-NLS-1$ //C++ specific
-				addLlvmLib(lib);
-//			}
+		for (String lib : libs) {
+			//			if (!lib.equalsIgnoreCase("stdc++")) { //$NON-NLS-1$ //C++ specific
+			addLlvmLib(lib);
+			//			}
 		}
 	}
 
@@ -924,59 +931,57 @@ public class LlvmToolOptionPathUtil {
 	 */
 	public static void addAllLibPathsToBuildConf() {
 		String[] libPaths = getAllLibraryPaths();
-		for(String libPath : libPaths) {
-//			if (!libPath.equalsIgnoreCase(LlvmEnvironmentVariableSupplier.getMinGWStdLib())) { //C++ specific
-				addLlvmLibraryPath(libPath);
-//			}
+		for (String libPath : libPaths) {
+			//			if (!libPath.equalsIgnoreCase(LlvmEnvironmentVariableSupplier.getMinGWStdLib())) { //C++ specific
+			addLlvmLibraryPath(libPath);
+			//			}
 		}
 	}
 
 	//temporary hack until scanner discovery works
 	public static void addMissingCppIncludesForMingw() {
 		//try to find mingw path from MingwEnvironmentVariableSupplier
-		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables =
-			new MingwEnvironmentVariableSupplier();
-		IBuildEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable(
-				"PATH", null, null); //$NON-NLS-1$
+		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = new MingwEnvironmentVariableSupplier();
+		IBuildEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable("PATH", null, null); //$NON-NLS-1$
 		//may contain multiple paths therefore must be separated
 		String[] mingwPaths = mingwPath.getValue().split(Separators.getPathSeparator());
 		//bin folder is appended so it must be removed
-		for(int i=0; i<mingwPaths.length; i++) {
-			if(mingwPaths[i].contains("bin")) { //$NON-NLS-1$
+		for (int i = 0; i < mingwPaths.length; i++) {
+			if (mingwPaths[i].contains("bin")) { //$NON-NLS-1$
 				mingwPaths[i] = mingwPaths[i].replace("bin", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		//find the correct path
 		File f1 = null;
 		String rightPath = null;
-		findPath: for(int i=0; i<mingwPaths.length; i++) {
-			f1 = new File(mingwPaths[i]+"lib/gcc/mingw32"); //$NON-NLS-1$
+		findPath: for (int i = 0; i < mingwPaths.length; i++) {
+			f1 = new File(mingwPaths[i] + "lib/gcc/mingw32"); //$NON-NLS-1$
 			if (f1.exists()) {
 				rightPath = f1.getAbsolutePath();
 				break findPath;
 			}
 		}
-		if (rightPath!=null && f1!=null) {
+		if (rightPath != null && f1 != null) {
 			//get the first directory (mingw version)
 			f1 = f1.listFiles()[0];
 			//add three includes if they exist
-			File testFile = new File(f1.getAbsolutePath()+"/include/c++"); //$NON-NLS-1$
+			File testFile = new File(f1.getAbsolutePath() + "/include/c++"); //$NON-NLS-1$
 			if (testFile.exists()) {
 				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
 				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
 			}
-			testFile = new File(f1.getAbsolutePath()+"/include/c++/mingw32"); //$NON-NLS-1$
+			testFile = new File(f1.getAbsolutePath() + "/include/c++/mingw32"); //$NON-NLS-1$
 			if (testFile.exists()) {
 				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
 				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
 			}
-			testFile = new File(f1.getAbsolutePath()+"/include/c++/backward"); //$NON-NLS-1$
+			testFile = new File(f1.getAbsolutePath() + "/include/c++/backward"); //$NON-NLS-1$
 			if (testFile.exists()) {
 				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
 				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
 			}
-    		//inform LLVM environment variable supplier that there has been a change
-    		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
+			//inform LLVM environment variable supplier that there has been a change
+			LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
 		}
 	}
 

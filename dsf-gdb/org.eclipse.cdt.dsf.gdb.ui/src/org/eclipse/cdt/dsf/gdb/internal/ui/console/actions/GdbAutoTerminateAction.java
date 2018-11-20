@@ -35,8 +35,7 @@ public class GdbAutoTerminateAction extends Action {
 
 	private boolean readState() {
 		return Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-				true, null);
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true, null);
 	}
 
 	@Override

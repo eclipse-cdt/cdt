@@ -28,25 +28,24 @@ import org.eclipse.core.runtime.Platform;
  */
 public class GdbDebugTextHover extends AbstractDsfDebugTextHover {
 
-    @Override
-    protected String getModelId() {
-        return GdbLaunchDelegate.GDB_DEBUG_MODEL_ID;
-    }
+	@Override
+	protected String getModelId() {
+		return GdbLaunchDelegate.GDB_DEBUG_MODEL_ID;
+	}
 
-    @Override
+	@Override
 	protected String getHoverFormat() {
-    	return  MIExpressions.DETAILS_FORMAT;
-    }
+		return MIExpressions.DETAILS_FORMAT;
+	}
 
-    @Override
-    protected boolean useExpressionExplorer() {
-    	// The preference is part of the GdbPlugin preference store
-    	// Bug 414622
-    	if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER,
-				true, null)) {
-    		return true;
-    	}
-    	return false;
-    }
+	@Override
+	protected boolean useExpressionExplorer() {
+		// The preference is part of the GdbPlugin preference store
+		// Bug 414622
+		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true, null)) {
+			return true;
+		}
+		return false;
+	}
 }

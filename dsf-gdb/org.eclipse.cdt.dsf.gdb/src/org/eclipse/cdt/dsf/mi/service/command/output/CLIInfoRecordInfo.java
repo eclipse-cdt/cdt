@@ -32,7 +32,7 @@ import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebug
 public class CLIInfoRecordInfo extends MIInfo {
 
 	private ReverseDebugMethod fReverseMethod;
-	
+
 	public CLIInfoRecordInfo(MIOutput record) {
 		super(record);
 		parse();
@@ -44,10 +44,10 @@ public class CLIInfoRecordInfo extends MIInfo {
 			MIOOBRecord[] records = out.getMIOOBRecords();
 			StringBuilder builder = new StringBuilder();
 			for (MIOOBRecord rec : records) {
-                if (rec instanceof MIConsoleStreamOutput) {
-                    MIStreamRecord o = (MIStreamRecord)rec;
-                    builder.append(o.getString());
-                }
+				if (rec instanceof MIConsoleStreamOutput) {
+					MIStreamRecord o = (MIStreamRecord) rec;
+					builder.append(o.getString());
+				}
 			}
 			parseReverseMethod(builder.toString());
 		}
@@ -57,12 +57,12 @@ public class CLIInfoRecordInfo extends MIInfo {
 		if (output.contains("Processor")) { //$NON-NLS-1$
 			fReverseMethod = ReverseDebugMethod.PROCESSOR_TRACE;
 		} else if (output.contains("Branch")) { //$NON-NLS-1$
-    		fReverseMethod = ReverseDebugMethod.BRANCH_TRACE;
-    	} else if (output.contains("full")) { //$NON-NLS-1$
-    		fReverseMethod = ReverseDebugMethod.SOFTWARE;
-    	} else {
-    		fReverseMethod = ReverseDebugMethod.OFF;
-    	}
+			fReverseMethod = ReverseDebugMethod.BRANCH_TRACE;
+		} else if (output.contains("full")) { //$NON-NLS-1$
+			fReverseMethod = ReverseDebugMethod.SOFTWARE;
+		} else {
+			fReverseMethod = ReverseDebugMethod.OFF;
+		}
 	}
 
 	public ReverseDebugMethod getReverseMethod() {

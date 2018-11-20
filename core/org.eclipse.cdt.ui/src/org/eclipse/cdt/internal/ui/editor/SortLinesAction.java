@@ -60,7 +60,7 @@ public final class SortLinesAction extends TextEditorAction {
 	 */
 	@Override
 	public void run() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor == null)
 			return;
 
@@ -68,17 +68,16 @@ public final class SortLinesAction extends TextEditorAction {
 		if (!(selection instanceof ITextSelection))
 			return;
 
-		ITextSelection textSelection= (ITextSelection) selection;
+		ITextSelection textSelection = (ITextSelection) selection;
 		if (textSelection.getStartLine() < 0 || textSelection.getEndLine() < 0)
 			return;
 
 		IEditorInput editorInput = editor.getEditorInput();
 		ICProject cProject = EditorUtility.getCProject(editorInput);
-		IDocument document= editor.getDocumentProvider().getDocument(editorInput);
+		IDocument document = editor.getDocumentProvider().getDocument(editorInput);
 		try {
-			IRegion block= getTextBlockFromSelection(textSelection, document);
-			SortElement[] elements = createSortElements(block, document,
-					CodeFormatterUtil.getTabWidth(cProject));
+			IRegion block = getTextBlockFromSelection(textSelection, document);
+			SortElement[] elements = createSortElements(block, document, CodeFormatterUtil.getTabWidth(cProject));
 			if (elements.length <= 1)
 				return;
 
@@ -97,7 +96,7 @@ public final class SortLinesAction extends TextEditorAction {
 				return;
 
 			ReplaceEdit edit = new ReplaceEdit(block.getOffset(), block.getLength(), replacement);
-			IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+			IDocumentUndoManager manager = DocumentUndoManagerRegistry.getDocumentUndoManager(document);
 			manager.beginCompoundChange();
 			edit.apply(document);
 			editor.getSelectionProvider().setSelection(new TextSelection(block.getOffset(), buf.length()));
@@ -117,29 +116,29 @@ public final class SortLinesAction extends TextEditorAction {
 	 */
 	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) {
 		try {
-			IRegion firstLine= document.getLineInformationOfOffset(selection.getOffset());
+			IRegion firstLine = document.getLineInformationOfOffset(selection.getOffset());
 			int selectionEnd = selection.getOffset() + selection.getLength();
-			IRegion lastLine= document.getLineInformationOfOffset(selectionEnd);
+			IRegion lastLine = document.getLineInformationOfOffset(selectionEnd);
 			int length = lastLine.getOffset() - firstLine.getOffset();
 			if (selectionEnd > lastLine.getOffset()) {
-				 // Last line is included with the line delimiter.
+				// Last line is included with the line delimiter.
 				length += document.getLineLength(document.getLineOfOffset(selectionEnd));
 			}
 			return new Region(firstLine.getOffset(), length);
 		} catch (BadLocationException e) {
-			CUIPlugin.log(e);  // Should not happen
+			CUIPlugin.log(e); // Should not happen
 		}
 		return null;
 	}
 
 	private SortElement[] createSortElements(IRegion block, IDocument document, int tabWidth)
 			throws BadLocationException {
-		ITypedRegion[] regions= TextUtilities.computePartitioning(document, ICPartitions.C_PARTITIONING,
+		ITypedRegion[] regions = TextUtilities.computePartitioning(document, ICPartitions.C_PARTITIONING,
 				block.getOffset(), block.getLength(), false);
 
 		int numLines = document.getNumberOfLines(block.getOffset(), block.getLength());
 		if (endOf(block) <= document.getLineInformationOfOffset(endOf(block)).getOffset()) {
-			numLines--;  // Last line is excluded
+			numLines--; // Last line is excluded
 		}
 		LineInfo[] lineDescriptors = new LineInfo[numLines];
 		int numNonCommentLines = 0;
@@ -154,10 +153,10 @@ public final class SortLinesAction extends TextEditorAction {
 				i++;
 			for (; i < regions.length && regions[i].getOffset() < lineInfo.getTrimmedEndOffset(); i++) {
 				ITypedRegion region = regions[i];
-				if (region.getType() != ICPartitions.C_MULTI_LINE_COMMENT &&
-						region.getType() != ICPartitions.C_MULTI_LINE_DOC_COMMENT &&
-						region.getType() != ICPartitions.C_SINGLE_LINE_COMMENT &&
-						region.getType() != ICPartitions.C_SINGLE_LINE_DOC_COMMENT) {
+				if (region.getType() != ICPartitions.C_MULTI_LINE_COMMENT
+						&& region.getType() != ICPartitions.C_MULTI_LINE_DOC_COMMENT
+						&& region.getType() != ICPartitions.C_SINGLE_LINE_COMMENT
+						&& region.getType() != ICPartitions.C_SINGLE_LINE_DOC_COMMENT) {
 					lineInfo.nonComment = true;
 					break;
 				}
@@ -174,10 +173,10 @@ public final class SortLinesAction extends TextEditorAction {
 			for (int j = 0; j < lineDescriptors.length; j++) {
 				LineInfo lineInfo = lineDescriptors[j];
 				if (lineInfo.nonComment) {
-					int endOffset = k < numNonCommentLines - 1 ?
-							lineInfo.getEndOffset() : block.getOffset() + block.getLength();
-					elements[k++] = new SortElement(new Region(offset, endOffset - offset), lineInfo,
-							document, tabWidth);
+					int endOffset = k < numNonCommentLines - 1 ? lineInfo.getEndOffset()
+							: block.getOffset() + block.getLength();
+					elements[k++] = new SortElement(new Region(offset, endOffset - offset), lineInfo, document,
+							tabWidth);
 					offset = lineInfo.getEndOffset();
 				}
 			}
@@ -220,14 +219,15 @@ public final class SortLinesAction extends TextEditorAction {
 		if (editor != null) {
 			ISelection selection = editor.getSelectionProvider().getSelection();
 			if (selection instanceof ITextSelection) {
-				ITextSelection textSelection= (ITextSelection) selection;
+				ITextSelection textSelection = (ITextSelection) selection;
 				int startLine = textSelection.getStartLine();
 				int endLine = textSelection.getEndLine();
 				if (startLine >= 0 && endLine > startLine) {
 					if (endLine == startLine + 1) {
-						IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
+						IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 						try {
-							if (textSelection.getOffset() + textSelection.getLength() > document.getLineOffset(endLine)) {
+							if (textSelection.getOffset() + textSelection.getLength() > document
+									.getLineOffset(endLine)) {
 								enabled = true;
 							}
 						} catch (BadLocationException e) {

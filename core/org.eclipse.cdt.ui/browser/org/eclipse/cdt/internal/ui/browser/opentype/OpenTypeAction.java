@@ -57,37 +57,38 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
 			return;
-		
+
 		ITypeInfo info = (ITypeInfo) dialog.getFirstResult();
 		if (info == null)
 			return;
-		
+
 		ITypeReference location = info.getResolvedReference();
 		if (location == null) {
 			// Could not resolve location.
-			String title = OpenTypeMessages.OpenTypeAction_errorTitle; 
-			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorTypeNotFound, info.getQualifiedTypeName().toString()); 
+			String title = OpenTypeMessages.OpenTypeAction_errorTitle;
+			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorTypeNotFound,
+					info.getQualifiedTypeName().toString());
 			MessageDialog.openError(getShell(), title, message);
 		} else if (!openTypeInEditor(location)) {
 			// Error opening editor.
-			String title = OpenTypeMessages.OpenTypeAction_errorTitle; 
-			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorOpenEditor, location.getPath().toString()); 
+			String title = OpenTypeMessages.OpenTypeAction_errorTitle;
+			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorOpenEditor, location.getPath().toString());
 			MessageDialog.openError(getShell(), title, message);
 		}
 	}
-	
+
 	private void configureDialog(ElementSelectionDialog dialog) {
-		dialog.setTitle(OpenTypeMessages.OpenTypeDialog_title); 
-		dialog.setMessage(OpenTypeMessages.OpenTypeDialog_message); 
+		dialog.setTitle(OpenTypeMessages.OpenTypeDialog_title);
+		dialog.setMessage(OpenTypeMessages.OpenTypeDialog_message);
 		dialog.setDialogSettings(getClass().getName());
 		if (fWorkbenchWindow != null) {
-			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
+			IWorkbenchPage page = fWorkbenchWindow.getActivePage();
 			if (page != null) {
-				IWorkbenchPart part= page.getActivePart();
+				IWorkbenchPart part = page.getActivePart();
 				if (part instanceof ITextEditor) {
-					ISelection sel= ((ITextEditor) part).getSelectionProvider().getSelection();
+					ISelection sel = ((ITextEditor) part).getSelectionProvider().getSelection();
 					if (sel instanceof ITextSelection) {
-						String txt= ((ITextSelection) sel).getText();
+						String txt = ((ITextSelection) sel).getText();
 						if (!txt.isEmpty() && txt.length() < 80) {
 							dialog.setFilter(txt, true);
 						}
@@ -100,7 +101,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	protected Shell getShell() {
 		return fWorkbenchWindow.getShell();
 	}
-	
+
 	/**
 	 * Opens an editor and displays the selected type.
 	 * 
@@ -108,16 +109,16 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @return true if successfully displayed.
 	 */
 	private boolean openTypeInEditor(ITypeReference location) {
-		ICElement[] cElements= location.getCElements();
+		ICElement[] cElements = location.getCElements();
 		try {
 			if (cElements != null && cElements.length > 0) {
-				IEditorPart editor= EditorUtility.openInEditor(cElements[0]);
+				IEditorPart editor = EditorUtility.openInEditor(cElements[0]);
 				EditorUtility.revealInEditor(editor, cElements[0]);
 				return true;
 			}
 			ITranslationUnit unit = location.getTranslationUnit();
 			IEditorPart editorPart = null;
-		
+
 			if (unit != null)
 				editorPart = EditorUtility.openInEditor(unit);
 			if (editorPart == null) {
@@ -128,22 +129,18 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			// Highlight the type in the editor.
 			if (editorPart != null && editorPart instanceof ITextEditor) {
 				ITextEditor editor = (ITextEditor) editorPart;
-                if( location.isLineNumber() )
-                {
-                    IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
-                    try
-                    {
-                        int startOffset = document.getLineOffset(location.getOffset()-1);
-                        int length=document.getLineLength(location.getOffset()-1);
-                        editor.selectAndReveal(startOffset, length);
-                        return true;
-                    }
-                    catch( BadLocationException ble )
-                    {
-                        return false;
-                    }
-                }
-                editor.selectAndReveal(location.getOffset(), location.getLength());
+				if (location.isLineNumber()) {
+					IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+					try {
+						int startOffset = document.getLineOffset(location.getOffset() - 1);
+						int length = document.getLineLength(location.getOffset() - 1);
+						editor.selectAndReveal(startOffset, length);
+						return true;
+					} catch (BadLocationException ble) {
+						return false;
+					}
+				}
+				editor.selectAndReveal(location.getOffset(), location.getLength());
 				return true;
 			}
 		} catch (CModelException ex) {
@@ -153,20 +150,20 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			ex.printStackTrace();
 			return false;
 		}
-		
+
 		return false;
 	}
 
 	@Override
 	public void dispose() {
-		fWorkbenchWindow= null;
+		fWorkbenchWindow = null;
 	}
-	
+
 	@Override
 	public void init(IWorkbenchWindow window) {
-		fWorkbenchWindow= window;
+		fWorkbenchWindow = window;
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

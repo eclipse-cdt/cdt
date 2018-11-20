@@ -18,11 +18,11 @@ import java.util.ArrayList;
 public class ConfigureOptionCategory implements IConfigureOption {
 
 	private String name;
-	
+
 	public ConfigureOptionCategory(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new ConfigureOptionCategory(name);
@@ -47,7 +47,7 @@ public class ConfigureOptionCategory implements IConfigureOption {
 	public ArrayList<String> getParameters() {
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public String getToolTip() {
 		return "";
@@ -77,12 +77,12 @@ public class ConfigureOptionCategory implements IConfigureOption {
 	public boolean isMultiArg() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFlag() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFlagValue() {
 		return false;

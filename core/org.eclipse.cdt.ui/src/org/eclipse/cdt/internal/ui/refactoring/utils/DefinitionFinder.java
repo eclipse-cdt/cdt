@@ -61,8 +61,8 @@ public class DefinitionFinder {
 	 *     not unique.
 	 * @throws CoreException thrown in case of errors
 	 */
-	public static IASTName getDefinition(IASTName name,	CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException, OperationCanceledException {
+	public static IASTName getDefinition(IASTName name, CRefactoringContext context, IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		IBinding binding = name.resolveBinding();
 		if (binding == null) {
 			return null;
@@ -84,8 +84,8 @@ public class DefinitionFinder {
 	 *     not unique.
 	 * @throws CoreException thrown in case of errors
 	 */
-	public static IASTName getDefinition(IBinding binding, IASTTranslationUnit contextTu,
-			CRefactoringContext context, IProgressMonitor pm) throws CoreException {
+	public static IASTName getDefinition(IBinding binding, IASTTranslationUnit contextTu, CRefactoringContext context,
+			IProgressMonitor pm) throws CoreException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		IIndex index = context.getIndex();
 		if (index == null) {
@@ -96,8 +96,8 @@ public class DefinitionFinder {
 			return null;
 		Set<String> searchedFiles = new HashSet<String>();
 		List<IASTName> definitions = new ArrayList<IASTName>();
-		IIndexName[] definitionsFromIndex =
-				index.findNames(indexBinding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		IIndexName[] definitionsFromIndex = index.findNames(indexBinding,
+				IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;
 		SubMonitor loopProgress = sm.newChild(6).setWorkRemaining(remainingCount);
 		for (IIndexName name : definitionsFromIndex) {
@@ -105,10 +105,8 @@ public class DefinitionFinder {
 				throw new OperationCanceledException();
 			}
 			IIndexFile indexFile = name.getFile();
-			if (contextTu.getASTFileSet().contains(indexFile) ||
-					contextTu.getIndexFileSet().contains(indexFile)) {
-				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
-						indexFile.getLocation(), null);
+			if (contextTu.getASTFileSet().contains(indexFile) || contextTu.getIndexFileSet().contains(indexFile)) {
+				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(indexFile.getLocation(), null);
 				if (searchedFiles.add(tu.getLocation().toOSString())) {
 					findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, pm);
 					if (definitions.size() > 1)
@@ -129,7 +127,8 @@ public class DefinitionFinder {
 				if (editorInput instanceof ITranslationUnitEditorInput) {
 					ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
 					if (searchedFiles.add(tu.getLocation().toOSString())) {
-						findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, loopProgress.newChild(1));
+						findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions,
+								loopProgress.newChild(1));
 						if (definitions.size() > 1)
 							return null;
 					}
@@ -150,8 +149,8 @@ public class DefinitionFinder {
 	 * @return <code>true</code> if the binding has a definition.
 	 * @throws CoreException thrown in case of errors
 	 */
-	public static boolean hasDefinition(IBinding binding, CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException, OperationCanceledException {
+	public static boolean hasDefinition(IBinding binding, CRefactoringContext context, IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		IIndex index = context.getIndex();
 		if (index == null) {
@@ -171,20 +170,18 @@ public class DefinitionFinder {
 		}
 
 		Set<String> searchedFiles = new HashSet<String>();
-		IIndexName[] definitionsFromIndex =
-				index.findNames(indexBinding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		IIndexName[] definitionsFromIndex = index.findNames(indexBinding,
+				IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;
 		SubMonitor loopProgress = sm.newChild(6).setWorkRemaining(remainingCount);
 		for (IIndexName name : definitionsFromIndex) {
 			if (sm.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
-					name.getFile().getLocation(), null);
+			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(name.getFile().getLocation(), null);
 			String filename = tu.getLocation().toOSString();
-			if (searchedFiles.add(filename) &&
-					(!dirtyFiles.contains(filename) ||
-					hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1)))) {
+			if (searchedFiles.add(filename) && (!dirtyFiles.contains(filename)
+					|| hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1)))) {
 				return true;
 			}
 			loopProgress.setWorkRemaining(--remainingCount);
@@ -200,8 +197,8 @@ public class DefinitionFinder {
 			if (editorInput instanceof ITranslationUnitEditorInput) {
 				ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
 				String filename = tu.getLocation().toOSString();
-				if (searchedFiles.add(filename) &&
-						hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1))) {
+				if (searchedFiles.add(filename)
+						&& hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1))) {
 					return true;
 				}
 			}
@@ -218,8 +215,7 @@ public class DefinitionFinder {
 	}
 
 	private static boolean hasDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
-			CRefactoringContext context, IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
+			CRefactoringContext context, IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		IASTTranslationUnit ast = context.getAST(tu, pm);
 		return ast.getDefinitionsInAST(binding).length != 0;
 	}
@@ -236,8 +232,8 @@ public class DefinitionFinder {
 	 *     not unique.
 	 * @throws CoreException thrown in case of errors
 	 */
-	public static IASTName getMemberDeclaration(IASTName memberName, CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException, OperationCanceledException {
+	public static IASTName getMemberDeclaration(IASTName memberName, CRefactoringContext context, IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		IBinding binding = memberName.resolveBinding();
 		if (!(binding instanceof ICPPMember))
 			return null;
@@ -264,8 +260,8 @@ public class DefinitionFinder {
 		IASTName classDefintionName = getDefinition(member.getClassOwner(), contextTu, context, pm);
 		if (classDefintionName == null)
 			return null;
-		IASTCompositeTypeSpecifier compositeTypeSpecifier =
-				ASTQueries.findAncestorWithType(classDefintionName, IASTCompositeTypeSpecifier.class);
+		IASTCompositeTypeSpecifier compositeTypeSpecifier = ASTQueries.findAncestorWithType(classDefintionName,
+				IASTCompositeTypeSpecifier.class);
 		IASTTranslationUnit ast = classDefintionName.getTranslationUnit();
 		IIndex index = context.getIndex();
 		if (index == null) {

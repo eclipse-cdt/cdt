@@ -56,15 +56,15 @@ public class ConvertTargetHandler extends AbstractResourceActionHandler {
 		if (hasTargetConverters(project)) {
 			handleConvertTargetAction(project, shell);
 		} else {
-			MessageDialog.openError(shell, Messages.ConvertTargetHandler_No_Converter,
-					NLS.bind(Messages.ProjectConvert_noConverterErrorDialog_message, new String[] {project.getName()}) );
+			MessageDialog.openError(shell, Messages.ConvertTargetHandler_No_Converter, NLS
+					.bind(Messages.ProjectConvert_noConverterErrorDialog_message, new String[] { project.getName() }));
 		}
 		return null;
 	}
 
 	public static boolean hasTargetConverters(IProject project) {
-		return ManagedBuildManager.hasTargetConversionElements(getProjectType(project)) ||
-				ManagedBuildManager.hasAnyTargetConversionElements(getProjectToolchains(project));
+		return ManagedBuildManager.hasTargetConversionElements(getProjectType(project))
+				|| ManagedBuildManager.hasAnyTargetConversionElements(getProjectToolchains(project));
 	}
 
 	private static IProjectType getProjectType(IProject project) {

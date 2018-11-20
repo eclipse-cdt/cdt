@@ -27,20 +27,20 @@ package org.eclipse.cdt.debug.core.disassembly;
  * This interface is experimental.
  */
 public interface IDisassemblyContextListener {
-    
-    /**
-     * Indicates that <code>context</code> has been registered
-     * with <code>IDisassemblyContextService</code>.
-     * 
-     * @param context the disassembly context that is registered
-     */
-    public void contextAdded( Object context );
 
-    /**
-     * Indicates that <code>context</code> has been unregistered
-     * with <code>IDisassemblyContextService</code>.
-     * 
-     * @param context the disassembly context that is unregistered
-     */
-    public void contextRemoved( Object context );
+	/**
+	 * Indicates that <code>context</code> has been registered
+	 * with <code>IDisassemblyContextService</code>.
+	 * 
+	 * @param context the disassembly context that is registered
+	 */
+	public void contextAdded(Object context);
+
+	/**
+	 * Indicates that <code>context</code> has been unregistered
+	 * with <code>IDisassemblyContextService</code>.
+	 * 
+	 * @param context the disassembly context that is unregistered
+	 */
+	public void contextRemoved(Object context);
 }

@@ -58,7 +58,7 @@ public abstract class StorableEnvironmentLoader {
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	public interface ISerializeInfo{
+	public interface ISerializeInfo {
 
 		/**
 		 * {@link IEclipsePreferences} root node in the Preference store
@@ -82,8 +82,9 @@ public abstract class StorableEnvironmentLoader {
 	 * @return a StorableEnvironment clone of the configuration's environment
 	 * @since 5.2
 	 */
-	public StorableEnvironment cloneEnvironmentWithContext(Object context, StorableEnvironment base, boolean isReadOnly) {
-		PrefsStorableEnvironment env = new PrefsStorableEnvironment(base, getSerializeInfo(context), isReadOnly);			
+	public StorableEnvironment cloneEnvironmentWithContext(Object context, StorableEnvironment base,
+			boolean isReadOnly) {
+		PrefsStorableEnvironment env = new PrefsStorableEnvironment(base, getSerializeInfo(context), isReadOnly);
 		return env;
 	}
 
@@ -107,36 +108,37 @@ public abstract class StorableEnvironmentLoader {
 	 */
 	protected StorableEnvironment loadEnvironment(Object context, boolean readOnly) {
 		ISerializeInfo serializeInfo = getSerializeInfo(context);
-		if(serializeInfo == null)
+		if (serializeInfo == null)
 			return null;
 
 		return new PrefsStorableEnvironment(serializeInfo, readOnly);
 	}
-	
+
 	/*
 	 * stores the given environment 
 	 */
-	protected void storeEnvironment(StorableEnvironment env, Object context, boolean force, boolean flush) throws CoreException{
-		if(!env.isDirty() && !force)
+	protected void storeEnvironment(StorableEnvironment env, Object context, boolean force, boolean flush)
+			throws CoreException {
+		if (!env.isDirty() && !force)
 			return;
-		
+
 		ISerializeInfo serializeInfo = getSerializeInfo(context);
-		if(serializeInfo == null)
+		if (serializeInfo == null)
 			return;
 
 		if (env instanceof PrefsStorableEnvironment) {
-			((PrefsStorableEnvironment)env).serialize();
+			((PrefsStorableEnvironment) env).serialize();
 		} else {
 			// Backwards compatibility
 			ByteArrayOutputStream stream = storeEnvironmentToStream(env);
-			if(stream == null)
+			if (stream == null)
 				return;
-			storeOutputStream(stream,serializeInfo.getNode(), serializeInfo.getPrefName(), flush);
-			
+			storeOutputStream(stream, serializeInfo.getNode(), serializeInfo.getPrefName(), flush);
+
 			env.setDirty(false);
 		}
 	}
-	
+
 	/**
 	 * @param env String representing the encoded environment
 	 * @return ICStorageElement tree from the passed in InputStream
@@ -145,71 +147,55 @@ public abstract class StorableEnvironmentLoader {
 	static ICStorageElement environmentStorageFromString(String env) {
 		if (env == null)
 			return null;
-		try{
+		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			InputSource inputSource = new InputSource(new ByteArrayInputStream(env.getBytes()));
 			Document document = parser.parse(inputSource);
 			Element el = document.getDocumentElement();
 			XmlStorageElement rootElement = new XmlStorageElement(el);
 
-			if(!StorableEnvironment.ENVIRONMENT_ELEMENT_NAME.equals(rootElement.getName()))
+			if (!StorableEnvironment.ENVIRONMENT_ELEMENT_NAME.equals(rootElement.getName()))
 				return null;
 
 			return rootElement;
-		}
-		catch(ParserConfigurationException e){
+		} catch (ParserConfigurationException e) {
 			CCorePlugin.log(e);
-		} catch(SAXException e) {
-			CCorePlugin.log(e);			
-		} catch(IOException e) {
+		} catch (SAXException e) {
+			CCorePlugin.log(e);
+		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}
 		return null;
 	}
 
-	private ByteArrayOutputStream storeEnvironmentToStream(StorableEnvironment env) throws CoreException{
-		try{
-			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder= factory.newDocumentBuilder();		
-			Document document= builder.newDocument();
-			
+	private ByteArrayOutputStream storeEnvironmentToStream(StorableEnvironment env) throws CoreException {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.newDocument();
+
 			Element el = document.createElement(StorableEnvironment.ENVIRONMENT_ELEMENT_NAME);
 			document.appendChild(el);
 			XmlStorageElement rootElement = new XmlStorageElement(el);
 			env.serialize(rootElement);
-			
-			Transformer transformer=TransformerFactory.newInstance().newTransformer();
+
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(document);
-			
+
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			StreamResult result = new StreamResult(stream);
-	
+
 			transformer.transform(source, result);
 			return stream;
-		}
-		catch(ParserConfigurationException e){
-			throw new CoreException(new Status(IStatus.ERROR, 
-					CCorePlugin.PLUGIN_ID,
-					-1,
-					e.getMessage(),
-					e));
-		}
-		catch(TransformerConfigurationException e){
-			throw new CoreException(new Status(IStatus.ERROR, 
-					CCorePlugin.PLUGIN_ID,
-					-1,
-					e.getMessage(),
-					e));
-		}
-		catch(TransformerException e){
-			throw new CoreException(new Status(IStatus.ERROR, 
-					CCorePlugin.PLUGIN_ID,
-					-1,
-					e.getMessage(),
-					e));
+		} catch (ParserConfigurationException e) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e));
+		} catch (TransformerConfigurationException e) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e));
+		} catch (TransformerException e) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e));
 		}
 	}
 
@@ -229,48 +215,41 @@ public abstract class StorableEnvironmentLoader {
 	 * @param key
 	 * @return String value stored in the node or null if no such value exists.
 	 */
-	static String loadPreferenceNode(Preferences node, String key){
-		if(node == null || key == null)
+	static String loadPreferenceNode(Preferences node, String key) {
+		if (node == null || key == null)
 			return null;
-		
+
 		String value = node.get(key, null);
-		if(value == null || value.length() == 0)
+		if (value == null || value.length() == 0)
 			return null;
-		
+
 		return value;
 	}
-	
-	private void storeOutputStream(ByteArrayOutputStream stream, Preferences node, String key, boolean flush) throws CoreException{
-		if(stream == null || node == null || key == null)
-			throw new CoreException(new Status(IStatus.ERROR, 
-					CCorePlugin.PLUGIN_ID,
-					-1,
+
+	private void storeOutputStream(ByteArrayOutputStream stream, Preferences node, String key, boolean flush)
+			throws CoreException {
+		if (stream == null || node == null || key == null)
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 					//TODO:ManagedMakeMessages.getResourceString(
 					"StorableEnvironmentLoader.storeOutputStream.wrong.arguments" //$NON-NLS-1$
 					//)
-					, 
-					null));
-		byte[] bytes= stream.toByteArray();
-		
+					, null));
+		byte[] bytes = stream.toByteArray();
+
 		String val = null;
 		try {
-			val= new String(bytes, "UTF-8"); //$NON-NLS-1$
+			val = new String(bytes, "UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
-			val= new String(bytes);
+			val = new String(bytes);
 		}
-		
-		node.put(key,val);
-		
-		if(flush){
-			try{
+
+		node.put(key, val);
+
+		if (flush) {
+			try {
 				node.flush();
-			}
-			catch(BackingStoreException e){
-				throw new CoreException(new Status(IStatus.ERROR, 
-						CCorePlugin.PLUGIN_ID,
-						-1,
-						e.getMessage(),
-						e));
+			} catch (BackingStoreException e) {
+				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e));
 			}
 		}
 	}

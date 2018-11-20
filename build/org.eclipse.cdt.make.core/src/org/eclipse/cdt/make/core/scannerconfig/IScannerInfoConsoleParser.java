@@ -29,7 +29,7 @@ public interface IScannerInfoConsoleParser extends IConsoleParser {
 	 * 
 	 * @param collector - scanner info collector
 	 */
-	public void startup(IProject project, IPath workingDirectory,
-            			IScannerInfoCollector collector, IMarkerGenerator markerGenerator);
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,
+			IMarkerGenerator markerGenerator);
 
 }

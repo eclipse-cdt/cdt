@@ -36,7 +36,6 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	protected Composite versionParent;
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -109,7 +108,8 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 		IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
 		String[] versionEntries = { PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME,
-				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_11_NAME };
+				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME,
+				PreferenceConstants.P_XL_COMPILER_VERSION_11_NAME };
 
 		versionParent = getFieldEditorParent();
 
@@ -169,7 +169,6 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		fVersionEditor.loadDefault();
 		//set the text entry to default setting
 		fVersionEditor.getComboControl(versionParent).setText(currentVersionLabel);
-
 
 	}
 

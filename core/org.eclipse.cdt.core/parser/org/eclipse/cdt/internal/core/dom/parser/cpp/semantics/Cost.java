@@ -37,10 +37,11 @@ public class Cost {
 	public enum DeferredUDC {
 		NONE, COPY_INIT_OF_CLASS, INIT_BY_CONVERSION, LIST_INIT_OF_CLASS, DIRECT_LIST_INIT_OF_CLASS
 	}
+
 	public enum Rank {
-		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL,
-		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
+		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
 	}
+
 	enum ReferenceBinding {
 		RVALUE_REF_BINDS_RVALUE, LVALUE_REF, OTHER_REF, NO_REF
 	}
@@ -50,34 +51,42 @@ public class Cost {
 		public void setRank(Rank rank) {
 			assert false;
 		}
+
 		@Override
 		public void setReferenceBinding(ReferenceBinding binding) {
 			assert false;
 		}
+
 		@Override
 		public void setAmbiguousUDC(boolean val) {
 			assert false;
 		}
+
 		@Override
 		public void setDeferredUDC(DeferredUDC val) {
 			assert false;
 		}
+
 		@Override
 		public void setInheritanceDistance(int inheritanceDistance) {
 			assert false;
 		}
+
 		@Override
 		public void setQualificationAdjustment(int adjustment) {
 			assert false;
 		}
+
 		@Override
 		public void setUserDefinedConversion(ICPPMethod conv) {
 			assert false;
 		}
+
 		@Override
 		public void setCouldNarrow() {
 			assert false;
 		}
+
 		@Override
 		public void setSelectedFunction(ICPPFunction function) {
 			assert false;
@@ -90,7 +99,7 @@ public class Cost {
 	private Rank fRank;
 	private Rank fSecondStandardConversionRank;
 	private boolean fAmbiguousUDC;
-	private DeferredUDC fDeferredUDC= DeferredUDC.NONE;
+	private DeferredUDC fDeferredUDC = DeferredUDC.NONE;
 	private int fQualificationAdjustments;
 	private int fInheritanceDistance;
 	private boolean fImpliedObject;
@@ -110,8 +119,8 @@ public class Cost {
 	public Cost(IType s, IType t, Rank rank) {
 		source = s;
 		target = t;
-		fRank= rank;
-		fReferenceBinding= ReferenceBinding.NO_REF;
+		fRank = rank;
+		fReferenceBinding = ReferenceBinding.NO_REF;
 	}
 
 	public final Rank getRank() {
@@ -123,7 +132,7 @@ public class Cost {
 	}
 
 	public void setRank(Rank rank) {
-		fRank= rank;
+		fRank = rank;
 	}
 
 	public ReferenceBinding getReferenceBinding() {
@@ -131,7 +140,7 @@ public class Cost {
 	}
 
 	public void setReferenceBinding(ReferenceBinding binding) {
-		fReferenceBinding= binding;
+		fReferenceBinding = binding;
 	}
 
 	public boolean isAmbiguousUDC() {
@@ -139,7 +148,7 @@ public class Cost {
 	}
 
 	public void setAmbiguousUDC(boolean val) {
-		fAmbiguousUDC= val;
+		fAmbiguousUDC = val;
 	}
 
 	public DeferredUDC isDeferredUDC() {
@@ -147,7 +156,7 @@ public class Cost {
 	}
 
 	public void setDeferredUDC(DeferredUDC udc) {
-		fDeferredUDC= udc;
+		fDeferredUDC = udc;
 	}
 
 	public int getInheritanceDistance() {
@@ -159,7 +168,7 @@ public class Cost {
 	}
 
 	public void setQualificationAdjustment(int adjustment) {
-		fQualificationAdjustments= adjustment;
+		fQualificationAdjustments = adjustment;
 	}
 
 	/**
@@ -167,10 +176,10 @@ public class Cost {
 	 * implicit conversion sequence.
 	 */
 	public void setUserDefinedConversion(ICPPMethod conv) {
-		fUserDefinedConversion= conv;
-		fSecondStandardConversionRank= fRank;
-		fRank= Rank.USER_DEFINED_CONVERSION;
-		fCouldNarrow= false;
+		fUserDefinedConversion = conv;
+		fSecondStandardConversionRank = fRank;
+		fRank = Rank.USER_DEFINED_CONVERSION;
+		fCouldNarrow = false;
 	}
 
 	/**
@@ -188,17 +197,17 @@ public class Cost {
 		// 7.3.3.13 (using declarations in classes):
 		// for overload resolution the implicit this pointer
 		// is treated as if it were a pointer to the derived class
-		final boolean ignoreInheritanceDist= fImpliedObject && other.fImpliedObject;
+		final boolean ignoreInheritanceDist = fImpliedObject && other.fImpliedObject;
 		Rank rank = fRank;
 		Rank otherRank = other.fRank;
 		if (ignoreInheritanceDist) {
 			if (rank == Rank.CONVERSION)
-				rank= Rank.IDENTITY;
+				rank = Rank.IDENTITY;
 			if (otherRank == Rank.CONVERSION)
-				otherRank= Rank.IDENTITY;
+				otherRank = Rank.IDENTITY;
 		}
 
-		int cmp= rank.compareTo(otherRank);
+		int cmp = rank.compareTo(otherRank);
 		if (cmp != 0)
 			return cmp;
 
@@ -218,7 +227,8 @@ public class Cost {
 
 			//   - L1 converts to type "array of N1 T", L2 converts to type "array of
 			//     N2 T", and N1 is smaller than N2
-			if (fListInitializationTarget instanceof IArrayType && other.fListInitializationTarget instanceof IArrayType) {
+			if (fListInitializationTarget instanceof IArrayType
+					&& other.fListInitializationTarget instanceof IArrayType) {
 				IArrayType arrayType = (IArrayType) fListInitializationTarget;
 				IArrayType otherArrayType = (IArrayType) other.fListInitializationTarget;
 				if (arrayType.getType().isSameType(otherArrayType.getType())) {
@@ -240,17 +250,16 @@ public class Cost {
 				return 0;
 
 			if (fUserDefinedConversion != other.fUserDefinedConversion) {
-				if (fUserDefinedConversion == null ||
-						!fUserDefinedConversion.equals(other.fUserDefinedConversion))
+				if (fUserDefinedConversion == null || !fUserDefinedConversion.equals(other.fUserDefinedConversion))
 					return 0;
 			}
-			cmp= fSecondStandardConversionRank.compareTo(other.fSecondStandardConversionRank);
+			cmp = fSecondStandardConversionRank.compareTo(other.fSecondStandardConversionRank);
 			if (cmp != 0)
 				return cmp;
 		}
 
 		if (!ignoreInheritanceDist) {
-			cmp= fInheritanceDistance - other.fInheritanceDistance;
+			cmp = fInheritanceDistance - other.fInheritanceDistance;
 			if (cmp != 0)
 				return cmp;
 		}
@@ -264,7 +273,7 @@ public class Cost {
 		}
 
 		// Top level cv-qualifiers are compared only for reference bindings.
-		int qdiff= fQualificationAdjustments ^ other.fQualificationAdjustments;
+		int qdiff = fQualificationAdjustments ^ other.fQualificationAdjustments;
 		if (fReferenceBinding == ReferenceBinding.NO_REF || other.fReferenceBinding == ReferenceBinding.NO_REF)
 			qdiff &= ~7;
 
@@ -281,24 +290,24 @@ public class Cost {
 	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
-		StringBuilder buf= new StringBuilder();
-		String comma= "";
+		StringBuilder buf = new StringBuilder();
+		String comma = "";
 		buf.append(fRank).append('[');
 		if (fQualificationAdjustments != 0) {
 			buf.append(comma).append("qualification=").append(fQualificationAdjustments);
-			comma= ", ";
+			comma = ", ";
 		}
 		if (fInheritanceDistance != 0) {
 			buf.append(comma).append("inheritance=").append(fInheritanceDistance);
-			comma= ", ";
+			comma = ", ";
 		}
 		if (fDeferredUDC != DeferredUDC.NONE) {
 			buf.append(comma).append(fDeferredUDC);
-			comma= ", ";
+			comma = ", ";
 		}
 		if (fAmbiguousUDC) {
 			buf.append(comma).append("ambiguous UDC");
-			comma= ", ";
+			comma = ", ";
 		}
 		if (fSecondStandardConversionRank != null) {
 			buf.append(comma).append("2ndConvRank=").append(fSecondStandardConversionRank);
@@ -331,9 +340,9 @@ public class Cost {
 					basicSource = (CPPBasicType) fixedType;
 				}
 			}
-			if (basicSource == null) {  // C enumeration or no fixed type
-				return !ArithmeticConversion.fitsIntoType(basicTarget, enumSource.getMinValue()) ||
-						!ArithmeticConversion.fitsIntoType(basicTarget, enumSource.getMaxValue());
+			if (basicSource == null) { // C enumeration or no fixed type
+				return !ArithmeticConversion.fitsIntoType(basicTarget, enumSource.getMinValue())
+						|| !ArithmeticConversion.fitsIntoType(basicTarget, enumSource.getMaxValue());
 			}
 		}
 
@@ -348,17 +357,15 @@ public class Cost {
 		if (BuiltinOperators.isFloatingPoint(basicSource) && BuiltinOperators.isIntegral(basicTarget)) {
 			// From a floating-point type to an integer type
 			return true;
-		} else if (basicSource.getKind() == Kind.eDouble
-				 && (basicTarget.getKind() == Kind.eFloat
-				     || (basicTarget.getKind() == Kind.eDouble && !basicTarget.isLong() && basicSource.isLong()))) {
+		} else if (basicSource.getKind() == Kind.eDouble && (basicTarget.getKind() == Kind.eFloat
+				|| (basicTarget.getKind() == Kind.eDouble && !basicTarget.isLong() && basicSource.isLong()))) {
 			// From long double to double or float, or from double to float
 			constantExprExceptionApplies = true;
 		} else if (BuiltinOperators.isIntegral(basicSource) && BuiltinOperators.isFloatingPoint(basicTarget)) {
 			// From an integer type or unscoped enumeration type to a floating-point type
 			constantExprExceptionApplies = true;
-		} else if (BuiltinOperators.isIntegral(basicSource)
-				 && BuiltinOperators.isIntegral(basicTarget)
-				 && !ArithmeticConversion.fitsIntoType(basicTarget, basicSource)) {
+		} else if (BuiltinOperators.isIntegral(basicSource) && BuiltinOperators.isIntegral(basicTarget)
+				&& !ArithmeticConversion.fitsIntoType(basicTarget, basicSource)) {
 			// From an integer type or unscoped enumeration type to an integer type that
 			// cannot represent all the values of the original type
 			constantExprExceptionApplies = true;
@@ -373,7 +380,7 @@ public class Cost {
 	}
 
 	public void setCouldNarrow() {
-		fCouldNarrow= true;
+		fCouldNarrow = true;
 	}
 
 	public ICPPFunction getUserDefinedConversion() {
@@ -384,7 +391,7 @@ public class Cost {
 	 * Stores a selected function. Used when resolving targeted functions.
 	 */
 	public void setSelectedFunction(ICPPFunction function) {
-		fSelectedFunction= function;
+		fSelectedFunction = function;
 	}
 
 	public ICPPFunction getSelectedFunction() {
@@ -392,7 +399,7 @@ public class Cost {
 	}
 
 	public void setImpliedObject() {
-		fImpliedObject= true;
+		fImpliedObject = true;
 	}
 
 	public void setListInitializationTarget(IType target) {

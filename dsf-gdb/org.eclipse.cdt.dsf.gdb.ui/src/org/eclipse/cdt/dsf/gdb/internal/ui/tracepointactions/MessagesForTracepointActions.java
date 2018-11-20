@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 2.1
  */
 class MessagesForTracepointActions extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.messages"; //$NON-NLS-1$
 
 	public static String TracepointActions_Actions_for_this_tracepoint;
 	public static String TracepointActions_Available_actions;
@@ -46,7 +46,7 @@ class MessagesForTracepointActions extends NLS {
 	public static String TracepointActions_Collect_Strings_Label;
 	public static String TracepointActions_Collect_Strings_Limit_Label;
 	public static String TracepointActions_Collect_Strings_Limit_Error;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, MessagesForTracepointActions.class);

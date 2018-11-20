@@ -42,33 +42,30 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 public class ASTCompletionNode implements IASTCompletionNode {
 
 	private final List<CompletionNameEntry> entries = new ArrayList<>();
-	
+
 	private final String prefix;
 	private IASTTranslationUnit tu;
-	
-	
+
 	/**
 	 * Creates a completion node.
 	 * @param prefix The completion prefix, set to null if the empty string is passed.
 	 */
 	public ASTCompletionNode(String prefix, IASTTranslationUnit tu) {
-		if("".equals(prefix)) //$NON-NLS-1$
+		if ("".equals(prefix)) //$NON-NLS-1$
 			prefix = null;
-		
+
 		this.prefix = prefix;
 		this.tu = tu;
 	}
-	
+
 	public ASTCompletionNode(String prefix) {
 		this(prefix, null);
 	}
 
-	
 	public void addName(IASTName name) {
 		entries.add(new CompletionNameEntry(name, name.getParent()));
 	}
 
-	
 	/**
 	 * Returns the length of the prefix.
 	 */
@@ -77,7 +74,6 @@ public class ASTCompletionNode implements IASTCompletionNode {
 		return prefix == null ? 0 : prefix.length();
 	}
 
-	
 	@Override
 	public IASTName[] getNames() {
 		IASTName[] names = new IASTName[entries.size()];
@@ -87,7 +83,6 @@ public class ASTCompletionNode implements IASTCompletionNode {
 		return names;
 	}
 
-	
 	/**
 	 * If the point of completion was at the end of a potential identifier, this
 	 * string contains the text of that identifier.
@@ -98,7 +93,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	public String getPrefix() {
 		return prefix;
 	}
-	
+
 	public void setTranslationUnit(IASTTranslationUnit tu) {
 		this.tu = tu;
 	}

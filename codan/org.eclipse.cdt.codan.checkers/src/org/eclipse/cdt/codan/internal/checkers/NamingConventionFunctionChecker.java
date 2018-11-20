@@ -65,7 +65,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 									reportProblem(pt, astName, name, parameter);
 								}
 							}
-			
+
 						}
 					}
 					return PROCESS_SKIP;
@@ -89,7 +89,8 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 							return null;
 						ICPPASTNameSpecifier[] qualifier = cppAstName.getQualifier();
 						if (qualifier.length > 0) {
-							if (cppAstName.getLastName().toString().equals(qualifier[qualifier.length - 1].toString())) {
+							if (cppAstName.getLastName().toString()
+									.equals(qualifier[qualifier.length - 1].toString())) {
 								// constructor
 								return null;
 							}
@@ -107,7 +108,8 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_KEY, CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern, "^[a-z]"); //$NON-NLS-1$
-		addPreference(problem, PARAM_METHODS, CheckersMessages.NamingConventionFunctionChecker_ParameterMethods, Boolean.TRUE);
+		addPreference(problem, PARAM_METHODS, CheckersMessages.NamingConventionFunctionChecker_ParameterMethods,
+				Boolean.TRUE);
 		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}

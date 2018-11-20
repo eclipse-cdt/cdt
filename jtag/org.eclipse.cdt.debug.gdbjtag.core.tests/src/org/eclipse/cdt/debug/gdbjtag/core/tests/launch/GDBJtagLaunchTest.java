@@ -32,10 +32,8 @@ import org.junit.runners.Parameterized;
 @SuppressWarnings("restriction")
 public class GDBJtagLaunchTest extends BaseParametrizedTestCase {
 
-	private static final String TEST_LAUNCH_CONFIGURATION_TYPE_ID =
-			"org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"; //$NON-NLS-1$
-	private static final String TEST_JTAG_DEVICE_ID =
-			"org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
+	private static final String TEST_LAUNCH_CONFIGURATION_TYPE_ID = "org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"; //$NON-NLS-1$
+	private static final String TEST_JTAG_DEVICE_ID = "org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
 	private static final String TEST_PROGRAM_NAME = EXEC_PATH + "Minimal.exe"; //$NON-NLS-1$
 	private static final String X86_64_INIT = SOURCE_PATH + "x86_64.init"; //$NON-NLS-1$
 
@@ -58,7 +56,8 @@ public class GDBJtagLaunchTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, false);
 		setLaunchAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, remote);
 		setLaunchAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, true);
-		setLaunchAttribute(IGDBJtagConstants.ATTR_STOP_AT, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+		setLaunchAttribute(IGDBJtagConstants.ATTR_STOP_AT,
+				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 		setLaunchAttribute(IGDBJtagConstants.ATTR_SET_RESUME, remote);
 		if (remote) {
 			setLaunchAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS, true);

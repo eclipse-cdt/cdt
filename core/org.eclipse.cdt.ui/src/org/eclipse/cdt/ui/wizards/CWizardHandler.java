@@ -51,13 +51,13 @@ import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 public class CWizardHandler implements Cloneable {
 	protected static final Image IMG0 = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_EMPTY);
 	protected static final Image IMG1 = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_PREFERRED);
-	
+
 	protected String head;
 	protected String name;
 	protected Composite parent;
 	protected Table table;
 	protected boolean supportedOnly = true;
-	
+
 	public CWizardHandler(Composite _parent, String _head, String _name) {
 		parent = _parent;
 		head = _head;
@@ -91,50 +91,65 @@ public class CWizardHandler implements Cloneable {
 			table.setVisible(false);
 		}
 	}
-	
+
 	/**
 	 * @return text for label above handler-specific pane
 	 */
-	public String getHeader() { return head; }
+	public String getHeader() {
+		return head;
+	}
 
 	/**
 	 * @return text for label in left tree
 	 */
-	public String getName() { return name; }
+	public String getName() {
+		return name;
+	}
 
 	/**
 	 * @return null if data is consistent
 	 *         else returns error message 
 	 */
-	public String getErrorMessage() { return null; }
+	public String getErrorMessage() {
+		return null;
+	}
 
 	/**
 	 * Defines whether only supported project types and toolchains are displayed
 	 * @param supp 
 	 */
-	public void setSupportedOnly(boolean supp) { supportedOnly = supp;}
+	public void setSupportedOnly(boolean supp) {
+		supportedOnly = supp;
+	}
 
 	/**
 	 * @return true if only supported project types and toolchains are displayed
 	 */
-	public boolean supportedOnly() { return supportedOnly; }
+	public boolean supportedOnly() {
+		return supportedOnly;
+	}
 
 	/**
 	 * @return true if handler is able to process preferred toolchains
 	 */
-	public boolean supportsPreferred() { return false; }
+	public boolean supportsPreferred() {
+		return false;
+	}
 
 	/**
 	 * @return 1st handler-specific page
 	 */
-	public IWizardPage getSpecificPage() { return null; }
+	public IWizardPage getSpecificPage() {
+		return null;
+	}
 
 	/**
 	 * Asks handler to update its data according to preferred list.
 	 * Usually, marks preferred toolchains somehow (icon, font etc)
 	 * @param prefs - list of strings (preferred Toolchain IDs)
 	 */
-	public void updatePreferred(List<String> prefs) {}
+	public void updatePreferred(List<String> prefs) {
+	}
 
 	/**
 	 * Creates project
@@ -143,8 +158,8 @@ public class CWizardHandler implements Cloneable {
 	 * @param defaults - true if called from 1st Wizard page
 	 * @throws CoreException
 	 */
-	public void createProject(IProject proj, boolean defaults)
-			throws CoreException {}
+	public void createProject(IProject proj, boolean defaults) throws CoreException {
+	}
 
 	/**
 	 * Creates project
@@ -156,11 +171,9 @@ public class CWizardHandler implements Cloneable {
 	 * 
 	 * @throws CoreException
 	 */
-	public void createProject(IProject proj, boolean defaults, boolean onFinish)
-			throws CoreException {
+	public void createProject(IProject proj, boolean defaults, boolean onFinish) throws CoreException {
 		createProject(proj, defaults);
 	}
-	
 
 	/**
 	 * Creates project
@@ -171,8 +184,8 @@ public class CWizardHandler implements Cloneable {
 	 * @throws CoreException
 	 * @since 5.1
 	 */
-	public void createProject(IProject proj, boolean defaults, IProgressMonitor monitor)
-			throws CoreException {}
+	public void createProject(IProject proj, boolean defaults, IProgressMonitor monitor) throws CoreException {
+	}
 
 	/**
 	 * Creates project
@@ -190,7 +203,7 @@ public class CWizardHandler implements Cloneable {
 			throws CoreException {
 		createProject(proj, defaults, monitor);
 	}
-	
+
 	/**
 	 * Converts an already created project
 	 * 
@@ -199,19 +212,23 @@ public class CWizardHandler implements Cloneable {
 	 * @throws CoreException
 	 * @since 5.1
 	 */
-	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {}
-	
+	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
+	}
+
 	/**
 	 * 
 	 * @return true if settings were changed 
 	 *         since last call to saveState()
 	 */
-	public boolean isChanged() { return true; } 
+	public boolean isChanged() {
+		return true;
+	}
 
 	/**
 	 * Stores current internal settings 
 	 */
-	public void saveState() {}
+	public void saveState() {
+	}
 
 	/**
 	 * Called when Finish button pressed, 
@@ -232,7 +249,9 @@ public class CWizardHandler implements Cloneable {
 	 *               as child to current Wizard item
 	 * @return - true if item can be added.
 	 */
-	public boolean isApplicable(EntryDescriptor data) { return true; }
+	public boolean isApplicable(EntryDescriptor data) {
+		return true;
+	}
 
 	/**
 	 * Initializes the handler to be used for the specified entry
@@ -240,21 +259,26 @@ public class CWizardHandler implements Cloneable {
 	 * @param data - Wizard Item data to be handled 
 	 * @throws CoreException
 	 */
-	public void initialize(EntryDescriptor data) throws CoreException {}
+	public void initialize(EntryDescriptor data) throws CoreException {
+	}
 
-	public boolean canFinish() {return true;}
+	public boolean canFinish() {
+		return true;
+	}
 
 	@Override
 	public Object clone() {
 		try {
-			CWizardHandler clone = (CWizardHandler)super.clone();
+			CWizardHandler clone = (CWizardHandler) super.clone();
 			clone.parent = parent;
 			clone.head = head;
 			clone.name = name;
 			return clone;
-		} catch (CloneNotSupportedException e) { return null; }
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
-	
+
 	/**
 	 * @deprecated since CDT 6.1.
 	 */
@@ -262,14 +286,14 @@ public class CWizardHandler implements Cloneable {
 	public static String removeSpaces(String s) {
 		char[] cs = s.toCharArray();
 		StringBuilder sb = new StringBuilder();
-		for (int i=0; i<cs.length; i++) {
-			if (Character.isWhitespace(cs[i])) 
+		for (int i = 0; i < cs.length; i++) {
+			if (Character.isWhitespace(cs[i]))
 				continue;
 			sb.append(cs[i]);
 		}
-		return sb.toString();	
+		return sb.toString();
 	}
-	
+
 	/**
 	 * Called after project creation in order to apply
 	 * template-specific settings.
@@ -284,22 +308,24 @@ public class CWizardHandler implements Cloneable {
 	 * 
 	 * @param prj - affected project.
 	 */
-protected void doTemplatesPostProcess(IProject prj) {}
+	protected void doTemplatesPostProcess(IProject prj) {
+	}
 
-/**
- * Called after project creation in order to apply
- * settings from custom pages.
- * 
- * Can be called 2 or more times:
- * - each time when user presses <Advanced Settings> button 
- * - when user presses <Finish> button.
- * If <Adv. settings> were not invoked, called once.
- *
- * Since the project is cleared before each doCustom() call,
- * no need to check whether it has been called before.
- * @param prj - affected project.
- */
-	
-protected void doCustom(IProject prj) {}
+	/**
+	 * Called after project creation in order to apply
+	 * settings from custom pages.
+	 * 
+	 * Can be called 2 or more times:
+	 * - each time when user presses <Advanced Settings> button 
+	 * - when user presses <Finish> button.
+	 * If <Adv. settings> were not invoked, called once.
+	 *
+	 * Since the project is cleared before each doCustom() call,
+	 * no need to check whether it has been called before.
+	 * @param prj - affected project.
+	 */
+
+	protected void doCustom(IProject prj) {
+	}
 
 }

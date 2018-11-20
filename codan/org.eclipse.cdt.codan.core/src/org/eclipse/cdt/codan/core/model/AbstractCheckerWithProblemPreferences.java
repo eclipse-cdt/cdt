@@ -34,20 +34,18 @@ import org.eclipse.core.runtime.IPath;
  * Checker can produce several problems, but preferences are per problem.
  * Sharing preferences between problems is not supported now.
  */
-public abstract class AbstractCheckerWithProblemPreferences extends AbstractChecker
-		implements ICheckerWithPreferences {
+public abstract class AbstractCheckerWithProblemPreferences extends AbstractChecker implements ICheckerWithPreferences {
 	/**
 	 * Checker that actually has parameter must override this
 	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		getTopLevelPreference(problem); // initialize
-		getLaunchModePreference(problem).enableInLaunchModes(
-				CheckerLaunchMode.RUN_AS_YOU_TYPE,
-				CheckerLaunchMode.RUN_ON_DEMAND,
-				CheckerLaunchMode.RUN_ON_FULL_BUILD,
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE,
+				CheckerLaunchMode.RUN_ON_DEMAND, CheckerLaunchMode.RUN_ON_FULL_BUILD,
 				CheckerLaunchMode.RUN_ON_INC_BUILD);
-		getSuppressionCommentPreference(problem).setValue(SuppressionCommentProblemPreference.generateDefaultComment(problem));
+		getSuppressionCommentPreference(problem)
+				.setValue(SuppressionCommentProblemPreference.generateDefaultComment(problem));
 	}
 
 	/**
@@ -171,8 +169,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	public IProblemPreference addPreference(IProblemWorkingCopy problem, String key, String label,
 			Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
-		BasicProblemPreference info = new BasicProblemPreference(key, label,
-				PreferenceType.typeOf(defaultValue));
+		BasicProblemPreference info = new BasicProblemPreference(key, label, PreferenceType.typeOf(defaultValue));
 		map.addChildDescriptor(info);
 		setDefaultPreferenceValue(problem, key, defaultValue);
 		return info;
@@ -192,12 +189,12 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 *         values or set different element type
 	 *
 	 */
-	public ListProblemPreference addListPreference(IProblemWorkingCopy problem, String key,
-			String label, String itemLabel) {
+	public ListProblemPreference addListPreference(IProblemWorkingCopy problem, String key, String label,
+			String itemLabel) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		ListProblemPreference list = new ListProblemPreference(key, label);
-		list.setChildDescriptor(new BasicProblemPreference(ListProblemPreference.COMMON_DESCRIPTOR_KEY,
-				itemLabel, PreferenceType.TYPE_STRING));
+		list.setChildDescriptor(new BasicProblemPreference(ListProblemPreference.COMMON_DESCRIPTOR_KEY, itemLabel,
+				PreferenceType.TYPE_STRING));
 		return (ListProblemPreference) map.addChildDescriptor(list);
 	}
 
@@ -209,8 +206,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * @param defaultValue - default value of the preference
 	 * @return added preference
 	 */
-	public IProblemPreference addPreference(IProblemWorkingCopy problem, IProblemPreference pref,
-			Object defaultValue) {
+	public IProblemPreference addPreference(IProblemWorkingCopy problem, IProblemPreference pref, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		String key = pref.getKey();
 		pref = map.addChildDescriptor(pref);
@@ -226,8 +222,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * @param key - preference key
 	 * @param defaultValue - value of preference to be set
 	 */
-	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key,
-			Object defaultValue) {
+	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		if (map.getChildValue(key) == null)
 			map.setChildValue(key, defaultValue);

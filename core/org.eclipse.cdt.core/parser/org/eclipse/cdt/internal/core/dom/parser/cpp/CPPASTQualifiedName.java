@@ -65,8 +65,7 @@ import org.eclipse.core.runtime.Assert;
  * Qualified name, which can contain any other name (unqualified, operator-name, conversion name,
  * template id).
  */
-public class CPPASTQualifiedName extends CPPASTNameBase
-		implements ICPPASTQualifiedName, ICPPASTCompletionContext {
+public class CPPASTQualifiedName extends CPPASTNameBase implements ICPPASTQualifiedName, ICPPASTCompletionContext {
 	private ICPPASTNameSpecifier[] fQualifier;
 	private int fQualifierPos = -1;
 	private ICPPASTName fLastName;
@@ -92,8 +91,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	@Override
 	public CPPASTQualifiedName copy(CopyStyle style) {
-		CPPASTQualifiedName copy =
-				new CPPASTQualifiedName(fLastName == null ? null : fLastName.copy(style));
+		CPPASTQualifiedName copy = new CPPASTQualifiedName(fLastName == null ? null : fLastName.copy(style));
 		for (ICPPASTNameSpecifier nameSpecifier : getQualifier()) {
 			copy.addNameSpecifier(nameSpecifier == null ? null : nameSpecifier.copy(style));
 		}
@@ -110,15 +108,15 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	@Override
 	public IBinding resolveBinding() {
 		// The whole qualified name resolves to the same thing as the last name.
-		IASTName lastName= getLastName();
+		IASTName lastName = getLastName();
 		return lastName == null ? null : lastName.resolveBinding();
 	}
 
-    @Override
+	@Override
 	public final IBinding getPreBinding() {
 		// The whole qualified name resolves to the same thing as the last name.
 		return getLastName().getPreBinding();
-    }
+	}
 
 	@Override
 	public IBinding getBinding() {
@@ -195,7 +193,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	@Override
 	public char[] toCharArray() {
 		if (fSignature == null) {
-			StringBuilder buf= new StringBuilder();
+			StringBuilder buf = new StringBuilder();
 			for (int i = 0; i <= fQualifierPos; i++) {
 				if (i > 0 || fIsFullyQualified) {
 					buf.append(Keywords.cpCOLONCOLON);
@@ -207,8 +205,8 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			}
 			buf.append(fLastName.toCharArray());
 
-			final int len= buf.length();
-			fSignature= new char[len];
+			final int len = buf.length();
+			fSignature = new char[len];
 			buf.getChars(0, len, fSignature, 0);
 		}
 		return fSignature;
@@ -221,7 +219,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	@Override
 	public void setFullyQualified(boolean isFullyQualified) {
-        assertNotFrozen();
+		assertNotFrozen();
 		this.fIsFullyQualified = isFullyQualified;
 	}
 
@@ -269,19 +267,19 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	@Override
 	public int getRoleOfName(boolean allowResolution) {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTInternalNameOwner) {
-        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
-        }
-        if (parent instanceof IASTNameOwner) {
-            return ((IASTNameOwner) parent).getRoleForName(this);
-        }
-        return IASTNameOwner.r_unclear;
+		IASTNode parent = getParent();
+		if (parent instanceof IASTInternalNameOwner) {
+			return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
+		}
+		if (parent instanceof IASTNameOwner) {
+			return ((IASTNameOwner) parent).getRoleForName(this);
+		}
+		return IASTNameOwner.r_unclear;
 	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		for (int i=0; i <= fQualifierPos; ++i) {
+		for (int i = 0; i <= fQualifierPos; ++i) {
 			if (fQualifier[i] == n)
 				return r_reference;
 		}
@@ -296,7 +294,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	@Override
 	public boolean isConversionOrOperator() {
-		final IASTName lastName= getLastName();
+		final IASTName lastName = getLastName();
 		if (lastName instanceof ICPPASTConversionName || lastName instanceof ICPPASTOperatorName) {
 			return true;
 		}
@@ -321,8 +319,8 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
 			final boolean isUsingDecl = getParent() instanceof ICPPASTUsingDeclaration;
 			List<IBinding> filtered = filterClassScopeBindings(classQualifier, bindings, isDeclaration);
-			if ((isDeclaration || isUsingDecl) && nameMatches(classQualifier.getNameCharArray(),
-					n.getLookupKey(), isPrefix)) {
+			if ((isDeclaration || isUsingDecl)
+					&& nameMatches(classQualifier.getNameCharArray(), n.getLookupKey(), isPrefix)) {
 				ICPPConstructor[] constructors = classQualifier.getConstructors();
 				for (int i = 0; i < constructors.length; i++) {
 					if (!constructors[i].isImplicit()) {
@@ -338,23 +336,22 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	// Are we taking the address of a qualified name?
 	private boolean isAddressOf() {
-		return getParent() instanceof IASTIdExpression
-			&& getParent().getParent() instanceof IASTUnaryExpression
-			&& ((IASTUnaryExpression) getParent().getParent()).getOperator() == IASTUnaryExpression.op_amper;
+		return getParent() instanceof IASTIdExpression && getParent().getParent() instanceof IASTUnaryExpression
+				&& ((IASTUnaryExpression) getParent().getParent()).getOperator() == IASTUnaryExpression.op_amper;
 	}
-	
+
 	// Are we inside a using-declaration?
 	private boolean inUsingDecl() {
 		return getParent() instanceof ICPPASTUsingDeclaration;
 	}
-	
+
 	private boolean canBeFieldAccess(ICPPClassType baseClass) {
-		IASTNode parent= getParent();
+		IASTNode parent = getParent();
 		if (parent instanceof IASTFieldReference) {
 			return true;
 		}
 		if (parent instanceof IASTIdExpression) {
-			IScope scope= CPPVisitor.getContainingScope(this);
+			IScope scope = CPPVisitor.getContainingScope(this);
 			try {
 				while (scope != null) {
 					if (scope instanceof ICPPClassScope) {
@@ -363,19 +360,19 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 							return true;
 						}
 					}
-					scope= scope.getParent();
+					scope = scope.getParent();
 				}
 			} catch (DOMException e) {
 			}
 		}
 		return false;
 	}
-	
+
 	private ICPPClassType getClassQualifier() {
 		if (fQualifierPos < 0) {
 			return null;
 		}
-		
+
 		IBinding binding = fQualifier[fQualifierPos].resolveBinding();
 
 		while (binding instanceof ITypedef) {
@@ -387,10 +384,10 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				binding = null;
 			}
 		}
-		
+
 		return binding instanceof ICPPClassType ? (ICPPClassType) binding : null;
 	}
-	
+
 	public static boolean canBeFieldAccess(CPPASTQualifiedName qname) {
 		ICPPClassType classQualifier = qname.getClassQualifier();
 		if (classQualifier == null) {
@@ -404,7 +401,8 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		List<IBinding> filtered = new ArrayList<IBinding>();
 		final boolean allowNonstatic = canBeFieldAccess(classType) || isAddressOf() || inUsingDecl();
 		final IBinding templateDefinition = (classType instanceof ICPPTemplateInstance)
-				? ((ICPPTemplateInstance) classType).getTemplateDefinition() : null;
+				? ((ICPPTemplateInstance) classType).getTemplateDefinition()
+				: null;
 
 		for (final IBinding binding : bindings) {
 			if (binding instanceof IField) {
@@ -427,15 +425,13 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				// This solves bug 456101 (template instance refering to itself).
 				// A<T>:: should not get a binding to its own template definition.
 				continue;
-			} else if (classType instanceof ICPPDeferredClassInstance
-					&& binding instanceof ICPPClassSpecialization) {
+			} else if (classType instanceof ICPPDeferredClassInstance && binding instanceof ICPPClassSpecialization) {
 				// during heuristic resolution of ICPPDeferredClassInstance's we
 				// might have found a partial specialization; those have their own template
 				// definition but share the same primary template as the ICPPDeferredClassInstance
 				ICPPClassType template = ((ICPPClassSpecialization) binding).getSpecializedBinding();
 				if (template instanceof ICPPClassTemplatePartialSpecialization) {
-					template = (ICPPClassType) ((ICPPClassTemplatePartialSpecialization) template)
-							.getPrimaryTemplate();
+					template = (ICPPClassType) ((ICPPClassTemplatePartialSpecialization) template).getPrimaryTemplate();
 				}
 				if (template.isSameType((IType) templateDefinition))
 					continue;

@@ -25,16 +25,16 @@ import org.eclipse.cdt.examples.dsf.gdb.service.command.GdbExtendedCommandFactor
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GdbExtendedDebugServicesFactory extends GdbDebugServicesFactory {
-	
+
 	public GdbExtendedDebugServicesFactory(String version, ILaunchConfiguration config) {
 		super(version, config);
 	}
-	
+
 	@Override
-    @SuppressWarnings("unchecked")
-    public <V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments) {
+	@SuppressWarnings("unchecked")
+	public <V> V createService(Class<V> clazz, DsfSession session, Object... optionalArguments) {
 		if (IGDBExtendedFunctions.class.isAssignableFrom(clazz)) {
-			return (V)createExtendedService(session);
+			return (V) createExtendedService(session);
 		}
 		return super.createService(clazz, session, optionalArguments);
 	}
@@ -58,7 +58,7 @@ public class GdbExtendedDebugServicesFactory extends GdbDebugServicesFactory {
 		}
 		return new GDBControl(session, config, new CommandFactory());
 	}
-	
+
 	protected IGDBExtendedFunctions createExtendedService(DsfSession session) {
 		return new GDBExtendedService(session);
 	}

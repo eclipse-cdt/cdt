@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 
 public class CArithmeticConversion extends ArithmeticConversion {
-	private static CArithmeticConversion sInstance= new CArithmeticConversion();
+	private static CArithmeticConversion sInstance = new CArithmeticConversion();
 
 	public static IType convertCOperandTypes(int operator, IType t1, IType t2) {
 		return sInstance.convertOperandTypes(operator, t1, t2);
@@ -29,7 +29,8 @@ public class CArithmeticConversion extends ArithmeticConversion {
 		return sInstance.promoteType(type);
 	}
 
-	private CArithmeticConversion() {}
+	private CArithmeticConversion() {
+	}
 
 	@Override
 	protected IBasicType createBasicType(Kind kind, int modifiers) {

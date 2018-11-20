@@ -69,7 +69,7 @@ import junit.framework.TestSuite;
 public class IndexUpdateTests extends IndexTestBase {
 	private static final String EXPLICIT = "explicit";
 	private static final String VIRTUAL = "virtual";
-	private static final String PURE_VIRTUAL= "pure-virtual";
+	private static final String PURE_VIRTUAL = "pure-virtual";
 	private static final String PROTECTED = "protected";
 	private static final String PUBLIC = "public";
 	private static final String PRIVATE = "private";
@@ -81,10 +81,10 @@ public class IndexUpdateTests extends IndexTestBase {
 	private static final String AUTO = "auto";
 	private static final String SHORT = "short int";
 	private static final String INT = "int";
-	private static final String IMPLICIT= "implicit";
+	private static final String IMPLICIT = "implicit";
 
 	public static TestSuite suite() {
-		TestSuite suite= suite(IndexUpdateTests.class, "_");
+		TestSuite suite = suite(IndexUpdateTests.class, "_");
 		suite.addTest(new IndexUpdateTests("deleteProject"));
 		return suite;
 	}
@@ -105,23 +105,23 @@ public class IndexUpdateTests extends IndexTestBase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fCppProject == null) {
-			fCppProject= CProjectHelper.createCCProject("indexUpdateTestsCpp", null, IPDOMManager.ID_FAST_INDEXER);
+			fCppProject = CProjectHelper.createCCProject("indexUpdateTestsCpp", null, IPDOMManager.ID_FAST_INDEXER);
 		}
 		if (fCProject == null) {
-			fCProject= CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
+			fCProject = CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
 		}
 		waitForIndexer(fCppProject);
 		waitForIndexer(fCProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCppProject});
+		fIndex = CCorePlugin.getIndexManager().getIndex(new ICProject[] { fCProject, fCppProject });
 	}
 
 	private void setupHeader(int totalFileVersions, boolean cpp) throws Exception {
 		if (fContents == null) {
-			fContents= getContentsForTest(totalFileVersions);
-			fContentUsed= -1;
+			fContents = getContentsForTest(totalFileVersions);
+			fContentUsed = -1;
 		}
-		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
-		fHeader= TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
+		IProject project = cpp ? fCppProject.getProject() : fCProject.getProject();
+		fHeader = TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
 		waitForIndexer(fCppProject);
 		waitForIndexer(fCProject);
 	}
@@ -129,19 +129,20 @@ public class IndexUpdateTests extends IndexTestBase {
 	private void updateHeader() throws Exception {
 		// Append variable comment to the end of the file to change its contents.
 		// Indexer would not reindex the file if its contents remain the same.
-		IProject project= fHeader.getProject();
-		fHeader= TestSourceReader.createFile(project, "header.h",
+		IProject project = fHeader.getProject();
+		fHeader = TestSourceReader.createFile(project, "header.h",
 				fContents[++fContentUsed].toString() + "\n// " + fContentUsed);
 		waitUntilFileIsIndexed(fIndex, fHeader);
 	}
 
 	private void setupFile(int totalFileVersions, boolean cpp) throws Exception {
 		if (fContents == null) {
-			fContents= getContentsForTest(totalFileVersions);
-			fContentUsed= -1;
+			fContents = getContentsForTest(totalFileVersions);
+			fContentUsed = -1;
 		}
-		ICProject cproject= cpp ? fCppProject : fCProject;
-		fFile= TestSourceReader.createFile(cproject.getProject(), "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
+		ICProject cproject = cpp ? fCppProject : fCProject;
+		fFile = TestSourceReader.createFile(cproject.getProject(), "file" + (cpp ? ".cpp" : ".c"),
+				fContents[++fContentUsed].toString());
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_TIMEOUT_MILLISEC);
 		waitForIndexer(cproject);
 	}
@@ -149,14 +150,14 @@ public class IndexUpdateTests extends IndexTestBase {
 	private void updateFile() throws Exception {
 		// Append variable comment to the end of the file to change its contents.
 		// Indexer would not reindex the file if its contents remain the same.
-		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(),
+		fFile = TestSourceReader.createFile(fFile.getParent(), fFile.getName(),
 				fContents[++fContentUsed].toString() + "\n// " + fContentUsed);
 		waitUntilFileIsIndexed(fIndex, fFile);
 	}
 
 	@Override
 	public void tearDown() throws Exception {
-		fIndex= null;
+		fIndex = null;
 		if (fFile != null) {
 			fFile.delete(true, npm());
 		}
@@ -169,11 +170,11 @@ public class IndexUpdateTests extends IndexTestBase {
 	public void deleteProject() {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
-			fCProject= null;
+			fCProject = null;
 		}
 		if (fCppProject != null) {
 			CProjectHelper.delete(fCppProject);
-			fCppProject= null;
+			fCppProject = null;
 		}
 	}
 
@@ -190,9 +191,9 @@ public class IndexUpdateTests extends IndexTestBase {
 		updateFile();
 		checkVariable("globalVar", SHORT, new String[] {});
 		updateFile();
-		checkVariable("globalVar", INT, new String[] {AUTO});
+		checkVariable("globalVar", INT, new String[] { AUTO });
 		updateFile();
-		checkVariable("globalVar", INT, new String[] {REGISTER});
+		checkVariable("globalVar", INT, new String[] { REGISTER });
 	}
 
 	private void checkVariable(String name, String type, String[] modifiers) throws Exception {
@@ -209,11 +210,11 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			IBinding b = findBinding(name);
-			IValue v= null;
+			IValue v = null;
 			if (b instanceof IVariable)
-				v= ((IVariable) b).getInitialValue();
+				v = ((IVariable) b).getInitialValue();
 			else if (b instanceof IEnumerator)
-				v= ((IEnumerator) b).getValue();
+				v = ((IEnumerator) b).getValue();
 			else
 				fail();
 
@@ -242,10 +243,10 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	private IIndexBinding findBinding(String name) throws CoreException {
-		String[] names= name.split("::");
-		char[][] nchars= new char[names.length][];
+		String[] names = name.split("::");
+		char[][] nchars = new char[names.length][];
 		for (int i = 0; i < nchars.length; i++) {
-			nchars[i]= names[i].toCharArray();
+			nchars[i] = names[i].toCharArray();
 		}
 		IIndexBinding[] bindings = fIndex.findBindings(nchars, IndexFilter.ALL_DECLARED, npm());
 		return bindings.length > 0 ? bindings[0] : null;
@@ -266,11 +267,11 @@ public class IndexUpdateTests extends IndexTestBase {
 	// register int globalVar;
 	public void testGlobalCppVariable() throws Exception {
 		setupFile(3, true);
-		checkCppVariable("globalVar", INT, new String[]{});
+		checkCppVariable("globalVar", INT, new String[] {});
 		updateFile();
-		checkCppVariable("globalVar", SHORT, new String[]{});
+		checkCppVariable("globalVar", SHORT, new String[] {});
 		updateFile();
-		checkCppVariable("globalVar", INT, new String[]{});
+		checkCppVariable("globalVar", INT, new String[] {});
 	}
 
 	private void checkCppVariable(String name, String type, String[] modifiers) throws Exception {
@@ -297,13 +298,13 @@ public class IndexUpdateTests extends IndexTestBase {
 	// inline int globalFunction(char a){};
 	public void testCFunction() throws Exception {
 		setupFile(4, false);
-		checkFunction("globalFunction", new String[] {INT, INT, INT}, new String[]{});
+		checkFunction("globalFunction", new String[] { INT, INT, INT }, new String[] {});
 		updateFile();
-		checkFunction("globalFunction", new String[] {SHORT, INT, INT}, new String[]{});
+		checkFunction("globalFunction", new String[] { SHORT, INT, INT }, new String[] {});
 		updateFile();
-		checkFunction("globalFunction", new String[] {INT, CHAR}, new String[]{});
+		checkFunction("globalFunction", new String[] { INT, CHAR }, new String[] {});
 		updateFile();
-		checkFunction("globalFunction", new String[] {INT, CHAR}, new String[]{INLINE});
+		checkFunction("globalFunction", new String[] { INT, CHAR }, new String[] { INLINE });
 	}
 
 	private void checkFunction(String name, String[] types, String[] modifiers) throws Exception {
@@ -316,10 +317,9 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 	}
 
-	private void checkFunction(IFunction func, String[] types, String[] modifiers)
-			throws DOMException {
+	private void checkFunction(IFunction func, String[] types, String[] modifiers) throws DOMException {
 		assertEquals(msg(), types[0], ASTTypeUtil.getType(func.getType().getReturnType()));
-		IParameter[] params= func.getParameters();
+		IParameter[] params = func.getParameters();
 		assertEquals(msg(), types.length - 1, params.length);
 		for (int i = 0; i < params.length; i++) {
 			IParameter parameter = params[i];
@@ -328,7 +328,6 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkModifier(modifiers, INLINE, func.isInline());
 		checkModifier(modifiers, STATIC, func.isStatic());
 	}
-
 
 	// int globalFunction(int a, int b){};
 
@@ -339,26 +338,24 @@ public class IndexUpdateTests extends IndexTestBase {
 	// inline int globalFunction(char a){};
 	public void testCppFunction() throws Exception {
 		setupFile(4, true);
-		checkFunction("globalFunction", new String[] {INT, INT, INT}, new String[]{});
+		checkFunction("globalFunction", new String[] { INT, INT, INT }, new String[] {});
 		updateFile();
-		checkFunction("globalFunction", new String[] {SHORT, INT, INT}, new String[]{});
+		checkFunction("globalFunction", new String[] { SHORT, INT, INT }, new String[] {});
 		updateFile();
-		checkFunction("globalFunction", new String[] {INT, CHAR}, new String[]{});
+		checkFunction("globalFunction", new String[] { INT, CHAR }, new String[] {});
 		updateFile();
-		checkFunction("globalFunction", new String[] {INT, CHAR}, new String[]{INLINE});
+		checkFunction("globalFunction", new String[] { INT, CHAR }, new String[] { INLINE });
 	}
-
 
 	// struct my_struct {int fField;};
 
 	// struct my_struct {short fField;};
 	public void testCField() throws Exception {
 		setupFile(2, false);
-		checkVariable("my_struct::fField", INT, new String[]{});
+		checkVariable("my_struct::fField", INT, new String[] {});
 		updateFile();
-		checkVariable("my_struct::fField", SHORT, new String[]{});
+		checkVariable("my_struct::fField", SHORT, new String[] {});
 	}
-
 
 	// class MyClass {int fField;};
 
@@ -375,19 +372,19 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {private: static int fField;};
 	public void testCppField() throws Exception {
 		setupFile(7, true);
-		checkCppField("MyClass::fField", INT, new String[]{PRIVATE});
+		checkCppField("MyClass::fField", INT, new String[] { PRIVATE });
 		updateFile();
-		checkCppField("MyClass::fField", SHORT, new String[]{PRIVATE});
+		checkCppField("MyClass::fField", SHORT, new String[] { PRIVATE });
 		updateFile();
-		checkCppField("MyClass::fField", INT, new String[]{PRIVATE, MUTABLE});
+		checkCppField("MyClass::fField", INT, new String[] { PRIVATE, MUTABLE });
 		updateFile();
-		checkCppField("MyClass::fField", INT, new String[]{PUBLIC});
+		checkCppField("MyClass::fField", INT, new String[] { PUBLIC });
 		updateFile();
-		checkCppField("MyClass::fField", INT, new String[]{PROTECTED});
+		checkCppField("MyClass::fField", INT, new String[] { PROTECTED });
 		updateFile();
-		checkCppField("MyClass::fField", INT, new String[]{PRIVATE});
+		checkCppField("MyClass::fField", INT, new String[] { PRIVATE });
 		updateFile();
-		checkCppField("MyClass::fField", INT, new String[]{PRIVATE, STATIC});
+		checkCppField("MyClass::fField", INT, new String[] { PRIVATE, STATIC });
 	}
 
 	private void checkCppField(String name, String type, String[] modifiers) throws Exception {
@@ -402,7 +399,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	private void checkCppMember(ICPPMember member, String[] modifiers) throws Exception {
-		int visibility= member.getVisibility();
+		int visibility = member.getVisibility();
 		checkModifier(modifiers, PUBLIC, visibility == ICPPMember.v_public);
 		checkModifier(modifiers, PROTECTED, visibility == ICPPMember.v_protected);
 		checkModifier(modifiers, PRIVATE, visibility == ICPPMember.v_private);
@@ -429,25 +426,25 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {virtual int method(char a) = 0;};
 	public void testCppMethod() throws Exception {
 		setupFile(10, true);
-		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PRIVATE});
+		checkCppMethod("MyClass::method", new String[] { INT, INT, INT }, new String[] { PRIVATE });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {SHORT, INT, INT}, new String[]{PRIVATE});
+		checkCppMethod("MyClass::method", new String[] { SHORT, INT, INT }, new String[] { PRIVATE });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PRIVATE });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, INLINE});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PRIVATE, INLINE });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, VIRTUAL});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PRIVATE, VIRTUAL });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PUBLIC});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PUBLIC });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PROTECTED});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PROTECTED });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PRIVATE });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, INLINE});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PRIVATE, INLINE });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, VIRTUAL, PURE_VIRTUAL});
+		checkCppMethod("MyClass::method", new String[] { INT, CHAR }, new String[] { PRIVATE, VIRTUAL, PURE_VIRTUAL });
 	}
 
 	// class MyClass {protected: int method(int a, int b);};
@@ -459,11 +456,11 @@ public class IndexUpdateTests extends IndexTestBase {
 	// char MyClass::method(int a, int b);
 	public void testFixedCppMethod() throws Exception {
 		setupHeader(3, true);
-		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
+		checkCppMethod("MyClass::method", new String[] { INT, INT, INT }, new String[] { PROTECTED });
 		setupFile(0, true);
-		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
+		checkCppMethod("MyClass::method", new String[] { INT, INT, INT }, new String[] { PROTECTED });
 		updateFile();
-		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
+		checkCppMethod("MyClass::method", new String[] { INT, INT, INT }, new String[] { PROTECTED });
 	}
 
 	private void checkCppMethod(String name, String[] types, String[] modifiers) throws Exception {
@@ -476,8 +473,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 	}
 
-	private void checkCppMethod(ICPPMethod method, String[] types, String[] modifiers)
-			throws DOMException, Exception {
+	private void checkCppMethod(ICPPMethod method, String[] types, String[] modifiers) throws DOMException, Exception {
 		checkFunction(method, types, modifiers);
 		checkCppMember(method, modifiers);
 		checkModifier(modifiers, VIRTUAL, method.isVirtual());
@@ -498,17 +494,17 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {private: MyClass(char a, int b);};
 	public void testCppConstructor() throws Exception {
 		setupFile(6, true);
-		checkCppConstructor("MyClass::MyClass", new String[] {"", INT, INT}, new String[]{PRIVATE});
+		checkCppConstructor("MyClass::MyClass", new String[] { "", INT, INT }, new String[] { PRIVATE });
 		updateFile();
-		checkCppConstructor("MyClass::MyClass", new String[] {"", CHAR, INT}, new String[]{PRIVATE});
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE });
 		updateFile();
-		checkCppConstructor("MyClass::MyClass", new String[] {"", CHAR, INT}, new String[]{PRIVATE,EXPLICIT});
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE, EXPLICIT });
 		updateFile();
-		checkCppConstructor("MyClass::MyClass", new String[] {"", CHAR, INT}, new String[]{PUBLIC});
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PUBLIC });
 		updateFile();
-		checkCppConstructor("MyClass::MyClass", new String[] {"", CHAR, INT}, new String[]{PROTECTED});
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PROTECTED });
 		updateFile();
-		checkCppConstructor("MyClass::MyClass", new String[] {"", CHAR, INT}, new String[]{PRIVATE});
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE });
 	}
 
 	private void checkCppConstructor(String name, String[] types, String[] modifiers) throws Exception {
@@ -538,30 +534,20 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {};
 	public void testImplicitMethods() throws Exception {
 		setupFile(5, true);
-		checkImplicitMethods("MyClass",
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {IMPLICIT, PUBLIC});
+		checkImplicitMethods("MyClass", new String[] { IMPLICIT, PUBLIC }, new String[] { IMPLICIT, PUBLIC },
+				new String[] { IMPLICIT, PUBLIC });
 		updateFile();
-		checkImplicitMethods("MyClass",
-				new String[] {PROTECTED},
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {IMPLICIT, PUBLIC});
+		checkImplicitMethods("MyClass", new String[] { PROTECTED }, new String[] { IMPLICIT, PUBLIC },
+				new String[] { IMPLICIT, PUBLIC });
 		updateFile();
-		checkImplicitMethods("MyClass",
-				null, // no default constructor, because we declared the copy constructor.
-				new String[] {EXPLICIT, PRIVATE},
-				new String[] {IMPLICIT, PUBLIC});
+		checkImplicitMethods("MyClass", null, // no default constructor, because we declared the copy constructor.
+				new String[] { EXPLICIT, PRIVATE }, new String[] { IMPLICIT, PUBLIC });
 		updateFile();
-		checkImplicitMethods("MyClass",
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {INLINE, PUBLIC});
+		checkImplicitMethods("MyClass", new String[] { IMPLICIT, PUBLIC }, new String[] { IMPLICIT, PUBLIC },
+				new String[] { INLINE, PUBLIC });
 		updateFile();
-		checkImplicitMethods("MyClass",
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {IMPLICIT, PUBLIC},
-				new String[] {IMPLICIT, PUBLIC});
+		checkImplicitMethods("MyClass", new String[] { IMPLICIT, PUBLIC }, new String[] { IMPLICIT, PUBLIC },
+				new String[] { IMPLICIT, PUBLIC });
 	}
 
 	private void checkImplicitMethods(String name, String[] m1, String[] m2, String[] m3) throws Exception {
@@ -570,36 +556,39 @@ public class IndexUpdateTests extends IndexTestBase {
 			final char[] nchars = name.toCharArray();
 			final String refType = name + " &";
 			final String constRefType = "const " + refType;
-			IIndexBinding[] ctors= fIndex.findBindings(new char[][] {nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
+			IIndexBinding[] ctors = fIndex.findBindings(new char[][] { nchars, nchars },
+					IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
 
-			int count= 0;
+			int count = 0;
 			for (int i = 0; i < ctors.length; i++) {
-				IIndexBinding ctor= ctors[i];
+				IIndexBinding ctor = ctors[i];
 				if (ctor.isFileLocal()) {
-					ctors[count++]= ctor;
+					ctors[count++] = ctor;
 				}
 			}
 			assertEquals(m1 == null ? 1 : 2, count);
 			final IType[] parameterTypes = ((ICPPConstructor) ctors[0]).getType().getParameterTypes();
 			if (parameterTypes.length != 1 || !(parameterTypes[0] instanceof ICPPReferenceType)) {
-				IIndexBinding h= ctors[0]; ctors[0]= ctors[1]; ctors[1]= h;
+				IIndexBinding h = ctors[0];
+				ctors[0] = ctors[1];
+				ctors[1] = h;
 			}
 			if (m1 != null) {
-				checkCppConstructor((ICPPConstructor) ctors[1], new String[] {""}, m1);
+				checkCppConstructor((ICPPConstructor) ctors[1], new String[] { "" }, m1);
 			}
-			checkCppConstructor((ICPPConstructor) ctors[0], new String[] {"", constRefType}, m2);
+			checkCppConstructor((ICPPConstructor) ctors[0], new String[] { "", constRefType }, m2);
 
-			IIndexBinding[] assignmentOps= fIndex.findBindings(
-					new char[][] {nchars, "operator =".toCharArray() }, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
-			count= 0;
+			IIndexBinding[] assignmentOps = fIndex.findBindings(new char[][] { nchars, "operator =".toCharArray() },
+					IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
+			count = 0;
 			for (int i = 0; i < assignmentOps.length; i++) {
-				IIndexBinding assignmentOp= assignmentOps[i];
+				IIndexBinding assignmentOp = assignmentOps[i];
 				if (assignmentOp.isFileLocal()) {
-					assignmentOps[count++]= assignmentOp;
+					assignmentOps[count++] = assignmentOp;
 				}
 			}
 			assertEquals(1, count);
-			checkCppMethod((ICPPMethod) assignmentOps[0], new String[]{refType, constRefType}, m3);
+			checkCppMethod((ICPPMethod) assignmentOps[0], new String[] { refType, constRefType }, m3);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -802,14 +791,14 @@ public class IndexUpdateTests extends IndexTestBase {
 		long pdomid;
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICPPClassType.k_class , binding.getKey());
+			assertEquals(ICPPClassType.k_class, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("T", tpars[0].getName());
 			assertNull(tpars[0].getDefaultValue());
-			pdomid= ((IAdaptable) tpars[0]).getAdapter(PDOMNode.class).getRecord();
+			pdomid = ((IAdaptable) tpars[0]).getAdapter(PDOMNode.class).getRecord();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -818,7 +807,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICPPClassType.k_class , binding.getKey());
+			assertEquals(ICPPClassType.k_class, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
@@ -833,7 +822,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICPPClassType.k_class , binding.getKey());
+			assertEquals(ICPPClassType.k_class, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
@@ -848,7 +837,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICompositeType.k_struct , binding.getKey());
+			assertEquals(ICompositeType.k_struct, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(2, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateNonTypeParameter);
@@ -865,13 +854,13 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICPPClassType.k_class , binding.getKey());
+			assertEquals(ICPPClassType.k_class, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTemplateParameter);
 			assertEquals("V", tpars[0].getName());
 			assertEquals(0, tpars[0].getParameterID());
-			tpars= ((ICPPTemplateTemplateParameter) tpars[0]).getTemplateParameters();
+			tpars = ((ICPPTemplateTemplateParameter) tpars[0]).getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
 			assertEquals(0x10000, tpars[0].getParameterID());
@@ -884,13 +873,13 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICPPClassType.k_class , binding.getKey());
+			assertEquals(ICPPClassType.k_class, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTemplateParameter);
 			assertEquals("V", tpars[0].getName());
 			assertEquals(0, tpars[0].getParameterID());
-			tpars= ((ICPPTemplateTemplateParameter) tpars[0]).getTemplateParameters();
+			tpars = ((ICPPTemplateTemplateParameter) tpars[0]).getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTemplateParameter);
 			assertEquals(0x10000, tpars[0].getParameterID());
@@ -903,7 +892,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
-			assertEquals(ICPPClassType.k_class , binding.getKey());
+			assertEquals(ICPPClassType.k_class, binding.getKey());
 			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
 			assertEquals(1, tpars.length);
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
@@ -922,7 +911,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//    globalVar= 1;
 	// }
 	public void testChangingSourceBeforeHeader_Bug171834() throws Exception {
-		CModelListener.sSuppressUpdateOfLastRecentlyUsed= false;
+		CModelListener.sSuppressUpdateOfLastRecentlyUsed = false;
 		setupHeader(2, true);
 		setupFile(0, true);
 		IBinding binding;
@@ -936,7 +925,8 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 
-		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(), fContents[1].toString().replaceAll("globalVar", "newVar"));
+		fFile = TestSourceReader.createFile(fFile.getParent(), fFile.getName(),
+				fContents[1].toString().replaceAll("globalVar", "newVar"));
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_TIMEOUT_MILLISEC);
 
 		fIndex.acquireReadLock();
@@ -948,7 +938,8 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 
-		fHeader= TestSourceReader.createFile(fHeader.getParent(), fHeader.getName(), fContents[0].toString().replaceAll("globalVar", "newVar"));
+		fHeader = TestSourceReader.createFile(fHeader.getParent(), fHeader.getName(),
+				fContents[0].toString().replaceAll("globalVar", "newVar"));
 		waitUntilFileIsIndexed(fIndex, fHeader);
 
 		fIndex.acquireReadLock();
@@ -960,7 +951,6 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-
 
 	// int globalVar;
 	// void func();
@@ -1163,11 +1153,12 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			IBinding client = findBinding(clientClassBinding);
 			IBinding supplier = findBinding(supplierBinding);
-			assertNotNull("Unable to find binding with name \""+clientClassBinding+"\"", client);
-			assertTrue("Unable to find binding with name \""+clientClassBinding+"\"", client instanceof ICPPClassType);
-			assertNotNull("Unable to find binding with name \""+supplierBinding+"\"", supplier);
-			assertTrue(((ICPPClassType)client).getFriends().length == 1);
-			assertTrue(((ICPPClassType)client).getFriends()[0].equals(supplier));
+			assertNotNull("Unable to find binding with name \"" + clientClassBinding + "\"", client);
+			assertTrue("Unable to find binding with name \"" + clientClassBinding + "\"",
+					client instanceof ICPPClassType);
+			assertNotNull("Unable to find binding with name \"" + supplierBinding + "\"", supplier);
+			assertTrue(((ICPPClassType) client).getFriends().length == 1);
+			assertTrue(((ICPPClassType) client).getFriends()[0].equals(supplier));
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -1177,9 +1168,10 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			IBinding client = findBinding(clientClassBinding);
-			assertNotNull("Unable to find binding with name \""+clientClassBinding+"\"", client);
-			assertTrue("Unable to find binding with name \""+clientClassBinding+"\"", client instanceof ICPPClassType);
-			assertTrue(((ICPPClassType)client).getFriends().length == 0);
+			assertNotNull("Unable to find binding with name \"" + clientClassBinding + "\"", client);
+			assertTrue("Unable to find binding with name \"" + clientClassBinding + "\"",
+					client instanceof ICPPClassType);
+			assertTrue(((ICPPClassType) client).getFriends().length == 0);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -1194,10 +1186,10 @@ public class IndexUpdateTests extends IndexTestBase {
 	public void testTypedeletion_Bug294306() throws Exception {
 		setupHeader(2, true);
 		setupFile(2, true);
-		checkFunction("useRef", new String[]{"void", "int"}, new String[]{});
+		checkFunction("useRef", new String[] { "void", "int" }, new String[] {});
 		fContentUsed--;
 		updateFile();
-		checkFunction("useRef", new String[]{"char", "int"}, new String[]{});
+		checkFunction("useRef", new String[] { "char", "int" }, new String[] {});
 	}
 
 	// void f(int a, int b=0);
@@ -1288,7 +1280,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			final IIndexBinding binding = findBinding("X");
-			id1= ((PDOMFile) binding.getLocalToFile()).getRecord();
+			id1 = ((PDOMFile) binding.getLocalToFile()).getRecord();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -1297,7 +1289,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			final IIndexBinding binding = findBinding("X");
-			id2= ((PDOMFile) binding.getLocalToFile()).getRecord();
+			id2 = ((PDOMFile) binding.getLocalToFile()).getRecord();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -1377,7 +1369,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			final IEnumerator e = (IEnumerator) findBinding("AE_ON");
 			assertNotNull(e);
-			name1= e.getOwner().getName();
+			name1 = e.getOwner().getName();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -1419,7 +1411,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			final IEnumerator e = (IEnumerator) findBinding("AE_ON");
 			assertNotNull(e);
-			name1= e.getOwner().getName();
+			name1 = e.getOwner().getName();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -1503,7 +1495,6 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 	}
 
-
 	// int dummy;
 
 	//#include "A.h"
@@ -1532,8 +1523,9 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertEquals(0, barBinding.length);
 			bIndex.releaseReadLock();
 
-			IFile fileAh = (IFile) ((ITranslationUnit)projectA.findElement(Path.fromOSString("A.h"))).getResource();
-			fileAh = TestSourceReader.createFile(projectA.getSourceRoots()[0].getResource(), Path.fromOSString("A.h"), "void bar(){}\n");
+			IFile fileAh = (IFile) ((ITranslationUnit) projectA.findElement(Path.fromOSString("A.h"))).getResource();
+			fileAh = TestSourceReader.createFile(projectA.getSourceRoots()[0].getResource(), Path.fromOSString("A.h"),
+					"void bar(){}\n");
 			TestSourceReader.waitUntilFileIsIndexed(aIndex, fileAh, INDEXER_TIMEOUT_SEC * 1000);
 			TestSourceReader.waitUntilFileIsIndexed(bIndex, fileAh, INDEXER_TIMEOUT_SEC * 1000);
 			bIndex.acquireReadLock();

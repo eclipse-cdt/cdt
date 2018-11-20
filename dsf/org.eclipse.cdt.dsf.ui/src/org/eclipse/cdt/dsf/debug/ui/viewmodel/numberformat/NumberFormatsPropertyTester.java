@@ -49,51 +49,52 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class NumberFormatsPropertyTester extends PropertyTester {
 
-    private static final String SUPPORTED = "areNumberFormatsSupported"; //$NON-NLS-1$
-    private static final String ELEMENT_FORMATS_SUPPORTED = "areElementNumberFormatsSupported"; //$NON-NLS-1$
-    private static final String AVAILABLE = "isNumberFormatAvailable"; //$NON-NLS-1$
-    private static final String ACTIVE = "isNumberFormatActive"; //$NON-NLS-1$
+	private static final String SUPPORTED = "areNumberFormatsSupported"; //$NON-NLS-1$
+	private static final String ELEMENT_FORMATS_SUPPORTED = "areElementNumberFormatsSupported"; //$NON-NLS-1$
+	private static final String AVAILABLE = "isNumberFormatAvailable"; //$NON-NLS-1$
+	private static final String ACTIVE = "isNumberFormatActive"; //$NON-NLS-1$
 
-    private static final List<String> AVAILABLE_FORMATS = new ArrayList<String>();
-    static {
-        AVAILABLE_FORMATS.add(IFormattedValues.NATURAL_FORMAT);
-        AVAILABLE_FORMATS.add(IFormattedValues.HEX_FORMAT);
-        AVAILABLE_FORMATS.add(IFormattedValues.DECIMAL_FORMAT);
-        AVAILABLE_FORMATS.add(IFormattedValues.OCTAL_FORMAT);
-        AVAILABLE_FORMATS.add(IFormattedValues.BINARY_FORMAT);
-        AVAILABLE_FORMATS.add(IFormattedValues.STRING_FORMAT);
-    };
-    
-    @Override
+	private static final List<String> AVAILABLE_FORMATS = new ArrayList<String>();
+	static {
+		AVAILABLE_FORMATS.add(IFormattedValues.NATURAL_FORMAT);
+		AVAILABLE_FORMATS.add(IFormattedValues.HEX_FORMAT);
+		AVAILABLE_FORMATS.add(IFormattedValues.DECIMAL_FORMAT);
+		AVAILABLE_FORMATS.add(IFormattedValues.OCTAL_FORMAT);
+		AVAILABLE_FORMATS.add(IFormattedValues.BINARY_FORMAT);
+		AVAILABLE_FORMATS.add(IFormattedValues.STRING_FORMAT);
+	};
+
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        if (receiver instanceof IVMContext) {
-            IVMProvider provider = ((IVMContext)receiver).getVMNode().getVMProvider();
-            if (provider != null) {
-                return testProvider(provider, property, expectedValue, (IVMContext) receiver);
-            }
-        } else if (receiver instanceof IDebugView) {
-            IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView)receiver);
-            if (provider != null) {
-                return testProvider(provider, property, expectedValue, null);                    
-            }
-        }
-        return false;
-    }
+		if (receiver instanceof IVMContext) {
+			IVMProvider provider = ((IVMContext) receiver).getVMNode().getVMProvider();
+			if (provider != null) {
+				return testProvider(provider, property, expectedValue, (IVMContext) receiver);
+			}
+		} else if (receiver instanceof IDebugView) {
+			IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView) receiver);
+			if (provider != null) {
+				return testProvider(provider, property, expectedValue, null);
+			}
+		}
+		return false;
+	}
 
-    private boolean testProvider(IVMProvider provider, String property, Object expectedValue, IVMContext vmctx) {
-        if (SUPPORTED.equals(property)) {
-            return true;
-        } else if (AVAILABLE.equals(property)) {
-            return AVAILABLE_FORMATS.contains(expectedValue);
-        } else if (ACTIVE.equals(property)) {
-            Object activeId = provider.getPresentationContext().getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
-            return expectedValue != null && expectedValue.equals(activeId);
-        } else if (ELEMENT_FORMATS_SUPPORTED.equals(property)) {
-        	if (provider instanceof IElementFormatProvider) {
-        		return ((IElementFormatProvider) provider).supportFormat(vmctx);
-        	}
-        }
-        return false;
-    }
-    
+	private boolean testProvider(IVMProvider provider, String property, Object expectedValue, IVMContext vmctx) {
+		if (SUPPORTED.equals(property)) {
+			return true;
+		} else if (AVAILABLE.equals(property)) {
+			return AVAILABLE_FORMATS.contains(expectedValue);
+		} else if (ACTIVE.equals(property)) {
+			Object activeId = provider.getPresentationContext()
+					.getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
+			return expectedValue != null && expectedValue.equals(activeId);
+		} else if (ELEMENT_FORMATS_SUPPORTED.equals(property)) {
+			if (provider instanceof IElementFormatProvider) {
+				return ((IElementFormatProvider) provider).supportFormat(vmctx);
+			}
+		}
+		return false;
+	}
+
 }

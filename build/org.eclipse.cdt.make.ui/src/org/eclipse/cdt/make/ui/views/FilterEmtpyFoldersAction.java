@@ -67,31 +67,33 @@ public class FilterEmtpyFoldersAction extends Action {
 			 * a make target.
 			 */
 			private boolean hasMakeTargets(final IContainer parentContainer) {
-				final boolean [] haveTargets = new boolean[1];
+				final boolean[] haveTargets = new boolean[1];
 				haveTargets[0] = false;
 
 				IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 					@Override
 					public boolean visit(IResourceProxy proxy) {
-						if(haveTargets[0]) {
+						if (haveTargets[0]) {
 							return false; // We found what we were looking for
 						}
 
 						int rcType = proxy.getType();
-						if(rcType != IResource.PROJECT && rcType != IResource.FOLDER) {
+						if (rcType != IResource.PROJECT && rcType != IResource.FOLDER) {
 							return false; // Ignore non-containers
 						}
 
 						IContainer subFolder = (IContainer) proxy.requestResource();
 
 						if (!(parentContainer instanceof IProject) && !subFolder.equals(parentContainer)
-								&& CCorePlugin.showSourceRootsAtTopOfProject() && MakeContentProvider.isSourceEntry(subFolder)) {
+								&& CCorePlugin.showSourceRootsAtTopOfProject()
+								&& MakeContentProvider.isSourceEntry(subFolder)) {
 							return false; // Skip source folders showing up second time as regular folders
 						}
 
 						try {
-							IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(subFolder);
-							if(targets != null && targets.length > 0) {
+							IMakeTarget[] targets = MakeCorePlugin.getDefault().getTargetManager()
+									.getTargets(subFolder);
+							if (targets != null && targets.length > 0) {
 								haveTargets[0] = true;
 								return false; // Found a target
 							}
@@ -121,7 +123,8 @@ public class FilterEmtpyFoldersAction extends Action {
 						container = (IContainer) element;
 						if (parentElement instanceof IProject && !(container instanceof IProject)) {
 							// under subfolders do not show source roots second time (when filtered)
-							if (CCorePlugin.showSourceRootsAtTopOfProject() && MakeContentProvider.isSourceEntry(container))
+							if (CCorePlugin.showSourceRootsAtTopOfProject()
+									&& MakeContentProvider.isSourceEntry(container))
 								return false;
 						}
 					} else if (element instanceof TargetSourceContainer) {

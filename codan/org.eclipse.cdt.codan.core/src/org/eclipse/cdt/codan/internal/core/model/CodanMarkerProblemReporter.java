@@ -104,8 +104,8 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 	@Override
 	public void deleteAllProblems() {
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
-					true, IResource.DEPTH_INFINITE);
+			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+					IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			CodanCorePlugin.log(e);
 		}
@@ -132,14 +132,12 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		Collection<IMarker> res = new ArrayList<>();
 		IMarker[] markers;
 		if (resource.exists()) {
-			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-					IResource.DEPTH_INFINITE);
+			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_INFINITE);
 		} else {
 			if (resource.getProject() == null || !resource.getProject().isAccessible())
 				return res;
 			// non resource markers attached to a project itself
-			markers = resource.getProject().findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-					IResource.DEPTH_ZERO);
+			markers = resource.getProject().findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		}
 		ICheckersRegistry reg = CodanRuntime.getInstance().getCheckersRegistry();
 		Collection<IProblem> problems = reg.getRefProblems(checker);

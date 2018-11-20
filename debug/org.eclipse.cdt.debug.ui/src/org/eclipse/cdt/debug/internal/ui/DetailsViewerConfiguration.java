@@ -10,11 +10,11 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- ***********************************************************************/ 
-package org.eclipse.cdt.debug.internal.ui; 
+ ***********************************************************************/
+package org.eclipse.cdt.debug.internal.ui;
 
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
- 
+
 /**
  * The source viewer configuration used in the Details pane of the variables, 
  * registers and expressions views.

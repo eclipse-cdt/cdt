@@ -23,17 +23,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AutotoolsProjectNatureTest {
-    @Before
-    public void setUp() throws CoreException {
-        if (!ProjectTools.setup())
-        	fail("could not perform basic project workspace setup");
-     }
+	@Before
+	public void setUp() throws CoreException {
+		if (!ProjectTools.setup())
+			fail("could not perform basic project workspace setup");
+	}
+
 	@Test
 	public void testAutotoolsProjectNature() throws Exception {
 		IProject testProject = ProjectTools.createProject("testProject");
-		if(testProject == null) {
-            fail("Unable to create test project");
-        }
+		if (testProject == null) {
+			fail("Unable to create test project");
+		}
 		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
 		testProject.delete(true, false, ProjectTools.getMonitor());
 	}

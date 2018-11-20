@@ -57,17 +57,18 @@ public class CDTPropertyManager {
 
 	private static ArrayList<Object> pages = new ArrayList<Object>();
 	private static ICProjectDescription prjd = null;
-	private static boolean saveDone  = false;
+	private static boolean saveDone = false;
 	private static IProject project = null;
 	private static DListener dListener = new DListener();
-
 
 	public static ICProjectDescription getProjectDescription(PropertyPage p, IProject prj) {
 		return get(p, prj);
 	}
+
 	public static ICProjectDescription getProjectDescription(Widget w, IProject prj) {
 		return get(w, prj);
 	}
+
 	public static ICProjectDescription getProjectDescription(IProject prj) {
 		return get(null, prj);
 	}
@@ -83,10 +84,10 @@ public class CDTPropertyManager {
 		if (p != null && !pages.contains(p)) {
 			pages.add(p);
 			if (p instanceof PropertyPage) {
-				if (((PropertyPage)p).getControl() != null)
-					((PropertyPage)p).getControl().addDisposeListener(dListener);
+				if (((PropertyPage) p).getControl() != null)
+					((PropertyPage) p).getControl().addDisposeListener(dListener);
 			} else if (p instanceof Widget) {
-				((Widget)p).addDisposeListener(dListener);
+				((Widget) p).addDisposeListener(dListener);
 			}
 		}
 		// Check that we are working with the same project
@@ -106,7 +107,8 @@ public class CDTPropertyManager {
 	 * @param p - widget which calls this functionality
 	 */
 	public static void performOk(Object p) {
-		if (saveDone) return;
+		if (saveDone)
+			return;
 
 		performOkForced(p);
 
@@ -156,19 +158,27 @@ public class CDTPropertyManager {
 	}
 
 	// pages utilities
-	public static boolean isSaveDone() { return saveDone; }
-	public static int getPagesCount() {	return pages.size(); }
-	public static Object getPage(int index) { return pages.get(index); }
+	public static boolean isSaveDone() {
+		return saveDone;
+	}
+
+	public static int getPagesCount() {
+		return pages.size();
+	}
+
+	public static Object getPage(int index) {
+		return pages.get(index);
+	}
 
 	// Removes disposed items from list
 	static class DListener implements DisposeListener {
-		public static void dispose (Object w) {
+		public static void dispose(Object w) {
 			if (pages.contains(w)) { // Widget ?
 				pages.remove(w);
-			} else {                 // Property Page ?
+			} else { // Property Page ?
 				for (Object ob : pages) {
 					if (ob != null && ob instanceof PropertyPage) {
-						if (((PropertyPage)ob).getControl().equals(w)) {
+						if (((PropertyPage) ob).getControl().equals(w)) {
 							pages.remove(ob);
 							break;
 						}
@@ -183,6 +193,7 @@ public class CDTPropertyManager {
 				saveDone = false;
 			}
 		}
+
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			dispose(e.widget);

@@ -66,8 +66,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 	 * 
 	 * @return the new project configuration
 	 */
-	IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent,
-			IProject project);
+	IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent, IProject project);
 
 	/**
 	 * Creates a UI controller to support editing the specified project configuration snapshot, which should
@@ -158,8 +157,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 			return result;
 		}
 
-		private IWorkingSetProjectConfigurationFactory get(
-				Map<?, IWorkingSetProjectConfigurationFactory> map, Object key) {
+		private IWorkingSetProjectConfigurationFactory get(Map<?, IWorkingSetProjectConfigurationFactory> map,
+				Object key) {
 			return map.get(key);
 		}
 
@@ -213,8 +212,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 			// first pass to populate the map with immediate requireds
 			IWorkspace ws = ResourcesPlugin.getWorkspace();
 			for (IProjectNatureDescriptor next : ws.getNatureDescriptors()) {
-				result.put(next.getNatureId(), new java.util.HashSet<String>(Arrays.asList(next
-						.getRequiredNatureIds())));
+				result.put(next.getNatureId(),
+						new java.util.HashSet<String>(Arrays.asList(next.getRequiredNatureIds())));
 			}
 
 			// now, iterate to add transitive requireds
@@ -261,9 +260,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 									if (natureID != null) {
 										factoriesByNature.put(natureID, desc);
 									} else {
-										CUIPlugin.log(NLS.bind(
-												WorkingSetMessages.WSProjConfigFactory_noNatureID, ext
-														.getContributor().getName()), null);
+										CUIPlugin.log(NLS.bind(WorkingSetMessages.WSProjConfigFactory_noNatureID,
+												ext.getContributor().getName()), null);
 									}
 								}
 							}
@@ -292,8 +290,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 
 				if (id == null) {
 					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, NLS.bind(
-							WorkingSetMessages.WSProjConfigFactory_noFactoryID, extension.getContributor()
-									.getName())));
+							WorkingSetMessages.WSProjConfigFactory_noFactoryID, extension.getContributor().getName())));
 				}
 			}
 
@@ -303,8 +300,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 			}
 
 			@Override
-			public IWorkingSetProjectConfiguration createProjectConfiguration(
-					IWorkingSetConfiguration parent, IProject project) {
+			public IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent,
+					IProject project) {
 				return resolve().createProjectConfiguration(parent, project);
 			}
 
@@ -324,11 +321,10 @@ public interface IWorkingSetProjectConfigurationFactory {
 				IWorkingSetProjectConfigurationFactory result = null;
 
 				try {
-					result = (IWorkingSetProjectConfigurationFactory) extension
-							.createExecutableExtension(A_CLASS);
+					result = (IWorkingSetProjectConfigurationFactory) extension.createExecutableExtension(A_CLASS);
 				} catch (ClassCastException e) {
-					CUIPlugin.log(NLS.bind(WorkingSetMessages.WSProjConfigFactory_badFactory, extension
-							.getContributor().getName()), e);
+					CUIPlugin.log(NLS.bind(WorkingSetMessages.WSProjConfigFactory_badFactory,
+							extension.getContributor().getName()), e);
 				} catch (CoreException e) {
 					CUIPlugin.log(new MultiStatus(CUIPlugin.PLUGIN_ID, 0, new IStatus[] { e.getStatus() },
 							WorkingSetMessages.WSProjConfigFactory_factoryFailed, null));
@@ -372,16 +368,15 @@ public interface IWorkingSetProjectConfigurationFactory {
 			}
 
 			@Override
-			public IWorkingSetProjectConfiguration createProjectConfiguration(
-					IWorkingSetConfiguration parent, IProject project) {
+			public IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent,
+					IProject project) {
 
 				WorkingSetProjectConfiguration result = createProjectConfiguration(parent);
 				result.setProjectName(project.getName());
 				return result;
 			}
 
-			protected WorkingSetProjectConfiguration createProjectConfiguration(
-					IWorkingSetConfiguration parent) {
+			protected WorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent) {
 				return new WorkingSetProjectConfiguration(parent);
 			}
 

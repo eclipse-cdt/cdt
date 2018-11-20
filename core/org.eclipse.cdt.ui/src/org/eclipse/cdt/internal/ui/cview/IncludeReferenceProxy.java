@@ -31,7 +31,7 @@ public class IncludeReferenceProxy extends CElementGrouping {
 
 	IncludeRefContainer includeRefContainer;
 	IIncludeReference reference;
-	
+
 	public IncludeReferenceProxy(IncludeRefContainer parent, IIncludeReference reference) {
 		super(0);
 		this.reference = reference;
@@ -97,7 +97,7 @@ public class IncludeReferenceProxy extends CElementGrouping {
 	public int hashCode() {
 		return reference.hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

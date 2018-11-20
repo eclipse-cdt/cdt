@@ -36,10 +36,10 @@ public interface IScanner {
 	public Map<String, IMacroBinding> getMacroDefinitions();
 
 	/**
-     * Returns next token for the parser. String literals are concatenated.
-     * @throws EndOfFileException when the end of the translation unit has been reached.
-     * @throws OffsetLimitReachedException see {@link Lexer}.
-     */
+	 * Returns next token for the parser. String literals are concatenated.
+	 * @throws EndOfFileException when the end of the translation unit has been reached.
+	 * @throws OffsetLimitReachedException see {@link Lexer}.
+	 */
 	public IToken nextToken() throws EndOfFileException;
 
 	/**
@@ -135,5 +135,6 @@ public interface IScanner {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public default void setScanComments(boolean val) {}
+	public default void setScanComments(boolean val) {
+	}
 }

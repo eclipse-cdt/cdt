@@ -70,11 +70,13 @@ public class QMakeTests extends TestCase {
 	}
 
 	public void testQMakeInfo() throws Exception {
-		StringReader qmake1Content = new StringReader("QMAKE_VERSION:3.0\nQT_VERSION:5.2\nQT_INSTALL_IMPORTS:QtImports\nQT_INSTALL_QML:QtQmls\nQT_INSTALL_DOCS:QtDocs\nCustomKey:CustomValue\n");
+		StringReader qmake1Content = new StringReader(
+				"QMAKE_VERSION:3.0\nQT_VERSION:5.2\nQT_INSTALL_IMPORTS:QtImports\nQT_INSTALL_QML:QtQmls\nQT_INSTALL_DOCS:QtDocs\nCustomKey:CustomValue\n");
 		BufferedReader qmake1Reader = new BufferedReader(qmake1Content);
 		Map<String, String> qmake1 = QMakeParser.parse(QMakeInfo.PATTERN_QUERY_LINE, qmake1Reader);
 
-		StringReader qmake2Content = new StringReader("QMAKE_INTERNAL_INCLUDED_FILES=Internal1 Internal2\nSOURCES=Source1 Source2\nHEADERS=Header1 Header2\nINCLUDEPATH=Include1 Include2\nDEFINES=Def1 Def2\nRESOURCES=Resource1 Resource2\nFORMS=Form1 Form2\nOTHER_FILES=Other1 Other2\nQML_IMPORT_PATH=CustomImport\n");
+		StringReader qmake2Content = new StringReader(
+				"QMAKE_INTERNAL_INCLUDED_FILES=Internal1 Internal2\nSOURCES=Source1 Source2\nHEADERS=Header1 Header2\nINCLUDEPATH=Include1 Include2\nDEFINES=Def1 Def2\nRESOURCES=Resource1 Resource2\nFORMS=Form1 Form2\nOTHER_FILES=Other1 Other2\nQML_IMPORT_PATH=CustomImport\n");
 		BufferedReader qmake2Reader = new BufferedReader(qmake2Content);
 		Map<String, String> qmake2 = QMakeParser.parse(QMakeInfo.PATTERN_EVAL_LINE, qmake2Reader);
 

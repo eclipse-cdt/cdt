@@ -37,7 +37,7 @@ public class SelectAllAction extends Action {
 		setToolTipText(ActionMessages.SelectAllAction_tooltip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.SELECT_ALL_ACTION);
 		Assert.isNotNull(viewer);
-		fViewer= viewer;
+		fViewer = viewer;
 	}
 
 	/**

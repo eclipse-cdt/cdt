@@ -27,12 +27,12 @@ public interface IResumeAtAddress {
 	 * 
 	 * @return whether this operation is currently available
 	 */
-	public boolean canResumeAtAddress( IAddress address );
+	public boolean canResumeAtAddress(IAddress address);
 
 	/**
 	 * Causes this element to resume the execution at the specified address.
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void resumeAtAddress( IAddress address ) throws DebugException;
+	public void resumeAtAddress(IAddress address) throws DebugException;
 }

@@ -26,6 +26,6 @@ import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMSASTDeclspecList extends IASTAttributeList {
-	public static InstanceOfPredicate<IASTAttributeSpecifier> TYPE_FILTER =
-			new InstanceOfPredicate<>(IMSASTDeclspecList.class);
+	public static InstanceOfPredicate<IASTAttributeSpecifier> TYPE_FILTER = new InstanceOfPredicate<>(
+			IMSASTDeclspecList.class);
 }

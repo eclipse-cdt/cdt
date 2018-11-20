@@ -84,15 +84,15 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	@Override
 	public ICProject createProject() throws CoreException {
 		// -source
-		File source= new File(getSingleString(OPT_SOURCE));
-		if(!source.exists()) {
-			fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, new Object[] {source}));
+		File source = new File(getSingleString(OPT_SOURCE));
+		if (!source.exists()) {
+			fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, new Object[] { source }));
 		}
 
 		// -include
-		List<String> includeFiles= new ArrayList<String>();
-		if(isPresent(OPT_INCLUDE)) {
-			includeFiles.addAll(getParameters(OPT_INCLUDE));				
+		List<String> includeFiles = new ArrayList<String>();
+		if (isPresent(OPT_INCLUDE)) {
+			includeFiles.addAll(getParameters(OPT_INCLUDE));
 		}
 
 		// -exclude
@@ -100,9 +100,9 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		if (isPresent(OPT_EXCLUDE)) {
 			excludeFiles.addAll(getParameters(OPT_EXCLUDE));
 		}
-		
+
 		// -id
-		fragmentId= getSingleString(OPT_FRAGMENT_ID);
+		fragmentId = getSingleString(OPT_FRAGMENT_ID);
 
 		return createCCProject("__" + System.currentTimeMillis(), source, includeFiles, excludeFiles); //$NON-NLS-1$
 	}
@@ -123,8 +123,8 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * @return a new project
 	 * @throws CoreException
 	 */
-	private ICProject createCCProject(final String projectName, final File location,
-			final List<String> includeFiles, final List<String> excludeFiles) throws CoreException {
+	private ICProject createCCProject(final String projectName, final File location, final List<String> includeFiles,
+			final List<String> excludeFiles) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 
@@ -132,71 +132,77 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IProject project = workspace.getRoot().getProject("__prebuilt_index_temp__" + System.currentTimeMillis()); //$NON-NLS-1$
+				IProject project = workspace.getRoot()
+						.getProject("__prebuilt_index_temp__" + System.currentTimeMillis()); //$NON-NLS-1$
 				IProjectDescription description = workspace.newProjectDescription(project.getName());
 				CCorePlugin.getDefault().createCProject(description, project, NPM, PREBUILT_PROJECT_OWNER);
 				CCorePlugin.getDefault().convertProjectFromCtoCC(project, NPM);
-				ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project, true); 
+				ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project, true);
 				newCfg(pd, project.getName(), "config"); //$NON-NLS-1$
-								
+
 				CoreModel.getDefault().setProjectDescription(project, pd, true, new NullProgressMonitor());
-				
+
 				// Add in exclude filters
 				for (String excludeFile : excludeFiles) {
-					FileInfoMatcherDescription matcherDescription = ExportIndexFileInfoMatcher.getDescription(excludeFile);
-					project.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS | IResourceFilterDescription.INHERITABLE, matcherDescription, 0, NPM);
+					FileInfoMatcherDescription matcherDescription = ExportIndexFileInfoMatcher
+							.getDescription(excludeFile);
+					project.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS
+							| IResourceFilterDescription.INHERITABLE, matcherDescription, 0, NPM);
 				}
 
-				ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(project);
-				
+				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+
 				// External content appears under a linked folder
 				content = project.getFolder(CONTENT);
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
 
 				// Setup path entries
-				List<IPathEntry> entries= new ArrayList<IPathEntry>(Arrays.asList(CoreModel.getRawPathEntries(cproject)));
+				List<IPathEntry> entries = new ArrayList<IPathEntry>(
+						Arrays.asList(CoreModel.getRawPathEntries(cproject)));
 
 				// pre-include files
-				for(String path : includeFiles) {
+				for (String path : includeFiles) {
 					entries.add(CoreModel.newIncludeFileEntry(project.getFullPath(), new Path(path)));
 				}
-				
+
 				// content directory is a source root
 				entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
-				
+
 				// any additional entries
 				entries.addAll(getAdditionalRawEntries());
-				
-				cproject.setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
-						new NullProgressMonitor()
-				);
-			
-				newProject[0]= cproject;
-				
-				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
-				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, Boolean.TRUE.toString());
-				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, Boolean.TRUE.toString());
+
+				cproject.setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]), new NullProgressMonitor());
+
+				newProject[0] = cproject;
+
+				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEXER_ID,
+						IPDOMManager.ID_NO_INDEXER);
+				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES,
+						Boolean.TRUE.toString());
+				IndexerPreferences.set(newProject[0].getProject(),
+						IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, Boolean.TRUE.toString());
 			}
 		}, null);
 
 		return newProject[0];
 	}
-	
+
 	/**
 	 * Get additional raw entries (above those added as part of the ExternalExportProjectProvider functionality)
 	 * @return a list of additional entries to add to the project
 	 */
 	protected List<IPathEntry> getAdditionalRawEntries() {
-		List<IPathEntry> entries= new ArrayList<IPathEntry>();
+		List<IPathEntry> entries = new ArrayList<IPathEntry>();
 		entries.add(CoreModel.newIncludeEntry(content.getProjectRelativePath(), null, content.getLocation(), true));
 		return entries;
 	}
 
-	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
-		CDefaultConfigurationData data= new CDefaultConfigurationData(project + "." + config, //$NON-NLS-1$
+	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config)
+			throws CoreException {
+		CDefaultConfigurationData data = new CDefaultConfigurationData(project + "." + config, //$NON-NLS-1$
 				project + " " + config + " name", null); //$NON-NLS-1$ //$NON-NLS-2$
 		data.initEmptyData();
-		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
+		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 	}
 
 	/*
@@ -212,11 +218,10 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 */
 	@Override
 	public Map<String, String> getExportProperties() {
-		Map<String, String> properties= new HashMap<String, String>();
-		Date now= Calendar.getInstance().getTime();
+		Map<String, String> properties = new HashMap<String, String>();
+		Date now = Calendar.getInstance().getTime();
 		properties.put(ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP,
-				DateFormat.getDateInstance().format(now)
-				+ " " + DateFormat.getTimeInstance().format(now)); //$NON-NLS-1$
+				DateFormat.getDateInstance().format(now) + " " + DateFormat.getTimeInstance().format(now)); //$NON-NLS-1$
 		properties.put(IIndexFragment.PROPERTY_FRAGMENT_ID, fragmentId);
 		return properties;
 	}

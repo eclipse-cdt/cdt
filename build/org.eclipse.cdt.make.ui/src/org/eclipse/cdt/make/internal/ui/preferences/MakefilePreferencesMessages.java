@@ -38,6 +38,6 @@ public class MakefilePreferencesMessages {
 		} catch (NullPointerException e) {
 			return '#' + key + '#';
 		}
-	}	
+	}
 
 }

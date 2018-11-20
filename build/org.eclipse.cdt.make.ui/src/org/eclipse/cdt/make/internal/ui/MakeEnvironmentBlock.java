@@ -84,15 +84,16 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	String fBuilderID;
 	IMakeCommonBuildInfo fBuildInfo;
 	protected TableViewer environmentTable;
-	protected String[] envTableColumnHeaders = {MakeUIPlugin.getResourceString("MakeEnvironmentBlock.0"), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.1")}; //$NON-NLS-1$ //$NON-NLS-2$
-	protected ColumnLayoutData[] envTableColumnLayouts = {new ColumnPixelData(150), new ColumnPixelData(250)};
+	protected String[] envTableColumnHeaders = { MakeUIPlugin.getResourceString("MakeEnvironmentBlock.0"), //$NON-NLS-1$
+			MakeUIPlugin.getResourceString("MakeEnvironmentBlock.1") }; //$NON-NLS-1$
+	protected ColumnLayoutData[] envTableColumnLayouts = { new ColumnPixelData(150), new ColumnPixelData(250) };
 
 	private static final String NAME_LABEL = MakeUIPlugin.getResourceString("MakeEnvironmentBlock.2"); //$NON-NLS-1$
 	private static final String VALUE_LABEL = MakeUIPlugin.getResourceString("MakeEnvironmentBlock.3"); //$NON-NLS-1$
 
 	protected static final String P_VARIABLE = "variable"; //$NON-NLS-1$
 	protected static final String P_VALUE = "value"; //$NON-NLS-1$
-	protected static String[] envTableColumnProperties = {P_VARIABLE, P_VALUE};
+	protected static String[] envTableColumnProperties = { P_VARIABLE, P_VALUE };
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
@@ -158,11 +159,12 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		public boolean equals(Object obj) {
 			boolean equal = false;
 			if (obj instanceof EnvironmentVariable) {
-				EnvironmentVariable var = (EnvironmentVariable)obj;
+				EnvironmentVariable var = (EnvironmentVariable) obj;
 				equal = var.getName().equals(name);
 			}
 			return equal;
 		}
+
 		/*
 		 * (non-Javadoc)
 		 *
@@ -182,7 +184,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			EnvironmentVariable[] elements = new EnvironmentVariable[0];
-			IMakeCommonBuildInfo info = (IMakeCommonBuildInfo)inputElement;
+			IMakeCommonBuildInfo info = (IMakeCommonBuildInfo) inputElement;
 			Map<String, String> m = info.getEnvironment();
 			if (m != null && !m.isEmpty()) {
 				elements = new EnvironmentVariable[m.size()];
@@ -194,16 +196,18 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			}
 			return elements;
 		}
+
 		@Override
 		public void dispose() {
 		}
+
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput == null) {
 				return;
 			}
 			if (viewer instanceof TableViewer) {
-				TableViewer tableViewer = (TableViewer)viewer;
+				TableViewer tableViewer = (TableViewer) viewer;
 				if (tableViewer.getTable().isDisposed()) {
 					return;
 				}
@@ -216,7 +220,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 						} else if (e2 == null) {
 							return 1;
 						} else {
-							return ((EnvironmentVariable)e1).getName().compareToIgnoreCase( ((EnvironmentVariable)e2).getName());
+							return ((EnvironmentVariable) e1).getName()
+									.compareToIgnoreCase(((EnvironmentVariable) e2).getName());
 						}
 					}
 				});
@@ -233,18 +238,19 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		public String getColumnText(Object element, int columnIndex) {
 			String result = null;
 			if (element != null) {
-				EnvironmentVariable var = (EnvironmentVariable)element;
+				EnvironmentVariable var = (EnvironmentVariable) element;
 				switch (columnIndex) {
-					case 0 : // variable
-						result = var.getName();
-						break;
-					case 1 : // value
-						result = var.getValue();
-						break;
+				case 0: // variable
+					result = var.getName();
+					break;
+				case 1: // value
+					result = var.getValue();
+					break;
 				}
 			}
 			return result;
 		}
+
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
@@ -306,8 +312,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				// configuration's attributes.
 				TableItem[] items = environmentTable.getTable().getItems();
 				Map<String, String> map = new HashMap<String, String>(items.length);
-				for (int i = 0; i < items.length; i++)
-				{
+				for (int i = 0; i < items.length; i++) {
 					EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 					map.put(var.getName(), var.getValue());
 				}
@@ -359,11 +364,13 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 		setControl(composite);
 
-		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
+		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
 
 		if (fBuildInfo == null) {
 			ControlFactory.createEmptySpace(composite);
-			ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString("SettingsBlock.label.missingBuilderInformation")); //$NON-NLS-1$
+			ControlFactory.createLabel(composite,
+					MakeUIPlugin.getResourceString("SettingsBlock.label.missingBuilderInformation")); //$NON-NLS-1$
 			return;
 		}
 
@@ -409,8 +416,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		label.setFont(font);
 		label.setText(MakeUIPlugin.getResourceString("MakeEnvironmentBlock.6")); //$NON-NLS-1$
 		// Create table
-		environmentTable = new TableViewer(tableComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
-				| SWT.FULL_SELECTION);
+		environmentTable = new TableViewer(tableComposite,
+				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = environmentTable.getTable();
 		TableLayout tableLayout = new TableLayout();
 		table.setLayout(tableLayout);
@@ -453,7 +460,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 *            the selection change event
 	 */
 	protected void handleTableSelectionChanged(SelectionChangedEvent event) {
-		int size = ((IStructuredSelection)event.getSelection()).size();
+		int size = ((IStructuredSelection) event.getSelection()).size();
 		envEditButton.setEnabled(size == 1);
 		envRemoveButton.setEnabled(size > 0);
 	}
@@ -489,7 +496,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		createVerticalSpacer(buttonComposite, 1);
 		// Create buttons
-		envAddButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.7"), null); //$NON-NLS-1$
+		envAddButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.7"), //$NON-NLS-1$
+				null);
 		envAddButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -497,7 +505,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				handleEnvAddButtonSelected();
 			}
 		});
-		envSelectButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.8"), null); //$NON-NLS-1$
+		envSelectButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.8"), //$NON-NLS-1$
+				null);
 		envSelectButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -505,7 +514,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				handleEnvSelectButtonSelected();
 			}
 		});
-		envEditButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.9"), null); //$NON-NLS-1$
+		envEditButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.9"), //$NON-NLS-1$
+				null);
 		envEditButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -514,7 +524,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.10"), null); //$NON-NLS-1$
+		envRemoveButton = createPushButton(buttonComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.10"), //$NON-NLS-1$
+				null);
 		envRemoveButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -529,7 +540,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.11")); //$NON-NLS-1$
+		MultipleInputDialog dialog = new MultipleInputDialog(getShell(),
+				MakeUIPlugin.getResourceString("MakeEnvironmentBlock.11")); //$NON-NLS-1$
 		dialog.addTextField(NAME_LABEL, null, false);
 		dialog.addVariablesField(VALUE_LABEL, null, true);
 
@@ -569,10 +581,11 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		String name = variable.getName();
 		TableItem[] items = environmentTable.getTable().getItems();
 		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable existingVariable = (EnvironmentVariable)items[i].getData();
+			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
 			if (existingVariable.getName().equals(name)) {
-				boolean overWrite = MessageDialog.openQuestion(getShell(), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.12"), MessageFormat.format( //$NON-NLS-1$
-						MakeUIPlugin.getResourceString("MakeEnvironmentBlock.13"), name)); //$NON-NLS-1$
+				boolean overWrite = MessageDialog.openQuestion(getShell(),
+						MakeUIPlugin.getResourceString("MakeEnvironmentBlock.12"), MessageFormat.format( //$NON-NLS-1$
+								MakeUIPlugin.getResourceString("MakeEnvironmentBlock.13"), name)); //$NON-NLS-1$
 				if (!overWrite) {
 					return false;
 				}
@@ -592,8 +605,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 *         environment.
 	 */
 	private Map<String, EnvironmentVariable> getNativeEnvironment() {
-		@SuppressWarnings({"unchecked", "rawtypes"})
-		Map<String, String> stringVars = (Hashtable)EnvironmentReader.getEnvVars();
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Map<String, String> stringVars = (Hashtable) EnvironmentReader.getEnvVars();
 		HashMap<String, EnvironmentVariable> vars = new HashMap<String, EnvironmentVariable>();
 		for (Iterator<String> i = stringVars.keySet().iterator(); i.hasNext();) {
 			String key = i.next();
@@ -614,12 +627,13 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		// get Environment Variables from the table
 		TableItem[] items = environmentTable.getTable().getItems();
 		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable var = (EnvironmentVariable)items[i].getData();
+			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 			envVariables.remove(var.getName());
 		}
 
-		ListSelectionDialog dialog = new NativeEnvironmentDialog(getShell(), envVariables, createSelectionDialogContentProvider(),
-				createSelectionDialogLabelProvider(), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.14")); //$NON-NLS-1$
+		ListSelectionDialog dialog = new NativeEnvironmentDialog(getShell(), envVariables,
+				createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(),
+				MakeUIPlugin.getResourceString("MakeEnvironmentBlock.14")); //$NON-NLS-1$
 		dialog.setTitle(MakeUIPlugin.getResourceString("MakeEnvironmentBlock.15")); //$NON-NLS-1$
 
 		int button = dialog.open();
@@ -648,21 +662,26 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			public Image getImage(Object element) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ENVIRONMENT);
 			}
+
 			@Override
 			public String getText(Object element) {
-				EnvironmentVariable var = (EnvironmentVariable)element;
+				EnvironmentVariable var = (EnvironmentVariable) element;
 				return var.getName() + " [" + var.getValue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
+
 			@Override
 			public void addListener(ILabelProviderListener listener) {
 			}
+
 			@Override
 			public void dispose() {
 			}
+
 			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
+
 			@Override
 			public void removeListener(ILabelProviderListener listener) {
 			}
@@ -688,14 +707,14 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 						@Override
 						public int compare(Object o1, Object o2) {
-							String s1 = (String)o1;
-							String s2 = (String)o2;
+							String s1 = (String) o1;
+							String s2 = (String) o2;
 							return s1.compareTo(s2);
 						}
 
 					};
 					TreeMap<String, EnvironmentVariable> envVars = new TreeMap<String, EnvironmentVariable>(comparator);
-					envVars.putAll((Map<String, EnvironmentVariable>)inputElement);
+					envVars.putAll((Map<String, EnvironmentVariable>) inputElement);
 					elements = new EnvironmentVariable[envVars.size()];
 					int index = 0;
 					for (Iterator<String> iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
@@ -705,26 +724,30 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				}
 				return elements;
 			}
+
 			@Override
 			public void dispose() {
 			}
+
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		};
 	}
+
 	/**
 	 * Creates an editor for the value of the selected environment variable.
 	 */
 	protected void handleEnvEditButtonSelected() {
-		IStructuredSelection sel = (IStructuredSelection)environmentTable.getSelection();
-		EnvironmentVariable var = (EnvironmentVariable)sel.getFirstElement();
+		IStructuredSelection sel = (IStructuredSelection) environmentTable.getSelection();
+		EnvironmentVariable var = (EnvironmentVariable) sel.getFirstElement();
 		if (var == null) {
 			return;
 		}
 		String originalName = var.getName();
 		String value = var.getValue();
-		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.16")); //$NON-NLS-1$
+		MultipleInputDialog dialog = new MultipleInputDialog(getShell(),
+				MakeUIPlugin.getResourceString("MakeEnvironmentBlock.16")); //$NON-NLS-1$
 		dialog.addTextField(NAME_LABEL, originalName, false);
 		dialog.addVariablesField(VALUE_LABEL, value, true);
 
@@ -749,7 +772,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void handleEnvRemoveButtonSelected() {
-		IStructuredSelection sel = (IStructuredSelection)environmentTable.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) environmentTable.getSelection();
 		environmentTable.getControl().setRedraw(false);
 		for (Iterator<EnvironmentVariable> i = sel.iterator(); i.hasNext();) {
 			EnvironmentVariable var = i.next();
@@ -832,7 +855,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		appendReplaceComposite.setLayout(layout);
 		appendReplaceComposite.setFont(parent.getFont());
 
-		appendEnvironment = createRadioButton(appendReplaceComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.17")); //$NON-NLS-1$
+		appendEnvironment = createRadioButton(appendReplaceComposite,
+				MakeUIPlugin.getResourceString("MakeEnvironmentBlock.17")); //$NON-NLS-1$
 		appendEnvironment.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -840,7 +864,8 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				getContainer().updateContainer();
 			}
 		});
-		replaceEnvironment = createRadioButton(appendReplaceComposite, MakeUIPlugin.getResourceString("MakeEnvironmentBlock.18")); //$NON-NLS-1$
+		replaceEnvironment = createRadioButton(appendReplaceComposite,
+				MakeUIPlugin.getResourceString("MakeEnvironmentBlock.18")); //$NON-NLS-1$
 	}
 
 }

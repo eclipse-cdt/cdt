@@ -28,12 +28,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAClearBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAClearBreakpointCommand(PDAVirtualMachineDMContext context, int line) {
-        super(context, "clear " + (line - 1));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAClearBreakpointCommand(PDAVirtualMachineDMContext context, int line) {
+		super(context, "clear " + (line - 1));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

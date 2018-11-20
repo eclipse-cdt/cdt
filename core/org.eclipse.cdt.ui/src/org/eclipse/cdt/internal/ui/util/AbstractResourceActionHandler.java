@@ -48,131 +48,129 @@ import org.eclipse.cdt.internal.core.AdapterUtil;
  * Base class for command handlers operating on resources.
  */
 public abstract class AbstractResourceActionHandler extends AbstractHandler {
-  private IEvaluationContext evaluationContext;
-  private IStructuredSelection selection;
+	private IEvaluationContext evaluationContext;
+	private IStructuredSelection selection;
 
-  public void setSelection(ISelection selection) {
-    this.selection = convertSelection(null, selection);
-  }
+	public void setSelection(ISelection selection) {
+		this.selection = convertSelection(null, selection);
+	}
 
-  @Override
-  public void setEnabled(Object evaluationContext) {
-    this.evaluationContext = (IEvaluationContext) evaluationContext;
-    selection = convertSelection(this.evaluationContext, null);
-  }
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		this.evaluationContext = (IEvaluationContext) evaluationContext;
+		selection = convertSelection(this.evaluationContext, null);
+	}
 
-  protected IStructuredSelection getSelection() {
-    if (selection == null) {
-      selection = convertSelection(evaluationContext, null);
-    }
-    return selection;
-  }
+	protected IStructuredSelection getSelection() {
+		if (selection == null) {
+			selection = convertSelection(evaluationContext, null);
+		}
+		return selection;
+	}
 
-  protected static IStructuredSelection getSelection(ExecutionEvent event) throws ExecutionException {
-    Object selection = HandlerUtil.getActiveMenuSelection(event);
-    if (selection == null) {
-      selection = HandlerUtil.getCurrentSelectionChecked(event);
-    }
-    if (selection instanceof ITextSelection) {
-      IEditorInput editorInput = HandlerUtil.getActiveEditorInputChecked(event);
-      IResource resource = ResourceUtil.getResource(editorInput);
-      if (resource != null) {
-        return new StructuredSelection(resource);
-      }
+	protected static IStructuredSelection getSelection(ExecutionEvent event) throws ExecutionException {
+		Object selection = HandlerUtil.getActiveMenuSelection(event);
+		if (selection == null) {
+			selection = HandlerUtil.getCurrentSelectionChecked(event);
+		}
+		if (selection instanceof ITextSelection) {
+			IEditorInput editorInput = HandlerUtil.getActiveEditorInputChecked(event);
+			IResource resource = ResourceUtil.getResource(editorInput);
+			if (resource != null) {
+				return new StructuredSelection(resource);
+			}
 
-      resource = ResourceUtil.getFile(editorInput);
-      if (resource != null) {
-        return new StructuredSelection(resource);
-      }
-    }
-    if (selection instanceof IStructuredSelection) {
-      return (IStructuredSelection) selection;
-    }
-    return StructuredSelection.EMPTY;
-  }
+			resource = ResourceUtil.getFile(editorInput);
+			if (resource != null) {
+				return new StructuredSelection(resource);
+			}
+		}
+		if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection) selection;
+		}
+		return StructuredSelection.EMPTY;
+	}
 
-  private static IStructuredSelection convertSelection(IEvaluationContext context,
-      Object selection) {
-    if (selection == null) {
-      if (context == null) {
-        return StructuredSelection.EMPTY;
-      }
-      selection = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-      if (!(selection instanceof ISelection)) {
-        selection = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-      }
-    }
-    if (selection instanceof ITextSelection) {
-      if (context == null) {
-        context = getEvaluationContext();
-      }
-      IResource resource =
-          ResourceUtil.getResource(context.getVariable(ISources.ACTIVE_EDITOR_INPUT_NAME));
-      if (resource != null) {
-        return new StructuredSelection(resource);
-      }
-    }
-    if (selection instanceof IStructuredSelection) {
-      return (IStructuredSelection) selection;
-    }
-    return StructuredSelection.EMPTY;
-  }
+	private static IStructuredSelection convertSelection(IEvaluationContext context, Object selection) {
+		if (selection == null) {
+			if (context == null) {
+				return StructuredSelection.EMPTY;
+			}
+			selection = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			if (!(selection instanceof ISelection)) {
+				selection = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			}
+		}
+		if (selection instanceof ITextSelection) {
+			if (context == null) {
+				context = getEvaluationContext();
+			}
+			IResource resource = ResourceUtil.getResource(context.getVariable(ISources.ACTIVE_EDITOR_INPUT_NAME));
+			if (resource != null) {
+				return new StructuredSelection(resource);
+			}
+		}
+		if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection) selection;
+		}
+		return StructuredSelection.EMPTY;
+	}
 
-  private static IEvaluationContext getEvaluationContext() {
-    IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    if (activeWindow == null) {
-      return null;
-    }
-    IHandlerService service = activeWindow.getService(IHandlerService.class);
-    return service.getCurrentState();
-  }
+	private static IEvaluationContext getEvaluationContext() {
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWindow == null) {
+			return null;
+		}
+		IHandlerService service = activeWindow.getService(IHandlerService.class);
+		return service.getCurrentState();
+	}
 
-  /**
-   * Returns the selected resources.
-   */
-  protected Collection<IResource> getSelectedResources() {
-    return getSelectedResources(getSelection());
-  }
+	/**
+	 * Returns the selected resources.
+	 */
+	protected Collection<IResource> getSelectedResources() {
+		return getSelectedResources(getSelection());
+	}
 
-  /**
-   * Returns the selected resources.
-   */
-  protected static Collection<IResource> getSelectedResources(ExecutionEvent event) throws ExecutionException {
-    IStructuredSelection selection = getSelection(event);
-    return getSelectedResources(selection);
-  }
+	/**
+	 * Returns the selected resources.
+	 */
+	protected static Collection<IResource> getSelectedResources(ExecutionEvent event) throws ExecutionException {
+		IStructuredSelection selection = getSelection(event);
+		return getSelectedResources(selection);
+	}
 
-  private static Collection<IResource> getSelectedResources(IStructuredSelection selection) {
-    Set<IResource> result = new LinkedHashSet<IResource>();
-    for (Object obj : selection.toList()) {
-      IResource resource = AdapterUtil.adapt(obj, IResource.class);
-      if (resource != null) {
-        result.add(resource);
-      } else {
-        result.addAll(extractResourcesFromMapping(obj));
-      }
-    }
-    return result;
-  }
+	private static Collection<IResource> getSelectedResources(IStructuredSelection selection) {
+		Set<IResource> result = new LinkedHashSet<IResource>();
+		for (Object obj : selection.toList()) {
+			IResource resource = AdapterUtil.adapt(obj, IResource.class);
+			if (resource != null) {
+				result.add(resource);
+			} else {
+				result.addAll(extractResourcesFromMapping(obj));
+			}
+		}
+		return result;
+	}
 
-  /**
-   * Extracts resources associated with a {@link ResourceMapping}.
-   *
-   * @param obj an object adaptable to {@link ResourceMapping}
-   * @return a list of resources associated with the mapping
-   */
-  private static List<IResource> extractResourcesFromMapping(Object obj) {
-    ResourceMapping mapping = AdapterUtil.adapt(obj, ResourceMapping.class);
-    if (mapping != null) {
-      try {
-        ResourceTraversal[] traversals = mapping.getTraversals(null, null);
-        for (ResourceTraversal traversal : traversals) {
-          return Arrays.asList(traversal.getResources());
-        }
-      } catch (CoreException e) {
-        CUIPlugin.log(e);
-      }
-    }
-    return Collections.emptyList();
-  }
+	/**
+	 * Extracts resources associated with a {@link ResourceMapping}.
+	 *
+	 * @param obj an object adaptable to {@link ResourceMapping}
+	 * @return a list of resources associated with the mapping
+	 */
+	private static List<IResource> extractResourcesFromMapping(Object obj) {
+		ResourceMapping mapping = AdapterUtil.adapt(obj, ResourceMapping.class);
+		if (mapping != null) {
+			try {
+				ResourceTraversal[] traversals = mapping.getTraversals(null, null);
+				for (ResourceTraversal traversal : traversals) {
+					return Arrays.asList(traversal.getResources());
+				}
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
+			}
+		}
+		return Collections.emptyList();
+	}
 }

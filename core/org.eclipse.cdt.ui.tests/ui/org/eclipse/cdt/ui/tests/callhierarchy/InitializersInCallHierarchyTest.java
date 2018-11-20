@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -28,14 +28,14 @@ public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 
 	public static Test suite() {
 		return suite(InitializersInCallHierarchyTest.class);
-	}	
-	
+	}
+
 	// {intvar}
 	// enum Enum{a= 12};
 	// int b= a;
 	public void testCIntVarInitializer() throws Exception {
 		String content = readTaggedComment("intvar");
-		IFile file= createFile(getProject(), "intvar.c", content);
+		IFile file = createFile(getProject(), "intvar.c", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 

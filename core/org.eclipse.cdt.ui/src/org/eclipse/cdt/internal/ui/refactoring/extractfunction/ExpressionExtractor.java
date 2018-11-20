@@ -87,7 +87,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation nameInfo,
 			List<IASTPointerOperator> pointerOperators) {
-		IType returnType = determineReturnType(extractedNode); 
+		IType returnType = determineReturnType(extractedNode);
 		INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
 		DeclarationGenerator generator = DeclarationGenerator.create(factory);
 		IASTDeclarator declarator = generator.createDeclaratorFromType(returnType, null);
@@ -116,7 +116,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 			{
 				shouldVisitExpressions = true;
 			}
-			
+
 			@Override
 			public int visit(IASTExpression expression) {
 				if (expression instanceof IASTIdExpression) {
@@ -141,8 +141,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	}
 
 	@Override
-	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
-			IASTExpression callExpression) {
+	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt, IASTExpression callExpression) {
 		return callExpression;
 	}
 }

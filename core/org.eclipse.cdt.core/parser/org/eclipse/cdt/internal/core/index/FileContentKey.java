@@ -29,7 +29,7 @@ public class FileContentKey {
 	 * @param location the file location.
 	 */
 	public FileContentKey(int linkageID, IIndexFileLocation location, ISignificantMacros sigMacros) {
-		this.linkageID= linkageID;
+		this.linkageID = linkageID;
 		this.location = location;
 		this.significantMacros = sigMacros;
 	}
@@ -62,16 +62,16 @@ public class FileContentKey {
 		FileContentKey other = (FileContentKey) obj;
 		if (linkageID != other.linkageID)
 			return false;
-		
-		if (!location.equals(other.location)) 
+
+		if (!location.equals(other.location))
 			return false;
-		
-		if (!significantMacros.equals(other.significantMacros)) 
+
+		if (!significantMacros.equals(other.significantMacros))
 			return false;
-	
-        return true;
+
+		return true;
 	}
-	
+
 	@SuppressWarnings("nls")
 	@Override
 	public String toString() {

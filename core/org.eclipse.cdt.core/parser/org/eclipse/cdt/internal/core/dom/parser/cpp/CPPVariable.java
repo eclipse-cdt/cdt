@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredVariable {
 	private IASTName fDefinition;
-	private IASTName fDeclarations[];  // Allowed to have trailing nulls. Users must check or trim! 
+	private IASTName fDeclarations[]; // Allowed to have trailing nulls. Users must check or trim! 
 	private IType fType;
 	private IValue fInitialValue = IntegralValue.NOT_INITIALIZED;
 	private boolean fAllResolved;
@@ -74,7 +74,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 			return new HashSet<>();
 		}
 	};
-	
+
 	public CPPVariable(IASTName name) {
 		boolean isDef = name != null && name.isDefinition();
 		if (name instanceof ICPPASTQualifiedName) {
@@ -106,8 +106,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 			fDeclarations = new IASTName[] { name };
 		} else {
 			// Keep the lowest offset declaration at the first position.
-			if (fDeclarations.length > 0
-					&& ((ASTNode) node).getOffset() < ((ASTNode) fDeclarations[0]).getOffset()) {
+			if (fDeclarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) fDeclarations[0]).getOffset()) {
 				fDeclarations = ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
 				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
@@ -258,12 +257,13 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 		try {
 			IValue initialValue = null;
 			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
-			if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN) {
+			if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition,
+					fDeclarations, getType())) == IntegralValue.UNKNOWN) {
 				ICPPEvaluation initEval = getInitializerEvaluation();
 				if (initEval == null) {
 					return null;
 				}
-				if (!initEval.isValueDependent() ) {
+				if (!initEval.isValueDependent()) {
 					IASTNode point = fDefinition != null ? fDefinition : fDeclarations[0];
 					CPPSemantics.pushLookupPoint(point);
 					try {

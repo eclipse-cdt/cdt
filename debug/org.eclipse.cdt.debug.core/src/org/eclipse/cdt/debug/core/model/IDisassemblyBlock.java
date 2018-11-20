@@ -17,7 +17,7 @@ package org.eclipse.cdt.debug.core.model;
  * Represents a contiguous segment of disassembly in an execution context.
  */
 public interface IDisassemblyBlock {
-	
+
 	/**
 	 * Returns the parent disassembly object.
 	 * 
@@ -33,7 +33,6 @@ public interface IDisassemblyBlock {
 	 */
 	String getModuleFile();
 
-
 	/**
 	 * Returns the source element (<code>IFile</code> or <code>File></code>) 
 	 * of the source file associated with this segment or null if no source file is associated.
@@ -48,7 +47,7 @@ public interface IDisassemblyBlock {
 	 * @param frame the stack frame
 	 * @return whether this block contains given stack frame
 	 */
-	boolean contains( ICStackFrame frame );
+	boolean contains(ICStackFrame frame);
 
 	/**
 	 * Return the array of source lines associated with this block.

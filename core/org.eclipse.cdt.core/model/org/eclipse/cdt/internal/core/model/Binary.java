@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -70,11 +69,11 @@ public class Binary extends Openable implements IBinary {
 	public Binary(ICElement parent, IFile file, IBinaryObject bin) {
 		super(parent, file, ICElement.C_BINARY);
 		binaryObject = bin;
-		showInBinaryContainer= determineShowInBinaryContainer(bin);
+		showInBinaryContainer = determineShowInBinaryContainer(bin);
 	}
 
 	private boolean determineShowInBinaryContainer(IBinaryObject bin) {
-		BinaryFilePresentation presentation= bin.getAdapter(BinaryFilePresentation.class);
+		BinaryFilePresentation presentation = bin.getAdapter(BinaryFilePresentation.class);
 		if (presentation != null) {
 			return presentation.showInBinaryContainer();
 		}
@@ -82,9 +81,9 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	public Binary(ICElement parent, IPath path, IBinaryObject bin) {
-		super (parent, path, ICElement.C_BINARY);
+		super(parent, path, ICElement.C_BINARY);
 		binaryObject = bin;
-		showInBinaryContainer= determineShowInBinaryContainer(bin);
+		showInBinaryContainer = determineShowInBinaryContainer(bin);
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class Binary extends Openable implements IBinary {
 			if (needed == null || hasChanged()) {
 				IBinaryObject obj = getBinaryObject();
 				if (obj instanceof IBinaryExecutable) {
-					needed = ((IBinaryExecutable)obj).getNeededSharedLibs();
+					needed = ((IBinaryExecutable) obj).getNeededSharedLibs();
 				}
 			}
 		}
@@ -189,7 +188,7 @@ public class Binary extends Openable implements IBinary {
 			if (soname == null || hasChanged()) {
 				IBinaryObject obj = getBinaryObject();
 				if (obj instanceof IBinaryShared) {
-					soname = ((IBinaryShared)obj).getSoName();
+					soname = ((IBinaryShared) obj).getSoName();
 				}
 			}
 		}
@@ -267,7 +266,7 @@ public class Binary extends Openable implements IBinary {
 		return true;
 	}
 
-	 @Override
+	@Override
 	public CElementInfo createElementInfo() {
 		return new BinaryInfo(this);
 	}
@@ -276,8 +275,8 @@ public class Binary extends Openable implements IBinary {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
-		throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		return computeChildren(info, underlyingResource);
 	}
 
@@ -312,8 +311,8 @@ public class Binary extends Openable implements IBinary {
 		return ok;
 	}
 
-	private boolean addSourceFiles(OpenableInfo info, IBinaryObject obj,
-			Map<IPath, BinaryModule> hash) throws CModelException {
+	private boolean addSourceFiles(OpenableInfo info, IBinaryObject obj, Map<IPath, BinaryModule> hash)
+			throws CModelException {
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
@@ -331,7 +330,7 @@ public class Binary extends Openable implements IBinary {
 					if (srcFinder != null) {
 						String localPath = srcFinder.toLocalPath(filename);
 						if (localPath != null) {
-							filename  = localPath;
+							filename = localPath;
 						}
 					}
 
@@ -375,18 +374,16 @@ public class Binary extends Openable implements IBinary {
 						// information told us. See bugzilla 297781
 						if (file.isAbsolute()) {
 							tu = new ExternalTranslationUnit(this, Path.fromOSString(filename), id);
-						}
-						else {
+						} else {
 							tu = new ExternalTranslationUnit(this, URIUtil.toURI(filename, true), id);
 						}
 					}
 
-					if (! info.includesChild(tu))
+					if (!info.includesChild(tu))
 						info.addChild(tu);
 				}
 				return true;
-			}
-			finally {
+			} finally {
 				if (srcFinder != null) {
 					srcFinder.dispose();
 				}
@@ -397,7 +394,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private void addFunction(OpenableInfo info, ISymbol symbol, Map<IPath, BinaryModule> hash) throws CModelException {
-		IPath filename= symbol.getFilename();
+		IPath filename = symbol.getFilename();
 		BinaryFunction function = null;
 
 		if (filename != null && !filename.isEmpty()) {
@@ -427,7 +424,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private void addVariable(OpenableInfo info, ISymbol symbol, Map<IPath, BinaryModule> hash) throws CModelException {
-		IPath filename= symbol.getFilename();
+		IPath filename = symbol.getFilename();
 		BinaryVariable variable = null;
 		if (filename != null && !filename.isEmpty()) {
 			BinaryModule module = null;
@@ -486,7 +483,7 @@ public class Binary extends Openable implements IBinary {
 			return null;
 
 		// set the buffer source
-		if (buffer.getCharacters() == null){
+		if (buffer.getCharacters() == null) {
 			IBinaryObject bin = getBinaryObject();
 			if (bin != null) {
 				StringBuilder sb = new StringBuilder();
@@ -504,7 +501,7 @@ public class Binary extends Openable implements IBinary {
 			} else {
 				IResource file = this.getResource();
 				if (file != null && file.getType() == IResource.FILE) {
-					buffer.setContents(Util.getResourceContentsAsCharArray((IFile)file));
+					buffer.setContents(Util.getResourceContentsAsCharArray((IFile) file));
 				}
 			}
 		}
@@ -536,13 +533,14 @@ public class Binary extends Openable implements IBinary {
 			return res.exists();
 		return super.exists();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
 	 */
 	@Override
 	protected void closing(Object info) throws CModelException {
 		ICProject cproject = getCProject();
-		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(cproject);
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(cproject);
 		if (pinfo != null && pinfo.vBin != null) {
 			pinfo.vBin.removeChild(this);
 		}

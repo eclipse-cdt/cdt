@@ -53,7 +53,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	 * @param dmContext
 	 */
 	public DefaultDsfSelectionPolicy(IDMContext dmContext) {
-		fDMContext= dmContext;
+		fDMContext = dmContext;
 	}
 
 	/*
@@ -63,11 +63,11 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	public boolean contains(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss= (IStructuredSelection) selection;
-				Object element= ss.getFirstElement();
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Object element = ss.getFirstElement();
 				if (element instanceof IDMVMContext) {
-					IDMVMContext dmvmContext= (IDMVMContext) element;
-					IDMContext dmContext= dmvmContext.getDMContext();
+					IDMVMContext dmvmContext = (IDMVMContext) element;
+					IDMContext dmContext = dmvmContext.getDMContext();
 					if (dmContext != null) {
 						return fDMContext.getSessionId().equals(dmContext.getSessionId());
 					}
@@ -84,8 +84,8 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	public boolean isSticky(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss= (IStructuredSelection) selection;
-				Object element= ss.getFirstElement();
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Object element = ss.getFirstElement();
 				return isSticky(element);
 			}
 		}
@@ -94,21 +94,23 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 
 	protected boolean isSticky(Object element) {
 		if (element instanceof IDMVMContext) {
-			IDMVMContext dmvmContext= (IDMVMContext) element;
-			final IDMContext dmContext= dmvmContext.getDMContext();
+			IDMVMContext dmvmContext = (IDMVMContext) element;
+			final IDMContext dmContext = dmvmContext.getDMContext();
 			if (dmContext instanceof IFrameDMContext) {
-				final IExecutionDMContext execContext= DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
+				final IExecutionDMContext execContext = DMContexts.getAncestorOfType(dmContext,
+						IExecutionDMContext.class);
 				if (execContext != null) {
 					Query<Boolean> query = new Query<Boolean>() {
 						@Override
 						protected void execute(DataRequestMonitor<Boolean> rm) {
-							DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), dmContext.getSessionId());
+							DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+									dmContext.getSessionId());
 							try {
-								IRunControl runControl= servicesTracker.getService(IRunControl.class);
+								IRunControl runControl = servicesTracker.getService(IRunControl.class);
 								if (runControl != null) {
 									rm.setData(runControl.isSuspended(execContext));
 								} else {
-								    rm.setData(false);
+									rm.setData(false);
 								}
 							} finally {
 								servicesTracker.dispose();
@@ -153,7 +155,6 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 		return true;
 	}
 
-	
 	protected boolean overrides(Object existing, Object candidate) {
 		if (existing == null || existing.equals(candidate)) {
 			return true;
@@ -162,18 +163,17 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 			IDMContext curr = ((IDMVMContext) existing).getDMContext();
 			IDMContext cand = ((IDMVMContext) candidate).getDMContext();
 			if (curr instanceof IFrameDMContext && cand instanceof IFrameDMContext) {
-				IExecutionDMContext currExecContext= DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
+				IExecutionDMContext currExecContext = DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
 				if (currExecContext != null) {
-					IExecutionDMContext candExecContext= DMContexts.getAncestorOfType(cand, IExecutionDMContext.class);
-					return currExecContext.equals(candExecContext) || 
-					    !isSticky(existing) || 
-					    frameOverrides((IFrameDMContext)curr, (IFrameDMContext)cand);
+					IExecutionDMContext candExecContext = DMContexts.getAncestorOfType(cand, IExecutionDMContext.class);
+					return currExecContext.equals(candExecContext) || !isSticky(existing)
+							|| frameOverrides((IFrameDMContext) curr, (IFrameDMContext) cand);
 				}
 			}
 		}
 		return !isSticky(existing);
 	}
-	
+
 	/**
 	 * Last test for whether a stack frame overrides another stack frame.
 	 * If two stack frames are from the same execution container (process) and 
@@ -187,63 +187,64 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	 * @return <code>true</code> if the new frame should override current selection. 
 	 */
 	private boolean frameOverrides(final IFrameDMContext curr, final IFrameDMContext cand) {
-	    // We're assuming that frames are from different execution contexts. 
-	    
-	    // Check if they are from the same container context:
-        final IContainerDMContext currContContext= DMContexts.getAncestorOfType(curr, IContainerDMContext.class);
-        IContainerDMContext candContContext= DMContexts.getAncestorOfType(cand, IContainerDMContext.class);
-        if (currContContext == null || !currContContext.equals(candContContext)) {
-            // If from different containers, frames should not override each other.
-            return false;
-        }
-        
-        Query<Boolean> query = new Query<Boolean>() {
-            @Override
-            protected void execute(final DataRequestMonitor<Boolean> rm) {
-                DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), curr.getSessionId());
+		// We're assuming that frames are from different execution contexts. 
 
-                // Check if container is not suspended.
-                IRunControl runControl= servicesTracker.getService(IRunControl.class);
-                if (runControl != null && runControl.isSuspended(currContContext)) {
-                    IExecutionDMContext execDmc = DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
-                    // If container is suspended, check whether the current thread was stopped due 
-                    // to container suspended event.
-                    runControl.getExecutionData(
-                        execDmc, 
-                        new DataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), rm) {
-                            @Override
-                            protected void handleSuccess() {
-                                rm.setData( getData().getStateChangeReason() == IRunControl.StateChangeReason.CONTAINER );
-                                rm.done();
-                            };
-                        });
-                } else {
-                    // If container is not suspended it's running, then do not override the selection.
-                    rm.setData(false);
-                    rm.done();
-                } 
-                // In either case, we won't need the services tracker anymore.
-                servicesTracker.dispose();
-            }
-        };
-        
-        DsfSession session = DsfSession.getSession(curr.getSessionId());
-        if (session != null) {
-            if (session.getExecutor().isInExecutorThread()) {
-                query.run();
-            } else {
-                session.getExecutor().execute(query);
-            }
-            try {
-                Boolean result = query.get();
-                return result != null && result.booleanValue();
-            } catch (InterruptedException exc) {
-                Thread.currentThread().interrupt();
-            } catch (ExecutionException exc) {
-                DsfUIPlugin.log(exc);
-            }
-        }
-        return false;
+		// Check if they are from the same container context:
+		final IContainerDMContext currContContext = DMContexts.getAncestorOfType(curr, IContainerDMContext.class);
+		IContainerDMContext candContContext = DMContexts.getAncestorOfType(cand, IContainerDMContext.class);
+		if (currContContext == null || !currContContext.equals(candContContext)) {
+			// If from different containers, frames should not override each other.
+			return false;
+		}
+
+		Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+						curr.getSessionId());
+
+				// Check if container is not suspended.
+				IRunControl runControl = servicesTracker.getService(IRunControl.class);
+				if (runControl != null && runControl.isSuspended(currContContext)) {
+					IExecutionDMContext execDmc = DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
+					// If container is suspended, check whether the current thread was stopped due 
+					// to container suspended event.
+					runControl.getExecutionData(execDmc,
+							new DataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), rm) {
+								@Override
+								protected void handleSuccess() {
+									rm.setData(getData()
+											.getStateChangeReason() == IRunControl.StateChangeReason.CONTAINER);
+									rm.done();
+								};
+							});
+				} else {
+					// If container is not suspended it's running, then do not override the selection.
+					rm.setData(false);
+					rm.done();
+				}
+				// In either case, we won't need the services tracker anymore.
+				servicesTracker.dispose();
+			}
+		};
+
+		DsfSession session = DsfSession.getSession(curr.getSessionId());
+		if (session != null) {
+			if (session.getExecutor().isInExecutorThread()) {
+				query.run();
+			} else {
+				session.getExecutor().execute(query);
+			}
+			try {
+				Boolean result = query.get();
+				return result != null && result.booleanValue();
+			} catch (InterruptedException exc) {
+				Thread.currentThread().interrupt();
+			} catch (ExecutionException exc) {
+				DsfUIPlugin.log(exc);
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -251,16 +252,16 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	 */
 	@Override
 	public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
-        if (invalidSelection instanceof ITreeSelection) {
-            ITreeSelection treeSelection = (ITreeSelection)invalidSelection;
-            if (treeSelection.getPaths().length == 1) {
-                TreePath path = treeSelection.getPaths()[0];
-                if (path.getSegmentCount() > 1) {
-                    return new TreeSelection(path.getParentPath());
-                }
-            }
-        }
-        return newSelection;
+		if (invalidSelection instanceof ITreeSelection) {
+			ITreeSelection treeSelection = (ITreeSelection) invalidSelection;
+			if (treeSelection.getPaths().length == 1) {
+				TreePath path = treeSelection.getPaths()[0];
+				if (path.getSegmentCount() > 1) {
+					return new TreeSelection(path.getParentPath());
+				}
+			}
+		}
+		return newSelection;
 	}
 
 }

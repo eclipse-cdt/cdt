@@ -36,25 +36,25 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
  *
  * @since 3.0
  */
-public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
-	private static final String fNonOverloadableMacros[] = new String[]{
-		//tool-integrators not allowed currently to override the "CWD" and "PWD" macros
-		"CWD",   //$NON-NLS-1$
-		"PWD"	  //$NON-NLS-1$
+public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier {
+	private static final String fNonOverloadableMacros[] = new String[] {
+			//tool-integrators not allowed currently to override the "CWD" and "PWD" macros
+			"CWD", //$NON-NLS-1$
+			"PWD" //$NON-NLS-1$
 	};
 
 	private ICdtVariableManager fMngr;
 	private ICConfigurationDescription fCfgDes;
 
-//	private static ExternalExtensionMacroSupplier fInstance;
+	//	private static ExternalExtensionMacroSupplier fInstance;
 
-	private class ExtensionMacroProvider extends BuildMacroProvider{
+	private class ExtensionMacroProvider extends BuildMacroProvider {
 		private IMacroContextInfo fStartInfo;
 		private int fContextType;
 		private Object fContextData;
 		private boolean fStartInitialized;
 
-		public ExtensionMacroProvider(int contextType, Object contextData){
+		public ExtensionMacroProvider(int contextType, Object contextData) {
 			fContextType = contextType;
 			fContextData = contextData;
 		}
@@ -63,22 +63,19 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariable(java.lang.String, java.lang.Object, boolean)
 		 */
 		@Override
-		public ICdtVariable getVariable(String macroName,
-				int contextType,
-				Object contextData,
-				boolean includeParent) {
-			if(getValidName(macroName) == null)
+		public ICdtVariable getVariable(String macroName, int contextType, Object contextData, boolean includeParent) {
+			if (getValidName(macroName) == null)
 				return null;
 			return fMngr.getVariable(macroName, fCfgDes);
-//			return super.getMacro(macroName,contextType,contextData,includeParent);
+			//			return super.getMacro(macroName,contextType,contextData,includeParent);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getMacros(int, java.lang.Object, boolean)
 		 */
 		@Override
-		public ICdtVariable[] getVariables(int contextType,Object contextData, boolean includeParent) {
-//			return filterVariables(super.getMacros(contextType, contextData,  includeParent));
+		public ICdtVariable[] getVariables(int contextType, Object contextData, boolean includeParent) {
+			//			return filterVariables(super.getMacros(contextType, contextData,  includeParent));
 			return filterVariables(fMngr.getVariables(fCfgDes));
 		}
 
@@ -86,31 +83,30 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		 * @see org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider#getContextInfo(java.lang.Object)
 		 */
 		@Override
-		public IMacroContextInfo getMacroContextInfo(int contextType,Object contextData){
+		public IMacroContextInfo getMacroContextInfo(int contextType, Object contextData) {
 			IMacroContextInfo startInfo = getStartInfo();
-			if(contextType == fContextType &&
-					contextData == fContextData)
+			if (contextType == fContextType && contextData == fContextData)
 				return startInfo;
 
 			IMacroContextInfo info = super.getMacroContextInfo(contextType, contextData);
-			if(info == null)
+			if (info == null)
 				return null;
 
-			if(SupplierBasedCdtVariableManager.checkParentContextRelation(startInfo,info))
+			if (SupplierBasedCdtVariableManager.checkParentContextRelation(startInfo, info))
 				return info;
 			return null;
 		}
 
-		protected IMacroContextInfo getStartInfo(){
-			if(fStartInfo == null && !fStartInitialized){
-				IMacroContextInfo info = super.getMacroContextInfo(fContextType,fContextData);
-				if(info != null){
+		protected IMacroContextInfo getStartInfo() {
+			if (fStartInfo == null && !fStartInitialized) {
+				IMacroContextInfo info = super.getMacroContextInfo(fContextType, fContextData);
+				if (info != null) {
 					ICdtVariableSupplier suppliers[] = info.getSuppliers();
 					suppliers = filterValidSuppliers(suppliers);
-					if(suppliers != null)
-						fStartInfo = new DefaultMacroContextInfo(fContextType,fContextData,suppliers);
+					if (suppliers != null)
+						fStartInfo = new DefaultMacroContextInfo(fContextType, fContextData, suppliers);
 					else
-						fStartInfo = (IMacroContextInfo)info.getNext();
+						fStartInfo = (IMacroContextInfo) info.getNext();
 					fStartInitialized = true;
 				}
 				fStartInitialized = true;
@@ -119,8 +115,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		}
 	}
 
-
-	public ExternalExtensionMacroSupplier(ICdtVariableManager mngr, ICConfigurationDescription cfgDes){
+	public ExternalExtensionMacroSupplier(ICdtVariableManager mngr, ICConfigurationDescription cfgDes) {
 		fMngr = mngr;
 		fCfgDes = cfgDes;
 	}
@@ -130,36 +125,38 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 	 */
 	@Override
 	public ICdtVariable getVariable(String macroName, IVariableContextInfo context) {
-		if((macroName = getValidName(macroName)) == null)
+		if ((macroName = getValidName(macroName)) == null)
 			return null;
 
-		IMacroContextInfo info = (IMacroContextInfo)context;
+		IMacroContextInfo info = (IMacroContextInfo) context;
 		int contextType = info.getContextType();
 		Object contextData = info.getContextData();
-		switch(contextType){
+		switch (contextType) {
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			IConfiguration cfg = null;
 			IBuilder builder = null;
-			if(contextData instanceof IBuilder){
-				builder = (IBuilder)contextData;
+			if (contextData instanceof IBuilder) {
+				builder = (IBuilder) contextData;
 				cfg = builder.getParent().getParent();
-			} else if(contextData instanceof IConfiguration){
-				cfg = (IConfiguration)contextData;
+			} else if (contextData instanceof IConfiguration) {
+				cfg = (IConfiguration) contextData;
 				builder = cfg.getBuilder();
 			}
-			if(cfg != null){
+			if (cfg != null) {
 				IConfigurationBuildMacroSupplier supplier = cfg.getBuildMacroSupplier();
-				if(supplier == null)
+				if (supplier == null)
 					return null;
-				return supplier.getMacro(macroName,cfg,new ExtensionMacroProvider(contextType, contextData));
+				return supplier.getMacro(macroName, cfg, new ExtensionMacroProvider(contextType, contextData));
 			}
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if (contextData instanceof IManagedProject) {
-				IManagedProject project = (IManagedProject)contextData;
-				IProjectBuildMacroSupplier supplier = project.getProjectType() != null ? project.getProjectType().getBuildMacroSupplier() : null;
-				if(supplier == null)
+				IManagedProject project = (IManagedProject) contextData;
+				IProjectBuildMacroSupplier supplier = project.getProjectType() != null
+						? project.getProjectType().getBuildMacroSupplier()
+						: null;
+				if (supplier == null)
 					return null;
-				return supplier.getMacro(macroName,project,new ExtensionMacroProvider(contextType, contextData));
+				return supplier.getMacro(macroName, project, new ExtensionMacroProvider(contextType, contextData));
 			}
 		}
 		return null;
@@ -171,81 +168,83 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo context) {
 		IBuildMacro macros[] = null;
-		IMacroContextInfo info = (IMacroContextInfo)context;
+		IMacroContextInfo info = (IMacroContextInfo) context;
 		int contextType = info.getContextType();
 		Object contextData = info.getContextData();
 
-		switch(contextType){
+		switch (contextType) {
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			IConfiguration cfg = null;
 			IBuilder builder = null;
-			if(contextData instanceof IBuilder){
-				builder = (IBuilder)contextData;
+			if (contextData instanceof IBuilder) {
+				builder = (IBuilder) contextData;
 				cfg = builder.getParent().getParent();
-			}else if(contextData instanceof IConfiguration){
-				cfg = (IConfiguration)contextData;
+			} else if (contextData instanceof IConfiguration) {
+				cfg = (IConfiguration) contextData;
 				builder = cfg.getBuilder();
 			}
-			if(cfg != null){
+			if (cfg != null) {
 				IConfigurationBuildMacroSupplier supplier = cfg.getBuildMacroSupplier();
-				if(supplier != null)
-					macros = supplier.getMacros(cfg,new ExtensionMacroProvider(contextType, contextData));
+				if (supplier != null)
+					macros = supplier.getMacros(cfg, new ExtensionMacroProvider(contextType, contextData));
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if (contextData instanceof IManagedProject) {
-				IManagedProject project = (IManagedProject)contextData;
-				IProjectBuildMacroSupplier supplier = project.getProjectType() != null ? project.getProjectType().getBuildMacroSupplier() : null;
-				if(supplier != null)
-					macros = supplier.getMacros(project,new ExtensionMacroProvider(contextType, contextData));
+				IManagedProject project = (IManagedProject) contextData;
+				IProjectBuildMacroSupplier supplier = project.getProjectType() != null
+						? project.getProjectType().getBuildMacroSupplier()
+						: null;
+				if (supplier != null)
+					macros = supplier.getMacros(project, new ExtensionMacroProvider(contextType, contextData));
 			}
 		}
 		return filterVariables(macros);
 	}
 
-	protected String getValidName(String name){
-		if(name == null || (name = name.trim()).length() == 0)
+	protected String getValidName(String name) {
+		if (name == null || (name = name.trim()).length() == 0)
 			return null;
-		if(fNonOverloadableMacros != null){
-			for(int i = 0; i < fNonOverloadableMacros.length; i++){
-				if(fNonOverloadableMacros[i].equals(EnvVarOperationProcessor.normalizeName(name)))
+		if (fNonOverloadableMacros != null) {
+			for (int i = 0; i < fNonOverloadableMacros.length; i++) {
+				if (fNonOverloadableMacros[i].equals(EnvVarOperationProcessor.normalizeName(name)))
 					return null;
 			}
 		}
 		return name;
 	}
 
-	protected ICdtVariable[] filterVariables(ICdtVariable macros[]){
-		return filterVariables(macros,fNonOverloadableMacros);
+	protected ICdtVariable[] filterVariables(ICdtVariable macros[]) {
+		return filterVariables(macros, fNonOverloadableMacros);
 	}
 
-	private ICdtVariable[] filterVariables(ICdtVariable macros[], String remove[]){
-		if(macros == null || macros.length == 0)
+	private ICdtVariable[] filterVariables(ICdtVariable macros[], String remove[]) {
+		if (macros == null || macros.length == 0)
 			return macros;
 
 		ICdtVariable filtered[] = new ICdtVariable[macros.length];
 		int filteredNum = 0;
-		for(int i = 0; i < macros.length; i++){
+		for (int i = 0; i < macros.length; i++) {
 			ICdtVariable var = macros[i];
 			String name = null;
-			if(var != null && (name = var.getName().trim()).length() != 0){
+			if (var != null && (name = var.getName().trim()).length() != 0) {
 				boolean skip = false;
-				if(remove != null && remove.length > 0){
-					for(int j = 0; j < remove.length; j++){
-						if(remove[j] != null && remove[j].equals(name)){
+				if (remove != null && remove.length > 0) {
+					for (int j = 0; j < remove.length; j++) {
+						if (remove[j] != null && remove[j].equals(name)) {
 							skip = true;
 							break;
 						}
 					}
 				}
-				if(!skip)
+				if (!skip)
 					filtered[filteredNum++] = var;
 			}
 		}
 
-		if(filteredNum != filtered.length){
+		if (filteredNum != filtered.length) {
 			ICdtVariable m[] = new ICdtVariable[filteredNum];
-			for(int i = 0; i < filteredNum; i++)
+			for (int i = 0; i < filteredNum; i++)
 				m[i] = filtered[i];
 			filtered = m;
 		}
@@ -253,26 +252,24 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 
 	}
 
-	protected ICdtVariableSupplier[] filterValidSuppliers(ICdtVariableSupplier suppliers[]){
-		if(suppliers == null)
+	protected ICdtVariableSupplier[] filterValidSuppliers(ICdtVariableSupplier suppliers[]) {
+		if (suppliers == null)
 			return null;
 
 		int i = 0, j = 0;
-		for(i = 0; i < suppliers.length; i++){
-			if(suppliers[i] == this)
+		for (i = 0; i < suppliers.length; i++) {
+			if (suppliers[i] == this)
 				break;
 		}
 
-
-		if(i >= suppliers.length)
+		if (i >= suppliers.length)
 			return null;
 
 		int startNum = i + 1;
 
-		ICdtVariableSupplier validSuppliers[] =
-			new ICdtVariableSupplier[suppliers.length - startNum];
+		ICdtVariableSupplier validSuppliers[] = new ICdtVariableSupplier[suppliers.length - startNum];
 
-		for(i = startNum, j = 0; i < suppliers.length; i++, j++)
+		for (i = startNum, j = 0; i < suppliers.length; i++, j++)
 			validSuppliers[j] = suppliers[i];
 
 		return validSuppliers;

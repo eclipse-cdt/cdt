@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 
 public class NamespaceHandle extends CElementHandle implements INamespace {
-	
+
 	public NamespaceHandle(ICElement parent, ICPPNamespace ns) {
 		super(parent, ICElement.C_NAMESPACE, ns.getName());
 	}

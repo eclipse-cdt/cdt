@@ -29,34 +29,35 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
 
-    private final IViewerUpdate fUpdate;
-    public ViewerCountingRequestMonitor(Executor executor, IViewerUpdate update) {
-        super(executor, null);
-        fUpdate = update;
-    }
-    
-    @Override
-    public synchronized boolean isCanceled() { 
-        // isCanceled() is called implicitly by the super-constructor before fUpdate
-        // is initialized.  The fUpdate != null is here to protect against an NPE 
-        // from that.
-        return (fUpdate != null && fUpdate.isCanceled()) || super.isCanceled();
-    }
-    
-    @Override
-    protected void handleSuccess() {
-        fUpdate.done();
-    }
+	private final IViewerUpdate fUpdate;
 
-    @Override
-    protected void handleErrorOrWarning() {
-        fUpdate.setStatus(getStatus());
-        fUpdate.done();
-    }
-    
-    @Override
-    protected void handleCancel() {
-        fUpdate.setStatus(getStatus());
-        fUpdate.done();
-    }
+	public ViewerCountingRequestMonitor(Executor executor, IViewerUpdate update) {
+		super(executor, null);
+		fUpdate = update;
+	}
+
+	@Override
+	public synchronized boolean isCanceled() {
+		// isCanceled() is called implicitly by the super-constructor before fUpdate
+		// is initialized.  The fUpdate != null is here to protect against an NPE 
+		// from that.
+		return (fUpdate != null && fUpdate.isCanceled()) || super.isCanceled();
+	}
+
+	@Override
+	protected void handleSuccess() {
+		fUpdate.done();
+	}
+
+	@Override
+	protected void handleErrorOrWarning() {
+		fUpdate.setStatus(getStatus());
+		fUpdate.done();
+	}
+
+	@Override
+	protected void handleCancel() {
+		fUpdate.setStatus(getStatus());
+		fUpdate.done();
+	}
 }

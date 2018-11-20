@@ -28,4 +28,3 @@ public class AutoconfKeywordDetector implements IWordDetector {
 	}
 
 }
-

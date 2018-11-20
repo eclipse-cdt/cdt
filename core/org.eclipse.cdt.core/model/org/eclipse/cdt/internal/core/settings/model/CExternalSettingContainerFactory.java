@@ -46,20 +46,18 @@ public abstract class CExternalSettingContainerFactory {
 	 * @return {@link CExternalSettingsContainer}
 	 * @throws CoreException
 	 */
-	public abstract CExternalSettingsContainer createContainer(
-			String id,
-			IProject project,
+	public abstract CExternalSettingsContainer createContainer(String id, IProject project,
 			ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException;
 
-	public void addListener(ICExternalSettingsListener listener){
-	}
-	
-	public void removeListener(ICExternalSettingsListener listener){
+	public void addListener(ICExternalSettingsListener listener) {
 	}
 
-	public void startup(){
+	public void removeListener(ICExternalSettingsListener listener) {
 	}
-	
-	public void shutdown(){
+
+	public void startup() {
+	}
+
+	public void shutdown() {
 	}
 }

@@ -31,45 +31,44 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
   *
   */
 public class NameAndVisibilityComposite extends Composite {
-	
+
 	private LabeledTextField constantName;
 	private final String labelName;
 	private final VisibilitySelectionPanel visibilityPanel;
-	
+
 	public NameAndVisibilityComposite(Composite parent, String labelName, String defaultName) {
 		this(parent, labelName, VisibilityEnum.v_public, defaultName);
 	}
-	
-	public NameAndVisibilityComposite(Composite parent, String labelName, VisibilityEnum defaultVisibility, String defaultName){
+
+	public NameAndVisibilityComposite(Composite parent, String labelName, VisibilityEnum defaultVisibility,
+			String defaultName) {
 
 		super(parent, SWT.NONE);
-		
+
 		this.labelName = labelName;
-		
+
 		setLayout(new GridLayout());
-		
+
 		createNewMethodNameComposite(this, defaultName);
-		visibilityPanel = new VisibilitySelectionPanel(this, defaultVisibility,SWT.NONE);
+		visibilityPanel = new VisibilitySelectionPanel(this, defaultVisibility, SWT.NONE);
 	}
-	
 
 	public Text getConstantNameText() {
 		return constantName.getText();
 	}
-	
+
 	public Group getVisibiltyGroup() {
 		return visibilityPanel.getGroup();
 	}
-	
+
 	public void visibilityPanelsetVisible(boolean visible) {
 		visibilityPanel.setVisible(visible);
 	}
 
-
 	private void createNewMethodNameComposite(Composite control, String defaultName) {
 		Composite methodNameComposite = new Composite(control, SWT.NONE);
 		FillLayout compositeLayout = new FillLayout(SWT.HORIZONTAL);
-		GridData gridData = new GridData(SWT.FILL,SWT.BEGINNING, true, false);
+		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.horizontalAlignment = GridData.FILL;
 		methodNameComposite.setLayoutData(gridData);
 		methodNameComposite.setLayout(compositeLayout);

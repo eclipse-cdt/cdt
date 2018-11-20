@@ -42,12 +42,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GDBStack_HEAD extends MIStack {
 	public GDBStack_HEAD(DsfSession session) {
 		super(session);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_1_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_1_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}

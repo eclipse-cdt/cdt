@@ -20,7 +20,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.AbstractDebugView;
 
-
 /**
  * Updates the signals view.
  *
@@ -33,30 +32,30 @@ public class SignalsViewEventHandler extends AbstractDebugEventHandler {
 	 * 
 	 * @param view signals view
 	 */
-	public SignalsViewEventHandler( AbstractDebugView view ) {
-		super( view );
+	public SignalsViewEventHandler(AbstractDebugView view) {
+		super(view);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#doHandleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	@Override
-	protected void doHandleDebugEvents( DebugEvent[] events ) {
-		for( int i = 0; i < events.length; i++ ) {
+	protected void doHandleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			switch( event.getKind() ) {
-				case DebugEvent.CREATE:
-				case DebugEvent.TERMINATE:
-					if ( event.getSource() instanceof IDebugTarget || event.getSource() instanceof ICSignal )
-						refresh();
-					break;
-				case DebugEvent.SUSPEND:
+			switch (event.getKind()) {
+			case DebugEvent.CREATE:
+			case DebugEvent.TERMINATE:
+				if (event.getSource() instanceof IDebugTarget || event.getSource() instanceof ICSignal)
 					refresh();
-					break;
-				case DebugEvent.CHANGE:
-					if ( event.getSource() instanceof ICSignal )
-						refresh( event.getSource() );
-					break;
+				break;
+			case DebugEvent.SUSPEND:
+				refresh();
+				break;
+			case DebugEvent.CHANGE:
+				if (event.getSource() instanceof ICSignal)
+					refresh(event.getSource());
+				break;
 			}
 		}
 	}

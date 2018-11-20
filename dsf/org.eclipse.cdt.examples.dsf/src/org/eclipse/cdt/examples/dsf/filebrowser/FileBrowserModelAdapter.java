@@ -41,25 +41,24 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 @SuppressWarnings("restriction")
 @ThreadSafe
-public class FileBrowserModelAdapter extends AbstractVMAdapter
-{
-    FileBrowserVMProvider fViewModelProvider; 
+public class FileBrowserModelAdapter extends AbstractVMAdapter {
+	FileBrowserVMProvider fViewModelProvider;
 
-    @Override
-    protected IVMProvider createViewModelProvider(IPresentationContext context) {
-        /*
-         * In this example there is only one viewer, so there is only one 
-         * VMProvider.
-         */
-        return fViewModelProvider;
-    }
-    
-    public FileBrowserModelAdapter(IPresentationContext presentationContext) {
-        super();
-        fViewModelProvider = new FileBrowserVMProvider(this, presentationContext);
-    }    
+	@Override
+	protected IVMProvider createViewModelProvider(IPresentationContext context) {
+		/*
+		 * In this example there is only one viewer, so there is only one 
+		 * VMProvider.
+		 */
+		return fViewModelProvider;
+	}
 
-    FileBrowserVMProvider getVMProvider() {
-        return fViewModelProvider;
-    }
+	public FileBrowserModelAdapter(IPresentationContext presentationContext) {
+		super();
+		fViewModelProvider = new FileBrowserVMProvider(this, presentationContext);
+	}
+
+	FileBrowserVMProvider getVMProvider() {
+		return fViewModelProvider;
+	}
 }

@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.w3c.dom.Element;
 
-
 /**
  * Class handles the Template processes
  */
@@ -45,16 +44,17 @@ public class TemplateProcessHandler {
 	private void initialize() {
 		TemplateDescriptor desc = template.getTemplateDescriptor();
 		Element root = desc.getRootElement();
-		conditionalProcessGroupList =  new ArrayList<ConditionalProcessGroup>();
+		conditionalProcessGroupList = new ArrayList<ConditionalProcessGroup>();
 		List<Element> nodeList = TemplateEngine.getChildrenOfElementByTag(root, TemplateDescriptor.IF);
 		for (int j = 0, l = nodeList.size(); j < l; j++) {
 			conditionalProcessGroupList.add(new ConditionalProcessGroup(template, nodeList.get(j), j + 1));
 		}
 		//Collect all free-hanging processes in one ConditionalProcessGroup object with condition true.
 		nodeList = TemplateEngine.getChildrenOfElementByTag(root, TemplateDescriptor.PROCESS);
-		conditionalProcessGroupList.add(new ConditionalProcessGroup(template, nodeList.toArray(new Element[nodeList.size()])));
+		conditionalProcessGroupList
+				.add(new ConditionalProcessGroup(template, nodeList.toArray(new Element[nodeList.size()])));
 	}
-	
+
 	/**
 	 * 
 	 * @param monitor 
@@ -63,7 +63,7 @@ public class TemplateProcessHandler {
 	 */
 	public IStatus[] processAll(IProgressMonitor monitor) throws ProcessFailureException {
 		List<IStatus> allStatuses = new ArrayList<IStatus>();
-		for(ConditionalProcessGroup cpg : conditionalProcessGroupList) {
+		for (ConditionalProcessGroup cpg : conditionalProcessGroupList) {
 			try {
 				allStatuses.addAll(cpg.process(monitor));
 			} catch (ProcessFailureException e) {
@@ -78,7 +78,7 @@ public class TemplateProcessHandler {
 	 */
 	public Set<String> getAllMacros() {
 		Set<String> set = new HashSet<String>();
-		for(ConditionalProcessGroup cpg : conditionalProcessGroupList) {
+		for (ConditionalProcessGroup cpg : conditionalProcessGroupList) {
 			Set<String> subSet = cpg.getAllMacros();
 			if (subSet != null) {
 				set.addAll(subSet);

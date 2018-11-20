@@ -36,172 +36,152 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 public class MethodStubsListDialogField extends CheckedListDialogField<IMethodStub> {
-    // column properties
-    private static final String CP_NAME = "name"; //$NON-NLS-1$
-    private static final String CP_ACCESS = "access"; //$NON-NLS-1$
-    private static final String CP_VIRTUAL = "virtual"; //$NON-NLS-1$
-    private static final String CP_INLINE = "inline"; //$NON-NLS-1$
-    static final Integer INDEX_YES = 0;
-    static final Integer INDEX_NO = 1;
-    static final Integer INDEX_PUBLIC = 0;
-    static final Integer INDEX_PROTECTED = 1;
-    static final Integer INDEX_PRIVATE = 2;
-    
-    private final class CellHandler implements ICellModifier {
-        @Override
-		public boolean canModify(Object element, String property) {
-            if (element instanceof IMethodStub) {
-                IMethodStub stub = (IMethodStub) element;
-                if (property.equals(CP_ACCESS)) {
-                    return stub.canModifyAccess();
-                } else if (property.equals(CP_VIRTUAL)) {
-                    return stub.canModifyVirtual();
-                } else if (property.equals(CP_INLINE)) {
-                    return stub.canModifyInline();
-                }
-            }
-            return false;
-        }
-        
-        @Override
-		public Object getValue(Object element, String property) {
-            if (!(element instanceof IMethodStub))
-                return null;
-            
-            IMethodStub stub = (IMethodStub) element;
-            if (property.equals(CP_ACCESS)) {
-                if (stub.getAccess() == ASTAccessVisibility.PRIVATE) {
-                    return INDEX_PRIVATE;
-                } else if (stub.getAccess() == ASTAccessVisibility.PROTECTED) {
-                    return INDEX_PROTECTED;
-                } else {
-                    return INDEX_PUBLIC;
-                }
-            } else if (property.equals(CP_VIRTUAL)) {
-            	if (stub.isVirtual())
-            		return INDEX_YES;
-            	return INDEX_NO;
-	        } else if (property.equals(CP_INLINE)) {
-	        	if (stub.isInline())
-	        		return INDEX_YES;
-        		return INDEX_NO;
-	        }
-            return null;
-        }
-        
-        @Override
-		public void modify(Object element, String property, Object value) {
-            IMethodStub stub = null;
-            if (element instanceof IMethodStub) {
-                stub = (IMethodStub)element;
-            } else if (element instanceof Item) {
-                Object data = ((Item)element).getData();
-                if (data instanceof IMethodStub)
-                    stub = (IMethodStub)data;
-            }
-            if (stub != null) {
-                if (property.equals(CP_ACCESS) && value instanceof Integer) {
-                    Integer access = (Integer) value;
-                    if (access.equals(INDEX_PRIVATE)) {
-                        stub.setAccess(ASTAccessVisibility.PRIVATE);
-                    } else if (access.equals(INDEX_PROTECTED)) {
-                        stub.setAccess(ASTAccessVisibility.PROTECTED);
-                    } else {
-                        stub.setAccess(ASTAccessVisibility.PUBLIC);
-                    }
-                    refresh();
-                } else if (property.equals(CP_VIRTUAL) && value instanceof Integer) {
-                    Integer yesno = (Integer) value;
-                    stub.setVirtual(yesno.equals(INDEX_YES));
-                    refresh();
-                } else if (property.equals(CP_INLINE) && value instanceof Integer) {
-                    Integer yesno = (Integer) value;
-                    stub.setInline(yesno.equals(INDEX_YES));
-                    refresh();
-                }
-            }
-        }
-    }
-    
-    public MethodStubsListDialogField(String title, IListAdapter<IMethodStub> listAdapter) {
-        super(listAdapter, null, new MethodStubsLabelProvider());
-        setLabelText(title);
-        
-        String[] headers = new String[] {
-        	NewClassWizardMessages.MethodStubsDialogField_headings_name, 
-        	NewClassWizardMessages.MethodStubsDialogField_headings_access, 
-        	NewClassWizardMessages.MethodStubsDialogField_headings_virtual, 
-        	NewClassWizardMessages.MethodStubsDialogField_headings_inline
-        };
-        ColumnLayoutData[] columns = new ColumnLayoutData[] {
-        	new ColumnWeightData(70, 30),
-        	new ColumnWeightData(40, 30),
-        	new ColumnWeightData(30, 25),
-        	new ColumnWeightData(30, 25),
-        };
-        setTableColumns(new ListDialogField.ColumnsDescription(columns, headers, true));
-    }
-    
-    @Override
-	protected boolean managedButtonPressed(int index) {
-        super.managedButtonPressed(index);
-        return false;
-    }
-    
-    @Override
-	protected TableViewer createTableViewer(Composite parent) {
-        TableViewer viewer = super.createTableViewer(parent);
-        Table table = viewer.getTable();
-        table.getAccessible().addAccessibleListener(
-            new AccessibleAdapter() {                       
-                @Override
-				public void getName(AccessibleEvent e) {
-                	e.result = NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label; 
-                }
-            }
-        );
-        
-        CellEditor virtualCellEditor = new ComboBoxCellEditor(table,
-        	new String[] {
-                /* INDEX_YES */BaseClassesLabelProvider.getYesNoText(true),
-                /* INDEX_NO */BaseClassesLabelProvider.getYesNoText(false)
-        	}, SWT.READ_ONLY);
+	// column properties
+	private static final String CP_NAME = "name"; //$NON-NLS-1$
+	private static final String CP_ACCESS = "access"; //$NON-NLS-1$
+	private static final String CP_VIRTUAL = "virtual"; //$NON-NLS-1$
+	private static final String CP_INLINE = "inline"; //$NON-NLS-1$
+	static final Integer INDEX_YES = 0;
+	static final Integer INDEX_NO = 1;
+	static final Integer INDEX_PUBLIC = 0;
+	static final Integer INDEX_PROTECTED = 1;
+	static final Integer INDEX_PRIVATE = 2;
 
-        CellEditor accessCellEditor = new ComboBoxCellEditor(table,
-        	new String[] {
-                /* INDEX_PUBLIC */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PUBLIC),
-                /* INDEX_PROTECTED */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PROTECTED),
-                /* INDEX_PRIVATE */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PRIVATE)
-            }, SWT.READ_ONLY);
-        
-        viewer.setCellEditors(new CellEditor[] {
-            null,
-            accessCellEditor,
-            virtualCellEditor,
-            virtualCellEditor
+	private final class CellHandler implements ICellModifier {
+		@Override
+		public boolean canModify(Object element, String property) {
+			if (element instanceof IMethodStub) {
+				IMethodStub stub = (IMethodStub) element;
+				if (property.equals(CP_ACCESS)) {
+					return stub.canModifyAccess();
+				} else if (property.equals(CP_VIRTUAL)) {
+					return stub.canModifyVirtual();
+				} else if (property.equals(CP_INLINE)) {
+					return stub.canModifyInline();
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public Object getValue(Object element, String property) {
+			if (!(element instanceof IMethodStub))
+				return null;
+
+			IMethodStub stub = (IMethodStub) element;
+			if (property.equals(CP_ACCESS)) {
+				if (stub.getAccess() == ASTAccessVisibility.PRIVATE) {
+					return INDEX_PRIVATE;
+				} else if (stub.getAccess() == ASTAccessVisibility.PROTECTED) {
+					return INDEX_PROTECTED;
+				} else {
+					return INDEX_PUBLIC;
+				}
+			} else if (property.equals(CP_VIRTUAL)) {
+				if (stub.isVirtual())
+					return INDEX_YES;
+				return INDEX_NO;
+			} else if (property.equals(CP_INLINE)) {
+				if (stub.isInline())
+					return INDEX_YES;
+				return INDEX_NO;
+			}
+			return null;
+		}
+
+		@Override
+		public void modify(Object element, String property, Object value) {
+			IMethodStub stub = null;
+			if (element instanceof IMethodStub) {
+				stub = (IMethodStub) element;
+			} else if (element instanceof Item) {
+				Object data = ((Item) element).getData();
+				if (data instanceof IMethodStub)
+					stub = (IMethodStub) data;
+			}
+			if (stub != null) {
+				if (property.equals(CP_ACCESS) && value instanceof Integer) {
+					Integer access = (Integer) value;
+					if (access.equals(INDEX_PRIVATE)) {
+						stub.setAccess(ASTAccessVisibility.PRIVATE);
+					} else if (access.equals(INDEX_PROTECTED)) {
+						stub.setAccess(ASTAccessVisibility.PROTECTED);
+					} else {
+						stub.setAccess(ASTAccessVisibility.PUBLIC);
+					}
+					refresh();
+				} else if (property.equals(CP_VIRTUAL) && value instanceof Integer) {
+					Integer yesno = (Integer) value;
+					stub.setVirtual(yesno.equals(INDEX_YES));
+					refresh();
+				} else if (property.equals(CP_INLINE) && value instanceof Integer) {
+					Integer yesno = (Integer) value;
+					stub.setInline(yesno.equals(INDEX_YES));
+					refresh();
+				}
+			}
+		}
+	}
+
+	public MethodStubsListDialogField(String title, IListAdapter<IMethodStub> listAdapter) {
+		super(listAdapter, null, new MethodStubsLabelProvider());
+		setLabelText(title);
+
+		String[] headers = new String[] { NewClassWizardMessages.MethodStubsDialogField_headings_name,
+				NewClassWizardMessages.MethodStubsDialogField_headings_access,
+				NewClassWizardMessages.MethodStubsDialogField_headings_virtual,
+				NewClassWizardMessages.MethodStubsDialogField_headings_inline };
+		ColumnLayoutData[] columns = new ColumnLayoutData[] { new ColumnWeightData(70, 30),
+				new ColumnWeightData(40, 30), new ColumnWeightData(30, 25), new ColumnWeightData(30, 25), };
+		setTableColumns(new ListDialogField.ColumnsDescription(columns, headers, true));
+	}
+
+	@Override
+	protected boolean managedButtonPressed(int index) {
+		super.managedButtonPressed(index);
+		return false;
+	}
+
+	@Override
+	protected TableViewer createTableViewer(Composite parent) {
+		TableViewer viewer = super.createTableViewer(parent);
+		Table table = viewer.getTable();
+		table.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label;
+			}
 		});
-        viewer.setColumnProperties(new String[] {
-            CP_NAME,
-            CP_ACCESS,
-            CP_VIRTUAL,
-            CP_INLINE
-        });
-        viewer.setCellModifier(new CellHandler());
-        return viewer;
-    }
-    
-    public void addMethodStub(IMethodStub methodStub, boolean checked) {
+
+		CellEditor virtualCellEditor = new ComboBoxCellEditor(table,
+				new String[] { /* INDEX_YES */BaseClassesLabelProvider.getYesNoText(true),
+						/* INDEX_NO */BaseClassesLabelProvider.getYesNoText(false) },
+				SWT.READ_ONLY);
+
+		CellEditor accessCellEditor = new ComboBoxCellEditor(table,
+				new String[] { /* INDEX_PUBLIC */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PUBLIC),
+						/* INDEX_PROTECTED */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PROTECTED),
+						/* INDEX_PRIVATE */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PRIVATE) },
+				SWT.READ_ONLY);
+
+		viewer.setCellEditors(new CellEditor[] { null, accessCellEditor, virtualCellEditor, virtualCellEditor });
+		viewer.setColumnProperties(new String[] { CP_NAME, CP_ACCESS, CP_VIRTUAL, CP_INLINE });
+		viewer.setCellModifier(new CellHandler());
+		return viewer;
+	}
+
+	public void addMethodStub(IMethodStub methodStub, boolean checked) {
 		addElement(methodStub);
 		setChecked(methodStub, checked);
-    }
+	}
 
-    public IMethodStub[] getMethodStubs() {
-	    List<IMethodStub> allStubs = getElements();
-	    return allStubs.toArray(new IMethodStub[allStubs.size()]);
-    }
+	public IMethodStub[] getMethodStubs() {
+		List<IMethodStub> allStubs = getElements();
+		return allStubs.toArray(new IMethodStub[allStubs.size()]);
+	}
 
-    public IMethodStub[] getCheckedMethodStubs() {
-	    List<IMethodStub> checkedStubs = getCheckedElements();
-	    return checkedStubs.toArray(new IMethodStub[checkedStubs.size()]);
-    }
+	public IMethodStub[] getCheckedMethodStubs() {
+		List<IMethodStub> checkedStubs = getCheckedElements();
+		return checkedStubs.toArray(new IMethodStub[checkedStubs.size()]);
+	}
 }

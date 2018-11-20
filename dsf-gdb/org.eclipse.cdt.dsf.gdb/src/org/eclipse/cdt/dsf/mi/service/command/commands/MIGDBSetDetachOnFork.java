@@ -24,9 +24,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * @since 4.0
  */
-public class MIGDBSetDetachOnFork extends MIGDBSet 
-{
-    public MIGDBSetDetachOnFork(ICommandControlDMContext ctx, boolean detach) {
-        super(ctx, new String[] {"detach-on-fork", detach ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-    }
+public class MIGDBSetDetachOnFork extends MIGDBSet {
+	public MIGDBSetDetachOnFork(ICommandControlDMContext ctx, boolean detach) {
+		super(ctx, new String[] { "detach-on-fork", detach ? "on" : "off" });//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
 }

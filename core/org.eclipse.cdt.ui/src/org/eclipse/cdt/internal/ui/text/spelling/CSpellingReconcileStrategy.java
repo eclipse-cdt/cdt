@@ -49,21 +49,23 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 		 */
 		@Override
 		public void accept(SpellingProblem problem) {
-			IProblemRequestor requestor= fRequestor;
+			IProblemRequestor requestor = fRequestor;
 			if (requestor != null) {
 				try {
-					int line= getDocument().getLineOfOffset(problem.getOffset()) + 1;
-					String word= getDocument().get(problem.getOffset(), problem.getLength());
-					boolean dictionaryMatch= false;
-					boolean sentenceStart= false;
+					int line = getDocument().getLineOfOffset(problem.getOffset()) + 1;
+					String word = getDocument().get(problem.getOffset(), problem.getLength());
+					boolean dictionaryMatch = false;
+					boolean sentenceStart = false;
 					if (problem instanceof CSpellingProblem) {
-						dictionaryMatch= ((CSpellingProblem)problem).isDictionaryMatch();
-						sentenceStart= ((CSpellingProblem) problem).isSentenceStart();
+						dictionaryMatch = ((CSpellingProblem) problem).isDictionaryMatch();
+						sentenceStart = ((CSpellingProblem) problem).isSentenceStart();
 					}
 					// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=81514
-					IEditorInput editorInput= fEditor.getEditorInput();
+					IEditorInput editorInput = fEditor.getEditorInput();
 					if (editorInput != null) {
-						CoreSpellingProblem iProblem= new CoreSpellingProblem(problem.getOffset(), problem.getOffset() + problem.getLength() - 1, line, problem.getMessage(), word, dictionaryMatch, sentenceStart, getDocument(), editorInput.getName());
+						CoreSpellingProblem iProblem = new CoreSpellingProblem(problem.getOffset(),
+								problem.getOffset() + problem.getLength() - 1, line, problem.getMessage(), word,
+								dictionaryMatch, sentenceStart, getDocument(), editorInput.getName());
 						requestor.acceptProblem(iProblem);
 					}
 				} catch (BadLocationException x) {
@@ -91,19 +93,19 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 		}
 	}
 
-	
 	/** The id of the problem */
-	public static final int SPELLING_PROBLEM_ID= 0x80000000;
+	public static final int SPELLING_PROBLEM_ID = 0x80000000;
 
 	/** Properties file content type */
-	private static final IContentType CXX_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+	private static final IContentType CXX_CONTENT_TYPE = Platform.getContentTypeManager()
+			.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 	/** The text editor to operate on. */
 	private ITextEditor fEditor;
 
 	/** The problem requester. */
 	private IProblemRequestor fRequestor;
-	
+
 	/**
 	 * Creates a new comment reconcile strategy.
 	 *
@@ -112,7 +114,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	 */
 	public CSpellingReconcileStrategy(ISourceViewer viewer, ITextEditor editor) {
 		super(viewer, CSpellingService.getInstance());
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	/*
@@ -123,7 +125,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 		if (fRequestor != null && isSpellingEnabled())
 			super.reconcile(region);
 	}
-	
+
 	private boolean isSpellingEnabled() {
 		return EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED);
 	}
@@ -135,7 +137,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
 		return new SpellingProblemCollector();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#getContentType()
 	 */
@@ -157,16 +159,16 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	 * Update the problem requester based on the current editor
 	 */
 	private void updateProblemRequester() {
-		IAnnotationModel model= getAnnotationModel();
-		fRequestor= (model instanceof IProblemRequestor) ? (IProblemRequestor) model : null;
+		IAnnotationModel model = getAnnotationModel();
+		fRequestor = (model instanceof IProblemRequestor) ? (IProblemRequestor) model : null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#getAnnotationModel()
 	 */
 	@Override
 	protected IAnnotationModel getAnnotationModel() {
-		final IDocumentProvider documentProvider= fEditor.getDocumentProvider();
+		final IDocumentProvider documentProvider = fEditor.getDocumentProvider();
 		if (documentProvider == null)
 			return null;
 		return documentProvider.getAnnotationModel(fEditor.getEditorInput());

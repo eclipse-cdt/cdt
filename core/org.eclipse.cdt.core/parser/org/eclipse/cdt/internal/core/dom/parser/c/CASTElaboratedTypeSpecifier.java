@@ -31,14 +31,13 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 /**
  * Node for elaborated type specifiers (examples: struct S; union U; enum E;)
  */
-public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implements
-        ICASTElaboratedTypeSpecifier, IASTCompletionContext {
+public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier
+		implements ICASTElaboratedTypeSpecifier, IASTCompletionContext {
 
-    private int kind;
-    private IASTName name;
+	private int kind;
+	private IASTName name;
 
-
-    public CASTElaboratedTypeSpecifier() {
+	public CASTElaboratedTypeSpecifier() {
 	}
 
 	public CASTElaboratedTypeSpecifier(int kind, IASTName name) {
@@ -60,63 +59,72 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 
 	@Override
 	public int getKind() {
-        return kind;
-    }
+		return kind;
+	}
 
-    @Override
+	@Override
 	public void setKind(int value) {
-        assertNotFrozen();
-        this.kind = value;
-    }
+		assertNotFrozen();
+		this.kind = value;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(TYPE_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (!visitAlignmentSpecifiers(action)) {
-        	return false;
-        }
-        if (name != null) if (!name.accept(action)) return false;
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (!visitAlignmentSpecifiers(action)) {
+			return false;
 		}
-        return true;
-    }
+		if (name != null)
+			if (!name.accept(action))
+				return false;
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (n != name) return r_unclear;
+		if (n != name)
+			return r_unclear;
 
 		IASTNode parent = getParent();
 		if (!(parent instanceof IASTDeclaration))
 			return r_reference;
 
 		if (parent instanceof IASTSimpleDeclaration) {
-			IASTDeclarator [] dtors = ((IASTSimpleDeclaration) parent).getDeclarators();
+			IASTDeclarator[] dtors = ((IASTSimpleDeclaration) parent).getDeclarators();
 			if (dtors.length == 0)
 				return r_declaration;
 		}
@@ -133,30 +141,30 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] result= CVisitor.findBindingsForContentAssist(n, isPrefix);
-		int nextPos= 0;
+		IBinding[] result = CVisitor.findBindingsForContentAssist(n, isPrefix);
+		int nextPos = 0;
 		for (int i = 0; i < result.length; i++) {
-			IBinding b= result[i];
+			IBinding b = result[i];
 			if (b instanceof ICompositeType) {
-				ICompositeType ct= (ICompositeType) b;
+				ICompositeType ct = (ICompositeType) b;
 				switch (ct.getKey()) {
 				case ICompositeType.k_struct:
 					if (getKind() != k_struct)
-						b= null;
+						b = null;
 					break;
 				case ICompositeType.k_union:
 					if (getKind() != k_union)
-						b= null;
+						b = null;
 					break;
 				}
 			} else if (b instanceof IEnumeration) {
 				if (getKind() != k_enum)
-					b= null;
+					b = null;
 			} else if (b instanceof ITypedef) {
-				b= null;
+				b = null;
 			}
 			if (b != null) {
-				result[nextPos++]= b;
+				result[nextPos++] = b;
 			}
 		}
 		if (nextPos != result.length) {

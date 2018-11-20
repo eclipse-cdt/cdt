@@ -24,24 +24,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author vhirsl
  */
 public interface IExternalScannerInfoProvider {
-    /**
-     * Invokes a provider to generate scanner info.
-     */
-    public boolean invokeProvider(IProgressMonitor monitor, 
-                                  IResource resource,
-                                  String providerId,
-                                  IScannerConfigBuilderInfo2 buildInfo,
-                                  IScannerInfoCollector collector); 
+	/**
+	 * Invokes a provider to generate scanner info.
+	 */
+	public boolean invokeProvider(IProgressMonitor monitor, IResource resource, String providerId,
+			IScannerConfigBuilderInfo2 buildInfo, IScannerInfoCollector collector);
 
-    /**
-     * Alternative interface to pass down the environment.
-     */
-    public boolean invokeProvider(IProgressMonitor monitor, 
-            IResource resource,
-            InfoContext context,
-            String providerId,
-            IScannerConfigBuilderInfo2 buildInfo,
-            IScannerInfoCollector collector,
-            Properties env); 
- 
+	/**
+	 * Alternative interface to pass down the environment.
+	 */
+	public boolean invokeProvider(IProgressMonitor monitor, IResource resource, InfoContext context, String providerId,
+			IScannerConfigBuilderInfo2 buildInfo, IScannerInfoCollector collector, Properties env);
+
 }

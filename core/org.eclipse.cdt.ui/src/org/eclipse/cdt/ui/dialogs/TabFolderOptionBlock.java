@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -129,7 +128,7 @@ public abstract class TabFolderOptionBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!initializingTabs) {
-					setCurrentPage((ICOptionPage) ((TabItem)e.item).getData());
+					setCurrentPage((ICOptionPage) ((TabItem) e.item).getData());
 					fParent.updateContainer();
 				}
 			}
@@ -165,9 +164,8 @@ public abstract class TabFolderOptionBlock {
 				try {
 					tab.performApply(new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
-					CUIPlugin.errorDialog(
-							composite.getShell(),
-							CUIMessages.TabFolderOptionBlock_error, CUIMessages.TabFolderOptionBlock_error_settingOptions, e, true); 
+					CUIPlugin.errorDialog(composite.getShell(), CUIMessages.TabFolderOptionBlock_error,
+							CUIMessages.TabFolderOptionBlock_error_settingOptions, e, true);
 					return false;
 				}
 			}
@@ -195,13 +193,12 @@ public abstract class TabFolderOptionBlock {
 			ICOptionPage tab = iter.next();
 			ok = tab.isValid();
 			if (!ok) {
-                String errorMessage = tab.getErrorMessage();
-                if (!tab.getControl().isVisible()) {
-                    setErrorMessage(NLS.bind(
-                            CUIMessages.TabFolderOptionBlock_error_message, tab.getTitle()));
-                } else {
-                    setErrorMessage(errorMessage);
-                }
+				String errorMessage = tab.getErrorMessage();
+				if (!tab.getControl().isVisible()) {
+					setErrorMessage(NLS.bind(CUIMessages.TabFolderOptionBlock_error_message, tab.getTitle()));
+				} else {
+					setErrorMessage(errorMessage);
+				}
 				break;
 			}
 		}

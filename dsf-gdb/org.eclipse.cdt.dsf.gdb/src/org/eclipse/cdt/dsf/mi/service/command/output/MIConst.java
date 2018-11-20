@@ -22,31 +22,31 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * GDB/MI const value represents a ios-c string.
  */
 public class MIConst extends MIValue {
-    
-    private String cstring = ""; //$NON-NLS-1$
-    
-    public String getCString() {
-        return cstring;
-    }
-    
-    public void setCString(String str) {
-        cstring = str;
-    }
-    
-    /**
-     * Translates the C string value into a string which is suitable for display to a human.
-     * @return The translated string.
-     */
-    public String getString() {
-        return MIStringHandler.translateCString(cstring, true);
-    }
-    
-    public static String getString(String str) {
-    	return MIStringHandler.translateCString(str, true);
-    }
-    
-    @Override
-    public String toString() {
-        return getCString();
-    }
+
+	private String cstring = ""; //$NON-NLS-1$
+
+	public String getCString() {
+		return cstring;
+	}
+
+	public void setCString(String str) {
+		cstring = str;
+	}
+
+	/**
+	 * Translates the C string value into a string which is suitable for display to a human.
+	 * @return The translated string.
+	 */
+	public String getString() {
+		return MIStringHandler.translateCString(cstring, true);
+	}
+
+	public static String getString(String str) {
+		return MIStringHandler.translateCString(str, true);
+	}
+
+	@Override
+	public String toString() {
+		return getCString();
+	}
 }

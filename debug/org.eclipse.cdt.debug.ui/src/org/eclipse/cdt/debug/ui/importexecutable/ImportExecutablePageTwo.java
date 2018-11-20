@@ -94,17 +94,16 @@ public class ImportExecutablePageTwo extends WizardPage {
 	}
 
 	private void addLaunchConfigTypes() {
-		ILaunchConfigurationType[] configTypeList = DebugPlugin.getDefault()
-				.getLaunchManager().getLaunchConfigurationTypes();
+		ILaunchConfigurationType[] configTypeList = DebugPlugin.getDefault().getLaunchManager()
+				.getLaunchConfigurationTypes();
 		int j = 0, capp = 0;
 		for (int i = 0; i < configTypeList.length; i++) {
 			ILaunchConfigurationType type = configTypeList[i];
 			String configTypeName = type.getName();
-			if (type.isPublic()
-					&& type.supportsMode(ILaunchManager.DEBUG_MODE)) {
+			if (type.isPublic() && type.supportsMode(ILaunchManager.DEBUG_MODE)) {
 				if (wizard.supportsConfigurationType(type)) {
 					configTypes.add(configTypeName);
-					
+
 					if (type.getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP)) {
 						capp = j;
 					}
@@ -120,8 +119,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		if (isCreateNewProjectSelected) {
 			String defaultName = wizard.getDefaultProjectName();
 			if (defaultName.length() > 0) {
-				ICProject cProject = CoreModel.getDefault().getCModel()
-						.getCProject(defaultName);
+				ICProject cProject = CoreModel.getDefault().getCModel().getCProject(defaultName);
 				if (cProject.exists()) {
 					isCreateNewProjectSelected = false;
 					existingProjectName.setText(defaultName);
@@ -142,8 +140,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 			ICProject[] projects = getCProjects();
 
 			ILabelProvider labelProvider = new CElementLabelProvider();
-			ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-					getShell(), labelProvider);
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 			dialog.setTitle("Select a Project"); //$NON-NLS-1$
 			dialog.setMessage("Choose a project for the executable."); //$NON-NLS-1$
 			dialog.setElements(projects);
@@ -162,7 +159,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		
+
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
 		//
@@ -203,8 +200,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		final GridData gridData_1 = new GridData();
 		gridData_1.horizontalSpan = 3;
 		newProjectLabel.setLayoutData(gridData_1);
-		newProjectLabel
-				.setText(Messages.ImportExecutablePageTwo_ProjectLabel);
+		newProjectLabel.setText(Messages.ImportExecutablePageTwo_ProjectLabel);
 
 		final Label dummy2 = new Label(composite, SWT.NONE);
 		final GridData gridData_2 = new GridData();
@@ -271,8 +267,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		createLaunch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				isCreateLaunchConfigurationSelected = createLaunch
-						.getSelection();
+				isCreateLaunchConfigurationSelected = createLaunch.getSelection();
 				setLaunchConfigurationName(configurationName.getText().trim());
 				updateControls();
 			}
@@ -292,8 +287,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		});
 
 		configurationNameLabel = new Label(composite, SWT.NONE);
-		configurationNameLabel.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_END));
+		configurationNameLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		configurationNameLabel.setText(Messages.ImportExecutablePageTwo_Name);
 
 		configurationName = new Text(composite, SWT.BORDER);
@@ -310,20 +304,20 @@ public class ImportExecutablePageTwo extends WizardPage {
 		});
 		addLaunchConfigTypes();
 		updateControls();
-		CDebugUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp( getControl(), ICDebugHelpContextIds.IMPORT_EXECUTABLE_PAGE_TWO );
+		CDebugUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICDebugHelpContextIds.IMPORT_EXECUTABLE_PAGE_TWO);
 
 	}
 
 	private ICProject[] getCProjects() throws CModelException {
-		ICProject cproject[] = CoreModel.getDefault().getCModel()
-				.getCProjects();
+		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
 		ArrayList<ICProject> list = new ArrayList<>(cproject.length);
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {
-				cdesciptor = CCorePlugin.getDefault().getCProjectDescription(
-						(IProject) cproject[i].getResource(), false);
+				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource(),
+						false);
 				if (cdesciptor != null) {
 					String projectPlatform = cdesciptor.getPlatform();
 					if (filterPlatform.equals("*") //$NON-NLS-1$
@@ -346,8 +340,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		if (projectName.length() < 1) {
 			return null;
 		}
-		ICProject cProject = CoreModel.getDefault().getCModel().getCProject(
-				projectName);
+		ICProject cProject = CoreModel.getDefault().getCModel().getCProject(projectName);
 		if (!cProject.exists())
 			return null;
 		return cProject;
@@ -368,8 +361,8 @@ public class ImportExecutablePageTwo extends WizardPage {
 	protected ILaunchConfigurationType getSelectedLaunchConfigurationType() {
 		ILaunchConfigurationType result = null;
 		String selectedTypeName = configTypes.getText();
-		ILaunchConfigurationType[] configTypeList = DebugPlugin.getDefault()
-				.getLaunchManager().getLaunchConfigurationTypes();
+		ILaunchConfigurationType[] configTypeList = DebugPlugin.getDefault().getLaunchManager()
+				.getLaunchConfigurationTypes();
 		for (int i = 0; i < configTypeList.length; i++) {
 			if (selectedTypeName.equals(configTypeList[i].getName())) {
 				result = configTypeList[i];
@@ -388,8 +381,8 @@ public class ImportExecutablePageTwo extends WizardPage {
 	}
 
 	private void setLaunchConfigurationName(String defaultName) {
-		configurationName.setText(DebugPlugin.getDefault().getLaunchManager()
-				.generateUniqueLaunchConfigurationNameFrom(defaultName));
+		configurationName.setText(
+				DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(defaultName));
 		updateControls();
 	}
 
@@ -406,11 +399,11 @@ public class ImportExecutablePageTwo extends WizardPage {
 		if (shouldUpdateButtons && getContainer().getCurrentPage() != null)
 			getContainer().updateButtons();
 	}
-	
-    @Override
+
+	@Override
 	public boolean isPageComplete() {
-    	setErrorMessage(null);
-    	setWarningMessage(null);
+		setErrorMessage(null);
+		setWarningMessage(null);
 		if (isCreateNewProjectSelected()) {
 			if (getNewProjectName().length() == 0) {
 
@@ -432,7 +425,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 				setErrorMessage(Messages.ImportExecutablePageTwo_BadProjectName);
 				return false;
 			}
-			
+
 			// check if executables with same names already exist in the existing project
 			String[] executables = wizard.getImportExecutablePage().getSelectedExecutables();
 			List<String> existingNames = new ArrayList<String>();
@@ -443,7 +436,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 				}
 			}
 			if (!existingNames.isEmpty()) {
-				setWarningMessage(NLS.bind(Messages.ImportExecutablePageTwo_ExecutableAlreadyExists, 
+				setWarningMessage(NLS.bind(Messages.ImportExecutablePageTwo_ExecutableAlreadyExists,
 						StringUtil.join(existingNames, ", "))); //$NON-NLS-1$
 			}
 
@@ -455,26 +448,25 @@ public class ImportExecutablePageTwo extends WizardPage {
 		}
 		return super.isPageComplete();
 	}
-    
-    /**
-     * Returns the executable resource having the specified path within the project.
-     * @param project - the project of the executable file
-     * @param executable - the string path of the executable
-     * @return the executable file
-     */
-    private IFile getExecutableFile(IProject project, String executable) {
+
+	/**
+	 * Returns the executable resource having the specified path within the project.
+	 * @param project - the project of the executable file
+	 * @param executable - the string path of the executable
+	 * @return the executable file
+	 */
+	private IFile getExecutableFile(IProject project, String executable) {
 		IPath location = Path.fromOSString(executable);
 		String name = location.toFile().getName();
 		return project.getFile(name);
-    }
-    
-    /**
-     * Sets or clears the warning message for this page.
-     * @param message - the message, or <code>null</code> to clear the message
-     */
-    private void setWarningMessage(String message) {
-    	setMessage(message, IMessageProvider.WARNING);
-    }
+	}
 
+	/**
+	 * Sets or clears the warning message for this page.
+	 * @param message - the message, or <code>null</code> to clear the message
+	 */
+	private void setWarningMessage(String message) {
+		setMessage(message, IMessageProvider.WARNING);
+	}
 
 }

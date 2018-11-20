@@ -65,19 +65,20 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	private String fErrorMessage;
 
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		List<ICompletionProposal> proposals= Collections.emptyList();
-		fErrorMessage= null;
-		
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
+		List<ICompletionProposal> proposals = Collections.emptyList();
+		fErrorMessage = null;
+
 		if (context instanceof CContentAssistInvocationContext) {
-			CContentAssistInvocationContext cContext= (CContentAssistInvocationContext) context;
+			CContentAssistInvocationContext cContext = (CContentAssistInvocationContext) context;
 			if (inIncludeDirective(cContext)) {
 				// add include file proposals
-				proposals= new ArrayList<ICompletionProposal>();
+				proposals = new ArrayList<ICompletionProposal>();
 				try {
 					addInclusionProposals(cContext, proposals);
 				} catch (Exception exc) {
-					fErrorMessage= exc.getMessage();
+					fErrorMessage = exc.getMessage();
 					CUIPlugin.log(exc);
 				}
 			}
@@ -86,7 +87,8 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	}
 
 	@Override
-	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return null;
 	}
 
@@ -112,17 +114,17 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	private boolean inIncludeDirective(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();
 		int offset = context.getInvocationOffset();
-		
+
 		try {
-			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			final ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
 			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
-				String ppPrefix= doc.get(partition.getOffset(), offset - partition.getOffset());
+				String ppPrefix = doc.get(partition.getOffset(), offset - partition.getOffset());
 				if (ppPrefix.matches("\\s*#\\s*include\\s*[\"<][^\">]*")) { //$NON-NLS-1$
 					// we are inside the file name part of the include directive
 					return true;
 				}
 			}
-			
+
 		} catch (BadLocationException exc) {
 		}
 		return false;
@@ -130,53 +132,56 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	private static class PotentialInclude {
 		public String fPath;
-		public boolean fKnownContentType;  // true for directories and files known to be headers
-		
+		public boolean fKnownContentType; // true for directories and files known to be headers
+
 		public PotentialInclude(String path, boolean knownContentType) {
 			fPath = path;
 			fKnownContentType = knownContentType;
 		}
 	}
-	
-	private void addInclusionProposals(CContentAssistInvocationContext context, List<ICompletionProposal> proposals) throws Exception {
+
+	private void addInclusionProposals(CContentAssistInvocationContext context, List<ICompletionProposal> proposals)
+			throws Exception {
 		if (context.isContextInformationStyle()) {
 			return;
 		}
-		final ITranslationUnit tu= context.getTranslationUnit();
+		final ITranslationUnit tu = context.getTranslationUnit();
 		if (tu == null) {
 			return;
 		}
 		String prefix;
-		boolean angleBrackets= false;
+		boolean angleBrackets = false;
 		prefix = computeIncludePrefix(context);
 		if (prefix.length() > 0) {
-			angleBrackets= prefix.charAt(0) == '<';
-			prefix= prefix.substring(1);
+			angleBrackets = prefix.charAt(0) == '<';
+			prefix = prefix.substring(1);
 		}
-		IPath prefixPath= new Path(prefix);
-		PotentialInclude[] potentialIncludes= collectIncludeFiles(tu, prefixPath, angleBrackets);
+		IPath prefixPath = new Path(prefix);
+		PotentialInclude[] potentialIncludes = collectIncludeFiles(tu, prefixPath, angleBrackets);
 		if (potentialIncludes.length > 0) {
-			IInclude[] includes= tu.getIncludes();
-			Set<String> alreadyIncluded= new HashSet<String>();
+			IInclude[] includes = tu.getIncludes();
+			Set<String> alreadyIncluded = new HashSet<String>();
 			for (IInclude includeDirective : includes) {
 				alreadyIncluded.add(includeDirective.getElementName());
 			}
 			Image image = getImage(CElementImageProvider.getIncludeImageDescriptor());
 			for (PotentialInclude include : potentialIncludes) {
 				if (alreadyIncluded.add(include.fPath)) {
-					final char openingBracket= angleBrackets ? '<' : '"';
-					final char closingBracket= angleBrackets ? '>' : '"';
-					String repString= openingBracket + include.fPath;
-					final String dispString= repString + closingBracket;
+					final char openingBracket = angleBrackets ? '<' : '"';
+					final char closingBracket = angleBrackets ? '>' : '"';
+					String repString = openingBracket + include.fPath;
+					final String dispString = repString + closingBracket;
 					int repLength = prefix.length() + 1;
-					int repOffset= context.getInvocationOffset() - repLength;
-					final boolean needClosingBracket= context.getDocument().getChar(repOffset + repLength) != closingBracket;
+					int repOffset = context.getInvocationOffset() - repLength;
+					final boolean needClosingBracket = context.getDocument()
+							.getChar(repOffset + repLength) != closingBracket;
 					if (needClosingBracket) {
 						repString += closingBracket;
 					}
-					final boolean isDir= include.fPath.endsWith("/"); //$NON-NLS-1$
-					final int relevance= computeRelevance(prefix, include) + (isDir ? 0 : 1);
-					final CCompletionProposal proposal= createProposal(repOffset, repLength, repString, dispString, image, relevance, context);
+					final boolean isDir = include.fPath.endsWith("/"); //$NON-NLS-1$
+					final int relevance = computeRelevance(prefix, include) + (isDir ? 0 : 1);
+					final CCompletionProposal proposal = createProposal(repOffset, repLength, repString, dispString,
+							image, relevance, context);
 					if (!isDir && !needClosingBracket) {
 						// put cursor behind closing bracket
 						proposal.setCursorPosition(repString.length() + 1);
@@ -186,7 +191,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Collect potential include files for the given translation unit.
 	 * 
@@ -196,22 +201,23 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @return an array of incude file names
 	 * @throws CoreException
 	 */
-	private PotentialInclude[] collectIncludeFiles(final ITranslationUnit tu, IPath prefixPath, boolean angleBrackets) throws CoreException {
-		final List<PotentialInclude> includeFiles= new ArrayList<>();
+	private PotentialInclude[] collectIncludeFiles(final ITranslationUnit tu, IPath prefixPath, boolean angleBrackets)
+			throws CoreException {
+		final List<PotentialInclude> includeFiles = new ArrayList<>();
 		if (!angleBrackets) {
 			// search in current directory
-			IResource resource= tu.getResource();
+			IResource resource = tu.getResource();
 			if (resource != null) {
-				IContainer parent= resource.getParent();
+				IContainer parent = resource.getParent();
 				collectIncludeFilesFromContainer(tu, parent, prefixPath, includeFiles);
 			} else {
-				IPath location= tu.getLocation();
+				IPath location = tu.getLocation();
 				if (location != null) {
 					collectIncludeFilesFromDirectory(tu, location.removeLastSegments(1), prefixPath, includeFiles);
 				}
 			}
 		}
-		IScannerInfo info= tu.getScannerInfo(true);
+		IScannerInfo info = tu.getScannerInfo(true);
 		if (info != null) {
 			collectIncludeFilesFromScannerInfo(tu, info, prefixPath, angleBrackets, includeFiles);
 		}
@@ -225,23 +231,23 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @param angleBrackets  whether angle brackets enclose the include file name
 	 * @param includeFiles  the result list
 	 */
-	private void collectIncludeFilesFromScannerInfo(ITranslationUnit tu, IScannerInfo info, IPath prefixPath, 
+	private void collectIncludeFilesFromScannerInfo(ITranslationUnit tu, IScannerInfo info, IPath prefixPath,
 			boolean angleBrackets, List<PotentialInclude> includeFiles) {
 		if (!angleBrackets && info instanceof IExtendedScannerInfo) {
-			IExtendedScannerInfo extendedInfo= (IExtendedScannerInfo) info;
-			String[] quoteIncludes= extendedInfo.getLocalIncludePath();
-			
+			IExtendedScannerInfo extendedInfo = (IExtendedScannerInfo) info;
+			String[] quoteIncludes = extendedInfo.getLocalIncludePath();
+
 			if (quoteIncludes != null) {
 				for (String quoteInclude : quoteIncludes) {
-					IPath includeDir= new Path(quoteInclude);
+					IPath includeDir = new Path(quoteInclude);
 					collectIncludeFilesFromDirectory(tu, includeDir, prefixPath, includeFiles);
 				}
 			}
 		}
-		
-		String[] allIncludes= info.getIncludePaths();
+
+		String[] allIncludes = info.getIncludePaths();
 		for (String allInclude : allIncludes) {
-			IPath includeDir= new Path(allInclude);
+			IPath includeDir = new Path(allInclude);
 			collectIncludeFilesFromDirectory(tu, includeDir, prefixPath, includeFiles);
 		}
 	}
@@ -254,20 +260,20 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @param prefixPath  the path part to match the sub-directory and file name
 	 * @param includeFiles  the result list
 	 */
-	private void collectIncludeFilesFromDirectory(ITranslationUnit tu, IPath directory, IPath prefixPath, 
+	private void collectIncludeFilesFromDirectory(ITranslationUnit tu, IPath directory, IPath prefixPath,
 			List<PotentialInclude> includeFiles) {
 		final String namePrefix;
 		if (prefixPath.segmentCount() == 0) {
-			namePrefix= ""; //$NON-NLS-1$
+			namePrefix = ""; //$NON-NLS-1$
 		} else if (prefixPath.hasTrailingSeparator()) {
-			namePrefix= ""; //$NON-NLS-1$
-			prefixPath= prefixPath.removeTrailingSeparator();
-			directory= directory.append(prefixPath);
+			namePrefix = ""; //$NON-NLS-1$
+			prefixPath = prefixPath.removeTrailingSeparator();
+			directory = directory.append(prefixPath);
 		} else {
-			namePrefix= prefixPath.lastSegment();
-			prefixPath= prefixPath.removeLastSegments(1);
+			namePrefix = prefixPath.lastSegment();
+			prefixPath = prefixPath.removeLastSegments(1);
 			if (prefixPath.segmentCount() > 0) {
-				directory= directory.append(prefixPath);
+				directory = directory.append(prefixPath);
 			}
 		}
 		final File fileDir = directory.toFile();
@@ -275,34 +281,33 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			return;
 		}
 		final int prefixLength = namePrefix.length();
-		final IProject project= tu.getCProject().getProject();
-		File[] files= fileDir.listFiles();
+		final IProject project = tu.getCProject().getProject();
+		File[] files = fileDir.listFiles();
 		if (files == null) {
 			return;
 		}
 		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(namePrefix);
 		for (File file : files) {
-			final String name= file.getName();
+			final String name = file.getName();
 			if (name.length() >= prefixLength && matcher.match(name.toCharArray())) {
 				maybeAddInclude(prefixPath, includeFiles, project, file.isFile(), file.isDirectory(), name);
 			}
 		}
 	}
 
-	private static void maybeAddInclude(IPath prefixPath, List<PotentialInclude> includeFiles,
-			final IProject project, boolean isFile, boolean isDirectory, final String name) {
+	private static void maybeAddInclude(IPath prefixPath, List<PotentialInclude> includeFiles, final IProject project,
+			boolean isFile, boolean isDirectory, final String name) {
 		if (isFile) {
 			boolean definitelyHeader = CoreModel.isValidHeaderUnitName(project, name);
 			boolean definitelyNotHeader = false;
 			if (!definitelyHeader) {
-				definitelyNotHeader = CoreModel.isValidSourceUnitName(project, name) || name.startsWith(".");  //$NON-NLS-1$
+				definitelyNotHeader = CoreModel.isValidSourceUnitName(project, name) || name.startsWith("."); //$NON-NLS-1$
 			}
 			if (definitelyHeader || !definitelyNotHeader) {
 				includeFiles.add(new PotentialInclude(prefixPath.append(name).toString(), definitelyHeader));
 			}
 		} else if (isDirectory) {
-			includeFiles.add(new PotentialInclude(
-					prefixPath.append(name).addTrailingSeparator().toString(), true));
+			includeFiles.add(new PotentialInclude(prefixPath.append(name).addTrailingSeparator().toString(), true));
 		}
 	}
 
@@ -315,17 +320,17 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @param includeFiles  the result list
 	 * @throws CoreException
 	 */
-	private void collectIncludeFilesFromContainer(final ITranslationUnit tu, IContainer parent, 
-			IPath prefixPath, final List<PotentialInclude> includeFiles) throws CoreException {
+	private void collectIncludeFilesFromContainer(final ITranslationUnit tu, IContainer parent, IPath prefixPath,
+			final List<PotentialInclude> includeFiles) throws CoreException {
 		final String namePrefix;
 		if (prefixPath.segmentCount() == 0) {
-			namePrefix= ""; //$NON-NLS-1$
+			namePrefix = ""; //$NON-NLS-1$
 		} else if (prefixPath.hasTrailingSeparator()) {
-			namePrefix= ""; //$NON-NLS-1$
-			prefixPath= prefixPath.removeTrailingSeparator();
+			namePrefix = ""; //$NON-NLS-1$
+			prefixPath = prefixPath.removeTrailingSeparator();
 		} else {
-			namePrefix= prefixPath.lastSegment();
-			prefixPath= prefixPath.removeLastSegments(1);
+			namePrefix = prefixPath.lastSegment();
+			prefixPath = prefixPath.removeLastSegments(1);
 		}
 		if (prefixPath.segmentCount() > 0) {
 			IPath parentPath = parent.getFullPath().append(prefixPath);
@@ -340,18 +345,19 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		if (!parent.exists()) {
 			return;
 		}
-		final IPath cPrefixPath= prefixPath;
+		final IPath cPrefixPath = prefixPath;
 		final int prefixLength = namePrefix.length();
 		final IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(namePrefix);
-		final IProject project= tu.getCProject().getProject();
+		final IProject project = tu.getCProject().getProject();
 		parent.accept(new IResourceProxyVisitor() {
-			boolean fFirstVisit= true;
+			boolean fFirstVisit = true;
+
 			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
-				final int type= proxy.getType();
-				final String name= proxy.getName();
+				final int type = proxy.getType();
+				final String name = proxy.getName();
 				if (fFirstVisit) {
-					fFirstVisit= false;
+					fFirstVisit = false;
 					return true;
 				}
 				if (name.length() >= prefixLength && matcher.match(name.toCharArray())) {
@@ -359,7 +365,8 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 							type == IResource.FOLDER, name);
 				}
 				return false;
-			}}, IResource.DEPTH_ONE);
+			}
+		}, IResource.DEPTH_ONE);
 	}
 
 	/**
@@ -370,19 +377,18 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @throws BadLocationException
 	 */
 	private String computeIncludePrefix(CContentAssistInvocationContext context) throws BadLocationException {
-		IDocument document= context.getDocument();
+		IDocument document = context.getDocument();
 		if (document == null)
 			return null;
-		int end= context.getInvocationOffset();
-		int start= end;
+		int end = context.getInvocationOffset();
+		int start = end;
 		while (--start >= 0) {
-			final char ch= document.getChar(start);
+			final char ch = document.getChar(start);
 			if (ch == '"' || ch == '<')
 				break;
 		}
 		return document.get(start, end - start);
 	}
-
 
 	/**
 	 * Compute base relevance depending on quality of name / prefix match.
@@ -392,8 +398,8 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @return a relevance value inidicating the quality of the name match
 	 */
 	protected int computeRelevance(String prefix, PotentialInclude match) {
-		int baseRelevance= 0;
-		boolean caseMatch= prefix.length() > 0 && match.fPath.startsWith(prefix);
+		int baseRelevance = 0;
+		boolean caseMatch = prefix.length() > 0 && match.fPath.startsWith(prefix);
 		if (caseMatch) {
 			baseRelevance += RelevanceConstants.CASE_MATCH_RELEVANCE;
 		}
@@ -403,12 +409,14 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		return baseRelevance;
 	}
 
-	private CCompletionProposal createProposal(int repOffset, int repLength, String repString, String dispString, Image image, int relevance, CContentAssistInvocationContext context) {
-		return new CCompletionProposal(repString, repOffset, repLength, image, dispString, dispString, relevance, context.getViewer());
+	private CCompletionProposal createProposal(int repOffset, int repLength, String repString, String dispString,
+			Image image, int relevance, CContentAssistInvocationContext context) {
+		return new CCompletionProposal(repString, repOffset, repLength, image, dispString, dispString, relevance,
+				context.getViewer());
 	}
 
 	private Image getImage(ImageDescriptor desc) {
 		return desc != null ? CUIPlugin.getImageDescriptorRegistry().get(desc) : null;
 	}
-	
+
 }

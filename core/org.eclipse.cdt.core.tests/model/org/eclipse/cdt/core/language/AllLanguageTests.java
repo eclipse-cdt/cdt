@@ -23,9 +23,9 @@ import junit.framework.TestSuite;
 public class AllLanguageTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new AllLanguageTests();
-		
+
 		suite.addTest(LanguageInheritanceTests.suite());
-		
+
 		return suite;
 	}
 }

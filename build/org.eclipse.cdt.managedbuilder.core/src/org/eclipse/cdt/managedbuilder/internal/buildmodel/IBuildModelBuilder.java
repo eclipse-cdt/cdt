@@ -38,10 +38,7 @@ public interface IBuildModelBuilder {
 	public static final int STATUS_ERROR_BUILD = -1;
 	public static final int STATUS_ERROR_LAUNCH = -2;
 	public static final int STATUS_CANCELLED = -3;
-	
 
-	int build(OutputStream out,
-			OutputStream err,
-			IProgressMonitor monitor);
-	
+	int build(OutputStream out, OutputStream err, IProgressMonitor monitor);
+
 }

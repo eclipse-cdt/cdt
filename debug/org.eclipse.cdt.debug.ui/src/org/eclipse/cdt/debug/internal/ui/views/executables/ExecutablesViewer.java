@@ -42,7 +42,6 @@ public class ExecutablesViewer extends BaseViewer {
 	private static final String P_COLUMN_SORT_DIRECTION_KEY_EXE = "columnSortDirectionKeyEXE"; //$NON-NLS-1$
 	private static final String P_VISIBLE_COLUMNS_KEY_EXE = "visibleColumnsKeyEXE"; //$NON-NLS-1$
 
-	
 	/**
 	 * Handles dropping executable files into the view
 	 */
@@ -103,7 +102,8 @@ public class ExecutablesViewer extends BaseViewer {
 		};
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
-		getExecutablesView().getSite().registerContextMenu(popupMenuManager, this.getExecutablesView().getSite().getSelectionProvider());
+		getExecutablesView().getSite().registerContextMenu(popupMenuManager,
+				this.getExecutablesView().getSite().getSelectionProvider());
 		Menu menu = popupMenuManager.createContextMenu(getTree());
 		getTree().setMenu(menu);
 	}

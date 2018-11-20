@@ -27,71 +27,78 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  */
 public interface IStack extends IDsfService {
 
-    /**
-     * Context for a specific stack frame.  Besides allowing access to stack
-     * frame data, this context is used by other services that require a stack
-     * frame for evaluation.  
-     */
-    public interface IFrameDMContext extends IDMContext {
-        int getLevel();
-    }
+	/**
+	 * Context for a specific stack frame.  Besides allowing access to stack
+	 * frame data, this context is used by other services that require a stack
+	 * frame for evaluation.  
+	 */
+	public interface IFrameDMContext extends IDMContext {
+		int getLevel();
+	}
 
-    /**
-     * Stack frame information. 
-     */
-    public interface IFrameDMData extends IDMData {
-        IAddress getAddress();
-        String getFile();
-        String getFunction();
-        int getLine();
-        int getColumn();
-        /**
-         * @since 2.0
-         */
+	/**
+	 * Stack frame information. 
+	 */
+	public interface IFrameDMData extends IDMData {
+		IAddress getAddress();
+
+		String getFile();
+
+		String getFunction();
+
+		int getLine();
+
+		int getColumn();
+
+		/**
+		 * @since 2.0
+		 */
 		String getModule();
-    }
-    
-    /**
-     * Variable context.  This context only provides access to limited 
-     * expression information.  For displaying complete information, 
-     * Expressions service should be used.
-     */
-    public interface IVariableDMContext extends IDMContext {}
+	}
 
-    /** 
-     * Stack frame variable information.
-     */
-    public interface IVariableDMData extends IDMData {
-        String getName();
-        String getValue();
-    }
+	/**
+	 * Variable context.  This context only provides access to limited 
+	 * expression information.  For displaying complete information, 
+	 * Expressions service should be used.
+	 */
+	public interface IVariableDMContext extends IDMContext {
+	}
 
-    /**
-     * Retrieves stack frame data for given context.
-     * @param frameDmc Context to retrieve data for.
-     * @param rm Request completion monitor.
-     */    
-    public void getFrameData(final IFrameDMContext frameDmc, DataRequestMonitor<IFrameDMData> rm);
+	/** 
+	 * Stack frame variable information.
+	 */
+	public interface IVariableDMData extends IDMData {
+		String getName();
 
-    /**
-     * Retrieves stack frame variable data for given context.
-     * @param variableDmc Context to retrieve data for.
-     * @param rm Request completion monitor.
-     */    
-    public void getVariableData(IVariableDMContext variableDmc, DataRequestMonitor<IVariableDMData> rm);
-    
-    /**
-     * Retrieves list of stack frames for the given execution context.  Request
-     * will fail if the stack frame data is not available.
-     */
-    void getFrames(IDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
-    
-    /**
+		String getValue();
+	}
+
+	/**
+	 * Retrieves stack frame data for given context.
+	 * @param frameDmc Context to retrieve data for.
+	 * @param rm Request completion monitor.
+	 */
+	public void getFrameData(final IFrameDMContext frameDmc, DataRequestMonitor<IFrameDMData> rm);
+
+	/**
+	 * Retrieves stack frame variable data for given context.
+	 * @param variableDmc Context to retrieve data for.
+	 * @param rm Request completion monitor.
+	 */
+	public void getVariableData(IVariableDMContext variableDmc, DataRequestMonitor<IVariableDMData> rm);
+
+	/**
+	 * Retrieves list of stack frames for the given execution context.  Request
+	 * will fail if the stack frame data is not available.
+	 */
+	void getFrames(IDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
+
+	/**
 	 * When passed in the endIndex of getFrames(...) it indicates that all stack frames are to be retrieved.
 	 * @since 2.0
 	 */
-    public final static int ALL_FRAMES = -1;
-	
+	public final static int ALL_FRAMES = -1;
+
 	/**
 	 * Retrieves list of stack frames for the given execution context.  Request
 	 * will fail if the stack frame data is not available. 
@@ -108,38 +115,39 @@ public interface IStack extends IDsfService {
 	 * @see #getFrames(IDMContext, DataRequestMonitor)
 	 * @since 2.0
 	 */
-	public void getFrames(IDMContext execContext, int startIndex, int endIndex, DataRequestMonitor<IFrameDMContext[]> rm);
-	
-    /**
-     * Retrieves the top stack frame for the given execution context.  
-     * Retrieving just the top frame DMC and corresponding data can be much 
-     * more efficient than just retrieving the whole stack, before the data
-     * is often included in the stopped event.  Also for some UI functionality, 
-     * such as stepping, only top stack frame is often needed. 
-     * @param execContext
-     * @param rm
-     */
-    void getTopFrame(IDMContext execContext, DataRequestMonitor<IFrameDMContext> rm);
-    
-    /**
-     * Retrieves variables which were arguments to the stack frame's function.
-     */
-    void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
-    
-    /**
-     * Retrieves variables local to the stack frame, including arguments.
-     */
-    void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
-    
-    /**
-     * Retrieves the number of stack frames available for the given context.  The depth
-     * returned could, but is not required to, be limited to the maxDepth parameter.
-     * 
-     * @param dmc Context to retrieve data for.
-     * @param maxDepth The maximum depth of stack that is requested.  If 0, not limit should
-     * be used to calculate the stack depth, and the actual stack depth should be returned.
-     * @param rm Request monitor indicating the current stack depth, potentially limited
-     * to maxDepth.
-     */
-    void getStackDepth(IDMContext dmc, int maxDepth, DataRequestMonitor<Integer> rm);
+	public void getFrames(IDMContext execContext, int startIndex, int endIndex,
+			DataRequestMonitor<IFrameDMContext[]> rm);
+
+	/**
+	 * Retrieves the top stack frame for the given execution context.  
+	 * Retrieving just the top frame DMC and corresponding data can be much 
+	 * more efficient than just retrieving the whole stack, before the data
+	 * is often included in the stopped event.  Also for some UI functionality, 
+	 * such as stepping, only top stack frame is often needed. 
+	 * @param execContext
+	 * @param rm
+	 */
+	void getTopFrame(IDMContext execContext, DataRequestMonitor<IFrameDMContext> rm);
+
+	/**
+	 * Retrieves variables which were arguments to the stack frame's function.
+	 */
+	void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+
+	/**
+	 * Retrieves variables local to the stack frame, including arguments.
+	 */
+	void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+
+	/**
+	 * Retrieves the number of stack frames available for the given context.  The depth
+	 * returned could, but is not required to, be limited to the maxDepth parameter.
+	 * 
+	 * @param dmc Context to retrieve data for.
+	 * @param maxDepth The maximum depth of stack that is requested.  If 0, not limit should
+	 * be used to calculate the stack depth, and the actual stack depth should be returned.
+	 * @param rm Request monitor indicating the current stack depth, potentially limited
+	 * to maxDepth.
+	 */
+	void getStackDepth(IDMContext dmc, int maxDepth, DataRequestMonitor<Integer> rm);
 }

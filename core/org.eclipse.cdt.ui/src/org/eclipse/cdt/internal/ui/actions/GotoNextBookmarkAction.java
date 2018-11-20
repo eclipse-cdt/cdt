@@ -35,9 +35,9 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class GotoNextBookmarkAction extends TextEditorAction {
 
-    public static final String NEXT_BOOKMARK = "GotoNextBookmark"; //$NON-NLS-1$
+	public static final String NEXT_BOOKMARK = "GotoNextBookmark"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Private class to handle comparison of markers using their line numbers.
 	 */
 	private class CompareMarker implements Comparator<IMarker> {
@@ -45,8 +45,10 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 		public int compare(IMarker m1, IMarker m2) {
 			int l1 = MarkerUtilities.getLineNumber(m1);
 			int l2 = MarkerUtilities.getLineNumber(m2);
-			if (l1 > l2) return 1;
-			if (l1 < l2) return -1;
+			if (l1 > l2)
+				return 1;
+			if (l1 < l2)
+				return -1;
 			return 0;
 		}
 	}
@@ -65,7 +67,7 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();
-		if (editor == null )
+		if (editor == null)
 			return;
 
 		ISelectionProvider provider = editor.getSelectionProvider();
@@ -76,7 +78,7 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 		if (selection == null || selection.isEmpty())
 			return;
 
-		IEditorInput input= editor.getEditorInput();
+		IEditorInput input = editor.getEditorInput();
 		if (input == null)
 			return;
 
@@ -110,8 +112,7 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 					break;
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}

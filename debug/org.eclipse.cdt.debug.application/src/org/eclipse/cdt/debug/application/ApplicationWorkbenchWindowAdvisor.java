@@ -68,20 +68,20 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			super();
 		}
 	}
-	
-    public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
-        super(configurer);
-    }
 
-    @Override
+	public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
+		super(configurer);
+	}
+
+	@Override
 	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
-        return new ApplicationActionBarAdvisor(configurer);
-    }
-    
-    @Override
+		return new ApplicationActionBarAdvisor(configurer);
+	}
+
+	@Override
 	public void preWindowOpen() {
-        IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-//        configurer.setInitialSize(new Point(400, 300));
+		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+		//        configurer.setInitialSize(new Point(400, 300));
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
@@ -105,7 +105,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	// Private method to search for executable names on PATH
 	private String findExecutable(String input) {
 		String result = input;
-		
+
 		Path x = new Path(input);
 		try {
 			if (!x.isAbsolute() && x.segmentCount() == 1) {
@@ -132,13 +132,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 		return result;
 	}
-	
+
 	private void appendChar(StringBuilder builder, int repeat, char c) {
 		for (int i = 0; i < repeat; i++) {
 			builder.append(c);
 		}
 	}
-	
+
 	private boolean needsEscaping(String input) {
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
@@ -148,7 +148,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 		return false;
 	}
-	
+
 	private String escapeArg(String arg) {
 		if (!arg.isEmpty() && !needsEscaping(arg)) {
 			return arg;
@@ -161,7 +161,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				i++;
 				numberOfBackslashes++;
 			}
-			
+
 			if (i == arg.length()) {
 				appendChar(buffer, numberOfBackslashes * 2, '\\');
 				break;
@@ -176,12 +176,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		buffer.append('"');
 		return buffer.toString();
 	}
-	
+
 	public class PostWindowCreateRunnable implements IRunnableWithProgress {
 
 		@Override
-		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(Messages.InitializingDebugger, 10);
 			boolean attachExecutable = false;
 			String executable = null;
@@ -203,32 +202,30 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						++i;
 						if (i < args.length)
 							buildLog = args[i];
-					}
-					else if ("-a".equals(args[i])) { //$NON-NLS-1$
+					} else if ("-a".equals(args[i])) { //$NON-NLS-1$
 						attachExecutable = true;
 						// Make sure 'executable' is still null in case we are dealing with a remote
 						// session that is also an attach, as the -r flag could have been set first
 						executable = null;
-						
+
 						// Check for optional pid
 						if (i + 1 < args.length) {
-							if (!args[i+1].startsWith("-")) { //$NON-NLS-1$
+							if (!args[i + 1].startsWith("-")) { //$NON-NLS-1$
 								++i;
 								pid = args[i];
 							}
 						}
-					}
-					else if ("-c".equals(args[i])) { //$NON-NLS-1$
+					} else if ("-c".equals(args[i])) { //$NON-NLS-1$
 						++i;
 						corefile = ""; //$NON-NLS-1$
 						executable = ""; //$NON-NLS-1$
 						if (i < args.length)
 							corefile = args[i];
-					}
-					else if ("-r".equals(args[i])) { //$NON-NLS-1$
+					} else if ("-r".equals(args[i])) { //$NON-NLS-1$
 						++i;
 						remoteAddress = ""; //$NON-NLS-1$
-						if (!attachExecutable) executable = ""; //$NON-NLS-1$
+						if (!attachExecutable)
+							executable = ""; //$NON-NLS-1$
 						if (i < args.length) {
 							String[] params = args[i].split(":"); //$NON-NLS-1$
 							if (params.length == 2) {
@@ -236,8 +233,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 								remotePort = params[1];
 							}
 						}
-					}
-					else if ("-e".equals(args[i])) { //$NON-NLS-1$
+					} else if ("-e".equals(args[i])) { //$NON-NLS-1$
 						++i;
 						if (i < args.length)
 							executable = findExecutable(args[i]);
@@ -264,7 +260,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					corefile = coreFile.getCanonicalPath();
 					if (executableFile == null || !executableFile.exists() || !coreFile.exists()) {
 						final CoreFileInfo info = new CoreFileInfo("", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ $NON-NLS-2$ $NON-NLS-3$
-						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 						final String executablePath = executable;
 						final String coreFilePath = corefile;
@@ -282,8 +278,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 									info.setHostPath(info2.getHostPath());
 									info.setCoreFilePath(info2.getCoreFilePath());
 								} else {
-									ErrorDialog.openError(null,
-											Messages.DebuggerInitializingProblem, null, errorStatus,
+									ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
 											IStatus.ERROR | IStatus.WARNING);
 								}
 							}
@@ -304,39 +299,39 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						executableFile = new File(executable);
 						executable = executableFile.getCanonicalPath();
 					}
-					
+
 					Integer port = null;
 					try {
 						port = Integer.parseInt(remotePort);
 					} catch (NumberFormatException e) {
 						port = null;
 					}
-					
-					if ((!attachExecutable && (executableFile == null || !executableFile.exists())) ||
-							remoteAddress.length() == 0 || port == null) {
+
+					if ((!attachExecutable && (executableFile == null || !executableFile.exists()))
+							|| remoteAddress.length() == 0 || port == null) {
 						final RemoteExecutableInfo[] info = new RemoteExecutableInfo[1];
-						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 						final String executablePath = executable;
 						final String addressStr = remoteAddress;
 						final String portStr = remotePort;
 						final String buildLogPath = buildLog;
 						final boolean attach = attachExecutable;
-						
+
 						Display.getDefault().syncExec(new Runnable() {
 
 							@Override
 							public void run() {
 
-								RemoteExecutableDialog dialog = new RemoteExecutableDialog(getWindowConfigurer().getWindow().getShell(),
-										executablePath, buildLogPath, addressStr, portStr, attach);
+								RemoteExecutableDialog dialog = new RemoteExecutableDialog(
+										getWindowConfigurer().getWindow().getShell(), executablePath, buildLogPath,
+										addressStr, portStr, attach);
 								dialog.setBlockOnOpen(true);
 								if (dialog.open() == IDialogConstants.OK_ID) {
 									info[0] = dialog.getExecutableInfo();
 								} else {
 									info[0] = null;
-									ErrorDialog.openError(null,
-											Messages.DebuggerInitializingProblem, null, errorStatus,
+									ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
 											IStatus.ERROR | IStatus.WARNING);
 								}
 							}
@@ -363,7 +358,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 					if (!executableFile.exists() || (buildLogFile != null && !buildLogFile.exists())) {
 						final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ $NON-NLS-2$ $NON-NLS-3$
-						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 						final String executablePath = executable;
 						final String executableArgs = arguments;
@@ -374,16 +369,16 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							@Override
 							public void run() {
 
-								NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
-										0, executablePath, buildLogPath, executableArgs);
+								NewExecutableDialog dialog = new NewExecutableDialog(
+										getWindowConfigurer().getWindow().getShell(), 0, executablePath, buildLogPath,
+										executableArgs);
 								dialog.setBlockOnOpen(true);
 								if (dialog.open() == IDialogConstants.OK_ID) {
 									NewExecutableInfo info2 = dialog.getExecutableInfo();
 									info.setHostPath(info2.getHostPath());
 									info.setArguments(info2.getArguments());
 								} else {
-									ErrorDialog.openError(null,
-											Messages.DebuggerInitializingProblem, null, errorStatus,
+									ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
 											IStatus.ERROR | IStatus.WARNING);
 								}
 							}
@@ -399,20 +394,23 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 				}
 				monitor.worked(1);
-				if (remoteAddress != null && remoteAddress.length() > 0 && 
-						remotePort != null && remotePort.length() > 0) {
-					config = DebugRemoteExecutable.createLaunchConfig(monitor, buildLog, executable, remoteAddress, remotePort, attachExecutable);
+				if (remoteAddress != null && remoteAddress.length() > 0 && remotePort != null
+						&& remotePort.length() > 0) {
+					config = DebugRemoteExecutable.createLaunchConfig(monitor, buildLog, executable, remoteAddress,
+							remotePort, attachExecutable);
 				} else if (attachExecutable) {
 					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog, pid);
 				} else if (corefile != null && corefile.length() > 0) {
 					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);
 				} else if (executable != null && executable.length() > 0) {
-					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments, true);
+					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments,
+							true);
 				} else {
 					// No executable specified, look for last launch
 					// and offer that to the end-user.
 					monitor.subTask(Messages.RestorePreviousLaunch);
-					String memento = ResourcesPlugin.getWorkspace().getRoot().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
+					String memento = ResourcesPlugin.getWorkspace().getRoot()
+							.getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
 					if (memento != null)
 						config = DebugExecutable.getLaunchManager().getLaunchConfiguration(memento);
 					String oldExecutable = ""; //$NON-NLS-1$
@@ -424,7 +422,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						oldBuildLog = config.getAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION, ""); //$NON-NLS-1$
 					}
 					final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ $NON-NLS-2$ $NON-NLS-3$
-					final IStatus errorStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID, 0, 
+					final IStatus errorStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID, 0,
 							Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 					final String executablePath = oldExecutable;
 					final String executableArgs = oldArguments;
@@ -436,8 +434,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						@Override
 						public void run() {
 
-							NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
-									0, executablePath, buildLogPath, executableArgs);
+							NewExecutableDialog dialog = new NewExecutableDialog(
+									getWindowConfigurer().getWindow().getShell(), 0, executablePath, buildLogPath,
+									executableArgs);
 							dialog.setBlockOnOpen(true);
 							if (dialog.open() == IDialogConstants.OK_ID) {
 								NewExecutableInfo info2 = dialog.getExecutableInfo();
@@ -445,8 +444,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 								info.setArguments(info2.getArguments());
 								info.setBuildLog(info2.getBuildLog());
 							} else {
-								ErrorDialog.openError(null,
-										Messages.DebuggerInitializingProblem, null, errorStatus,
+								ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
 										IStatus.ERROR | IStatus.WARNING);
 							}
 						}
@@ -464,14 +462,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					// the executable, we need to create a new configuration
 					// and remove artifacts from the old one.
 					if (config == null || !executable.equals(oldExecutable))
-						config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments, true);
+						config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments,
+								true);
 					ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-					wc.setAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION,
-							buildLog);
+					wc.setAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION, buildLog);
 					if (arguments != null)
-						wc.setAttribute(
-								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-								arguments);
+						wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
 					config = wc.doSave();
 
 					monitor.worked(7);
@@ -503,7 +499,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						try {
 							LaunchJobs.getLaunchJob().join();
 						} catch (InterruptedException e) {
-							IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+							IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
 									Messages.LaunchInterruptedError, e);
 							ResourcesPlugin.getPlugin().getLog().log(status);
 						}
@@ -521,7 +517,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				monitor.done();
 			}
 		}
-	
+
 	}
 
 	@Override
@@ -534,18 +530,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private void disconnectFromWorkspace() {
 
 		// save the workspace
-		final MultiStatus status = new MultiStatus(
-				Activator.PLUGIN_ID, 1,
-				Messages.ProblemSavingWorkbench, null);
+		final MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, 1, Messages.ProblemSavingWorkbench, null);
 		try {
-			final ProgressMonitorDialog p = new ProgressMonitorDialog(
-					null);
+			final ProgressMonitorDialog p = new ProgressMonitorDialog(null);
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				@Override
-				public void  run(IProgressMonitor monitor) {
+				public void run(IProgressMonitor monitor) {
 					try {
-						status.merge(ResourcesPlugin
-								.getWorkspace().save(true, monitor));
+						status.merge(ResourcesPlugin.getWorkspace().save(true, monitor));
 					} catch (CoreException e) {
 						status.merge(e.getStatus());
 					}
@@ -553,24 +545,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			};
 			p.run(true, false, runnable);
 		} catch (InvocationTargetException e) {
-			status.merge(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, 1,
-					Messages.InternalError, 
-					e.getTargetException()));
+			status.merge(
+					new Status(IStatus.ERROR, Activator.PLUGIN_ID, 1, Messages.InternalError, e.getTargetException()));
 		} catch (InterruptedException e) {
-			status.merge(new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, 1,
-					Messages.InternalError, e));
+			status.merge(new Status(IStatus.ERROR, Activator.PLUGIN_ID, 1, Messages.InternalError, e));
 		}
 
-		ErrorDialog.openError(null,
-				Messages.ProblemsSavingWorkspace, null, status,
-				IStatus.ERROR | IStatus.WARNING);
+		ErrorDialog.openError(null, Messages.ProblemsSavingWorkspace, null, status, IStatus.ERROR | IStatus.WARNING);
 
 		if (!status.isOK()) {
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 
-	}	
+	}
 
 }

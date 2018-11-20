@@ -19,26 +19,26 @@ import junit.framework.TestSuite;
 /**
  * Test that anonymous types are not returned as possibilities.
  */
-public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
+public class CompletionTest_AnonymousTypes extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart40.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart40.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {"notAnonymousEnum", "notAnonymousClass", "xOtherClass"};
-	
+	private final String[] expectedResults = { "notAnonymousEnum", "notAnonymousClass", "xOtherClass" };
+
 	public CompletionTest_AnonymousTypes(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=174809
 		// setExpectFailure(174809);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_AnonymousTypes.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_AnonymousTypes.class.getName());
 		suite.addTest(new CompletionTest_AnonymousTypes("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -78,6 +78,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

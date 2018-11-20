@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
@@ -26,27 +26,27 @@ import org.eclipse.cdt.core.model.ICElement;
 public class THNode implements IAdaptable {
 	private THNode fParent;
 	private ICElement fElement;
-	private List<THNode> fChildren= Collections.emptyList();
-    
-    private int fHashCode;
-    private boolean fIsFiltered;
-    private boolean fIsImplementor;
+	private List<THNode> fChildren = Collections.emptyList();
 
-    /**
-     * Creates a new node for the type hierarchy browser.
-     */
-    public THNode(THNode parent, ICElement decl) {
-        fParent= parent;
-        fElement= decl;
-        fHashCode= Objects.hash(fParent, fElement);
-    }
+	private int fHashCode;
+	private boolean fIsFiltered;
+	private boolean fIsImplementor;
+
+	/**
+	 * Creates a new node for the type hierarchy browser.
+	 */
+	public THNode(THNode parent, ICElement decl) {
+		fParent = parent;
+		fElement = decl;
+		fHashCode = Objects.hash(fParent, fElement);
+	}
 
 	@Override
 	public int hashCode() {
-        return fHashCode;
-    }
+		return fHashCode;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof THNode)) {
 			return false;
@@ -58,19 +58,19 @@ public class THNode implements IAdaptable {
 		}
 
 		return Objects.equals(fElement, rhs.fElement);
-    }
+	}
 
 	/**
-     * Returns the parent node or {@code null} for the root node.
-     */
-    public THNode getParent() {
-        return fParent;
-    }
+	 * Returns the parent node or {@code null} for the root node.
+	 */
+	public THNode getParent() {
+		return fParent;
+	}
 
 	public ICElement getElement() {
 		return fElement;
 	}
-	
+
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
@@ -79,19 +79,19 @@ public class THNode implements IAdaptable {
 		}
 		return null;
 	}
-	
+
 	public boolean isFiltered() {
 		return fIsFiltered;
 	}
 
 	public void setIsFiltered(boolean val) {
-		fIsFiltered= val;
+		fIsFiltered = val;
 	}
 
 	public void addChild(THNode childNode) {
 		if (fChildren.isEmpty()) {
-			fChildren= new ArrayList<>();
-		}			
+			fChildren = new ArrayList<>();
+		}
 		fChildren.add(childNode);
 	}
 
@@ -104,7 +104,7 @@ public class THNode implements IAdaptable {
 	}
 
 	public void setIsImplementor(boolean val) {
-		fIsImplementor= val;
+		fIsImplementor = val;
 	}
 
 	public boolean isImplementor() {
@@ -131,4 +131,3 @@ public class THNode implements IAdaptable {
 		}
 	}
 }
-

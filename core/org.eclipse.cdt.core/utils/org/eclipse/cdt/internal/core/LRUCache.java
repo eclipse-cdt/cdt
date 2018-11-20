@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Andrew Gvozdev - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core;
 
@@ -32,7 +32,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 	 */
 	public LRUCache(int limit) {
 		super(limit, 0.75f, true);
-		fLimit= limit;
+		fLimit = limit;
 	}
 
 	/**
@@ -43,9 +43,9 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 	 */
 	public LRUCache(int initialCapacity, int limit) {
 		super(initialCapacity, 0.75f, true);
-		fLimit= limit;
+		fLimit = limit;
 	}
-	
+
 	@Override
 	protected boolean removeEldestEntry(Entry<K, V> eldest) {
 		return size() >= fLimit;

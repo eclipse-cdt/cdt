@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
-
 import java.util.ArrayList;
-
 
 public class AccessibilityTestPass implements IDialogTestPass {
 	private static final int CHECKLIST_SIZE = 5;
-	
+
 	/**
 	 * @see IDialogTestPass#title()
 	 */
@@ -27,6 +25,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	public String title() {
 		return "Test Pass: Accessibility";
 	}
+
 	/**
 	 * @see IDialogTestPass#description()
 	 */
@@ -34,13 +33,15 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	public String description() {
 		return "Verify the accessibility of the dialogs.";
 	}
+
 	/**
 	 * @see IDialogTestPass#label()
 	 */
 	@Override
 	public String label() {
 		return "&Accessibility";
-	}	
+	}
+
 	/**
 	 * @see IDialogTestPass#checkListTexts()
 	 */
@@ -54,6 +55,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 		list.add("&5) selectable widgets can be selected using the spacebar.");
 		return list;
 	}
+
 	/**
 	 * @see IDialogTestPass#failureTexts()
 	 * Size of the return array must be the same size as the checkListTexts'
@@ -69,6 +71,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 		failureText[4] = "Some widgets cannot be selected using the spacebar.";
 		return failureText;
 	}
+
 	/**
 	 * @see IDialogTestPass#queryText()
 	 */
@@ -76,6 +79,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	public String queryText() {
 		return "Is the accessibility of the dialog acceptable?";
 	}
+
 	/**
 	 * @see IDialogTestPass#getID()
 	 */

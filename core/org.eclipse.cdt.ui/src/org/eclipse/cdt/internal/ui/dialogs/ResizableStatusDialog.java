@@ -31,22 +31,22 @@ public abstract class ResizableStatusDialog extends StatusDialog {
 
 	@Override
 	protected Point getInitialSize() {
-		Point defaultSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		Point restoredSize= super.getInitialSize();
+		Point defaultSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point restoredSize = super.getInitialSize();
 		if (restoredSize.x < defaultSize.x)
-			restoredSize.x= defaultSize.x;
+			restoredSize.x = defaultSize.x;
 		if (restoredSize.y < defaultSize.y)
-			restoredSize.y= defaultSize.y;
+			restoredSize.y = defaultSize.y;
 		return restoredSize;
 	}
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
-		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section= settings.getSection(sectionName);
+		String sectionName = getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(sectionName);
 		if (section == null)
-			section= settings.addNewSection(sectionName);
+			section = settings.addNewSection(sectionName);
 		return section;
 	}
 
@@ -55,4 +55,3 @@ public abstract class ResizableStatusDialog extends StatusDialog {
 		return true;
 	}
 }
-

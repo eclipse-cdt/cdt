@@ -25,48 +25,48 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPParameterPackType implements ICPPParameterPackType, ITypeContainer, ISerializableType {
-    private IType fType;
+	private IType fType;
 
-    public CPPParameterPackType(IType type) {
-    	setType(type);
-    }
+	public CPPParameterPackType(IType type) {
+		setType(type);
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return fType;
-    }
+		return fType;
+	}
 
-    @Override
+	@Override
 	public void setType(IType t) {
-    	assert t != null;
-    	fType= t;
-    }
+		assert t != null;
+		fType = t;
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType obj) {
-        if (obj == this)
-            return true;
-        if (obj instanceof ITypedef)
-            return ((ITypedef) obj).isSameType(this);
+		if (obj == this)
+			return true;
+		if (obj instanceof ITypedef)
+			return ((ITypedef) obj).isSameType(this);
 
-        if (obj instanceof ICPPParameterPackType) {
-            final ICPPParameterPackType rhs = (ICPPParameterPackType) obj;
-            IType t1= getType();
-            IType t2= rhs.getType();
-            return t1 != null && t1.isSameType(t2);
-        }
-    	return false;
-    }
+		if (obj instanceof ICPPParameterPackType) {
+			final ICPPParameterPackType rhs = (ICPPParameterPackType) obj;
+			IType t1 = getType();
+			IType t2 = rhs.getType();
+			return t1 != null && t1.isSameType(t2);
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-   		try {
-   			return super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen.
-        	return null;
-        }
-    }
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen.
+			return null;
+		}
+	}
 
 	@Override
 	public String toString() {
@@ -75,13 +75,13 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.PACK_EXPANSION_TYPE;
+		short firstBytes = ITypeMarshalBuffer.PACK_EXPANSION_TYPE;
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType nested= buffer.unmarshalType();
+		IType nested = buffer.unmarshalType();
 		if (nested == null)
 			return new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
 

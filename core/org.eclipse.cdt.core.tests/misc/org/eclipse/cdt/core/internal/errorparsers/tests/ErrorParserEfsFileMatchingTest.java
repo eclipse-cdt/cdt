@@ -58,7 +58,8 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	private final IMarkerGenerator markerGenerator = new IMarkerGenerator() {
 		// deprecated
 		@Override
-		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {}
+		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+		}
 
 		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
@@ -75,8 +76,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		 */
 		public MockErrorParser() {
 			super(new ErrorPattern[] {
-				new ErrorPattern("(.*):(.*):(.*)", 1, 2, 3, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
-			});
+					new ErrorPattern("(.*):(.*):(.*)", 1, 2, 3, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) });
 		}
 	}
 
@@ -91,7 +91,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		if (fProject==null) {
+		if (fProject == null) {
 			fProject = ResourceHelper.createCDTProject(testName);
 			Assert.assertNotNull(fProject);
 			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
@@ -187,7 +187,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Convenience method to parse one line of output.
 	 */
 	private void parseOutput(IProject project, String buildDir, String line) throws Exception {
-		parseOutput(project, new Path(buildDir), new String[] {mockErrorParserId}, line);
+		parseOutput(project, new Path(buildDir), new String[] { mockErrorParserId }, line);
 	}
 
 	/**
@@ -195,7 +195,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 *  Search is done in project location.
 	 */
 	private void parseOutput(IProject project, String line) throws Exception {
-		parseOutput(project, project.getLocation(), new String[] {mockErrorParserId}, line);
+		parseOutput(project, project.getLocation(), new String[] { mockErrorParserId }, line);
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Search is done for current project in default location.
 	 */
 	private void parseOutput(String line) throws Exception {
-		parseOutput(fProject, fProject.getLocation(), new String[] {mockErrorParserId}, line);
+		parseOutput(fProject, fProject.getLocation(), new String[] { mockErrorParserId }, line);
 	}
 
 	/**
@@ -217,8 +217,8 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/testSingle.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/testSingle.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -233,8 +233,8 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/testEfsVsRegular.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/testEfsVsRegular.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -243,15 +243,14 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 */
 	public void testFullPath() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
-		ResourceHelper.createEfsFile(fProject, "Folder/testFullPath.c",
-				"null:/EfsFolder/efsTestFullPath.c");
+		ResourceHelper.createEfsFile(fProject, "Folder/testFullPath.c", "null:/EfsFolder/efsTestFullPath.c");
 
 		parseOutput("EfsFolder/efsTestFullPath.c:1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/Folder/testFullPath.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/Folder/testFullPath.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 
 	}
 
@@ -268,8 +267,8 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/NonEfsFolder/testInNonEfsFolder.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/NonEfsFolder/testInNonEfsFolder.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 
 	}
 
@@ -279,15 +278,14 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 */
 	public void testInFolder() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
-		ResourceHelper.createEfsFile(fProject, "Folder/testInFolder.c",
-				"null:/EfsFolder/efsTestInFolder.c");
+		ResourceHelper.createEfsFile(fProject, "Folder/testInFolder.c", "null:/EfsFolder/efsTestInFolder.c");
 
 		parseOutput("efsTestInFolder.c:1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/Folder/testInFolder.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/Folder/testInFolder.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 
 	}
 
@@ -299,17 +297,16 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		ResourceHelper.createEfsFile(fProject, "testDuplicateInRoot.c", "null:/testDuplicateInRoot.c");
 
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
-		ResourceHelper.createEfsFile(fProject, "Folder/testDuplicateInRoot.c",
-				"null:/Folder/testDuplicateInRoot.c");
+		ResourceHelper.createEfsFile(fProject, "Folder/testDuplicateInRoot.c", "null:/Folder/testDuplicateInRoot.c");
 
 		// Resolved to the file in root folder
 		parseOutput("testDuplicateInRoot.c:1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("L/FindMatchingFilesEfsTest/testDuplicateInRoot.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("L/FindMatchingFilesEfsTest/testDuplicateInRoot.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -325,9 +322,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/Folder/testRelativePathFromProjectRoot.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/Folder/testRelativePathFromProjectRoot.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -344,9 +342,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/Subfolder/Folder/testRelativePathFromSubfolder.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/Subfolder/Folder/testRelativePathFromSubfolder.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -363,10 +362,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match
-		assertEquals("P/FindMatchingFilesEfsTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("NotMatchingFolder/testRelativePathNotMatchingFolder.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesEfsTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("NotMatchingFolder/testRelativePathNotMatchingFolder.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -388,10 +387,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesEfsTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("Folder/testRelativePathDuplicate.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesEfsTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("Folder/testRelativePathDuplicate.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -407,9 +406,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/Folder/testRelativePathUpSubfolder.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/Folder/testRelativePathUpSubfolder.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -426,9 +426,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/Subfolder/Folder/testRelativePathDotFromSubfolder.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/Subfolder/Folder/testRelativePathDotFromSubfolder.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -446,9 +447,9 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesEfsTest/BuildDir/testBuildDir.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesEfsTest/BuildDir/testBuildDir.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -467,8 +468,8 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/EfsProject/Folder/testEfsProject.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/EfsProject/Folder/testEfsProject.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -485,12 +486,12 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		ResourceHelper.createFile(efsProject, "BuildDir/" + fileName);
 
 		URI buildDirURI = new URI("mem:/EfsProject/BuildDir/");
-		parseOutput(efsProject, buildDirURI, new String[] {mockErrorParserId}, fileName+":1:error");
+		parseOutput(efsProject, buildDirURI, new String[] { mockErrorParserId }, fileName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/EfsProject/BuildDir/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/EfsProject/BuildDir/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -505,21 +506,19 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(efsProject, "Folder");
 		ResourceHelper.createFolder(efsProject, "Folder/SubFolder");
 		ResourceHelper.createFile(efsProject, fileName);
-		ResourceHelper.createFile(efsProject, "Folder/"+fileName);
-		ResourceHelper.createFile(efsProject, "Folder/SubFolder/"+fileName);
+		ResourceHelper.createFile(efsProject, "Folder/" + fileName);
+		ResourceHelper.createFile(efsProject, "Folder/SubFolder/" + fileName);
 
-		String lines = "make[1]: Entering directory `Folder'\n"
-			+ "make[2]: Entering directory `SubFolder'\n"
-			+ "make[2]: Leaving directory `SubFolder'\n"
-			+ fileName+":1:error\n";
+		String lines = "make[1]: Entering directory `Folder'\n" + "make[2]: Entering directory `SubFolder'\n"
+				+ "make[2]: Leaving directory `SubFolder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		String[] errorParsers = { MAKE_ERRORPARSER_ID, mockErrorParserId };
 		parseOutput(efsProject, efsProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/EfsProject/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/EfsProject/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 }

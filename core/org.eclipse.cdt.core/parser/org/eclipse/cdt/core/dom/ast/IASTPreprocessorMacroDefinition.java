@@ -44,7 +44,7 @@ public interface IASTPreprocessorMacroDefinition extends IASTPreprocessorStateme
 	 * @since 5.0
 	 */
 	public IASTFileLocation getExpansionLocation();
-	
+
 	/**
 	 * Returns whether this macro definition occurs in active code.
 	 * @since 5.1

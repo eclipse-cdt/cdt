@@ -220,7 +220,8 @@ public class ListProblemPreference extends AbstractProblemPreference
 
 	@Override
 	public void importValue(String str) {
-		if (str.isEmpty()) return;
+		if (str.isEmpty())
+			return;
 		StreamTokenizer tokenizer = getImportTokenizer(str);
 		try {
 			importValue(tokenizer);

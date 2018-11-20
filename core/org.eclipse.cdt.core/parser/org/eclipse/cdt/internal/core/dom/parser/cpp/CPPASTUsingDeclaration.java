@@ -31,13 +31,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 		implements ICPPASTUsingDeclaration, ICPPASTCompletionContext {
-    private boolean typeName;
-    private IASTName name;
-    
-    // The using-declaration has an implicit name referencing every delegate binding.
-    private IASTImplicitName[] fImplicitNames;
+	private boolean typeName;
+	private IASTName name;
 
-    public CPPASTUsingDeclaration() {
+	// The using-declaration has an implicit name referencing every delegate binding.
+	private IASTImplicitName[] fImplicitNames;
+
+	public CPPASTUsingDeclaration() {
 	}
 
 	public CPPASTUsingDeclaration(IASTName name) {
@@ -51,66 +51,74 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 
 	@Override
 	public CPPASTUsingDeclaration copy(CopyStyle style) {
-		CPPASTUsingDeclaration copy =
-				new CPPASTUsingDeclaration(name == null ? null : name.copy(style));
+		CPPASTUsingDeclaration copy = new CPPASTUsingDeclaration(name == null ? null : name.copy(style));
 		copy.typeName = typeName;
 		return copy(copy, style);
 	}
 
 	@Override
 	public void setIsTypename(boolean value) {
-        assertNotFrozen();
-        this.typeName = value;
-    }
+		assertNotFrozen();
+		this.typeName = value;
+	}
 
-    @Override
+	@Override
 	public boolean isTypename() {
-        return typeName;
-    }
+		return typeName;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (name != null && !name.accept(action)) return false;
-        
-        if (action.shouldVisitImplicitNames) {
-        	for (IASTImplicitName name : getImplicitNames()) {
-        		if (!name.accept(action)) return false;
-        	}
-        }
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (name != null && !name.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitImplicitNames) {
+			for (IASTImplicitName name : getImplicitNames()) {
+				if (!name.accept(action))
+					return false;
+			}
 		}
-        return true;
-    }
+
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {

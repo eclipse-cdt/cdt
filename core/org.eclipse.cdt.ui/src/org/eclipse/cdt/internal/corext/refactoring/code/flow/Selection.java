@@ -22,16 +22,16 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 public class Selection {
 	/** Flag indicating that the AST node somehow intersects with the selection. */
-	public static final int INTERSECTS= 0;
+	public static final int INTERSECTS = 0;
 
 	/** Flag that indicates that an AST node appears before the selected nodes. */
-	public static final int BEFORE= 1;
+	public static final int BEFORE = 1;
 
 	/** Flag indicating that an AST node is covered by the selection. */
-	public static final int SELECTED= 2;
+	public static final int SELECTED = 2;
 
 	/** Flag indicating that an AST nodes appears after the selected nodes. */
-	public static final int AFTER= 3;
+	public static final int AFTER = 3;
 
 	private int fStart;
 	private int fLength;
@@ -49,10 +49,10 @@ public class Selection {
 	 */
 	public static Selection createFromStartLength(int start, int length) {
 		Assert.isTrue(start >= 0 && length >= 0);
-		Selection result= new Selection();
-		result.fStart= start;
-		result.fLength= length;
-		result.fEnd= start + length;
+		Selection result = new Selection();
+		result.fStart = start;
+		result.fLength = length;
+		result.fEnd = start + length;
 		return result;
 	}
 
@@ -65,10 +65,10 @@ public class Selection {
 	 */
 	public static Selection createFromStartEnd(int start, int end) {
 		Assert.isTrue(start >= 0 && end >= start);
-		Selection result= new Selection();
-		result.fStart= start;
-		result.fLength= end - start;
-		result.fEnd= result.fStart + result.fLength;
+		Selection result = new Selection();
+		result.fStart = start;
+		result.fLength = end - start;
+		result.fEnd = result.fStart + result.fLength;
 		return result;
 	}
 
@@ -99,8 +99,8 @@ public class Selection {
 	 */
 	public int getVisitSelectionMode(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
-		int nodeStart= location.getNodeOffset();
-		int nodeEnd= nodeStart + location.getNodeLength();
+		int nodeStart = location.getNodeOffset();
+		int nodeEnd = nodeStart + location.getNodeLength();
 		if (nodeEnd <= fStart) {
 			return BEFORE;
 		} else if (covers(node)) {
@@ -113,8 +113,8 @@ public class Selection {
 
 	public int getLeaveSelectionMode(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
-		int nodeStart= location.getNodeOffset();
-		int nodeEnd= nodeStart + location.getNodeLength();
+		int nodeStart = location.getNodeOffset();
+		int nodeEnd = nodeStart + location.getNodeLength();
 		if (nodeEnd <= fStart) {
 			return BEFORE;
 		} else if (covers(node)) {
@@ -133,35 +133,35 @@ public class Selection {
 
 	public boolean covers(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
-		int nodeStart= location.getNodeOffset();
+		int nodeStart = location.getNodeOffset();
 		return fStart <= nodeStart && nodeStart + location.getNodeLength() <= fEnd;
 	}
 
 	public boolean coveredBy(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
-		int nodeStart= location.getNodeOffset();
+		int nodeStart = location.getNodeOffset();
 		return nodeStart <= fStart && fEnd <= nodeStart + location.getNodeLength();
 	}
 
 	public boolean coveredBy(IRegion region) {
-		int regionStart= region.getOffset();
+		int regionStart = region.getOffset();
 		return regionStart <= fStart && fEnd <= regionStart + region.getLength();
 	}
 
 	public boolean endsIn(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
-		int nodeStart= location.getNodeOffset();
+		int nodeStart = location.getNodeOffset();
 		return nodeStart < fEnd && fEnd < nodeStart + location.getNodeLength();
 	}
 
 	public boolean liesOutside(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
-		int nodeStart= location.getNodeOffset();
-		return fEnd < nodeStart || nodeStart + location.getNodeLength() < fStart; 
+		int nodeStart = location.getNodeOffset();
+		return fEnd < nodeStart || nodeStart + location.getNodeLength() < fStart;
 	}
 
 	@Override
 	public String toString() {
-		return "<start == " + fStart + ", length == " + fLength + "/>";  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "<start == " + fStart + ", length == " + fLength + "/>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

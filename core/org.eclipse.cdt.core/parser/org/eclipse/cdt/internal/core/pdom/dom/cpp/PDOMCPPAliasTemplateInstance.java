@@ -29,16 +29,15 @@ import org.eclipse.core.runtime.CoreException;
  * PDOM binding for alias template instance.
  */
 class PDOMCPPAliasTemplateInstance extends PDOMCPPTypedefSpecialization implements ICPPAliasTemplateInstance {
-	private static final int TEMPLATE_ARGUMENTS = PDOMCPPTypedefSpecialization.RECORD_SIZE;  // Database.PTR_SIZE
-	
+	private static final int TEMPLATE_ARGUMENTS = PDOMCPPTypedefSpecialization.RECORD_SIZE; // Database.PTR_SIZE
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TEMPLATE_ARGUMENTS + Database.PTR_SIZE;
 
 	private volatile ICPPTemplateArgument[] fTemplateArguments;
-	
-	public PDOMCPPAliasTemplateInstance(PDOMCPPLinkage linkage, PDOMNode parent, 
-			PDOMBinding aliasTemplate, ICPPAliasTemplateInstance astInstance) 
-			throws CoreException, DOMException {
+
+	public PDOMCPPAliasTemplateInstance(PDOMCPPLinkage linkage, PDOMNode parent, PDOMBinding aliasTemplate,
+			ICPPAliasTemplateInstance astInstance) throws CoreException, DOMException {
 		super(linkage, parent, astInstance, aliasTemplate);
 		fTemplateArguments = astInstance.getTemplateArguments();
 		linkage.new ConfigureAliasTemplateInstance(this);
@@ -72,7 +71,7 @@ class PDOMCPPAliasTemplateInstance extends PDOMCPPTypedefSpecialization implemen
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		if (fTemplateArguments == null) {
 			try {
-				final long rec= getPDOM().getDB().getRecPtr(record + TEMPLATE_ARGUMENTS);
+				final long rec = getPDOM().getDB().getRecPtr(record + TEMPLATE_ARGUMENTS);
 				fTemplateArguments = PDOMCPPArgumentList.getArguments(this, rec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -81,21 +80,21 @@ class PDOMCPPAliasTemplateInstance extends PDOMCPPTypedefSpecialization implemen
 		}
 		return fTemplateArguments;
 	}
-	
+
 	public void storeTemplateArguments() {
 		try {
 			// fTemplateArguments here are the temporarily stored, possibly non-PDOM arguments stored
 			// by the constructor. Construct the PDOM arguments and store them.
 			final long argListRec = PDOMCPPArgumentList.putArguments(this, fTemplateArguments);
 			getDB().putRecPtr(record + TEMPLATE_ARGUMENTS, argListRec);
-			
+
 			// Read the stored arguments next time getTemplateArguments() is called.
 			fTemplateArguments = null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public boolean isExplicitSpecialization() {
 		// Alias templates cannot be explicitly specialized.

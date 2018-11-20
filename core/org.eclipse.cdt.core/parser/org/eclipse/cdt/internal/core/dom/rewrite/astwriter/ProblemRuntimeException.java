@@ -31,7 +31,7 @@ public class ProblemRuntimeException extends RuntimeException {
 	public ProblemRuntimeException(IASTProblemHolder statement) {
 		problem = statement;
 	}
-	
+
 	public IASTProblemHolder getProblem() {
 		return problem;
 	}

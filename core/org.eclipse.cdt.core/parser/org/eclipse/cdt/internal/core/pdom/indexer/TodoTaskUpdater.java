@@ -47,54 +47,43 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 
-
 public class TodoTaskUpdater implements ITodoTaskUpdater {
 	private static final String SOURCE_ID = "CDT"; //$NON-NLS-1$
-	private static final String[] TASK_MARKER_ATTRIBUTE_NAMES = {
-		IMarker.MESSAGE, 
-		IMarker.PRIORITY, 
-		IMarker.CHAR_START, 
-		IMarker.CHAR_END, 
-		IMarker.LINE_NUMBER, 
-		IMarker.USER_EDITABLE,
-		IMarker.SOURCE_ID,
-	};
+	private static final String[] TASK_MARKER_ATTRIBUTE_NAMES = { IMarker.MESSAGE, IMarker.PRIORITY, IMarker.CHAR_START,
+			IMarker.CHAR_END, IMarker.LINE_NUMBER, IMarker.USER_EDITABLE, IMarker.SOURCE_ID, };
 
 	private final TodoTaskParser taskParser;
-	
+
 	public TodoTaskUpdater() {
 		String value = CCorePlugin.getOption(CCorePreferenceConstants.TODO_TASK_TAGS);
 		if (value == null) {
 			value = CCorePreferenceConstants.DEFAULT_TASK_TAGS;
 		}
-        String[] tags = split(value, ","); //$NON-NLS-1$
-        char[][] taskTags = new char[tags.length][];
-        for (int i = 0; i < tags.length; i++) {
+		String[] tags = split(value, ","); //$NON-NLS-1$
+		char[][] taskTags = new char[tags.length][];
+		for (int i = 0; i < tags.length; i++) {
 			taskTags[i] = tags[i].toCharArray();
 		}
-        
+
 		value = CCorePlugin.getOption(CCorePreferenceConstants.TODO_TASK_PRIORITIES);
 		if (value == null) {
 			value = CCorePreferenceConstants.DEFAULT_TASK_PRIORITY;
 		}
-        String[] priorities = split(value, ","); //$NON-NLS-1$
-        int[] taskPriorities = new int[taskTags.length];
-        for (int i = 0; i < taskPriorities.length; i++) {
-			String priority = i < priorities.length ?
-					priorities[i] : CCorePreferenceConstants.DEFAULT_TASK_PRIORITY;
-			taskPriorities[i] =
-					CCorePreferenceConstants.TASK_PRIORITY_HIGH.equals(priority) ?
-						IMarker.PRIORITY_HIGH :
-					CCorePreferenceConstants.TASK_PRIORITY_LOW.equals(priority) ?
-						IMarker.PRIORITY_LOW : IMarker.PRIORITY_NORMAL;
+		String[] priorities = split(value, ","); //$NON-NLS-1$
+		int[] taskPriorities = new int[taskTags.length];
+		for (int i = 0; i < taskPriorities.length; i++) {
+			String priority = i < priorities.length ? priorities[i] : CCorePreferenceConstants.DEFAULT_TASK_PRIORITY;
+			taskPriorities[i] = CCorePreferenceConstants.TASK_PRIORITY_HIGH.equals(priority) ? IMarker.PRIORITY_HIGH
+					: CCorePreferenceConstants.TASK_PRIORITY_LOW.equals(priority) ? IMarker.PRIORITY_LOW
+							: IMarker.PRIORITY_NORMAL;
 		}
-        
+
 		value = CCorePlugin.getOption(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE);
 		if (value == null) {
 			value = CCorePreferenceConstants.DEFAULT_TASK_CASE_SENSITIVE;
 		}
-        boolean isTaskCaseSensitive = Boolean.valueOf(value).booleanValue();
-        taskParser = new TodoTaskParser(taskTags, taskPriorities, isTaskCaseSensitive);
+		boolean isTaskCaseSensitive = Boolean.valueOf(value).booleanValue();
+		taskParser = new TodoTaskParser(taskTags, taskPriorities, isTaskCaseSensitive);
 	}
 
 	@Override
@@ -104,12 +93,12 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			List<Task> fTasks;
 
 			public TaskList(IFile file) {
-				fFile= file;
+				fFile = file;
 			}
 
 			public void add(Task task) {
 				if (fTasks == null) {
-					fTasks= new ArrayList<>();
+					fTasks = new ArrayList<>();
 				}
 				fTasks.add(task);
 			}
@@ -118,8 +107,8 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		// First collect all valid file-locations.
-		final Map<IPath, TaskList> pathToTaskList= new HashMap<>();
-		final Set<IProject> projects= new HashSet<>();
+		final Map<IPath, TaskList> pathToTaskList = new HashMap<>();
+		final Set<IProject> projects = new HashSet<>();
 		for (final IIndexFileLocation indexFileLocation : filesToUpdate) {
 			final String filepath = indexFileLocation.getFullPath();
 			if (filepath != null) {
@@ -134,27 +123,27 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		if (comments.length > 0) {
 			final Task[] tasks = taskParser.parse(comments);
 			for (final Task task : tasks) {
-				TaskList list= pathToTaskList.get(new Path(task.getFileLocation()));
+				TaskList list = pathToTaskList.get(new Path(task.getFileLocation()));
 				if (list != null) {
 					list.add(task);
 				}
 			}
 		}
-		
+
 		// Update markers in a job in order not to block the indexer (bug 210730).
 		if (!pathToTaskList.isEmpty()) {
-			WorkspaceJob job= new WorkspaceJob(Messages.TodoTaskUpdater_UpdateJob) {
+			WorkspaceJob job = new WorkspaceJob(Messages.TodoTaskUpdater_UpdateJob) {
 				@Override
 				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					MultiStatus status= new MultiStatus(CCorePlugin.PLUGIN_ID, 0,
-							Messages.TodoTaskUpdater_UpdateJob, null);
+					MultiStatus status = new MultiStatus(CCorePlugin.PLUGIN_ID, 0, Messages.TodoTaskUpdater_UpdateJob,
+							null);
 
 					for (TaskList tasklist : pathToTaskList.values()) {
-						final IFile file= tasklist.fFile;
+						final IFile file = tasklist.fFile;
 						try {
 							if (file.exists()) {
 								file.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
-								final List<Task> tasks= tasklist.fTasks;
+								final List<Task> tasks = tasklist.fTasks;
 								if (tasks != null) {
 									for (Task task : tasks) {
 										applyTask(task, file);
@@ -179,35 +168,28 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 	private void applyTask(Task task, IResource resource) throws CoreException {
 		IMarker marker = resource.createMarker(ICModelMarker.TASK_MARKER);
 		String description = NLS.bind(Messages.TodoTaskUpdater_taskFormat, task.getTag(), task.getMessage());
-		marker.setAttributes(
-			TASK_MARKER_ATTRIBUTE_NAMES,
-			new Object[] { 
-				description,
-				Integer.valueOf(task.getPriority()),
-				Integer.valueOf(task.getStart()),
-				Integer.valueOf(task.getEnd()),
-				Integer.valueOf(task.getLineNumber()),
-				Boolean.FALSE,
-				SOURCE_ID
-			});
+		marker.setAttributes(TASK_MARKER_ATTRIBUTE_NAMES,
+				new Object[] { description, Integer.valueOf(task.getPriority()), Integer.valueOf(task.getStart()),
+						Integer.valueOf(task.getEnd()), Integer.valueOf(task.getLineNumber()), Boolean.FALSE,
+						SOURCE_ID });
 	}
-	
-    private String[] split(String value, String delimiters) {
-        StringTokenizer tokenizer = new StringTokenizer(value, delimiters);
-        int size = tokenizer.countTokens();
-        String[] tokens = new String[size];
-        for (int i = 0; i < size; i++)
-            tokens[i] = tokenizer.nextToken();
-        return tokens;
-    }
-    
+
+	private String[] split(String value, String delimiters) {
+		StringTokenizer tokenizer = new StringTokenizer(value, delimiters);
+		int size = tokenizer.countTokens();
+		String[] tokens = new String[size];
+		for (int i = 0; i < size; i++)
+			tokens[i] = tokenizer.nextToken();
+		return tokens;
+	}
+
 	public static void removeTasksFor(final IResource resource) {
 		if (resource == null || !resource.exists()) {
 			return;
 		}
-		
+
 		// Delete markers in a job in order not to block the indexer (bug 210730).
-		WorkspaceJob job= new WorkspaceJob(Messages.TodoTaskUpdater_DeleteJob) {
+		WorkspaceJob job = new WorkspaceJob(Messages.TodoTaskUpdater_DeleteJob) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				try {

@@ -45,9 +45,9 @@ public final class SemanticToken implements ISemanticToken {
 	@Override
 	public IBinding getBinding() {
 		if (!fIsBindingResolved) {
-			fIsBindingResolved= true;
+			fIsBindingResolved = true;
 			if (fNode instanceof IASTName)
-				fBinding= ((IASTName) fNode).resolveBinding();
+				fBinding = ((IASTName) fNode).resolveBinding();
 		}
 
 		return fBinding;
@@ -67,9 +67,9 @@ public final class SemanticToken implements ISemanticToken {
 	@Override
 	public IASTTranslationUnit getRoot() {
 		if (!fIsRootResolved) {
-			fIsRootResolved= true;
+			fIsRootResolved = true;
 			if (fNode != null) {
-				fRoot= fNode.getTranslationUnit();
+				fRoot = fNode.getTranslationUnit();
 			}
 		}
 		return fRoot;
@@ -85,7 +85,7 @@ public final class SemanticToken implements ISemanticToken {
 	 */
 	void update(IASTNode node) {
 		clear();
-		fNode= node;
+		fNode = node;
 	}
 
 	/**
@@ -95,10 +95,10 @@ public final class SemanticToken implements ISemanticToken {
 	 * </p>
 	 */
 	void clear() {
-		fNode= null;
-		fBinding= null;
-		fIsBindingResolved= false;
-		fRoot= null;
-		fIsRootResolved= false;
+		fNode = null;
+		fBinding = null;
+		fIsBindingResolved = false;
+		fRoot = null;
+		fIsRootResolved = false;
 	}
 }

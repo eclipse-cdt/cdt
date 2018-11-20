@@ -69,12 +69,14 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public IGPPASTArrayRangeDesignator newArrayRangeDesignatorGPP(ICPPASTExpression floor, ICPPASTExpression ceiling);
 
 	@Override
-	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript);
+	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr,
+			IASTExpression subscript);
 
 	/**
 	 * @since 5.2
 	 */
-	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTInitializerClause subscript);
+	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr,
+			IASTInitializerClause subscript);
 
 	/**
 	 * @since 5.7
@@ -102,7 +104,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * @since 5.3
 	 */
-	public IASTExpression newBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator op, IASTTypeId type1, IASTTypeId type2);
+	public IASTExpression newBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator op, IASTTypeId type1,
+			IASTTypeId type2);
 
 	/**
 	 * @since 5.3
@@ -166,12 +169,14 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * If {@code isScoped == true} is passed {@code ScopeToken.CLASS} is assumed.
 	 */
 	@Deprecated
-	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType);
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name,
+			ICPPASTDeclSpecifier baseType);
 
 	/**
 	 * @since 6.6
 	 */
-	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeStyle scopeStyle, IASTName name, ICPPASTDeclSpecifier baseType);
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeStyle scopeStyle, IASTName name,
+			ICPPASTDeclSpecifier baseType);
 
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 
@@ -205,7 +210,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 5.2
 	 */
 	@Override
-	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments);
+	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr,
+			IASTInitializerClause[] arguments);
 
 	@Override
 	public ICPPASTFunctionDeclarator newFunctionDeclarator(IASTName name);
@@ -214,8 +220,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement);
 
-	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
-			IASTStatement bodyStatement);
+	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier,
+			IASTFunctionDeclarator declarator, IASTStatement bodyStatement);
 
 	public ICPPASTIfStatement newIfStatement();
 
@@ -248,7 +254,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
 
 	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);
-	
+
 	/**
 	 * @since 6.0
 	 */
@@ -258,7 +264,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * @since 5.2
 	 */
-	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer, IASTTypeId typeId);
+	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer,
+			IASTTypeId typeId);
 
 	public ICPPASTOperatorName newOperatorName(char[] name);
 
@@ -300,7 +307,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Override
 	public ICPPASTName newName(char[] name);
-	
+
 	/**
 	 * @since 6.1
 	 */
@@ -340,15 +347,18 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * @since 5.2
 	 */
-	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec, IASTInitializer initializer);
+	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec,
+			IASTInitializer initializer);
 
-	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId);
+	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name,
+			IASTTypeId typeId);
 
 	/**
 	 * Creates a new static assertion declaration with the given condition and message.
 	 * @since 5.2
 	 */
-	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition, ICPPASTLiteralExpression message);
+	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition,
+			ICPPASTLiteralExpression message);
 
 	/**
 	 * @since 6.5
@@ -364,12 +374,14 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTTemplateDeclaration newTemplateDeclaration(IASTDeclaration declaration);
 
-	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue);
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name,
+			IASTExpression defaultValue);
 
 	/**
 	 * @since 6.6
 	 */
-	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(int type, IASTName name, IASTExpression defaultValue);
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(int type, IASTName name,
+			IASTExpression defaultValue);
 
 	public ICPPASTTemplateId newTemplateId(IASTName templateName);
 
@@ -429,7 +441,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId, IASTExpression initializerValue);
+	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId,
+			IASTExpression initializerValue);
 
 	/**
 	 * @deprecated Replaced by {@link #newConstructorInitializer(IASTInitializerClause[])}.
@@ -458,7 +471,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId);
+	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer,
+			IASTTypeId typeId);
 
 	/**
 	 * @deprecated Replaced by {@link #newQualifiedName(ICPPASTName)}.
@@ -479,7 +493,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
+	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr,
+			boolean isTemplate);
 
 	/**
 	 * @deprecated Use newAttributeList() instead.

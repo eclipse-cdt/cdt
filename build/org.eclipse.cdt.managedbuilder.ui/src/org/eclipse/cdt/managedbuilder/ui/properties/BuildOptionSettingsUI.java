@@ -99,8 +99,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * Option settings page in project properties Build Settings under Tool Settings tab.
  */
 public class BuildOptionSettingsUI extends AbstractToolSettingUI {
-	private Map<String, FieldEditor> fieldsMap =
-		new HashMap<String, FieldEditor>();
+	private Map<String, FieldEditor> fieldsMap = new HashMap<String, FieldEditor>();
 	private IOptionCategory category;
 	private IHoldsOptions optionHolder;
 	/** Option Holders involved */
@@ -108,8 +107,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/** The index of the current IHoldsOptions in ohs */
 	private int curr = -1;
 	private Map<String, CustomFieldEditorDescriptor> customFieldEditorDescriptorIndex;
-	private Map<FieldEditor, Composite> fieldEditorsToParentMap =
-		new HashMap<FieldEditor, Composite>();
+	private Map<FieldEditor, Composite> fieldEditorsToParentMap = new HashMap<FieldEditor, Composite>();
 	/** True if the user selected "Display tool option tips at a fixed location" in Preferences */
 	private boolean displayFixedTip;
 	/** type of mouse action the displayFixedTip responds to.
@@ -121,8 +119,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		private final IOption option;
 		private String contextId;
 
-		private TreeBrowseFieldEditor(String name, String labelText, Composite parent, String nameStr,
-				IOption option, String contextId) {
+		private TreeBrowseFieldEditor(String name, String labelText, Composite parent, String nameStr, IOption option,
+				String contextId) {
 			super(name, labelText, parent);
 			this.nameStr = nameStr;
 			this.option = option;
@@ -145,7 +143,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						}
 					}
 				}
-				
+
 				if (dlg.open() == Window.OK) {
 					ITreeOption selected = dlg.getSelection();
 					return selected.getName();
@@ -164,17 +162,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			this.name = name;
 			this.tip = tip;
 		}
+
 		protected String getName() {
 			return name;
 		}
+
 		protected String getTip() {
 			return tip;
 		}
 	}
 
-
-	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
-			IResourceInfo info, IHoldsOptions optionHolder,
+	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page, IResourceInfo info, IHoldsOptions optionHolder,
 			IOptionCategory _category) {
 		this(page, info, optionHolder, _category, false);
 	}
@@ -190,8 +188,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 *
 	 * @since 7.0
 	 */
-	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
-			IResourceInfo info, IHoldsOptions optionHolder,
+	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page, IResourceInfo info, IHoldsOptions optionHolder,
 			IOptionCategory cat, boolean displayFixedTip) {
 		super(info);
 		this.category = cat;
@@ -199,8 +196,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		this.optionHolder = optionHolder;
 		buildPropPage = page;
 		if (info instanceof MultiItemsHolder) {
-			MultiResourceInfo mri = (MultiResourceInfo)info;
-			IResourceInfo[] ris = (IResourceInfo[])mri.getItems();
+			MultiResourceInfo mri = (MultiResourceInfo) info;
+			IResourceInfo[] ris = (IResourceInfo[]) mri.getItems();
 			String id = category.getId();
 
 			/*
@@ -211,10 +208,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			 */
 			ArrayList<IHoldsOptions> lst = new ArrayList<IHoldsOptions>();
 			if (optionHolder instanceof ITool) {
-				String ext = ((ITool)optionHolder).getDefaultInputExtension();
-				for (int i=0; i<ris.length; i++) {
+				String ext = ((ITool) optionHolder).getDefaultInputExtension();
+				for (int i = 0; i < ris.length; i++) {
 					ITool[] ts = ris[i].getTools();
-					for (int j=0; j<ts.length; j++) {
+					for (int j = 0; j < ts.length; j++) {
 						IOptionCategory op = ts[j].getOptionCategory(id);
 						if (op != null) {
 							if (ext.equals(ts[j].getDefaultInputExtension())) {
@@ -224,7 +221,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					}
 				}
 			} else if (optionHolder instanceof IToolChain) {
-				for (int i=0; i<ris.length; i++) {
+				for (int i = 0; i < ris.length; i++) {
 					IToolChain tc = ris[i].getParent().getToolChain();
 					IOptionCategory op = tc.getOptionCategory(id);
 					if (op != null)
@@ -233,7 +230,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 
 			ohs = lst.toArray(new IHoldsOptions[lst.size()]);
-			for (int i=0; i<ohs.length; i++) {
+			for (int i = 0; i < ohs.length; i++) {
 				if (ohs[i].equals(optionHolder)) {
 					curr = i;
 					break;
@@ -270,9 +267,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 		for (int index = 0; index < options.length; ++index) {
 			// Get the option
-			IHoldsOptions holder = (IHoldsOptions)options[index][0];
-			if (holder == null) break;	//  The array may not be full
-			IOption opt = (IOption)options[index][1];
+			IHoldsOptions holder = (IHoldsOptions) options[index][0];
+			if (holder == null)
+				break; //  The array may not be full
+			IOption opt = (IOption) options[index][1];
 
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
@@ -285,7 +283,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				String tipStr = opt.getToolTip();
 				String contextId = opt.getContextId();
 
-				if (pageHasToolTipBox && (tipStr==null || tipStr.trim().length()==0)) {
+				if (pageHasToolTipBox && (tipStr == null || tipStr.trim().length() == 0)) {
 					tipStr = Messages.BuildOptionSettingsUI_0;
 				}
 
@@ -296,31 +294,30 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					FieldEditor fieldEditor = null;
 
 					String customFieldEditorId = opt.getFieldEditorId();
-					if(customFieldEditorId != null) {
+					if (customFieldEditorId != null) {
 						fieldEditor = createCustomFieldEditor(customFieldEditorId);
-						if(fieldEditor != null) {
-							ICustomBuildOptionEditor customFieldEditor = (ICustomBuildOptionEditor)fieldEditor;
-					        if(customFieldEditor.init(opt, opt.getFieldEditorExtraArgument(), optId, fieldEditorParent)) {
+						if (fieldEditor != null) {
+							ICustomBuildOptionEditor customFieldEditor = (ICustomBuildOptionEditor) fieldEditor;
+							if (customFieldEditor.init(opt, opt.getFieldEditorExtraArgument(), optId,
+									fieldEditorParent)) {
 								Control[] toolTipSources = customFieldEditor.getToolTipSources();
-								if(toolTipSources != null) {
-									for(Control control : toolTipSources) {
-										if(pageHasToolTipBox) {
-											control.setData(new TipInfo(nameStr,tipStr));
+								if (toolTipSources != null) {
+									for (Control control : toolTipSources) {
+										if (pageHasToolTipBox) {
+											control.setData(new TipInfo(nameStr, tipStr));
 											control.addListener(selectAction, tipSetListener);
-										}
-										else {
+										} else {
 											control.setToolTipText(tipStr);
 										}
 									}
 								}
-					        }
-					        else {
-					        	fieldEditor = null;
-					        }
+							} else {
+								fieldEditor = null;
+							}
 						}
 					}
 
-					if(fieldEditor == null) {
+					if (fieldEditor == null) {
 						switch (opt.getValueType()) {
 						case IOption.STRING: {
 							StringFieldEditor stringField;
@@ -328,64 +325,70 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							// If browsing is set, use a field editor that has a
 							// browse button of the appropriate type.
 							switch (opt.getBrowseType()) {
-								case IOption.BROWSE_DIR: {
-									stringField = new DirectoryFieldEditor(optId, nameStr, fieldEditorParent);
-									if(opt.getBrowseFilterPath() != null) {
-										try {
-											String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(opt.getBrowseFilterPath(),
-													null, null, IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
-											((DirectoryFieldEditor)stringField).setFilterPath(new File(filterPath));
-										} catch(BuildMacroException bmx) {
-											ManagedBuilderUIPlugin.log(bmx);
-										}
+							case IOption.BROWSE_DIR: {
+								stringField = new DirectoryFieldEditor(optId, nameStr, fieldEditorParent);
+								if (opt.getBrowseFilterPath() != null) {
+									try {
+										String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(
+												opt.getBrowseFilterPath(), null, null,
+												IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
+										((DirectoryFieldEditor) stringField).setFilterPath(new File(filterPath));
+									} catch (BuildMacroException bmx) {
+										ManagedBuilderUIPlugin.log(bmx);
 									}
-								} break;
-
-								case IOption.BROWSE_FILE: {
-									stringField = new FileFieldEditor(optId, nameStr, fieldEditorParent) {
-										/**
-										 * Do not perform validity check on the file name due to losing focus,
-										 * see http://bugs.eclipse.org/289448
-										 */
-										@Override
-										protected boolean checkState() {
-											clearErrorMessage();
-											return true;
-										}
-									};
-									if(opt.getBrowseFilterPath() != null) {
-										try {
-											String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(opt.getBrowseFilterPath(),
-													null, null, IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
-											((FileFieldEditor)stringField).setFilterPath(new File(filterPath));
-										} catch(BuildMacroException bmx) {
-											ManagedBuilderUIPlugin.log(bmx);
-										}
-									}
-									((FileFieldEditor)stringField).setFileExtensions(opt.getBrowseFilterExtensions());
-								} break;
-
-								case IOption.BROWSE_NONE: {
-									final StringFieldEditorM local = new StringFieldEditorM(optId, nameStr, fieldEditorParent);
-									stringField = local;
-									local.getTextControl().addModifyListener(new ModifyListener() {
-							            @Override
-										public void modifyText(ModifyEvent e) {
-							            	local.valueChanged();
-							            }
-									});
-								} break;
-
-								default: {
-									throw new BuildException(null);
 								}
+							}
+								break;
+
+							case IOption.BROWSE_FILE: {
+								stringField = new FileFieldEditor(optId, nameStr, fieldEditorParent) {
+									/**
+									 * Do not perform validity check on the file name due to losing focus,
+									 * see http://bugs.eclipse.org/289448
+									 */
+									@Override
+									protected boolean checkState() {
+										clearErrorMessage();
+										return true;
+									}
+								};
+								if (opt.getBrowseFilterPath() != null) {
+									try {
+										String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(
+												opt.getBrowseFilterPath(), null, null,
+												IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
+										((FileFieldEditor) stringField).setFilterPath(new File(filterPath));
+									} catch (BuildMacroException bmx) {
+										ManagedBuilderUIPlugin.log(bmx);
+									}
+								}
+								((FileFieldEditor) stringField).setFileExtensions(opt.getBrowseFilterExtensions());
+							}
+								break;
+
+							case IOption.BROWSE_NONE: {
+								final StringFieldEditorM local = new StringFieldEditorM(optId, nameStr,
+										fieldEditorParent);
+								stringField = local;
+								local.getTextControl().addModifyListener(new ModifyListener() {
+									@Override
+									public void modifyText(ModifyEvent e) {
+										local.valueChanged();
+									}
+								});
+							}
+								break;
+
+							default: {
+								throw new BuildException(null);
+							}
 							}
 							Label label = stringField.getLabelControl(fieldEditorParent);
 							Text text = stringField.getTextControl(fieldEditorParent);
 							if (pageHasToolTipBox) {
-								label.setData(new TipInfo(nameStr,tipStr));
+								label.setData(new TipInfo(nameStr, tipStr));
 								label.addListener(selectAction, tipSetListener);
-								text.setData(new TipInfo(nameStr,tipStr));
+								text.setData(new TipInfo(nameStr, tipStr));
 								text.addListener(selectAction, tipSetListener);
 							} else {
 								label.setToolTipText(tipStr);
@@ -395,19 +398,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								PlatformUI.getWorkbench().getHelpSystem().setHelp(text, contextId);
 							}
 							fieldEditor = stringField;
-						} break;
+						}
+							break;
 
 						case IOption.BOOLEAN: {
-							fieldEditor = new TriStateBooleanFieldEditor(
-									optId,
-									nameStr,
-									tipStr,
-									fieldEditorParent,
-									contextId,
-									ohs,
-									curr);
+							fieldEditor = new TriStateBooleanFieldEditor(optId, nameStr, tipStr, fieldEditorParent,
+									contextId, ohs, curr);
 							// tipStr is handled in TriStateBooleanFieldEditor constructor
-						} break;
+						}
+							break;
 
 						case IOption.ENUMERATED: {
 							String selId = opt.getSelectedEnum();
@@ -420,8 +419,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String[] enumNames = opt.getApplicableValues();
 							Vector<String> enumValidList = new Vector<String>();
 							for (int i = 0; i < enumNames.length; ++i) {
-								if (opt.getValueHandler().isEnumValueAppropriate(config,
-										opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
+								if (opt.getValueHandler().isEnumValueAppropriate(config, opt.getOptionHolder(), opt,
+										opt.getValueHandlerExtraArgument(), enumNames[i])) {
 									enumValidList.add(enumNames[i]);
 								}
 							}
@@ -430,29 +429,31 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 							// if (displayFixedTip==false), tooltip was already set in BuildOptionComboFieldEditor constructor.
 							String tooltipHoverStr = displayFixedTip ? null : tipStr;
-							fieldEditor = new BuildOptionComboFieldEditor(optId, nameStr,
-									tooltipHoverStr, contextId, enumValidNames, sel, fieldEditorParent);
+							fieldEditor = new BuildOptionComboFieldEditor(optId, nameStr, tooltipHoverStr, contextId,
+									enumValidNames, sel, fieldEditorParent);
 
 							if (pageHasToolTipBox) {
-								Combo combo = ((BuildOptionComboFieldEditor)fieldEditor).getComboControl();
+								Combo combo = ((BuildOptionComboFieldEditor) fieldEditor).getComboControl();
 								Label label = fieldEditor.getLabelControl(fieldEditorParent);
-								combo.setData(new TipInfo(nameStr,tipStr));
+								combo.setData(new TipInfo(nameStr, tipStr));
 								combo.addListener(selectAction, tipSetListener);
-								label.setData(new TipInfo(nameStr,tipStr));
+								label.setData(new TipInfo(nameStr, tipStr));
 								label.addListener(selectAction, tipSetListener);
 							}
-						} break;
+						}
+							break;
 
 						case IOption.TREE:
-							fieldEditor = new TreeBrowseFieldEditor(optId, nameStr, fieldEditorParent, nameStr, opt, contextId);
-							((StringButtonFieldEditor)fieldEditor).setChangeButtonText("..."); //$NON-NLS-1$
+							fieldEditor = new TreeBrowseFieldEditor(optId, nameStr, fieldEditorParent, nameStr, opt,
+									contextId);
+							((StringButtonFieldEditor) fieldEditor).setChangeButtonText("..."); //$NON-NLS-1$
 
 							if (pageHasToolTipBox) {
-								Text text = ((StringButtonFieldEditor)fieldEditor).getTextControl(fieldEditorParent);
+								Text text = ((StringButtonFieldEditor) fieldEditor).getTextControl(fieldEditorParent);
 								Label label = fieldEditor.getLabelControl(fieldEditorParent);
-								text.setData(new TipInfo(nameStr,tipStr));
+								text.setData(new TipInfo(nameStr, tipStr));
 								text.addListener(selectAction, tipSetListener);
-								label.setData(new TipInfo(nameStr,tipStr));
+								label.setData(new TipInfo(nameStr, tipStr));
 								label.addListener(selectAction, tipSetListener);
 							}
 							break;
@@ -471,29 +472,31 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.UNDEF_INCLUDE_FILES:
 						case IOption.UNDEF_LIBRARY_PATHS:
 						case IOption.UNDEF_LIBRARY_FILES:
-						case IOption.UNDEF_MACRO_FILES:
-						{
-							 // if (displayFixedTip==false), tooltip was already set in FileListControlFieldEditor constructor.
+						case IOption.UNDEF_MACRO_FILES: {
+							// if (displayFixedTip==false), tooltip was already set in FileListControlFieldEditor constructor.
 							String tooltipHoverStr = displayFixedTip ? null : tipStr;
-							fieldEditor = new FileListControlFieldEditor(optId, nameStr,
-									tooltipHoverStr, contextId, fieldEditorParent, opt.getBrowseType());
-							if(opt.getBrowseFilterPath() != null) {
+							fieldEditor = new FileListControlFieldEditor(optId, nameStr, tooltipHoverStr, contextId,
+									fieldEditorParent, opt.getBrowseType());
+							if (opt.getBrowseFilterPath() != null) {
 								try {
-									String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(opt.getBrowseFilterPath(),
-											null, null, IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
-									((FileListControlFieldEditor)fieldEditor).setFilterPath(filterPath);
-								} catch(BuildMacroException bmx) {
+									String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(
+											opt.getBrowseFilterPath(), null, null, IBuildMacroProvider.CONTEXT_OPTION,
+											opt.getOptionContextData(holder));
+									((FileListControlFieldEditor) fieldEditor).setFilterPath(filterPath);
+								} catch (BuildMacroException bmx) {
 									ManagedBuilderUIPlugin.log(bmx);
 								}
 							}
-							((FileListControlFieldEditor)fieldEditor).setFilterExtensions(opt.getBrowseFilterExtensions());
+							((FileListControlFieldEditor) fieldEditor)
+									.setFilterExtensions(opt.getBrowseFilterExtensions());
 
 							if (pageHasToolTipBox) {
 								Label label = fieldEditor.getLabelControl(fieldEditorParent);
-								label.setData(new TipInfo(nameStr,tipStr));
+								label.setData(new TipInfo(nameStr, tipStr));
 								label.addListener(selectAction, tipSetListener);
 							}
-						} break;
+						}
+							break;
 
 						default:
 							throw new BuildException(null);
@@ -516,12 +519,12 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * Instantiates the custom-field editor registered under the given id.
 	 */
 	private FieldEditor createCustomFieldEditor(String customFieldEditorId) {
-		if(this.customFieldEditorDescriptorIndex == null) {
+		if (this.customFieldEditorDescriptorIndex == null) {
 			loadCustomFieldEditorDescriptors();
 		}
 
 		CustomFieldEditorDescriptor editorDescriptor = this.customFieldEditorDescriptorIndex.get(customFieldEditorId);
-		if(editorDescriptor != null) {
+		if (editorDescriptor != null) {
 			return editorDescriptor.createEditor();
 		}
 
@@ -532,8 +535,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * Holds all the information necessary to instantiate a custom field-editor.
 	 * Also acts as a factory - instantiates and returns a non-initialized field-editor.
 	 */
-	private class CustomFieldEditorDescriptor
-	{
+	private class CustomFieldEditorDescriptor {
 		private final IConfigurationElement element;
 
 		public CustomFieldEditorDescriptor(IConfigurationElement providerElement) {
@@ -543,11 +545,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		FieldEditor createEditor() {
 			try {
 				Object editor = element.createExecutableExtension("class"); //$NON-NLS-1$
-				if(editor instanceof FieldEditor && editor instanceof ICustomBuildOptionEditor) {
-					return (FieldEditor)editor;
+				if (editor instanceof FieldEditor && editor instanceof ICustomBuildOptionEditor) {
+					return (FieldEditor) editor;
 				}
-			}
-			catch(Exception x) {
+			} catch (Exception x) {
 				ManagedBuilderUIPlugin.log(x);
 			}
 
@@ -560,16 +561,16 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * Synchronization is not necessary as this would always be invoked on the UI thread.
 	 */
 	private void loadCustomFieldEditorDescriptors() {
-		if(this.customFieldEditorDescriptorIndex != null)
+		if (this.customFieldEditorDescriptorIndex != null)
 			return;
 
 		this.customFieldEditorDescriptorIndex = new HashMap<String, CustomFieldEditorDescriptor>();
 
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
-				ManagedBuilderUIPlugin.getUniqueIdentifier() + ".buildDefinitionsUI"); //$NON-NLS-1$
+		IExtensionPoint ep = Platform.getExtensionRegistry()
+				.getExtensionPoint(ManagedBuilderUIPlugin.getUniqueIdentifier() + ".buildDefinitionsUI"); //$NON-NLS-1$
 
-		for(IExtension e : ep.getExtensions()) {
-			for(IConfigurationElement providerElement : e.getConfigurationElements()) {
+		for (IExtension e : ep.getExtensions()) {
+			for (IConfigurationElement providerElement : e.getConfigurationElements()) {
 				String editorId = providerElement.getAttribute("id"); //$NON-NLS-1$
 
 				this.customFieldEditorDescriptorIndex.put(editorId, new CustomFieldEditorDescriptor(providerElement));
@@ -602,89 +603,92 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		// Write the preference store values back to the build model
 
 		Object[][] clonedOptions;
-//		IResourceConfiguration realRcCfg = null;
+		//		IResourceConfiguration realRcCfg = null;
 		IConfiguration realCfg = null;
 		IBuildObject handler = null;
 
 		realCfg = buildPropPage.getCfg(); //.getRealConfig(clonedConfig);
-		if(realCfg == null)	return false;
+		if (realCfg == null)
+			return false;
 		handler = realCfg;
 		clonedOptions = category.getOptions(fInfo, optionHolder);
 
 		for (int i = 0; i < clonedOptions.length; i++) {
-			IHoldsOptions clonedHolder = (IHoldsOptions)clonedOptions[i][0];
-			if (clonedHolder == null) break;	//  The array may not be full
-			IOption clonedOption = (IOption)clonedOptions[i][1];
+			IHoldsOptions clonedHolder = (IHoldsOptions) clonedOptions[i][0];
+			if (clonedHolder == null)
+				break; //  The array may not be full
+			IOption clonedOption = (IOption) clonedOptions[i][1];
 
 			IHoldsOptions realHolder = clonedHolder; // buildPropPage.getRealHoldsOptions(clonedHolder);
 			IOption realOption = clonedOption; // buildPropPage.getRealOption(clonedOption, clonedHolder);
-			if(realOption == null) continue;
+			if (realOption == null)
+				continue;
 
 			try {
 				// Transfer value from preference store to options
 				IOption setOption = null;
 				switch (clonedOption.getValueType()) {
-					case IOption.BOOLEAN :
-						boolean boolVal = clonedOption.getBooleanValue();
-						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, boolVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), boolVal);
-//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-//							fe.setPreferenceName(setOption.getId());
-//						}
-						break;
-					case IOption.ENUMERATED :
-					case IOption.TREE :
-						String enumVal = clonedOption.getStringValue();
-						String enumId = clonedOption.getId(enumVal);
-						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption,
-								(enumId != null && enumId.length() > 0) ? enumId : enumVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), enumVal);
-//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-//							fe.setPreferenceName(setOption.getId());
-//					}
-						break;
-					case IOption.STRING :
-						String strVal = clonedOption.getStringValue();
-						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, strVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), strVal);
-//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-//							fe.setPreferenceName(setOption.getId());
-//						}
-						break;
-					case IOption.STRING_LIST :
-					case IOption.INCLUDE_PATH :
-					case IOption.PREPROCESSOR_SYMBOLS :
-					case IOption.LIBRARIES :
-					case IOption.OBJECTS :
-					case IOption.INCLUDE_FILES:
-					case IOption.LIBRARY_PATHS:
-					case IOption.LIBRARY_FILES:
-					case IOption.MACRO_FILES:
-					case IOption.UNDEF_INCLUDE_PATH:
-					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-					case IOption.UNDEF_INCLUDE_FILES:
-					case IOption.UNDEF_LIBRARY_PATHS:
-					case IOption.UNDEF_LIBRARY_FILES:
-					case IOption.UNDEF_MACRO_FILES:
-						@SuppressWarnings("unchecked")
-						String[] listVal = ((List<String>)clonedOption.getValue()).toArray(new String[0]);
-						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);
+				case IOption.BOOLEAN:
+					boolean boolVal = clonedOption.getBooleanValue();
+					setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, boolVal);
+					// Reset the preference store since the Id may have changed
+					//						if (setOption != option) {
+					//							getToolSettingsPrefStore().setValue(setOption.getId(), boolVal);
+					//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+					//							fe.setPreferenceName(setOption.getId());
+					//						}
+					break;
+				case IOption.ENUMERATED:
+				case IOption.TREE:
+					String enumVal = clonedOption.getStringValue();
+					String enumId = clonedOption.getId(enumVal);
+					setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption,
+							(enumId != null && enumId.length() > 0) ? enumId : enumVal);
+					// Reset the preference store since the Id may have changed
+					//						if (setOption != option) {
+					//							getToolSettingsPrefStore().setValue(setOption.getId(), enumVal);
+					//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+					//							fe.setPreferenceName(setOption.getId());
+					//					}
+					break;
+				case IOption.STRING:
+					String strVal = clonedOption.getStringValue();
+					setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, strVal);
+					// Reset the preference store since the Id may have changed
+					//						if (setOption != option) {
+					//							getToolSettingsPrefStore().setValue(setOption.getId(), strVal);
+					//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+					//							fe.setPreferenceName(setOption.getId());
+					//						}
+					break;
+				case IOption.STRING_LIST:
+				case IOption.INCLUDE_PATH:
+				case IOption.PREPROCESSOR_SYMBOLS:
+				case IOption.LIBRARIES:
+				case IOption.OBJECTS:
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
+				case IOption.UNDEF_INCLUDE_PATH:
+				case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+				case IOption.UNDEF_INCLUDE_FILES:
+				case IOption.UNDEF_LIBRARY_PATHS:
+				case IOption.UNDEF_LIBRARY_FILES:
+				case IOption.UNDEF_MACRO_FILES:
+					@SuppressWarnings("unchecked")
+					String[] listVal = ((List<String>) clonedOption.getValue()).toArray(new String[0]);
+					setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);
 
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), listStr);
-//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-//							fe.setPreferenceName(setOption.getId());
-//						}
-						break;
-					default :
-						break;
+					// Reset the preference store since the Id may have changed
+					//						if (setOption != option) {
+					//							getToolSettingsPrefStore().setValue(setOption.getId(), listStr);
+					//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+					//							fe.setPreferenceName(setOption.getId());
+					//						}
+					break;
+				default:
+					break;
 				}
 
 				// Call an MBS CallBack function to inform that Settings related to Apply/OK button
@@ -692,12 +696,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				if (setOption == null)
 					setOption = realOption;
 
-				if (setOption.getValueHandler().handleValue(
-						handler,
-						setOption.getOptionHolder(),
-						setOption,
-						setOption.getValueHandlerExtraArgument(),
-						IManagedOptionValueHandler.EVENT_APPLY)) {
+				if (setOption.getValueHandler().handleValue(handler, setOption.getOptionHolder(), setOption,
+						setOption.getValueHandlerExtraArgument(), IManagedOptionValueHandler.EVENT_APPLY)) {
 					// TODO : Event is handled successfully and returned true.
 					// May need to do something here say log a message.
 				} else {
@@ -707,7 +707,6 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			} catch (BuildException e) {
 			} catch (ClassCastException e) {
 			}
-
 
 		}
 		return ok;
@@ -733,10 +732,11 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			if (fieldsMap.containsKey(prefName)) {
 				FieldEditor fieldEditor = fieldsMap.get(prefName);
 				try {
-					if ( opt.getValueType() == IOption.ENUMERATED ) {
-						updateEnumList( fieldEditor, opt, holder, fInfo );
+					if (opt.getValueType() == IOption.ENUMERATED) {
+						updateEnumList(fieldEditor, opt, holder, fInfo);
 					}
-				} catch ( BuildException be ) {}
+				} catch (BuildException be) {
+				}
 
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
@@ -750,7 +750,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		Collection<FieldEditor> fieldsList = fieldsMap.values();
 		for (FieldEditor editor : fieldsList) {
 			if (editor instanceof TriStateBooleanFieldEditor)
-				((TriStateBooleanFieldEditor)editor).set3(true);
+				((TriStateBooleanFieldEditor) editor).set3(true);
 			editor.load();
 		}
 	}
@@ -762,7 +762,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 		// if the option is not enabled then disable it
 		IBuildObject config = fInfo;
-		if (!optionApplicability.isOptionEnabled(config, holder, option )) {
+		if (!optionApplicability.isOptionEnabled(config, holder, option)) {
 			fieldEditor.setEnabled(false, parent);
 		} else {
 			fieldEditor.setEnabled(true, parent);
@@ -770,7 +770,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	}
 
 	private boolean hasStr(String tipStr) {
-		return (tipStr!=null && tipStr.trim().length()>0);
+		return (tipStr != null && tipStr.trim().length() > 0);
 	}
 
 	/* (non-Javadoc)
@@ -786,11 +786,11 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		IHoldsOptions changedHolder = null;
 		String id = null;
 
-		if(source instanceof FieldEditor){
-			FieldEditor fe = (FieldEditor)source;
+		if (source instanceof FieldEditor) {
+			FieldEditor fe = (FieldEditor) source;
 
 			if (fe instanceof TriStateBooleanFieldEditor)
-				((TriStateBooleanFieldEditor)fe).set3(false);
+				((TriStateBooleanFieldEditor) fe).set3(false);
 
 			id = fe.getPreferenceName();
 
@@ -804,37 +804,37 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				}
 			}
 
-			if(option != null){
-				changedOption = (IOption)option[1];
-				changedHolder = (IHoldsOptions)option[0];
+			if (option != null) {
+				changedOption = (IOption) option[1];
+				changedHolder = (IHoldsOptions) option[0];
 				try {
-					switch(changedOption.getValueType()){
+					switch (changedOption.getValueType()) {
 					case IOption.STRING:
-						if(fe instanceof StringFieldEditor){
-							String val = ((StringFieldEditor)fe).getStringValue();
-							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,val);
+						if (fe instanceof StringFieldEditor) {
+							String val = ((StringFieldEditor) fe).getStringValue();
+							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
 						}
 						break;
 					case IOption.BOOLEAN:
-						if(fe instanceof BooleanFieldEditor){
-							boolean val = ((BooleanFieldEditor)fe).getBooleanValue();
-							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,val);
+						if (fe instanceof BooleanFieldEditor) {
+							boolean val = ((BooleanFieldEditor) fe).getBooleanValue();
+							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
 						}
 						break;
 					case IOption.ENUMERATED:
-						if(fe instanceof BuildOptionComboFieldEditor){
-							String name = ((BuildOptionComboFieldEditor)fe).getSelection();
+						if (fe instanceof BuildOptionComboFieldEditor) {
+							String name = ((BuildOptionComboFieldEditor) fe).getSelection();
 							String enumId = changedOption.getEnumeratedId(name);
-							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,
+							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption,
 									(enumId != null && enumId.length() > 0) ? enumId : name);
 
 						}
 						break;
 					case IOption.TREE:
-						if(fe instanceof TreeBrowseFieldEditor){
-							String name = ((TreeBrowseFieldEditor)fe).getStringValue();
+						if (fe instanceof TreeBrowseFieldEditor) {
+							String name = ((TreeBrowseFieldEditor) fe).getStringValue();
 							String treeId = changedOption.getId(name);
-							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,
+							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption,
 									(treeId != null && treeId.length() > 0) ? treeId : name);
 
 						}
@@ -854,15 +854,16 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
-						if(fe instanceof FileListControlFieldEditor){
-							String val[] =((FileListControlFieldEditor)fe).getStringListValue();
+						if (fe instanceof FileListControlFieldEditor) {
+							String val[] = ((FileListControlFieldEditor) fe).getStringListValue();
 							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
 						}
 						break;
 					default:
 						break;
 					}
-				} catch (BuildException e) {}
+				} catch (BuildException e) {
+				}
 			}
 		}
 
@@ -885,11 +886,12 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 				FieldEditor fieldEditor = fieldsMap.get(optId);
 				try {
-					if ( opt.getValueType() == IOption.ENUMERATED ) {
+					if (opt.getValueType() == IOption.ENUMERATED) {
 						// the item list of this enumerated option may have changed, update it
-						updateEnumList( fieldEditor, opt, holder, fInfo );
+						updateEnumList(fieldEditor, opt, holder, fInfo);
 					}
-				} catch ( BuildException be ) {}
+				} catch (BuildException be) {
+				}
 
 				if (applicabilityCalculator != null) {
 					Composite parent = fieldEditorsToParentMap.get(fieldEditor);
@@ -900,7 +902,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 		Collection<FieldEditor> xxx = fieldsMap.values();
 		for (FieldEditor editor : xxx) {
-			if(id == null || !id.equals(editor.getPreferenceName()))
+			if (id == null || !id.equals(editor.getPreferenceName()))
 				editor.load();
 		}
 	}
@@ -922,9 +924,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		if (optionHolder instanceof ITool) { // option category page
 			Object[][] options = category.getOptions(fInfo, optionHolder);
 			for (int index = 0; index < options.length; ++index) {
-				IHoldsOptions holder = (IHoldsOptions)options[index][0];
-				if (holder == null) break; //  The array may not be full
-				IOption opt = (IOption)options[index][1];
+				IHoldsOptions holder = (IHoldsOptions) options[index][0];
+				if (holder == null)
+					break; //  The array may not be full
+				IOption opt = (IOption) options[index][1];
 				String tipStr = opt.getToolTip();
 
 				// check to see if the option has an applicability calculator
@@ -956,7 +959,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * @param config      project or resource info
 	 * @throws BuildException
 	 */
-	protected void updateEnumList( FieldEditor fieldEditor, IOption opt, IHoldsOptions holder, IResourceInfo config ) throws BuildException	{
+	protected void updateEnumList(FieldEditor fieldEditor, IOption opt, IHoldsOptions holder, IResourceInfo config)
+			throws BuildException {
 		// Get all applicable values for this enumerated Option, and filter out
 		// the disable values
 		String[] enumNames = opt.getApplicableValues();
@@ -967,7 +971,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		String selectedEnumName = opt.getEnumName(selectedEnum);
 
 		// get the default value for this enumerated option
-		String defaultEnumId = (String)opt.getDefaultValue();
+		String defaultEnumId = (String) opt.getDefaultValue();
 		String defaultEnumName = opt.getEnumName(defaultEnumId);
 
 		boolean selectNewEnum = true;
@@ -975,13 +979,13 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 		Vector<String> enumValidList = new Vector<String>();
 		for (int i = 0; i < enumNames.length; ++i) {
-			if (opt.getValueHandler().isEnumValueAppropriate(config,
-					opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
-				if ( selectedEnumName.equals(enumNames[i]) ) {
+			if (opt.getValueHandler().isEnumValueAppropriate(config, opt.getOptionHolder(), opt,
+					opt.getValueHandlerExtraArgument(), enumNames[i])) {
+				if (selectedEnumName.equals(enumNames[i])) {
 					// the currently selected enum is part of the new item list, no need to select a new value.
 					selectNewEnum = false;
 				}
-				if ( defaultEnumName.equals(enumNames[i]) ) {
+				if (defaultEnumName.equals(enumNames[i])) {
 					// the default enum value is part of new item list
 					selectDefault = true;
 				}
@@ -991,20 +995,20 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		String[] enumValidNames = new String[enumValidList.size()];
 		enumValidList.copyInto(enumValidNames);
 
-		if ( selectNewEnum ) {
+		if (selectNewEnum) {
 			// apparently the currently selected enum value is not part anymore of the enum list
 			// select a new value.
 			String selection = null;
-			if ( selectDefault ) {
+			if (selectDefault) {
 				// the default enum value is part of the item list, use it
-				selection = (String)opt.getDefaultValue();
-			} else if ( enumValidNames.length > 0 ) {
+				selection = (String) opt.getDefaultValue();
+			} else if (enumValidNames.length > 0) {
 				// select the first item in the item list
 				selection = opt.getEnumeratedId(enumValidNames[0]);
 			}
-			ManagedBuildManager.setOption(config,holder,opt,selection);
+			ManagedBuildManager.setOption(config, holder, opt, selection);
 		}
-		((BuildOptionComboFieldEditor)fieldEditor).setOptions(enumValidNames);
+		((BuildOptionComboFieldEditor) fieldEditor).setOptions(enumValidNames);
 		fieldEditor.load();
 	}
 
@@ -1012,9 +1016,9 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		@Override
 		public void handleEvent(Event event) {
 			Object data = event.widget.getData();
-			if (data!=null && buildPropPage!=null) {
-				TipInfo obj = (TipInfo)data;
-				((ToolSettingsTab)buildPropPage).updateTipText(obj.getName(), obj.getTip());
+			if (data != null && buildPropPage != null) {
+				TipInfo obj = (TipInfo) data;
+				((ToolSettingsTab) buildPropPage).updateTipText(obj.getName(), obj.getTip());
 			}
 		}
 	};
@@ -1029,13 +1033,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		protected IHoldsOptions[] holders = null;
 		private boolean enable3 = true;
 		protected int current = 0;
-		public TriStateBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent, String contextId, IHoldsOptions[] ho, int curr) {
+
+		public TriStateBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent,
+				String contextId, IHoldsOptions[] ho, int curr) {
 			super(name, labelText, parent);
 			holders = ho;
 			current = curr;
 			button = getChangeControl(parent);
 			if (displayFixedTip && isToolTipBoxNeeded()) {
-				button.setData(new TipInfo(labelText,tooltip));
+				button.setData(new TipInfo(labelText, tooltip));
 				button.addListener(selectAction, tipSetListener);
 			} else {
 				button.setToolTipText(tooltip);
@@ -1045,11 +1051,13 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 
 		}
+
 		@Override
 		protected void valueChanged(boolean oldValue, boolean newValue) {
 			button.setGrayed(false);
 			super.valueChanged(!newValue, newValue);
 		}
+
 		@Override
 		protected void doLoad() {
 			if (enable3 && holders != null && button != null) {
@@ -1059,15 +1067,16 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					if (op.getSuperClass() != null)
 						id = op.getSuperClass().getId();
 					int[] vals = new int[2];
-					for (int i=0; i<holders.length; i++) {
+					for (int i = 0; i < holders.length; i++) {
 						op = holders[i].getOptionBySuperClassId(id);
 						try {
 							if (op != null)
 								vals[op.getBooleanValue() ? 1 : 0]++;
-						} catch (BuildException e) {}
+						} catch (BuildException e) {
+						}
 					}
 					boolean value = false;
-					boolean gray  = false;
+					boolean gray = false;
 					if (vals[1] > 0) {
 						value = true;
 						if (vals[0] > 0)
@@ -1121,7 +1130,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 
 			Composite control = new Composite(parent, SWT.NULL);
-			GridData gd= new GridData(GridData.FILL_BOTH);
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			GridLayout topLayout = new GridLayout();
 			topLayout.numColumns = 1;
 			control.setLayout(topLayout);
@@ -1129,9 +1138,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			PatternFilter filter = new PatternFilter();
 			filter.setIncludeLeadingWildcard(true);
-			FilteredTree tree = new FilteredTree(control,
-					SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
-					filter, true);
+			FilteredTree tree = new FilteredTree(control, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filter,
+					true);
 			viewer = tree.getViewer();
 			viewer.setContentProvider(new ITreeContentProvider() {
 
@@ -1151,7 +1159,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				@Override
 				public Object[] getChildren(Object parentElement) {
 					if (parentElement instanceof ITreeOption) {
-						ITreeOption[] children = ((ITreeOption)parentElement).getChildren();
+						ITreeOption[] children = ((ITreeOption) parentElement).getChildren();
 
 						// Not entirely sure whether this method is allowed to return null,
 						// but let's play safe.
@@ -1194,7 +1202,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				@Override
 				public Object getParent(Object element) {
 					if (element instanceof ITreeOption) {
-						return ((ITreeOption)element).getParent();
+						return ((ITreeOption) element).getParent();
 					}
 					return null;
 				}
@@ -1212,7 +1220,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				@Override
 				public String getText(Object element) {
 					if (element instanceof ITreeOption) {
-						return ((ITreeOption)element).getName();
+						return ((ITreeOption) element).getName();
 					}
 					return super.getText(element);
 				}
@@ -1220,7 +1228,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				@Override
 				public Image getImage(Object element) {
 					if (element instanceof ITreeOption) {
-						String icon = ((ITreeOption)element).getIcon();
+						String icon = ((ITreeOption) element).getIcon();
 						return createImage(icon);
 					}
 					return super.getImage(element);
@@ -1233,7 +1241,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				public void selectionChanged(SelectionChangedEvent event) {
 					ISelection selection = event.getSelection();
 					if (selection instanceof IStructuredSelection) {
-						Object selectedObj = ((IStructuredSelection)selection).getFirstElement();
+						Object selectedObj = ((IStructuredSelection) selection).getFirstElement();
 						if (selectedObj instanceof ITreeOption) {
 							selected = (ITreeOption) selectedObj;
 
@@ -1262,13 +1270,14 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				@Override
 				public void doubleClick(DoubleClickEvent event) {
 					ISelection selection = event.getSelection();
-					if (!selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection)selection).size() == 1) {
-						Object selectedNode = ((IStructuredSelection)selection).getFirstElement();
+					if (!selection.isEmpty() && selection instanceof IStructuredSelection
+							&& ((IStructuredSelection) selection).size() == 1) {
+						Object selectedNode = ((IStructuredSelection) selection).getFirstElement();
 						if (selectedNode instanceof ITreeOption) {
-							if (updateOKButton((ITreeOption)selectedNode)) {
+							if (updateOKButton((ITreeOption) selectedNode)) {
 								TreeSelectionDialog.this.okPressed();
 							} else { // if doubleclick is not on selectable item, expand/collapse
-								viewer.setExpandedState(selectedNode,!viewer.getExpandedState(selectedNode));
+								viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
 							}
 						}
 					}
@@ -1290,7 +1299,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			return control;
 		}
-		
+
 		@Override
 		public void create() {
 			super.create();
@@ -1303,7 +1312,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		public ITreeOption getSelection() {
 			return selected;
 		}
-		
+
 		/**
 		 * @since 8.2
 		 */
@@ -1315,9 +1324,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		}
 
 		private void setUISelection() {
-			if (viewer != null && selected != null) viewer.setSelection(new StructuredSelection(selected), true);
+			if (viewer != null && selected != null)
+				viewer.setSelection(new StructuredSelection(selected), true);
 		}
-		
+
 		private static ITreeRoot getRoot(ITreeOption option) {
 			if (option != null) {
 				ITreeOption parent = option.getParent();
@@ -1325,7 +1335,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					option = parent;
 					parent = option.getParent();
 				}
-				return option instanceof ITreeRoot? (ITreeRoot) option : null;
+				return option instanceof ITreeRoot ? (ITreeRoot) option : null;
 			}
 			return null;
 		}

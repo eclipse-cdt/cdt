@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
  * Spelling preference block
  */
 public class SpellingPreferenceBlock implements ISpellingPreferenceBlock {
-	
+
 	private class NullStatusChangeListener implements IStatusChangeListener {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.wizards.IStatusChangeListener#statusChanged(org.eclipse.core.runtime.IStatus)
@@ -39,32 +39,33 @@ public class SpellingPreferenceBlock implements ISpellingPreferenceBlock {
 
 	private class StatusChangeListenerAdapter implements IStatusChangeListener {
 		private final IPreferenceStatusMonitor fMonitor;
-		
+
 		private IStatus fStatus;
-		
+
 		public StatusChangeListenerAdapter(IPreferenceStatusMonitor monitor) {
 			super();
-			fMonitor= monitor;
+			fMonitor = monitor;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.wizards.IStatusChangeListener#statusChanged(org.eclipse.core.runtime.IStatus)
 		 */
 		@Override
 		public void statusChanged(IStatus status) {
-			fStatus= status;
+			fStatus = status;
 			fMonitor.statusChanged(status);
 		}
-		
+
 		public IStatus getStatus() {
 			return fStatus;
 		}
 	}
 
-	private final SpellingConfigurationBlock fBlock= new SpellingConfigurationBlock(new NullStatusChangeListener(), null, null);
-	
+	private final SpellingConfigurationBlock fBlock = new SpellingConfigurationBlock(new NullStatusChangeListener(),
+			null, null);
+
 	private SpellingPreferenceBlock.StatusChangeListenerAdapter fStatusMonitor;
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -78,8 +79,8 @@ public class SpellingPreferenceBlock implements ISpellingPreferenceBlock {
 	 */
 	@Override
 	public void initialize(IPreferenceStatusMonitor statusMonitor) {
-		fStatusMonitor= new StatusChangeListenerAdapter(statusMonitor);
-		fBlock.fContext= fStatusMonitor;
+		fStatusMonitor = new StatusChangeListenerAdapter(statusMonitor);
+		fBlock.fContext = fStatusMonitor;
 	}
 
 	/*
@@ -87,7 +88,8 @@ public class SpellingPreferenceBlock implements ISpellingPreferenceBlock {
 	 */
 	@Override
 	public boolean canPerformOk() {
-		return fStatusMonitor == null || fStatusMonitor.getStatus() == null || !fStatusMonitor.getStatus().matches(IStatus.ERROR);
+		return fStatusMonitor == null || fStatusMonitor.getStatus() == null
+				|| !fStatusMonitor.getStatus().matches(IStatus.ERROR);
 	}
 
 	/*
@@ -105,7 +107,7 @@ public class SpellingPreferenceBlock implements ISpellingPreferenceBlock {
 	public void performDefaults() {
 		fBlock.performDefaults();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performRevert()
 	 */

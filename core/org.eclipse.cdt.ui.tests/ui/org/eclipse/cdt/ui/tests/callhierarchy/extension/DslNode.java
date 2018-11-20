@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.ICHENode;
 
-
 /**
  * The dsl node sample
  * */
@@ -39,14 +38,13 @@ public class DslNode implements IAdaptable, ICHENode {
 	/**
 	 * Constructor used for Open Dsl declaration command
 	 * */
-    public DslNode() {
+	public DslNode() {
 
 	}
 
-    public ICProject getProject() {
+	public ICProject getProject() {
 		return mProject;
 	}
-
 
 	public void setProject(ICProject mProject) {
 		this.mProject = mProject;
@@ -57,11 +55,10 @@ public class DslNode implements IAdaptable, ICHENode {
 		return fRepresentedDecl;
 	}
 
-
 	@Override
 	public <T> T getAdapter(Class<T> adapterClass) {
 		if (adapterClass == ICElement.class) {
-			return (T)getRepresentedDeclaration();
+			return (T) getRepresentedDeclaration();
 		}
 		return null;
 	}
@@ -71,8 +68,8 @@ public class DslNode implements IAdaptable, ICHENode {
 	 * e.g. "Java function <function_name>".
 	 * */
 	public String getDslNodeName() {
-		if ( mDslNodeName == null ) {
-			mDslNodeName = "JAVA function " + fRepresentedDecl.getElementName()+"()";
+		if (mDslNodeName == null) {
+			mDslNodeName = "JAVA function " + fRepresentedDecl.getElementName() + "()";
 		}
 		return mDslNodeName;
 	}

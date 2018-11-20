@@ -33,18 +33,20 @@ public class TemplateEngineUtil {
 		}
 		if (t instanceof CoreException) {
 			ResourcesPlugin.getPlugin().getLog().log(((CoreException) t).getStatus());
-		} if (t instanceof ProcessFailureException) {
+		}
+		if (t instanceof ProcessFailureException) {
 			do {
 				List<IStatus> statuses = ((ProcessFailureException) t).getStatuses();
 				if (statuses != null) {
-					for(IStatus status : statuses) {
+					for (IStatus status : statuses) {
 						ResourcesPlugin.getPlugin().getLog().log(status);
 					}
 				}
 				t = t.getCause();
 			} while (t != null && t instanceof ProcessFailureException);
 		} else {
-			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK, t.getMessage() == null ? t.toString() : t.getMessage() , t));
+			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK,
+					t.getMessage() == null ? t.toString() : t.getMessage(), t));
 		}
 	}
 }

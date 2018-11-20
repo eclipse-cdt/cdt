@@ -55,8 +55,8 @@ public class BuildStateManager {
 			return doHandleResourceRemove(rc);
 		}
 
-		private boolean doHandleResourceRemove(IResource rc){
-			switch(rc.getType()){
+		private boolean doHandleResourceRemove(IResource rc) {
+			switch (rc.getType()) {
 			case IResource.PROJECT:
 				removeProjectInfo(rc.getProject());
 				return false;
@@ -78,7 +78,7 @@ public class BuildStateManager {
 
 		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
-			switch(event.getEventType()){
+			switch (event.getEventType()) {
 			case CProjectDescriptionEvent.APPLIED:
 			case CProjectDescriptionEvent.LOADED:
 				ICDescriptionDelta delta = event.getProjectDelta();
@@ -87,8 +87,8 @@ public class BuildStateManager {
 			}
 		}
 
-		private void processAppliedDelta(CProjectDescriptionEvent event, ICDescriptionDelta delta){
-			if(delta == null)
+		private void processAppliedDelta(CProjectDescriptionEvent event, ICDescriptionDelta delta) {
+			if (delta == null)
 				return;
 
 			IProjectBuildState pbs = null;
@@ -99,13 +99,13 @@ public class BuildStateManager {
 				break;
 			case ICDescriptionDelta.CHANGED:
 				ICDescriptionDelta[] children = delta.getChildren();
-				for(int i = 0; i < children.length; i++){
-					if(children[i].getDeltaKind() == ICDescriptionDelta.REMOVED){
-						if(pbs == null){
+				for (int i = 0; i < children.length; i++) {
+					if (children[i].getDeltaKind() == ICDescriptionDelta.REMOVED) {
+						if (pbs == null) {
 							pbs = getProjectBuildState(event.getProject());
 							String id = children[i].getSetting().getId();
 							IConfigurationBuildState cbs = pbs.getConfigurationBuildState(id, false);
-							if(cbs != null){
+							if (cbs != null) {
 								apply = true;
 								pbs.removeConfigurationBuildState(id);
 							}
@@ -117,82 +117,80 @@ public class BuildStateManager {
 				break;
 			}
 
-			if(pbs != null && apply){
+			if (pbs != null && apply) {
 				setProjectBuildState(event.getProject(), pbs);
 			}
 		}
 
 		@Override
-		protected IResourceMoveHandler createResourceMoveHandler(
-				IResourceChangeEvent event) {
+		protected IResourceMoveHandler createResourceMoveHandler(IResourceChangeEvent event) {
 			return new ResourceMoveHandler();
 		}
 
 	}
 
-	private void removeProjectInfo(IProject project){
+	private void removeProjectInfo(IProject project) {
 		File f = getPrefsDir(project);
-		if(f.exists()){
+		if (f.exists()) {
 			File[] children = f.listFiles();
-			for(int i = 0; i < children.length; i++){
+			for (int i = 0; i < children.length; i++) {
 				children[i].delete();
 			}
 			f.delete();
 		}
 	}
 
-	private BuildStateManager(){
+	private BuildStateManager() {
 	}
 
-	public static BuildStateManager getInstance(){
-		if(fInstance == null)
+	public static BuildStateManager getInstance() {
+		if (fInstance == null)
 			fInstance = new BuildStateManager();
 		return fInstance;
 	}
 
-	public void startup(){
-		if(fListener == null){
+	public void startup() {
+		if (fListener == null) {
 			fListener = new EventListener();
-			CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener,
-					IResourceChangeEvent.POST_CHANGE
-					| IResourceChangeEvent.PRE_DELETE
-					| IResourceChangeEvent.PRE_CLOSE);
+			CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fListener,
+					CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener, IResourceChangeEvent.POST_CHANGE
+					| IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 		}
 	}
 
-	public void shutdown(){
-		if(fListener != null){
+	public void shutdown() {
+		if (fListener != null) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
 			CoreModel.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(fListener);
 		}
 	}
 
-	public IProjectBuildState getProjectBuildState(IProject project){
+	public IProjectBuildState getProjectBuildState(IProject project) {
 		return new ProjectBuildState(project);
 	}
 
-	public void setProjectBuildState(IProject project, IProjectBuildState state){
-		((ProjectBuildState)state).serialize();
+	public void setProjectBuildState(IProject project, IProjectBuildState state) {
+		((ProjectBuildState) state).serialize();
 	}
 
-	private IPath getPrefsDirPath(){
+	private IPath getPrefsDirPath() {
 		IPath path = ManagedBuilderCorePlugin.getDefault().getStateLocation();
 		path = path.append(PREFS_LOCATION);
 		return path;
 	}
 
-	IPath getPrefsDirPath(IProject project){
+	IPath getPrefsDirPath(IProject project) {
 		IPath path = getPrefsDirPath();
 		path = path.append(project.getName());
 		return path;
 	}
 
-	private File getPrefsDir(IProject project){
+	private File getPrefsDir(IProject project) {
 		IPath path = getPrefsDirPath(project);
 		File file = path.toFile();
-//		if(!file.exists())
-//			file.mkdirs();
+		//		if(!file.exists())
+		//			file.mkdirs();
 		return file;
 	}
 }

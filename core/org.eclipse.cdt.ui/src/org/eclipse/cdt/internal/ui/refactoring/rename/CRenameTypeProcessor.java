@@ -10,7 +10,7 @@
  * 
  * Contributors: 
  *     Markus Schorn - initial API and implementation 
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 /**
@@ -18,7 +18,7 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
  */
 public class CRenameTypeProcessor extends CRenameGlobalProcessor {
 
-    public CRenameTypeProcessor(CRenameProcessor processor, String kind) {
-        super(processor, kind);
-    }
+	public CRenameTypeProcessor(CRenameProcessor processor, String kind) {
+		super(processor, kind);
+	}
 }

@@ -106,7 +106,7 @@ public interface ISpellChecker {
 	 * @param listener The listener to remove
 	 */
 	void removeListener(ISpellEventListener listener);
-	
+
 	/**
 	 * Returns the current locale of the spell check engine.
 	 *

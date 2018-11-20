@@ -53,7 +53,8 @@ public class RegexErrorParserTests extends TestCase {
 	private final IMarkerGenerator markerGenerator = new IMarkerGenerator() {
 		// deprecated
 		@Override
-		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {}
+		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+		}
 
 		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
@@ -124,12 +125,12 @@ public class RegexErrorParserTests extends TestCase {
 	 */
 	public void testRegexErrorParserAddDeletePattern() throws Exception {
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
-		regexErrorParser.addPattern(new RegexErrorPattern("pattern 1",
-				null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
-		regexErrorParser.addPattern(new RegexErrorPattern("delete me",
-				null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
-		regexErrorParser.addPattern(new RegexErrorPattern("pattern 3",
-				null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
+		regexErrorParser.addPattern(
+				new RegexErrorPattern("pattern 1", null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
+		regexErrorParser.addPattern(
+				new RegexErrorPattern("delete me", null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
+		regexErrorParser.addPattern(
+				new RegexErrorPattern("pattern 3", null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
 
 		// adding patterns
 		RegexErrorPattern[] patternsBefore = regexErrorParser.getPatterns();
@@ -151,7 +152,7 @@ public class RegexErrorParserTests extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testRegexErrorParserPatternOrder() throws Exception {
-		final int ERR=IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
+		final int ERR = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
 		RegexErrorPattern removable = new RegexErrorPattern("CCC", null, null, null, null, ERR, true);
 		regexErrorParser.addPattern(new RegexErrorPattern("AAA", null, null, null, null, ERR, true));
@@ -187,71 +188,71 @@ public class RegexErrorParserTests extends TestCase {
 	 */
 	public void testRegexErrorParserParseOutput() throws Exception {
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
-		regexErrorParser.addPattern(new RegexErrorPattern("(.*)#(.*)#(.*)#(.*)",
-				"$1", "$2", "$3 $4", "var=$4", IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
-		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(skip me)!(.*)!(.*)",
-				null, null, null, null, RegexErrorPattern.SEVERITY_SKIP, true));
-		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(Description)!(.*)!(.*)",
-				"$4", "$3", "$2", "$1", IMarkerGenerator.SEVERITY_WARNING, /*eat-line*/ false));
+		regexErrorParser.addPattern(new RegexErrorPattern("(.*)#(.*)#(.*)#(.*)", "$1", "$2", "$3 $4", "var=$4",
+				IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
+		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(skip me)!(.*)!(.*)", null, null, null, null,
+				RegexErrorPattern.SEVERITY_SKIP, true));
+		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(Description)!(.*)!(.*)", "$4", "$3", "$2", "$1",
+				IMarkerGenerator.SEVERITY_WARNING, /*eat-line*/ false));
 		// broken pattern
-		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(.*)",
-				"$6", "$7", "$8", "$9", IMarkerGenerator.SEVERITY_WARNING, true));
-		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(.*)!(.*)!(.*)",
-				null, null, null, null, IMarkerGenerator.SEVERITY_INFO, true));
+		regexErrorParser.addPattern(
+				new RegexErrorPattern("(.*)!(.*)", "$6", "$7", "$8", "$9", IMarkerGenerator.SEVERITY_WARNING, true));
+		regexErrorParser.addPattern(new RegexErrorPattern("(.*)!(.*)!(.*)!(.*)", null, null, null, null,
+				IMarkerGenerator.SEVERITY_INFO, true));
 
 		String fileName = "RegexErrorParser.c";
 		ResourceHelper.createFile(fProject, fileName);
 
 		errorList.clear();
 		ErrorParserManager epManager = new ErrorParserManager(fProject, markerGenerator, new String[0]);
-		
+
 		ProblemMarkerInfo problemMarkerInfo;
 
 		// Regular pattern
-		regexErrorParser.processLine(fileName+"#10#Description#Variable", epManager);
+		regexErrorParser.processLine(fileName + "#10#Description#Variable", epManager);
 		// This should get ignored
-		regexErrorParser.processLine("Variable!skip me!10!"+fileName, epManager);
+		regexErrorParser.processLine("Variable!skip me!10!" + fileName, epManager);
 		// Eat-line=false + qualifying next pattern (nulls), i.e. generates 2 problems
-		regexErrorParser.processLine("Variable!Description!10!"+fileName, epManager);
+		regexErrorParser.processLine("Variable!Description!10!" + fileName, epManager);
 
 		assertEquals(3, errorList.size());
 
 		// Regular
 		problemMarkerInfo = errorList.get(0);
 		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, problemMarkerInfo.severity);
-		assertEquals("L/"+TEST_PROJECT_NAME+"/"+fileName, problemMarkerInfo.file.toString());
+		assertEquals("L/" + TEST_PROJECT_NAME + "/" + fileName, problemMarkerInfo.file.toString());
 		assertEquals(fileName, problemMarkerInfo.file.getName());
 		assertEquals(10, problemMarkerInfo.lineNumber);
-		assertEquals("Description Variable",problemMarkerInfo.description);
-		assertEquals("var=Variable",problemMarkerInfo.variableName);
+		assertEquals("Description Variable", problemMarkerInfo.description);
+		assertEquals("var=Variable", problemMarkerInfo.variableName);
 
 		// Eat-line
 		problemMarkerInfo = errorList.get(1);
 		assertEquals(IMarkerGenerator.SEVERITY_WARNING, problemMarkerInfo.severity);
-		assertEquals("L/"+TEST_PROJECT_NAME+"/"+fileName, problemMarkerInfo.file.toString());
+		assertEquals("L/" + TEST_PROJECT_NAME + "/" + fileName, problemMarkerInfo.file.toString());
 		assertEquals(fileName, problemMarkerInfo.file.getName());
 		assertEquals(10, problemMarkerInfo.lineNumber);
-		assertEquals("Description",problemMarkerInfo.description);
-		assertEquals("Variable",problemMarkerInfo.variableName);
+		assertEquals("Description", problemMarkerInfo.description);
+		assertEquals("Variable", problemMarkerInfo.variableName);
 
 		// Nulls
 		problemMarkerInfo = errorList.get(2);
 		assertEquals(IMarkerGenerator.SEVERITY_INFO, problemMarkerInfo.severity);
-		assertEquals("P/"+TEST_PROJECT_NAME, problemMarkerInfo.file.toString());
+		assertEquals("P/" + TEST_PROJECT_NAME, problemMarkerInfo.file.toString());
 		assertEquals(0, problemMarkerInfo.lineNumber);
-		assertEquals("",problemMarkerInfo.description);
-		assertEquals("",problemMarkerInfo.variableName);
+		assertEquals("", problemMarkerInfo.description);
+		assertEquals("", problemMarkerInfo.variableName);
 
 		// clone & equals
-		RegexErrorParser cloned = (RegexErrorParser)regexErrorParser.clone();
-		assertTrue(cloned!=regexErrorParser);
+		RegexErrorParser cloned = (RegexErrorParser) regexErrorParser.clone();
+		assertTrue(cloned != regexErrorParser);
 		assertEquals(regexErrorParser, cloned);
-		assertTrue(cloned.getPatterns()!=regexErrorParser.getPatterns());
+		assertTrue(cloned.getPatterns() != regexErrorParser.getPatterns());
 		assertEquals(cloned.getPatterns().length, regexErrorParser.getPatterns().length);
-		for (int i=0; i<regexErrorParser.getPatterns().length; i++) {
+		for (int i = 0; i < regexErrorParser.getPatterns().length; i++) {
 			// Checking deep copy
-			assertTrue(cloned.getPatterns()[i]!=regexErrorParser.getPatterns()[i]);
-			assertEquals(cloned.getPatterns()[i],regexErrorParser.getPatterns()[i]);
+			assertTrue(cloned.getPatterns()[i] != regexErrorParser.getPatterns()[i]);
+			assertEquals(cloned.getPatterns()[i], regexErrorParser.getPatterns()[i]);
 		}
 	}
 
@@ -287,7 +288,7 @@ public class RegexErrorParserTests extends TestCase {
 			assertEquals(REGEX_ERRORPARSER_NAME, errorParser.getName());
 
 			assertTrue(errorParser instanceof RegexErrorParser);
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParser;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 			assertEquals(REGEX_ERRORPARSER_ID, regexErrorParser.getId());
 			assertEquals(REGEX_ERRORPARSER_NAME, regexErrorParser.getName());
 
@@ -309,7 +310,7 @@ public class RegexErrorParserTests extends TestCase {
 			IErrorParser errorParser = ErrorParserManager.getErrorParserCopy(REGEX_ERRORPARSER_ID);
 			assertTrue(errorParser instanceof RegexErrorParser);
 
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParser;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 			assertEquals(REGEX_ERRORPARSER_ID, regexErrorParser.getId());
 			assertEquals(REGEX_ERRORPARSER_NAME, regexErrorParser.getName());
 		}
@@ -334,19 +335,19 @@ public class RegexErrorParserTests extends TestCase {
 				String name = ErrorParserManager.getErrorParserCopy(id).getName();
 				boolean isDeprecated = name.contains("(Deprecated)");
 				boolean isTestPlugin = id.startsWith(CTestPlugin.PLUGIN_ID);
-				String message = "Parser ["+lastName+"] preceeds ["+name+"]";
-				
+				String message = "Parser [" + lastName + "] preceeds [" + name + "]";
+
 				// inside the same category sorted by names
-				if (lastIsDeprecated==isDeprecated && lastIsTestPlugin==isTestPlugin) {
-					assertTrue(message, lastName.compareTo(name)<=0);
+				if (lastIsDeprecated == isDeprecated && lastIsTestPlugin == isTestPlugin) {
+					assertTrue(message, lastName.compareTo(name) <= 0);
 				}
 				// deprecated follow non-deprecated (unless parsers from test plugin show up)
-				if (lastIsTestPlugin==isTestPlugin) {
-					assertFalse(message, lastIsDeprecated==true && isDeprecated==false);
+				if (lastIsTestPlugin == isTestPlugin) {
+					assertFalse(message, lastIsDeprecated == true && isDeprecated == false);
 				}
 				// error parsers from test plugin are the last
-				assertFalse(message, lastIsTestPlugin==true && isTestPlugin==false);
-				
+				assertFalse(message, lastIsTestPlugin == true && isTestPlugin == false);
+
 				lastName = name;
 				lastIsDeprecated = isDeprecated;
 				lastIsTestPlugin = isTestPlugin;
@@ -365,7 +366,7 @@ public class RegexErrorParserTests extends TestCase {
 
 		final String[] availableParserIds = ErrorParserManager.getErrorParserAvailableIds();
 		assertNotNull(availableParserIds);
-		assertTrue(availableParserIds.length>0);
+		assertTrue(availableParserIds.length > 0);
 		final String firstId = ErrorParserManager.getErrorParserAvailableIds()[0];
 		final IErrorParserNamed firstErrorParser = ErrorParserManager.getErrorParserCopy(firstId);
 		assertNotNull(firstErrorParser);
@@ -392,8 +393,7 @@ public class RegexErrorParserTests extends TestCase {
 					// add brand new one
 					new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, dummy1),
 					// override extension with another one
-					new ErrorParserNamedWrapper(firstId, firstName, dummy2),
-			});
+					new ErrorParserNamedWrapper(firstId, firstName, dummy2), });
 			String all = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserAvailableIds());
 			assertEquals(true, all.contains(TESTING_ID));
 			assertEquals(true, all.contains(firstId));
@@ -402,14 +402,14 @@ public class RegexErrorParserTests extends TestCase {
 			assertNotNull(retrieved1);
 			assertEquals(TESTING_NAME, retrieved1.getName());
 			assertTrue(retrieved1 instanceof ErrorParserNamedWrapper);
-			assertEquals(dummy1, ((ErrorParserNamedWrapper)retrieved1).getErrorParser());
+			assertEquals(dummy1, ((ErrorParserNamedWrapper) retrieved1).getErrorParser());
 
 			IErrorParserNamed retrieved2 = ErrorParserManager.getErrorParserCopy(firstId);
 			assertNotNull(retrieved2);
 			assertEquals(firstName, retrieved2.getName());
 			assertTrue(retrieved2 instanceof ErrorParserNamedWrapper);
-			assertEquals(dummy2, ((ErrorParserNamedWrapper)retrieved2).getErrorParser());
-			
+			assertEquals(dummy2, ((ErrorParserNamedWrapper) retrieved2).getErrorParser());
+
 			IErrorParserNamed retrieved2_ext = ErrorParserManager.getErrorParserExtensionCopy(firstId);
 			assertNotNull(retrieved2_ext);
 			assertEquals(firstName, retrieved2_ext.getName());
@@ -453,9 +453,9 @@ public class RegexErrorParserTests extends TestCase {
 		}
 		{
 			ErrorParserManager.setUserDefinedErrorParsers(new IErrorParserNamed[] {
-					new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, new DummyErrorParser()),
-			});
-			String userDefinedIds = ErrorParserManager.toDelimitedString(ErrorParserManager.getUserDefinedErrorParserIds());
+					new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, new DummyErrorParser()), });
+			String userDefinedIds = ErrorParserManager
+					.toDelimitedString(ErrorParserManager.getUserDefinedErrorParserIds());
 			assertEquals(TESTING_ID, userDefinedIds);
 
 			String all = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserAvailableIds());
@@ -483,11 +483,8 @@ public class RegexErrorParserTests extends TestCase {
 		}
 		// setDefaultErrorParserIds
 		{
-			String[] newDefaultErrorParserIds = {
-					"org.eclipse.cdt.core.test.errorparser0",
-					"org.eclipse.cdt.core.test.errorparser1",
-					"org.eclipse.cdt.core.test.errorparser2",
-			};
+			String[] newDefaultErrorParserIds = { "org.eclipse.cdt.core.test.errorparser0",
+					"org.eclipse.cdt.core.test.errorparser1", "org.eclipse.cdt.core.test.errorparser2", };
 			ErrorParserManager.setDefaultErrorParserIds(newDefaultErrorParserIds);
 			String[] defaultErrorParserIds = ErrorParserManager.getDefaultErrorParserIds();
 			assertNotNull(defaultErrorParserIds);
@@ -518,7 +515,8 @@ public class RegexErrorParserTests extends TestCase {
 			// Create error parser
 			IErrorParser errorParser = new GASErrorParser();
 			// Add to available parsers
-			ErrorParserExtensionManager.setUserDefinedErrorParsersInternal(new IErrorParserNamed[] {new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, errorParser)});
+			ErrorParserExtensionManager.setUserDefinedErrorParsersInternal(
+					new IErrorParserNamed[] { new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, errorParser) });
 			assertNotNull(ErrorParserManager.getErrorParserCopy(TESTING_ID));
 			assertEquals(TESTING_NAME, ErrorParserManager.getErrorParserCopy(TESTING_ID).getName());
 			// Serialize in persistent storage
@@ -537,7 +535,7 @@ public class RegexErrorParserTests extends TestCase {
 			assertNotNull(errorParser);
 			assertEquals(TESTING_NAME, errorParser.getName());
 			assertTrue(errorParser instanceof ErrorParserNamedWrapper);
-			assertTrue(((ErrorParserNamedWrapper)errorParser).getErrorParser() instanceof GASErrorParser);
+			assertTrue(((ErrorParserNamedWrapper) errorParser).getErrorParser() instanceof GASErrorParser);
 		}
 		{
 			// Remove from available parsers as clean-up
@@ -559,11 +557,12 @@ public class RegexErrorParserTests extends TestCase {
 		{
 			// Create error parser with the same id as in eclipse registry
 			RegexErrorParser regexErrorParser = new RegexErrorParser(TESTING_ID, TESTING_NAME);
-			regexErrorParser.addPattern(new RegexErrorPattern("Pattern-Y",
-					"line-Y", "file-Y", "description-Y", null, IMarkerGenerator.SEVERITY_WARNING, false));
+			regexErrorParser.addPattern(new RegexErrorPattern("Pattern-Y", "line-Y", "file-Y", "description-Y", null,
+					IMarkerGenerator.SEVERITY_WARNING, false));
 
 			// Add to available parsers
-			ErrorParserExtensionManager.setUserDefinedErrorParsersInternal(new IErrorParserNamed[] {regexErrorParser});
+			ErrorParserExtensionManager
+					.setUserDefinedErrorParsersInternal(new IErrorParserNamed[] { regexErrorParser });
 			assertNotNull(ErrorParserManager.getErrorParserCopy(TESTING_ID));
 			// And serialize in persistent storage
 			ErrorParserExtensionManager.serializeUserDefinedErrorParsers();
@@ -584,7 +583,7 @@ public class RegexErrorParserTests extends TestCase {
 			IErrorParser errorParser = ErrorParserManager.getErrorParserCopy(TESTING_ID);
 			assertNotNull(errorParser);
 			assertTrue(errorParser instanceof RegexErrorParser);
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParser;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 			assertEquals(TESTING_ID, regexErrorParser.getId());
 			assertEquals(TESTING_NAME, regexErrorParser.getName());
 
@@ -619,11 +618,12 @@ public class RegexErrorParserTests extends TestCase {
 		{
 			// Create error parser with the same id as in eclipse registry
 			RegexErrorParser regexErrorParser = new RegexErrorParser(TESTING_ID, TESTING_NAME);
-			regexErrorParser.addPattern(new RegexErrorPattern(TESTING_REGEX,
-					"line-<>\"'\\&", "file-<>\"'\\&", "description-<>\"'\\&", null, IMarkerGenerator.SEVERITY_WARNING, false));
+			regexErrorParser.addPattern(new RegexErrorPattern(TESTING_REGEX, "line-<>\"'\\&", "file-<>\"'\\&",
+					"description-<>\"'\\&", null, IMarkerGenerator.SEVERITY_WARNING, false));
 
 			// Add to available parsers
-			ErrorParserExtensionManager.setUserDefinedErrorParsersInternal(new IErrorParserNamed[] {regexErrorParser});
+			ErrorParserExtensionManager
+					.setUserDefinedErrorParsersInternal(new IErrorParserNamed[] { regexErrorParser });
 			assertNotNull(ErrorParserManager.getErrorParserCopy(TESTING_ID));
 			// And serialize in persistent storage
 			ErrorParserExtensionManager.serializeUserDefinedErrorParsers();
@@ -638,7 +638,7 @@ public class RegexErrorParserTests extends TestCase {
 			IErrorParser errorParser = ErrorParserManager.getErrorParserCopy(TESTING_ID);
 			assertNotNull(errorParser);
 			assertTrue(errorParser instanceof RegexErrorParser);
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParser;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 			assertEquals(TESTING_ID, regexErrorParser.getId());
 			assertEquals(TESTING_NAME, regexErrorParser.getName());
 
@@ -654,11 +654,8 @@ public class RegexErrorParserTests extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testSerializeDefaultErrorParserIds() throws Exception {
-		final String[] testingDefaultErrorParserIds = {
-				"org.eclipse.cdt.core.test.errorparser0",
-				"org.eclipse.cdt.core.test.errorparser1",
-				"org.eclipse.cdt.core.test.errorparser2",
-		};
+		final String[] testingDefaultErrorParserIds = { "org.eclipse.cdt.core.test.errorparser0",
+				"org.eclipse.cdt.core.test.errorparser1", "org.eclipse.cdt.core.test.errorparser2", };
 		final String TESTING_IDS = ErrorParserManager.toDelimitedString(testingDefaultErrorParserIds);
 		final String DEFAULT_IDS = ErrorParserManager.toDelimitedString(ErrorParserManager.getDefaultErrorParserIds());
 
@@ -677,7 +674,8 @@ public class RegexErrorParserTests extends TestCase {
 		{
 			// Remove from internal list
 			ErrorParserExtensionManager.setDefaultErrorParserIdsInternal(null);
-			assertEquals(DEFAULT_IDS, ErrorParserManager.toDelimitedString(ErrorParserManager.getDefaultErrorParserIds()));
+			assertEquals(DEFAULT_IDS,
+					ErrorParserManager.toDelimitedString(ErrorParserManager.getDefaultErrorParserIds()));
 		}
 
 		{
@@ -722,12 +720,12 @@ public class RegexErrorParserTests extends TestCase {
 
 			assertTrue(clone1 instanceof ErrorParserNamedWrapper);
 			assertTrue(clone2 instanceof ErrorParserNamedWrapper);
-			IErrorParser gccClone1 = ((ErrorParserNamedWrapper)clone1).getErrorParser();
-			IErrorParser gccClone2 = ((ErrorParserNamedWrapper)clone2).getErrorParser();
+			IErrorParser gccClone1 = ((ErrorParserNamedWrapper) clone1).getErrorParser();
+			IErrorParser gccClone2 = ((ErrorParserNamedWrapper) clone2).getErrorParser();
 			assertNotSame(clone1, clone2);
 		}
 	}
-	
+
 	/**
 	 * Check how RegexErrorParser parses output.
 	 *
@@ -735,8 +733,8 @@ public class RegexErrorParserTests extends TestCase {
 	 */
 	public void testRegexErrorParserExternalLocation_bug301338() throws Exception {
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
-		regexErrorParser.addPattern(new RegexErrorPattern("pattern",
-				"", "", "", "$0", IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
+		regexErrorParser.addPattern(
+				new RegexErrorPattern("pattern", "", "", "", "$0", IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
 
 		errorList.clear();
 		ErrorParserManager epManager = new ErrorParserManager(fProject, markerGenerator, new String[0]);
@@ -746,6 +744,5 @@ public class RegexErrorParserTests extends TestCase {
 
 		assertEquals(0, errorList.size());
 	}
-
 
 }

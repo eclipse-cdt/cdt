@@ -28,8 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Implementation of ICPPASTDecltypeSpecifier.
  */
-public class CPPASTDecltypeSpecifier extends ASTNode
-		implements ICPPASTDecltypeSpecifier, IASTAmbiguityParent {
+public class CPPASTDecltypeSpecifier extends ASTNode implements ICPPASTDecltypeSpecifier, IASTAmbiguityParent {
 	private ICPPASTExpression fDecltypeExpression;
 	private char[] fSignature;
 
@@ -73,9 +72,12 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 	public boolean accept(ASTVisitor visitor) {
 		if (visitor.shouldVisitDecltypeSpecifiers) {
 			switch (visitor.visit(this)) {
-			case ASTVisitor.PROCESS_ABORT: return false;
-			case ASTVisitor.PROCESS_SKIP:  return true;
-			default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 
@@ -84,9 +86,12 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 
 		if (visitor.shouldVisitDecltypeSpecifiers) {
 			switch (visitor.leave(this)) {
-			case ASTVisitor.PROCESS_ABORT: return false;
-			case ASTVisitor.PROCESS_SKIP:  return true;
-			default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 

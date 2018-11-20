@@ -28,7 +28,7 @@ public abstract class SemanticHighlighting {
 	 * @return the preference key, will be augmented by a prefix and a suffix for each preference
 	 */
 	public abstract String getPreferenceKey();
-	
+
 	/**
 	 * @return <code>true</code> if the highlighting is enabled by default
 	 */
@@ -41,7 +41,7 @@ public abstract class SemanticHighlighting {
 	public boolean requiresImplicitNames() {
 		return false;
 	}
-	
+
 	/**
 	 * Indicates that the highlighting needs to visit expressions.
 	 */

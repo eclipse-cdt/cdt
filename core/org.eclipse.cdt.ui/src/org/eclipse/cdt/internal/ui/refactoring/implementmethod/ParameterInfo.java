@@ -29,17 +29,17 @@ public class ParameterInfo {
 	private IASTParameterDeclaration parameter;
 	private boolean hasNewName;
 	private String parameterName;
-	
+
 	public ParameterInfo(IASTParameterDeclaration parameter, String parameterName, boolean hasNewName) {
 		this.parameter = parameter;
 		this.hasNewName = hasNewName;
 		this.parameterName = parameterName;
 	}
-	
+
 	public boolean hasNewName() {
 		return hasNewName;
 	}
-	
+
 	public boolean hasDefaultValue() {
 		return getDefaultValueNode() != null;
 	}

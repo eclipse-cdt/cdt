@@ -23,7 +23,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 public class QuickFixUsePointer extends AbstractCodanCMarkerResolution {
-	
+
 	@Override
 	public String getLabel() {
 		return QuickFixMessages.QuickFixUsePointer_replace_dot;
@@ -40,8 +40,8 @@ public class QuickFixUsePointer extends AbstractCodanCMarkerResolution {
 				IRegion region;
 				try {
 					region = dad.find(lineOffset + columnOffset - 1, ".", //$NON-NLS-1$
-							/* forwardSearch */true, /* caseSensitive */true,
-							/* wholeWord */true, /* regExSearch */false);
+							/* forwardSearch */true, /* caseSensitive */true, /* wholeWord */true,
+							/* regExSearch */false);
 					document.replace(region.getOffset(), 1, "->"); //$NON-NLS-1$
 				} catch (BadLocationException e) {
 					return;
@@ -63,5 +63,5 @@ public class QuickFixUsePointer extends AbstractCodanCMarkerResolution {
 		}
 		return 0;
 	}
-	
+
 }

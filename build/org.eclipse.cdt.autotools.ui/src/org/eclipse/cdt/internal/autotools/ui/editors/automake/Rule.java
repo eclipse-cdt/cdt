@@ -58,10 +58,10 @@ public abstract class Rule extends Parent implements IRule {
 	@Override
 	public boolean equals(Object r) {
 		if (r instanceof Rule)
-			return ((Rule)r).getTarget().equals(getTarget());
+			return ((Rule) r).getTarget().equals(getTarget());
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getTarget().hashCode();

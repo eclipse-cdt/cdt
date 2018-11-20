@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 
-
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/* (non-Javadoc)
@@ -35,7 +34,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(),
+				MakeBuilder.BUILDER_ID, true);
 		try {
 			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make"); //$NON-NLS-1$
 			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, ""); //$NON-NLS-1$
@@ -52,45 +52,45 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			info.setErrorParsers(CCorePlugin.getDefault().getAllErrorParsersIDs());
 		} catch (CoreException e) {
 		}
-		MakeCorePlugin.getDefault().getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
+		MakeCorePlugin.getDefault().getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER,
+				CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
 
 		// default plugin preferences for scanner configuration discovery
-		IScannerConfigBuilderInfo scInfo = MakeCorePlugin.createScannerConfigBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), ScannerConfigBuilder.BUILDER_ID, true);
+		IScannerConfigBuilderInfo scInfo = MakeCorePlugin.createScannerConfigBuildInfo(
+				MakeCorePlugin.getDefault().getPluginPreferences(), ScannerConfigBuilder.BUILDER_ID, true);
 		try {
 			scInfo.setAutoDiscoveryEnabled(true);
 			scInfo.setMakeBuilderConsoleParserEnabled(true);
 			scInfo.setESIProviderCommandEnabled(true);
 			scInfo.setUseDefaultESIProviderCmd(true);
 			scInfo.setESIProviderCommand(new Path("gcc")); //$NON-NLS-1$
-			scInfo.setESIProviderArguments("-E -P -v -dD ${plugin_state_location}/${specs_file}");	//$NON-NLS-1$
+			scInfo.setESIProviderArguments("-E -P -v -dD ${plugin_state_location}/${specs_file}"); //$NON-NLS-1$
 			scInfo.setESIProviderConsoleParserId(MakeCorePlugin.GCC_SPECS_CONSOLE_PARSER_ID);
 			scInfo.setMakeBuilderConsoleParserId(MakeCorePlugin.GCC_SCANNER_INFO_CONSOLE_PARSER_ID);
 			scInfo.setSIProblemGenerationEnabled(true);
 		} catch (CoreException e) {
 		}
 
-        // default plugin preferences for new scanner configuration discovery
-        IScannerConfigBuilderInfo2 scInfo2 = ScannerConfigProfileManager.
-                createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
-                        ScannerConfigProfileManager.NULL_PROFILE_ID, true);
-        scInfo2.setAutoDiscoveryEnabled(true);
-        scInfo2.setProblemReportingEnabled(true);
-        scInfo2.setSelectedProfileId(ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
-        scInfo2.setBuildOutputFileActionEnabled(true);
-        scInfo2.setBuildOutputFilePath(""); //$NON-NLS-1$
-        scInfo2.setBuildOutputParserEnabled(true);
-        String providerId = "specsFile";    //$NON-NLS-1$
-        scInfo2.setProviderOpenFilePath(providerId, "");//$NON-NLS-1$
-        scInfo2.setProviderRunCommand(providerId, "gcc");   //$NON-NLS-1$
-        scInfo2.setProviderRunArguments(providerId, "-E -P -v -dD ${plugin_state_location}/${specs_file}");//$NON-NLS-1$
-        scInfo2.setProviderOutputParserEnabled(providerId, true);
-        scInfo2.setProblemReportingEnabled(true);
-        try {
-            scInfo2.save();
-        }
-        catch (CoreException e) {
-        }
-        
+		// default plugin preferences for new scanner configuration discovery
+		IScannerConfigBuilderInfo2 scInfo2 = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
+				MakeCorePlugin.getDefault().getPluginPreferences(), ScannerConfigProfileManager.NULL_PROFILE_ID, true);
+		scInfo2.setAutoDiscoveryEnabled(true);
+		scInfo2.setProblemReportingEnabled(true);
+		scInfo2.setSelectedProfileId(ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
+		scInfo2.setBuildOutputFileActionEnabled(true);
+		scInfo2.setBuildOutputFilePath(""); //$NON-NLS-1$
+		scInfo2.setBuildOutputParserEnabled(true);
+		String providerId = "specsFile"; //$NON-NLS-1$
+		scInfo2.setProviderOpenFilePath(providerId, "");//$NON-NLS-1$
+		scInfo2.setProviderRunCommand(providerId, "gcc"); //$NON-NLS-1$
+		scInfo2.setProviderRunArguments(providerId, "-E -P -v -dD ${plugin_state_location}/${specs_file}");//$NON-NLS-1$
+		scInfo2.setProviderOutputParserEnabled(providerId, true);
+		scInfo2.setProblemReportingEnabled(true);
+		try {
+			scInfo2.save();
+		} catch (CoreException e) {
+		}
+
 		// Store default for makefile
 		MakeCorePlugin.getDefault().getPluginPreferences().setDefault(MakeCorePlugin.MAKEFILE_STYLE, "GNU"); //$NON-NLS-1$
 	}

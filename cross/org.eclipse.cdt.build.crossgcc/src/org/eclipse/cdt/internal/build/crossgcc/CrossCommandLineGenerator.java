@@ -24,22 +24,21 @@ import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 public class CrossCommandLineGenerator extends ManagedCommandLineGenerator {
 
 	@Override
-	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool,
-			String commandName, String[] flags, String outputFlag,
-			String outputPrefix, String outputName, String[] inputResources,
+	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool, String commandName, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources,
 			String commandLinePattern) {
 		IBuildObject parent = tool.getParent();
 		IToolChain toolchain;
-		if(parent instanceof ResourceConfiguration)
-			toolchain = ((ResourceConfiguration)parent).getBaseToolChain();
+		if (parent instanceof ResourceConfiguration)
+			toolchain = ((ResourceConfiguration) parent).getBaseToolChain();
 		else
-			toolchain = (IToolChain)parent;
+			toolchain = (IToolChain) parent;
 
 		IOption option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.prefix"); //$NON-NLS-1$
-		String prefix = (String)option.getValue();
+		String prefix = (String) option.getValue();
 		String newCommandName = prefix + commandName;
-		return super.generateCommandLineInfo(tool, newCommandName, flags, outputFlag,
-				outputPrefix, outputName, inputResources, commandLinePattern);
+		return super.generateCommandLineInfo(tool, newCommandName, flags, outputFlag, outputPrefix, outputName,
+				inputResources, commandLinePattern);
 	}
-	
+
 }

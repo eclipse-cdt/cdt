@@ -16,7 +16,6 @@ package org.eclipse.cdt.visualizer.ui.events;
 
 import org.eclipse.cdt.visualizer.ui.IVisualizerViewer;
 
-
 // ---------------------------------------------------------------------------
 // IVisualizerViewerListener
 // ---------------------------------------------------------------------------
@@ -24,11 +23,10 @@ import org.eclipse.cdt.visualizer.ui.IVisualizerViewer;
 /**
  * IVisualizerViewer event listener.
  */
-public interface IVisualizerViewerListener
-{
+public interface IVisualizerViewerListener {
 	// --- methods ---
-	
+
 	/** Invoked when VisualizerViewer's selected IVisualizer changes. */
 	public void visualizerEvent(IVisualizerViewer source, VisualizerViewerEvent event);
-	
+
 }

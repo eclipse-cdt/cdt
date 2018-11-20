@@ -29,8 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 /**
  * The specialization of a method template in the context of a class specialization.
  */
-public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpecialization
-		implements ICPPMethod {
+public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpecialization implements ICPPMethod {
 	private ICPPTemplateParameter[] fTemplateParameters;
 
 	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassSpecialization owner,

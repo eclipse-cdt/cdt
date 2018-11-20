@@ -39,7 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class CLIAddressableSize extends MIInterpreterExecConsole<CLIAddressableSizeInfo> {
 
-	private static final String hexOfBitsContainedInChar = "p/x (char)-1";  //$NON-NLS-1$
+	private static final String hexOfBitsContainedInChar = "p/x (char)-1"; //$NON-NLS-1$
 
 	public CLIAddressableSize(IMemoryDMContext ctx) {
 		super(ctx, hexOfBitsContainedInChar);

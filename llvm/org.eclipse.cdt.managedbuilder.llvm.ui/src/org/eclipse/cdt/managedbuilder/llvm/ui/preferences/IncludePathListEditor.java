@@ -48,16 +48,16 @@ public class IncludePathListEditor extends LlvmListEditor {
 		dlg.setText(Messages.IncludePathListEditor_0);
 		dlg.setMessage(Messages.IncludePathListEditor_1);
 		String dir = dlg.open();
-		if(dir == null) {
+		if (dir == null) {
 			return null;
 		}
 		//remove white spaces
 		dir = dir.trim();
-		if (dir.length()!=0) {
+		if (dir.length() != 0) {
 			//get all existing items in the list
 			String[] existingItems = getList().getItems();
 			//check that the list doesn't already contain the added item
-			if (existingItems.length>0) {
+			if (existingItems.length > 0) {
 				//return null if duplicate item found
 				for (String item : existingItems) {
 					if (item.equalsIgnoreCase(dir)) {
@@ -82,18 +82,18 @@ public class IncludePathListEditor extends LlvmListEditor {
 	 */
 	protected void removePressed() {
 		List incList = getList();
-        setPresentsDefaultValue(false);
-        String[] selected = incList.getSelection();
-        for (String s : selected) {
-            //remove an include path from the LLVM preference store
-            LlvmPreferenceStore.removeIncludePath(s);
-            //remove an include path from the LLVM assembler's option
-            LlvmToolOptionPathUtil.removeLlvmIncludePath(s);
-    		//inform LLVM environment variable supplier that there has been a change
-    		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
-    		incList.remove(s);
-    		selectionChanged();
-        }
+		setPresentsDefaultValue(false);
+		String[] selected = incList.getSelection();
+		for (String s : selected) {
+			//remove an include path from the LLVM preference store
+			LlvmPreferenceStore.removeIncludePath(s);
+			//remove an include path from the LLVM assembler's option
+			LlvmToolOptionPathUtil.removeLlvmIncludePath(s);
+			//inform LLVM environment variable supplier that there has been a change
+			LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
+			incList.remove(s);
+			selectionChanged();
+		}
 	}
 
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.Iterator;
@@ -27,35 +27,35 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.cdt.core.model.ICElement;
 
 public class CHDropTargetListener implements DropTargetListener {
-    private CHViewPart fCallHierarchy;
+	private CHViewPart fCallHierarchy;
 	private ICElement fInput;
-	private boolean fEnabled= true;
+	private boolean fEnabled = true;
 
-    public CHDropTargetListener(CHViewPart view) {
-        fCallHierarchy= view;
-    }
-    
-    public void setEnabled(boolean val) {
-    	fEnabled= val;
-    }
-    
-    @Override
+	public CHDropTargetListener(CHViewPart view) {
+		fCallHierarchy = view;
+	}
+
+	public void setEnabled(boolean val) {
+		fEnabled = val;
+	}
+
+	@Override
 	public void dragEnter(DropTargetEvent event) {
-    	fInput= null;
-        checkOperation(event);
-        if (event.detail != DND.DROP_NONE) {
+		fInput = null;
+		checkOperation(event);
+		if (event.detail != DND.DROP_NONE) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
-				fInput= checkLocalSelection();
+				fInput = checkLocalSelection();
 				if (!CallHierarchyUI.isRelevantForCallHierarchy(fInput)) {
-					event.detail= DND.DROP_NONE;
-					fInput= null;
+					event.detail = DND.DROP_NONE;
+					fInput = null;
 				}
-        	}
-        }
-    }
+			}
+		}
+	}
 
 	private ICElement checkLocalSelection() {
-		ISelection sel= LocalSelectionTransfer.getTransfer().getSelection();
+		ISelection sel = LocalSelectionTransfer.getTransfer().getSelection();
 		if (sel instanceof IStructuredSelection) {
 			for (Iterator<?> iter = ((IStructuredSelection) sel).iterator(); iter.hasNext();) {
 				Object element = iter.next();
@@ -63,7 +63,7 @@ public class CHDropTargetListener implements DropTargetListener {
 					return (ICElement) element;
 				}
 				if (element instanceof IAdaptable) {
-					ICElement adapter= ((IAdaptable) element).getAdapter(ICElement.class);
+					ICElement adapter = ((IAdaptable) element).getAdapter(ICElement.class);
 					if (adapter != null) {
 						return adapter;
 					}
@@ -73,37 +73,37 @@ public class CHDropTargetListener implements DropTargetListener {
 		return null;
 	}
 
-    @Override
+	@Override
 	public void dragLeave(DropTargetEvent event) {
-    }
+	}
 
-    @Override
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
-        checkOperation(event);
-    }
+		checkOperation(event);
+	}
 
-    @Override
+	@Override
 	public void dragOver(DropTargetEvent event) {
-    }
+	}
 
-    @Override
+	@Override
 	public void drop(DropTargetEvent event) {
-    	if (fInput == null) {
-            Display.getCurrent().beep();
-        } else {
-            fCallHierarchy.setInput(fInput);
-        }
-    }
+		if (fInput == null) {
+			Display.getCurrent().beep();
+		} else {
+			fCallHierarchy.setInput(fInput);
+		}
+	}
 
-    @Override
+	@Override
 	public void dropAccept(DropTargetEvent event) {
-    }
-    
-    private void checkOperation(DropTargetEvent event) {
-        if (fEnabled && (event.operations & DND.DROP_COPY) != 0) {
-            event.detail= DND.DROP_COPY;
-        } else {
-            event.detail= DND.DROP_NONE;
-        }
-    }
+	}
+
+	private void checkOperation(DropTargetEvent event) {
+		if (fEnabled && (event.operations & DND.DROP_COPY) != 0) {
+			event.detail = DND.DROP_COPY;
+		} else {
+			event.detail = DND.DROP_NONE;
+		}
+	}
 }

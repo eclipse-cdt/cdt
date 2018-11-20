@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ICElement;
 
-
 /**
  */
 public class BinaryContainerInfo extends OpenableInfo {

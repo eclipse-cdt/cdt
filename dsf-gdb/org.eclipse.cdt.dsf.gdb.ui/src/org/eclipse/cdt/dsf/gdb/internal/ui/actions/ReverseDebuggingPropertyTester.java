@@ -32,21 +32,22 @@ import org.eclipse.core.expressions.PropertyTester;
  */
 public class ReverseDebuggingPropertyTester extends PropertyTester {
 
-    private static final String ENABLED = "isReverseDebuggingEnabled"; //$NON-NLS-1$
+	private static final String ENABLED = "isReverseDebuggingEnabled"; //$NON-NLS-1$
 
-    @Override
-    public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-    	if (ENABLED.equals(property)) {
-    		if (receiver instanceof IDMVMContext) {
-				return test((IDMVMContext)receiver);
-    		}
-    	}
-    	return false;
-    }   
-    
-    private boolean test(IDMVMContext context) {
-    	boolean result = false;
-		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(), ICommandControlDMContext.class);
+	@Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		if (ENABLED.equals(property)) {
+			if (receiver instanceof IDMVMContext) {
+				return test((IDMVMContext) receiver);
+			}
+		}
+		return false;
+	}
+
+	private boolean test(IDMVMContext context) {
+		boolean result = false;
+		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(),
+				ICommandControlDMContext.class);
 		if (controlDmc != null) {
 			IReverseToggleHandler toggle = (controlDmc.getAdapter(IReverseToggleHandler.class));
 			if (toggle != null) {
@@ -54,5 +55,5 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
 			}
 		}
 		return result;
-    }
+	}
 }

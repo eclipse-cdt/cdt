@@ -31,8 +31,7 @@ import org.eclipse.debug.core.model.RuntimeProcess;
  */
 public class GDBProcess extends RuntimeProcess {
 
-	public GDBProcess(ILaunch launch, Process process, String name,
-			Map<String, String> attributes) {
+	public GDBProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
 		super(launch, process, name, attributes);
 	}
 
@@ -80,7 +79,7 @@ public class GDBProcess extends RuntimeProcess {
 		}
 
 		@Override
-		public void write(String input) throws IOException {			
+		public void write(String input) throws IOException {
 		}
 	}
 }

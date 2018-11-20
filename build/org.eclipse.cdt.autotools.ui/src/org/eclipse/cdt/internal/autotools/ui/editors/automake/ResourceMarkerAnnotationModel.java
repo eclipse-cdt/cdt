@@ -46,9 +46,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	class ResourceChangeListener implements IResourceChangeListener {
 		@Override
 		public void resourceChanged(IResourceChangeEvent e) {
-			IResourceDelta delta= e.getDelta();
+			IResourceDelta delta = e.getDelta();
 			if (delta != null && fResource != null) {
-				IResourceDelta child= delta.findMember(fResource.getFullPath());
+				IResourceDelta child = delta.findMember(fResource.getFullPath());
 				if (child != null)
 					update(child.getMarkerDeltas());
 			}
@@ -60,8 +60,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	/** The resource. */
 	private IResource fResource;
 	/** The resource change listener. */
-	private IResourceChangeListener fResourceChangeListener= new ResourceChangeListener();
-
+	private IResourceChangeListener fResourceChangeListener = new ResourceChangeListener();
 
 	/**
 	 * Creates a marker annotation model with the given resource as the source
@@ -71,8 +70,8 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 */
 	public ResourceMarkerAnnotationModel(IResource resource) {
 		Assert.isNotNull(resource);
-		fResource= resource;
-		fWorkspace= resource.getWorkspace();
+		fResource = resource;
+		fWorkspace = resource.getWorkspace();
 	}
 
 	@Override
@@ -87,21 +86,21 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 */
 	protected void update(IMarkerDelta[] markerDeltas) {
 
-		if (markerDeltas.length ==  0)
+		if (markerDeltas.length == 0)
 			return;
 
 		if (markerDeltas.length == 1) {
-			IMarkerDelta delta= markerDeltas[0];
+			IMarkerDelta delta = markerDeltas[0];
 			switch (delta.getKind()) {
-				case IResourceDelta.ADDED :
-					addMarkerAnnotation(delta.getMarker());
-					break;
-				case IResourceDelta.REMOVED :
-					removeMarkerAnnotation(delta.getMarker());
-					break;
-				case IResourceDelta.CHANGED :
-					modifyMarkerAnnotation(delta.getMarker());
-					break;
+			case IResourceDelta.ADDED:
+				addMarkerAnnotation(delta.getMarker());
+				break;
+			case IResourceDelta.REMOVED:
+				removeMarkerAnnotation(delta.getMarker());
+				break;
+			case IResourceDelta.CHANGED:
+				modifyMarkerAnnotation(delta.getMarker());
+				break;
 			}
 		} else
 			batchedUpdate(markerDeltas);
@@ -115,39 +114,39 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * @param markerDeltas the array of marker deltas
 	 */
 	private void batchedUpdate(IMarkerDelta[] markerDeltas) {
-		HashSet<IMarker> removedMarkers= new HashSet<>(markerDeltas.length);
-		HashSet<IMarker> modifiedMarkers= new HashSet<>(markerDeltas.length);
+		HashSet<IMarker> removedMarkers = new HashSet<>(markerDeltas.length);
+		HashSet<IMarker> modifiedMarkers = new HashSet<>(markerDeltas.length);
 
-		for (int i= 0; i < markerDeltas.length; i++) {
-			IMarkerDelta delta= markerDeltas[i];
+		for (int i = 0; i < markerDeltas.length; i++) {
+			IMarkerDelta delta = markerDeltas[i];
 			switch (delta.getKind()) {
-				case IResourceDelta.ADDED:
-					addMarkerAnnotation(delta.getMarker());
-					break;
-				case IResourceDelta.REMOVED:
-					removedMarkers.add(delta.getMarker());
-					break;
-				case IResourceDelta.CHANGED:
-					modifiedMarkers.add(delta.getMarker());
-					break;
-				}
+			case IResourceDelta.ADDED:
+				addMarkerAnnotation(delta.getMarker());
+				break;
+			case IResourceDelta.REMOVED:
+				removedMarkers.add(delta.getMarker());
+				break;
+			case IResourceDelta.CHANGED:
+				modifiedMarkers.add(delta.getMarker());
+				break;
+			}
 		}
 
 		if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
 			return;
 
-		Iterator<?> e= getAnnotationIterator(false);
+		Iterator<?> e = getAnnotationIterator(false);
 		while (e.hasNext()) {
-			Object o= e.next();
+			Object o = e.next();
 			if (o instanceof MarkerAnnotation) {
-				MarkerAnnotation a= (MarkerAnnotation)o;
-				IMarker marker= a.getMarker();
+				MarkerAnnotation a = (MarkerAnnotation) o;
+				IMarker marker = a.getMarker();
 
 				if (removedMarkers.remove(marker))
 					removeAnnotation(a, false);
 
 				if (modifiedMarkers.remove(marker)) {
-					Position p= createPositionFromMarker(marker);
+					Position p = createPositionFromMarker(marker);
 					if (p != null) {
 						a.update();
 						modifyAnnotationPosition(a, p, false);
@@ -160,7 +159,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 		}
 
-		Iterator<IMarker> iter= modifiedMarkers.iterator();
+		Iterator<IMarker> iter = modifiedMarkers.iterator();
 		while (iter.hasNext())
 			addMarkerAnnotation(iter.next());
 	}
@@ -176,7 +175,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	@Override
 	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
 		fWorkspace.run((IWorkspaceRunnable) monitor -> {
-			for (int i= 0; i < markers.length; ++i) {
+			for (int i = 0; i < markers.length; ++i) {
 				markers[i].delete();
 			}
 		}, null, IWorkspace.AVOID_UPDATE, null);

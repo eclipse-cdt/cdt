@@ -14,9 +14,9 @@
 package org.eclipse.cdt.core.settings.model.util;
 
 public class Comparator {
-	
-	public boolean equal(Object o1, Object o2){
-		if(o1 == null)
+
+	public boolean equal(Object o1, Object o2) {
+		if (o1 == null)
 			return o2 == null;
 		return o1.equals(o2);
 	}

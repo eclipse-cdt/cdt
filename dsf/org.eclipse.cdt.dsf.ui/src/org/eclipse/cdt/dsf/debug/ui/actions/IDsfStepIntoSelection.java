@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
  * @since 2.4
  */
 public interface IDsfStepIntoSelection {
-	
+
 	/**
 	 * Checks if within a state to perform step into selection
 	 * @param dmc
@@ -35,5 +35,6 @@ public interface IDsfStepIntoSelection {
 	 * @param selectedFunction
 	 * @param context
 	 */
-	public void runToSelection(final String fileName, final int lineLocation, final IFunctionDeclaration selectedFunction, final IExecutionDMContext context);
+	public void runToSelection(final String fileName, final int lineLocation,
+			final IFunctionDeclaration selectedFunction, final IExecutionDMContext context);
 }

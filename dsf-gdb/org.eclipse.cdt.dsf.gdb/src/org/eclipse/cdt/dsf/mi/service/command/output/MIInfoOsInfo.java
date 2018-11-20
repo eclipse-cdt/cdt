@@ -81,32 +81,33 @@ public class MIInfoOsInfo extends MIInfo {
 		}
 	}
 
-	public IResourcesInformation getResourcesInformation()
-	{
+	public IResourcesInformation getResourcesInformation() {
 		return new IResourcesInformation() {
 
 			@Override
-			public String[][] getContent() { return content; }
+			public String[][] getContent() {
+				return content;
+			}
 
 			@Override
-			public String[] getColumnNames() { return columnNames; }
+			public String[] getColumnNames() {
+				return columnNames;
+			}
 		};
 	}
 
-	public IResourceClass[] getResourceClasses()
-	{
+	public IResourceClass[] getResourceClasses() {
 		return resourceClasses;
 	}
 
-	private void parseResourceClasses()
-	{
+	private void parseResourceClasses() {
 		List<IResourceClass> classes = new ArrayList<IResourceClass>();
 
-		MITuple table = (MITuple)get(getMIOutput(), "OSDataTable");  //$NON-NLS-1$
+		MITuple table = (MITuple) get(getMIOutput(), "OSDataTable"); //$NON-NLS-1$
 
-		MIList body = (MIList)get(table, "body");  //$NON-NLS-1$
-		for (MIResult r: body.getMIResults()) {
-			MITuple row = (MITuple)r.getMIValue();
+		MIList body = (MIList) get(table, "body"); //$NON-NLS-1$
+		for (MIResult r : body.getMIResults()) {
+			MITuple row = (MITuple) r.getMIValue();
 
 			final String id = getString(row.getMIResults()[0]);
 			final String description = getString(row.getMIResults()[2]);
@@ -114,10 +115,14 @@ public class MIInfoOsInfo extends MIInfo {
 			classes.add(new IResourceClass() {
 
 				@Override
-				public String getId() { return id; }
+				public String getId() {
+					return id;
+				}
 
 				@Override
-				public String getHumanDescription() { return description; }
+				public String getHumanDescription() {
+					return description;
+				}
 
 			});
 		}
@@ -125,23 +130,20 @@ public class MIInfoOsInfo extends MIInfo {
 		resourceClasses = classes.toArray(new IResourceClass[classes.size()]);
 	}
 
-	private void parseResourcesInformation()
-	{
+	private void parseResourcesInformation() {
 		MITuple table = (MITuple) get(getMIOutput(), "OSDataTable"); //$NON-NLS-1$
 
-		MIList header = (MIList) get(table, "hdr");  //$NON-NLS-1$
+		MIList header = (MIList) get(table, "hdr"); //$NON-NLS-1$
 		columnNames = new String[header.getMIValues().length];
 		int i = 0;
 		for (MIValue v : header.getMIValues()) {
 			MITuple column = (MITuple) v;
-			String columnName = ((MIConst) get(column, "colhdr")).getString();  //$NON-NLS-1$
+			String columnName = ((MIConst) get(column, "colhdr")).getString(); //$NON-NLS-1$
 			columnNames[i++] = Character.toUpperCase(columnName.charAt(0)) + columnName.substring(1);
 		}
 
-
-		MIList body = (MIList) get(table, "body");  //$NON-NLS-1$
-		if (body == null)
-		{
+		MIList body = (MIList) get(table, "body"); //$NON-NLS-1$
+		if (body == null) {
 			content = new String[0][];
 			return;
 		}
@@ -153,8 +155,7 @@ public class MIInfoOsInfo extends MIInfo {
 			assert row.getMIResults().length == columnNames.length;
 			String[] rowStrings = new String[row.getMIResults().length];
 			int j = 0;
-			for (MIResult r2 : row.getMIResults())
-			{
+			for (MIResult r2 : row.getMIResults()) {
 				rowStrings[j] = ((MIConst) r2.getMIValue()).getString();
 				++j;
 			}
@@ -177,13 +178,11 @@ public class MIInfoOsInfo extends MIInfo {
 		return get(tuple.getMIResults(), name);
 	}
 
-	private String getString(MIValue value)
-	{
-		return ((MIConst)value).getString();
+	private String getString(MIValue value) {
+		return ((MIConst) value).getString();
 	}
 
-	private String getString(MIResult result)
-	{
+	private String getString(MIResult result) {
 		return getString(result.getMIValue());
 	}
 }

@@ -26,36 +26,36 @@ import org.eclipse.ui.IWorkbenchPart;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDisassemblyPart extends IWorkbenchPart {
-	
+
 	/**
 	 * Property id for the active state of the part.
 	 */
-	public final int PROP_ACTIVE= 0x505;
+	public final int PROP_ACTIVE = 0x505;
 
 	/**
 	 * Property id for the connected state of the part.
 	 */
-	public final int PROP_CONNECTED= 0x506;
+	public final int PROP_CONNECTED = 0x506;
 
 	/**
 	 * Property id for the suspended state of the underlying execution context.
 	 */
-	public final int PROP_SUSPENDED= 0x507;
-	
+	public final int PROP_SUSPENDED = 0x507;
+
 	/**
 	 * Test whether this part is connected to a debug session and execution context.
 	 * 
 	 * @return <code>true</code> if the part is connected to a debug session and execution context
 	 */
 	boolean isConnected();
-	
+
 	/**
 	 * Test whether this part is active. A part is active if it is visible and connected.
 	 * 
 	 * @return <code>true</code> if the part is active
 	 */
 	boolean isActive();
-	
+
 	/**
 	 * Test whether the underlying execution context is currently suspended.
 	 * Implies connected state.
@@ -70,7 +70,7 @@ public interface IDisassemblyPart extends IWorkbenchPart {
 	 * @return the text viewer
 	 */
 	ISourceViewer getTextViewer();
-	
+
 	/**
 	 * Navigate to the given address.
 	 * 

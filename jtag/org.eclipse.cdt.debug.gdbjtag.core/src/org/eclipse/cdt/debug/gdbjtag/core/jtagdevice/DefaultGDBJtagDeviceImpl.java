@@ -83,12 +83,12 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	@Override
 	public void doContinue(Collection<String> commands) {
-	    // The CLI version "continue" causes GDB to block and would not be
-	    // able to respond other MI commands, this is a problem
-	    // when running in async mode as it depends on the processing 
-	    // of MI commands e.g. to suspend the program. 
-	    //   Therefore we need to use the MI command version "-exec-continue"
-	    // which does not block GDB.
+		// The CLI version "continue" causes GDB to block and would not be
+		// able to respond other MI commands, this is a problem
+		// when running in async mode as it depends on the processing 
+		// of MI commands e.g. to suspend the program. 
+		//   Therefore we need to use the MI command version "-exec-continue"
+		// which does not block GDB.
 		String cmd = "-exec-continue"; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
@@ -98,7 +98,7 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	@Override
 	public void doLoadImage(String imageFileName, String imageOffset, Collection<String> commands) {
-		addCmd(commands, "load " + escapeScpaces(imageFileName) + ' ' + imageOffset);			
+		addCmd(commands, "load " + escapeScpaces(imageFileName) + ' ' + imageOffset);
 	}
 
 	/* (non-Javadoc)
@@ -109,14 +109,15 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 		String file = escapeScpaces(symbolFileName);
 		if (symbolOffset == null || (symbolOffset.length() == 0)) {
 			addCmd(commands, "symbol-file " + file);
-		}
-		else {
+		} else {
 			addCmd(commands, "add-symbol-file " + file + " " + symbolOffset);
 		}
 	}
-	
+
 	protected String escapeScpaces(String file) {
-		if (file.indexOf(' ') >= 0) { return '"' + file + '"'; }
+		if (file.indexOf(' ') >= 0) {
+			return '"' + file + '"';
+		}
 		return file;
 	}
 

@@ -24,6 +24,6 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
  */
 public class MIGDBSetTraceNotes extends MIGDBSet {
 	public MIGDBSetTraceNotes(ITraceTargetDMContext ctx, String notes) {
-		super(ctx, new String[] {"trace-notes", notes}); //$NON-NLS-1$
+		super(ctx, new String[] { "trace-notes", notes }); //$NON-NLS-1$
 	}
 }

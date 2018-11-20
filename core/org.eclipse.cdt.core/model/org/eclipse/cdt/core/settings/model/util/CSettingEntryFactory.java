@@ -30,12 +30,16 @@ public class CSettingEntryFactory {
 	public ICSettingEntry getEntry(ICSettingEntry entry) {
 		return CDataUtil.getPooledEntry(entry);
 	}
+
 	public ICLanguageSettingEntry getLanguageSettingEntry(ICLanguageSettingEntry entry) {
 		return CDataUtil.getPooledEntry(entry);
 	}
-	public ICSettingEntry getEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, boolean create) {
+
+	public ICSettingEntry getEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags,
+			boolean create) {
 		return CDataUtil.createEntry(kind, name, value, exclusionPatterns, flags);
 	}
+
 	public void clear() {
 	}
 }

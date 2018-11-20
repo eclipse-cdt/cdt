@@ -80,8 +80,7 @@ public class QtIncludePathsProvider extends LanguageSettingsSerializableProvider
 			Node child = children.item(i);
 			if (ELEMENT_QMAKE.equals(child.getNodeName())) {
 				QtIncludePaths qtIncludePaths = QtIncludePaths.loadFrom(child);
-				if (qtIncludePaths != null
-				 && qtIncludePaths.isValid())
+				if (qtIncludePaths != null && qtIncludePaths.isValid())
 					qtInstallHeaders.put(qtIncludePaths.getQMakePath(), qtIncludePaths);
 			}
 		}
@@ -95,8 +94,8 @@ public class QtIncludePathsProvider extends LanguageSettingsSerializableProvider
 		//       to the file.
 
 		// Each value is serialized into a new element in the XML document.
-		Document document = parent instanceof Document ? (Document)parent : parent.getOwnerDocument();
-		for(QtIncludePaths qtIncludePaths : qtInstallHeaders.values()) {
+		Document document = parent instanceof Document ? (Document) parent : parent.getOwnerDocument();
+		for (QtIncludePaths qtIncludePaths : qtInstallHeaders.values()) {
 			Element child = document.createElement(ELEMENT_QMAKE);
 			qtIncludePaths.serialize(child);
 			parent.appendChild(child);
@@ -109,14 +108,16 @@ public class QtIncludePathsProvider extends LanguageSettingsSerializableProvider
 	 * data or loaded, serialized, and returned.
 	 */
 	@Override
-	public synchronized List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription configDesc, IResource rc, String languageId) {
+	public synchronized List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription configDesc,
+			IResource rc, String languageId) {
 		// Make sure the requested language is in scope for this provider.
 		if (!getLanguageScope().contains(languageId))
 			return null;
 
 		// The value of the build configuration's QMAKE environment variable is used to select the
 		// right version of qmake.
-		IEnvironmentVariable qmake_var = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENVVAR_QMAKE, configDesc, true);
+		IEnvironmentVariable qmake_var = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENVVAR_QMAKE,
+				configDesc, true);
 		if (qmake_var == null)
 			return null;
 

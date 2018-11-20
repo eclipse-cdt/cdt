@@ -22,25 +22,25 @@ public class MIVarShowAttributesInfo extends MIInfo {
 
 	public MIVarShowAttributesInfo(MIOutput record) {
 		super(record);
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("attr")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIConst) {
-                            attr = ((MIConst)value).getString();
-                        }
-                    }
-                }
-            }
-        }
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("attr")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIConst) {
+							attr = ((MIConst) value).getString();
+						}
+					}
+				}
+			}
+		}
 	}
 
-	public String getAttributes () {
+	public String getAttributes() {
 		return attr;
 	}
 

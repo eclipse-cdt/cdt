@@ -34,31 +34,31 @@ public interface IPDOMIndexer {
 	 * Returns the project associated with the indexer.
 	 */
 	public ICProject getProject();
-		
+
 	/**
 	 * Returns the unique ID of type of this indexer
 	 */
 	public String getID();
-	
+
 	/**
 	 * Returns the value of a property.
 	 * @since 4.0
 	 */
 	public String getProperty(String key);
-	
+
 	/**
 	 * Clients are not allowed to call this method, it is called by the framework. 
 	 * @since 4.0
 	 */
 	public void setProperties(Properties props);
-	
+
 	/**
 	 * Clients are not allowed to call this method, it is called by the framework. 
 	 * Used to check whether we need to reindex a project.
 	 * @since 4.0
 	 */
 	public boolean needsToRebuildForProperties(Properties props);
-	
+
 	/**
 	 * Clients are not allowed to call this method, it is called by the framework. 
 	 * Creates a task that handles the changes.

@@ -64,7 +64,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	private static final String TITLE = Messages.CConfigWizardPage_0;
 	private static final String MESSAGE = Messages.CConfigWizardPage_1;
 	private static final String COMMENT = Messages.CConfigWizardPage_12;
-	private static final String EMPTY_STR = "";  //$NON-NLS-1$
+	private static final String EMPTY_STR = ""; //$NON-NLS-1$
 
 	private Table table;
 	private CheckboxTableViewer tv;
@@ -96,7 +96,7 @@ public class CDTConfigWizardPage extends WizardPage {
 			ArrayList<CfgHolder> out = new ArrayList<CfgHolder>(table.getItemCount());
 			for (TableItem ti : table.getItems()) {
 				if (ti.getChecked())
-					out.add((CfgHolder)ti.getData());
+					out.add((CfgHolder) ti.getData());
 			}
 			its = out.toArray(new CfgHolder[out.size()]);
 		}
@@ -133,27 +133,35 @@ public class CDTConfigWizardPage extends WizardPage {
 		tv.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return (Object[])inputElement;
+				return (Object[]) inputElement;
 			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		});
 		tv.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				return element == null ? EMPTY_STR : ((CfgHolder)element).getName();
+				return element == null ? EMPTY_STR : ((CfgHolder) element).getName();
 			}
+
 			@Override
-			public Image getImage(Object element) { return IMG_CONFIG; }
+			public Image getImage(Object element) {
+				return IMG_CONFIG;
+			}
 		});
 		tv.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(isCustomPageComplete());
 				update();
-			}});
+			}
+		});
 		Composite c = new Composite(c2, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		c.setLayout(new GridLayout());
@@ -167,7 +175,8 @@ public class CDTConfigWizardPage extends WizardPage {
 				tv.setAllChecked(true);
 				setPageComplete(isCustomPageComplete());
 				update();
-			}});
+			}
+		});
 
 		Button b2 = new Button(c, SWT.PUSH);
 		b2.setText(Messages.CConfigWizardPage_8);
@@ -178,7 +187,8 @@ public class CDTConfigWizardPage extends WizardPage {
 				tv.setAllChecked(false);
 				setPageComplete(isCustomPageComplete());
 				update();
-			}});
+			}
+		});
 
 		// dummy placeholder
 		new Label(c, 0).setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -190,7 +200,8 @@ public class CDTConfigWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				advancedDialog();
-			}});
+			}
+		});
 
 		Group gr = new Group(parent, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -207,25 +218,27 @@ public class CDTConfigWizardPage extends WizardPage {
 		String id = handler.getPropertyId();
 		IProjectType pt = handler.getProjectType();
 		ArrayList<CfgHolder> out = new ArrayList<CfgHolder>();
-		for (IToolChain tc : handler.getSelectedToolChains()){
+		for (IToolChain tc : handler.getSelectedToolChains()) {
 			CfgHolder[] cfgs = null;
 			if (id != null)
-				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tc, MBSWizardHandler.ARTIFACT, id));
+				cfgs = CfgHolder
+						.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tc, MBSWizardHandler.ARTIFACT, id));
 			else if (pt != null)
 				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tc, pt));
 			else { // Create default configuration for StdProject
 				cfgs = new CfgHolder[1];
 				cfgs[0] = new CfgHolder(tc, null);
 			}
-			if (cfgs == null) return null;
+			if (cfgs == null)
+				return null;
 
-			for (int j=0; j<cfgs.length; j++) {
+			for (int j = 0; j < cfgs.length; j++) {
 				if (cfgs[j].isSystem() || (handler.supportedOnly() && !cfgs[j].isSupported())
-						// Bug 335338 don't include project type configurations if we're not creating a project-typed project
-						//            Project types are non-default if their nameAttribute != "" (see: ManagedBuildWizard: "old style project types")
-						|| (pt == null && cfgs[j].getConfiguration() != null &&
-								          cfgs[j].getConfiguration().getProjectType() != null &&
-										  cfgs[j].getConfiguration().getProjectType().getNameAttribute().length() > 0))
+				// Bug 335338 don't include project type configurations if we're not creating a project-typed project
+				//            Project types are non-default if their nameAttribute != "" (see: ManagedBuildWizard: "old style project types")
+						|| (pt == null && cfgs[j].getConfiguration() != null
+								&& cfgs[j].getConfiguration().getProjectType() != null
+								&& cfgs[j].getConfiguration().getProjectType().getNameAttribute().length() > 0))
 					continue;
 				out.add(cfgs[j]);
 			}
@@ -243,9 +256,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		if (table == null || handler == null)
 			return false;
 
-		return Arrays.equals(
-				handler.getSelectedToolChains(),
-				visitedTCs);
+		return Arrays.equals(handler.getSelectedToolChains(), visitedTCs);
 	}
 
 	/**
@@ -283,11 +294,11 @@ public class CDTConfigWizardPage extends WizardPage {
 			tv.setAllChecked(true);
 			String s = EMPTY_STR;
 			visitedTCs = handler.getSelectedToolChains();
-			for (int i=0; i < visitedTCs.length; i++) {
-				s = s + ((visitedTCs[i] == null) ?
-						"" : //$NON-NLS-1$
-							visitedTCs[i].getUniqueRealName());
-				if (i < visitedTCs.length - 1) s = s + "\n";  //$NON-NLS-1$
+			for (int i = 0; i < visitedTCs.length; i++) {
+				s = s + ((visitedTCs[i] == null) ? "" : //$NON-NLS-1$
+						visitedTCs[i].getUniqueRealName());
+				if (i < visitedTCs.length - 1)
+					s = s + "\n"; //$NON-NLS-1$
 			}
 			l_chains.setText(s);
 			l_projtype.setText(handler.getName());
@@ -312,15 +323,29 @@ public class CDTConfigWizardPage extends WizardPage {
 	}
 
 	@Override
-	public String getName() { return TITLE; }
+	public String getName() {
+		return TITLE;
+	}
+
 	@Override
-	public Control getControl() { return parent; }
+	public Control getControl() {
+		return parent;
+	}
+
 	@Override
-	public String getErrorMessage() { return errorMessage; }
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
 	@Override
-	public String getMessage() { return message; }
+	public String getMessage() {
+		return message;
+	}
+
 	@Override
-	public String getTitle()   { return TITLE; }
+	public String getTitle() {
+		return TITLE;
+	}
 
 	protected void update() {
 		getWizard().getContainer().updateButtons();
@@ -333,14 +358,15 @@ public class CDTConfigWizardPage extends WizardPage {
 	 */
 	private void advancedDialog() {
 		if (getWizard() instanceof ICDTCommonProjectWizard) {
-			ICDTCommonProjectWizard nmWizard = (ICDTCommonProjectWizard)getWizard();
+			ICDTCommonProjectWizard nmWizard = (ICDTCommonProjectWizard) getWizard();
 			IProject newProject = nmWizard.getProject(true, false);
 			if (newProject != null) {
 				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG);
 				// disable manage configurations button
 				CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, true);
 				try {
-					int res = PreferencesUtil.createPropertyDialogOn(getWizard().getContainer().getShell(), newProject, propertyId, null, null).open();
+					int res = PreferencesUtil.createPropertyDialogOn(getWizard().getContainer().getShell(), newProject,
+							propertyId, null, null).open();
 					if (res != Window.OK) {
 						// if user presses cancel, remove the project.
 						nmWizard.performCancel();

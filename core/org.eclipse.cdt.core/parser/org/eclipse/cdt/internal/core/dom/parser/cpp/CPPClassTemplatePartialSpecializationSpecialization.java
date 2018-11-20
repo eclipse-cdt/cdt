@@ -40,11 +40,11 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	private final ICPPTemplateArgument[] fArguments;
 
 	public CPPClassTemplatePartialSpecializationSpecialization(ICPPClassTemplatePartialSpecialization orig,
-			ICPPTemplateParameterMap argumentMap, ICPPClassTemplate template,
-			ICPPTemplateArgument[] args) throws DOMException {
+			ICPPTemplateParameterMap argumentMap, ICPPClassTemplate template, ICPPTemplateArgument[] args)
+			throws DOMException {
 		super(orig, template.getOwner(), argumentMap);
-		fClassTemplate= template;
-		fArguments= args;
+		fClassTemplate = template;
+		fArguments = args;
 	}
 
 	@Override
@@ -57,14 +57,14 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
-		String key= ASTTypeUtil.getArgumentListString(arguments, true);
+		String key = ASTTypeUtil.getArgumentListString(arguments, true);
 		instances.put(key, instance);
 	}
 
 	@Override
 	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
-			String key= ASTTypeUtil.getArgumentListString(arguments, true);
+			String key = ASTTypeUtil.getArgumentListString(arguments, true);
 			return (ICPPTemplateInstance) instances.get(key);
 		}
 		return null;
@@ -73,9 +73,9 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
-			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i= 0; i < instances.size(); i++) {
-				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			ICPPTemplateInstance[] result = new ICPPTemplateInstance[instances.size()];
+			for (int i = 0; i < instances.size(); i++) {
+				result[i] = (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;
 		}
@@ -90,7 +90,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
-			fDeferredInstance= CPPTemplates.createDeferredInstance(this);
+			fDeferredInstance = CPPTemplates.createDeferredInstance(this);
 		}
 		return fDeferredInstance;
 	}
@@ -122,7 +122,8 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 			return type.isSameType(this);
 
 		if (type instanceof ICPPClassTemplatePartialSpecializationSpecialization) {
-			return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this, (ICPPClassTemplatePartialSpecializationSpecialization) type);
+			return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this,
+					(ICPPClassTemplatePartialSpecializationSpecialization) type);
 		}
 		return false;
 	}

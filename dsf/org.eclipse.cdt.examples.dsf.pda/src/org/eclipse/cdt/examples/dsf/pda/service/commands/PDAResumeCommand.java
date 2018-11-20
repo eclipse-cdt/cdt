@@ -34,12 +34,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAResumeCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAResumeCommand(PDAThreadDMContext thread) {
-        super(thread, "resume " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAResumeCommand(PDAThreadDMContext thread) {
+		super(thread, "resume " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

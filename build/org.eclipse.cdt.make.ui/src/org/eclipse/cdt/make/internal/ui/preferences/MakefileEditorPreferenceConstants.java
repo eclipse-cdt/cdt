@@ -39,12 +39,12 @@ public class MakefileEditorPreferenceConstants {
 	 * Preference key suffix for bold text style preference keys.
 	 * 
 	 */
-	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
+	public static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for italic text style preference keys.
 	 */
-	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
+	public static final String EDITOR_ITALIC_SUFFIX = "_italic"; //$NON-NLS-1$
 
 	public static final String EDITOR_FOLDING_MACRODEF = "editor_folding_default_macrodef"; //$NON-NLS-1$
 	public static final String EDITOR_FOLDING_RULE = "editor_folding_default_rule"; //$NON-NLS-1$

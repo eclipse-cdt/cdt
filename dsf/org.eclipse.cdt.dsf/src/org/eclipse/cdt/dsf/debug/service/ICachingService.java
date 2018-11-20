@@ -21,12 +21,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
  * @since 1.1  
  */
 public interface ICachingService {
-    
-    /**
-     * Clears the service cache entries which have the given context in their
-     * hierarchy.
-     * @param context Root context to flush.  May be <code>null</code> to flush 
-     * the entire cache. 
-     */
-    public void flushCache(IDMContext context);
+
+	/**
+	 * Clears the service cache entries which have the given context in their
+	 * hierarchy.
+	 * @param context Root context to flush.  May be <code>null</code> to flush 
+	 * the entire cache. 
+	 */
+	public void flushCache(IDMContext context);
 }

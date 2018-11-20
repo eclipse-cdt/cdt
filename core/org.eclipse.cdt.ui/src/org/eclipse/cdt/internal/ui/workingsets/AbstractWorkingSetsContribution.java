@@ -62,8 +62,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 		int i = 0;
 		for (IWorkingSet recent : getWorkingsetManager().getRecentWorkingSets()) {
-			IWorkingSetProxy proxy = WorkingSetConfigurationManager.getDefault().getWorkingSet(
-					recent.getName());
+			IWorkingSetProxy proxy = WorkingSetConfigurationManager.getDefault().getWorkingSet(recent.getName());
 
 			if (proxy != null) {
 				IContributionItem item = createMenu(proxy, i++);

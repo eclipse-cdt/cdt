@@ -48,13 +48,13 @@ public class QtInstall implements IQtInstall {
 
 	public static String getSpec(Path qmakePath) throws IOException {
 		if (Files.exists(qmakePath)) {
-		Process proc = new ProcessBuilder(qmakePath.toString(), "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-			String line = reader.readLine();
-			if (line != null) {
-				return line.trim();
+			Process proc = new ProcessBuilder(qmakePath.toString(), "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+				String line = reader.readLine();
+				if (line != null) {
+					return line.trim();
+				}
 			}
-		}
 		}
 		return null;
 	}
@@ -80,5 +80,5 @@ public class QtInstall implements IQtInstall {
 	public Map<String, String> getProperties() {
 		return Collections.unmodifiableMap(properties);
 	}
-	
+
 }

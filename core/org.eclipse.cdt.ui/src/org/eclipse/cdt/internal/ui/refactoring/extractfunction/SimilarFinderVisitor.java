@@ -35,8 +35,8 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 	private final List<IASTNode> statements;
 	private int statementCount;
 
-	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring, NodeContainer extractedNodes,
-			List<IASTNode> trail, List<IASTNode> statements) {
+	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring, NodeContainer extractedNodes, List<IASTNode> trail,
+			List<IASTNode> statements) {
 		this.refactoring = refactoring;
 		this.extractedNodes = extractedNodes;
 		this.trail = trail;
@@ -49,7 +49,7 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 	public int visit(IASTStatement statement) {
 		if (!isInSelection(statement) && refactoring.isStatementInTrail(statement, trail)) {
 			stmtToReplace.add(statement);
-			similarContainer.add(statement);	
+			similarContainer.add(statement);
 			++statementCount;
 
 			if (statementCount == statements.size()) {
@@ -57,7 +57,8 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 				boolean similarOnReturnWays = true;
 				for (NameInformation nameInfo : similarContainer.getParameterCandidates()) {
 					if (refactoring.names.containsKey(nameInfo.getDeclarationName().getRawSignature())) {
-						Integer nameOrderNumber = refactoring.names.get(nameInfo.getDeclarationName().getRawSignature());
+						Integer nameOrderNumber = refactoring.names
+								.get(nameInfo.getDeclarationName().getRawSignature());
 						if (refactoring.nameTrail.containsValue(nameOrderNumber)) {
 							String orgName = null;
 							boolean found = false;
@@ -69,8 +70,8 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 							}
 							if (orgName != null) {
 								for (NameInformation orgNameInfo : extractedNodes.getParameterCandidates()) {
-									if (orgName.equals(orgNameInfo.getDeclarationName().getRawSignature()) &&
-											(orgNameInfo.isOutput() || !nameInfo.isOutput())) {
+									if (orgName.equals(orgNameInfo.getDeclarationName().getRawSignature())
+											&& (orgNameInfo.isOutput() || !nameInfo.isOutput())) {
 										found = true;
 										break;
 									}

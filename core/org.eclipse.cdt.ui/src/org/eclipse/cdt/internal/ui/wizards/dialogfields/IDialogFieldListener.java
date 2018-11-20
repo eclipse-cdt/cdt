@@ -14,6 +14,6 @@
 package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 
 public interface IDialogFieldListener {
-	
+
 	void dialogFieldChanged(DialogField field);
 }

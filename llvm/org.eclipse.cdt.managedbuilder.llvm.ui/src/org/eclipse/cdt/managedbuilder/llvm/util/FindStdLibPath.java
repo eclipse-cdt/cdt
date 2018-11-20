@@ -40,19 +40,18 @@ public class FindStdLibPath {
 		ProcessBuilder pb = null;
 		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		if (os.indexOf("win") >= 0) { //$NON-NLS-1$
-			pb = new ProcessBuilder("cmd", "/c", WIN_SCRIPT + " " + STD_LIB);    //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		} else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0) { //$NON-NLS-1$ //$NON-NLS-2$
-			pb = new ProcessBuilder("bash", "-c", UNIX_SCRIPT);    //$NON-NLS-1$//$NON-NLS-2$
-		} else if (os.indexOf( "mac" ) >= 0) { //$NON-NLS-1$
-			pb = new ProcessBuilder("bash", "-c", MAC_SCRIPT);    //$NON-NLS-1$//$NON-NLS-2$
+			pb = new ProcessBuilder("cmd", "/c", WIN_SCRIPT + " " + STD_LIB); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		} else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("bash", "-c", UNIX_SCRIPT); //$NON-NLS-1$//$NON-NLS-2$
+		} else if (os.indexOf("mac") >= 0) { //$NON-NLS-1$
+			pb = new ProcessBuilder("bash", "-c", MAC_SCRIPT); //$NON-NLS-1$//$NON-NLS-2$
 		} else {
 			return null;
 		}
 		try {
 			Process p = pb.start();
 			String line;
-			BufferedReader input = new BufferedReader
-					(new InputStreamReader(p.getInputStream()));
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			line = input.readLine();
 			input.close();
 			if (line != null) {

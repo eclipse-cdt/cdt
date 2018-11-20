@@ -22,12 +22,13 @@ import org.eclipse.core.runtime.CoreException;
 
 public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory {
 	static private DefaultBuildDescriptionFactory fInstance;
-	protected DefaultBuildDescriptionFactory(){
+
+	protected DefaultBuildDescriptionFactory() {
 
 	}
 
-	public static DefaultBuildDescriptionFactory getInstance(){
-		if(fInstance == null)
+	public static DefaultBuildDescriptionFactory getInstance() {
+		if (fInstance == null)
 			fInstance = new DefaultBuildDescriptionFactory();
 		return fInstance;
 	}
@@ -36,14 +37,16 @@ public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory 
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#createBuildDescription(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.core.resources.IResourceDelta, int)
 	 */
 	@Override
-	public IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException {
+	public IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags)
+			throws CoreException {
 		return createBuildDescription(cfg, null, delta, flags);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#createBuildDescription(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.core.resources.IResourceDelta, int)
 	 */
-	public IBuildDescription createBuildDescription(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags) throws CoreException {
+	public IBuildDescription createBuildDescription(IConfiguration cfg, IConfigurationBuildState bs,
+			IResourceDelta delta, int flags) throws CoreException {
 		BuildDescription info = new BuildDescription();
 		info.init(cfg, bs, delta, flags);
 		return info;
@@ -54,10 +57,8 @@ public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory 
 	 */
 	@Override
 	public int getSupportedMethods() {
-		return BuildDescriptionManager.REMOVED
-			| BuildDescriptionManager.REBUILD
-			| BuildDescriptionManager.DEPFILES
-			| BuildDescriptionManager.DEPS;
+		return BuildDescriptionManager.REMOVED | BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPFILES
+				| BuildDescriptionManager.DEPS;
 	}
 
 }

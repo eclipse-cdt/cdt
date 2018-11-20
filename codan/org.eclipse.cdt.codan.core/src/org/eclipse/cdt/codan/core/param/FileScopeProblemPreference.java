@@ -129,11 +129,12 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	}
 
 	@Override
-	public boolean isDefault(){
-		if (inclusion.length==0 && exclusion.length==0)
+	public boolean isDefault() {
+		if (inclusion.length == 0 && exclusion.length == 0)
 			return true;
 		return false;
 	}
+
 	@Override
 	public String exportValue() {
 		return exportPathList(INCLUSION, inclusion) + "," //$NON-NLS-1$

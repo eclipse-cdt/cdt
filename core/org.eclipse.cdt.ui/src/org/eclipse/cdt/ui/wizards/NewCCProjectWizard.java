@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 
 /**
  * @deprecated as of CDT 4.0. Being kept here for API compatibility only.
@@ -36,13 +34,12 @@ public abstract class NewCCProjectWizard extends NewCProjectWizard {
 		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 	}
 
-
 	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		super.doRun(monitor);
 		// Add C++ Nature to the newly created project.
-        if (newProject != null){
-            CCorePlugin.getDefault().convertProjectFromCtoCC(newProject, monitor);
-        }
+		if (newProject != null) {
+			CCorePlugin.getDefault().convertProjectFromCtoCC(newProject, monitor);
+		}
 	}
 }

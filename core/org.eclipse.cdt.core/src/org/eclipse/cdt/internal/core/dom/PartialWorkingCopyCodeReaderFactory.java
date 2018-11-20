@@ -34,53 +34,53 @@ import org.eclipse.core.runtime.CoreException;
 @Deprecated
 public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFactory {
 
-    private final IWorkingCopyProvider provider;
+	private final IWorkingCopyProvider provider;
 	private ICodeReaderCache cache = null;
 
-    /**
-     * @param provider
-     */
-    public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider, IIncludeFileResolutionHeuristics heuristics) {
-    	super(heuristics);
-        this.provider = provider;
+	/**
+	 * @param provider
+	 */
+	public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider,
+			IIncludeFileResolutionHeuristics heuristics) {
+		super(heuristics);
+		this.provider = provider;
 		cache = SavedCodeReaderFactory.getInstance().getCodeReaderCache();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
-     */
-    @Override
-	public int getUniqueIdentifier() {
-        return CDOM.PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
-     */
-    @Override
-	public CodeReader createCodeReaderForTranslationUnit(String path) {
-		return checkWorkingCopyThenCache(path);
-    }
-
-    public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
-		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
-    }
-
-	protected CodeReader checkWorkingCopyThenCache(String path) {
-		char [] buffer = ParserUtil.findWorkingCopyBuffer( path, createWorkingCopyIterator() );
-		if( buffer != null )
-			return new CodeReader(path, buffer);
-		return cache.get( path );
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
-     */
-    @Override
-	public CodeReader createCodeReaderForInclusion(String path) {
-        return cache.get( path );
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
+	 */
+	@Override
+	public int getUniqueIdentifier() {
+		return CDOM.PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS;
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
+	 */
+	@Override
+	public CodeReader createCodeReaderForTranslationUnit(String path) {
+		return checkWorkingCopyThenCache(path);
+	}
+
+	public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
+		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
+	}
+
+	protected CodeReader checkWorkingCopyThenCache(String path) {
+		char[] buffer = ParserUtil.findWorkingCopyBuffer(path, createWorkingCopyIterator());
+		if (buffer != null)
+			return new CodeReader(path, buffer);
+		return cache.get(path);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
+	 */
+	@Override
+	public CodeReader createCodeReaderForInclusion(String path) {
+		return cache.get(path);
+	}
 
 	@Override
 	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath)
@@ -89,13 +89,14 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
 	}
 
 	protected Iterator<IWorkingCopy> createWorkingCopyIterator() {
-        if( provider == null ) return EmptyIterator.empty();
-        return Arrays.asList( provider.getWorkingCopies() ).iterator();
-    }
+		if (provider == null)
+			return EmptyIterator.empty();
+		return Arrays.asList(provider.getWorkingCopies()).iterator();
+	}
 
 	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getCodeReaderCache()
-     */
+	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getCodeReaderCache()
+	 */
 	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return cache;

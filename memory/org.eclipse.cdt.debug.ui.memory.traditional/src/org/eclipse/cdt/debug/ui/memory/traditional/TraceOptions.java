@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
-
 import java.util.Hashtable;
 
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -54,7 +53,6 @@ class TraceOptions implements DebugOptionsListener {
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}
 
-
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		fgDebugTrace = options.newDebugTrace(pluginID);
@@ -78,7 +76,7 @@ class TraceOptions implements DebugOptionsListener {
 		}
 		System.out.print(systemPrintableMessage);
 		//then pass the original message to be traced into a file
-		if(fgDebugTrace != null) {
+		if (fgDebugTrace != null) {
 			fgDebugTrace.trace(option, message, throwable);
 		}
 	}
@@ -91,6 +89,5 @@ class TraceOptions implements DebugOptionsListener {
 	public static void trace(String message) {
 		trace(null, message, null);
 	}
-
 
 }

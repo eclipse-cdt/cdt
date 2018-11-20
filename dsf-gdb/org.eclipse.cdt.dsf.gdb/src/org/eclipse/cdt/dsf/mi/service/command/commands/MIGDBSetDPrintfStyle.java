@@ -34,11 +34,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  */
 public class MIGDBSetDPrintfStyle extends MIGDBSet {
 
-	public static final String GDB_STYLE  = "gdb";    //$NON-NLS-1$
-	public static final String CALL_STYLE  = "call";  //$NON-NLS-1$
+	public static final String GDB_STYLE = "gdb"; //$NON-NLS-1$
+	public static final String CALL_STYLE = "call"; //$NON-NLS-1$
 	public static final String AGENT_STYLE = "agent"; //$NON-NLS-1$
 
 	public MIGDBSetDPrintfStyle(ICommandControlDMContext dmc, String style) {
 		super(dmc, new String[] { "dprintf-style", style }); //$NON-NLS-1$
-    }
+	}
 }

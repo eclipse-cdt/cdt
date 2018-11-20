@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
@@ -47,19 +46,20 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	/**
 	 * The content assist executor.
 	 */
-	private final SpecificContentAssistExecutor fExecutor= new SpecificContentAssistExecutor(CompletionProposalComputerRegistry.getDefault());
+	private final SpecificContentAssistExecutor fExecutor = new SpecificContentAssistExecutor(
+			CompletionProposalComputerRegistry.getDefault());
 	/**
 	 * The editor.
 	 */
 	private CEditor fEditor;
-	
+
 	/**
 	 * Creates a new action for a certain proposal category.
 	 * 
 	 * @param category
 	 */
 	public SpecificContentAssistAction(CompletionProposalCategory category) {
-		fCategory= category;
+		fCategory = category;
 		setText(category.getName());
 		setImageDescriptor(category.getImageDescriptor());
 		setActionDefinitionId("org.eclipse.cdt.ui.specific_content_assist.command"); //$NON-NLS-1$
@@ -70,12 +70,12 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void run() {
-		ITextEditor editor= getActiveEditor();
+		ITextEditor editor = getActiveEditor();
 		if (editor == null)
 			return;
-		
+
 		fExecutor.invokeContentAssist(editor, fCategory.getId());
-		
+
 		return;
 	}
 
@@ -91,66 +91,66 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	public void setActiveEditor(IEditorPart part) {
 		CEditor editor;
 		if (part instanceof CEditor)
-			editor= (CEditor) part;
+			editor = (CEditor) part;
 		else
-			editor= null;
-		fEditor= editor;
+			editor = null;
+		fEditor = editor;
 		setEnabled(computeEnablement(fEditor));
 	}
-	
+
 	private boolean computeEnablement(ITextEditor editor) {
 		if (editor == null)
 			return false;
-		ITextOperationTarget target= editor.getAdapter(ITextOperationTarget.class);
-		boolean hasContentAssist= target != null && target.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+		ITextOperationTarget target = editor.getAdapter(ITextOperationTarget.class);
+		boolean hasContentAssist = target != null && target.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 		if (!hasContentAssist)
 			return false;
-		
-		ISelection selection= editor.getSelectionProvider().getSelection();
+
+		ISelection selection = editor.getSelectionProvider().getSelection();
 		return isValidSelection(selection);
 	}
 
-    /**
+	/**
 	 * Computes the partition type at the selection start and checks whether the proposal category
 	 * has any computers for this partition.
 	 * 
 	 * @param selection the selection
 	 * @return <code>true</code> if there are any computers for the selection
 	 */
-    private boolean isValidSelection(ISelection selection) {
-    	if (!(selection instanceof ITextSelection))
-    		return false;
-    	int offset= ((ITextSelection) selection).getOffset();
-    	
-    	IDocument document= getDocument();
-    	if (document == null)
-    		return false;
-    	
-    	String contentType;
-    	try {
-	        contentType= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, true);
-        } catch (BadLocationException x) {
-        	return false;
-        }
-        
-        return fCategory.hasComputers(contentType);
-    }
-    
+	private boolean isValidSelection(ISelection selection) {
+		if (!(selection instanceof ITextSelection))
+			return false;
+		int offset = ((ITextSelection) selection).getOffset();
+
+		IDocument document = getDocument();
+		if (document == null)
+			return false;
+
+		String contentType;
+		try {
+			contentType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, true);
+		} catch (BadLocationException x) {
+			return false;
+		}
+
+		return fCategory.hasComputers(contentType);
+	}
+
 	private IDocument getDocument() {
 		Assert.isTrue(fEditor != null);
-	    IDocumentProvider provider= fEditor.getDocumentProvider();
-	    if (provider == null)
-	    	return null;
-	    
-		IDocument document= provider.getDocument(fEditor.getEditorInput());
-	    return document;
-    }
+		IDocumentProvider provider = fEditor.getDocumentProvider();
+		if (provider == null)
+			return null;
+
+		IDocument document = provider.getDocument(fEditor.getEditorInput());
+		return document;
+	}
 
 	/*
-     * @see org.eclipse.ui.texteditor.IUpdate#update()
-     */
-    @Override
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	@Override
 	public void update() {
-    	setEnabled(computeEnablement(fEditor));
-    }
+		setEnabled(computeEnablement(fEditor));
+	}
 }

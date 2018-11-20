@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The preference page for configuring styles of names.
  */
 public class NameStylePreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.NameStylePreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.NameStylePreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.NameStylePreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.NameStylePreferencePage"; //$NON-NLS-1$
 
 	public NameStylePreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// Only used when the page is shown programmatically.
-		setTitle(PreferencesMessages.NameStylePreferencePage_title);		 
+		setTitle(PreferencesMessages.NameStylePreferencePage_title);
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class NameStylePreferencePage extends ConfigurationBlockPropertyAndPrefer
 	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
-//		return PROP_ID;
+		//		return PROP_ID;
 	}
 }

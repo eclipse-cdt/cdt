@@ -78,22 +78,22 @@ C model (<code>ICModel</code>)<br>
  */
 public class BaseCElementContentProvider implements ITreeContentProvider {
 
-	protected static final Object[] NO_CHILDREN= new Object[0];
+	protected static final Object[] NO_CHILDREN = new Object[0];
 
-	protected boolean fProvideMembers= false;
-	protected boolean fProvideWorkingCopy= false;
-	protected boolean fIncludesGrouping= false;
-	protected boolean fNamespacesGrouping= false;
-	protected boolean fMemberGrouping= false;
-	protected boolean fMacroGrouping= false;
+	protected boolean fProvideMembers = false;
+	protected boolean fProvideWorkingCopy = false;
+	protected boolean fIncludesGrouping = false;
+	protected boolean fNamespacesGrouping = false;
+	protected boolean fMemberGrouping = false;
+	protected boolean fMacroGrouping = false;
 
 	public BaseCElementContentProvider() {
 		this(false, false);
 	}
 
 	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
-	    fProvideMembers= provideMembers;
-		fProvideWorkingCopy= provideWorkingCopy;
+		fProvideMembers = provideMembers;
+		fProvideWorkingCopy = provideWorkingCopy;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * for a TU's children.
 	 */
 	public void setProvideMembers(boolean b) {
-		fProvideMembers= b;
+		fProvideMembers = b;
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * a working copy of a compilation unit
 	 */
 	public void setProvideWorkingCopy(boolean b) {
-		fProvideWorkingCopy= b;
+		fProvideWorkingCopy = b;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * Can elements be group.
 	 */
 	public boolean areIncludesGroup() {
-	    return fIncludesGrouping;
+		return fIncludesGrouping;
 	}
 
 	/**
@@ -140,14 +140,14 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * @param b
 	 */
 	public void setIncludesGrouping(boolean b) {
-	    fIncludesGrouping = b;
+		fIncludesGrouping = b;
 	}
 
 	/**
 	 * Can elements be group.
 	 */
 	public boolean areNamespacesGroup() {
-	    return fNamespacesGrouping;
+		return fNamespacesGrouping;
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * @param b
 	 */
 	public void setNamespacesGrouping(boolean b) {
-	    fNamespacesGrouping = b;
+		fNamespacesGrouping = b;
 	}
 
 	/**
@@ -220,19 +220,19 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 		try {
 			if (element instanceof ICModel) {
-				return  getCProjects((ICModel)element);
-			} else if  (element instanceof ICProject ) {
-				return getSourceRoots((ICProject)element);
+				return getCProjects((ICModel) element);
+			} else if (element instanceof ICProject) {
+				return getSourceRoots((ICProject) element);
 			} else if (element instanceof ICContainer) {
-				return getCResources((ICContainer)element);
+				return getCResources((ICContainer) element);
 			} else if (element instanceof ITranslationUnit) {
 				// if we want to get the children of a translation unit
 				if (fProvideMembers) {
 					// if we want to use the working copy of it
-					ITranslationUnit tu = (ITranslationUnit)element;
-					if (fProvideWorkingCopy){
+					ITranslationUnit tu = (ITranslationUnit) element;
+					if (fProvideWorkingCopy) {
 						// if it is not already a working copy
-						if (!(element instanceof IWorkingCopy)){
+						if (!(element instanceof IWorkingCopy)) {
 							// if it has a valid working copy
 							IWorkingCopy copy = CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(tu);
 							if (copy != null) {
@@ -243,21 +243,21 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					return getTranslationUnitChildren(tu);
 				}
 			} else if (element instanceof IBinary) {
-				return ((IBinary)element).getChildren();
+				return ((IBinary) element).getChildren();
 			} else if (element instanceof IArchive) {
-				return ((IArchive)element).getChildren();
+				return ((IArchive) element).getChildren();
 			} else if (element instanceof IBinaryModule) {
-				return ((IBinaryModule)element).getChildren();
+				return ((IBinaryModule) element).getChildren();
 			} else if (element instanceof INamespace) {
 				return getNamespaceChildren((INamespace) element);
-			} else if (element instanceof ISourceReference  && element instanceof IParent) {
-				return ((IParent)element).getChildren();
+			} else if (element instanceof ISourceReference && element instanceof IParent) {
+				return ((IParent) element).getChildren();
 			} else if (element instanceof IProject) {
-				return getResources((IProject)element);
+				return getResources((IProject) element);
 			} else if (element instanceof IFolder) {
-				return getResources((IFolder)element);
+				return getResources((IFolder) element);
 			} else if (element instanceof CElementGrouping) {
-				return ((CElementGrouping)element).getChildren(element);
+				return ((CElementGrouping) element).getChildren(element);
 			}
 		} catch (CModelException e) {
 			//CUIPlugin.log(e);
@@ -286,7 +286,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 
 		if (element instanceof ICProject) {
-			ICProject cp= (ICProject)element;
+			ICProject cp = (ICProject) element;
 			if (!cp.getProject().isOpen()) {
 				return false;
 			}
@@ -294,11 +294,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 
 		if (element instanceof ICContainer) {
-			ICContainer container= (ICContainer)element;
-			IResource resource= container.getResource();
+			ICContainer container = (ICContainer) element;
+			IResource resource = container.getResource();
 			if (resource instanceof IContainer) {
 				try {
-					return ((IContainer)resource).members().length > 0;
+					return ((IContainer) resource).members().length > 0;
 				} catch (CoreException exc) {
 					return false;
 				}
@@ -307,7 +307,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 		if (element instanceof IParent) {
 			// when we have C children return true, else we fetch all the children
-			if (((IParent)element).hasChildren()) {
+			if (((IParent) element).hasChildren()) {
 				return true;
 			}
 		}
@@ -316,7 +316,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return true;
 		}
 
-		Object[] children= getChildren(element);
+		Object[] children = getChildren(element);
 		return (children != null) && children.length > 0;
 	}
 
@@ -333,9 +333,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	public Object internalGetParent(Object element) {
 		if (element instanceof IResource) {
-			IResource parent= ((IResource)element).getParent();
+			IResource parent = ((IResource) element).getParent();
 			if (parent != null && parent.isAccessible()) {
-				ICElement cParent= CoreModel.getDefault().create(parent);
+				ICElement cParent = CoreModel.getDefault().create(parent);
 				if (cParent != null && cParent.exists()) {
 					return cParent;
 				}
@@ -349,48 +349,49 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				if (parent instanceof IProject) {
 					return ((ICElement) element).getCProject();
 				}
-			}
-			else
-				parent = ((ICElement)element).getParent();
+			} else
+				parent = ((ICElement) element).getParent();
 			// translate working copy parent to original TU,
 			// because working copies are never returned by getChildren
 			// this is necessary for proper show-in-target support
 			if (parent instanceof IWorkingCopy) {
-				parent= ((IWorkingCopy)parent).getOriginalElement();
+				parent = ((IWorkingCopy) parent).getOriginalElement();
 			}
 		} else if (element instanceof IWorkbenchAdapter) {
-			parent = ((IWorkbenchAdapter)element).getParent(element);
+			parent = ((IWorkbenchAdapter) element).getParent(element);
 		}
 
 		// if the parent is the default ISourceRoot == ICProject  return the project
 		if (parent instanceof ISourceRoot) {
-			if (isProjectSourceRoot((ISourceRoot)parent)) {
-				parent = ((ISourceRoot)parent).getCProject();
+			if (isProjectSourceRoot((ISourceRoot) parent)) {
+				parent = ((ISourceRoot) parent).getCProject();
 			}
 		} else if (parent instanceof IBinaryContainer || parent instanceof IArchiveContainer) {
 			// If the virtual container is the parent we must find the legitimate parent.
 			if (element instanceof ICElement) {
-				IResource res = ((ICElement)element).getResource();
+				IResource res = ((ICElement) element).getResource();
 				if (res != null) {
 					parent = internalGetParent(res);
 				}
 			}
 		}
 		if (parent instanceof INamespace && fNamespacesGrouping) {
-			final INamespace namespace = (INamespace)parent;
-			final NamespacesGrouping grouping = new NamespacesGrouping(namespace.getTranslationUnit(), namespace, fMemberGrouping);
+			final INamespace namespace = (INamespace) parent;
+			final NamespacesGrouping grouping = new NamespacesGrouping(namespace.getTranslationUnit(), namespace,
+					fMemberGrouping);
 			if (grouping.getNamespaces().length > 2) {
 				parent = grouping;
 			}
 		}
 		if (parent instanceof IMember && fMemberGrouping) {
-			final IMember member = (IMember)parent;
+			final IMember member = (IMember) parent;
 			final String ns = getElementNamespace(member);
 			if (ns != null) {
 				Object parentParent = member.getParent();
 				if (parentParent instanceof INamespace && fNamespacesGrouping) {
-					final INamespace namespace = (INamespace)parent;
-					final NamespacesGrouping grouping = new NamespacesGrouping(namespace.getTranslationUnit(), namespace);
+					final INamespace namespace = (INamespace) parent;
+					final NamespacesGrouping grouping = new NamespacesGrouping(namespace.getTranslationUnit(),
+							namespace);
 					if (grouping.getNamespaces().length > 2) {
 						parentParent = grouping;
 					}
@@ -400,10 +401,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		// if we are doing grouping for the includes return the grouping container.
 		if (element instanceof IInclude && fIncludesGrouping) {
-			parent = new IncludesGrouping(((IInclude)element).getTranslationUnit());
+			parent = new IncludesGrouping(((IInclude) element).getTranslationUnit());
 		}
 		if (element instanceof IMacro && fMacroGrouping) {
-			parent = new MacrosGrouping(((IMacro)element).getTranslationUnit());
+			parent = new MacrosGrouping(((IMacro) element).getTranslationUnit());
 		}
 		return parent;
 	}
@@ -425,20 +426,19 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		if (!cproject.getProject().isOpen())
 			return NO_CHILDREN;
 
-		List<ICElement> list= new ArrayList<ICElement>();
+		List<ICElement> list = new ArrayList<ICElement>();
 		ICElement[] children = cproject.getChildren();
 		for (ICElement child : children) {
 			if (child instanceof ISourceRoot && child.getResource().getType() == IResource.PROJECT) {
 				// Was a source root at the project, get the children of this element
-				ICElement[] c2 = ((ISourceRoot)child).getChildren();
+				ICElement[] c2 = ((ISourceRoot) child).getChildren();
 				for (int k = 0; k < c2.length; ++k)
 					list.add(c2[k]);
 			} else if (CCorePlugin.showSourceRootsAtTopOfProject()) {
 				list.add(child);
-			} else if (child instanceof ISourceRoot &&
-						child.getResource().getParent().equals(cproject.getProject())) {
+			} else if (child instanceof ISourceRoot && child.getResource().getParent().equals(cproject.getProject())) {
 				list.add(child);
-		}
+			}
 		}
 
 		Object[] objects = list.toArray();
@@ -464,7 +464,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				}
 			}
 			if (hasInclude) {
-				list.add (0, new IncludesGrouping(unit));
+				list.add(0, new IncludesGrouping(unit));
 			}
 			children = list.toArray();
 		}
@@ -474,7 +474,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			List<Object> list = new ArrayList<Object>(children.length);
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof INamespace) {
-					INamespace n1 = (INamespace)children[i];
+					INamespace n1 = (INamespace) children[i];
 					NamespacesGrouping namespacesGrouping = nsmap.get(n1.getElementName());
 					if (namespacesGrouping == null) {
 						namespacesGrouping = new NamespacesGrouping(unit, n1, fMemberGrouping);
@@ -497,7 +497,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof IMember) {
-					final ICElement member = (ICElement)children[i];
+					final ICElement member = (ICElement) children[i];
 					String namespace = getElementNamespace(member);
 					MembersGrouping memberGrouping = map.get(namespace);
 					if (memberGrouping == null) {
@@ -526,14 +526,13 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 			if (hasMacros) {
 				//Check if include gouping is there. If so, put macros after
-				if(!list.isEmpty()){
-					if(list.get(0) instanceof IncludesGrouping)
-						list.add (1, new MacrosGrouping(unit));
+				if (!list.isEmpty()) {
+					if (list.get(0) instanceof IncludesGrouping)
+						list.add(1, new MacrosGrouping(unit));
 					else
-						list.add (0, new MacrosGrouping(unit));
-				}
-				else
-					list.add (0, new MacrosGrouping(unit));
+						list.add(0, new MacrosGrouping(unit));
+				} else
+					list.add(0, new MacrosGrouping(unit));
 			}
 			children = list.toArray();
 		}
@@ -548,7 +547,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof IMember) {
-					final ICElement member = (ICElement)children[i];
+					final ICElement member = (ICElement) children[i];
 					String namespace = getElementNamespace(member);
 					MembersGrouping memberGrouping = map.get(namespace);
 					if (memberGrouping == null) {
@@ -591,7 +590,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 		Object[] result = children;
 		if (missingElements.size() > 0) {
-            result = concatenate(result, missingElements.toArray());
+			result = concatenate(result, missingElements.toArray());
 		}
 
 		if (objects != null && objects.length > 0) {
@@ -670,7 +669,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		List<Object> nonCResources = new ArrayList<Object>(objects.length);
 		for (Object object : objects) {
-			Object o= object;
+			Object o = object;
 			// A folder can also be a source root in the following case
 			// Project
 			//  + src <- source folder
@@ -679,7 +678,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			// Included is a member of excluded, but since it is rendered as a source
 			// folder we have to exclude it as a normal child.
 			if (o instanceof IFolder) {
-				IFolder folder = (IFolder)o;
+				IFolder folder = (IFolder) o;
 				ISourceRoot root = null;
 				for (int j = 0; j < roots.length; j++) {
 					if (roots[j].getPath().equals(folder.getFullPath())) {
@@ -690,11 +689,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				// it is a sourceRoot skip it.
 				if (root != null) {
 					if (CCorePlugin.showSourceRootsAtTopOfProject())
-					continue;
+						continue;
 					else
 						o = root;
 				}
-			} else if (o instanceof IFile){
+			} else if (o instanceof IFile) {
 				boolean found = false;
 				for (ICElement binarie : binaries) {
 					IResource res = binarie.getResource();
@@ -723,7 +722,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * Note: This method is for internal use only. Clients should not call this method.
 	 */
 	protected boolean isProjectSourceRoot(ISourceRoot root) {
-		IResource resource= root.getResource();
+		IResource resource = root.getResource();
 		return (resource instanceof IProject);
 	}
 
@@ -732,10 +731,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return false;
 		}
 		if (element instanceof IResource) {
-			return ((IResource)element).exists();
+			return ((IResource) element).exists();
 		}
 		if (element instanceof ICElement) {
-			return ((ICElement)element).exists();
+			return ((ICElement) element).exists();
 		}
 		return true;
 	}
@@ -750,7 +749,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
 		for (ICElement celement : celements) {
 			if (celement instanceof IBinary) {
-				IBinary bin = (IBinary)celement;
+				IBinary bin = (IBinary) celement;
 				list.add(bin);
 			}
 		}
@@ -769,7 +768,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		ArrayList<IArchive> list = new ArrayList<IArchive>(celements.length);
 		for (ICElement celement : celements) {
 			if (celement instanceof IArchive) {
-				IArchive ar = (IArchive)celement;
+				IArchive ar = (IArchive) celement;
 				list.add(ar);
 			}
 		}

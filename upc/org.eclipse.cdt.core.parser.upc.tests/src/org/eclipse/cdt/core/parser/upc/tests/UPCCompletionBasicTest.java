@@ -19,7 +19,8 @@ import org.eclipse.cdt.core.model.ILanguage;
 
 public class UPCCompletionBasicTest extends LRCompletionBasicTest {
 
-	public UPCCompletionBasicTest() { }
+	public UPCCompletionBasicTest() {
+	}
 
 	@Override
 	protected ILanguage getCLanguage() {

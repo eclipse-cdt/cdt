@@ -27,49 +27,48 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  */
 public class CImplicitFunction extends CExternalFunction {
 
-    private IParameter[] parms=null;
-    private IScope scope=null;
-    private boolean takesVarArgs=false;
-    private char[] name=null;
+	private IParameter[] parms = null;
+	private IScope scope = null;
+	private boolean takesVarArgs = false;
+	private char[] name = null;
 
-    public CImplicitFunction(char[] name, IScope scope, IFunctionType type, IParameter[] parms, boolean takesVarArgs) {
-        super(null, null);
-        this.name=name;
-        this.scope=scope;
-        this.type=type;
-        this.parms=parms;
-        this.takesVarArgs=takesVarArgs;
-    }
+	public CImplicitFunction(char[] name, IScope scope, IFunctionType type, IParameter[] parms, boolean takesVarArgs) {
+		super(null, null);
+		this.name = name;
+		this.scope = scope;
+		this.type = type;
+		this.parms = parms;
+		this.takesVarArgs = takesVarArgs;
+	}
 
-
-    @Override
+	@Override
 	public IParameter[] getParameters() {
-        return parms;
-    }
+		return parms;
+	}
 
-    @Override
+	@Override
 	public IFunctionType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public boolean takesVarArgs() {
-        return takesVarArgs;
-    }
+		return takesVarArgs;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return String.valueOf(name);
-    }
+		return String.valueOf(name);
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return scope;
-    }
+		return scope;
+	}
 
 }

@@ -43,8 +43,7 @@ public abstract class QtPDOMVisitor implements IPDOMVisitor {
 		@Override
 		@SuppressWarnings("unchecked")
 		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node != null
-			 && cls.isAssignableFrom(node.getClass()))
+			if (node != null && cls.isAssignableFrom(node.getClass()))
 				list.add((T) node);
 			return true;
 		}
@@ -98,8 +97,7 @@ public abstract class QtPDOMVisitor implements IPDOMVisitor {
 			if (element != null)
 				return false;
 
-			if (cls.isAssignableFrom(node.getClass())
-			 && filter.matches(node))
+			if (cls.isAssignableFrom(node.getClass()) && filter.matches(node))
 				element = (T) node;
 
 			return element == null;

@@ -53,10 +53,11 @@ public class UNCPathConverterTest {
 				// With scheme and host
 				{ new URI("http", "example.com", "/foo/bar", null), Path.fromOSString("//example.com/foo/bar") },
 				// With server-based authority
-				{ new URI("ssh", "user:password", "example.com", 8080, "/foo/bar", null, null), Path.fromOSString("//example.com/foo/bar") },
+				{ new URI("ssh", "user:password", "example.com", 8080, "/foo/bar", null, null),
+						Path.fromOSString("//example.com/foo/bar") },
 				// With Registry-based authority
-				{ new URI("remotetools", "My Connection", "/foo/bar", null, null), Path.fromOSString("//My Connection/foo/bar") }
-		});
+				{ new URI("remotetools", "My Connection", "/foo/bar", null, null),
+						Path.fromOSString("//My Connection/foo/bar") } });
 	}
 
 	@Test

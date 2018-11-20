@@ -40,51 +40,51 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	public CPPTypedef(IASTName name) {
 		// Bug 223020 even though qualified names are not legal, we need to deal with them.
 		if (name != null && name.getParent() instanceof ICPPASTQualifiedName) {
-			name= (IASTName) name.getParent();
+			name = (IASTName) name.getParent();
 		}
 		this.declarations = new IASTName[] { name };
-        if (name != null)
-            name.setBinding(this);
+		if (name != null)
+			name.setBinding(this);
 	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return declarations;
-    }
+		return declarations;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return declarations[0];
-    }
+		return declarations[0];
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType o) {
-        if (o == this)
-            return true;
-	    if (o instanceof ITypedef) {
-            IType t = getType();
+		if (o == this)
+			return true;
+		if (o instanceof ITypedef) {
+			IType t = getType();
 			if (t != null)
-			    return t.isSameType(((ITypedef) o).getType());
+				return t.isSameType(((ITypedef) o).getType());
 			return false;
-	    }
+		}
 
-	    IType t = getType();
-	    if (t != null)
-	        return t.isSameType(o);
-	    return false;
+		IType t = getType();
+		if (t != null)
+			return t.isSameType(o);
+		return false;
 	}
 
 	@Override
 	public IType getType() {
-	    if (type == null) {
-	        type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
-	    }
+		if (type == null) {
+			type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
+		}
 		return type;
 	}
 
 	@Override
 	public void setType(IType t) {
-	    type = t;
+		type = t;
 	}
 
 	@Override
@@ -102,66 +102,65 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 		return CPPVisitor.getContainingScope(declarations[0].getParent());
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen
+		}
+		return t;
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while (scope != null) {
-            if (scope instanceof ICPPBlockScope)
-                return false;
-            scope = scope.getParent();
-        }
-        return true;
-    }
+		IScope scope = getScope();
+		while (scope != null) {
+			if (scope instanceof ICPPBlockScope)
+				return false;
+			scope = scope.getParent();
+		}
+		return true;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {
-	    addDeclaration(node);
+		addDeclaration(node);
 	}
 
 	@Override
 	public void addDeclaration(IASTNode node) {
-	    IASTName name;
+		IASTName name;
 		if (!(node instanceof IASTName)) {
 			return;
 		}
-    	if (node.getParent() instanceof ICPPASTQualifiedName) {
-    		name= (IASTName) node.getParent();
-    	} else {
-    		name= (IASTName) node;
-    	}
+		if (node.getParent() instanceof ICPPASTQualifiedName) {
+			name = (IASTName) node.getParent();
+		} else {
+			name = (IASTName) node;
+		}
 
 		if (declarations == null) {
-	        declarations = new IASTName[] { name };
+			declarations = new IASTName[] { name };
 		} else {
-	        // Keep the lowest offset declaration in [0]
-			if (declarations.length > 0 &&
-					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+			// Keep the lowest offset declaration in [0]
+			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
 				declarations = ArrayUtil.append(IASTName.class, declarations, name);
 			}
-	    }
+		}
 	}
 
 	@Override

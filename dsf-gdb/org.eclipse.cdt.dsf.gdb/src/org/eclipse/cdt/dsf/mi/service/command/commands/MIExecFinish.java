@@ -32,9 +32,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  </p>
  * 
  */
-public class MIExecFinish extends MICommand<MIInfo> 
-{
-    public MIExecFinish(IFrameDMContext dmc) {
-        super(dmc, "-exec-finish"); //$NON-NLS-1$
-    }
+public class MIExecFinish extends MICommand<MIInfo> {
+	public MIExecFinish(IFrameDMContext dmc) {
+		super(dmc, "-exec-finish"); //$NON-NLS-1$
+	}
 }

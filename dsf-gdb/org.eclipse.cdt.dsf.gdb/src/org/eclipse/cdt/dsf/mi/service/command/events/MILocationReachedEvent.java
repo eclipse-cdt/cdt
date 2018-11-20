@@ -26,16 +26,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 @Immutable
 public class MILocationReachedEvent extends MIStoppedEvent {
 
-    protected MILocationReachedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
-        super(ctx, token, results, frame);
-    }
+	protected MILocationReachedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
+		super(ctx, token, results, frame);
+	}
 
-    /**
-     * @since 1.1
-     */
-    public static MILocationReachedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
-    	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-    	return new MILocationReachedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
-    }
+	/**
+	 * @since 1.1
+	 */
+	public static MILocationReachedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MILocationReachedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+	}
 }

@@ -63,5 +63,5 @@ public class MachOBinaryArchive extends BinaryFile implements IBinaryArchive {
 			children.trimToSize();
 		}
 		return children.toArray(new IBinaryObject[0]);
-	}	
+	}
 }

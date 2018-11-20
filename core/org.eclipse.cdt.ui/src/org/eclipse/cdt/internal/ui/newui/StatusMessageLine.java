@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class StatusMessageLine {
 	private CLabel fLabel;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -39,7 +39,7 @@ public class StatusMessageLine {
 	 */
 	public StatusMessageLine(Composite parent, int style, int span) {
 		fLabel = new CLabel(parent, style);
-		if (span!=1) {
+		if (span != 1) {
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = span;
 			fLabel.setLayoutData(gd);

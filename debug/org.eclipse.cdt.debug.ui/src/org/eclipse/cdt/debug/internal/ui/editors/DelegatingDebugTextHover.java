@@ -31,7 +31,7 @@ import org.eclipse.ui.IEditorPart;
  */
 public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
 
-    private IEditorPart fEditor;
+	private IEditorPart fEditor;
 	private ICEditorTextHover fDelegate;
 
 	/*
@@ -41,70 +41,70 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		fDelegate = getDelegate();
 		if (fDelegate != null) {
-	        return fDelegate.getHoverRegion(viewer, offset);
+			return fDelegate.getHoverRegion(viewer, offset);
 		}
 		return null;
 	}
-	
-    /*
-     * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-     */
-    @Override
-	@SuppressWarnings("deprecation")
-    public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-        fDelegate = getDelegate();
-        if (fDelegate != null) {
-            return fDelegate.getHoverInfo(textViewer, hoverRegion);
-        }
-        return null;
-    }
 
-    /*
-     * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-     */
-    @Override
+	/*
+	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	@Override
 	@SuppressWarnings("deprecation")
-    public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-        fDelegate = getDelegate();
-        if (fDelegate instanceof ITextHoverExtension2) {
-            return ((ITextHoverExtension2) fDelegate).getHoverInfo2(textViewer, hoverRegion);
-        }
-        // fall back to legacy method
-        if (fDelegate != null) {
-            return fDelegate.getHoverInfo(textViewer, hoverRegion);
-        }
-        return null;
-    }
+	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+		fDelegate = getDelegate();
+		if (fDelegate != null) {
+			return fDelegate.getHoverInfo(textViewer, hoverRegion);
+		}
+		return null;
+	}
 
-    /*
-     * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
-     */
-    @Override
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	@Override
+	@SuppressWarnings("deprecation")
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
+		fDelegate = getDelegate();
+		if (fDelegate instanceof ITextHoverExtension2) {
+			return ((ITextHoverExtension2) fDelegate).getHoverInfo2(textViewer, hoverRegion);
+		}
+		// fall back to legacy method
+		if (fDelegate != null) {
+			return fDelegate.getHoverInfo(textViewer, hoverRegion);
+		}
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
+	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-        if (fDelegate instanceof ITextHoverExtension) {
-            return ((ITextHoverExtension) fDelegate).getHoverControlCreator();
-        }
-        return null;
-    }
+		if (fDelegate instanceof ITextHoverExtension) {
+			return ((ITextHoverExtension) fDelegate).getHoverControlCreator();
+		}
+		return null;
+	}
 
-    /*
-     * @see org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
-     */
-    @Override
+	/*
+	 * @see org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
+	 */
+	@Override
 	public final void setEditor(IEditorPart editor) {
-        fEditor = editor;
-    }
+		fEditor = editor;
+	}
 
-    private ICEditorTextHover getDelegate() {
-        IAdaptable context = DebugUITools.getDebugContext();
-        if (context != null) {
-            ICEditorTextHover hover = context.getAdapter(ICEditorTextHover.class);
-            if (hover != null) {
-                hover.setEditor(fEditor);
-            }
-            return hover;
-        }
-        return null;
-    }
+	private ICEditorTextHover getDelegate() {
+		IAdaptable context = DebugUITools.getDebugContext();
+		if (context != null) {
+			ICEditorTextHover hover = context.getAdapter(ICEditorTextHover.class);
+			if (hover != null) {
+				hover.setEditor(fEditor);
+			}
+			return hover;
+		}
+		return null;
+	}
 
 }

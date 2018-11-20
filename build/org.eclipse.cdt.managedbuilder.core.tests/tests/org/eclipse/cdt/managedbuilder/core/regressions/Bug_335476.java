@@ -88,12 +88,17 @@ public class Bug_335476 extends AbstractBuilderTest {
 
 					// Check that the Environment manager + the build manager have the variable
 					//  (which tells us how far the variable has got through the system...)
-					String value = envManager.getVariable(VAR_NAME, CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration(), false).getValue();
-					String value2 = buildMacroManager.resolveValue("${" + VAR_NAME + "}", "", ";", CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration());
+					String value = envManager.getVariable(VAR_NAME,
+							CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration(), false)
+							.getValue();
+					String value2 = buildMacroManager.resolveValue("${" + VAR_NAME + "}", "", ";",
+							CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration());
 
-					assertTrue(i + " EnvManager " 	+ expected + " exepected, but was: " + value,    expected.equals(value));
-					assertTrue(i + " CdtVarManager " + expected + " exepected, but was: " + value2,   expected.equals(value2));
-					assertTrue(i + " Makefile: " 	+ expected + " exepected, but was: " + buildVar, expected.equals(buildVar));
+					assertTrue(i + " EnvManager " + expected + " exepected, but was: " + value, expected.equals(value));
+					assertTrue(i + " CdtVarManager " + expected + " exepected, but was: " + value2,
+							expected.equals(value2));
+					assertTrue(i + " Makefile: " + expected + " exepected, but was: " + buildVar,
+							expected.equals(buildVar));
 					found = true;
 				}
 				// Check that we at least matched

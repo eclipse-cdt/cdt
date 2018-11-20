@@ -31,20 +31,21 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	private IMacro[] fAddMacros;
 	private CharArrayIntMap fAddKeywords;
 	private CharArrayIntMap fAddPreprocessorKeywords;
-	
+
 	protected static class MacroDefinition implements IMacro {
 		private final char[] fSignature;
 		private final char[] fExpansion;
-		
+
 		MacroDefinition(char[] signature, char[] expansion) {
-			fSignature= signature;
-			fExpansion= expansion;
+			fSignature = signature;
+			fExpansion = expansion;
 		}
-		
+
 		@Override
 		public char[] getSignature() {
 			return fSignature;
 		}
+
 		@Override
 		public char[] getExpansion() {
 			return fExpansion;
@@ -53,7 +54,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 
 	public AbstractScannerExtensionConfiguration() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#support$InIdentifiers()
 	 */
@@ -70,8 +71,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public boolean supportAtSignInIdentifiers() {
 		return false;
 	}
-	
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @since 5.1
@@ -80,8 +80,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public boolean supportUTFLiterals() {
 		return true;
 	}
-	
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @since 5.1
@@ -114,7 +113,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public boolean supportRawStringLiterals() {
 		return false;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @since 5.11
@@ -133,7 +132,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
 		return fAddPreprocessorKeywords;
 	}
-	
+
 	@Override
 	public CharArrayIntMap getAdditionalKeywords() {
 		return fAddKeywords;
@@ -143,9 +142,9 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public IMacro[] getAdditionalMacros() {
 		if (fAddMacros == null) {
 			if (fAddMacroList == null) {
-				fAddMacros= EMPTY_MACRO_ARRAY;
+				fAddMacros = EMPTY_MACRO_ARRAY;
 			} else {
-				fAddMacros= fAddMacroList.toArray(new IMacro[fAddMacroList.size()]);
+				fAddMacros = fAddMacroList.toArray(new IMacro[fAddMacroList.size()]);
 			}
 		}
 		return fAddMacros;
@@ -164,12 +163,12 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	protected void addMacro(String signature, String value) {
 		if (fAddMacroList == null) {
-			fAddMacroList= new ArrayList<IMacro>();
+			fAddMacroList = new ArrayList<IMacro>();
 		}
 		fAddMacroList.add(new MacroDefinition(signature.toCharArray(), value.toCharArray()));
-		fAddMacros= null;
+		fAddMacros = null;
 	}
-	
+
 	/**
 	 * Adds a preprocessor keyword to the map of additional preprocessor keywords. 
 	 * @param name the name of the keyword
@@ -178,7 +177,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	protected void addPreprocessorKeyword(char[] name, int tokenKind) {
 		if (fAddPreprocessorKeywords == null) {
-			fAddPreprocessorKeywords= new CharArrayIntMap(10, -1);
+			fAddPreprocessorKeywords = new CharArrayIntMap(10, -1);
 		}
 		fAddPreprocessorKeywords.put(name, tokenKind);
 	}
@@ -191,7 +190,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	protected void addKeyword(char[] name, int tokenKind) {
 		if (fAddKeywords == null) {
-			fAddKeywords= new CharArrayIntMap(10, -1);
+			fAddKeywords = new CharArrayIntMap(10, -1);
 		}
 		fAddKeywords.put(name, tokenKind);
 	}
@@ -209,21 +208,21 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	@Deprecated
 	protected static IMacro createFunctionStyleMacro(String name, String value, String[] arguments) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append(name);
 		buf.append('(');
 		for (int i = 0; i < arguments.length; i++) {
-			if (i>0) {
+			if (i > 0) {
 				buf.append(',');
 			}
 			buf.append(arguments[i]);
 		}
 		buf.append(')');
-		char[] signature= new char[buf.length()];
+		char[] signature = new char[buf.length()];
 		buf.getChars(0, signature.length, signature, 0);
 		return new MacroDefinition(signature, value.toCharArray());
 	}
-	
+
 	/**
 	 * @deprecated see {@link IScannerExtensionConfiguration#initializeMacroValuesTo1()}
 	 */

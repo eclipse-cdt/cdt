@@ -20,7 +20,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTOperatorName extends ICPPASTName {
-	
+
 	/**
 	 * @since 5.1
 	 */

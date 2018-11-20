@@ -499,20 +499,17 @@ public class BuildConsolePartitioner
 
 	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		return new BuildOutputStream(this,
-				fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
+		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
 	}
 
 	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
-		return new BuildOutputStream(this,
-				fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
+		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
 	}
 
 	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
-		return new BuildOutputStream(this,
-				fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
+		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}
 
 	/**

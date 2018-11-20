@@ -24,8 +24,7 @@ public class CBuildConfigAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (ICBuildConfiguration.class.equals(adapterType)
-				&& adaptableObject instanceof IBuildConfiguration) {
+		if (ICBuildConfiguration.class.equals(adapterType) && adaptableObject instanceof IBuildConfiguration) {
 			IBuildConfiguration config = (IBuildConfiguration) adaptableObject;
 			try {
 				return (T) manager.getBuildConfiguration(config);

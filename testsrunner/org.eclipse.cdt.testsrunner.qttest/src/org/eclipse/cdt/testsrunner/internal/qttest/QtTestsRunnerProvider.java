@@ -47,10 +47,10 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 			return true;
 		}
 		// "initTestCase" & "cleanupTestCase" are special test case names and they should be skipped too
-		String testName = testPath[testPath.length-1];
+		String testName = testPath[testPath.length - 1];
 		return testName.equals("initTestCase") || testName.equals("cleanupTestCase"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Returns the count of not "special" test paths.
 	 * 
@@ -66,11 +66,10 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public String[] getAdditionalLaunchParameters(String[][] testPaths) throws TestingException {
-		final String[] qtParameters = {
-			"-xml", //$NON-NLS-1$
+		final String[] qtParameters = { "-xml", //$NON-NLS-1$
 		};
 		String[] result = qtParameters;
 
@@ -80,7 +79,7 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 			if ((testPathsLength == 0) != (testPaths.length == 0)) {
 				throw new TestingException(QtTestsRunnerMessages.QtTestsRunner_no_test_cases_to_rerun);
 			}
-			
+
 			// Build tests filter
 			if (testPathsLength >= 1) {
 				result = new String[qtParameters.length + testPathsLength];
@@ -89,7 +88,7 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 				for (int i = 0; i < testPaths.length; i++) {
 					String[] testPath = testPaths[i];
 					if (!isSpecialTestPath(testPath)) {
-						result[resultIdx] = testPath[testPath.length-1];
+						result[resultIdx] = testPath[testPath.length - 1];
 						resultIdx++;
 					}
 				}
@@ -97,35 +96,38 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 		}
 		return result;
 	}
-	
-    /**
-     * Construct the error message from prefix and detailed description.
-     *
-     * @param prefix prefix
-     * @param description detailed description
-     * @return the full message
-     */
+
+	/**
+	 * Construct the error message from prefix and detailed description.
+	 *
+	 * @param prefix prefix
+	 * @param description detailed description
+	 * @return the full message
+	 */
 	private String getErrorText(String prefix, String description) {
 		return MessageFormat.format(QtTestsRunnerMessages.QtTestsRunner_error_format, prefix, description);
 	}
-	
+
 	@Override
 	public void run(ITestModelUpdater modelUpdater, InputStream inputStream) throws TestingException {
 		try {
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
 			sp.parse(inputStream, new QtXmlLogHandler(modelUpdater));
-			
+
 		} catch (IOException e) {
-			throw new TestingException(getErrorText(QtTestsRunnerMessages.QtTestsRunner_io_error_prefix, e.getLocalizedMessage()));
-			
+			throw new TestingException(
+					getErrorText(QtTestsRunnerMessages.QtTestsRunner_io_error_prefix, e.getLocalizedMessage()));
+
 		} catch (ParserConfigurationException e) {
-			throw new TestingException(getErrorText(QtTestsRunnerMessages.QtTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
+			throw new TestingException(
+					getErrorText(QtTestsRunnerMessages.QtTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
 
 		} catch (SAXException e) {
-			throw new TestingException(getErrorText(QtTestsRunnerMessages.QtTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
+			throw new TestingException(
+					getErrorText(QtTestsRunnerMessages.QtTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
 		}
-		
+
 	}
 
 }

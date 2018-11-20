@@ -50,13 +50,13 @@ public class CPathFilterPage extends WizardPage {
 	private List<IPathEntry> fPaths;
 	private List<?> fExclusions;
 	private ViewerFilter filter;
-	
+
 	protected ICElement fCElement;
 
 	protected CPathFilterPage(ICElement cElement, int[] filterType) {
 		super("CPathFilterPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.CPathFilterPage_title); 
-		setDescription(CPathEntryMessages.CPathFilterPage_description); 
+		setTitle(CPathEntryMessages.CPathFilterPage_title);
+		setDescription(CPathEntryMessages.CPathFilterPage_description);
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		fFilterType = filterType;
 		fCElement = cElement;
@@ -70,7 +70,7 @@ public class CPathFilterPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(CPathEntryMessages.CPathFilterPage_label); 
+		label.setText(CPathEntryMessages.CPathFilterPage_label);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -113,7 +113,8 @@ public class CPathFilterPage extends WizardPage {
 			}
 		} else if (fParentEntry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 			try {
-				IPathEntryContainer container = CoreModel.getPathEntryContainer(fParentEntry.getPath(), fCElement.getCProject());
+				IPathEntryContainer container = CoreModel.getPathEntryContainer(fParentEntry.getPath(),
+						fCElement.getCProject());
 				if (container != null) {
 					fPaths = Arrays.asList(container.getPathEntries());
 				}
@@ -123,7 +124,6 @@ public class CPathFilterPage extends WizardPage {
 		createExlusions(fParentEntry.getEntryKind() == IPathEntry.CDT_PROJECT);
 	}
 
-	
 	private void createExlusions(boolean showExported) {
 		fExclusions = new ArrayList<Object>();
 		if (filter != null) {

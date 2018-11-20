@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -52,50 +52,50 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class TypeHierarchyUI {
-	private static final int INDEX_SEARCH_OPTION = IIndexManager.ADD_DEPENDENCIES
-			| IIndexManager.ADD_DEPENDENT | IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY;
+	private static final int INDEX_SEARCH_OPTION = IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT
+			| IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY;
 
 	public static THViewPart open(ICElement input, IWorkbenchWindow window) {
-        if (!isValidInput(input)) {
-        	return null;
-        }
-        ICElement memberInput= null;
-        if (!isValidTypeInput(input)) {
-        	memberInput= input;
-        	input= memberInput.getParent();
-        	if (!isValidTypeInput(input)) {
-        		ICElement[] inputs= findInput(memberInput);
-        		if (inputs != null) {
-        			input= inputs[0];
-        			memberInput= inputs[1];
-        		}
-        	}
-        }
-        		
-        if (isValidTypeInput(input)) {
-        	return openInViewPart(window, input, memberInput);
-        }
-        return null;
-    }
+		if (!isValidInput(input)) {
+			return null;
+		}
+		ICElement memberInput = null;
+		if (!isValidTypeInput(input)) {
+			memberInput = input;
+			input = memberInput.getParent();
+			if (!isValidTypeInput(input)) {
+				ICElement[] inputs = findInput(memberInput);
+				if (inputs != null) {
+					input = inputs[0];
+					memberInput = inputs[1];
+				}
+			}
+		}
 
-    private static THViewPart openInViewPart(IWorkbenchWindow window, ICElement input, ICElement member) {
-        IWorkbenchPage page= window.getActivePage();
-        try {
-            THViewPart result= (THViewPart)page.showView(CUIPlugin.ID_TYPE_HIERARCHY);
-            result.setInput(input, member);
-            return result;
-        } catch (CoreException e) {
-            ExceptionHandler.handle(e, window.getShell(), Messages.TypeHierarchyUI_OpenTypeHierarchy, null); 
-        }
-        return null;        
-    }
+		if (isValidTypeInput(input)) {
+			return openInViewPart(window, input, memberInput);
+		}
+		return null;
+	}
+
+	private static THViewPart openInViewPart(IWorkbenchWindow window, ICElement input, ICElement member) {
+		IWorkbenchPage page = window.getActivePage();
+		try {
+			THViewPart result = (THViewPart) page.showView(CUIPlugin.ID_TYPE_HIERARCHY);
+			result.setInput(input, member);
+			return result;
+		} catch (CoreException e) {
+			ExceptionHandler.handle(e, window.getShell(), Messages.TypeHierarchyUI_OpenTypeHierarchy, null);
+		}
+		return null;
+	}
 
 	public static ICElement[] getInput(final ITextEditor editor, IRegion region) {
 		if (editor != null) {
 			final IEditorInput editorInput = editor.getEditorInput();
 			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 			if (inputCElement != null) {
-				final ICProject project= inputCElement.getCProject();
+				final ICProject project = inputCElement.getCProject();
 				try {
 					return findInput(project, editorInput, region);
 				} catch (CoreException e) {
@@ -106,34 +106,35 @@ public class TypeHierarchyUI {
 		return null;
 	}
 
-    public static void open(final ITextEditor editor, final ITextSelection sel) {
+	public static void open(final ITextEditor editor, final ITextSelection sel) {
 		if (editor != null) {
-			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager()
+					.getWorkingCopy(editor.getEditorInput());
 			if (inputCElement != null) {
-				final ICProject project= inputCElement.getCProject();
+				final ICProject project = inputCElement.getCProject();
 				final IEditorInput editorInput = editor.getEditorInput();
-				final Display display= Display.getCurrent();
+				final Display display = Display.getCurrent();
 
-				Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
+				Job job = new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							StatusLineHandler.clearStatusLine(editor.getSite());
-							IRegion reg= new Region(sel.getOffset(), sel.getLength());
-							final ICElement[] elems= findInput(project, editorInput, reg);
+							IRegion reg = new Region(sel.getOffset(), sel.getLength());
+							final ICElement[] elems = findInput(project, editorInput, reg);
 							if (elems != null && elems.length == 2) {
 								display.asyncExec(new Runnable() {
 									@Override
 									public void run() {
 										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
-									}});
+									}
+								});
 							} else {
-								StatusLineHandler.showStatusLineMessage(editor.getSite(), 
+								StatusLineHandler.showStatusLineMessage(editor.getSite(),
 										Messages.TypeHierarchyUI_OpenFailure_message);
 							}
 							return Status.OK_STATUS;
-						} 
-						catch (CoreException e) {
+						} catch (CoreException e) {
 							return e.getStatus();
 						}
 					}
@@ -142,80 +143,75 @@ public class TypeHierarchyUI {
 				job.schedule();
 			}
 		}
-    }
-    
-	private static ICElement[] findInput(ICProject project, IEditorInput editorInput, IRegion sel) throws CoreException {
+	}
+
+	private static ICElement[] findInput(ICProject project, IEditorInput editorInput, IRegion sel)
+			throws CoreException {
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 
 			index.acquireReadLock();
 			try {
-				IASTName name= IndexUI.getSelectedName(editorInput, sel);
+				IASTName name = IndexUI.getSelectedName(editorInput, sel);
 				if (name != null) {
-					IBinding binding= name.resolveBinding();
+					IBinding binding = name.resolveBinding();
 					if (!isValidInput(binding)) {
 						return null;
 					}
-					ICElement member= null;
+					ICElement member = null;
 					if (!isValidTypeInput(binding)) {
-						member= findDeclaration(project, index, name, binding);
-						name= null;
-						binding= findTypeBinding(binding);
+						member = findDeclaration(project, index, name, binding);
+						name = null;
+						binding = findTypeBinding(binding);
 					}
 					if (isValidTypeInput(binding)) {
-						ICElement input= findDefinition(project, index, name, binding);
+						ICElement input = findDefinition(project, index, name, binding);
 						if (input != null) {
-							return new ICElement[] {input, member};
+							return new ICElement[] { input, member };
 						}
 					}
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 		return null;
 	}
 
-	private static ICElement[] findInput(ICElement member)  {
-		ICProject project= member.getCProject();
+	private static ICElement[] findInput(ICElement member) {
+		ICProject project = member.getCProject();
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 			index.acquireReadLock();
 			try {
-				IIndexName name= IndexUI.elementToName(index, member);
+				IIndexName name = IndexUI.elementToName(index, member);
 				if (name != null) {
-					member= IndexUI.getCElementForName(project, index, name);
-					IBinding binding= index.findBinding(name);
-					binding= findTypeBinding(binding);
+					member = IndexUI.getCElementForName(project, index, name);
+					IBinding binding = index.findBinding(name);
+					binding = findTypeBinding(binding);
 					if (isValidTypeInput(binding)) {
-						ICElement input= findDefinition(project, index, null, binding);
+						ICElement input = findDefinition(project, index, null, binding);
 						if (input != null) {
-							return new ICElement[] {input, member};
+							return new ICElement[] { input, member };
 						}
 					}
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 		return null;
 	}
 
 	private static IBinding findTypeBinding(IBinding memberBinding) {
 		if (memberBinding instanceof IEnumerator) {
-			IType type= ((IEnumerator) memberBinding).getType();
+			IType type = ((IEnumerator) memberBinding).getType();
 			if (type instanceof IBinding) {
 				return (IBinding) type;
 			}
@@ -227,26 +223,26 @@ public class TypeHierarchyUI {
 		return null;
 	}
 
-	private static ICElement findDefinition(ICProject project, IIndex index, IASTName name, IBinding binding) 
+	private static ICElement findDefinition(ICProject project, IIndex index, IASTName name, IBinding binding)
 			throws CoreException {
 		if (name != null && name.isDefinition()) {
 			return IndexUI.getCElementForName(project, index, name);
 		}
 
-		ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
+		ICElement[] elems = IndexUI.findAllDefinitions(index, binding);
 		if (elems.length > 0) {
 			return elems[0];
 		}
 		return IndexUI.findAnyDeclaration(index, project, binding);
 	}
 
-	private static ICElement findDeclaration(ICProject project, IIndex index, IASTName name, IBinding binding) 
+	private static ICElement findDeclaration(ICProject project, IIndex index, IASTName name, IBinding binding)
 			throws CoreException {
 		if (name != null && name.isDefinition()) {
 			return IndexUI.getCElementForName(project, index, name);
 		}
 
-		ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
+		ICElement[] elems = IndexUI.findAllDefinitions(index, binding);
 		if (elems.length > 0) {
 			return elems[0];
 		}
@@ -254,9 +250,7 @@ public class TypeHierarchyUI {
 	}
 
 	public static boolean isValidInput(IBinding binding) {
-		if (isValidTypeInput(binding)
-				|| binding instanceof ICPPMember
-				|| binding instanceof IEnumerator
+		if (isValidTypeInput(binding) || binding instanceof ICPPMember || binding instanceof IEnumerator
 				|| binding instanceof IField) {
 			return true;
 		}
@@ -264,9 +258,7 @@ public class TypeHierarchyUI {
 	}
 
 	public static boolean isValidTypeInput(IBinding binding) {
-		if (binding instanceof ICompositeType
-				|| binding instanceof IEnumeration 
-				|| binding instanceof ITypedef) {
+		if (binding instanceof ICompositeType || binding instanceof IEnumeration || binding instanceof ITypedef) {
 			return true;
 		}
 		return false;
@@ -304,12 +296,12 @@ public class TypeHierarchyUI {
 		case ICElement.C_UNION_DECLARATION:
 		case ICElement.C_ENUMERATION:
 		case ICElement.C_TYPEDEF:
-//		case ICElement.C_TEMPLATE_CLASS:
-//		case ICElement.C_TEMPLATE_CLASS_DECLARATION:
-//		case ICElement.C_TEMPLATE_STRUCT:
-//		case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
-//		case ICElement.C_TEMPLATE_UNION:
-//		case ICElement.C_TEMPLATE_UNION_DECLARATION:
+			//		case ICElement.C_TEMPLATE_CLASS:
+			//		case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+			//		case ICElement.C_TEMPLATE_STRUCT:
+			//		case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
+			//		case ICElement.C_TEMPLATE_UNION:
+			//		case ICElement.C_TEMPLATE_UNION_DECLARATION:
 			return true;
 		}
 		return false;

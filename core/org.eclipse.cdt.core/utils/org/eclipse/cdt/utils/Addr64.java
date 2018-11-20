@@ -89,18 +89,16 @@ public class Addr64 implements IAddress, Serializable {
 		if (addr.signum() == -1) {
 			throw new IllegalArgumentException("Invalid Address, must be positive value"); //$NON-NLS-1$
 		}
-		if (addr.bitLength() > 64 ) {
+		if (addr.bitLength() > 64) {
 			if (truncate) {
 				return addr.and(MAX.getValue()); // truncate
-			}
-			else {
+			} else {
 				throw (new NumberFormatException(Messages.Addr_valueOutOfRange));
 			}
 		}
 		return addr;
 	}
-	
-	
+
 	@Override
 	public IAddress add(BigInteger offset) {
 		return new Addr64(this.address.add(offset));
@@ -141,8 +139,8 @@ public class Addr64 implements IAddress, Serializable {
 		if (!(other instanceof IAddress)) {
 			throw new IllegalArgumentException();
 		}
-		
-		return getValue().compareTo(((IAddress)other).getValue());
+
+		return getValue().compareTo(((IAddress) other).getValue());
 	}
 
 	@Override
@@ -151,7 +149,7 @@ public class Addr64 implements IAddress, Serializable {
 			return true;
 		if (!(x instanceof IAddress))
 			return false;
-		return getValue().equals(((IAddress)x).getValue());
+		return getValue().equals(((IAddress) x).getValue());
 	}
 
 	@Override
@@ -181,7 +179,7 @@ public class Addr64 implements IAddress, Serializable {
 		sb.append(addressString);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @since 5.4
 	 */
@@ -196,7 +194,7 @@ public class Addr64 implements IAddress, Serializable {
 		sb.append(addressString);
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String toBinaryAddressString() {
 		String addressString = address.toString(2);
@@ -220,4 +218,3 @@ public class Addr64 implements IAddress, Serializable {
 		return BYTES_NUM;
 	}
 }
-

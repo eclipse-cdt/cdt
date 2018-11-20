@@ -132,8 +132,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 			}
 		}
 
-		return (result == null) ? Collections.<ICConfigurationDescription> emptyList() : Arrays
-				.asList(result);
+		return (result == null) ? Collections.<ICConfigurationDescription>emptyList() : Arrays.asList(result);
 	}
 
 	@Override
@@ -169,13 +168,13 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		ICConfigurationDescription config = resolveSelectedConfiguration();
 
 		if (config == null) {
-			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
-					WorkingSetMessages.WSProjConfig_noConfig, getProjectName()));
+			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+					NLS.bind(WorkingSetMessages.WSProjConfig_noConfig, getProjectName()));
 		} else {
 			if (!isActive()) {
 				activate();
-				result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
-						WorkingSetMessages.WSProjConfig_activatedWarning, config.getName(), getProjectName()));
+				result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+						NLS.bind(WorkingSetMessages.WSProjConfig_activatedWarning, config.getName(), getProjectName()));
 			}
 
 			monitor = SubMonitor.convert(monitor);
@@ -211,8 +210,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 	}
 
 	@Override
-	public ISnapshot createSnapshot(IWorkingSetConfiguration.ISnapshot workingSetConfig,
-			WorkspaceSnapshot workspace) {
+	public ISnapshot createSnapshot(IWorkingSetConfiguration.ISnapshot workingSetConfig, WorkspaceSnapshot workspace) {
 
 		return new Snapshot(workingSetConfig, this, workspace);
 	}
@@ -228,8 +226,8 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 	 * 
 	 * @since 6.0
 	 */
-	public static class Snapshot extends WorkingSetProjectConfiguration implements
-			IWorkingSetProjectConfiguration.ISnapshot {
+	public static class Snapshot extends WorkingSetProjectConfiguration
+			implements IWorkingSetProjectConfiguration.ISnapshot {
 
 		private final IProject project;
 		private final WorkspaceSnapshot workspace;

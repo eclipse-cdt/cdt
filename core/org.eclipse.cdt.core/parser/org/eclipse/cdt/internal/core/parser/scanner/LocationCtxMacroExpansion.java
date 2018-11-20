@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
@@ -30,13 +30,14 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	private final ImageLocationInfo[] fLocationInfos;
 	private final ASTMacroReferenceName fExpansionName;
 
-	public LocationCtxMacroExpansion(LocationMap map, LocationCtxContainer parent, int parentOffset, int parentEndOffset,
-			int sequenceNumber, int length, ImageLocationInfo[] imageLocations,	ASTMacroReferenceName expansionName) {
+	public LocationCtxMacroExpansion(LocationMap map, LocationCtxContainer parent, int parentOffset,
+			int parentEndOffset, int sequenceNumber, int length, ImageLocationInfo[] imageLocations,
+			ASTMacroReferenceName expansionName) {
 		super(parent, parentOffset, parentEndOffset, sequenceNumber);
-		fLocationMap= map;
-		fLength= length;
-		fLocationInfos= imageLocations;
-		fExpansionName= expansionName;
+		fLocationMap = map;
+		fLength = length;
+		fLocationInfos = imageLocations;
+		fExpansionName = expansionName;
 		if (!(expansionName.getParent() instanceof ASTMacroExpansion)) {
 			throw new IllegalArgumentException(expansionName.toString() + " is not a macro expansion name"); //$NON-NLS-1$
 		}
@@ -46,31 +47,31 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	public int getSequenceLength() {
 		return fLength;
 	}
-	
+
 	@Override
 	public void collectLocations(int start, int length, ArrayList<IASTNodeLocation> locations) {
-		final int offset= start - fSequenceNumber;
+		final int offset = start - fSequenceNumber;
 		assert offset >= 0 && length >= 0;
-		
+
 		if (offset + length <= fLength) {
 			locations.add(new ASTMacroExpansionLocation(this, offset, length));
 		} else {
-			locations.add(new ASTMacroExpansionLocation(this, offset, fLength-offset));
+			locations.add(new ASTMacroExpansionLocation(this, offset, fLength - offset));
 		}
-	}	
-	
+	}
+
 	public ASTMacroExpansion getExpansion() {
 		return (ASTMacroExpansion) fExpansionName.getParent();
 	}
-	
+
 	public ASTMacroReferenceName getMacroReference() {
 		return fExpansionName;
 	}
-	
+
 	public IASTPreprocessorMacroDefinition getMacroDefinition() {
 		return fLocationMap.getMacroDefinition((IMacroBinding) fExpansionName.getBinding());
 	}
-	
+
 	@Override
 	public LocationCtxMacroExpansion findEnclosingMacroExpansion(int sequenceNumber, int length) {
 		return this;
@@ -80,16 +81,16 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		if (length == 0) {
 			return null;
 		}
-		final int end= offset + length;
-		int nextToCheck= offset;
-		ImageLocationInfo firstInfo= null;
-		ImageLocationInfo lastInfo= null;
+		final int end = offset + length;
+		int nextToCheck = offset;
+		ImageLocationInfo firstInfo = null;
+		ImageLocationInfo lastInfo = null;
 		for (ImageLocationInfo info : fLocationInfos) {
 			if (info.fTokenOffsetInExpansion == nextToCheck) {
 				if (firstInfo == null || lastInfo == null) {
-					firstInfo= lastInfo= info;
+					firstInfo = lastInfo = info;
 				} else if (lastInfo.canConcatenate(info)) {
-					lastInfo= info;
+					lastInfo = info;
 				} else {
 					return null;
 				}
@@ -106,7 +107,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	public ASTPreprocessorName[] getNestedMacroReferences() {
 		return fLocationMap.getNestedMacroReferences((ASTMacroExpansion) fExpansionName.getParent());
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Expansion of " + fExpansionName.toString(); //$NON-NLS-1$

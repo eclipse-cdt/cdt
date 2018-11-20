@@ -359,7 +359,7 @@ public class SerialPort {
 	public boolean isOpen() {
 		return isOpen;
 	}
-	
+
 	public void pause() throws IOException {
 		if (!isOpen) {
 			return;

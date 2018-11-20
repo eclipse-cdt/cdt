@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
  *
  */
 public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
-	
 
 	/**
 	 * Is the const modifier used?
@@ -96,7 +95,7 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 	 *            boolean
 	 */
 	public void setVariableSized(boolean value);
-	
+
 	/**
 	 */
 	public IXlcCPPASTModifiedArrayModifier copy();

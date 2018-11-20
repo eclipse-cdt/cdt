@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IBuildConfiguration;
  *
  * @since 3.0
  */
-public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
+public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo {
 	private Object fContextObject;
 	private ICoreEnvironmentVariableSupplier fContextSuppliers[];
 
@@ -31,11 +31,11 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	 *
 	 * @param context
 	 */
-	public DefaultEnvironmentContextInfo(Object context){
+	public DefaultEnvironmentContextInfo(Object context) {
 		fContextObject = context;
 	}
 
-	protected DefaultEnvironmentContextInfo(Object context, ICoreEnvironmentVariableSupplier suppliers[]){
+	protected DefaultEnvironmentContextInfo(Object context, ICoreEnvironmentVariableSupplier suppliers[]) {
 		fContextSuppliers = suppliers;
 		fContextObject = context;
 	}
@@ -43,15 +43,17 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	/*
 	 * answers the list of suppliers that should be used for the given context
 	 */
-	protected ICoreEnvironmentVariableSupplier[] getSuppliers(Object context){
+	protected ICoreEnvironmentVariableSupplier[] getSuppliers(Object context) {
 		ICoreEnvironmentVariableSupplier suppliers[];
-		if(context instanceof ICConfigurationDescription)
-			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fUserSupplier,EnvironmentVariableManager.fExternalSupplier};
+		if (context instanceof ICConfigurationDescription)
+			suppliers = new ICoreEnvironmentVariableSupplier[] { EnvironmentVariableManager.fUserSupplier,
+					EnvironmentVariableManager.fExternalSupplier };
 		else if (context instanceof IBuildConfiguration)
-			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fBuildConfigSupplier, EnvironmentVariableManager.fToolChainSupplier,
-					EnvironmentVariableManager.fUserSupplier};
+			suppliers = new ICoreEnvironmentVariableSupplier[] { EnvironmentVariableManager.fBuildConfigSupplier,
+					EnvironmentVariableManager.fToolChainSupplier, EnvironmentVariableManager.fUserSupplier };
 		else
-			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fUserSupplier, EnvironmentVariableManager.fEclipseSupplier};
+			suppliers = new ICoreEnvironmentVariableSupplier[] { EnvironmentVariableManager.fUserSupplier,
+					EnvironmentVariableManager.fEclipseSupplier };
 		return suppliers;
 	}
 
@@ -59,9 +61,9 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getNext()
 	 */
 	@Override
-	public IEnvironmentContextInfo getNext(){
+	public IEnvironmentContextInfo getNext() {
 		DefaultEnvironmentContextInfo next = null;
-		if(fContextObject instanceof ICConfigurationDescription) {
+		if (fContextObject instanceof ICConfigurationDescription) {
 			next = new DefaultEnvironmentContextInfo(null);
 			if (next.getSuppliers() == null)
 				next = null;
@@ -73,13 +75,13 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getSuppliers()
 	 */
 	@Override
-	public ICoreEnvironmentVariableSupplier[] getSuppliers(){
-		if(fContextSuppliers == null)
+	public ICoreEnvironmentVariableSupplier[] getSuppliers() {
+		if (fContextSuppliers == null)
 			fContextSuppliers = getSuppliers(fContextObject);
 		return fContextSuppliers;
 	}
 
-	protected void setSuppliers(ICoreEnvironmentVariableSupplier suppliers[]){
+	protected void setSuppliers(ICoreEnvironmentVariableSupplier suppliers[]) {
 		fContextSuppliers = suppliers;
 	}
 
@@ -87,7 +89,7 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getContext()
 	 */
 	@Override
-	public Object getContext(){
+	public Object getContext() {
 		return fContextObject;
 	}
 }

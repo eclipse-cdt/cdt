@@ -25,13 +25,13 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 
-public class CProjectDescriptionListener implements	ICProjectDescriptionListener {
+public class CProjectDescriptionListener implements ICProjectDescriptionListener {
 	private PDOMManager fIndexManager;
 	private IndexerSetupParticipant fIndexerSetupParticipant;
 
 	public CProjectDescriptionListener(PDOMManager manager) {
-		fIndexManager= manager;
-		fIndexerSetupParticipant= createIndexerSetupParticipant();
+		fIndexManager = manager;
+		fIndexerSetupParticipant = createIndexerSetupParticipant();
 		manager.addIndexerSetupParticipant(fIndexerSetupParticipant);
 	}
 
@@ -46,16 +46,16 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 
 	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
-		ICProjectDescription old= event.getOldCProjectDescription();
-		ICProjectDescription act= event.getNewCProjectDescription();
+		ICProjectDescription old = event.getOldCProjectDescription();
+		ICProjectDescription act = event.getNewCProjectDescription();
 		if (act != null) {
 			if (completedProjectCreation(old, act)) {
-				ICProject project= getProject(event);
+				ICProject project = getProject(event);
 				if (project != null) {
 					fIndexerSetupParticipant.notifyIndexerSetup(project);
 				}
 			} else if (old != null && changedDefaultSettingConfiguration(old, act)) {
-				ICProject project= getProject(event);
+				ICProject project = getProject(event);
 				if (project != null) {
 					if (IndexerPreferences.getReindexOnConfigChange(project.getProject())) {
 						fIndexManager.reindex(project);
@@ -66,11 +66,11 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 	}
 
 	private boolean changedDefaultSettingConfiguration(ICProjectDescription old, ICProjectDescription act) {
-		ICConfigurationDescription oldConfig= old.getDefaultSettingConfiguration();
-		ICConfigurationDescription newConfig= act.getDefaultSettingConfiguration();
+		ICConfigurationDescription oldConfig = old.getDefaultSettingConfiguration();
+		ICConfigurationDescription newConfig = act.getDefaultSettingConfiguration();
 		if (oldConfig != null && newConfig != null) {
-			String oldID= oldConfig.getId();
-			String newID= newConfig.getId();
+			String oldID = oldConfig.getId();
+			String newID = newConfig.getId();
 			if (oldID != null && newID != null) {
 				if (!oldID.equals(newID)) {
 					return true;
@@ -81,7 +81,7 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 	}
 
 	private ICProject getProject(CProjectDescriptionEvent event) {
-		IProject project= event.getProject();
+		IProject project = event.getProject();
 		if (project != null && project.isOpen()) {
 			return CoreModel.getDefault().create(project);
 		}
@@ -91,7 +91,8 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 	protected boolean isProjectCreationComplete(IProject project) {
 		// Check for a project that has been created by the new project wizard just
 		// just for the purpose of editing preferences (Advanced button)
-		ICProjectDescription desc= CProjectDescriptionManager.getInstance().getProjectDescription(project.getProject(), false, false);
+		ICProjectDescription desc = CProjectDescriptionManager.getInstance().getProjectDescription(project.getProject(),
+				false, false);
 		return desc == null || !desc.isCdtProjectCreating();
 	}
 

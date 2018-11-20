@@ -24,7 +24,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MIInterpreterExecConsoleKill extends MIInterpreterExecConsole<MIInfo> {
 
-    public MIInterpreterExecConsoleKill(IMIContainerDMContext ctx) {
-        super(ctx, "kill"); //$NON-NLS-1$
-    }
+	public MIInterpreterExecConsoleKill(IMIContainerDMContext ctx) {
+		super(ctx, "kill"); //$NON-NLS-1$
+	}
 }

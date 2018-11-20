@@ -62,12 +62,13 @@ public class OverrideIndicatorImageProvider implements IAnnotationImageProvider 
 		assert false;
 		return null;
 	}
-	
+
 	private boolean isImageProviderFor(Annotation annotation) {
-		return annotation != null && OverrideIndicatorManager.OverrideIndicator.ANNOTATION_TYPE_ID.equals(annotation.getType());
+		return annotation != null
+				&& OverrideIndicatorManager.OverrideIndicator.ANNOTATION_TYPE_ID.equals(annotation.getType());
 	}
-	
+
 	private int getAnnotationType(Annotation annotation) {
-		return ((OverrideIndicatorManager.OverrideIndicator)annotation).getIndicationType();
+		return ((OverrideIndicatorManager.OverrideIndicator) annotation).getIndicationType();
 	}
 }

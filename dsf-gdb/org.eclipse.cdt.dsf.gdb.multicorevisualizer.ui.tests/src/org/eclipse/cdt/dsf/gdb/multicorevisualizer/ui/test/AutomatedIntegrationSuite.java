@@ -18,14 +18,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-
 @RunWith(Suite.class)
 
 // Add additional test case classes below
-@SuiteClasses({
-    PersistentSettingsManagerTest.class,
-    VisualizerVirtualBoundsGraphicObjectTest.class,
-})	
+@SuiteClasses({ PersistentSettingsManagerTest.class, VisualizerVirtualBoundsGraphicObjectTest.class, })
 public class AutomatedIntegrationSuite {
 	// Often overriding BeforeClass method here
 }

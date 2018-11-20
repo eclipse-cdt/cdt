@@ -31,7 +31,7 @@ public class CompositeCPPUnknownScope extends CPPUnknownTypeScope implements IIn
 	public IIndexName getScopeName() {
 		return null;
 	}
-	
+
 	@Override
 	public IIndexScope getParent() {
 		try {
@@ -40,7 +40,7 @@ public class CompositeCPPUnknownScope extends CPPUnknownTypeScope implements IIn
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) super.getScopeType();

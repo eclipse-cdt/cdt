@@ -24,13 +24,13 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentDictionary;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 
 public class NullDocCommentViewerConfiguration implements IDocCommentViewerConfiguration {
-	public static final IDocCommentViewerConfiguration INSTANCE= new NullDocCommentViewerConfiguration();
-	
+	public static final IDocCommentViewerConfiguration INSTANCE = new NullDocCommentViewerConfiguration();
+
 	public NullDocCommentViewerConfiguration() {
 	}
-	
+
 	@Override
-	public IAutoEditStrategy createAutoEditStrategy() {		
+	public IAutoEditStrategy createAutoEditStrategy() {
 		return null;
 	}
 
@@ -53,7 +53,7 @@ public class NullDocCommentViewerConfiguration implements IDocCommentViewerConfi
 	public boolean isDocumentationComment(IDocument doc, int offset, int length) {
 		return false;
 	}
-	
+
 	@Override
 	public IDocCommentDictionary getSpellingDictionary() {
 		return null;

@@ -78,8 +78,7 @@ public class RemoteDebuggerTab extends CDebuggerTab {
 			return;
 		}
 		// Ask the dynamic UI to create its Control
-		debuggerPage
-				.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+		debuggerPage.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		debuggerPage.createControl(dynamicTabHolder);
 		debuggerPage.getControl().setVisible(true);
 		dynamicTabHolder.layout(true);

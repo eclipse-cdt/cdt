@@ -26,7 +26,7 @@ class IfFlowInfo extends FlowInfo {
 		if (thenPart == null && elsePart == null)
 			return;
 
-		GenericConditionalFlowInfo cond= new GenericConditionalFlowInfo();
+		GenericConditionalFlowInfo cond = new GenericConditionalFlowInfo();
 		if (thenPart != null)
 			cond.merge(thenPart, context);
 
@@ -39,4 +39,3 @@ class IfFlowInfo extends FlowInfo {
 		mergeSequential(cond, context);
 	}
 }
-

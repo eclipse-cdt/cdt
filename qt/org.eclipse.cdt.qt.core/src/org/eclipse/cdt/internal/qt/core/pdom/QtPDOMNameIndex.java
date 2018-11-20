@@ -58,7 +58,7 @@ public class QtPDOMNameIndex {
 			return Collections.emptyList();
 
 		List<PDOMName> names = new ArrayList<PDOMName>();
-		for(long node = db.getRecPtr(finder.headRec); node != 0; node = db.getRecPtr(node + Database.PTR_SIZE))
+		for (long node = db.getRecPtr(finder.headRec); node != 0; node = db.getRecPtr(node + Database.PTR_SIZE))
 			names.add(new PDOMName(qtLinkage, db.getRecPtr(node)));
 		return names;
 	}
@@ -104,7 +104,7 @@ public class QtPDOMNameIndex {
 		// Walk the list to find this record.  If found then update the previous node to
 		// point to the one after node.
 		long prev = finder.headRec;
-		for(long node = db.getRecPtr(prev); node != 0; node = db.getRecPtr(prev)) {
+		for (long node = db.getRecPtr(prev); node != 0; node = db.getRecPtr(prev)) {
 			long rec = db.getRecPtr(node);
 			if (rec == qmlRec) {
 				long next = db.getRecPtr(node + Database.PTR_SIZE);

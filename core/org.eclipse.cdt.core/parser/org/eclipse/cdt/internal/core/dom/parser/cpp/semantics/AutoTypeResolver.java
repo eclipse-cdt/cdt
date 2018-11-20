@@ -34,10 +34,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
  */
 class AutoTypeResolver implements ICPPFunctionTemplate {
 	// Template parameter of the function. This parameter is used in place of 'auto' keyword.
-	public static final ICPPTemplateTypeParameter AUTO_TYPE =
-			new CPPTemplateTypeParameter(new CPPASTName(), false);
-	private static final ICPPTemplateTypeParameter[] TEMPLATE_PARAMETERS =
-			new ICPPTemplateTypeParameter[] { AUTO_TYPE };
+	public static final ICPPTemplateTypeParameter AUTO_TYPE = new CPPTemplateTypeParameter(new CPPASTName(), false);
+	private static final ICPPTemplateTypeParameter[] TEMPLATE_PARAMETERS = new ICPPTemplateTypeParameter[] {
+			AUTO_TYPE };
 	private static final String UNEXPECTED_CALL = "Unexpected call"; //$NON-NLS-1$
 	private final CPPFunctionType functionType;
 
@@ -54,7 +53,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	public ICPPFunctionType getDeclaredType() {
 		return functionType;
 	}
-	
+
 	@Override
 	public ICPPFunctionType getType() {
 		return functionType;

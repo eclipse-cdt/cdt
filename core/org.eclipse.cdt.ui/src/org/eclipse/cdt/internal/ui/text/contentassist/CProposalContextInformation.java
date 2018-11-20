@@ -43,22 +43,25 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	private boolean fHasPrefixSuffix;
 	private int fParamlistStartIndex;
 	private int fParamlistEndIndex;
-	
+
 	public void setHasPrefixSuffix(int paramlistStartIndex, int paramlistEndIndex) {
 		fHasPrefixSuffix = true;
 		fParamlistStartIndex = paramlistStartIndex;
 		fParamlistEndIndex = paramlistEndIndex;
 	}
+
 	public boolean hasPrefixSuffix() {
 		return fHasPrefixSuffix;
 	}
+
 	public int getArglistStartIndex() {
 		return fParamlistStartIndex;
 	}
+
 	public int getArglistEndIndex() {
 		return fParamlistEndIndex;
 	}
-	
+
 	/**
 	 * Creates a new context information without an image.
 	 *
@@ -79,33 +82,34 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	 */
 	public CProposalContextInformation(Image image, String contextDisplayString, String informationDisplayString) {
 		//Assert.isNotNull(informationDisplayString);
-		fImage= image;
-		fContextDisplayString= contextDisplayString;
-		fInformationDisplayString= informationDisplayString;
+		fImage = image;
+		fContextDisplayString = contextDisplayString;
+		fInformationDisplayString = informationDisplayString;
 	}
 
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
-			IContextInformation contextInformation= (IContextInformation) object;
-			boolean equals= fInformationDisplayString.equalsIgnoreCase(contextInformation.getInformationDisplayString());
-			if (fContextDisplayString != null) 
-				equals= equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());
+			IContextInformation contextInformation = (IContextInformation) object;
+			boolean equals = fInformationDisplayString
+					.equalsIgnoreCase(contextInformation.getInformationDisplayString());
+			if (fContextDisplayString != null)
+				equals = equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());
 			return equals;
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
-	
+
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	@Override
 	public String getContextDisplayString() {
 		if (fContextDisplayString != null)
@@ -117,7 +121,7 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	public int getContextInformationPosition() {
 		return fInformationPosition;
 	}
-	
+
 	public void setContextInformationPosition(int pos) {
 		fInformationPosition = pos;
 	}

@@ -10,11 +10,10 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-
 
 /**
  * Interface for visitors to visit c-specific nodes.

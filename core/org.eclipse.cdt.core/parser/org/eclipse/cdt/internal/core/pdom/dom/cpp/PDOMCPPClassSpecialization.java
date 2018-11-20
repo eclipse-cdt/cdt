@@ -75,7 +75,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache.
-	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
+	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();
@@ -95,7 +95,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
-			ICPPClassType classType= (ICPPClassType) newBinding;
+			ICPPClassType classType = (ICPPClassType) newBinding;
 			setFlags(classType);
 			super.update(linkage, newBinding);
 		}
@@ -119,16 +119,16 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	@Override
 	public IBinding specializeMember(IBinding original) {
 		if (specializationMap == null) {
-			final Long key= record + PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
-			Object cached= getPDOM().getCachedResult(key);
+			final Long key = record + PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
+			Object cached = getPDOM().getCachedResult(key);
 			if (cached != null) {
-				specializationMap= (ObjectMap) cached;
+				specializationMap = (ObjectMap) cached;
 			} else {
-				final ObjectMap newMap= new ObjectMap(2);
+				final ObjectMap newMap = new ObjectMap(2);
 				try {
 					PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
 					PDOMCPPClassScope.acceptViaCache(this, visitor, false);
-					final ICPPClassType[] nested= visitor.getNestedClasses();
+					final ICPPClassType[] nested = visitor.getNestedClasses();
 					for (ICPPClassType classType : nested) {
 						if (classType instanceof ICPPSpecialization) {
 							newMap.put(((ICPPSpecialization) classType).getSpecializedBinding(), classType);
@@ -137,28 +137,28 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}
-				specializationMap= (ObjectMap) getPDOM().putCachedResult(key, newMap, false);
+				specializationMap = (ObjectMap) getPDOM().putCachedResult(key, newMap, false);
 			}
 		}
 		synchronized (specializationMap) {
-			IBinding result= (IBinding) specializationMap.get(original);
+			IBinding result = (IBinding) specializationMap.get(original);
 			if (result != null)
 				return result;
 		}
 
 		IBinding newSpec;
-		Set<IBinding> recursionProtectionSet= fInProgress.get();
+		Set<IBinding> recursionProtectionSet = fInProgress.get();
 		if (!recursionProtectionSet.add(original))
 			return RecursionResolvingBinding.createFor(original);
 
 		try {
-			newSpec= CPPTemplates.createSpecialization(this, original);
+			newSpec = CPPTemplates.createSpecialization(this, original);
 		} finally {
 			recursionProtectionSet.remove(original);
 		}
 
 		synchronized (specializationMap) {
-			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
+			IBinding oldSpec = (IBinding) specializationMap.put(original, newSpec);
 			if (oldSpec != null) {
 				specializationMap.put(original, oldSpec);
 				return oldSpec;
@@ -178,12 +178,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 		if (fScope == null) {
 			try {
 				if (hasOwnScope()) {
-					fScope= new PDOMCPPClassScope(this);
+					fScope = new PDOMCPPClassScope(this);
 					return fScope;
 				}
 			} catch (CoreException e) {
 			}
-			fScope= new PDOMCPPClassSpecializationScope(this);
+			fScope = new PDOMCPPClassSpecializationScope(this);
 		}
 		return fScope;
 	}
@@ -203,35 +203,35 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 		final PDOMLinkage linkage = getLinkage();
 		PDOMCPPBase firstBase = getFirstBase();
 		for (ICPPBase base : bases) {
-			PDOMCPPBase nextBase= new PDOMCPPBase(linkage, base, classDefName);
+			PDOMCPPBase nextBase = new PDOMCPPBase(linkage, base, classDefName);
 			nextBase.setNextBase(firstBase);
-			firstBase= nextBase;
+			firstBase = nextBase;
 		}
 		setFirstBase(firstBase);
 	}
 
 	public void removeBases(PDOMName classDefName) throws CoreException {
 		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
-		PDOMCPPBase base= getFirstBase();
-		PDOMCPPBase predecessor= null;
-		long nameRec= classDefName.getRecord();
-		boolean deleted= false;
+		PDOMCPPBase base = getFirstBase();
+		PDOMCPPBase predecessor = null;
+		long nameRec = classDefName.getRecord();
+		boolean deleted = false;
 		while (base != null) {
 			PDOMCPPBase nextBase = base.getNextBase();
-			long classDefRec= getDB().getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
+			long classDefRec = getDB().getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
 			if (classDefRec == nameRec) {
-				deleted= true;
+				deleted = true;
 				base.delete();
 			} else if (deleted) {
-				deleted= false;
+				deleted = false;
 				if (predecessor == null) {
 					setFirstBase(base);
 				} else {
 					predecessor.setNextBase(base);
 				}
-				predecessor= base;
+				predecessor = base;
 			}
-			base= nextBase;
+			base = nextBase;
 		}
 		if (deleted) {
 			if (predecessor == null) {
@@ -244,14 +244,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public ICPPBase[] getBases() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getBases();
 		}
 
 		// This is an explicit specialization.
-		Long key= record + PDOMCPPLinkage.CACHE_BASES;
-		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
+		Long key = record + PDOMCPPLinkage.CACHE_BASES;
+		ICPPBase[] bases = (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null)
 			return bases;
 
@@ -278,17 +278,17 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			ICPPConstructor[] constructors = ((ICPPClassSpecializationScope) scope).getConstructors();
-	    	return ClassTypeHelper.getAllConstructors(this, constructors);
+			return ClassTypeHelper.getAllConstructors(this, constructors);
 		}
 
 		try {
-			PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
+			PDOMClassUtil.ConstructorCollector visitor = new PDOMClassUtil.ConstructorCollector();
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
 			ICPPConstructor[] constructors = visitor.getConstructors();
-	    	return ClassTypeHelper.getAllConstructors(this, constructors);
+			return ClassTypeHelper.getAllConstructors(this, constructors);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
@@ -303,7 +303,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
 		}
@@ -325,7 +325,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
 		}
@@ -347,7 +347,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
 		}
@@ -366,10 +366,10 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		return getNestedClasses();
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getUsingDeclarations();
 		}
@@ -382,7 +382,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 			return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
@@ -391,7 +391,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public IBinding[] getFriends() {
-		ICPPClassScope scope= getCompositeScope();
+		ICPPClassScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope)
 			return ((ICPPClassSpecializationScope) scope).getFriends();
 		return IBinding.EMPTY_BINDING_ARRAY;
@@ -455,7 +455,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 			return type.isSameType(this);
 
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
@@ -517,7 +517,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	}
 
 	private void setFlags(ICPPClassType classType) throws CoreException {
-		byte flags = (byte) ((classType.isFinal() ? FLAGS_FINAL : 0) | (hasOwnScope(classType) ? FLAGS_HAS_OWN_SCOPE : 0));
+		byte flags = (byte) ((classType.isFinal() ? FLAGS_FINAL : 0)
+				| (hasOwnScope(classType) ? FLAGS_HAS_OWN_SCOPE : 0));
 		getDB().putByte(record + FLAGS, flags);
 	}
 
@@ -527,7 +528,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	private static boolean hasOwnScope(ICPPClassType classType) {
 		if (!(classType instanceof ICPPInternalBinding))
 			return false;
-			
+
 		ICPPInternalBinding binding = (ICPPInternalBinding) classType;
 		if (binding.getDefinition() != null)
 			return true;
@@ -569,6 +570,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	public boolean isVisibleToAdlOnly() {
 		return false;
 	}
+
 	@Override
 	public void setVisibleToAdlOnly(boolean visibleToAdlOnly) throws CoreException {
 	}

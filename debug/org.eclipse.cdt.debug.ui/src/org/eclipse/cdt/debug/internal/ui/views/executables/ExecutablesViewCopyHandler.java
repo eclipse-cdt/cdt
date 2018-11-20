@@ -57,10 +57,10 @@ public class ExecutablesViewCopyHandler extends AbstractHandler {
 		}
 
 		if (selection instanceof IStructuredSelection) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream(baos);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream ps = new PrintStream(baos);
 
-            Iterator<?> iter = ((IStructuredSelection) selection).iterator();
+			Iterator<?> iter = ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
 				Object obj = iter.next();
 				if (obj instanceof Executable) {
@@ -73,15 +73,14 @@ public class ExecutablesViewCopyHandler extends AbstractHandler {
 					ps.println(obj.toString());
 
 			}
-            ps.flush();
-            try {
+			ps.flush();
+			try {
 				baos.flush();
 			} catch (IOException e) {
 				throw new ExecutionException("", e); //$NON-NLS-1$
 			}
 			Clipboard cp = getClipboard();
-			cp.setContents(new Object[] { baos.toString().trim() },
-					new Transfer[] { TextTransfer.getInstance() });
+			cp.setContents(new Object[] { baos.toString().trim() }, new Transfer[] { TextTransfer.getInstance() });
 		}
 
 		return null;

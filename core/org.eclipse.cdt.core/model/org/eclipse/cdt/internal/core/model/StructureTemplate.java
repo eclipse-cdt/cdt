@@ -25,6 +25,7 @@ public class StructureTemplate extends Structure implements IStructureTemplate {
 		super(parent, kind, name);
 		fTemplate = new Template(name);
 	}
+
 	/**
 	 * Returns the parameterTypes.
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
@@ -37,7 +38,7 @@ public class StructureTemplate extends Structure implements IStructureTemplate {
 
 	@Override
 	public String[] getTemplateArguments() {
-		return  fTemplate.getTemplateArguments();
+		return fTemplate.getTemplateArguments();
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class StructureTemplate extends Structure implements IStructureTemplate {
 	public void getHandleMemento(StringBuilder buff) {
 		super.getHandleMemento(buff);
 		if (fTemplate.getNumberOfTemplateParameters() > 0) {
-			final String[] parameterTypes= fTemplate.getTemplateParameterTypes();
+			final String[] parameterTypes = fTemplate.getTemplateParameterTypes();
 			for (String parameterType : parameterTypes) {
 				buff.append(CEM_PARAMETER);
 				escapeMementoName(buff, parameterType);

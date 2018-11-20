@@ -20,10 +20,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 
 public class C99CompositeTypeScope extends C99Scope implements ICCompositeTypeScope {
 
-	
 	private ICompositeType struct;
-	
-	
+
 	public C99CompositeTypeScope(ICompositeType struct) {
 		super(EScopeKind.eClassType);
 		this.struct = struct;
@@ -33,7 +31,7 @@ public class C99CompositeTypeScope extends C99Scope implements ICCompositeTypeSc
 	public ICompositeType getCompositeType() {
 		return struct;
 	}
-	
+
 	@Override
 	public IBinding getBinding(@SuppressWarnings("unused") char[] name) {
 		throw new UnsupportedOperationException();

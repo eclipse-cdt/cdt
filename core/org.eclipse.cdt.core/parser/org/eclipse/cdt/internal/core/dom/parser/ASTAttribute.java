@@ -21,18 +21,18 @@ import org.eclipse.cdt.core.dom.ast.IASTToken;
  * Base class for C and C++ attributes.
  */
 public abstract class ASTAttribute extends ASTNode implements IASTAttribute {
-    private final char[] name;
-    private final IASTToken argumentClause;
+	private final char[] name;
+	private final IASTToken argumentClause;
 
 	public ASTAttribute(char[] name, IASTToken arguments) {
 		this.name = name;
 		this.argumentClause = arguments;
 	}
 
-    @Override
+	@Override
 	public char[] getName() {
-        return name;
-    }
+		return name;
+	}
 
 	@Override
 	public IASTToken getArgumentClause() {
@@ -50,19 +50,23 @@ public abstract class ASTAttribute extends ASTNode implements IASTAttribute {
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitAttributes) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitAttributes) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (argumentClause != null && !argumentClause.accept(action)) return false;
+		if (argumentClause != null && !argumentClause.accept(action))
+			return false;
 
-        if (action.shouldVisitAttributes && action.leave(this) == ASTVisitor.PROCESS_ABORT)
-            return false;
+		if (action.shouldVisitAttributes && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 }

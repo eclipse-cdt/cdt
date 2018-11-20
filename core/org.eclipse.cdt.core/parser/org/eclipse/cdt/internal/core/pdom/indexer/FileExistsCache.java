@@ -35,14 +35,15 @@ import org.eclipse.core.runtime.CoreException;
  * @since 5.0
  */
 public final class FileExistsCache {
-	private static final Content EMPTY_STRING_ARRAY= new Content(new String[0]);
-	private static boolean BYPASS_CACHE= Boolean.getBoolean("CDT_INDEXER_BYPASS_FILE_EXISTS_CACHE"); //$NON-NLS-1$
+	private static final Content EMPTY_STRING_ARRAY = new Content(new String[0]);
+	private static boolean BYPASS_CACHE = Boolean.getBoolean("CDT_INDEXER_BYPASS_FILE_EXISTS_CACHE"); //$NON-NLS-1$
 
 	private static class Content {
 		public Content(String[] names) {
-			fNames= names;
-			fIsFile= new BitSet(names.length * 2);
+			fNames = names;
+			fIsFile = new BitSet(names.length * 2);
 		}
+
 		public String[] fNames;
 		public BitSet fIsFile;
 	}
@@ -53,10 +54,10 @@ public final class FileExistsCache {
 	private final boolean fCaseInSensitive;
 
 	public FileExistsCache(boolean caseInsensitive) {
-		fCaseInSensitive= caseInsensitive;
+		fCaseInSensitive = caseInsensitive;
 		Map<String, Content> cache = new HashMap<>();
 		// Before running out of memory the entire map will be thrown away.
-		fCache= new SoftReference<>(cache);
+		fCache = new SoftReference<>(cache);
 	}
 
 	public boolean isFile(String path) {
@@ -96,21 +97,21 @@ public final class FileExistsCache {
 				return false;
 			}
 		} else {
-			file= new File(path);
+			file = new File(path);
 			if (BYPASS_CACHE) {
 				return file.isFile();
 			}
 
-			parent= file.getParent();
+			parent = file.getParent();
 			if (parent == null)
 				return false;
 
-			name= file.getName();
+			name = file.getName();
 		}
 		if (fCaseInSensitive)
-			name= name.toUpperCase();
+			name = name.toUpperCase();
 
-		Content avail= getExistsCache().get(parent);
+		Content avail = getExistsCache().get(parent);
 		if (avail == null) {
 			String[] files = null;
 			try {
@@ -119,19 +120,19 @@ public final class FileExistsCache {
 				// Ignore
 			}
 			if (files == null || files.length == 0) {
-				avail= EMPTY_STRING_ARRAY;
+				avail = EMPTY_STRING_ARRAY;
 			} else {
 				if (fCaseInSensitive) {
 					for (int i = 0; i < files.length; i++) {
-						files[i]= files[i].toUpperCase();
+						files[i] = files[i].toUpperCase();
 					}
 				}
 				Arrays.sort(files);
-				avail= new Content(files);
+				avail = new Content(files);
 			}
 			getExistsCache().put(parent, avail);
 		}
-		int idx= Arrays.binarySearch(avail.fNames, name);
+		int idx = Arrays.binarySearch(avail.fNames, name);
 		if (idx < 0)
 			return false;
 		idx *= 2;
@@ -151,11 +152,11 @@ public final class FileExistsCache {
 	}
 
 	private Map<String, Content> getExistsCache() {
-		Map<String, Content> cache= fCache.get();
+		Map<String, Content> cache = fCache.get();
 		if (cache == null) {
-			cache= new HashMap<>();
+			cache = new HashMap<>();
 			// Before running out of memory the entire map will be thrown away.
-			fCache= new SoftReference<>(cache);
+			fCache = new SoftReference<>(cache);
 		}
 		return cache;
 	}

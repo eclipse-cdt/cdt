@@ -31,14 +31,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TypedListener;
 
 public class FlatButton extends Canvas {
-	
+
 	protected String fText;
 	protected int fMargin = 4;
 	protected Cursor fHandCursor;
-	
+
 	public FlatButton(Composite parent, int flags) {
 		super(parent, flags);
-		
+
 		fHandCursor = getDisplay().getSystemCursor(SWT.CURSOR_HAND);
 		setCursor(fHandCursor);
 
@@ -54,48 +54,48 @@ public class FlatButton extends Canvas {
 			public void mouseDown(MouseEvent e) {
 				onSelection(e);
 			}
-		}); 					
+		});
 	}
-	
-	public void addSelectionListener (SelectionListener listener) {
-		checkWidget ();
-		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-		TypedListener typedListener = new TypedListener (listener);
-		addListener (SWT.Selection,typedListener);
-		addListener (SWT.DefaultSelection,typedListener);
+
+	public void addSelectionListener(SelectionListener listener) {
+		checkWidget();
+		if (listener == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		TypedListener typedListener = new TypedListener(listener);
+		addListener(SWT.Selection, typedListener);
+		addListener(SWT.DefaultSelection, typedListener);
 	}
-	
+
 	public void setText(String text) {
 		fText = text;
 	}
-	
-	public String getText()	{
+
+	public String getText() {
 		return fText;
 	}
-	
+
 	public void setMargin(int margin) {
 		fMargin = margin;
 	}
-	
+
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return computeSize(wHint, hHint);
 	}
-	
+
 	@Override
 	public Point computeSize(int wHint, int hHint) {
-		
+
 		GC gc = new GC(this);
 		if (fText == null || fText.isEmpty()) {
 			Point e = gc.textExtent("A"); //$NON-NLS-1$
-			return new Point(0, e.y + fMargin*2);
+			return new Point(0, e.y + fMargin * 2);
 		}
-		
-		
+
 		Point e = gc.textExtent(fText);
-		return new Point(e.x + fMargin*2, e.y + fMargin*2);
+		return new Point(e.x + fMargin * 2, e.y + fMargin * 2);
 	}
-	
+
 	protected void onPaint(PaintEvent event) {
 		GC gc = event.gc;
 		Rectangle ca = getClientArea();
@@ -106,29 +106,28 @@ public class FlatButton extends Canvas {
 		float h = mainHSB[0];
 		float s = mainHSB[1];
 		float b = mainHSB[2];
-		
-				
-		Color borderColor = new Color(gc.getDevice(), new RGB(h, s, (float)(b*0.7)));			
-		Color shadowColor = new Color(gc.getDevice(), new RGB(h, s, (float)(b*0.5)));	
-		
+
+		Color borderColor = new Color(gc.getDevice(), new RGB(h, s, (float) (b * 0.7)));
+		Color shadowColor = new Color(gc.getDevice(), new RGB(h, s, (float) (b * 0.5)));
+
 		gc.setForeground(borderColor);
-		gc.drawRectangle(0, 0, ca.width-1, ca.height-1);
-		
+		gc.drawRectangle(0, 0, ca.width - 1, ca.height - 1);
+
 		gc.setForeground(shadowColor);
-		gc.drawLine(0, ca.height-1, ca.width-1, ca.height-1);
-					
-		gc.fillRectangle(1, 1, ca.width-2, ca.height-2);
-		
+		gc.drawLine(0, ca.height - 1, ca.width - 1, ca.height - 1);
+
+		gc.fillRectangle(1, 1, ca.width - 2, ca.height - 2);
+
 		gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 		gc.drawText(fText, fMargin, fMargin, true);
-		
+
 		borderColor.dispose();
 		shadowColor.dispose();
 	}
-	
+
 	protected void onSelection(MouseEvent e) {
 		if (isEnabled()) {
 			notifyListeners(SWT.Selection, null);
-		}		
+		}
 	}
 }

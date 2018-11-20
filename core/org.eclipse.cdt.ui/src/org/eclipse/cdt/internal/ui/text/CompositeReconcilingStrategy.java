@@ -25,7 +25,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
  * A reconciling strategy consisting of a sequence of internal reconciling strategies.
  * By default, all requests are passed on to the contained strategies.
  */
-public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IReconcilingStrategyExtension {
+public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 	/** The list of internal reconciling strategies. */
 	private IReconcilingStrategy[] fStrategies;
@@ -42,7 +42,7 @@ public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IRec
 	 * @param strategies the strategies to be set or <code>null</code>
 	 */
 	public void setReconcilingStrategies(IReconcilingStrategy[] strategies) {
-		fStrategies= strategies;
+		fStrategies = strategies;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IRec
 		if (fStrategies == null)
 			return;
 
-		for (int i= 0; i < fStrategies.length; i++)
+		for (int i = 0; i < fStrategies.length; i++)
 			fStrategies[i].setDocument(document);
 	}
 
@@ -74,7 +74,7 @@ public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IRec
 		if (fStrategies == null)
 			return;
 
-		for (int i= 0; i < fStrategies.length; i++)
+		for (int i = 0; i < fStrategies.length; i++)
 			fStrategies[i].reconcile(dirtyRegion, subRegion);
 	}
 
@@ -86,7 +86,7 @@ public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IRec
 		if (fStrategies == null)
 			return;
 
-		for (int i= 0; i < fStrategies.length; i++)
+		for (int i = 0; i < fStrategies.length; i++)
 			fStrategies[i].reconcile(partition);
 	}
 
@@ -98,9 +98,9 @@ public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IRec
 		if (fStrategies == null)
 			return;
 
-		for (int i=0; i < fStrategies.length; i++) {
+		for (int i = 0; i < fStrategies.length; i++) {
 			if (fStrategies[i] instanceof IReconcilingStrategyExtension) {
-				IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategies[i];
+				IReconcilingStrategyExtension extension = (IReconcilingStrategyExtension) fStrategies[i];
 				extension.setProgressMonitor(monitor);
 			}
 		}
@@ -116,7 +116,7 @@ public class CompositeReconcilingStrategy  implements IReconcilingStrategy, IRec
 
 		for (int i = 0; i < fStrategies.length; i++) {
 			if (fStrategies[i] instanceof IReconcilingStrategyExtension) {
-				IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategies[i];
+				IReconcilingStrategyExtension extension = (IReconcilingStrategyExtension) fStrategies[i];
 				extension.initialReconcile();
 			}
 		}

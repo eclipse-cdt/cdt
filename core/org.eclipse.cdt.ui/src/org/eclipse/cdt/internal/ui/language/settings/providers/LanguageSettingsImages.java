@@ -39,7 +39,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  */
 public class LanguageSettingsImages {
 	// evaluates to "/${ProjName)/"
-	private static final String PROJ_NAME_PREFIX = '/' + CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME) + '/';
+	private static final String PROJ_NAME_PREFIX = '/'
+			+ CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME) + '/';
 
 	/**
 	 * Check if the language settings entry should be presented as "project-relative" in UI.
@@ -114,9 +115,10 @@ public class LanguageSettingsImages {
 			String[] overlayKeys = new String[5];
 
 			if ((flags & ICSettingEntry.UNDEFINED) != 0) {
-				image = CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
+				image = CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE,
+						IDecoration.BOTTOM_LEFT);
 			} else {
-				String overlayKeyStatus=null;
+				String overlayKeyStatus = null;
 				IStatus status = getStatus(entry, cfgDescription);
 				switch (status.getSeverity()) {
 				case IStatus.ERROR:
@@ -130,11 +132,11 @@ public class LanguageSettingsImages {
 					break;
 				}
 				if (overlayKeyStatus != null) {
-					overlayKeys[IDecoration.BOTTOM_LEFT]=overlayKeyStatus;
+					overlayKeys[IDecoration.BOTTOM_LEFT] = overlayKeyStatus;
 				}
 
 				if ((flags & ICSettingEntry.EXPORTED) != 0) {
-					overlayKeys[IDecoration.BOTTOM_RIGHT]=CDTSharedImages.IMG_OVR_EXPORTED;
+					overlayKeys[IDecoration.BOTTOM_RIGHT] = CDTSharedImages.IMG_OVR_EXPORTED;
 				}
 
 				image = CDTSharedImages.getImageOverlaid(imageKey, overlayKeys);
@@ -200,7 +202,7 @@ public class LanguageSettingsImages {
 		if (isWorkspacePath) {
 			IPath path = new Path(entry.getValue());
 			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			exists = (rc !=null) && rc.isAccessible();
+			exists = (rc != null) && rc.isAccessible();
 		} else if (UNCPathConverter.isUNC(entry.getName())) {
 			return true;
 		} else {
@@ -221,23 +223,27 @@ public class LanguageSettingsImages {
 	public static IStatus getStatus(ICLanguageSettingEntry entry, ICConfigurationDescription cfgDescription) {
 		if (entry instanceof ACPathEntry) {
 			if (!entry.isResolved()) {
-				ICLanguageSettingEntry[] entries = CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, cfgDescription);
+				ICLanguageSettingEntry[] entries = CDataUtil.resolveEntries(new ICLanguageSettingEntry[] { entry },
+						cfgDescription);
 				if (entries != null && entries.length > 0) {
 					entry = entries[0];
 				}
 			}
 
-			ACPathEntry acEntry = (ACPathEntry)entry;
+			ACPathEntry acEntry = (ACPathEntry) entry;
 			String acEntryName = acEntry.getName();
 			IPath path = new Path(acEntryName);
 			if (!path.isAbsolute()) {
-				return new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsImages_UsingRelativePathsNotRecommended);
+				return new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID,
+						Messages.LanguageSettingsImages_UsingRelativePathsNotRecommended);
 			}
 			if (!isLocationOk(acEntry)) {
 				if (acEntry.isFile()) {
-					return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsImages_FileDoesNotExist);
+					return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+							Messages.LanguageSettingsImages_FileDoesNotExist);
 				} else {
-					return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsImages_FolderDoesNotExist);
+					return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+							Messages.LanguageSettingsImages_FolderDoesNotExist);
 				}
 			}
 

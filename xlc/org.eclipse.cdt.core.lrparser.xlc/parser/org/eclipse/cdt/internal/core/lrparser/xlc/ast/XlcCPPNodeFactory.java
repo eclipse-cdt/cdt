@@ -21,17 +21,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 @SuppressWarnings("restriction")
 public class XlcCPPNodeFactory extends CPPNodeFactory implements IXlcCPPNodeFactory {
-	
-private static final XlcCPPNodeFactory DEFAULT_INSTANCE = new XlcCPPNodeFactory();
-	
+
+	private static final XlcCPPNodeFactory DEFAULT_INSTANCE = new XlcCPPNodeFactory();
+
 	public static XlcCPPNodeFactory getDefault() {
 		return DEFAULT_INSTANCE;
 	}
-	
+
 	public IXlcCPPASTVectorTypeSpecifier newVectorTypeSpecifier() {
 		return new XlcCPPASTVectorTypeSpecifier();
 	}
-	
+
 	public IXlcCPPASTModifiedArrayModifier newModifiedArrayModifier(IASTExpression expr) {
 		return new XlcCPPASTModifiedArrayModifier(expr);
 	}

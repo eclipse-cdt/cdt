@@ -10,7 +10,7 @@ public class Canceler implements ICanceler {
 	@Override
 	public void setCancelable(ICancelable cancelable) {
 		synchronized (this) {
-			fCancelable= cancelable;
+			fCancelable = cancelable;
 			cancelable = getCancelableToCancel();
 		}
 		if (cancelable != null)
@@ -41,7 +41,7 @@ public class Canceler implements ICanceler {
 		ICancelable cancelable = null;
 		if (canceled) {
 			cancelable = fCancelable;
-			fCancelable= null;
+			fCancelable = null;
 		}
 		return cancelable;
 	}

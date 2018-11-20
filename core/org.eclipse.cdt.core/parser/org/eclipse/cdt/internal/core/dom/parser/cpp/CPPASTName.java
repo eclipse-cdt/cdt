@@ -37,19 +37,19 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Unqualified name, also base class for operator and conversion name.
  */
 public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionContext {
-	public static final IASTName NOT_INITIALIZED= new CPPASTName(null);
+	public static final IASTName NOT_INITIALIZED = new CPPASTName(null);
 
 	private char[] name;
 
-    public CPPASTName(char[] name) {
-        this.name = name;
-    }
+	public CPPASTName(char[] name) {
+		this.name = name;
+	}
 
-    public CPPASTName() {
-        name = CharArrayUtils.EMPTY;
-    }
+	public CPPASTName() {
+		name = CharArrayUtils.EMPTY;
+	}
 
-    @Override
+	@Override
 	public CPPASTName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -70,20 +70,20 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 		}
 	}
 
-    @Override
+	@Override
 	public IASTCompletionContext getCompletionContext() {
-        IASTNode node = getParent();
-    	while (node != null) {
-    		if (node instanceof IASTCompletionContext) {
-    			return (IASTCompletionContext) node;
-    		}
-    		node = node.getParent();
-    	}
-    	if (getLength() > 0) {
-    		return this;
-    	}
-    	return null;
-    }
+		IASTNode node = getParent();
+		while (node != null) {
+			if (node instanceof IASTCompletionContext) {
+				return (IASTCompletionContext) node;
+			}
+			node = node.getParent();
+		}
+		if (getLength() > 0) {
+			return this;
+		}
+		return null;
+	}
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
@@ -112,32 +112,32 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 				}
 			} else if (bindings.length == 0) {
 				// The lookup did not find the binding that is defined by this name.
-				bindings= new IBinding[] { n.resolveBinding() };
+				bindings = new IBinding[] { n.resolveBinding() };
 			}
 			return ArrayUtil.removeNulls(IBinding.class, bindings);
 		}
 		return null;
 	}
 
-    private IBinding[] filterByElaboratedTypeSpecifier(int kind, IBinding[] bindings) {
+	private IBinding[] filterByElaboratedTypeSpecifier(int kind, IBinding[] bindings) {
 		for (int i = 0; i < bindings.length; i++) {
 			IBinding binding = bindings[i];
 			if (binding instanceof ICPPClassType) {
 				if (((ICPPClassType) binding).getKey() != kind)
 					bindings[i] = null;
 			} else if (!(binding instanceof ICPPNamespace)) {
-				bindings[i]= null;
+				bindings[i] = null;
 			}
 		}
 		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
-    @Override
+	@Override
 	public char[] toCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public final char[] getSimpleID() {
 		return name;
 	}
@@ -148,35 +148,35 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 	}
 
 	public void setName(char[] name) {
-        assertNotFrozen();
-        this.name = name;
-    }
+		assertNotFrozen();
+		this.name = name;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitNames) {
-            switch (action.visit(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
-            }
-        }
+		if (action.shouldVisitNames) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
 
-        if (action.shouldVisitNames) {
-            switch (action.leave(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
-            }
-        }
-        return true;
-    }
+		if (action.shouldVisitNames) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {

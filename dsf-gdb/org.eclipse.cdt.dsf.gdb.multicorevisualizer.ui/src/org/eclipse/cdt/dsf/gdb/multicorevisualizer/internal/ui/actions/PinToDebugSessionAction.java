@@ -22,30 +22,28 @@ import org.eclipse.cdt.visualizer.ui.VisualizerAction;
 
 /** Pins the multicore visualizer to the current debug session */
 public class PinToDebugSessionAction extends VisualizerAction {
-	
+
 	// --- members ---
-	
+
 	/** current active state of pinning */
 	private boolean m_pinActive;
-	
+
 	/** Visualizer instance we're associated with. */
 	MulticoreVisualizer m_visualizer = null;
-	
 
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	public PinToDebugSessionAction() {
-		super(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.PinToDebugSession.text"),  //$NON-NLS-1$
-			  MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.PinToDebugSession.description"), //$NON-NLS-1$
-			  CDebugImages.DESC_LCL_PIN_VIEW
-		);
+		super(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.PinToDebugSession.text"), //$NON-NLS-1$
+				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.PinToDebugSession.description"), //$NON-NLS-1$
+				CDebugImages.DESC_LCL_PIN_VIEW);
 
 		// at first, this action is disabled (un-pinned)
 		setChecked(false);
 		m_pinActive = false;
 	}
-	
+
 	/** Dispose method. */
 	@Override
 	public void dispose() {
@@ -53,15 +51,13 @@ public class PinToDebugSessionAction extends VisualizerAction {
 		super.dispose();
 	}
 
-
 	// --- init methods ---
-	
+
 	/** Initializes this action for the specified view. */
-	public void init(MulticoreVisualizer visualizer)
-	{
+	public void init(MulticoreVisualizer visualizer) {
 		m_visualizer = visualizer;
 	}
-	
+
 	// --- methods ---
 
 	/** Invoked when action is triggered. */
@@ -72,8 +68,7 @@ public class PinToDebugSessionAction extends VisualizerAction {
 
 		if (m_pinActive) {
 			m_visualizer.pin();
-		}
-		else {
+		} else {
 			m_visualizer.unpin();
 		}
 		// update the toolbar

@@ -125,5 +125,5 @@ public interface IDebugEntryRequestor {
 	 * @param type
 	 */
 	void acceptTypeDef(String name, DebugType type);
-	
+
 }

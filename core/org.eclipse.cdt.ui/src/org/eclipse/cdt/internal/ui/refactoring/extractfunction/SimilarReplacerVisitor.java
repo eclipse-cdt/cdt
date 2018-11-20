@@ -29,8 +29,8 @@ final class SimilarReplacerVisitor extends SimilarFinderVisitor {
 
 	private final ModificationCollector collector;
 
-	SimilarReplacerVisitor(ExtractFunctionRefactoring refactoring, NodeContainer extractedNodes, ModificationCollector collector,
-			List<IASTNode> trail, IASTName name, List<IASTNode> statements) {
+	SimilarReplacerVisitor(ExtractFunctionRefactoring refactoring, NodeContainer extractedNodes,
+			ModificationCollector collector, List<IASTNode> trail, IASTName name, List<IASTNode> statements) {
 		super(refactoring, extractedNodes, trail, statements);
 		this.name = name;
 		this.collector = collector;
@@ -38,10 +38,9 @@ final class SimilarReplacerVisitor extends SimilarFinderVisitor {
 
 	@Override
 	protected void foundSimilar() {
-		IASTNode call = refactoring.getMethodCall(name,	refactoring.nameTrail,
-				refactoring.names, extractedNodes, similarContainer);
-		ASTRewrite rewrite =
-				collector.rewriterForTranslationUnit(stmtToReplace.get(0).getTranslationUnit());
+		IASTNode call = refactoring.getMethodCall(name, refactoring.nameTrail, refactoring.names, extractedNodes,
+				similarContainer);
+		ASTRewrite rewrite = collector.rewriterForTranslationUnit(stmtToReplace.get(0).getTranslationUnit());
 		TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);
 		rewrite.replace(stmtToReplace.get(0), call, editGroup);
 		if (stmtToReplace.size() > 1) {

@@ -22,21 +22,28 @@ package org.eclipse.cdt.core.parser;
 public interface IToken {
 	// Getters.
 	public int getType();
+
 	public String getImage();
+
 	public char[] getCharImage();
+
 	public int getOffset();
+
 	public int getLength();
+
 	public int getEndOffset();
+
 	public IToken getNext();
 
 	public void setNext(IToken t);
+
 	public void setType(int i);
 
 	// Token types
-	int FIRST_RESERVED_PREPROCESSOR= -200;
-	int LAST_RESERVED_PREPROCESSOR= -101;
-	int FIRST_RESERVED_SCANNER= -100;
-	int LAST_RESERVED_SCANNER= -1;
+	int FIRST_RESERVED_PREPROCESSOR = -200;
+	int LAST_RESERVED_PREPROCESSOR = -101;
+	int FIRST_RESERVED_SCANNER = -100;
+	int LAST_RESERVED_SCANNER = -1;
 
 	/** @since 5.2 */
 	int t_PRAGMA = 5200;
@@ -79,7 +86,7 @@ public interface IToken {
 	int tNOT = 36;
 	int tEQUAL = 37;
 	int tASSIGN = 38;
-	int tUNKNOWN_CHAR= 39;
+	int tUNKNOWN_CHAR = 39;
 	int tSHIFTL = 40;
 	int tLTEQUAL = 41;
 	int tLT = 42;
@@ -97,10 +104,12 @@ public interface IToken {
 	 * @see IScanner#setSplitShiftROperator(boolean)
 	 * @since 5.2
 	 */
-	int tGT_in_SHIFTR= 5201;
+	int tGT_in_SHIFTR = 5201;
 
-	/** @since 5.10*/ int t_alignas = 5900;
-	/** @since 5.10*/ int t_alignof = 5901;
+	/** @since 5.10*/
+	int t_alignas = 5900;
+	/** @since 5.10*/
+	int t_alignof = 5901;
 	int t_asm = 56;
 	int t_auto = 57;
 	int t_bool = 60;
@@ -108,15 +117,19 @@ public interface IToken {
 	int t_case = 62;
 	int t_catch = 63;
 	int t_char = 64;
-	/** @since 5.2 */ int t_char16_t= 5202;
-	/** @since 5.2 */ int t_char32_t= 5203;
+	/** @since 5.2 */
+	int t_char16_t = 5202;
+	/** @since 5.2 */
+	int t_char32_t = 5203;
 	int t_class = 65;
 	int t_const = 67;
 
-	/** @since 5.4 */ int t_constexpr = 5400;
+	/** @since 5.4 */
+	int t_constexpr = 5400;
 	int t_const_cast = 69;
 	int t_continue = 70;
-	/** @since 5.2 */ int t_decltype= 5204;
+	/** @since 5.2 */
+	int t_decltype = 5204;
 	int t_default = 71;
 	int t_delete = 72;
 	int t_do = 73;
@@ -139,8 +152,10 @@ public interface IToken {
 	int t_mutable = 90;
 	int t_namespace = 91;
 	int t_new = 92;
-	/** @since 5.4 */ int t_noexcept = 5401;
-	/** @since 5.4 */ int t_nullptr = 5402;
+	/** @since 5.4 */
+	int t_noexcept = 5401;
+	/** @since 5.4 */
+	int t_nullptr = 5402;
 	int t_operator = 95;
 	int t_private = 98;
 	int t_protected = 99;
@@ -151,14 +166,16 @@ public interface IToken {
 	int t_short = 104;
 	int t_sizeof = 105;
 	int t_static = 106;
-	/** @since 5.2 */ int t_static_assert = 5205;
+	/** @since 5.2 */
+	int t_static_assert = 5205;
 	int t_static_cast = 107;
 	int t_signed = 108;
 	int t_struct = 109;
 	int t_switch = 110;
 	int t_template = 111;
 	int t_this = 112;
-	/** @since 5.4 */ int t_thread_local = 5403;
+	/** @since 5.4 */
+	int t_thread_local = 5403;
 	int t_throw = 113;
 	int t_true = 114;
 	int t_try = 115;
@@ -177,44 +194,54 @@ public interface IToken {
 
 	int tSTRING = 130;
 	int tLSTRING = 131;
-	/** @since 5.1 */ int tUTF16STRING = 5000;
-	/** @since 5.1 */ int tUTF32STRING = 5001;
-	/** @since 5.11 */ int tUSER_DEFINED_STRING_LITERAL = 51002;
+	/** @since 5.1 */
+	int tUTF16STRING = 5000;
+	/** @since 5.1 */
+	int tUTF32STRING = 5001;
+	/** @since 5.11 */
+	int tUSER_DEFINED_STRING_LITERAL = 51002;
 
 	int tCHAR = 132;
 	int tLCHAR = 133;
-	/** @since 5.1 */ int tUTF16CHAR = 5002;
-	/** @since 5.1 */ int tUTF32CHAR = 5003;
-	/** @since 5.11 */ int tUSER_DEFINED_CHAR_LITERAL = 51003;
+	/** @since 5.1 */
+	int tUTF16CHAR = 5002;
+	/** @since 5.1 */
+	int tUTF32CHAR = 5003;
+	/** @since 5.11 */
+	int tUSER_DEFINED_CHAR_LITERAL = 51003;
 
-	/** @since 5.10 */ int t__Alignas = 51000;
-	/** @since 5.10 */ int t__Alignof = 51001;
+	/** @since 5.10 */
+	int t__Alignas = 51000;
+	/** @since 5.10 */
+	int t__Alignof = 51001;
 	int t__Bool = 134;
 	int t__Complex = 135;
 	int t__Imaginary = 136;
 	int t_restrict = 137;
-	int tPOUND= 	  138;
+	int tPOUND = 138;
 	int tPOUNDPOUND = 139;
 	int tCOMPLETION = 140;
 	int tEOC = 141; // End of Completion
-	int tEND_OF_INPUT= 144;
-	/** @since 5.1 */ int tINACTIVE_CODE_START= 145;
-	/** @since 5.1 */ int tINACTIVE_CODE_SEPARATOR= 146;
-	/** @since 5.1 */ int tINACTIVE_CODE_END  = 147;
+	int tEND_OF_INPUT = 144;
+	/** @since 5.1 */
+	int tINACTIVE_CODE_START = 145;
+	/** @since 5.1 */
+	int tINACTIVE_CODE_SEPARATOR = 146;
+	/** @since 5.1 */
+	int tINACTIVE_CODE_END = 147;
 
-	int FIRST_RESERVED_IGCCToken		= 150;
-	int LAST_RESERVED_IGCCToken			= 199;
+	int FIRST_RESERVED_IGCCToken = 150;
+	int LAST_RESERVED_IGCCToken = 199;
 
-	int FIRST_RESERVED_IExtensionToken	= 243;
-	int LAST_RESERVED_IExtensionToken	= 299;
-	
+	int FIRST_RESERVED_IExtensionToken = 243;
+	int LAST_RESERVED_IExtensionToken = 299;
+
 	/**
 	 * Token types for context-sensitive tokens.
 	 * @since 5.9
 	 */
 	enum ContextSensitiveTokenType {
-		OVERRIDE,
-		FINAL
+		OVERRIDE, FINAL
 	}
 
 	/**
@@ -224,33 +251,48 @@ public interface IToken {
 	public boolean isOperator();
 
 	/** @deprecated Use {@link #tAND}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_and = 54;
+	@Deprecated
+	int t_and = 54;
 	/** @deprecated Use {@link #tAMPERASSIGN}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_and_eq = 55;
+	@Deprecated
+	int t_and_eq = 55;
 	/** @deprecated Use {@link #tAMPER}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_bitand = 58;
+	@Deprecated
+	int t_bitand = 58;
 	/** @deprecated Use {@link #tBITOR}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_bitor = 59;
+	@Deprecated
+	int t_bitor = 59;
 	/** @deprecated Use {@link #tBITCOMPLEMENT}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int tCOMPL= tBITCOMPLEMENT;
+	@Deprecated
+	int tCOMPL = tBITCOMPLEMENT;
 	/** @deprecated Use {@link #tBITCOMPLEMENT}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_compl = 66;
+	@Deprecated
+	int t_compl = 66;
 	/** @deprecated Use {@link #tNOT}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_not = 93;
+	@Deprecated
+	int t_not = 93;
 	/** @deprecated Use {@link #tNOTEQUAL} @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_not_eq = 94;
+	@Deprecated
+	int t_not_eq = 94;
 	/** @deprecated Use {@link #tOR} @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_or = 96;
+	@Deprecated
+	int t_or = 96;
 	/** @deprecated Use {@link #tBITORASSIGN}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_or_eq = 97;
+	@Deprecated
+	int t_or_eq = 97;
 	/** @deprecated Use {@link #tXOR}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_xor = 127;
+	@Deprecated
+	int t_xor = 127;
 	/** @deprecated Use {@link #tXORASSIGN}. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int t_xor_eq = 128;
+	@Deprecated
+	int t_xor_eq = 128;
 	/** @deprecated Not used. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int tMACROEXP = 138;
+	@Deprecated
+	int tMACROEXP = 138;
 	/** @deprecated Not used. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int tCOMMENT = 142;
+	@Deprecated
+	int tCOMMENT = 142;
 	/** @deprecated Not used. @noreference This field is not intended to be referenced by clients. */
-	@Deprecated int tBLOCKCOMMENT = 143;
+	@Deprecated
+	int tBLOCKCOMMENT = 143;
 }

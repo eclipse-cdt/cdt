@@ -45,8 +45,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected CRefactoring createRefactoring() {
-		refactoring = new ExtractLocalVariableRefactoring(getSelectedTranslationUnit(),
-				getSelection(),	getCProject());
+		refactoring = new ExtractLocalVariableRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 		return refactoring;
 	}
 

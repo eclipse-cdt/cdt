@@ -38,7 +38,7 @@ import com.ibm.icu.text.MessageFormat;
  * @since 5.3
  * 
  */
-public abstract class RefreshExclusion implements Cloneable{
+public abstract class RefreshExclusion implements Cloneable {
 
 	public static final String CLASS_ATTRIBUTE_NAME = "class"; //$NON-NLS-1$
 	public static final String CONTRIBUTOR_ID_ATTRIBUTE_NAME = "contributorId"; //$NON-NLS-1$
@@ -70,8 +70,8 @@ public abstract class RefreshExclusion implements Cloneable{
 				RefreshExclusion newExclusion = manager.getExclusionForClassName(className);
 
 				if (newExclusion == null) {
-					throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(
-							Messages.RefreshExclusion_0, className)));
+					throw new CoreException(
+							CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshExclusion_0, className)));
 				}
 
 				// load the exclusion type
@@ -116,15 +116,13 @@ public abstract class RefreshExclusion implements Cloneable{
 					else if (grandchild.getName().equals(INSTANCE_ELEMENT_NAME)) {
 
 						// load the instance data
-						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild,
-								manager);
+						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild, manager);
 						newExclusion.fExclusionInstanceList.add(instance);
 					}
 				}
 
 				// load nested exclusions
-				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null,
-						manager);
+				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null, manager);
 
 				// add to parent
 				for (RefreshExclusion nestedExclusion : nestedExclusions) {
@@ -255,8 +253,7 @@ public abstract class RefreshExclusion implements Cloneable{
 		}
 
 		// provide a place for extenders to store their own data
-		ICStorageElement extensionElement = exclusionElement
-				.createChild(EXTENSION_DATA_ELEMENT_NAME);
+		ICStorageElement extensionElement = exclusionElement.createChild(EXTENSION_DATA_ELEMENT_NAME);
 
 		// call extender to store any extender-specific data
 		persistExtendedData(extensionElement);
@@ -360,17 +357,17 @@ public abstract class RefreshExclusion implements Cloneable{
 		return currentValue;
 
 	}
-	
+
 	/**
 	 * Duplicate this refresh exclusion to the given one.
 	 * @param destination - the refresh exclusion to be modified
 	 * @since 5.4
 	 */
-	protected void copyTo (RefreshExclusion destination) {
+	protected void copyTo(RefreshExclusion destination) {
 		destination.setContributorId(getContributorId());
 		destination.setExclusionType(getExclusionType());
 		destination.setParentResource(getParentResource());
-		
+
 		Iterator<RefreshExclusion> iterator = getNestedExclusions().iterator();
 		while (iterator.hasNext()) {
 			RefreshExclusion nestedExclusion = iterator.next();
@@ -379,10 +376,10 @@ public abstract class RefreshExclusion implements Cloneable{
 			clone.setParentExclusion(destination);
 			destination.addNestedExclusion(clone);
 		}
-		
+
 		Iterator<ExclusionInstance> exclusionInstances = getExclusionInstances().iterator();
-		
-		while(exclusionInstances.hasNext()) {
+
+		while (exclusionInstances.hasNext()) {
 			ExclusionInstance next = exclusionInstances.next();
 			ExclusionInstance newInstance = new ExclusionInstance();
 			newInstance.setDisplayString(next.getDisplayString());

@@ -43,7 +43,7 @@ public class LoggingUtils {
 	 */
 	public static String toString(Object obj, boolean simpleClassName) {
 		if (obj == null) {
-			return "null";  //$NON-NLS-1$
+			return "null"; //$NON-NLS-1$
 		}
 		String className = obj.getClass().getName();
 		if (simpleClassName) {
@@ -54,10 +54,10 @@ public class LoggingUtils {
 		}
 
 		String id = Integer.toHexString(System.identityHashCode(obj));
-	
+
 		return className + "@" + id; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Equivalent to toString(obj, false)
 	 */
@@ -79,7 +79,7 @@ public class LoggingUtils {
 			str.append(s).append(", "); //$NON-NLS-1$
 		}
 		if (strings.length > 0) {
-			str.delete(str.length()-2, Integer.MAX_VALUE); // remove the trailing comma and space
+			str.delete(str.length() - 2, Integer.MAX_VALUE); // remove the trailing comma and space
 		}
 		str.append("}"); //$NON-NLS-1$
 		return str.toString();
@@ -98,12 +98,12 @@ public class LoggingUtils {
 		if (strlen == 0) {
 			return str;
 		}
-		
+
 		int removeCount = 0;
 		for (int i = strlen - 1; i >= 0 && Character.isWhitespace(str.charAt(i)); i--) {
 			removeCount++;
-        }
-		
-		return (removeCount == 0) ? str : str.substring(0, str.length() - removeCount); 
+		}
+
+		return (removeCount == 0) ? str : str.substring(0, str.length() - removeCount);
 	}
 }

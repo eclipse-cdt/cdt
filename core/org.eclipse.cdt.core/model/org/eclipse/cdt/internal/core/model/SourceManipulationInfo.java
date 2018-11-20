@@ -44,7 +44,7 @@ class SourceManipulationInfo extends CElementInfo {
 		fStartPos = startPos;
 		fLength = length;
 	}
-	
+
 	public int getStartPos() {
 		return fStartPos;
 	}
@@ -54,8 +54,8 @@ class SourceManipulationInfo extends CElementInfo {
 	}
 
 	public void setIdPos(int startPos, int length) {
-		fIdStartPos= startPos;
-		fIdLength= length;
+		fIdStartPos = startPos;
+		fIdLength = length;
 	}
 
 	public int getIdStartPos() {
@@ -94,7 +94,7 @@ class SourceManipulationInfo extends CElementInfo {
 		}
 		int offset = fStartPos;
 		int length = fLength;
-		if (offset == -1 || length == 0 ) {
+		if (offset == -1 || length == 0) {
 			return null;
 		}
 		try {
@@ -103,23 +103,23 @@ class SourceManipulationInfo extends CElementInfo {
 			return null;
 		}
 
-//		ITranslationUnit tu = getTranslationUnit();
-//		if (tu != null) {
-//			try {
-//				IResource res = tu.getResource();
-//				if (res != null && res instanceof IFile) {
-//					StringBuilder buffer = Util.getContent((IFile)res);
-//					return  buffer.substring(getElement().getStartPos(),
-//							getElement().getStartPos() + getElement().getLength());
-//				}
-//			} catch (IOException e) {
-//				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
-//			} catch (StringIndexOutOfBoundsException bound) {
-//				// This is not good we screwed up the offset some how
-//				throw new CModelException(bound, ICModelStatusConstants.INDEX_OUT_OF_BOUNDS);
-//			}
-//		}
-//		return ""; //$NON-NLS-1$
+		//		ITranslationUnit tu = getTranslationUnit();
+		//		if (tu != null) {
+		//			try {
+		//				IResource res = tu.getResource();
+		//				if (res != null && res instanceof IFile) {
+		//					StringBuilder buffer = Util.getContent((IFile)res);
+		//					return  buffer.substring(getElement().getStartPos(),
+		//							getElement().getStartPos() + getElement().getLength());
+		//				}
+		//			} catch (IOException e) {
+		//				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+		//			} catch (StringIndexOutOfBoundsException bound) {
+		//				// This is not good we screwed up the offset some how
+		//				throw new CModelException(bound, ICModelStatusConstants.INDEX_OUT_OF_BOUNDS);
+		//			}
+		//		}
+		//		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -136,20 +136,20 @@ class SourceManipulationInfo extends CElementInfo {
 	/**
 	 * @see ISourceManipulation#copy(ICElement, ICElement, String, boolean, IProgressMonitor)
 	 */
-	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
-		IProgressMonitor monitor) throws CModelException {
+	public void copy(ICElement container, ICElement sibling, String rename, boolean force, IProgressMonitor monitor)
+			throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] { getElement() };
-		ICElement[] containers= new ICElement[] { container };
-		ICElement[] siblings= null;
+		ICElement[] elements = new ICElement[] { getElement() };
+		ICElement[] containers = new ICElement[] { container };
+		ICElement[] siblings = null;
 		if (sibling != null) {
-			siblings= new ICElement[] { sibling };
+			siblings = new ICElement[] { sibling };
 		}
-		String[] renamings= null;
+		String[] renamings = null;
 		if (rename != null) {
-			renamings= new String[] { rename };
+			renamings = new String[] { rename };
 		}
 		getElement().getCModel().copy(elements, containers, siblings, renamings, force, monitor);
 	}
@@ -165,20 +165,20 @@ class SourceManipulationInfo extends CElementInfo {
 	/**
 	 * @see ISourceManipulation#move(ICElement, ICElement, String, boolean, IProgressMonitor)
 	 */
-	public void move(ICElement container, ICElement sibling, String rename, boolean force,
-			IProgressMonitor monitor) throws CModelException {
+	public void move(ICElement container, ICElement sibling, String rename, boolean force, IProgressMonitor monitor)
+			throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] { getElement() };
-		ICElement[] containers= new ICElement[] { container };
-		ICElement[] siblings= null;
+		ICElement[] elements = new ICElement[] { getElement() };
+		ICElement[] containers = new ICElement[] { container };
+		ICElement[] siblings = null;
 		if (sibling != null) {
-			siblings= new ICElement[] { sibling };
+			siblings = new ICElement[] { sibling };
 		}
-		String[] renamings= null;
+		String[] renamings = null;
 		if (rename != null) {
-			renamings= new String[] { rename };
+			renamings = new String[] { rename };
 		}
 		getElement().getCModel().move(elements, containers, siblings, renamings, force, monitor);
 	}
@@ -190,19 +190,19 @@ class SourceManipulationInfo extends CElementInfo {
 		if (name == null) {
 			throw new IllegalArgumentException("element.nullName"); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] { getElement() };
-		ICElement[] dests= new ICElement[] { getElement().getParent() };
-		String[] renamings= new String[] { name };
+		ICElement[] elements = new ICElement[] { getElement() };
+		ICElement[] dests = new ICElement[] { getElement().getParent() };
+		String[] renamings = new String[] { name };
 		getElement().getCModel().rename(elements, dests, renamings, force, monitor);
 	}
-	
+
 	/**
 	 * Returns the element modifiers.
 	 */
 	public int getModifiers() {
 		return 0;
 	}
-	
+
 	/**
 	 * Subclasses should override
 	 */

@@ -16,7 +16,6 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.Collection;
 
-
 /**
  * @author ajin
  *

@@ -32,7 +32,7 @@ public abstract class DeclarationGenerator {
 	public static DeclarationGenerator create(INodeFactory factory) {
 		return new DeclarationGeneratorImpl(factory);
 	}
-	
+
 	/**
 	 * Creates a new {@link IASTDeclSpecifier} for a given {@link IType}.
 	 * @param type the type to describe

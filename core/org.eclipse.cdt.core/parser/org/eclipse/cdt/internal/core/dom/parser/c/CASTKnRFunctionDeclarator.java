@@ -71,7 +71,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 	@Override
 	public void setParameterNames(IASTName[] names) {
-        assertNotFrozen();
+		assertNotFrozen();
 		parameterNames = names;
 		if (names != null) {
 			for (IASTName name : names) {
@@ -90,7 +90,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 	@Override
 	public void setParameterDeclarations(IASTDeclaration[] decls) {
-        assertNotFrozen();
+		assertNotFrozen();
 		parameterDeclarations = decls;
 		if (decls != null) {
 			for (IASTDeclaration decl : decls) {
@@ -107,7 +107,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return parameterDeclarations;
 	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTName[] ns = getParameterNames();
 		for (int i = 0; i < ns.length; i++) {
@@ -126,18 +126,18 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 	@Override
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name) {
-		boolean found= false;
-		for (int i= 0; i < parameterNames.length; i++) {
+		boolean found = false;
+		for (int i = 0; i < parameterNames.length; i++) {
 			if (parameterNames[i] == name)
 				found = true;
 		}
 		if (!found)
 			return null;
 
-		for (int i= 0; i < parameterDeclarations.length; i++) {
+		for (int i = 0; i < parameterDeclarations.length; i++) {
 			if (parameterDeclarations[i] instanceof IASTSimpleDeclaration) {
 				IASTDeclarator[] decltors = ((IASTSimpleDeclaration) parameterDeclarations[i]).getDeclarators();
-				for (int j= 0; j < decltors.length; j++) {
+				for (int j = 0; j < decltors.length; j++) {
 					if (decltors[j].getName().toString().equals(name.toString()))
 						return decltors[j];
 				}
@@ -149,7 +149,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 	@Override
 	public int getRoleForName(IASTName name) {
-		IASTName [] n = getParameterNames();
+		IASTName[] n = getParameterNames();
 		for (int i = 0; i < n.length; ++i) {
 			if (n[i] == name)
 				return r_unclear;

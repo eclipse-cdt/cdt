@@ -34,39 +34,39 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 abstract public class AbstractVMNode implements IVMNode {
 
-    private final IVMProvider fProvider;
-    private boolean fDisposed = false;
-    
-    public AbstractVMNode(IVMProvider provider) {
-        fProvider = provider;
-    }
+	private final IVMProvider fProvider;
+	private boolean fDisposed = false;
 
-    /**
-     * Accessor method for sub-classes.
-     */
-    protected Executor getExecutor() {
-        return fProvider.getExecutor();
-    }
+	public AbstractVMNode(IVMProvider provider) {
+		fProvider = provider;
+	}
 
-    @Override
+	/**
+	 * Accessor method for sub-classes.
+	 */
+	protected Executor getExecutor() {
+		return fProvider.getExecutor();
+	}
+
+	@Override
 	public IVMProvider getVMProvider() {
-        return fProvider;
-    }
-    
-    @Override
-	public void dispose() {
-        fDisposed = true;
-    }
+		return fProvider;
+	}
 
-    @Override
+	@Override
+	public void dispose() {
+		fDisposed = true;
+	}
+
+	@Override
 	public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
-        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
-        rm.done();
-    }
-    
-    protected boolean isDisposed() { 
-        return fDisposed;
-    }
+		rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+		rm.done();
+	}
+
+	protected boolean isDisposed() {
+		return fDisposed;
+	}
 
 	/**
 	 * Checks whether there are any fundamental roadblocks which will prevent
@@ -83,39 +83,39 @@ abstract public class AbstractVMNode implements IVMNode {
 	 * request some appropriate default result (if applicable) and call its
 	 * <code>done</code> method.
 	 *
-     * @param update the update request
-     * @return false if a roadblock is found, otherwise true
-     */
-    protected boolean checkUpdate(IViewerUpdate update) {
-        if (update.isCanceled()) {
-            update.done();
-            return false;
-        }
-        if (fDisposed) {
-            handleFailedUpdate(update);
-            return false;
-        }
-        return true;
-    }
-    
-    /**
-     * A convenience method that completes update object in case of an error.
-     * Different types of update need to have some data configured to exhibit
-     * desired behavior in the viewer.
-     * @param update Update to handle.
-     */
-    protected void handleFailedUpdate(IViewerUpdate update) {
-        if (update instanceof IHasChildrenUpdate) {
-            ((IHasChildrenUpdate)update).setHasChilren(false);
-        } else if (update instanceof IChildrenCountUpdate) {
-            ((IChildrenCountUpdate)update).setChildCount(0);            
-        } else if (update instanceof ILabelUpdate) {
-            ILabelUpdate labelUpdate = (ILabelUpdate)update;
-            String[] columns = labelUpdate.getColumnIds();
-            for (int i = 0; i < (columns != null ? columns.length : 1); i++) {
-                labelUpdate.setLabel("...", i); //$NON-NLS-1$
-            }
-        }
-        update.done();
-    }
+	 * @param update the update request
+	 * @return false if a roadblock is found, otherwise true
+	 */
+	protected boolean checkUpdate(IViewerUpdate update) {
+		if (update.isCanceled()) {
+			update.done();
+			return false;
+		}
+		if (fDisposed) {
+			handleFailedUpdate(update);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * A convenience method that completes update object in case of an error.
+	 * Different types of update need to have some data configured to exhibit
+	 * desired behavior in the viewer.
+	 * @param update Update to handle.
+	 */
+	protected void handleFailedUpdate(IViewerUpdate update) {
+		if (update instanceof IHasChildrenUpdate) {
+			((IHasChildrenUpdate) update).setHasChilren(false);
+		} else if (update instanceof IChildrenCountUpdate) {
+			((IChildrenCountUpdate) update).setChildCount(0);
+		} else if (update instanceof ILabelUpdate) {
+			ILabelUpdate labelUpdate = (ILabelUpdate) update;
+			String[] columns = labelUpdate.getColumnIds();
+			for (int i = 0; i < (columns != null ? columns.length : 1); i++) {
+				labelUpdate.setLabel("...", i); //$NON-NLS-1$
+			}
+		}
+		update.done();
+	}
 }

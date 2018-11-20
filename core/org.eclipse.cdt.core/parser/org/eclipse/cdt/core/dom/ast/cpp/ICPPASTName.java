@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 public interface ICPPASTName extends IASTName, ICPPASTNameSpecifier {
 	@Override
 	public ICPPASTName copy();
-	
+
 	@Override
 	public ICPPASTName copy(CopyStyle style);
 }

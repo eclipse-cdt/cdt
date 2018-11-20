@@ -22,15 +22,15 @@ package org.eclipse.cdt.testsrunner.model;
 public interface IModelVisitor {
 
 	public void visit(ITestSuite testSuite);
-	
+
 	public void leave(ITestSuite testSuite);
-	
+
 	public void visit(ITestCase testCase);
-	
+
 	public void leave(ITestCase testCase);
-	
+
 	public void visit(ITestMessage testMessage);
-	
+
 	public void leave(ITestMessage testMessage);
-	
+
 }

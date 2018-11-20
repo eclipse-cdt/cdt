@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class CDefaultFileData extends CFileData {
 	protected IPath fPath;
-//	protected boolean fIsExcluded;
+	//	protected boolean fIsExcluded;
 	protected String fName;
 	protected String fId;
 	protected CLanguageData fLanguageData;
@@ -31,7 +31,7 @@ public class CDefaultFileData extends CFileData {
 
 	public CDefaultFileData(CConfigurationData cfg, CDataFactory factory) {
 		fCfg = cfg;
-		if(factory == null)
+		if (factory == null)
 			factory = new CDataFactory();
 		fFactory = factory;
 	}
@@ -43,52 +43,53 @@ public class CDefaultFileData extends CFileData {
 		fPath = path;
 	}
 
-	public CDefaultFileData(String id, IPath path, CFileData base, CConfigurationData cfg, CDataFactory factory, boolean clone) {
+	public CDefaultFileData(String id, IPath path, CFileData base, CConfigurationData cfg, CDataFactory factory,
+			boolean clone) {
 		this(id, path, cfg, factory);
-		
+
 		copyDataFrom(base, clone);
 	}
 
-	public CDefaultFileData(String id, IPath path, CFolderData base, CLanguageData baseLangData, CConfigurationData cfg, CDataFactory factory) {
+	public CDefaultFileData(String id, IPath path, CFolderData base, CLanguageData baseLangData, CConfigurationData cfg,
+			CDataFactory factory) {
 		this(id, path, cfg, factory);
-		
+
 		copyDataFrom(base, baseLangData);
 	}
 
-	protected void copyDataFrom(CFileData base, boolean clone){
+	protected void copyDataFrom(CFileData base, boolean clone) {
 		CLanguageData baseLanguageData = base.getLanguageData();
-		if(baseLanguageData != null)
+		if (baseLanguageData != null)
 			fLanguageData = copyLanguageData(baseLanguageData, clone);
 
-//		fIsExcluded = base.isExcluded();
+		//		fIsExcluded = base.isExcluded();
 	}
 
-	protected void copyDataFrom(CFolderData base, CLanguageData baseLanguageData){
-//		fIsExcluded = base != null ? base.isExcluded() : false;
-		if(baseLanguageData != null)
+	protected void copyDataFrom(CFolderData base, CLanguageData baseLanguageData) {
+		//		fIsExcluded = base != null ? base.isExcluded() : false;
+		if (baseLanguageData != null)
 			fLanguageData = copyLanguageData(baseLanguageData, false);
 	}
 
-	protected CLanguageData copyLanguageData(CLanguageData data, boolean clone){
+	protected CLanguageData copyLanguageData(CLanguageData data, boolean clone) {
 		return fFactory.createLanguageData(fCfg, this, data, null, clone);
 	}
-
 
 	@Override
 	public IPath getPath() {
 		return fPath;
 	}
 
-//	public boolean isExcluded() {
-//		return fIsExcluded;
-//	}
+	//	public boolean isExcluded() {
+	//		return fIsExcluded;
+	//	}
 
-//	public void setExcluded(boolean excluded) {
-//		if(excluded == fIsExcluded)
-//			return;
-//		
-//		fIsExcluded = excluded;
-//	}
+	//	public void setExcluded(boolean excluded) {
+	//		if(excluded == fIsExcluded)
+	//			return;
+	//		
+	//		fIsExcluded = excluded;
+	//	}
 
 	@Override
 	public void setPath(IPath path) {
@@ -118,18 +119,18 @@ public class CDefaultFileData extends CFileData {
 	public CLanguageData getLanguageData() {
 		return fLanguageData;
 	}
-	
-	public boolean isModified(){
-		if(fIsModified)
+
+	public boolean isModified() {
+		if (fIsModified)
 			return true;
-		
+
 		return fFactory.isModified(fLanguageData);
 	}
-	
-	public void setModified(boolean modified){
+
+	public void setModified(boolean modified) {
 		fIsModified = modified;
-		
-		if(!modified)
+
+		if (!modified)
 			fFactory.setModified(fLanguageData, false);
 	}
 

@@ -82,7 +82,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 	 */
 	@Override
 	public IASTExpression getInitialValue();
-	
+
 	/**
 	 * @since 5.1
 	 */

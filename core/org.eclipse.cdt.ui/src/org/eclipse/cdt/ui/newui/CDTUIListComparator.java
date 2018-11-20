@@ -32,19 +32,20 @@ public class CDTUIListComparator extends CDTListComparator {
 			comparator = new CDTUIListComparator();
 		return comparator;
 	}
+
 	@Override
 	public int compare(Object a, Object b) {
-		if (a == null || b == null) 
+		if (a == null || b == null)
 			return 0;
 		if (a instanceof ExtData) {
-			ExtData c1 = (ExtData)a;
-			ExtData c2 = (ExtData)b;
+			ExtData c1 = (ExtData) a;
+			ExtData c2 = (ExtData) b;
 			return c1.getName().compareToIgnoreCase(c2.getName());
-		} 
+		}
 		if (a instanceof IConfigurationElement) {
-			IConfigurationElement e1 = (IConfigurationElement)a;
-			IConfigurationElement e2 = (IConfigurationElement)b;
-			return AbstractPage.getWeight(e1).compareTo(AbstractPage.getWeight(e2)); 
+			IConfigurationElement e1 = (IConfigurationElement) a;
+			IConfigurationElement e2 = (IConfigurationElement) b;
+			return AbstractPage.getWeight(e1).compareTo(AbstractPage.getWeight(e2));
 		}
 		if (a instanceof EntryDescriptor) {
 			EntryDescriptor c1 = (EntryDescriptor) a;

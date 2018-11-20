@@ -40,7 +40,8 @@ public class MakeUITestBase {
 	 * @param srcRoot - project folder where the test package is rooted.
 	 */
 	protected MakeUITestBase(String srcRoot) {
-		this.commentReader = new TestSourceReader(MakeUITestsPlugin.getDefault().getBundle(), srcRoot, this.getClass(), 1);
+		this.commentReader = new TestSourceReader(MakeUITestsPlugin.getDefault().getBundle(), srcRoot, this.getClass(),
+				1);
 	}
 
 	/**

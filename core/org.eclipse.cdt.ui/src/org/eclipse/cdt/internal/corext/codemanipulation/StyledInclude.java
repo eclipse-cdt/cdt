@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
  * Represents a new or an existing include statement together with the style associated with it.
  */
 public class StyledInclude {
-	private final IPath header;  // null for existing unresolved includes 
+	private final IPath header; // null for existing unresolved includes 
 	private final IncludeInfo includeInfo; // never null
 	private final IncludeGroupStyle style;
 	private IASTPreprocessorIncludeStatement existingInclude;
@@ -72,7 +72,7 @@ public class StyledInclude {
 	@Override
 	public int hashCode() {
 		if (header != null)
-			return header.hashCode();  // includeInfo is ignored if header is not null
+			return header.hashCode(); // includeInfo is ignored if header is not null
 		return includeInfo.hashCode();
 	}
 
@@ -86,7 +86,7 @@ public class StyledInclude {
 			return false;
 		StyledInclude other = (StyledInclude) obj;
 		if (header != null)
-			return header.equals(other.header);  // includeInfo is ignored if header is not null
+			return header.equals(other.header); // includeInfo is ignored if header is not null
 		if (other.header != null)
 			return false;
 		return includeInfo.equals(other.includeInfo);

@@ -21,14 +21,15 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.Assert;
 
 public final class StringSetSerializer {
-	private static final String DELIM= "\0"; //$NON-NLS-1$
+	private static final String DELIM = "\0"; //$NON-NLS-1$
+
 	private StringSetSerializer() {
 	}
 
 	public static String serialize(Set<String> strings) {
 		Assert.isLegal(strings != null);
-		StringBuilder buf= new StringBuilder(strings.size() * 20);
-		for (Iterator<String> it= strings.iterator(); it.hasNext();) {
+		StringBuilder buf = new StringBuilder(strings.size() * 20);
+		for (Iterator<String> it = strings.iterator(); it.hasNext();) {
 			buf.append(it.next());
 			if (it.hasNext())
 				buf.append(DELIM);
@@ -38,17 +39,17 @@ public final class StringSetSerializer {
 
 	public static Set<String> deserialize(String serialized) {
 		Assert.isLegal(serialized != null);
-		Set<String> marked= new HashSet<String>();
-		StringTokenizer tok= new StringTokenizer(serialized, DELIM);
+		Set<String> marked = new HashSet<String>();
+		StringTokenizer tok = new StringTokenizer(serialized, DELIM);
 		while (tok.hasMoreTokens())
 			marked.add(tok.nextToken());
 		return marked;
 	}
 
 	public static String[] getDifference(String oldValue, String newValue) {
-		Set<String> oldSet= deserialize(oldValue);
-		Set<String> newSet= deserialize(newValue);
-		Set<String> intersection= new HashSet<String>(oldSet);
+		Set<String> oldSet = deserialize(oldValue);
+		Set<String> newSet = deserialize(newValue);
+		Set<String> intersection = new HashSet<String>(oldSet);
 		intersection.retainAll(newSet);
 		oldSet.removeAll(intersection);
 		newSet.removeAll(intersection);

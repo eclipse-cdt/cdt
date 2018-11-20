@@ -22,21 +22,19 @@ import org.eclipse.ui.IWorkbenchSite;
 public class FindRefsAction extends FindAction {
 
 	public FindRefsAction(CEditor editor) {
-		this(editor,
-		CSearchMessages.CSearch_FindReferencesAction_label, 
-		CSearchMessages.CSearch_FindReferencesAction_tooltip); 
+		this(editor, CSearchMessages.CSearch_FindReferencesAction_label,
+				CSearchMessages.CSearch_FindReferencesAction_tooltip);
 	}
-	
-	public FindRefsAction(IWorkbenchSite site){
-		this(site,
-		CSearchMessages.CSearch_FindReferencesAction_label, 
-		CSearchMessages.CSearch_FindReferencesAction_tooltip); 
-	} 
+
+	public FindRefsAction(IWorkbenchSite site) {
+		this(site, CSearchMessages.CSearch_FindReferencesAction_label,
+				CSearchMessages.CSearch_FindReferencesAction_tooltip);
+	}
 
 	public FindRefsAction(CEditor editor, String label, String tooltip) {
 		super(editor);
-		setText(label); 
-		setToolTipText(tooltip); 
+		setText(label);
+		setToolTipText(tooltip);
 	}
 
 	public FindRefsAction(IWorkbenchSite site, String label, String tooltip) {
@@ -47,13 +45,13 @@ public class FindRefsAction extends FindAction {
 
 	@Override
 	protected String getScopeDescription() {
-		return CSearchMessages.WorkspaceScope; 
+		return CSearchMessages.WorkspaceScope;
 	}
 
 	@Override
 	protected ICElement[] getScope() {
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	protected int getLimitTo() {

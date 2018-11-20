@@ -91,7 +91,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 
 		inputCommand = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
 		String compilerPattern = provider.getCompilerPattern();
-		inputCommand.setText(compilerPattern!=null ? compilerPattern : ""); //$NON-NLS-1$
+		inputCommand.setText(compilerPattern != null ? compilerPattern : ""); //$NON-NLS-1$
 
 		gd = new GridData();
 		gd.horizontalSpan = 1;
@@ -137,6 +137,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 					refreshItem(selectedProvider);
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
@@ -174,6 +175,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 					refreshItem(selectedProvider);
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
@@ -186,7 +188,8 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 		gd.horizontalSpan = 2;
 		scopeFolderRadioButton.setLayoutData(gd);
 
-		scopeFolderRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER);
+		scopeFolderRadioButton
+				.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER);
 		scopeFolderRadioButton.setEnabled(fEditable);
 		scopeFolderRadioButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -199,6 +202,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 					refreshItem(selectedProvider);
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
@@ -211,7 +215,8 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 		gd.horizontalSpan = 2;
 		scopeProjectRadioButton.setLayoutData(gd);
 
-		scopeProjectRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT);
+		scopeProjectRadioButton
+				.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT);
 		scopeProjectRadioButton.setEnabled(fEditable);
 		scopeProjectRadioButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -224,6 +229,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 					refreshItem(selectedProvider);
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);

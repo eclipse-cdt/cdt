@@ -22,8 +22,7 @@ import org.eclipse.debug.core.DebugException;
  * 
  * @since: Feb 4, 2003
  */
-public interface IResumeWithoutSignal
-{
+public interface IResumeWithoutSignal {
 	/**
 	 * Causes this element to resume its execution ignoring a signal.
 	 * Has no effect on an element that is not suspended because of a signal.

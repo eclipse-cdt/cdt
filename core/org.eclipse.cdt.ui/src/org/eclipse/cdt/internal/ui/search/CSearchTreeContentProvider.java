@@ -53,7 +53,7 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 	private final CSearchViewPage fPage;
 
 	CSearchTreeContentProvider(CSearchViewPage page) {
-		fPage= page;
+		fPage = page;
 	}
 
 	@Override
@@ -76,9 +76,9 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 		return null;
 	}
 
- 	@Override
+	@Override
 	public boolean hasChildren(Object element) {
- 		return tree.get(element) != null;
+		return tree.get(element) != null;
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = (TreeViewer)viewer;
+		this.viewer = (TreeViewer) viewer;
 		this.result = (CSearchResult) newInput;
 		initialize(result);
 		viewer.refresh();
@@ -104,9 +104,8 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 	 */
 	private void insertUnindexedProjectWarningElement(ICProject project) {
 		insertCElement(project);
-		insertChild(project, 
-				new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-						CSearchMessages.PDOMSearchTreeContentProvider_IndexerNotEnabledWarning));
+		insertChild(project, new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+				CSearchMessages.PDOMSearchTreeContentProvider_IndexerNotEnabledWarning));
 	}
 
 	/**
@@ -115,11 +114,10 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 	 */
 	private void insertClosedProjectWarningElement(ICProject project) {
 		insertCElement(project);
-		insertChild(project, 
-				new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-						CSearchMessages.PDOMSearchTreeContentProvider_ProjectClosedWarning));
+		insertChild(project, new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+				CSearchMessages.PDOMSearchTreeContentProvider_ProjectClosedWarning));
 	}
-	
+
 	private boolean insertChild(Object parent, Object child) {
 		Set<Object> children = tree.get(parent);
 		if (children == null) {
@@ -128,27 +126,27 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 		}
 		return children.add(child);
 	}
-	
+
 	private void insertSearchElement(CSearchElement element) {
-		IIndexFileLocation location= element.getLocation();
+		IIndexFileLocation location = element.getLocation();
 		IFile[] files;
-		if(location.getFullPath()!=null) {
-			files= new IFile[] {ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()))};
+		if (location.getFullPath() != null) {
+			files = new IFile[] { ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath())) };
 		} else {
-			IPath path= IndexLocationFactory.getAbsolutePath(element.getLocation());
-			files= ResourceLookup.findFilesForLocation(path);
+			IPath path = IndexLocationFactory.getAbsolutePath(element.getLocation());
+			files = ResourceLookup.findFilesForLocation(path);
 		}
-		boolean handled= false;
+		boolean handled = false;
 		if (files.length > 0) {
 			for (int j = 0; j < files.length; ++j) {
 				ICElement celement = CoreModel.getDefault().create(files[j]);
 				if (celement != null) {
 					insertChild(celement, element);
 					insertCElement(celement);
-					handled= true;
+					handled = true;
 				}
 			}
-		} 
+		}
 		if (!handled) {
 			// insert a folder and then the file under that
 			IPath path = IndexLocationFactory.getAbsolutePath(location);
@@ -164,7 +162,7 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 			}
 		}
 	}
-	
+
 	private void insertCElement(ICElement element) {
 		if (element instanceof ICProject)
 			insertChild(result, element);
@@ -177,12 +175,12 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 			insertCElement(parent);
 		}
 	}
-	
+
 	@Override
 	public void elementsChanged(Object[] elements) {
 		if (elements != null) {
 			for (int i = 0; i < elements.length; ++i) {
-				CSearchElement element = (CSearchElement)elements[i];
+				CSearchElement element = (CSearchElement) elements[i];
 				if (fPage.getDisplayedMatchCount(element) > 0) {
 					insertSearchElement(element);
 				} else {
@@ -214,30 +212,30 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void clear() {
 		initialize(result);
 	}
-	
+
 	private void initialize(final CSearchResult result) {
 		this.result = result;
 		tree.clear();
 		if (result != null) {
 			// if indexer was busy, record that
 			if (result.wasIndexerBusy()) {
-				insertChild(result, IPDOMSearchContentProvider.INCOMPLETE_RESULTS_NODE); 
+				insertChild(result, IPDOMSearchContentProvider.INCOMPLETE_RESULTS_NODE);
 			}
-			
+
 			Object[] elements = result.getElements();
 			for (int i = 0; i < elements.length; ++i) {
-				final CSearchElement element = (CSearchElement)elements[i];
+				final CSearchElement element = (CSearchElement) elements[i];
 				if (fPage.getDisplayedMatchCount(element) > 0)
 					insertSearchElement(element);
 			}
 
 			// add all the projects which have no results
-			ICProject[] projects = ((CSearchQuery)result.getQuery()).getProjects();
+			ICProject[] projects = ((CSearchQuery) result.getQuery()).getProjects();
 			for (int i = 0; i < projects.length; ++i) {
 				ICProject project = projects[i];
 				Object projectResults = tree.get(project);
@@ -247,16 +245,16 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 			}
 		}
 	}
-	
+
 	protected void remove(Object element) {
 		Object parent = getParent(element);
 		if (parent == null)
 			// reached the search result
 			return;
-		
+
 		Set<Object> siblings = tree.get(parent);
 		siblings.remove(element);
-		
+
 		if (siblings.isEmpty()) {
 			// remove the parent
 			remove(parent);

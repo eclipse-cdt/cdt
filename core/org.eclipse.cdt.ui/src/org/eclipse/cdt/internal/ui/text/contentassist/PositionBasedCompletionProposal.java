@@ -31,7 +31,8 @@ import org.eclipse.swt.graphics.Point;
  * An enhanced implementation of the <code>ICompletionProposal</code> interface implementing all the extension interfaces.
  * It uses a position to track its replacement offset and length. The position must be set up externally.
  */
-public class PositionBasedCompletionProposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2 {
+public class PositionBasedCompletionProposal
+		implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2 {
 	/** The string to be displayed in the completion proposal popup */
 	private String fDisplayString;
 	/** The replacement string */
@@ -73,18 +74,20 @@ public class PositionBasedCompletionProposal implements ICompletionProposal, ICo
 	 * @param additionalProposalInfo the additional information associated with this proposal
 	 * @param triggers the trigger characters
 	 */
-	public PositionBasedCompletionProposal(String replacementString, Position replacementPosition, int cursorPosition, Image image, String displayString, IContextInformation contextInformation, String additionalProposalInfo, char[] triggers) {
+	public PositionBasedCompletionProposal(String replacementString, Position replacementPosition, int cursorPosition,
+			Image image, String displayString, IContextInformation contextInformation, String additionalProposalInfo,
+			char[] triggers) {
 		Assert.isNotNull(replacementString);
 		Assert.isTrue(replacementPosition != null);
 
-		fReplacementString= replacementString;
-		fReplacementPosition= replacementPosition;
-		fCursorPosition= cursorPosition;
-		fImage= image;
-		fDisplayString= displayString;
-		fContextInformation= contextInformation;
-		fAdditionalProposalInfo= additionalProposalInfo;
-		fTriggerCharacters= triggers;
+		fReplacementString = replacementString;
+		fReplacementPosition = replacementPosition;
+		fCursorPosition = cursorPosition;
+		fImage = image;
+		fDisplayString = displayString;
+		fContextInformation = contextInformation;
+		fAdditionalProposalInfo = additionalProposalInfo;
+		fTriggerCharacters = triggers;
 	}
 
 	@Override
@@ -139,7 +142,7 @@ public class PositionBasedCompletionProposal implements ICompletionProposal, ICo
 	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
-			String content= document.get(fReplacementPosition.getOffset(), offset - fReplacementPosition.getOffset());
+			String content = document.get(fReplacementPosition.getOffset(), offset - fReplacementPosition.getOffset());
 			if (fReplacementString.startsWith(content))
 				return true;
 		} catch (BadLocationException e) {
@@ -169,4 +172,3 @@ public class PositionBasedCompletionProposal implements ICompletionProposal, ICo
 		return fReplacementPosition.getOffset();
 	}
 }
-

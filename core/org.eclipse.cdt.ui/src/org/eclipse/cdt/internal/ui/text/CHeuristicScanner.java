@@ -39,33 +39,32 @@ public final class CHeuristicScanner implements Symbols {
 	 * Returned by all methods when the requested position could not be found, or if a
 	 * {@link BadLocationException} was thrown while scanning.
 	 */
-	public static final int NOT_FOUND= -1;
+	public static final int NOT_FOUND = -1;
 
 	/**
 	 * Special bound parameter that means either -1 (backward scanning) or
 	 * <code>fDocument.getLength()</code> (forward scanning).
 	 */
-	public static final int UNBOUND= -2;
-
+	public static final int UNBOUND = -2;
 
 	/* character constants */
-	private static final char LBRACE= '{';
-	private static final char RBRACE= '}';
-	private static final char LPAREN= '(';
-	private static final char RPAREN= ')';
-	private static final char SEMICOLON= ';';
-	private static final char COLON= ':';
-	private static final char COMMA= ',';
-	private static final char LBRACKET= '[';
-	private static final char RBRACKET= ']';
-	private static final char QUESTIONMARK= '?';
-	private static final char EQUAL= '=';
-	private static final char LANGLE= '<';
-	private static final char RANGLE= '>';
-	private static final char DOT= '.';
-	private static final char MINUS= '-';
-	private static final char PLUS= '+';
-	private static final char TILDE= '~';
+	private static final char LBRACE = '{';
+	private static final char RBRACE = '}';
+	private static final char LPAREN = '(';
+	private static final char RPAREN = ')';
+	private static final char SEMICOLON = ';';
+	private static final char COLON = ':';
+	private static final char COMMA = ',';
+	private static final char LBRACKET = '[';
+	private static final char RBRACKET = ']';
+	private static final char QUESTIONMARK = '?';
+	private static final char EQUAL = '=';
+	private static final char LANGLE = '<';
+	private static final char RANGLE = '>';
+	private static final char DOT = '.';
+	private static final char MINUS = '-';
+	private static final char PLUS = '+';
+	private static final char TILDE = '~';
 
 	/**
 	 * Specifies the stop condition, upon which the <code>scanXXX</code> methods will decide whether
@@ -125,16 +124,16 @@ public final class CHeuristicScanner implements Symbols {
 		 */
 		@Override
 		public int nextPosition(int position, boolean forward) {
-			ITypedRegion partition= getPartition(position);
+			ITypedRegion partition = getPartition(position);
 			if (fPartition.equals(partition.getType()))
 				return super.nextPosition(position, forward);
 
 			if (forward) {
-				int end= partition.getOffset() + partition.getLength();
+				int end = partition.getOffset() + partition.getLength();
 				if (position < end)
 					return end;
 			} else {
-				int offset= partition.getOffset();
+				int offset = partition.getOffset();
 				if (position > offset)
 					return offset - 1;
 			}
@@ -174,16 +173,16 @@ public final class CHeuristicScanner implements Symbols {
 		 */
 		@Override
 		public int nextPosition(int position, boolean forward) {
-			ITypedRegion partition= getPartition(position);
+			ITypedRegion partition = getPartition(position);
 			if (fPartition.equals(partition.getType()))
 				return super.nextPosition(position, forward);
 
 			if (forward) {
-				int end= partition.getOffset() + partition.getLength();
+				int end = partition.getOffset() + partition.getLength();
 				if (position < end)
 					return end;
 			} else {
-				int offset= partition.getOffset();
+				int offset = partition.getOffset();
 				if (position > offset)
 					return offset - 1;
 			}
@@ -202,7 +201,7 @@ public final class CHeuristicScanner implements Symbols {
 		 * @param ch the single character to match
 		 */
 		public CharacterMatch(char ch) {
-			this(new char[] {ch});
+			this(new char[] { ch });
 		}
 
 		/**
@@ -212,7 +211,7 @@ public final class CHeuristicScanner implements Symbols {
 		public CharacterMatch(char[] chars) {
 			Assert.isNotNull(chars);
 			Assert.isTrue(chars.length > 0);
-			fChars= chars;
+			fChars = chars;
 			Arrays.sort(chars);
 		}
 
@@ -229,16 +228,16 @@ public final class CHeuristicScanner implements Symbols {
 		 */
 		@Override
 		public int nextPosition(int position, boolean forward) {
-			ITypedRegion partition= getPartition(position);
+			ITypedRegion partition = getPartition(position);
 			if (fPartition.equals(partition.getType()))
 				return super.nextPosition(position, forward);
 
 			if (forward) {
-				int end= partition.getOffset() + partition.getLength();
+				int end = partition.getOffset() + partition.getLength();
 				if (position < end)
 					return end;
 			} else {
-				int offset= partition.getOffset();
+				int offset = partition.getOffset();
 				if (position > offset)
 					return offset - 1;
 			}
@@ -262,12 +261,12 @@ public final class CHeuristicScanner implements Symbols {
 	/**
 	 * The most recently used partition.
 	 */
-	private ITypedRegion fCachedPartition= new TypedRegion(-1, 0, "__no_partition_at_all"); //$NON-NLS-1$
+	private ITypedRegion fCachedPartition = new TypedRegion(-1, 0, "__no_partition_at_all"); //$NON-NLS-1$
 
 	/* preset stop conditions */
-	private final StopCondition fNonWSDefaultPart= new NonWhitespaceDefaultPartition();
-	private static final StopCondition fNonWS= new NonWhitespace();
-	private final StopCondition fNonIdent= new NonJavaIdentifierPartDefaultPartition();
+	private final StopCondition fNonWSDefaultPart = new NonWhitespaceDefaultPartition();
+	private static final StopCondition fNonWS = new NonWhitespace();
+	private final StopCondition fNonIdent = new NonJavaIdentifierPartDefaultPartition();
 
 	/**
 	 * Creates a new instance.
@@ -280,9 +279,9 @@ public final class CHeuristicScanner implements Symbols {
 		Assert.isLegal(document != null);
 		Assert.isLegal(partitioning != null);
 		Assert.isLegal(partition != null);
-		fDocument= document;
-		fPartitioning= partitioning;
-		fPartition= partition;
+		fDocument = document;
+		fPartitioning = partitioning;
+		fPartition = partition;
 	}
 
 	/**
@@ -314,107 +313,106 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return a constant from {@link Symbols} describing the next token
 	 */
 	public int nextToken(int start, int bound) {
-		int pos= scanForward(start, bound, fNonWS);
+		int pos = scanForward(start, bound, fNonWS);
 		if (pos == NOT_FOUND)
 			return TokenEOF;
 		try {
 			// check for string or char literal
 			char ch = fDocument.getChar(pos);
 			if (ch == '"' || ch == '\'') {
-				fChar= ch;
-				fPos= fNonWSDefaultPart.nextPosition(pos, true);
+				fChar = ch;
+				fPos = fNonWSDefaultPart.nextPosition(pos, true);
 				return TokenOTHER;
 			}
 		} catch (BadLocationException exc) {
 		}
-		pos= scanForward(pos, bound, fNonWSDefaultPart);
+		pos = scanForward(pos, bound, fNonWSDefaultPart);
 		if (pos == NOT_FOUND)
 			return TokenEOF;
 
 		fPos++;
 
 		switch (fChar) {
-			case LBRACE:
-				return TokenLBRACE;
-			case RBRACE:
-				return TokenRBRACE;
-			case LBRACKET:
-				return TokenLBRACKET;
-			case RBRACKET:
-				return TokenRBRACKET;
-			case LPAREN:
-				return TokenLPAREN;
-			case RPAREN:
-				return TokenRPAREN;
-			case SEMICOLON:
-				return TokenSEMICOLON;
+		case LBRACE:
+			return TokenLBRACE;
+		case RBRACE:
+			return TokenRBRACE;
+		case LBRACKET:
+			return TokenLBRACKET;
+		case RBRACKET:
+			return TokenRBRACKET;
+		case LPAREN:
+			return TokenLPAREN;
+		case RPAREN:
+			return TokenRPAREN;
+		case SEMICOLON:
+			return TokenSEMICOLON;
+		case COLON:
+			switch (peekNextChar()) {
 			case COLON:
-				switch (peekNextChar()) {
-				case COLON:
-					++fPos;
-					return TokenDOUBLECOLON;
-				}
-				return TokenCOLON;
-			case COMMA:
-				return TokenCOMMA;
-			case QUESTIONMARK:
-				return TokenQUESTIONMARK;
-			case EQUAL:
-				return TokenEQUAL;
+				++fPos;
+				return TokenDOUBLECOLON;
+			}
+			return TokenCOLON;
+		case COMMA:
+			return TokenCOMMA;
+		case QUESTIONMARK:
+			return TokenQUESTIONMARK;
+		case EQUAL:
+			return TokenEQUAL;
+		case LANGLE:
+			switch (peekNextChar()) {
 			case LANGLE:
-				switch (peekNextChar()) {
-				case LANGLE:
-					++fPos;
-					return TokenSHIFTLEFT;
-				case EQUAL:
-					++fPos;
-					return TokenOTHER;
-				}
-				return TokenLESSTHAN;
+				++fPos;
+				return TokenSHIFTLEFT;
+			case EQUAL:
+				++fPos;
+				return TokenOTHER;
+			}
+			return TokenLESSTHAN;
+		case RANGLE:
+			switch (peekNextChar()) {
 			case RANGLE:
-				switch (peekNextChar()) {
-				case RANGLE:
-					++fPos;
-					return TokenSHIFTRIGHT;
-				case EQUAL:
-					++fPos;
-					return TokenOTHER;
-				}
-				return TokenGREATERTHAN;
-			case DOT:
-				return TokenDOT;
-			case MINUS:
-				switch (peekNextChar()) {
-				case RANGLE:
-					++fPos;
-					return TokenARROW;
-				}
-				return TokenMINUS;
-			case PLUS:
-				return TokenPLUS;
-			case TILDE:
-				return TokenTILDE;
+				++fPos;
+				return TokenSHIFTRIGHT;
+			case EQUAL:
+				++fPos;
+				return TokenOTHER;
+			}
+			return TokenGREATERTHAN;
+		case DOT:
+			return TokenDOT;
+		case MINUS:
+			switch (peekNextChar()) {
+			case RANGLE:
+				++fPos;
+				return TokenARROW;
+			}
+			return TokenMINUS;
+		case PLUS:
+			return TokenPLUS;
+		case TILDE:
+			return TokenTILDE;
 		}
 
 		// else
 		if (Character.isJavaIdentifierPart(fChar)) {
 			// assume an identifier or keyword
-			int from= pos, to;
-			pos= scanForward(pos + 1, bound, fNonIdent);
+			int from = pos, to;
+			pos = scanForward(pos + 1, bound, fNonIdent);
 			if (pos == NOT_FOUND)
-				to= bound == UNBOUND ? fDocument.getLength() : bound;
+				to = bound == UNBOUND ? fDocument.getLength() : bound;
 			else
-				to= pos;
+				to = pos;
 
 			String identOrKeyword;
 			try {
-				identOrKeyword= fDocument.get(from, to - from);
+				identOrKeyword = fDocument.get(from, to - from);
 			} catch (BadLocationException e) {
 				return TokenEOF;
 			}
 
 			return getToken(identOrKeyword);
-
 
 		}
 		// operators, number literals etc
@@ -432,86 +430,86 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return a constant from {@link Symbols} describing the previous token
 	 */
 	public int previousToken(int start, int bound) {
-		int pos= scanBackward(start, bound, fNonWSDefaultPart);
+		int pos = scanBackward(start, bound, fNonWSDefaultPart);
 		if (pos == NOT_FOUND)
 			return TokenEOF;
 
 		fPos--;
 
 		switch (fChar) {
-			case LBRACE:
-				return TokenLBRACE;
-			case RBRACE:
-				return TokenRBRACE;
-			case LBRACKET:
-				return TokenLBRACKET;
-			case RBRACKET:
-				return TokenRBRACKET;
-			case LPAREN:
-				return TokenLPAREN;
-			case RPAREN:
-				return TokenRPAREN;
-			case SEMICOLON:
-				return TokenSEMICOLON;
+		case LBRACE:
+			return TokenLBRACE;
+		case RBRACE:
+			return TokenRBRACE;
+		case LBRACKET:
+			return TokenLBRACKET;
+		case RBRACKET:
+			return TokenRBRACKET;
+		case LPAREN:
+			return TokenLPAREN;
+		case RPAREN:
+			return TokenRPAREN;
+		case SEMICOLON:
+			return TokenSEMICOLON;
+		case COLON:
+			switch (peekPreviousChar()) {
 			case COLON:
-				switch (peekPreviousChar()) {
-				case COLON:
-					--fPos;
-					return TokenDOUBLECOLON;
-				}
-				return TokenCOLON;
-			case COMMA:
-				return TokenCOMMA;
-			case QUESTIONMARK:
-				return TokenQUESTIONMARK;
-			case EQUAL:
-				switch (peekPreviousChar()) {
-				case RANGLE:
-				case LANGLE:
-					--fPos;
-					return TokenOTHER;
-				}
-				return TokenEQUAL;
-			case LANGLE:
-				switch (peekPreviousChar()) {
-				case LANGLE:
-					--fPos;
-					return TokenSHIFTLEFT;
-				}
-				return TokenLESSTHAN;
+				--fPos;
+				return TokenDOUBLECOLON;
+			}
+			return TokenCOLON;
+		case COMMA:
+			return TokenCOMMA;
+		case QUESTIONMARK:
+			return TokenQUESTIONMARK;
+		case EQUAL:
+			switch (peekPreviousChar()) {
 			case RANGLE:
-				switch (peekPreviousChar()) {
-				case RANGLE:
-					--fPos;
-					return TokenSHIFTRIGHT;
-				case MINUS:
-					--fPos;
-					return TokenARROW;
-				}
-				return TokenGREATERTHAN;
-			case DOT:
-				return TokenDOT;
+			case LANGLE:
+				--fPos;
+				return TokenOTHER;
+			}
+			return TokenEQUAL;
+		case LANGLE:
+			switch (peekPreviousChar()) {
+			case LANGLE:
+				--fPos;
+				return TokenSHIFTLEFT;
+			}
+			return TokenLESSTHAN;
+		case RANGLE:
+			switch (peekPreviousChar()) {
+			case RANGLE:
+				--fPos;
+				return TokenSHIFTRIGHT;
 			case MINUS:
-				return TokenMINUS;
-			case PLUS:
-				return TokenPLUS;
-			case TILDE:
-				return TokenTILDE;
+				--fPos;
+				return TokenARROW;
+			}
+			return TokenGREATERTHAN;
+		case DOT:
+			return TokenDOT;
+		case MINUS:
+			return TokenMINUS;
+		case PLUS:
+			return TokenPLUS;
+		case TILDE:
+			return TokenTILDE;
 		}
 
 		// else
 		if (Character.isJavaIdentifierPart(fChar)) {
 			// assume an ident or keyword
-			int from, to= pos + 1;
-			pos= scanBackward(pos - 1, bound, fNonIdent);
+			int from, to = pos + 1;
+			pos = scanBackward(pos - 1, bound, fNonIdent);
 			if (pos == NOT_FOUND)
-				from= bound == UNBOUND ? 0 : bound + 1;
+				from = bound == UNBOUND ? 0 : bound + 1;
 			else
-				from= pos + 1;
+				from = pos + 1;
 
 			String identOrKeyword;
 			try {
-				identOrKeyword= fDocument.get(from, to - from);
+				identOrKeyword = fDocument.get(from, to - from);
 			} catch (BadLocationException e) {
 				return TokenEOF;
 			}
@@ -532,7 +530,7 @@ public final class CHeuristicScanner implements Symbols {
 			} catch (BadLocationException exc) {
 			}
 		}
-		return (char)-1;
+		return (char) -1;
 	}
 
 	/**
@@ -545,7 +543,7 @@ public final class CHeuristicScanner implements Symbols {
 			} catch (BadLocationException e) {
 			}
 		}
-		return (char)-1;
+		return (char) -1;
 	}
 
 	/**
@@ -558,91 +556,91 @@ public final class CHeuristicScanner implements Symbols {
 		Assert.isNotNull(s);
 
 		switch (s.length()) {
-			case 2:
-				if ("if".equals(s)) //$NON-NLS-1$
-					return TokenIF;
-				if ("do".equals(s)) //$NON-NLS-1$
-					return TokenDO;
-				break;
-			case 3:
-				if ("for".equals(s)) //$NON-NLS-1$
-					return TokenFOR;
-				if ("try".equals(s)) //$NON-NLS-1$
-					return TokenTRY;
-				if ("new".equals(s)) //$NON-NLS-1$
-					return TokenNEW;
-				break;
-			case 4:
-				if ("case".equals(s)) //$NON-NLS-1$
-					return TokenCASE;
-				if ("else".equals(s)) //$NON-NLS-1$
-					return TokenELSE;
-				if ("enum".equals(s)) //$NON-NLS-1$
-					return TokenENUM;
-				if ("goto".equals(s)) //$NON-NLS-1$
-					return TokenGOTO;
-				break;
-			case 5:
-				if ("break".equals(s)) //$NON-NLS-1$
-					return TokenBREAK;
-				if ("catch".equals(s)) //$NON-NLS-1$
-					return TokenCATCH;
-				if ("class".equals(s)) //$NON-NLS-1$
-					return TokenCLASS;
-				if ("const".equals(s)) //$NON-NLS-1$
-					return TokenCONST;
-				if ("while".equals(s)) //$NON-NLS-1$
-					return TokenWHILE;
-				if ("union".equals(s)) //$NON-NLS-1$
-					return TokenUNION;
-				if ("using".equals(s)) //$NON-NLS-1$
-					return TokenUSING;
-				if ("throw".equals(s)) //$NON-NLS-1$
-					return TokenTHROW;
-				break;
-			case 6:
-				if ("delete".equals(s)) //$NON-NLS-1$
-					return TokenDELETE;
-				if ("public".equals(s)) //$NON-NLS-1$
-					return TokenPUBLIC;
-				if ("return".equals(s)) //$NON-NLS-1$
-					return TokenRETURN;
-				if ("static".equals(s)) //$NON-NLS-1$
-					return TokenSTATIC;
-				if ("struct".equals(s)) //$NON-NLS-1$
-					return TokenSTRUCT;
-				if ("switch".equals(s)) //$NON-NLS-1$
-					return TokenSWITCH;
-				if ("extern".equals(s)) //$NON-NLS-1$
-					return TokenEXTERN;
-				break;
-			case 7:
-				if ("default".equals(s)) //$NON-NLS-1$
-					return TokenDEFAULT;
-				if ("private".equals(s)) //$NON-NLS-1$
-					return TokenPRIVATE;
-				if ("typedef".equals(s)) //$NON-NLS-1$
-					return TokenTYPEDEF;
-				if ("virtual".equals(s)) //$NON-NLS-1$
-					return TokenVIRTUAL;
-				break;
-			case 8:
-				if ("operator".equals(s)) //$NON-NLS-1$
-					return TokenOPERATOR;
-				if ("template".equals(s)) //$NON-NLS-1$
-					return TokenTEMPLATE;
-				if ("typename".equals(s)) //$NON-NLS-1$
-					return TokenTYPENAME;
-				if ("noexcept".equals(s)) //$NON-NLS-1$
-					return TokenNOEXCEPT;
-				if ("override".equals(s)) //$NON-NLS-1$
-					return TokenOVERRIDE;
-				break;
-			case 9:
-				if ("namespace".equals(s)) //$NON-NLS-1$
-					return TokenNAMESPACE;
-				if ("protected".equals(s)) //$NON-NLS-1$
-					return TokenPROTECTED;
+		case 2:
+			if ("if".equals(s)) //$NON-NLS-1$
+				return TokenIF;
+			if ("do".equals(s)) //$NON-NLS-1$
+				return TokenDO;
+			break;
+		case 3:
+			if ("for".equals(s)) //$NON-NLS-1$
+				return TokenFOR;
+			if ("try".equals(s)) //$NON-NLS-1$
+				return TokenTRY;
+			if ("new".equals(s)) //$NON-NLS-1$
+				return TokenNEW;
+			break;
+		case 4:
+			if ("case".equals(s)) //$NON-NLS-1$
+				return TokenCASE;
+			if ("else".equals(s)) //$NON-NLS-1$
+				return TokenELSE;
+			if ("enum".equals(s)) //$NON-NLS-1$
+				return TokenENUM;
+			if ("goto".equals(s)) //$NON-NLS-1$
+				return TokenGOTO;
+			break;
+		case 5:
+			if ("break".equals(s)) //$NON-NLS-1$
+				return TokenBREAK;
+			if ("catch".equals(s)) //$NON-NLS-1$
+				return TokenCATCH;
+			if ("class".equals(s)) //$NON-NLS-1$
+				return TokenCLASS;
+			if ("const".equals(s)) //$NON-NLS-1$
+				return TokenCONST;
+			if ("while".equals(s)) //$NON-NLS-1$
+				return TokenWHILE;
+			if ("union".equals(s)) //$NON-NLS-1$
+				return TokenUNION;
+			if ("using".equals(s)) //$NON-NLS-1$
+				return TokenUSING;
+			if ("throw".equals(s)) //$NON-NLS-1$
+				return TokenTHROW;
+			break;
+		case 6:
+			if ("delete".equals(s)) //$NON-NLS-1$
+				return TokenDELETE;
+			if ("public".equals(s)) //$NON-NLS-1$
+				return TokenPUBLIC;
+			if ("return".equals(s)) //$NON-NLS-1$
+				return TokenRETURN;
+			if ("static".equals(s)) //$NON-NLS-1$
+				return TokenSTATIC;
+			if ("struct".equals(s)) //$NON-NLS-1$
+				return TokenSTRUCT;
+			if ("switch".equals(s)) //$NON-NLS-1$
+				return TokenSWITCH;
+			if ("extern".equals(s)) //$NON-NLS-1$
+				return TokenEXTERN;
+			break;
+		case 7:
+			if ("default".equals(s)) //$NON-NLS-1$
+				return TokenDEFAULT;
+			if ("private".equals(s)) //$NON-NLS-1$
+				return TokenPRIVATE;
+			if ("typedef".equals(s)) //$NON-NLS-1$
+				return TokenTYPEDEF;
+			if ("virtual".equals(s)) //$NON-NLS-1$
+				return TokenVIRTUAL;
+			break;
+		case 8:
+			if ("operator".equals(s)) //$NON-NLS-1$
+				return TokenOPERATOR;
+			if ("template".equals(s)) //$NON-NLS-1$
+				return TokenTEMPLATE;
+			if ("typename".equals(s)) //$NON-NLS-1$
+				return TokenTYPENAME;
+			if ("noexcept".equals(s)) //$NON-NLS-1$
+				return TokenNOEXCEPT;
+			if ("override".equals(s)) //$NON-NLS-1$
+				return TokenOVERRIDE;
+			break;
+		case 9:
+			if ("namespace".equals(s)) //$NON-NLS-1$
+				return TokenNAMESPACE;
+			if ("protected".equals(s)) //$NON-NLS-1$
+				return TokenPROTECTED;
 		}
 		return TokenIDENT;
 	}
@@ -680,10 +678,10 @@ public final class CHeuristicScanner implements Symbols {
 		Assert.isLegal(start >= 0);
 
 		try {
-			int depth= 1;
+			int depth = 1;
 			start -= 1;
 			while (true) {
-				start= scanForward(start + 1, bound, new CharacterMatch(new char[] {openingPeer, closingPeer}));
+				start = scanForward(start + 1, bound, new CharacterMatch(new char[] { openingPeer, closingPeer }));
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
 
@@ -734,11 +732,11 @@ public final class CHeuristicScanner implements Symbols {
 		Assert.isLegal(start < fDocument.getLength());
 
 		try {
-			final CharacterMatch match= new CharacterMatch(new char[] {openingPeer, closingPeer});
-			int depth= 1;
+			final CharacterMatch match = new CharacterMatch(new char[] { openingPeer, closingPeer });
+			int depth = 1;
 			start += 1;
 			while (true) {
-				start= scanBackward(start - 1, bound, match);
+				start = scanBackward(start - 1, bound, match);
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
 
@@ -768,8 +766,8 @@ public final class CHeuristicScanner implements Symbols {
 		if (offset < 1 || offset >= fDocument.getLength())
 			return null;
 
-		int begin= findOpeningPeer(offset - 1, CHeuristicScanner.UNBOUND, LBRACE, RBRACE);
-		int end= findClosingPeer(offset, UNBOUND, LBRACE, RBRACE);
+		int begin = findOpeningPeer(offset - 1, CHeuristicScanner.UNBOUND, LBRACE, RBRACE);
+		int end = findClosingPeer(offset, UNBOUND, LBRACE, RBRACE);
 		if (begin == NOT_FOUND || end == NOT_FOUND)
 			return null;
 		return new Region(begin, end + 1 - begin);
@@ -826,25 +824,24 @@ public final class CHeuristicScanner implements Symbols {
 		Assert.isLegal(start >= 0);
 
 		if (bound == UNBOUND)
-			bound= fDocument.getLength();
+			bound = fDocument.getLength();
 
 		Assert.isLegal(bound <= fDocument.getLength());
 
 		try {
-			fPos= start;
+			fPos = start;
 			while (fPos < bound) {
 
-				fChar= fDocument.getChar(fPos);
+				fChar = fDocument.getChar(fPos);
 				if (condition.stop(fChar, fPos, true))
 					return fPos;
 
-				fPos= condition.nextPosition(fPos, true);
+				fPos = condition.nextPosition(fPos, true);
 			}
 		} catch (BadLocationException e) {
 		}
 		return NOT_FOUND;
 	}
-
 
 	/**
 	 * Finds the lowest position in <code>fDocument</code> such that the position is &gt;= <code>position</code>
@@ -885,20 +882,20 @@ public final class CHeuristicScanner implements Symbols {
 	 */
 	public int scanBackward(int start, int bound, StopCondition condition) {
 		if (bound == UNBOUND)
-			bound= -1;
+			bound = -1;
 
 		Assert.isLegal(bound >= -1);
-		Assert.isLegal(start < fDocument.getLength() );
+		Assert.isLegal(start < fDocument.getLength());
 
 		try {
-			fPos= start;
+			fPos = start;
 			while (fPos > bound) {
 
-				fChar= fDocument.getChar(fPos);
+				fChar = fDocument.getChar(fPos);
 				if (condition.stop(fChar, fPos, false))
 					return fPos;
 
-				fPos= condition.nextPosition(fPos, false);
+				fPos = condition.nextPosition(fPos, false);
 			}
 		} catch (BadLocationException e) {
 		}
@@ -954,11 +951,11 @@ public final class CHeuristicScanner implements Symbols {
 		if (!contains(fCachedPartition, position)) {
 			Assert.isTrue(position >= 0);
 			Assert.isTrue(position <= fDocument.getLength());
-			
+
 			try {
-				fCachedPartition= TextUtilities.getPartition(fDocument, fPartitioning, position, false);
+				fCachedPartition = TextUtilities.getPartition(fDocument, fPartitioning, position, false);
 			} catch (BadLocationException e) {
-				fCachedPartition= new TypedRegion(position, 0, "__no_partition_at_all"); //$NON-NLS-1$
+				fCachedPartition = new TypedRegion(position, 0, "__no_partition_at_all"); //$NON-NLS-1$
 			}
 		}
 
@@ -973,7 +970,7 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return <code>true</code> if <code>region</code> contains <code>position</code>
 	 */
 	private boolean contains(IRegion region, int position) {
-		int offset= region.getOffset();
+		int offset = region.getOffset();
 		return offset <= position && position < offset + region.getLength();
 	}
 
@@ -998,24 +995,24 @@ public final class CHeuristicScanner implements Symbols {
 			return false;
 
 		switch (previousToken(position, bound)) {
-			case TokenDO:
-			case TokenELSE:
-				return true;
-			case TokenRPAREN:
-				position= findOpeningPeer(fPos, CHeuristicScanner.UNBOUND, LPAREN, RPAREN);
-				if (position > 0) {
-					switch (previousToken(position - 1, bound)) {
-						case TokenIF:
-						case TokenFOR:
-						case TokenWHILE:
-							return true;
-					}
+		case TokenDO:
+		case TokenELSE:
+			return true;
+		case TokenRPAREN:
+			position = findOpeningPeer(fPos, CHeuristicScanner.UNBOUND, LPAREN, RPAREN);
+			if (position > 0) {
+				switch (previousToken(position - 1, bound)) {
+				case TokenIF:
+				case TokenFOR:
+				case TokenWHILE:
+					return true;
 				}
+			}
 		}
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
 	 * appears to contain a class instance creation, i.e. a possibly qualified name preceded by a
@@ -1045,14 +1042,14 @@ public final class CHeuristicScanner implements Symbols {
 	 *         instance creation
 	 */
 	public boolean looksLikeClassInstanceCreationBackward(int start, int bound) {
-		int token= previousToken(start - 1, bound);
+		int token = previousToken(start - 1, bound);
 		if (token == Symbols.TokenIDENT) { // type name
-			token= previousToken(getPosition(), bound);
+			token = previousToken(getPosition(), bound);
 			while (token == Symbols.TokenDOUBLECOLON) { // qualification
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				if (token != Symbols.TokenIDENT) // qualification name
 					return false;
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 			}
 			return token == Symbols.TokenNEW;
 		}
@@ -1070,9 +1067,9 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return <code>true</code> if the current position looks like a field reference
 	 */
 	public boolean looksLikeFieldReferenceBackward(int start, int bound) {
-		int token= previousToken(start - 1, bound);
+		int token = previousToken(start - 1, bound);
 		if (token == Symbols.TokenIDENT) { // field name
-			token= previousToken(getPosition(), bound);
+			token = previousToken(getPosition(), bound);
 		}
 		if (token == Symbols.TokenDOT) {
 			return true;
@@ -1084,7 +1081,7 @@ public final class CHeuristicScanner implements Symbols {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
 	 * appears to be a composite type (class, struct, union) or enum definition. Examples:
@@ -1103,14 +1100,14 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return <code>true</code> if the current position looks like a composite type definition
 	 */
 	public boolean looksLikeCompositeTypeDefinitionBackward(int start, int bound) {
-		int token= previousToken(start - 1, bound);
+		int token = previousToken(start - 1, bound);
 		switch (token) {
 		case Symbols.TokenSTRUCT:
 		case Symbols.TokenUNION:
 		case Symbols.TokenENUM:
 			return true; // anonymous
 		case Symbols.TokenIDENT:
-			token= previousToken(getPosition(), bound);
+			token = previousToken(getPosition(), bound);
 			switch (token) {
 			case Symbols.TokenCLASS:
 			case Symbols.TokenSTRUCT:
@@ -1119,56 +1116,56 @@ public final class CHeuristicScanner implements Symbols {
 				return true; // no base-clause
 			default:
 				// backtrack
-				token= previousToken(start - 1, bound);
+				token = previousToken(start - 1, bound);
 			}
 			break;
 		default:
 			// backtrack
-			token= previousToken(start - 1, bound);
+			token = previousToken(start - 1, bound);
 			break;
 		}
 		// match base-clause
 		if (token == Symbols.TokenGREATERTHAN) {
 			findOpeningPeer(getPosition(), bound, '<', '>');
-			token= previousToken(getPosition(), bound);
+			token = previousToken(getPosition(), bound);
 			if (token != Symbols.TokenLESSTHAN) {
 				return false;
 			}
-			token= previousToken(getPosition(), bound);
+			token = previousToken(getPosition(), bound);
 		}
 		outerWhile: while (token == Symbols.TokenIDENT) {// type name or base type
-			token= previousToken(getPosition(), bound);
+			token = previousToken(getPosition(), bound);
 			// match nested-name-specifier
 			while (token == Symbols.TokenCOLON) { // colon of qualification
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				if (token != Symbols.TokenCOLON) { // second colon of qualification
 					break outerWhile;
 				}
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				if (token != Symbols.TokenIDENT) // qualification name?
 					break;
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 			}
 			switch (token) {
 			case Symbols.TokenVIRTUAL:
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				//$FALL-THROUGH$
 			case Symbols.TokenPUBLIC:
 			case Symbols.TokenPROTECTED:
 			case Symbols.TokenPRIVATE:
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				if (token == Symbols.TokenVIRTUAL) {
-					token= previousToken(getPosition(), bound);
+					token = previousToken(getPosition(), bound);
 				}
 				if (token == Symbols.TokenCOMMA) {
-					token= previousToken(getPosition(), bound);
+					token = previousToken(getPosition(), bound);
 					if (token == Symbols.TokenGREATERTHAN) {
 						findOpeningPeer(getPosition(), bound, '<', '>');
-						token= previousToken(getPosition(), bound);
+						token = previousToken(getPosition(), bound);
 						if (token != Symbols.TokenLESSTHAN) {
 							return false;
 						}
-						token= previousToken(getPosition(), bound);
+						token = previousToken(getPosition(), bound);
 					}
 					continue; // another base type
 				}
@@ -1176,17 +1173,17 @@ public final class CHeuristicScanner implements Symbols {
 					return false;
 				//$FALL-THROUGH$
 			case Symbols.TokenCOLON:
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				break outerWhile;
 			case Symbols.TokenCOMMA:
-				token= previousToken(getPosition(), bound);
+				token = previousToken(getPosition(), bound);
 				if (token == Symbols.TokenGREATERTHAN) {
 					findOpeningPeer(getPosition(), bound, '<', '>');
-					token= previousToken(getPosition(), bound);
+					token = previousToken(getPosition(), bound);
 					if (token != Symbols.TokenLESSTHAN) {
 						return false;
 					}
-					token= previousToken(getPosition(), bound);
+					token = previousToken(getPosition(), bound);
 				}
 				continue; // another base type
 			case Symbols.TokenIDENT:
@@ -1198,12 +1195,12 @@ public final class CHeuristicScanner implements Symbols {
 		if (token != Symbols.TokenIDENT) {
 			return false;
 		}
-		token= previousToken(getPosition(), bound);
+		token = previousToken(getPosition(), bound);
 		switch (token) {
 		case Symbols.TokenCLASS:
 		case Symbols.TokenSTRUCT:
 		case Symbols.TokenUNION:
-		case Symbols.TokenENUM:  // enum is actually not valid here
+		case Symbols.TokenENUM: // enum is actually not valid here
 			return true;
 		default:
 			return false;

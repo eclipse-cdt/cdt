@@ -78,8 +78,10 @@ public class LogAction extends AbstractBreakpointAction {
 			stream.println(logMessage);
 			stream.close();
 		} catch (Exception e) {
-			String errorMsg = MessageFormat.format(Messages.getString("LogAction.error.0"), new Object[] {getSummary()}); //$NON-NLS-1$
-			result = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, e );
+			String errorMsg = MessageFormat.format(Messages.getString("LogAction.error.0"), //$NON-NLS-1$
+					new Object[] { getSummary() });
+			result = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+					ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, e);
 		}
 		return result;
 	}

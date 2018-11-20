@@ -24,6 +24,6 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
  */
 public class MIGDBSetDisconnectedTracing extends MIGDBSet {
 	public MIGDBSetDisconnectedTracing(ITraceTargetDMContext ctx, boolean disconnectedTracing) {
-		super(ctx, new String[] {"disconnected-tracing", disconnectedTracing ? "on": "off"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super(ctx, new String[] { "disconnected-tracing", disconnectedTracing ? "on" : "off" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

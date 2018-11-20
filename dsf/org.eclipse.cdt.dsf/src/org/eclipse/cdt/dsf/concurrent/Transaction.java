@@ -27,14 +27,14 @@ public abstract class Transaction<V> {
 	 * validate a cache object that is stale (or has never obtained a value from
 	 * the source)
 	 */
-    private static final InvalidCacheException INVALID_CACHE_EXCEPTION = new InvalidCacheException();
-    
+	private static final InvalidCacheException INVALID_CACHE_EXCEPTION = new InvalidCacheException();
+
 	/** The request object we've been given to set the transaction results in */
-    private DataRequestMonitor<V> fRm;
-    
-    public static class InvalidCacheException extends Exception {
-        private static final long serialVersionUID = 1L;
-    }
+	private DataRequestMonitor<V> fRm;
+
+	public static class InvalidCacheException extends Exception {
+		private static final long serialVersionUID = 1L;
+	}
 
 	/**
 	 * Kicks off the transaction. We'll either complete the request monitor
@@ -49,15 +49,15 @@ public abstract class Transaction<V> {
 	 * 
 	 * @param rm Request completion monitor.
 	 */
-    public void request(DataRequestMonitor<V> rm) {
-        if (fRm != null) {
-            assert fRm.isCanceled();
-            fRm.done();
-        }
-        fRm = rm;
-        assert fRm != null;
-        execute();
-    }
+	public void request(DataRequestMonitor<V> rm) {
+		if (fRm != null) {
+			assert fRm.isCanceled();
+			fRm.done();
+		}
+		fRm = rm;
+		assert fRm != null;
+		execute();
+	}
 
 	/**
 	 * The transaction logic--code that tries to synchronously make use of,
@@ -73,12 +73,12 @@ public abstract class Transaction<V> {
 	 * logic once the cache object has been updated from the source.
 	 * 
 	 * @return the cached data if it's valid, otherwise an exception is thrown
-     * @throws Transaction.InvalidCacheException Exception indicating that a 
-     * cache is not valid and transaction will need to be rescheduled.
-     * @throws CoreException Exception indicating that one of the caches is 
-     * in error state and transaction cannot be processed.
+	 * @throws Transaction.InvalidCacheException Exception indicating that a 
+	 * cache is not valid and transaction will need to be rescheduled.
+	 * @throws CoreException Exception indicating that one of the caches is 
+	 * in error state and transaction cannot be processed.
 	 */
-    abstract protected V process() throws InvalidCacheException, CoreException;
+	abstract protected V process() throws InvalidCacheException, CoreException;
 
 	/**
 	 * Method which invokes the transaction logic and handles any exception that
@@ -86,38 +86,36 @@ public abstract class Transaction<V> {
 	 * simply do nothing. This method will be called again once the cache
 	 * objects tell us it has obtained an updated value form the source.
 	 */
-    private void execute() {
-        if (fRm.isCanceled()) {
-            fRm.done();
-            fRm = null;
-            return;
-        }
-        
-        try {
-        	// Execute the transaction logic
-            V data = process();
-            
+	private void execute() {
+		if (fRm.isCanceled()) {
+			fRm.done();
+			fRm = null;
+			return;
+		}
+
+		try {
+			// Execute the transaction logic
+			V data = process();
+
 			// No exception means all cache objects used by the transaction
 			// were valid and up to date. Complete the request
-            fRm.setData(data);
-            fRm.done();
-            fRm = null;
-        }
-        catch (CoreException e) {
+			fRm.setData(data);
+			fRm.done();
+			fRm = null;
+		} catch (CoreException e) {
 			// At least one of the cache objects encountered a failure obtaining
 			// the data from the source. Complete the request.
-            fRm.setStatus(e.getStatus());
-            fRm.done();
-            fRm = null;
-        }
-        catch (InvalidCacheException e) {
+			fRm.setStatus(e.getStatus());
+			fRm.done();
+			fRm = null;
+		} catch (InvalidCacheException e) {
 			// At least one of the cache objects was stale/unset. Keep the
 			// request monitor in the incomplete state, thus leaving our client
 			// "waiting" (asynchronously). We'll get called again once the cache
 			// objects are updated, thus re-starting the whole transaction
 			// attempt.
-        }
-    }
+		}
+	}
 
 	/**
 	 * Clients must call one of our validate methods prior to using (calling
@@ -130,73 +128,73 @@ public abstract class Transaction<V> {
 	 * @throws CoreException
 	 *             if an error was encountered getting the data from the source
 	 */
-    public void validate(ICache<?> cache) throws InvalidCacheException, CoreException {
-        if (cache.isValid()) {
-            if (!cache.getStatus().isOK()) {
-                throw new CoreException(cache.getStatus());
-            }
-        } else {
+	public void validate(ICache<?> cache) throws InvalidCacheException, CoreException {
+		if (cache.isValid()) {
+			if (!cache.getStatus().isOK()) {
+				throw new CoreException(cache.getStatus());
+			}
+		} else {
 			// Throw the invalid cache exception, but first ask the cache to
 			// update itself from its source, and schedule a re-attempt of the
 			// transaction logic to occur when the stale/unset cache has been
 			// updated
-            cache.update(new RequestMonitor(ImmediateExecutor.getInstance(), fRm) {
-                @Override
-                protected void handleCompleted() {
-                    execute();
-                }
-            });
-            throw INVALID_CACHE_EXCEPTION;
-        }
-    }
+			cache.update(new RequestMonitor(ImmediateExecutor.getInstance(), fRm) {
+				@Override
+				protected void handleCompleted() {
+					execute();
+				}
+			});
+			throw INVALID_CACHE_EXCEPTION;
+		}
+	}
 
-    /**
-     * See {@link #validate(RequestCache)}. This variant simply validates
-     * multiple cache objects.
-     */
-    public <T> void  validate(ICache<?> ... caches) throws InvalidCacheException, CoreException {
-        validate(Arrays.asList(caches));
-    }
+	/**
+	 * See {@link #validate(RequestCache)}. This variant simply validates
+	 * multiple cache objects.
+	 */
+	public <T> void validate(ICache<?>... caches) throws InvalidCacheException, CoreException {
+		validate(Arrays.asList(caches));
+	}
 
-    /**
-     * See {@link #validate(RequestCache)}. This variant simply validates
-     * multiple cache objects.
-     */
-    public void validate(@SuppressWarnings("rawtypes") Iterable caches) throws InvalidCacheException, CoreException {
-        // Check if any of the caches have errors:
-        boolean allValid = true;
-        
-        for (Object cacheObj : caches) {
-            ICache<?> cache = (ICache<?>)cacheObj;
-            if (cache.isValid()) {
-                if (!cache.getStatus().isOK()) {
-                    throw new CoreException(cache.getStatus());
-                }
-            } else {
-                allValid = false;
-            }
-        }
-        if (!allValid) {
-            // Throw the invalid cache exception, but first schedule a
-            // re-attempt of the transaction logic, to occur when the
-            // stale/unset cache objects have been updated
-            CountingRequestMonitor countringRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), fRm) {
-                @Override
-                protected void handleCompleted() {
-                    execute();
-                }
-            };
-            int count = 0;
-            for (Object cacheObj : caches) {
-                ICache<?> cache = (ICache<?>)cacheObj;
-                if (!cache.isValid()) {
-                    cache.update(countringRm);
-                    count++;
-                }
-            }
-            countringRm.setDoneCount(count);
-            throw INVALID_CACHE_EXCEPTION;
-        }        
-    }
+	/**
+	 * See {@link #validate(RequestCache)}. This variant simply validates
+	 * multiple cache objects.
+	 */
+	public void validate(@SuppressWarnings("rawtypes") Iterable caches) throws InvalidCacheException, CoreException {
+		// Check if any of the caches have errors:
+		boolean allValid = true;
+
+		for (Object cacheObj : caches) {
+			ICache<?> cache = (ICache<?>) cacheObj;
+			if (cache.isValid()) {
+				if (!cache.getStatus().isOK()) {
+					throw new CoreException(cache.getStatus());
+				}
+			} else {
+				allValid = false;
+			}
+		}
+		if (!allValid) {
+			// Throw the invalid cache exception, but first schedule a
+			// re-attempt of the transaction logic, to occur when the
+			// stale/unset cache objects have been updated
+			CountingRequestMonitor countringRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), fRm) {
+				@Override
+				protected void handleCompleted() {
+					execute();
+				}
+			};
+			int count = 0;
+			for (Object cacheObj : caches) {
+				ICache<?> cache = (ICache<?>) cacheObj;
+				if (!cache.isValid()) {
+					cache.update(countringRm);
+					count++;
+				}
+			}
+			countringRm.setDoneCount(count);
+			throw INVALID_CACHE_EXCEPTION;
+		}
+	}
 
 }

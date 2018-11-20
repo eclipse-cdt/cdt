@@ -43,8 +43,7 @@ public class BuildFileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#generateMakefiles(org.eclipse.core.resources.IResourceDelta)
 	 */
 	@Override
-	public MultiStatus generateMakefiles(IResourceDelta delta)
-			throws CoreException {
+	public MultiStatus generateMakefiles(IResourceDelta delta) throws CoreException {
 		return defGen.generateMakefiles(delta);
 	}
 
@@ -70,8 +69,7 @@ public class BuildFileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#initialize(org.eclipse.core.resources.IProject, org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initialize(IProject project, IManagedBuildInfo info,
-			IProgressMonitor monitor) {
+	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
 		defGen.initialize(project, info, monitor);
 	}
 

@@ -39,8 +39,8 @@ public class HeaderSubstitutor {
 	private static int HEURISTIC_SCORE_NOT_AUTO_EXPORTED_HEADER = 0x1;
 	private static int HEURISTIC_SCORE_NAME_MATCH = 0x2;
 	private static int HEURISTIC_SCORE_NO_EXTENSION = 0x4;
-	private static int HEURISTIC_SCORE_MAX =
-			HEURISTIC_SCORE_NOT_AUTO_EXPORTED_HEADER + HEURISTIC_SCORE_NAME_MATCH + HEURISTIC_SCORE_NO_EXTENSION;
+	private static int HEURISTIC_SCORE_MAX = HEURISTIC_SCORE_NOT_AUTO_EXPORTED_HEADER + HEURISTIC_SCORE_NAME_MATCH
+			+ HEURISTIC_SCORE_NO_EXTENSION;
 
 	private final IncludeCreationContext fContext;
 	private IncludeMap[] fIncludeMaps;
@@ -51,8 +51,8 @@ public class HeaderSubstitutor {
 		fIncludeMaps = new IncludeMap[] { new IncludeMap(true), new IncludeMap(false) };
 		IPreferencesService preferences = Platform.getPreferencesService();
 		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(context.getProject());
-		String str = preferences.getString(CUIPlugin.PLUGIN_ID,
-				PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION, null, scopes);
+		String str = preferences.getString(CUIPlugin.PLUGIN_ID, PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION, null,
+				scopes);
 		if (str != null) {
 			List<HeaderSubstitutionMap> maps = HeaderSubstitutionMap.deserializeMaps(str);
 			for (HeaderSubstitutionMap map : maps) {
@@ -67,8 +67,8 @@ public class HeaderSubstitutor {
 		fIncludeMaps[1].transitivelyClose();
 
 		fSymbolExportMap = new SymbolExportMap();
-		str = preferences.getString(CUIPlugin.PLUGIN_ID,
-				PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS, null, scopes);
+		str = preferences.getString(CUIPlugin.PLUGIN_ID, PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS, null,
+				scopes);
 		if (str != null) {
 			List<SymbolExportMap> maps = SymbolExportMap.deserializeMaps(str);
 			for (SymbolExportMap map : maps) {
@@ -199,8 +199,7 @@ public class HeaderSubstitutor {
 			}
 		}
 
-		return firstIncludedPreviously != null ?
-				firstIncludedPreviously : firstResolved != null ? firstResolved : path;
+		return firstIncludedPreviously != null ? firstIncludedPreviously : firstResolved != null ? firstResolved : path;
 	}
 
 	/**
@@ -216,7 +215,7 @@ public class HeaderSubstitutor {
 		String symbolName = request.getBinding().getName();
 		int bestScore = getScore(preferredHeader.toString(), symbolName);
 		if (bestScore == HEURISTIC_SCORE_MAX)
-			return preferredHeader;  // Nothing can be better than preferredHeader.
+			return preferredHeader; // Nothing can be better than preferredHeader.
 
 		IIndexFile bestCandidate = null;
 		Set<IIndexFile> indexFiles = request.getDeclaringFiles().keySet();

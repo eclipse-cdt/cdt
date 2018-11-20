@@ -32,9 +32,9 @@ public abstract class RefactoringRunner {
 	public RefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
 			ICProject cProject) {
 		this.selection = selection;
-		this.element= element;
+		this.element = element;
 		this.project = cProject;
-		this.shellProvider= shellProvider;
+		this.shellProvider = shellProvider;
 	}
 
 	public abstract void run();

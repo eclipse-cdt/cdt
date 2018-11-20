@@ -30,4 +30,3 @@ public interface IErrorParser {
 	boolean processLine(String line, ErrorParserManager eoParser);
 
 }
-

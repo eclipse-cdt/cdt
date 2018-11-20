@@ -64,13 +64,13 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 	@Override
 	public void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
-		sourceFile = fCProject.getProject().getFile( getSourcefileResource() );
+		fCProject = CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
+		sourceFile = fCProject.getProject().getFile(getSourcefileResource());
 		if (!sourceFile.exists()) {
-			try{
-				FileInputStream fileIn = new FileInputStream(
-						CTestPlugin.getDefault().getFileInPlugin(new Path(getSourcefileSubdir() + getSourcefileResource()))); 
-				sourceFile.create(fileIn,false, monitor);        
+			try {
+				FileInputStream fileIn = new FileInputStream(CTestPlugin.getDefault()
+						.getFileInPlugin(new Path(getSourcefileSubdir() + getSourcefileResource())));
+				sourceFile.create(fileIn, false, monitor);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
@@ -83,10 +83,10 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 	@Override
 	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
-	}	
+	}
 
 	protected ITranslationUnit getTU() throws CModelException {
-		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(sourceFile);
+		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
 		CCorePlugin.getDefault().setStructuralParseMode(isStructuralParse());
 		// parse the translation unit to get the elements tree		
 		// Force the parsing now to do this in the right ParseMode.
@@ -95,12 +95,14 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 		CCorePlugin.getDefault().setStructuralParseMode(false);
 		return tu;
 	}
+
 	/**
 	 * @return Returns the structuralParse.
 	 */
 	public boolean isStructuralParse() {
 		return structuralParse;
 	}
+
 	/**
 	 * @param structuralParse The structuralParse to set.
 	 */

@@ -36,7 +36,6 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.resources.IBuildConfiguration;
 
-
 /**
  * This class implements the IEnvironmentVariableProvider interface and provides all
  * build environment functionality to the MBS
@@ -44,12 +43,12 @@ import org.eclipse.core.resources.IBuildConfiguration;
  * @since 3.0
  */
 public class EnvironmentVariableManager implements IEnvironmentVariableManager {
-	private static final String DELIMITER_WIN32 = ";";  //$NON-NLS-1$
-	private static final String DELIMITER_UNIX = ":";  //$NON-NLS-1$
+	private static final String DELIMITER_WIN32 = ";"; //$NON-NLS-1$
+	private static final String DELIMITER_UNIX = ":"; //$NON-NLS-1$
 
 	private static EnvironmentVariableManager fInstance = null;
 
-//	private EnvVarVariableSubstitutor fVariableSubstitutor;
+	//	private EnvVarVariableSubstitutor fVariableSubstitutor;
 
 	public static final UserDefinedEnvironmentSupplier fUserSupplier = new UserDefinedEnvironmentSupplier();
 	public static final BuildSystemEnvironmentSupplier fExternalSupplier = new BuildSystemEnvironmentSupplier();
@@ -61,19 +60,22 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 
 	public class EnvVarVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor {
 		private String fDefaultDelimiter;
-/*		public EnvVarMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter) {
-			super(contextType,contextData,inexistentMacroValue,listDelimiter);
-			fDefaultDelimiter = listDelimiter;
-		}
-*/
-		public EnvVarVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter) {
-			super(contextInfo, inexistentMacroValue, listDelimiter, null ,inexistentMacroValue);
+
+		/*		public EnvVarMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter) {
+					super(contextType,contextData,inexistentMacroValue,listDelimiter);
+					fDefaultDelimiter = listDelimiter;
+				}
+		*/
+		public EnvVarVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,
+				String listDelimiter) {
+			super(contextInfo, inexistentMacroValue, listDelimiter, null, inexistentMacroValue);
 			fDefaultDelimiter = listDelimiter;
 		}
 
 		public IEnvironmentVariable resolveVariable(EnvVarDescriptor var) throws CdtVariableException {
 			String value;
-			if (var == null || (value = var.getValue()) == null || value.length() == 0 || var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
+			if (var == null || (value = var.getValue()) == null || value.length() == 0
+					|| var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
 				return var;
 
 			String listDelimiter = var.getDelimiter();
@@ -82,10 +84,10 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			setListDelimiter(listDelimiter);
 			ICdtVariable macro = EnvironmentVariableSupplier.getInstance().createBuildMacro(var);
 			IVariableContextInfo varMacroInfo = getVarMacroContextInfo(var);
-			int varSupplierNum = getVarMacroSupplierNum(var,varMacroInfo);
-			value = resolveToString(new MacroDescriptor(macro,varMacroInfo,varSupplierNum));
+			int varSupplierNum = getVarMacroSupplierNum(var, varMacroInfo);
+			value = resolveToString(new MacroDescriptor(macro, varMacroInfo, varSupplierNum));
 			removeResolvedMacro(var.getName());
-			return new EnvironmentVariable(var.getName(),value,var.getOperation(),var.getDelimiter());
+			return new EnvironmentVariable(var.getName(), value, var.getOperation(), var.getDelimiter());
 		}
 
 		protected IVariableContextInfo getVarMacroContextInfo(EnvVarDescriptor var) {
@@ -99,7 +101,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			int varSupplierNum = -1;
 			ICdtVariableSupplier macroSuppliers[] = varMacroInfo.getSuppliers();
 			if (macroSuppliers != null) {
-				for(int i = 0; i < macroSuppliers.length; i++) {
+				for (int i = 0; i < macroSuppliers.length; i++) {
 					if (macroSuppliers[i] instanceof EnvironmentVariableSupplier) {
 						varSupplierNum = i;
 						break;
@@ -124,7 +126,8 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	 * @return a variable of a given name or null
 	 * the context information is taken from the contextInfo passed
 	 */
-	public static EnvVarDescriptor getVariable(String variableName, IEnvironmentContextInfo contextInfo, boolean includeParentLevels) {
+	public static EnvVarDescriptor getVariable(String variableName, IEnvironmentContextInfo contextInfo,
+			boolean includeParentLevels) {
 		if (contextInfo == null)
 			return null;
 		if ((variableName = EnvVarOperationProcessor.normalizeName(variableName)) == null)
@@ -136,7 +139,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			ICoreEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
 			boolean bVarFound = false;
 			for (ICoreEnvironmentVariableSupplier supplier : suppliers) {
-				if (supplier.getVariable(variableName,infos[0].getContext()) != null) {
+				if (supplier.getVariable(variableName, infos[0].getContext()) != null) {
 					bVarFound = true;
 					break;
 				}
@@ -150,13 +153,13 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		int varSupplierNum = -1;
 		ICoreEnvironmentVariableSupplier varSupplier = null;
 
-		for(int i = infos.length-1 ; i >=0 ; i-- ) {
+		for (int i = infos.length - 1; i >= 0; i--) {
 			IEnvironmentContextInfo info = infos[i];
 			ICoreEnvironmentVariableSupplier suppliers[] = info.getSuppliers();
 
-			for(int j = suppliers.length-1 ; j >= 0 ; j-- ) {
+			for (int j = suppliers.length - 1; j >= 0; j--) {
 				ICoreEnvironmentVariableSupplier supplier = suppliers[j];
-				IEnvironmentVariable var = supplier.getVariable(variableName,info.getContext());
+				IEnvironmentVariable var = supplier.getVariable(variableName, info.getContext());
 
 				if (var == null)
 					continue;
@@ -168,28 +171,29 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 				if (variable == null)
 					variable = var;
 				else
-					variable = EnvVarOperationProcessor.performOperation(variable,var);
+					variable = EnvVarOperationProcessor.performOperation(variable, var);
 			}
 		}
 
 		if (variable != null) {
-//			if (variable.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-//				return null;
-			return new EnvVarDescriptor(variable,varContextInfo,varSupplierNum,varSupplier);
+			//			if (variable.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
+			//				return null;
+			return new EnvVarDescriptor(variable, varContextInfo, varSupplierNum, varSupplier);
 		}
 		return null;
 	}
 
 	@Override
-	public IEnvironmentVariable getVariable(String variableName, ICConfigurationDescription cfg, boolean resolveMacros) {
+	public IEnvironmentVariable getVariable(String variableName, ICConfigurationDescription cfg,
+			boolean resolveMacros) {
 		if (variableName == null || variableName.isEmpty())
 			return null;
 
 		IEnvironmentContextInfo info = getContextInfo(cfg);
-		EnvVarDescriptor var = getVariable(variableName,info,true);
+		EnvVarDescriptor var = getVariable(variableName, info, true);
 
 		if (var != null && var.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE) {
-			return resolveMacros ? calculateResolvedVariable(var,info) : var;
+			return resolveMacros ? calculateResolvedVariable(var, info) : var;
 		}
 		return null;
 	}
@@ -201,14 +205,14 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 
 		IEnvironmentContextInfo info = getContextInfo(config);
 		EnvVarDescriptor var = getVariable(name, info, true);
-		
+
 		if (var != null && var.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE) {
 			return resolveMacros ? calculateResolvedVariable(var, info) : var;
 		} else {
 			return null;
 		}
 	}
-	
+
 	IEnvironmentContextInfo getDefaultContextInfo(Object level) {
 		DefaultEnvironmentContextInfo info = new DefaultEnvironmentContextInfo(level);
 		if (info.getSuppliers() == null)
@@ -222,8 +226,9 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	 */
 	public IEnvironmentContextInfo getContextInfo(Object level) {
 		if (level instanceof ICConfigurationDescription) {
-			return fContributedEnvironment.appendEnvironment((ICConfigurationDescription)level) ?
-					getDefaultContextInfo(level) : fContributedEnvironment.getContextInfo(level);
+			return fContributedEnvironment.appendEnvironment((ICConfigurationDescription) level)
+					? getDefaultContextInfo(level)
+					: fContributedEnvironment.getContextInfo(level);
 		} else {
 			return getDefaultContextInfo(level);
 		}
@@ -243,12 +248,11 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		if (!includeParentLevels) {
 			ICoreEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
 			set = new HashSet<String>();
-			for(int i = 0; i < suppliers.length; i++) {
+			for (int i = 0; i < suppliers.length; i++) {
 				IEnvironmentVariable vars[] = suppliers[i].getVariables(infos[0].getContext());
 				if (vars != null) {
 					for (IEnvironmentVariable var : vars) {
-						String name = EnvVarOperationProcessor.normalizeName(var.
-								getName());
+						String name = EnvVarOperationProcessor.normalizeName(var.getName());
 						if (name != null)
 							set.add(name);
 					}
@@ -262,11 +266,11 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 
 		EnvVarCollector envVarSet = new EnvVarCollector();
 
-		for(int i = infos.length-1 ; i >=0 ; i-- ) {
+		for (int i = infos.length - 1; i >= 0; i--) {
 			IEnvironmentContextInfo info = infos[i];
 			ICoreEnvironmentVariableSupplier suppliers[] = info.getSuppliers();
 
-			for(int j = suppliers.length-1 ; j >= 0 ; j-- ) {
+			for (int j = suppliers.length - 1; j >= 0; j--) {
 				ICoreEnvironmentVariableSupplier supplier = suppliers[j];
 				if (!supplier.appendEnvironment(info.getContext())) {
 					envVarSet.clear();
@@ -277,17 +281,16 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 					List<IEnvironmentVariable> varList = new ArrayList<IEnvironmentVariable>();
 					Iterator<String> iter = set.iterator();
 
-					while(iter.hasNext()) {
-						IEnvironmentVariable var = supplier.getVariable(iter.next(),info.getContext());
+					while (iter.hasNext()) {
+						IEnvironmentVariable var = supplier.getVariable(iter.next(), info.getContext());
 						if (var != null)
 							varList.add(var);
 					}
 					vars = varList.toArray(new IEnvironmentVariable[varList.size()]);
+				} else {
+					vars = supplier.getVariables(info.getContext());
 				}
-				else{
-					 vars = supplier.getVariables(info.getContext());
-				}
-				envVarSet.add(vars,info,j, supplier);
+				envVarSet.add(vars, info, j, supplier);
 			}
 		}
 
@@ -297,7 +300,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	@Override
 	public IEnvironmentVariable[] getVariables(ICConfigurationDescription cfg, boolean resolveMacros) {
 		IEnvironmentContextInfo info = getContextInfo(cfg);
-		EnvVarCollector varSet = getVariables(info,true);
+		EnvVarCollector varSet = getVariables(info, true);
 
 		EnvVarDescriptor vars[] = varSet != null ? varSet.toArray(false) : null;
 
@@ -306,7 +309,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 				return vars;
 
 			IEnvironmentVariable resolved[] = new IEnvironmentVariable[vars.length];
-			for(int i = 0; i < vars.length; i++)
+			for (int i = 0; i < vars.length; i++)
 				resolved[i] = calculateResolvedVariable(vars[i], info);
 			return resolved;
 		}
@@ -318,11 +321,11 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		IEnvironmentContextInfo info = getContextInfo(config);
 		EnvVarCollector varSet = getVariables(info, true);
 		EnvVarDescriptor vars[] = varSet != null ? varSet.toArray(false) : null;
-		
+
 		if (vars != null) {
 			if (!resolveMacros)
 				return vars;
-			
+
 			IEnvironmentVariable resolved[] = new IEnvironmentVariable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
 				resolved[i] = calculateResolvedVariable(vars[i], info);
@@ -331,7 +334,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return an array of the IContextInfo that holds the context informations
 	 * starting from the one passed to this method and including all subsequent parents
@@ -344,7 +347,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 
 		list.add(contextInfo);
 
-		while((contextInfo = contextInfo.getNext()) != null)
+		while ((contextInfo = contextInfo.getNext()) != null)
 			list.add(contextInfo);
 
 		return list.toArray(new IEnvironmentContextInfo[list.size()]);
@@ -382,10 +385,10 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			return false;
 
 		IEnvironmentContextInfo enumInfo = child;
-		do{
+		do {
 			if (parent.getContext() == enumInfo.getContext())
 				return true;
-		}while((enumInfo = enumInfo.getNext()) != null);
+		} while ((enumInfo = enumInfo.getNext()) != null);
 		return false;
 	}
 
@@ -393,7 +396,8 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		if (des == null || info == null)
 			return null;
 
-		return calculateResolvedVariable(des,getVariableSubstitutor(getMacroContextInfoForContext(info.getContext()),""," ")); //$NON-NLS-1$ //$NON-NLS-2$
+		return calculateResolvedVariable(des,
+				getVariableSubstitutor(getMacroContextInfoForContext(info.getContext()), "", " ")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public IEnvironmentVariable calculateResolvedVariable(EnvVarDescriptor des, IVariableSubstitutor sub) {
@@ -401,12 +405,12 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			return null;
 		IEnvironmentVariable var = des;
 
-		try{
+		try {
 			if (sub instanceof EnvVarVariableSubstitutor)
-				var = ((EnvVarVariableSubstitutor)sub).resolveVariable(des);
+				var = ((EnvVarVariableSubstitutor) sub).resolveVariable(des);
 			else if (des.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE) {
 				String name = des.getName();
-				var = new EnvironmentVariable(name,sub.resolveToString(name),des.getOperation(),des.getDelimiter());
+				var = new EnvironmentVariable(name, sub.resolveToString(name), des.getOperation(), des.getDelimiter());
 			}
 		} catch (CdtVariableException e) {
 		}
@@ -422,23 +426,24 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	}
 
 	public ICoreVariableContextInfo getMacroContextInfoForContext(Object context) {
-		return new DefaultVariableContextInfo(getMacroContextTypeFromContext(context),context);
+		return new DefaultVariableContextInfo(getMacroContextTypeFromContext(context), context);
 	}
 
-	public IVariableSubstitutor getVariableSubstitutor(IVariableContextInfo info, String inexistentMacroValue, String listDelimiter) {
-		return new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
-//		if (fVariableSubstitutor == null)
-//			fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
-//		else {
-//			try {
-//				fVariableSubstitutor.setMacroContextInfo(info);
-//				fVariableSubstitutor.setInexistentMacroValue(inexistentMacroValue);
-//				fVariableSubstitutor.setListDelimiter(listDelimiter);
-//			} catch (CdtVariableException e) {
-//				fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
-//			}
-//		}
-//		return fVariableSubstitutor;
+	public IVariableSubstitutor getVariableSubstitutor(IVariableContextInfo info, String inexistentMacroValue,
+			String listDelimiter) {
+		return new EnvVarVariableSubstitutor(info, inexistentMacroValue, listDelimiter);
+		//		if (fVariableSubstitutor == null)
+		//			fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
+		//		else {
+		//			try {
+		//				fVariableSubstitutor.setMacroContextInfo(info);
+		//				fVariableSubstitutor.setInexistentMacroValue(inexistentMacroValue);
+		//				fVariableSubstitutor.setListDelimiter(listDelimiter);
+		//			} catch (CdtVariableException e) {
+		//				fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
+		//			}
+		//		}
+		//		return fVariableSubstitutor;
 	}
 
 	@Override
@@ -469,5 +474,5 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			}
 		}
 	}
-	
+
 }

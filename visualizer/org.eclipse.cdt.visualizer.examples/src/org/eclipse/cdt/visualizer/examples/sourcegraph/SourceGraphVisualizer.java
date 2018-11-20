@@ -32,32 +32,28 @@ import org.eclipse.swt.widgets.Control;
 // SourceGraphVisualizer
 //---------------------------------------------------------------------------
 
-public class SourceGraphVisualizer extends Visualizer
-{
+public class SourceGraphVisualizer extends Visualizer {
 	// --- constants ---
-	
+
 	/** Eclipse ID for this view */
 	public static final String ECLIPSE_ID = "org.eclipse.cdt.visualizer.examples.sourcegraph"; //$NON-NLS-1$
 
-	
 	// --- members ---
-	
+
 	/** ScrollPanel container for visualizer control. */
 	ScrollPanel m_scrollPanel = null;
-	
+
 	/** visualizer control (downcast reference) */
 	SourceGraphControl m_sourceGraphControl = null;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
-	public SourceGraphVisualizer()
-	{
-		super(VisualizerExamplesPlugin.getString("SourceGraphVisualizer.name"),        //$NON-NLS-1$
-			  VisualizerExamplesPlugin.getString("SourceGraphVisualizer.displayName"), //$NON-NLS-1$
-			  VisualizerExamplesPlugin.getString("SourceGraphVisualizer.description")  //$NON-NLS-1$
-			  );
+	public SourceGraphVisualizer() {
+		super(VisualizerExamplesPlugin.getString("SourceGraphVisualizer.name"), //$NON-NLS-1$
+				VisualizerExamplesPlugin.getString("SourceGraphVisualizer.displayName"), //$NON-NLS-1$
+				VisualizerExamplesPlugin.getString("SourceGraphVisualizer.description") //$NON-NLS-1$
+		);
 	}
 
 	/** Dispose method. */
@@ -66,13 +62,11 @@ public class SourceGraphVisualizer extends Visualizer
 		super.dispose();
 	}
 
-	
 	// --- control management ---
-	
+
 	/** Creates and returns visualizer control on specified parent. */
 	@Override
-	public Control createControl(Composite parent)
-	{
+	public Control createControl(Composite parent) {
 		if (m_sourceGraphControl == null) {
 
 			m_scrollPanel = new ScrollPanel(parent);
@@ -90,11 +84,10 @@ public class SourceGraphVisualizer extends Visualizer
 		}
 		return getControl();
 	}
-	
+
 	/** Invoked when visualizer control should be disposed. */
 	@Override
-	public void disposeControl()
-	{
+	public void disposeControl() {
 		if (m_sourceGraphControl != null) {
 			setControl(null);
 			m_sourceGraphControl.dispose();
@@ -109,14 +102,13 @@ public class SourceGraphVisualizer extends Visualizer
 	@Override
 	public void visualizerDeselected() {
 	}
-	
+
 	@Override
 	public void visualizerSelected() {
 	}
-	
 
 	// --- update methods ---
-	
+
 	/**
 	 * Refresh the visualizer display based on the existing data.
 	 */
@@ -125,14 +117,15 @@ public class SourceGraphVisualizer extends Visualizer
 	}
 
 	// --- selection handling ---
-	
+
 	/** Invoked when selection changes, to determine whether this
 	 *  visualizer knows how to display the current selection.
 	 */
 	@Override
 	public int handlesSelection(ISelection selection) {
 		Object s = SelectionUtils.getSelectedObject(selection);
-		if (s instanceof TextSelection) return 1;		
+		if (s instanceof TextSelection)
+			return 1;
 		return 0;
 	}
 
@@ -149,30 +142,28 @@ public class SourceGraphVisualizer extends Visualizer
 			m_sourceGraphControl.setSourceText(""); //$NON-NLS-1$
 		}
 	}
-	
+
 	public SelectionManager getSelectionManager() {
 		return m_selectionManager;
-	}	
+	}
 
-	
 	// --- menu/toolbar management ---
 
 	/** Invoked when visualizer is selected, to populate the toolbar. */
 	@Override
-	public void populateToolBar(IToolBarManager toolBarManager)
-	{}
+	public void populateToolBar(IToolBarManager toolBarManager) {
+	}
 
 	/** Invoked when visualizer is selected, to populate the toolbar's menu. */
 	@Override
-	public void populateMenu(IMenuManager menuManager)
-	{}
+	public void populateMenu(IMenuManager menuManager) {
+	}
 
-	
 	// --- context menu handling ---
-	
+
 	/** Invoked when visualizer view's context menu is invoked, to populate it. */
 	@Override
-	public void populateContextMenu(IMenuManager menuManager)
-	{}
+	public void populateContextMenu(IMenuManager menuManager) {
+	}
 
 }

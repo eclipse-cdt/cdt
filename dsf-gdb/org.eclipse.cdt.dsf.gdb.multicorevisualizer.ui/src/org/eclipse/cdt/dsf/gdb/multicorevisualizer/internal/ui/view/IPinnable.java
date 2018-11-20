@@ -21,12 +21,12 @@ public interface IPinnable {
 	 * Pins to the current context
 	 */
 	public void pin();
-	
+
 	/**
 	 * Unpins
 	 */
 	public void unpin();
-	
+
 	/** Returns whether currently pinned */
 	public boolean isPinned();
 }

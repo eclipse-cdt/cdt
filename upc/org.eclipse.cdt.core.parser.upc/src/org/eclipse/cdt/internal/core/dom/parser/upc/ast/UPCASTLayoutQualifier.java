@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 @SuppressWarnings("restriction")
 public class UPCASTLayoutQualifier extends ASTNode implements IUPCASTLayoutQualifier {
 
-
 	private boolean isPure;
 	private boolean isIndefinite;
 	private IASTExpression blockSizeExpression;

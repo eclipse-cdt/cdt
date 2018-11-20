@@ -34,8 +34,8 @@ public interface IASTNodeLocation {
 	 */
 	public int getNodeLength();
 
-    /**
-     * Return a file location that best maps into this location.
-     */
-    public IASTFileLocation asFileLocation();
+	/**
+	 * Return a file location that best maps into this location.
+	 */
+	public IASTFileLocation asFileLocation();
 }

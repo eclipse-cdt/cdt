@@ -21,21 +21,21 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 	protected String fName;
 	protected String fId;
 	protected String[] fBinaryParserIds;
-//	protected CConfigurationData fCfg;
-//	private CDataFacroty fFactory;
+	//	protected CConfigurationData fCfg;
+	//	private CDataFacroty fFactory;
 	protected boolean fIsModified;
 
-//	public CDefaultTargetPlatformData(CConfigurationData cfg, CDataFacroty factory) {
-//		fCfg = cfg;
-//		if(factory == null)
-//			factory = new CDataFacroty();
-//		fFactory = factory;
-//	}
+	//	public CDefaultTargetPlatformData(CConfigurationData cfg, CDataFacroty factory) {
+	//		fCfg = cfg;
+	//		if(factory == null)
+	//			factory = new CDataFacroty();
+	//		fFactory = factory;
+	//	}
 
-	protected CDefaultTargetPlatformData(){
-		
+	protected CDefaultTargetPlatformData() {
+
 	}
-	
+
 	public CDefaultTargetPlatformData(String id, String name) {
 		fId = id;
 		fName = name;
@@ -43,35 +43,35 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 
 	public CDefaultTargetPlatformData(String id, CTargetPlatformData base) {
 		fId = id;
-		
+
 		copyDataFrom(base);
 	}
-	
-	protected void copyDataFrom(CTargetPlatformData base){
-		if(base != null){
+
+	protected void copyDataFrom(CTargetPlatformData base) {
+		if (base != null) {
 			fName = base.getName();
-	
+
 			fBinaryParserIds = base.getBinaryParserIds();
 		}
 	}
 
 	@Override
 	public String[] getBinaryParserIds() {
-		if(fBinaryParserIds != null)
+		if (fBinaryParserIds != null)
 			return fBinaryParserIds.clone();
 		return new String[0];
 	}
 
 	@Override
 	public void setBinaryParserIds(String[] ids) {
-		if(Arrays.equals(ids, fBinaryParserIds))
+		if (Arrays.equals(ids, fBinaryParserIds))
 			return;
-		
-		if(ids != null)
+
+		if (ids != null)
 			fBinaryParserIds = ids.clone();
 		else
 			fBinaryParserIds = null;
-		
+
 		setModified(true);
 	}
 
@@ -90,11 +90,11 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 		return getId() != null;
 	}
 
-	public boolean isModified(){
+	public boolean isModified() {
 		return fIsModified;
 	}
-	
-	public void setModified(boolean modified){
+
+	public void setModified(boolean modified) {
 		fIsModified = modified;
 	}
 

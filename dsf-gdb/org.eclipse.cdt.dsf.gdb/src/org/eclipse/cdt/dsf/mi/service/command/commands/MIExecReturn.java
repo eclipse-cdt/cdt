@@ -12,7 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -32,13 +32,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  </p>
  * 
  */
-public class MIExecReturn extends MICommand<MIInfo> 
-{
-    public MIExecReturn(IFrameDMContext dmc) {
-        super(dmc, "-exec-return"); //$NON-NLS-1$
-    }
+public class MIExecReturn extends MICommand<MIInfo> {
+	public MIExecReturn(IFrameDMContext dmc) {
+		super(dmc, "-exec-return"); //$NON-NLS-1$
+	}
 
-    public MIExecReturn(IFrameDMContext dmc, String arg) {
-        super(dmc, "-exec-return", new String[] { arg }); //$NON-NLS-1$
-    }
+	public MIExecReturn(IFrameDMContext dmc, String arg) {
+		super(dmc, "-exec-return", new String[] { arg }); //$NON-NLS-1$
+	}
 }

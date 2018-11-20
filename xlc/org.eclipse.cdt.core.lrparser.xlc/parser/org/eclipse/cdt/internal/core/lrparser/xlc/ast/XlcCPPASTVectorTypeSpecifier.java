@@ -44,5 +44,5 @@ public class XlcCPPASTVectorTypeSpecifier extends CPPASTSimpleDeclSpecifier impl
 	public void setPixel(boolean isPixel) {
 		this.isPixel = isPixel;
 	}
-	
+
 }

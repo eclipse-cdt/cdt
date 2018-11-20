@@ -73,16 +73,15 @@ public class QtASTClass {
 		// Q_SLOT   void slot1();
 		// };
 
-
 		// Consume all tags since the last declaration to find the highest precedence tag.
 		IQMethod.Kind kind = IQMethod.Kind.Unspecified;
-		while(tag != null && tag.offset < offset) {
+		while (tag != null && tag.offset < offset) {
 			kind = getHigherPrecedence(kind, tag.kind);
 			tag = tags.hasNext() ? tags.next() : null;
 		}
 
 		// Advance regions to find one that does not end before this offset.
-		while(region != null && region.end < offset)
+		while (region != null && region.end < offset)
 			region = regions.hasNext() ? regions.next() : null;
 
 		// If the offset is within this region, then use its kind.
@@ -101,7 +100,7 @@ public class QtASTClass {
 		// Consume all revisions since the last declaration to find one (if any) that applies
 		// to this declaration.
 		Long rev = null;
-		while(revision != null && revision.offset < offset) {
+		while (revision != null && revision.offset < offset) {
 			rev = revision.revision;
 			revision = revisions.hasNext() ? revisions.next() : null;
 		}
@@ -110,11 +109,11 @@ public class QtASTClass {
 	}
 
 	private static IQMethod.Kind getHigherPrecedence(IQMethod.Kind kind1, IQMethod.Kind kind2) {
-		switch(kind1) {
+		switch (kind1) {
 		case Unspecified:
 			return kind2;
 		case Invokable:
-			switch(kind2) {
+			switch (kind2) {
 			case Slot:
 			case Signal:
 				return kind2;
@@ -158,7 +157,7 @@ public class QtASTClass {
 		ArrayList<Revision> revisions = new ArrayList<Revision>();
 		ArrayList<Region> regions = new ArrayList<Region>();
 		Region currRegion = null;
-		for(IASTNodeLocation location : spec.getNodeLocations()) {
+		for (IASTNodeLocation location : spec.getNodeLocations()) {
 
 			Tag tag = Tag.create(location);
 			if (tag != null)
@@ -192,7 +191,7 @@ public class QtASTClass {
 
 				// Otherwise terminate all regions that start before this label and advance
 				// to the first one that follows.
-				while(region != null && region.begin < offset) {
+				while (region != null && region.begin < offset) {
 					region.end = offset;
 					region = iterator.hasNext() ? iterator.next() : null;
 				}
@@ -207,14 +206,14 @@ public class QtASTClass {
 		if (!tags.isEmpty()) {
 			Iterator<Tag> iterator = tags.iterator();
 			Tag tag = iterator.next();
-			for(Region region : regions) {
+			for (Region region : regions) {
 
 				// Keep all tags that are before the start of this region.
-				while(tag != null && tag.offset < region.begin)
+				while (tag != null && tag.offset < region.begin)
 					tag = iterator.hasNext() ? iterator.next() : null;
 
 				// Delete all tags that are within this region.
-				while(tag != null && region.contains(tag.offset)) {
+				while (tag != null && region.contains(tag.offset)) {
 					iterator.remove();
 					tag = iterator.hasNext() ? iterator.next() : null;
 				}
@@ -249,8 +248,7 @@ public class QtASTClass {
 		}
 
 		public boolean contains(int offset) {
-			return offset >= begin
-				&& offset < end;
+			return offset >= begin && offset < end;
 		}
 
 		/**
@@ -269,11 +267,9 @@ public class QtASTClass {
 			int offset = fileLocation.getNodeOffset();
 			IASTPreprocessorMacroExpansion expansion = macroLocation.getExpansion();
 			String macroName = getMacroName(expansion);
-			if (QtKeywords.Q_SLOTS.equals(macroName)
-			 || QtKeywords.SLOTS.equals(macroName))
+			if (QtKeywords.Q_SLOTS.equals(macroName) || QtKeywords.SLOTS.equals(macroName))
 				return new Region(offset, IQMethod.Kind.Slot);
-			if (QtKeywords.Q_SIGNALS.equals(macroName)
-			 || QtKeywords.SIGNALS.equals(macroName))
+			if (QtKeywords.Q_SIGNALS.equals(macroName) || QtKeywords.SIGNALS.equals(macroName))
 				return new Region(offset, IQMethod.Kind.Signal);
 			return null;
 		}
@@ -323,7 +319,8 @@ public class QtASTClass {
 		// group 1.  Hexadecimal and octal prefixes are included in the capture group.  Unsigned
 		// and long suffixes are allowed but are excluded from the capture group.  The matcher's
 		// input string should be trimmed and have all newlines replaced.
-		private static final Pattern QREVISION_REGEX = Pattern.compile("^Q_REVISION\\s*\\(\\s*((?:0x)?[\\da-fA-F]+)[ulUL]*\\s*\\)$");
+		private static final Pattern QREVISION_REGEX = Pattern
+				.compile("^Q_REVISION\\s*\\(\\s*((?:0x)?[\\da-fA-F]+)[ulUL]*\\s*\\)$");
 
 		public Revision(int offset, Long revision) {
 			this.offset = offset;
@@ -358,7 +355,7 @@ public class QtASTClass {
 			if (m.matches()) {
 				try {
 					return new Revision(offset, Long.parseLong(m.group(1)));
-				} catch(NumberFormatException e) {
+				} catch (NumberFormatException e) {
 					// The number will be parsed incorrectly when the C++ client code does not
 					// contain a valid integer.  We can't do anything about that, so the exception
 					// is ignored.  A codan checker could notify the user of this problem.

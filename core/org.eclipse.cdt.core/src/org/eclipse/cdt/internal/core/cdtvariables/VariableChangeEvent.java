@@ -20,24 +20,25 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
  */
 public class VariableChangeEvent {
 	private static final ICdtVariable[] EMPTY_VAR_ARRAY = new ICdtVariable[0];
-	
+
 	private ICdtVariable[] fAddedVars, fRemovedVars, fChangedVars;
-	
-	VariableChangeEvent(ICdtVariable[] addedVars, ICdtVariable[] removedVars, ICdtVariable[] changedVars){
-		fAddedVars = addedVars != null ? (ICdtVariable[])addedVars.clone() : null;
-		fRemovedVars = removedVars != null ? (ICdtVariable[])removedVars.clone() : null;
-		fChangedVars = changedVars != null ? (ICdtVariable[])changedVars.clone() : null;
-	}
-	public ICdtVariable[] getAddedVariables(){
-		return fAddedVars != null ? (ICdtVariable[])fAddedVars.clone() : EMPTY_VAR_ARRAY;
+
+	VariableChangeEvent(ICdtVariable[] addedVars, ICdtVariable[] removedVars, ICdtVariable[] changedVars) {
+		fAddedVars = addedVars != null ? (ICdtVariable[]) addedVars.clone() : null;
+		fRemovedVars = removedVars != null ? (ICdtVariable[]) removedVars.clone() : null;
+		fChangedVars = changedVars != null ? (ICdtVariable[]) changedVars.clone() : null;
 	}
 
-	public ICdtVariable[] getRemovedVariables(){
-		return fRemovedVars != null ? (ICdtVariable[])fRemovedVars.clone() : EMPTY_VAR_ARRAY;
+	public ICdtVariable[] getAddedVariables() {
+		return fAddedVars != null ? (ICdtVariable[]) fAddedVars.clone() : EMPTY_VAR_ARRAY;
 	}
 
-	public ICdtVariable[] getChangedVariables(){
-		return fChangedVars != null ? (ICdtVariable[])fChangedVars.clone() : EMPTY_VAR_ARRAY;
+	public ICdtVariable[] getRemovedVariables() {
+		return fRemovedVars != null ? (ICdtVariable[]) fRemovedVars.clone() : EMPTY_VAR_ARRAY;
+	}
+
+	public ICdtVariable[] getChangedVariables() {
+		return fChangedVars != null ? (ICdtVariable[]) fChangedVars.clone() : EMPTY_VAR_ARRAY;
 	}
 
 }

@@ -21,27 +21,28 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  */
 public abstract class CompositeType implements IIndexType {
 	protected final IType type;
-	protected final ICompositesFactory cf; 
-	
+	protected final ICompositesFactory cf;
+
 	protected CompositeType(IType rtype, ICompositesFactory cf) {
 		this.type = rtype;
 		this.cf = cf;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType other) {
 		return type.isSameType(other);
 	}
-	
+
 	@Override
 	public Object clone() {
-		fail(); return null; 
+		fail();
+		return null;
 	}
-	
+
 	public final void setType(IType type) {
 		fail();
 	}
-		
+
 	protected void fail() {
 		throw new CompositingNotImplementedError("Compositing feature (for IType) not implemented"); //$NON-NLS-1$
 	}

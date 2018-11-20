@@ -32,6 +32,4 @@ public class EFSExtensionProviderTestsProvider extends EFSExtensionProvider {
 		return true;
 	}
 
-	
-
 }

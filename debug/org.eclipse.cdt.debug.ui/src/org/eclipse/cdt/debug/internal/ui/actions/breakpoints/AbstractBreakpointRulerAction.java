@@ -30,10 +30,10 @@ import org.eclipse.ui.texteditor.IUpdate;
  * @see {@link RulerBreakpointAction} 
  */
 public abstract class AbstractBreakpointRulerAction extends Action implements IUpdate {
-	
+
 	private final IWorkbenchPart fTargetPart;
 	private final IVerticalRulerInfo fRulerInfo;
-	
+
 	/**
 	 * Constructs an action to work on breakpoints in the specified
 	 * part with the specified vertical ruler information.
@@ -54,13 +54,13 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {
-	    IWorkbenchPart targetPart = getTargetPart();
-	    if (targetPart instanceof ITextEditor) {
-	        return CDebugUIUtils.getBreakpointFromEditor((ITextEditor)targetPart, getVerticalRulerInfo());
-	    }
-	    return null;
+		IWorkbenchPart targetPart = getTargetPart();
+		if (targetPart instanceof ITextEditor) {
+			return CDebugUIUtils.getBreakpointFromEditor((ITextEditor) targetPart, getVerticalRulerInfo());
+		}
+		return null;
 	}
-	
+
 	/**
 	 * Returns the workbench part this action was created for.
 	 * 
@@ -69,7 +69,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	protected IWorkbenchPart getTargetPart() {
 		return fTargetPart;
 	}
-	
+
 	/**
 	 * Returns the vertical ruler information this action was created for.
 	 * 

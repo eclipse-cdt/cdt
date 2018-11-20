@@ -16,7 +16,6 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * GDB/MI trace command output parsing.
  * 
@@ -32,10 +31,10 @@ public class CLITraceInfo extends MIInfo {
 	}
 
 	private String fReference = null;
-	
+
 	/** @since 5.0 */
-	public String getTraceReference(){
-		return fReference; 
+	public String getTraceReference() {
+		return fReference;
 	}
 
 	protected void parse() {
@@ -46,7 +45,7 @@ public class CLITraceInfo extends MIInfo {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord) oobs[i];
 					String str = cons.getString().trim();
-					if(!str.isEmpty() ){
+					if (!str.isEmpty()) {
 						Pattern pattern = Pattern.compile("^Tracepoint\\s(\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
 						Matcher matcher = pattern.matcher(str);
 						if (matcher.find()) {

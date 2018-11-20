@@ -27,16 +27,16 @@ import org.eclipse.core.runtime.ListenerList;
  */
 public class CSourceTagProvider implements ISourceTagProvider {
 
-	private ListenerList<ISourceTagListener> fListenerList= new ListenerList<>(ListenerList.IDENTITY);
+	private ListenerList<ISourceTagListener> fListenerList = new ListenerList<>(ListenerList.IDENTITY);
 	private ITranslationUnit fUnit;
-	
+
 	/**
 	 * Create a new source tag provider for the given translation unit.
 	 * 
 	 * @param unit
 	 */
 	public CSourceTagProvider(ITranslationUnit unit) {
-		fUnit= unit;
+		fUnit = unit;
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class CSourceTagProvider implements ISourceTagProvider {
 	 */
 	private ISourceTag convertToSourceTag(ICElement element) {
 		if (element instanceof ISourceReference) {
-			return new CSourceTag((ISourceReference)element, element.getElementType());
+			return new CSourceTag((ISourceReference) element, element.getElementType());
 		}
 		return null;
 	}
@@ -81,13 +81,13 @@ public class CSourceTagProvider implements ISourceTagProvider {
 	 */
 	private void convertToSourceTags(ICElement[] children, Collection<ISourceTag> target) throws CModelException {
 		for (int i = 0; i < children.length; i++) {
-			ICElement element= children[i];
-			ISourceTag tag= convertToSourceTag(element);
+			ICElement element = children[i];
+			ISourceTag tag = convertToSourceTag(element);
 			if (tag != null) {
 				target.add(tag);
 			}
 			if (element instanceof IParent) {
-				convertToSourceTags(((IParent)element).getChildren(), target);
+				convertToSourceTags(((IParent) element).getChildren(), target);
 			}
 		}
 	}

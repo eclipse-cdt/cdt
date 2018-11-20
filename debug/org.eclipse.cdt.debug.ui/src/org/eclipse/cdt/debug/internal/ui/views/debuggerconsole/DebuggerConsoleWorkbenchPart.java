@@ -27,8 +27,8 @@ public class DebuggerConsoleWorkbenchPart implements IWorkbenchPart {
 
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof DebuggerConsoleWorkbenchPart) &&
-			fConsole.equals(((DebuggerConsoleWorkbenchPart)obj).fConsole);
+		return (obj instanceof DebuggerConsoleWorkbenchPart)
+				&& fConsole.equals(((DebuggerConsoleWorkbenchPart) obj).fConsole);
 	}
 
 	@Override

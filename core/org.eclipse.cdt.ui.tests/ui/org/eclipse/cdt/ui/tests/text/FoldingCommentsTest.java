@@ -225,28 +225,17 @@ public class FoldingCommentsTest extends FoldingTestBase {
 		boolean docComments = fDoxygenDoctool ? fDocComments : fNonDocComments;
 
 		PositionAndCollapsed[] actual = getFoldingPositions();
-		PositionAndCollapsed[] expected = new PositionAndCollapsed[] {
-				createPosition(0, 2, 1, fHeaderComments),
-				createPosition(4, 6, 5, docComments),
-				createPosition(12, 14, 13, fNonDocComments),
-				createPosition(20, 21, fNonDocComments),
-				createPosition(24, 25, docComments),
-				createPosition(34, 35, fNonDocComments),
-				createPosition(38, 39, docComments),
-				createPosition(42, 43, docComments),
-				createPosition(46, 47, docComments),
-				createPosition(50, 51, docComments),
-				createPosition(54, 55, fNonDocComments),
-				createPosition(58, 59, fNonDocComments),
-				createPosition(62, 63, fNonDocComments),
-				createPosition(66, 67, fNonDocComments),
-				createPosition(70, 71, fNonDocComments),
-				createPosition(74, 75, fNonDocComments),
-				createPosition(78, 79, docComments),
-				createPosition(82, 83, docComments),
-				createPosition(86, 87, docComments),
-				createPosition(94, 96, fNonDocComments),
-				createPosition(99, 101, docComments), };
+		PositionAndCollapsed[] expected = new PositionAndCollapsed[] { createPosition(0, 2, 1, fHeaderComments),
+				createPosition(4, 6, 5, docComments), createPosition(12, 14, 13, fNonDocComments),
+				createPosition(20, 21, fNonDocComments), createPosition(24, 25, docComments),
+				createPosition(34, 35, fNonDocComments), createPosition(38, 39, docComments),
+				createPosition(42, 43, docComments), createPosition(46, 47, docComments),
+				createPosition(50, 51, docComments), createPosition(54, 55, fNonDocComments),
+				createPosition(58, 59, fNonDocComments), createPosition(62, 63, fNonDocComments),
+				createPosition(66, 67, fNonDocComments), createPosition(70, 71, fNonDocComments),
+				createPosition(74, 75, fNonDocComments), createPosition(78, 79, docComments),
+				createPosition(82, 83, docComments), createPosition(86, 87, docComments),
+				createPosition(94, 96, fNonDocComments), createPosition(99, 101, docComments), };
 
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);

@@ -25,8 +25,9 @@ public interface ICPPBinding extends IBinding {
 	 * Returns an array of strings representing the qualified name of this binding.
 	 */
 	public String[] getQualifiedName() throws DOMException;
+
 	public char[][] getQualifiedNameCharArray() throws DOMException;
-	
+
 	/**
 	 * Returns true if this binding is qualified with respect to the translation unit
 	 * for example, local variables, function parameters and local classes will

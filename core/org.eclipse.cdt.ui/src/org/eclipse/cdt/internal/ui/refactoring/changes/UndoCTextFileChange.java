@@ -41,55 +41,52 @@ import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
  * UndoCTextFileChange that uses a working copy in order to generate CModel events. 
  * @author janees
  */
-public class UndoCTextFileChange
-    extends UndoTextFileChange {
-    
-    UndoEdit mUndoEdit = null;
+public class UndoCTextFileChange extends UndoTextFileChange {
 
-    public UndoCTextFileChange(String name, IFile file, UndoEdit undo, ContentStamp stamp, int saveMode) {
-        super(name, file, undo, stamp, saveMode);
-        mUndoEdit = undo;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ltk.core.refactoring.UndoTextFileChange#perform(org.eclipse.core.runtime.IProgressMonitor)
-     */
-    @Override
-	public Change perform(IProgressMonitor pm)
-        throws CoreException {
-        if (pm == null){
-            pm= new NullProgressMonitor();
-        }
-        Object obj = getModifiedElement();
-        if(!(obj instanceof IFile)){
-            throw new IllegalArgumentException();
-        }
-        final IFile file = (IFile) obj;
-        ICElement element = CoreModel.getDefault().create(file);
-        if (!(element instanceof TranslationUnit)) {
-            return super.perform(pm);
-        }
+	UndoEdit mUndoEdit = null;
 
-        final TranslationUnit tu = (TranslationUnit) element;
-        IWorkingCopy wc= tu.getWorkingCopy(pm, DocumentAdapter.FACTORY);
-        final IBuffer buffer= wc.getBuffer();
-        assert buffer instanceof DocumentAdapter;
-        if (buffer instanceof DocumentAdapter) {
-        	IDocument document= ((DocumentAdapter) buffer).getDocument();
-        	try {
-        		UndoEdit redo= mUndoEdit.apply(document, TextEdit.CREATE_UNDO);
-        		wc.commit(false, pm);
-        		return new UndoCTextFileChange(getName(), file, redo, null, getSaveMode());
-        	} catch (MalformedTreeException e) {
-        		CUIPlugin.log(e);
-        	} catch (BadLocationException e) {
-        		CUIPlugin.log(e);
-        	}
-        	finally {
-        		wc.destroy();
-        	}
-        }
-        return null;
-    }
+	public UndoCTextFileChange(String name, IFile file, UndoEdit undo, ContentStamp stamp, int saveMode) {
+		super(name, file, undo, stamp, saveMode);
+		mUndoEdit = undo;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.UndoTextFileChange#perform(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public Change perform(IProgressMonitor pm) throws CoreException {
+		if (pm == null) {
+			pm = new NullProgressMonitor();
+		}
+		Object obj = getModifiedElement();
+		if (!(obj instanceof IFile)) {
+			throw new IllegalArgumentException();
+		}
+		final IFile file = (IFile) obj;
+		ICElement element = CoreModel.getDefault().create(file);
+		if (!(element instanceof TranslationUnit)) {
+			return super.perform(pm);
+		}
+
+		final TranslationUnit tu = (TranslationUnit) element;
+		IWorkingCopy wc = tu.getWorkingCopy(pm, DocumentAdapter.FACTORY);
+		final IBuffer buffer = wc.getBuffer();
+		assert buffer instanceof DocumentAdapter;
+		if (buffer instanceof DocumentAdapter) {
+			IDocument document = ((DocumentAdapter) buffer).getDocument();
+			try {
+				UndoEdit redo = mUndoEdit.apply(document, TextEdit.CREATE_UNDO);
+				wc.commit(false, pm);
+				return new UndoCTextFileChange(getName(), file, redo, null, getSaveMode());
+			} catch (MalformedTreeException e) {
+				CUIPlugin.log(e);
+			} catch (BadLocationException e) {
+				CUIPlugin.log(e);
+			} finally {
+				wc.destroy();
+			}
+		}
+		return null;
+	}
 }

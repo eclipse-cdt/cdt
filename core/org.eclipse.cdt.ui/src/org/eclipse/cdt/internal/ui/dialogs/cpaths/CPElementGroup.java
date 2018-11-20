@@ -66,8 +66,9 @@ public class CPElementGroup {
 			return true;
 		}
 		if (arg0 instanceof CPElementGroup) {
-			CPElementGroup other = (CPElementGroup)arg0;
-			return (kind == other.kind && ( (parent == null && other.parent == null) || parent.equals(other.parent)) && ( (resource == null && other.resource == null) || resource.equals(other.resource)));
+			CPElementGroup other = (CPElementGroup) arg0;
+			return (kind == other.kind && ((parent == null && other.parent == null) || parent.equals(other.parent))
+					&& ((resource == null && other.resource == null) || resource.equals(other.resource)));
 		}
 		return false;
 	}
@@ -83,13 +84,13 @@ public class CPElementGroup {
 		List<CPElement> children = getChildrenList(element.getEntryKind(), false);
 		return children != null ? children.indexOf(element) : -1;
 	}
-	
+
 	public void addChild(CPElement element, int insertIndex) {
 		List<CPElement> children = getChildrenList(element.getEntryKind(), true);
 		children.add(insertIndex, element);
 		element.setParent(this);
 	}
-	
+
 	public void addChild(CPElement element) {
 		List<CPElement> children = getChildrenList(element.getEntryKind(), true);
 		int indx = children.indexOf(element);
@@ -124,7 +125,8 @@ public class CPElementGroup {
 	public void setChildren(CPElement[] elements) {
 		if (elements.length > 0) {
 			if (childrenListMap != null) {
-				childrenListMap.put(Integer.valueOf(elements[0].getEntryKind()), new ArrayList<CPElement>(Arrays.asList(elements)));
+				childrenListMap.put(Integer.valueOf(elements[0].getEntryKind()),
+						new ArrayList<CPElement>(Arrays.asList(elements)));
 			} else {
 				childrenList = new ArrayList<CPElement>(Arrays.asList(elements));
 			}

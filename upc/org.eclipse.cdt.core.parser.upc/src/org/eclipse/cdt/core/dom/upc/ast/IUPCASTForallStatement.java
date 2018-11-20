@@ -20,15 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 public interface IUPCASTForallStatement extends IASTForStatement {
 
-    public static final ASTNodeProperty AFFINITY = new ASTNodeProperty(
-    		"IUPCASTForallStatement.AFFINITY - IASTExpression affinity for IUPCASTForallStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty AFFINITY = new ASTNodeProperty(
+			"IUPCASTForallStatement.AFFINITY - IASTExpression affinity for IUPCASTForallStatement"); //$NON-NLS-1$
 
-
-    @Override
+	@Override
 	public IASTStatement getInitializerStatement();
 
-    @Override
-	public void setInitializerStatement( IASTStatement statement );
+	@Override
+	public void setInitializerStatement(IASTStatement statement);
 
 	@Override
 	public IASTExpression getConditionExpression();
@@ -55,7 +54,6 @@ public interface IUPCASTForallStatement extends IASTForStatement {
 
 	@Override
 	public void setBody(IASTStatement statement);
-
 
 	@Override
 	public IUPCASTForallStatement copy();

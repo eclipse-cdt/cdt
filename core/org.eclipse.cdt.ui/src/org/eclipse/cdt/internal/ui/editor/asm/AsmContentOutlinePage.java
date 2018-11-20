@@ -38,7 +38,7 @@ public class AsmContentOutlinePage extends AbstractCModelOutlinePage {
 
 	@Override
 	protected OpenViewActionGroup createOpenViewActionGroup() {
-		OpenViewActionGroup ovag= new OpenViewActionGroup(this);
+		OpenViewActionGroup ovag = new OpenViewActionGroup(this);
 		ovag.setEnableIncludeBrowser(false);
 		ovag.setSuppressCallHierarchy(true);
 		ovag.setSuppressTypeHierarchy(true);

@@ -26,17 +26,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 
-
 public class TemplateProposalTest extends AbstractContentAssistTest {
-	
+
 	public TemplateProposalTest(String name) {
 		super(name, true);
 	}
-	
+
 	public TemplateProposalTest(String name, boolean isCpp) {
 		super(name, isCpp);
 	}
-	
+
 	public static Test suite() {
 		return BaseTestCase.suite(TemplateProposalTest.class, "_");
 	}
@@ -44,7 +43,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		// Remove all the default templates. Tests will add templates as necessary.
 		TemplateStore templateStore = CUIPlugin.getDefault().getTemplateStore();
 		TemplatePersistenceData[] templateData = templateStore.getTemplateData(false);
@@ -56,7 +55,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		
+
 		// Restore the default templates
 		CUIPlugin.getDefault().getTemplateStore().restoreDefaults();
 	}
@@ -65,65 +64,65 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 	private static final String SOURCE_FILE_NAME = "CompletionTest.cpp";
 	private static final String SELECTION_START_TAG = "/*sel-start*/";
 	private static final String SELECTION_END_TAG = "/*sel-end*/";
-	
+
 	private static final String TEMPLATE_NAME_WORD_SELECTION = "word selection template";
 	private static final String TEMPLATE_NAME_WORD_SELECTION_DISP = TEMPLATE_NAME_WORD_SELECTION + " - ";
 	private static final String TEMPLATE_NAME_LINE_SELECTION = "line selection template";
 	private static final String TEMPLATE_NAME_LINE_SELECTION_DISP = TEMPLATE_NAME_LINE_SELECTION + " - ";
-	
+
 	protected int fSelectionOffset;
 	protected int fSelectionLength;
 	private IProject fProject;
-	
+
 	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
-		fProject= project;
-		StringBuilder sourceContent= getContentsForTest(1)[0];
-		fSelectionOffset= sourceContent.indexOf(SELECTION_START_TAG);
+		fProject = project;
+		StringBuilder sourceContent = getContentsForTest(1)[0];
+		fSelectionOffset = sourceContent.indexOf(SELECTION_START_TAG);
 		assertTrue("No selection start specified", fSelectionOffset >= 0);
 		sourceContent.delete(fSelectionOffset, fSelectionOffset + SELECTION_START_TAG.length());
 		int selEndOffset = sourceContent.indexOf(SELECTION_END_TAG);
-		
+
 		if (selEndOffset >= 0) {
 			sourceContent.delete(selEndOffset, selEndOffset + SELECTION_END_TAG.length());
 			fSelectionLength = selEndOffset - fSelectionOffset;
 		} else {
 			fSelectionLength = 0;
 		}
-		
+
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
-	
+
 	private void addWordSelectionTemplate() {
-		Template newTemplate = new Template(TEMPLATE_NAME_WORD_SELECTION, "", CContextType.ID, "cout << ${word_selection};", true);
-		TemplatePersistenceData data= new TemplatePersistenceData(newTemplate, true);
+		Template newTemplate = new Template(TEMPLATE_NAME_WORD_SELECTION, "", CContextType.ID,
+				"cout << ${word_selection};", true);
+		TemplatePersistenceData data = new TemplatePersistenceData(newTemplate, true);
 		CUIPlugin.getDefault().getTemplateStore().add(data);
 	}
-	
+
 	private void addLineSelectionTemplate() {
-		Template newTemplate = new Template(TEMPLATE_NAME_LINE_SELECTION, "", CContextType.ID, "cout << ${line_selection};", true);
-		TemplatePersistenceData data= new TemplatePersistenceData(newTemplate, true);
+		Template newTemplate = new Template(TEMPLATE_NAME_LINE_SELECTION, "", CContextType.ID,
+				"cout << ${line_selection};", true);
+		TemplatePersistenceData data = new TemplatePersistenceData(newTemplate, true);
 		CUIPlugin.getDefault().getTemplateStore().add(data);
 	}
-	
+
 	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION | IS_TEMPLATE;
-	
+
 	protected void assertCompletionResults(String[] expected) throws Exception {
 		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, DEFAULT_FLAGS, CompareType.ID);
 	}
-	
+
 	//void func() { 
 	///*sel-start*/test foo bar/*sel-end*/
 	//}
 	public void testFullLineSelection() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_LINE_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_LINE_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	///*sel-start*/test foo bar
 	//test foo bar/*sel-end*/
@@ -131,36 +130,30 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 	public void testMultiLineSelection() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_LINE_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_LINE_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	//foo /*sel-start*/test/*sel-end*/
 	//}
 	public void testWordSelection() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_WORD_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_WORD_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	//foo/*sel-start*/test/*sel-end*/
 	//}
 	public void testPartialLineWordSelection() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_WORD_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_WORD_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	//test foo/*sel-start*/bar
 	//test foo /*sel-end*/bar
@@ -168,23 +161,19 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 	public void testWordSelectionOverMultiLine() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_WORD_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_WORD_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	//  /*sel-start*/test/*sel-end*/
 	//}
 	public void testBug298554_lineSelectedWithoutWhitespaces() throws Exception {
 		addLineSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_LINE_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_LINE_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	//  /*sel-start*/test foo bar
 	//test foo bar/*sel-end*/  
@@ -192,35 +181,27 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 	public void testBug298554_multiLineSelectedWithoutWhitespaces() throws Exception {
 		addWordSelectionTemplate();
 		addLineSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_LINE_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_LINE_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	//  /*sel-start*/test/*sel-end*/
 	//}
 	public void testBug304482_onlyWordOnLine() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_LINE_SELECTION_DISP,
-			TEMPLATE_NAME_WORD_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_LINE_SELECTION_DISP, TEMPLATE_NAME_WORD_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void func() { 
 	///*sel-start*/test/*sel-end*/
 	//}
 	public void testBug304482_onlyWordOnLineStartOfLine() throws Exception {
 		addLineSelectionTemplate();
 		addWordSelectionTemplate();
-		final String[] expected= {
-			TEMPLATE_NAME_LINE_SELECTION_DISP,
-			TEMPLATE_NAME_WORD_SELECTION_DISP
-		};
+		final String[] expected = { TEMPLATE_NAME_LINE_SELECTION_DISP, TEMPLATE_NAME_WORD_SELECTION_DISP };
 		assertCompletionResults(expected);
 	}
 

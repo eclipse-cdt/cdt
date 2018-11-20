@@ -33,7 +33,7 @@ public class TextAssertions extends AbstractSWTBotAssertions<TextAssertions, SWT
 
 	public TextAssertions isEmpty() {
 		notNullValue();
-		if(!actual.getText().isEmpty()) {
+		if (!actual.getText().isEmpty()) {
 			failWithMessage("Expected text widget to be empty but it contained '%s'", actual.getText());
 		}
 		return this;
@@ -41,8 +41,9 @@ public class TextAssertions extends AbstractSWTBotAssertions<TextAssertions, SWT
 
 	public TextAssertions textEquals(final String expectedContent) {
 		notNullValue();
-		if(!actual.getText().equals(expectedContent)) {
-			failWithMessage("Expected text widget to contain '%s' but it contained '%s'", expectedContent, actual.getText());
+		if (!actual.getText().equals(expectedContent)) {
+			failWithMessage("Expected text widget to contain '%s' but it contained '%s'", expectedContent,
+					actual.getText());
 		}
 		return this;
 	}

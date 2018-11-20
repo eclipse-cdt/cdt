@@ -55,8 +55,8 @@ public interface IExternalSearchProvider {
 	 *
 	 * @see {@link IIndex#findNames(IBinding, int)}
 	 */
-	void findNames(IBinding binding, int flags, ICProject[] projects, IIndex index,
-			List<IIndexName> foundNames) throws CoreException;
+	void findNames(IBinding binding, int flags, ICProject[] projects, IIndex index, List<IIndexName> foundNames)
+			throws CoreException;
 
 	/**
 	 * Finds the function or the class enclosing the given name.

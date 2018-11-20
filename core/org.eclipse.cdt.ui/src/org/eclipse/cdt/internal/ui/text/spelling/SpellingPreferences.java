@@ -37,20 +37,20 @@ public class SpellingPreferences {
 	private static final String SPELLING_IGNORE_STRING_LITERALS = PreferenceConstants.SPELLING_IGNORE_STRING_LITERALS;
 	private static final String SPELLING_IGNORE_UPPER = PreferenceConstants.SPELLING_IGNORE_UPPER;
 	private static final String SPELLING_IGNORE_URLS = PreferenceConstants.SPELLING_IGNORE_URLS;
-	
+
 	/**
 	 * @see IPreferenceStore#addPropertyChangeListener(IPropertyChangeListener)
 	 */
-    public static void addPropertyChangeListener(IPropertyChangeListener listener) {
-  		preferenceStore.addPropertyChangeListener(listener); 
-    }
-	
+	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
+		preferenceStore.addPropertyChangeListener(listener);
+	}
+
 	/**
 	 * @see IPreferenceStore#removePropertyChangeListener(IPropertyChangeListener)
 	 */
-    public static void removePropertyChangeListener(IPropertyChangeListener listener) {
-   		preferenceStore.removePropertyChangeListener(listener); 
-    }
+	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
+		preferenceStore.removePropertyChangeListener(listener);
+	}
 
 	/**
 	 * The locale used for spell checking.
@@ -58,21 +58,21 @@ public class SpellingPreferences {
 	public static String getSpellingLocale() {
 		return preferenceStore.getString(SPELLING_LOCALE);
 	}
-	
+
 	/**
 	 * The workspace user dictionary.
 	 */
 	public static String getSpellingUserDictionary() {
 		return preferenceStore.getString(SPELLING_USER_DICTIONARY);
 	}
-	
+
 	/**
 	 * The encoding of the workspace user dictionary.
 	 */
 	public static String getSpellingUserDictionaryEncoding() {
 		return preferenceStore.getString(SPELLING_USER_DICTIONARY_ENCODING);
 	}
-	
+
 	/**
 	 * Returns the number of proposals offered during spell checking.
 	 */
@@ -86,7 +86,7 @@ public class SpellingPreferences {
 	public static boolean isEnabledSpellingContentAssist() {
 		return preferenceStore.getBoolean(SPELLING_ENABLE_CONTENTASSIST);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if words containing digits should
 	 * be skipped during spell checking.
@@ -102,7 +102,7 @@ public class SpellingPreferences {
 	public static boolean isIgnoreMixed() {
 		return preferenceStore.getBoolean(SPELLING_IGNORE_MIXED);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if non-letters at word boundaries
 	 * should be ignored during spell checking.
@@ -110,7 +110,7 @@ public class SpellingPreferences {
 	public static boolean isIgnoreNonLetters() {
 		return preferenceStore.getBoolean(SPELLING_IGNORE_NON_LETTERS);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if sentence capitalization should
 	 * be ignored during spell checking.
@@ -118,7 +118,7 @@ public class SpellingPreferences {
 	public static boolean isIgnoreSentence() {
 		return preferenceStore.getBoolean(SPELLING_IGNORE_SENTENCE);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if single letters
 	 * should be ignored during spell checking.
@@ -126,7 +126,7 @@ public class SpellingPreferences {
 	public static boolean isIgnoreSingleLetters() {
 		return preferenceStore.getBoolean(SPELLING_IGNORE_SINGLE_LETTERS);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if string literals
 	 * should be ignored during spell checking.

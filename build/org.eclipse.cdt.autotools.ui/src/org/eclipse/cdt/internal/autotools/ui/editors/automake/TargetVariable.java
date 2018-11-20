@@ -24,7 +24,8 @@ public class TargetVariable extends GNUVariableDef {
 
 	boolean override;
 
-	public TargetVariable(Directive parent, String target, String name, StringBuffer value, boolean override, int type) {
+	public TargetVariable(Directive parent, String target, String name, StringBuffer value, boolean override,
+			int type) {
 		super(parent, target, name, value, type);
 		this.override = override;
 	}

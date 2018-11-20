@@ -30,13 +30,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * ARGS will be passed to the inferior.  This option is not documented.
  * 
  */
-public class MIExecRun extends MICommand<MIInfo> 
-{
-    public MIExecRun(IExecutionDMContext dmc) {
-        super(dmc, "-exec-run"); //$NON-NLS-1$
-    }
-    
-    public MIExecRun(IExecutionDMContext dmc, String[] args) {
-        super(dmc, "-exec-run", args); //$NON-NLS-1$
-    }
+public class MIExecRun extends MICommand<MIInfo> {
+	public MIExecRun(IExecutionDMContext dmc) {
+		super(dmc, "-exec-run"); //$NON-NLS-1$
+	}
+
+	public MIExecRun(IExecutionDMContext dmc, String[] args) {
+		super(dmc, "-exec-run", args); //$NON-NLS-1$
+	}
 }

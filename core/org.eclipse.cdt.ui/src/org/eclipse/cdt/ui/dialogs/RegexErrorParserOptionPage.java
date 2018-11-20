@@ -87,12 +87,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	private static final int BUTTON_MOVEUP = 2;
 	private static final int BUTTON_MOVEDOWN = 3;
 
-	private static final String[] BUTTONS = new String[] {
-			AbstractCPropertyTab.ADD_STR,
-			AbstractCPropertyTab.DEL_STR,
-			AbstractCPropertyTab.MOVEUP_STR,
-			AbstractCPropertyTab.MOVEDOWN_STR,
-		};
+	private static final String[] BUTTONS = new String[] { AbstractCPropertyTab.ADD_STR, AbstractCPropertyTab.DEL_STR,
+			AbstractCPropertyTab.MOVEUP_STR, AbstractCPropertyTab.MOVEDOWN_STR, };
 
 	private static final String OOPS = "OOPS"; //$NON-NLS-1$
 
@@ -242,7 +238,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	}
 
 	private void createLinkToPreferences(final Composite parent) {
-		 // must not be editable as error parser gets desynchronized with ErrorParsTab
+		// must not be editable as error parser gets desynchronized with ErrorParsTab
 		Assert.isTrue(!fEditable);
 
 		Link link = new Link(parent, SWT.NONE);
@@ -252,7 +248,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 			@Override
 			public void handleEvent(Event event) {
 				// Use event.text to tell which link was used
-				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), WORKSPACE_PREFERENCE_PAGE, null, null).open();
+				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), WORKSPACE_PREFERENCE_PAGE, null, null)
+						.open();
 
 				IErrorParserNamed errorParser = ErrorParserManager.getErrorParserCopy(fErrorParser.getId());
 				if (errorParser instanceof RegexErrorParser)
@@ -288,9 +285,9 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	}
 
 	private void initializeTable() {
-		RegexErrorPattern[] errorParserPatterns = fErrorParser!=null
-			? errorParserPatterns = fErrorParser.getPatterns()
-			: new RegexErrorPattern[0];
+		RegexErrorPattern[] errorParserPatterns = fErrorParser != null
+				? errorParserPatterns = fErrorParser.getPatterns()
+				: new RegexErrorPattern[0];
 
 		int len = errorParserPatterns.length;
 		int newLen = len;
@@ -311,7 +308,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		tableLayouter.addColumnData(new ColumnWeightData(15, true)); // description
 		tableLayouter.addColumnData(new ColumnWeightData(10, true)); // eat line
 
-		int style= SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
+		int style = SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		if (fEditable) {
 			style = style | SWT.FULL_SELECTION;
 		}
@@ -336,23 +333,25 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		fTableViewer = new TableViewer(fTable);
 		fTableViewer.setUseHashlookup(true);
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		
+
 		//Bug 307542 - [Accessibility] Error Parser Options table should be accessible by keyboard
-		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(fTableViewer,new FocusCellOwnerDrawHighlighter(fTableViewer));
+		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(fTableViewer,
+				new FocusCellOwnerDrawHighlighter(fTableViewer));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(fTableViewer) {
 			@Override
 			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
 						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
-						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && (event.keyCode == SWT.CR || event.character == ' '))
+						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED
+								&& (event.keyCode == SWT.CR || event.character == ' '))
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
 		};
-		
-		TableViewerEditor.create(fTableViewer, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
-				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-		
+
+		TableViewerEditor.create(fTableViewer, focusCellManager, actSupport,
+				ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+						| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
+
 		createSeverityColumn();
 		createPatternColumn();
 		createFileColumn();
@@ -384,7 +383,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 					case IMarkerGenerator.SEVERITY_ERROR_RESOURCE:
 						return images.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					case RegexErrorPattern.SEVERITY_SKIP:
-							return images.getImage(ISharedImages.IMG_ELCL_REMOVE_DISABLED);
+						return images.getImage(ISharedImages.IMG_ELCL_REMOVE_DISABLED);
 					}
 				}
 				return null;
@@ -404,8 +403,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 					severityToString(IMarkerGenerator.SEVERITY_ERROR_RESOURCE),
 					severityToString(IMarkerGenerator.SEVERITY_WARNING),
 					severityToString(IMarkerGenerator.SEVERITY_INFO),
-					severityToString(RegexErrorPattern.SEVERITY_SKIP),
-				};
+					severityToString(RegexErrorPattern.SEVERITY_SKIP), };
 
 			private int severityToIndex(int severity) {
 				String strSeverity = severityToString(severity);
@@ -481,13 +479,13 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 			protected void setToPattern(RegexErrorPattern regexErrorPattern, String value) {
 				if (!fEditable)
 					return;
-				try{
+				try {
 					regexErrorPattern.setPattern(value);
 				} catch (Exception e) {
 					// to avoid recursive edits. the dialog is needed to ensure valid pattern on losing focus.
 					// this looks ugly and likely incorrect
 					fEditable = false;
-					RegularExpressionStatusDialog dialog= new RegularExpressionStatusDialog(getShell(), value);
+					RegularExpressionStatusDialog dialog = new RegularExpressionStatusDialog(getShell(), value);
 					if (dialog.open() == Window.OK) {
 						regexErrorPattern.setPattern(dialog.getValue());
 					}
@@ -596,7 +594,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		columnViewer.getColumn().setText(DialogsMessages.RegexErrorParserOptionPage_EatColumn);
 		columnViewer.getColumn().setResizable(true);
 
-		String message = MessageFormat.format(DialogsMessages.RegexErrorParserOptionPage_TooltipConsume, new Object[] { EAT_NO });
+		String message = MessageFormat.format(DialogsMessages.RegexErrorParserOptionPage_TooltipConsume,
+				new Object[] { EAT_NO });
 		columnViewer.getColumn().setToolTipText(message);
 		columnViewer.setLabelProvider(new ColumnLabelProvider() {
 
@@ -665,7 +664,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 			fButtons[i].addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					for (int i=0; i<fButtons.length; i++) {
+					for (int i = 0; i < fButtons.length; i++) {
 						if (fButtons[i].equals(event.widget)) {
 							buttonPressed(i);
 							return;
@@ -678,11 +677,11 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	}
 
 	private void updateButtons() {
-		if (fButtons!=null) {
+		if (fButtons != null) {
 			int pos = fTable.getSelectionIndex();
 			int count = fTable.getItemCount();
-			int last = count-1;
-			boolean selected = pos>=0 && pos<=last;
+			int last = count - 1;
+			boolean selected = pos >= 0 && pos <= last;
 
 			fButtons[BUTTON_ADD].setEnabled(true);
 			fButtons[BUTTON_DELETE].setEnabled(selected);
@@ -691,7 +690,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		}
 	}
 
-	private void buttonPressed (int button) {
+	private void buttonPressed(int button) {
 		switch (button) {
 		case BUTTON_ADD:
 			addErrorPattern();
@@ -715,8 +714,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 
 	private void addErrorPattern() {
 		int pos = fTable.getSelectionIndex();
-		int last = fTable.getItemCount()-1;
-		if (pos<0 || pos>last)
+		int last = fTable.getItemCount() - 1;
+		if (pos < 0 || pos > last)
 			pos = last;
 
 		int newPos = pos + 1;
@@ -726,9 +725,9 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 
 	private void deleteErrorPattern() {
 		int pos = fTable.getSelectionIndex();
-		int last = fTable.getItemCount()-1;
+		int last = fTable.getItemCount() - 1;
 
-		if (pos>=0 && pos<=last) {
+		if (pos >= 0 && pos <= last) {
 			fTableViewer.remove(fTableViewer.getElementAt(pos));
 			fTable.setSelection(pos);
 		}
@@ -737,26 +736,26 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	private void moveItem(boolean up) {
 		int pos = fTable.getSelectionIndex();
 		int count = fTable.getItemCount();
-		int last = count-1;
-		boolean selected = pos>=0 && pos<=last;
+		int last = count - 1;
+		boolean selected = pos >= 0 && pos <= last;
 
-		if (!selected || (up && pos==0) || (!up && pos==last))
+		if (!selected || (up && pos == 0) || (!up && pos == last))
 			return;
 
 		Object item = fTableViewer.getElementAt(pos);
 		fTableViewer.remove(item);
-		int newPos = up ? pos-1 : pos+1;
+		int newPos = up ? pos - 1 : pos + 1;
 		fTableViewer.insert(item, newPos);
 		fTable.setSelection(newPos);
 	}
 
 	private void applyPatterns() {
-		if (fErrorParser!=null && fEditable) {
+		if (fErrorParser != null && fEditable) {
 			fErrorParser.clearPatterns();
 			for (TableItem tableItem : fTable.getItems()) {
 				Object item = tableItem.getData();
 				if (item instanceof RegexErrorPattern) {
-					fErrorParser.addPattern((RegexErrorPattern)item);
+					fErrorParser.addPattern((RegexErrorPattern) item);
 				}
 			}
 		}
@@ -785,14 +784,14 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	/**
 	 * @since 5.3
 	 */
-	public void addListener(Listener listener){
+	public void addListener(Listener listener) {
 		fListeners.add(listener);
 	}
 
 	/**
 	 * @since 5.3
 	 */
-	public void removeListener(Listener listener){
+	public void removeListener(Listener listener) {
 		fListeners.remove(listener);
 	}
 

@@ -47,12 +47,13 @@ public class BasicOutlineTest extends BaseUITestCase {
 	}
 
 	private ICProject fCProject;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		restoreAllParts();
-		fCProject = CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER); 
+		fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+				IPDOMManager.ID_FAST_INDEXER);
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 
 	protected CEditor openEditor(IFile file) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = (CEditor) IDE.openEditor(page, file);
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 1000, 10);
 		runEventQueue(500);
 		return editor;
@@ -84,7 +85,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 
 	private void checkTreeItems(TreeItem[] items, String... labels) {
 		assertEquals(items.length, labels.length);
-		int i= 0;
+		int i = 0;
 		for (TreeItem treeItem : items) {
 			assertEquals(labels[i++], treeItem.getText());
 		}
@@ -96,15 +97,15 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//#define MACRO2()
 	//int main(int argc, char** argv) {}
 	public void testSimpleOutlineContent() throws Exception {
-		StringBuilder[] contents= getContentsForTest(1);
-		IProject project= getProject().getProject();
-		IFile source= createFile(project, "source.cpp", contents[0].toString());
+		StringBuilder[] contents = getContentsForTest(1);
+		IProject project = getProject().getProject();
+		IFile source = createFile(project, "source.cpp", contents[0].toString());
 		waitForIndexer(project, source);
-		
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		openEditor(source);
-		
-		Tree tree= checkTreeNode(outline, 0, "user.h").getParent();
+
+		Tree tree = checkTreeNode(outline, 0, "user.h").getParent();
 		checkTreeNode(tree, 1, "system.h");
 		checkTreeNode(tree, 2, "MACRO");
 		checkTreeNode(tree, 3, "MACRO2()");
@@ -116,30 +117,30 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//	void bar();
 	//	void foo();
 	//};
-	
+
 	//#include "header.h"
 	//void Foo::bar() {}
 	//int Foo::field = 5;
 	//void Foo::foo() {}
 	public void testGroupedMembers() throws Exception {
-		StringBuilder[] contents= getContentsForTest(2);
-		IProject project= getProject().getProject();
-		IFile header= createFile(project, "header.h", contents[0].toString());
-		IFile source= createFile(project, "source.cpp", contents[1].toString());
+		StringBuilder[] contents = getContentsForTest(2);
+		IProject project = getProject().getProject();
+		IFile header = createFile(project, "header.h", contents[0].toString());
+		IFile source = createFile(project, "source.cpp", contents[1].toString());
 		waitForIndexer(project, source);
 
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		openEditor(source);
-		
-		Tree tree= checkTreeNode(outline, 0, "header.h").getParent();
+
+		Tree tree = checkTreeNode(outline, 0, "header.h").getParent();
 		checkTreeNode(tree, 1, "Foo::bar() : void");
 		checkTreeNode(tree, 2, "Foo::field : int");
 		checkTreeNode(tree, 3, "Foo::foo() : void");
-		
+
 		PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, true);
 		runEventQueue(500);
-		
-		tree= checkTreeNode(outline, 0, "header.h").getParent();
+
+		tree = checkTreeNode(outline, 0, "header.h").getParent();
 		expandTreeItem(checkTreeNode(outline, 1, "Foo"));
 		checkTreeNode(tree, 1, 0, "bar() : void");
 		checkTreeNode(tree, 1, 1, "field : int");
@@ -163,32 +164,32 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//void Foo::foo() {}
 	//}
 	public void testGroupedMembersInNamespace() throws Exception {
-		StringBuilder[] contents= getContentsForTest(2);
-		IProject project= getProject().getProject();
-		IFile header= createFile(project, "header.h", contents[0].toString());
-		IFile source= createFile(project, "source.cpp", contents[1].toString());
+		StringBuilder[] contents = getContentsForTest(2);
+		IProject project = getProject().getProject();
+		IFile header = createFile(project, "header.h", contents[0].toString());
+		IFile source = createFile(project, "source.cpp", contents[1].toString());
 		waitForIndexer(project, source);
 
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		openEditor(source);
-		
-		TreeItem item= checkTreeNode(outline, 0, "header.h");
-		Tree tree= item.getParent();
+
+		TreeItem item = checkTreeNode(outline, 0, "header.h");
+		Tree tree = item.getParent();
 		expandTreeItem(checkTreeNode(tree, 1, "ns"));
 		checkTreeNode(tree, 1, 0, "Foo::bar() : void");
 		expandTreeItem(checkTreeNode(tree, 2, "ns"));
 		checkTreeNode(tree, 2, 0, "Foo::field : int");
 		checkTreeNode(tree, 2, 1, "Foo::foo() : void");
-		
+
 		PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, true);
 		runEventQueue(500);
-		
+
 		checkTreeNode(outline, 0, "header.h");
 		expandTreeItem(checkTreeNode(tree, 1, "ns"));
-		expandTreeItem(item= checkTreeNode(tree, 1, 0, "Foo"));
+		expandTreeItem(item = checkTreeNode(tree, 1, 0, "Foo"));
 		checkTreeItems(item.getItems(), "bar() : void");
 		expandTreeItem(checkTreeNode(tree, 2, "ns"));
-		expandTreeItem(item= checkTreeNode(tree, 2, 0, "Foo"));
+		expandTreeItem(item = checkTreeNode(tree, 2, 0, "Foo"));
 		checkTreeItems(item.getItems(), "field : int", "foo() : void");
 	}
 
@@ -209,26 +210,26 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//void Foo::foo() {}
 	//}
 	public void testGroupedNamespaces() throws Exception {
-		StringBuilder[] contents= getContentsForTest(2);
-		IProject project= getProject().getProject();
-		IFile header= createFile(project, "header.h", contents[0].toString());
-		IFile source= createFile(project, "source.cpp", contents[1].toString());
+		StringBuilder[] contents = getContentsForTest(2);
+		IProject project = getProject().getProject();
+		IFile header = createFile(project, "header.h", contents[0].toString());
+		IFile source = createFile(project, "source.cpp", contents[1].toString());
 		waitForIndexer(project, source);
 
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		openEditor(source);
-		
-		TreeItem item= checkTreeNode(outline, 0, "header.h");
-		Tree tree= item.getParent();
+
+		TreeItem item = checkTreeNode(outline, 0, "header.h");
+		Tree tree = item.getParent();
 		expandTreeItem(checkTreeNode(tree, 1, "ns"));
 		checkTreeNode(tree, 1, 0, "Foo::bar() : void");
 		expandTreeItem(checkTreeNode(tree, 2, "ns"));
 		checkTreeNode(tree, 2, 0, "Foo::field : int");
 		checkTreeNode(tree, 2, 1, "Foo::foo() : void");
-		
+
 		PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, true);
 		runEventQueue(500);
-		
+
 		checkTreeNode(outline, 0, "header.h");
 		expandTreeItem(checkTreeNode(tree, 1, "ns"));
 		checkTreeNode(tree, 1, 0, "Foo::bar() : void");
@@ -253,30 +254,30 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//void Foo::foo() {}
 	//}
 	public void testGroupedMembersInGroupedNamespaces() throws Exception {
-		StringBuilder[] contents= getContentsForTest(2);
-		IProject project= getProject().getProject();
-		IFile header= createFile(project, "header.h", contents[0].toString());
-		IFile source= createFile(project, "source.cpp", contents[1].toString());
+		StringBuilder[] contents = getContentsForTest(2);
+		IProject project = getProject().getProject();
+		IFile header = createFile(project, "header.h", contents[0].toString());
+		IFile source = createFile(project, "source.cpp", contents[1].toString());
 		waitForIndexer(project, source);
 
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		openEditor(source);
-		
-		TreeItem item= checkTreeNode(outline, 0, "header.h");
-		Tree tree= item.getParent();
+
+		TreeItem item = checkTreeNode(outline, 0, "header.h");
+		Tree tree = item.getParent();
 		expandTreeItem(checkTreeNode(tree, 1, "ns"));
 		checkTreeNode(tree, 1, 0, "Foo::bar() : void");
 		expandTreeItem(checkTreeNode(tree, 2, "ns"));
 		checkTreeNode(tree, 2, 0, "Foo::field : int");
 		checkTreeNode(tree, 2, 1, "Foo::foo() : void");
-		
+
 		PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, true);
 		PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, true);
 		runEventQueue(500);
-		
+
 		checkTreeNode(outline, 0, "header.h");
 		expandTreeItem(checkTreeNode(tree, 1, "ns"));
-		expandTreeItem(item= checkTreeNode(tree, 1, 0, "Foo"));
+		expandTreeItem(item = checkTreeNode(tree, 1, 0, "Foo"));
 		checkTreeItems(item.getItems(), "bar() : void", "field : int", "foo() : void");
 	}
 }

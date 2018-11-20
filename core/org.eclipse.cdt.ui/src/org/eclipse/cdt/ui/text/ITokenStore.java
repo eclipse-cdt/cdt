@@ -54,10 +54,10 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 public interface ITokenStore extends IPropertyChangeParticipant {
 	/**
 	 * Ensures any IToken objects that will be <em>or have been</em> returned are
-     * initialized for display.
+	 * initialized for display.
 	 */
 	void ensureTokensInitialised();
-	
+
 	/**
 	 * @param property
 	 * @return a token for the specified property. The Token may not be suitable for use if the
@@ -65,7 +65,7 @@ public interface ITokenStore extends IPropertyChangeParticipant {
 	 * point of token use in case this token store was originally initialized before a display was available.
 	 */
 	IToken getToken(String property);
-	
+
 	/**
 	 * @return The preference store used to read token styling preferences from.
 	 */

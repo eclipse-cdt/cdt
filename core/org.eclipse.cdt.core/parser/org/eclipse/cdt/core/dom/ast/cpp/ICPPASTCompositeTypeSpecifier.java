@@ -47,10 +47,10 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 */
 	public static final ASTNodeProperty BASE_SPECIFIER = new ASTNodeProperty(
 			"ICPPASTCompositeTypeSpecifier.BASE_SPECIFIER - Expresses the subclass role"); //$NON-NLS-1$
-	
+
 	/** @since 5.7 */
 	public static final ASTNodeProperty CLASS_VIRT_SPECIFIER = new ASTNodeProperty(
-			"ICPPASTCompositeTypeSpecifier.CLASS_VIRT_SPECIFIER [ICPPASTClassVirtSpecifier]");  //$NON-NLS-1$
+			"ICPPASTCompositeTypeSpecifier.CLASS_VIRT_SPECIFIER [ICPPASTClassVirtSpecifier]"); //$NON-NLS-1$
 
 	/**
 	 * Base specifiers are where a class expresses from whom it inherits.
@@ -67,7 +67,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		 */
 		public static final ASTNodeProperty NAME_SPECIFIER = new ASTNodeProperty(
 				"ICPPASTBaseSpecifier.NAME_SPECIFIER - Name specifier of base class"); //$NON-NLS-1$
-		
+
 		/**
 		 * @deprecated Use {@link ICPPASTBaseSpecifier#NAME_SPECIFIER} instead.
 		 * @noreference This field is not intended to be referenced by clients.
@@ -75,7 +75,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		@Deprecated
 		public static final ASTNodeProperty NAME = new ASTNodeProperty(
 				"ICPPASTBaseSpecifier.NAME - Name of base class"); //$NON-NLS-1$
-		
+
 		public static final int v_public = ICPPASTVisibilityLabel.v_public;
 		public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
 		public static final int v_private = ICPPASTVisibilityLabel.v_private;
@@ -103,33 +103,33 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		 * @since 5.8
 		 */
 		public ICPPASTNameSpecifier getNameSpecifier();
-		
+
 		/**
 		 * @since 5.1
 		 */
 		@Override
 		public ICPPASTBaseSpecifier copy();
-		
+
 		/**
 		 * @since 5.3
 		 */
 		@Override
 		public ICPPASTBaseSpecifier copy(CopyStyle style);
-		
+
 		/**
 		 * @deprecated Use setNameSpecifier() instead.
 		 * @noreference This method is not intended to be referenced by clients.
 		 */
 		@Deprecated
 		public void setName(IASTName name);
-		
+
 		/**
 		 * Sets the name specifier for this base specifier. Not allowed on frozen AST.
 		 * 
 		 * @since 5.8
 		 */
 		public void setNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
-		
+
 		/**
 		 * Sets whether this specifier is for a virtual base. Not allowed on frozen AST.
 		 */
@@ -160,7 +160,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 */
 	@Override
 	public ICPPClassScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */
@@ -188,13 +188,13 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 */
 	@Deprecated
 	public void setFinal(boolean isFinal);
-	
+
 	/**
 	 * Returns the class-virt-specifier of this class, or null if it doesn't have one.
 	 * @since 5.7
 	 */
 	public ICPPASTClassVirtSpecifier getVirtSpecifier();
-	
+
 	/**
 	 * Sets the class-virt-specifier for this class. 
 	 * @since 5.7

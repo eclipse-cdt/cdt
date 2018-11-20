@@ -89,8 +89,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer impl
 					}
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			//
 		}
 		return entries.toArray(new IPathEntry[entries.size()]);

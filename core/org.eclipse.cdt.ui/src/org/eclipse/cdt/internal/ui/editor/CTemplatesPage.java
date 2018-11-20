@@ -64,10 +64,11 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  */
 public class CTemplatesPage extends AbstractTemplatesPage {
 
-	private static final String PREFERENCE_PAGE_ID= "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
-	private static final TemplateStore TEMPLATE_STORE= CUIPlugin.getDefault().getTemplateStore();
-	private static final IPreferenceStore PREFERENCE_STORE= CUIPlugin.getDefault().getPreferenceStore();
-	private static final ContextTypeRegistry TEMPLATE_CONTEXT_REGISTRY= CUIPlugin.getDefault().getTemplateContextRegistry();
+	private static final String PREFERENCE_PAGE_ID = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
+	private static final TemplateStore TEMPLATE_STORE = CUIPlugin.getDefault().getTemplateStore();
+	private static final IPreferenceStore PREFERENCE_STORE = CUIPlugin.getDefault().getPreferenceStore();
+	private static final ContextTypeRegistry TEMPLATE_CONTEXT_REGISTRY = CUIPlugin.getDefault()
+			.getTemplateContextRegistry();
 
 	private TemplateVariableProcessor fTemplateProcessor;
 	private CEditor fCEditor;
@@ -79,8 +80,8 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 */
 	public CTemplatesPage(CEditor cEditor) {
 		super(cEditor, cEditor.getViewer());
-		fCEditor= cEditor;
-		fTemplateProcessor= new TemplateVariableProcessor();
+		fCEditor = cEditor;
+		fTemplateProcessor = new TemplateVariableProcessor();
 	}
 
 	/*
@@ -91,8 +92,8 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 		if (!fCEditor.validateEditorInputState())
 			return;
 
-		ISourceViewer contextViewer= fCEditor.getViewer();
-		ITextSelection textSelection= (ITextSelection) contextViewer.getSelectionProvider().getSelection();
+		ISourceViewer contextViewer = fCEditor.getViewer();
+		ITextSelection textSelection = (ITextSelection) contextViewer.getSelectionProvider().getSelection();
 		if (!isValidTemplate(document, template, textSelection.getOffset(), textSelection.getLength()))
 			return;
 		beginCompoundChange(contextViewer);
@@ -105,15 +106,16 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 		 */
 		String savedText;
 		try {
-			savedText= document.get(textSelection.getOffset(), textSelection.getLength());
+			savedText = document.get(textSelection.getOffset(), textSelection.getLength());
 			if (savedText.length() == 0) {
-				String prefix= getIdentifierPart(document, template, textSelection.getOffset(), textSelection.getLength());
+				String prefix = getIdentifierPart(document, template, textSelection.getOffset(),
+						textSelection.getLength());
 				if (prefix.length() > 0 && !template.getName().startsWith(prefix.toString())) {
 					return;
 				}
 				if (prefix.length() > 0) {
 					contextViewer.setSelectedRange(textSelection.getOffset() - prefix.length(), prefix.length());
-					textSelection= (ITextSelection) contextViewer.getSelectionProvider().getSelection();
+					textSelection = (ITextSelection) contextViewer.getSelectionProvider().getSelection();
 				}
 			}
 			document.replace(textSelection.getOffset(), textSelection.getLength(), template.getName().substring(0, 1));
@@ -121,13 +123,13 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 			endCompoundChange(contextViewer);
 			return;
 		}
-		Position position= new Position(textSelection.getOffset() + 1, 0);
-		Region region= new Region(textSelection.getOffset() + 1, 0);
+		Position position = new Position(textSelection.getOffset() + 1, 0);
+		Region region = new Region(textSelection.getOffset() + 1, 0);
 		contextViewer.getSelectionProvider().setSelection(new TextSelection(textSelection.getOffset(), 1));
-		ITranslationUnit compilationUnit= (ITranslationUnit) EditorUtility.getEditorInputCElement(fCEditor);
+		ITranslationUnit compilationUnit = (ITranslationUnit) EditorUtility.getEditorInputCElement(fCEditor);
 
-		TemplateContextType type= getContextTypeRegistry().getContextType(template.getContextTypeId());
-		DocumentTemplateContext context= ((CContextType) type).createContext(document, position, compilationUnit);
+		TemplateContextType type = getContextTypeRegistry().getContextType(template.getContextTypeId());
+		DocumentTemplateContext context = ((CContextType) type).createContext(document, position, compilationUnit);
 		context.setVariable("selection", savedText); //$NON-NLS-1$
 		if (context.getKey().length() == 0) {
 			try {
@@ -137,7 +139,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 				return;
 			}
 		}
-		TemplateProposal proposal= new TemplateProposal(template, context, region, null);
+		TemplateProposal proposal = new TemplateProposal(template, context, region, null);
 		fCEditor.getSite().getPage().activate(fCEditor);
 		proposal.apply(fCEditor.getViewer(), ' ', 0, region.getOffset());
 		endCompoundChange(contextViewer);
@@ -172,10 +174,10 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 */
 	@Override
 	protected boolean isValidTemplate(IDocument document, Template template, int offset, int length) {
-		String[] contextIds= getContextTypeIds(document, offset);
-		for (int i= 0; i < contextIds.length; i++) {
+		String[] contextIds = getContextTypeIds(document, offset);
+		for (int i = 0; i < contextIds.length; i++) {
 			if (contextIds[i].equals(template.getContextTypeId())) {
-				DocumentTemplateContext context= getContext(document, template, offset, length);
+				DocumentTemplateContext context = getContext(document, template, offset, length);
 				return context.canEvaluate(template) || isTemplateAllowed(context, template);
 			}
 		}
@@ -187,22 +189,23 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 */
 	@Override
 	protected SourceViewer createPatternViewer(Composite parent) {
-		IDocument document= new Document();
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
+		IDocument document = new Document();
+		CTextTools tools = CUIPlugin.getDefault().getTextTools();
 		tools.setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING, null);
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL, store);
-		SimpleCSourceViewerConfiguration configuration= new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false);
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		CSourceViewer viewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL, store);
+		SimpleCSourceViewerConfiguration configuration = new SimpleCSourceViewerConfiguration(tools.getColorManager(),
+				store, null, ICPartitions.C_PARTITIONING, false);
 		viewer.configure(configuration);
 		viewer.setEditable(false);
 		viewer.setDocument(document);
 
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		Font font = JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		viewer.getTextWidget().setFont(font);
 		new CSourcePreviewerUpdater(viewer, configuration, store);
 
-		Control control= viewer.getControl();
-		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		Control control = viewer.getControl();
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		control.setLayoutData(data);
 
 		viewer.setEditable(false);
@@ -222,7 +225,8 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 */
 	@Override
 	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
-		EditTemplateDialog dialog= new EditTemplateDialog(getSite().getShell(), template, edit, isNameModifiable, false, getContextTypeRegistry());
+		EditTemplateDialog dialog = new EditTemplateDialog(getSite().getShell(), template, edit, isNameModifiable,
+				false, getContextTypeRegistry());
 		if (dialog.open() == Window.OK)
 			return dialog.getTemplate();
 		return null;
@@ -235,17 +239,17 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	protected void updatePatternViewer(Template template) {
 		if (template == null) {
 			getPatternViewer().getDocument().set(""); //$NON-NLS-1$
-			return ;
+			return;
 		}
-		String contextId= template.getContextTypeId();
-		TemplateContextType type= getContextTypeRegistry().getContextType(contextId);
+		String contextId = template.getContextTypeId();
+		TemplateContextType type = getContextTypeRegistry().getContextType(contextId);
 		fTemplateProcessor.setContextType(type);
 
-		IDocument doc= getPatternViewer().getDocument();
+		IDocument doc = getPatternViewer().getDocument();
 
-		String start= ""; //$NON-NLS-1$
+		String start = ""; //$NON-NLS-1$
 		doc.set(start + template.getPattern());
-		int startLen= start.length();
+		int startLen = start.length();
 		getPatternViewer().setDocument(doc, startLen, doc.getLength() - startLen);
 	}
 
@@ -288,7 +292,8 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	private boolean isTemplateAllowed(DocumentTemplateContext context, Template template) {
 		int offset;
 		try {
-			return ((offset= context.getCompletionOffset()) > 0 && !isTemplateNamePart(context.getDocument().getChar(offset - 1)));
+			return ((offset = context.getCompletionOffset()) > 0
+					&& !isTemplateNamePart(context.getDocument().getChar(offset - 1)));
 		} catch (BadLocationException e) {
 		}
 		return false;
@@ -314,8 +319,9 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 * @return the context
 	 */
 	private DocumentTemplateContext getContext(IDocument document, Template template, final int offset, int length) {
-		DocumentTemplateContext context= new CContext(getContextTypeRegistry().getContextType(template.getContextTypeId()), document, new Position(offset, length), (ITranslationUnit) EditorUtility.getEditorInputCElement(
-					fCEditor));
+		DocumentTemplateContext context = new CContext(
+				getContextTypeRegistry().getContextType(template.getContextTypeId()), document,
+				new Position(offset, length), (ITranslationUnit) EditorUtility.getEditorInputCElement(fCEditor));
 		return context;
 	}
 

@@ -32,5 +32,3 @@ class GenericSequentialFlowInfo extends FlowInfo {
 		mergeAccessModeSequential(info, context);
 	}
 }
-
-

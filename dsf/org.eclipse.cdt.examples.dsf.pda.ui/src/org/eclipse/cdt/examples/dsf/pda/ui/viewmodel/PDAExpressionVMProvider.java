@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.TreePath;
 public class PDAExpressionVMProvider extends ExpressionVMProvider implements IElementFormatProvider {
 
 	static String myPersistId = "org.eclipse.cdt.examples.dsf.pda.ui.variablePersistable";
-	
+
 	public PDAExpressionVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
 		super(adapter, context, session);
 	}
@@ -52,10 +52,11 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 			rm.done();
 			return;
 		}
-	    SimpleMapPersistable<String> persistable = (SimpleMapPersistable<String>) p;
+		SimpleMapPersistable<String> persistable = (SimpleMapPersistable<String>) p;
 		Object x = elementPath.getLastSegment();
 		if (x instanceof VariableVMNode.VariableExpressionVMC) {
-			IExpressionDMContext ctx = DMContexts.getAncestorOfType(((VariableVMNode.VariableExpressionVMC) x).getDMContext(), IExpressionDMContext.class);
+			IExpressionDMContext ctx = DMContexts.getAncestorOfType(
+					((VariableVMNode.VariableExpressionVMC) x).getDMContext(), IExpressionDMContext.class);
 			if (ctx == null) {
 				rm.setData(null);
 			} else {
@@ -82,11 +83,12 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput, TreePath[] elementPath, String format) {
+	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput,
+			TreePath[] elementPath, String format) {
 		Object p = context.getProperty(myPersistId);
 		SimpleMapPersistable<String> persistable = null;
 		if (p instanceof SimpleMapPersistable) {
-		    persistable = (SimpleMapPersistable<String>) p;
+			persistable = (SimpleMapPersistable<String>) p;
 		} else {
 			persistable = new SimpleMapPersistable<String>(String.class);
 			context.setProperty(myPersistId, persistable);
@@ -95,7 +97,8 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		for (int i = 0; i < elementPath.length; i++) {
 			Object x = elementPath[i].getLastSegment();
 			if (x instanceof VariableVMNode.VariableExpressionVMC) {
-				IExpressionDMContext ctx = DMContexts.getAncestorOfType(((VariableVMNode.VariableExpressionVMC) x).getDMContext(), IExpressionDMContext.class);
+				IExpressionDMContext ctx = DMContexts.getAncestorOfType(
+						((VariableVMNode.VariableExpressionVMC) x).getDMContext(), IExpressionDMContext.class);
 				if (ctx == null)
 					continue;
 				persistable.setValue(ctx.getExpression(), format);

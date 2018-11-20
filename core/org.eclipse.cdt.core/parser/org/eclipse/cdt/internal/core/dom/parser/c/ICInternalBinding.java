@@ -19,17 +19,17 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * Methods needed by CVisitor but not meant for public interface
  */
 public interface ICInternalBinding {
-    public IASTNode getPhysicalNode();
+	public IASTNode getPhysicalNode();
 
-    /**
-     * Returns the declarations for this binding.
-     * @since 5.0
-     */
+	/**
+	 * Returns the declarations for this binding.
+	 * @since 5.0
+	 */
 	public IASTNode[] getDeclarations();
 
-    /**
-     * Returns the definitions for this binding.
-     * @since 5.0
-     */
+	/**
+	 * Returns the definitions for this binding.
+	 * @since 5.0
+	 */
 	public IASTNode getDefinition();
 }

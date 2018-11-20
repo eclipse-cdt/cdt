@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.msw.build;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -38,14 +37,14 @@ public class WinScannerInfoCollector implements IScannerInfoCollector3 {
 	public IDiscoveredPathInfo createPathInfoObject() {
 		return new WinDiscoveredPathInfo();
 	}
-	
+
 	public void setInfoContext(InfoContext context) {
 	}
-	
+
 	public void setProject(IProject project) {
 	}
-	
+
 	public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
 	}
-	
+
 }

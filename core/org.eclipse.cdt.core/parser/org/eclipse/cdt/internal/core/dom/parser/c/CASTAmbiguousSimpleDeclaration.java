@@ -39,29 +39,29 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @since 5.0.1
  */
 public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements IASTAmbiguousSimpleDeclaration {
-    private IASTSimpleDeclaration fSimpleDecl;
-    private IASTDeclSpecifier fAltDeclSpec;
-    private IASTDeclarator fAltDtor;
+	private IASTSimpleDeclaration fSimpleDecl;
+	private IASTDeclSpecifier fAltDeclSpec;
+	private IASTDeclarator fAltDtor;
 
-    public CASTAmbiguousSimpleDeclaration(IASTSimpleDeclaration decl, IASTDeclSpecifier declSpec, IASTDeclarator dtor) {
-    	fSimpleDecl= decl;
-    	fAltDeclSpec= declSpec;
-    	fAltDtor= dtor;
+	public CASTAmbiguousSimpleDeclaration(IASTSimpleDeclaration decl, IASTDeclSpecifier declSpec, IASTDeclarator dtor) {
+		fSimpleDecl = decl;
+		fAltDeclSpec = declSpec;
+		fAltDtor = dtor;
 	}
 
 	@Override
 	protected void beforeResolution() {
 		// Populate containing scope, so that it will not be affected by the alternative branches.
-		IScope scope= CVisitor.getContainingScope(this);
+		IScope scope = CVisitor.getContainingScope(this);
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).populateCache();
 		}
 	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return new IASTNode[] {fSimpleDecl, fAltDeclSpec, fAltDtor};
-    }
+		return new IASTNode[] { fSimpleDecl, fAltDeclSpec, fAltDtor };
+	}
 
 	@Override
 	public IASTSimpleDeclaration copy() {
@@ -116,31 +116,30 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 
 	@Override
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
-		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
-		IASTNode nodeToReplace= this;
+		final IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+		IASTNode nodeToReplace = this;
 
 		// Handle nested ambiguities first.
 		owner.replace(nodeToReplace, fSimpleDecl);
-		IASTDeclSpecifier declSpec= fSimpleDecl.getDeclSpecifier();
+		IASTDeclSpecifier declSpec = fSimpleDecl.getDeclSpecifier();
 		declSpec.accept(resolver);
 
-
 		// Find nested names.
-		final NameCollector nameCollector= new NameCollector();
+		final NameCollector nameCollector = new NameCollector();
 		declSpec.accept(nameCollector);
-		final IASTName[] names= nameCollector.getNames();
+		final IASTName[] names = nameCollector.getNames();
 
 		// Resolve names.
-		boolean hasIssue= false;
+		boolean hasIssue = false;
 		for (IASTName name : names) {
 			try {
 				IBinding b = name.resolveBinding();
 				if (b instanceof IProblemBinding) {
-					hasIssue= true;
+					hasIssue = true;
 					break;
 				}
 			} catch (Exception t) {
-				hasIssue= true;
+				hasIssue = true;
 				break;
 			}
 		}

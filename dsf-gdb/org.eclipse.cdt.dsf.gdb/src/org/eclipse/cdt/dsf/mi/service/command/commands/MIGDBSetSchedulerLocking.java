@@ -30,12 +30,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * @since 4.1
  */
-public class MIGDBSetSchedulerLocking extends MIGDBSet 
-{
+public class MIGDBSetSchedulerLocking extends MIGDBSet {
 	/**
 	 * @param mode The value to be send to GDB.  Can be 'on', 'off', 'step'
 	 */
-    public MIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {
-        super(ctx, new String[] {"scheduler-locking", mode});//$NON-NLS-1$
-    }
+	public MIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {
+		super(ctx, new String[] { "scheduler-locking", mode });//$NON-NLS-1$
+	}
 }

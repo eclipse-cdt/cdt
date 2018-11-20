@@ -20,10 +20,9 @@ import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-
 public class DefaultGnuToolFactory implements IGnuToolFactory {
 	protected ICExtension fExtension;
-	
+
 	/**
 	 * 
 	 */
@@ -54,7 +53,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;
-		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
+		if (cppFiltPath != null && !cppFiltPath.isEmpty()) {
 			try {
 				cppfilt = new CPPFilt(cppFiltPath.toOSString());
 			} catch (IOException e2) {
@@ -79,7 +78,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		}
 		return objdump;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
 	 */
@@ -99,7 +98,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 
 	protected IPath getAddr2linePath() {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
-		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1$
+		String value = ref.getExtensionData("addr2line"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
 			value = "addr2line"; //$NON-NLS-1$
 		}
@@ -108,22 +107,22 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 
 	protected IPath getObjdumpPath() {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
-		String value =  ref.getExtensionData("objdump"); //$NON-NLS-1$
+		String value = ref.getExtensionData("objdump"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
 			value = "objdump"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
-	
+
 	protected String getObjdumpArgs() {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
-		String value =  ref.getExtensionData("objdumpArgs"); //$NON-NLS-1$
+		String value = ref.getExtensionData("objdumpArgs"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
 			value = ""; //$NON-NLS-1$
 		}
 		return value;
 	}
-	
+
 	protected IPath getCPPFiltPath() {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
 		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
@@ -153,7 +152,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 
 	protected String getNMArgs() {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
-		String value =  ref.getExtensionData("nmArgs"); //$NON-NLS-1$
+		String value = ref.getExtensionData("nmArgs"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
 			value = ""; //$NON-NLS-1$
 		}

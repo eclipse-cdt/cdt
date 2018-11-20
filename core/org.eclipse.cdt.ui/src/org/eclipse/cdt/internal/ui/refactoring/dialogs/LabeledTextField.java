@@ -29,35 +29,35 @@ import org.eclipse.swt.widgets.Text;
 public class LabeledTextField extends Composite {
 	private final Text textField;
 
-	public LabeledTextField(Composite parent, String labelName, String textContent)	{
+	public LabeledTextField(Composite parent, String labelName, String textContent) {
 		super(parent, SWT.NONE);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 0;
 		setLayout(layout);
-				
+
 		Label label = new Label(this, SWT.NONE);
 		label.setText(labelName);
 		label.setLayoutData(new GridData());
-	
+
 		textField = new Text(this, SWT.BORDER | SWT.SINGLE);
 		textField.setText(textContent);
 		textField.selectAll();
-		GridData textData = new GridData(GridData.FILL_HORIZONTAL);		
+		GridData textData = new GridData(GridData.FILL_HORIZONTAL);
 		textData.grabExcessHorizontalSpace = true;
 		textField.setLayoutData(textData);
 	}
-	
-	public LabeledTextField(Composite parent, String labelName)	{
+
+	public LabeledTextField(Composite parent, String labelName) {
 		this(parent, labelName, ""); //$NON-NLS-1$
 	}
-	
-	public Text getText()	{
+
+	public Text getText() {
 		return textField;
 	}
 
-	public String getFieldContent(){
+	public String getFieldContent() {
 		return textField.getText();
 	}
 }

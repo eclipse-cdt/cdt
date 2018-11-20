@@ -69,6 +69,7 @@ public class CPPUnknownField extends CPPUnknownMember implements ICPPField {
 	public int getVisibility() {
 		return v_public;
 	}
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		IType owner = getOwnerType();

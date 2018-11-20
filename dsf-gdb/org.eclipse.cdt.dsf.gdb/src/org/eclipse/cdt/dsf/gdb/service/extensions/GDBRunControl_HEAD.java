@@ -43,12 +43,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GDBRunControl_HEAD extends GDBRunControl_7_12 {
 	public GDBRunControl_HEAD(DsfSession session) {
 		super(session);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_12_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_12_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}

@@ -54,7 +54,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 public class ProblemHover extends AbstractAnnotationHover {
 
 	protected static class ProblemInfo extends AnnotationInfo {
-		private static final ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
+		private static final ICompletionProposal[] NO_PROPOSALS = new ICompletionProposal[0];
 
 		public ProblemInfo(Annotation annotation, Position position, ITextViewer textViewer) {
 			super(annotation, position, textViewer);
@@ -75,18 +75,19 @@ public class ProblemHover extends AbstractAnnotationHover {
 		}
 
 		private ICompletionProposal[] getCAnnotationFixes(ICAnnotation cAnnotation) {
-			ProblemLocation location= new ProblemLocation(position.getOffset(), position.getLength(), cAnnotation);
-			ITranslationUnit tu= cAnnotation.getTranslationUnit();
+			ProblemLocation location = new ProblemLocation(position.getOffset(), position.getLength(), cAnnotation);
+			ITranslationUnit tu = cAnnotation.getTranslationUnit();
 
-			ISourceViewer sourceViewer= null;
+			ISourceViewer sourceViewer = null;
 			if (viewer instanceof ISourceViewer)
-				sourceViewer= (ISourceViewer) viewer;
+				sourceViewer = (ISourceViewer) viewer;
 
-			CorrectionContext context= new CorrectionContext(tu, sourceViewer, location.getOffset(), location.getLength());
+			CorrectionContext context = new CorrectionContext(tu, sourceViewer, location.getOffset(),
+					location.getLength());
 			if (!SpellingAnnotation.TYPE.equals(cAnnotation.getType()))
 				return NO_PROPOSALS;
 
-			List<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>();
+			List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
 			CCorrectionProcessor.collectCorrections(context, new IProblemLocation[] { location }, proposals);
 			Collections.sort(proposals, new CCompletionProposalComparator());
 
@@ -97,7 +98,7 @@ public class ProblemHover extends AbstractAnnotationHover {
 			if (markerAnnotation.isQuickFixableStateSet() && !markerAnnotation.isQuickFixable())
 				return NO_PROPOSALS;
 
-			IMarker marker= markerAnnotation.getMarker();
+			IMarker marker = markerAnnotation.getMarker();
 
 			IEditorInput input = null;
 			try {
@@ -107,22 +108,24 @@ public class ProblemHover extends AbstractAnnotationHover {
 			if (input == null)
 				return NO_PROPOSALS;
 
-			ITranslationUnit tu= getTranslationUnit(input);
+			ITranslationUnit tu = getTranslationUnit(input);
 			if (tu == null)
 				return NO_PROPOSALS;
 
-			IAnnotationModel model= CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(input);
+			IAnnotationModel model = CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(input);
 			if (model == null)
 				return NO_PROPOSALS;
-			
-			ISourceViewer sourceViewer= null;
+
+			ISourceViewer sourceViewer = null;
 			if (viewer instanceof ISourceViewer)
-				sourceViewer= (ISourceViewer) viewer;
+				sourceViewer = (ISourceViewer) viewer;
 
-			CorrectionContext context= new CorrectionContext(tu, sourceViewer, position.getOffset(), position.getLength());
+			CorrectionContext context = new CorrectionContext(tu, sourceViewer, position.getOffset(),
+					position.getLength());
 
-			List<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>();
-			CCorrectionProcessor.collectProposals(context, model, new Annotation[] { markerAnnotation }, true, false, proposals);
+			List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+			CCorrectionProcessor.collectProposals(context, model, new Annotation[] { markerAnnotation }, true, false,
+					proposals);
 
 			return proposals.toArray(new ICompletionProposal[proposals.size()]);
 		}

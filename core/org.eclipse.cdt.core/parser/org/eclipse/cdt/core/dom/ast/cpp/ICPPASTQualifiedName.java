@@ -36,14 +36,14 @@ public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	 * @param name {@code IASTName}
 	 */
 	public void addName(IASTName name);
-	
+
 	/**
 	 * Adds a segment to the end of the qualifier.
 	 * 
 	 * @since 5.6
 	 */
 	public void addNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
-	
+
 	/**
 	 * Sets the last name.
 	 * 
@@ -57,7 +57,7 @@ public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	 * @since 5.6
 	 */
 	public ICPPASTNameSpecifier[] getQualifier();
-	
+
 	/**
 	 * Returns all segments of the name.
 	 * 
@@ -70,7 +70,7 @@ public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	 * @since 5.6
 	 */
 	public ICPPASTNameSpecifier[] getAllSegments();
-	
+
 	/**
 	 * The last name is often semantically significant.
 	 */

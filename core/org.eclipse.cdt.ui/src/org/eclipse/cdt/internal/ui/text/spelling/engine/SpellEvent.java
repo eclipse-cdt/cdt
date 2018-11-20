@@ -51,13 +51,14 @@ public class SpellEvent implements ISpellEvent {
 	 * @param match      <code>true</code> iff the word was found in the dictionary,
 	 *                   <code>false</code> otherwise
 	 */
-	protected SpellEvent(final ISpellChecker checker, final String word, final int begin, final int end, final boolean sentence, final boolean match) {
-		fChecker= checker;
-		fEnd= end;
-		fBegin= begin;
-		fWord= word;
-		fSentence= sentence;
-		fMatch= match;
+	protected SpellEvent(final ISpellChecker checker, final String word, final int begin, final int end,
+			final boolean sentence, final boolean match) {
+		fChecker = checker;
+		fEnd = end;
+		fBegin = begin;
+		fWord = word;
+		fSentence = sentence;
+		fMatch = match;
 	}
 
 	/*

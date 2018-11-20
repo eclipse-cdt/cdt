@@ -63,12 +63,12 @@ public class AR {
 	public class ARHeader {
 
 		private String object_name;
-//		private String modification_time;
-//		private String uid;
-//		private String gid;
-//		private String mode;
+		//		private String modification_time;
+		//		private String uid;
+		//		private String gid;
+		//		private String mode;
 		private long size;
-//		private long file_offset;
+		//		private long file_offset;
 		private long macho_offset;
 
 		/**
@@ -82,23 +82,23 @@ public class AR {
 		 * @throws IOException 
 		 *    <code>offset</code> not in string table bounds.
 		 */
-//		private String nameFromStringTable(long offset) throws IOException {
-//			StringBuilder name = new StringBuilder(0);
-//			long pos = efile.getFilePointer();
-//
-//			try {
-//				if (strtbl_pos != -1) {
-//					byte temp;
-//					efile.seek(strtbl_pos + offset);
-//					while ((temp = efile.readByte()) != '\n')
-//						name.append((char) temp);
-//				}
-//			} finally {
-//				efile.seek(pos);
-//			}
-//
-//			return name.toString();
-//		}
+		//		private String nameFromStringTable(long offset) throws IOException {
+		//			StringBuilder name = new StringBuilder(0);
+		//			long pos = efile.getFilePointer();
+		//
+		//			try {
+		//				if (strtbl_pos != -1) {
+		//					byte temp;
+		//					efile.seek(strtbl_pos + offset);
+		//					while ((temp = efile.readByte()) != '\n')
+		//						name.append((char) temp);
+		//				}
+		//			} finally {
+		//				efile.seek(pos);
+		//			}
+		//
+		//			return name.toString();
+		//		}
 
 		/**
 		 * Creates a new archive header object.  
@@ -137,19 +137,17 @@ public class AR {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = new String(object_name).trim();
-//			this.modification_time = new String(modification_time);
-//			this.uid = new String(uid);
-//			this.gid = new String(gid);
-//			this.mode = new String(mode);
+			//			this.modification_time = new String(modification_time);
+			//			this.uid = new String(uid);
+			//			this.gid = new String(gid);
+			//			this.mode = new String(mode);
 			this.size = Long.parseLong(new String(size).trim());
 
 			//
 			// If the name is of the format "#1/<number>", real name directly follows the
 			// header.
 			//
-			if (this.object_name.length() > 3 
-					&& this.object_name.charAt(0) == '#' 
-					&& this.object_name.charAt(1) == '1' 
+			if (this.object_name.length() > 3 && this.object_name.charAt(0) == '#' && this.object_name.charAt(1) == '1'
 					&& this.object_name.charAt(2) == '/') {
 				try {
 					int len = Integer.parseInt(this.object_name.substring(3));
@@ -182,7 +180,7 @@ public class AR {
 		public long getSize() {
 			return size;
 		}
-		
+
 		public String getArchiveName() {
 			return filename;
 		}
@@ -216,14 +214,8 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 7
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>')
+		if (ident == null || ident.length < 7 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a'
+				|| ident[3] != 'r' || ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>')
 			return false;
 		return true;
 	}

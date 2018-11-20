@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.model;
 
 import java.util.EventObject;
 
-
 /**
  * A   buffer changed event describes how a buffer has changed. These events are
  * used in <code>IBufferChangedListener</code> notifications.
@@ -80,6 +79,7 @@ public class BufferChangedEvent extends EventObject {
 		this.length = length;
 		this.text = text;
 	}
+
 	/**
 	 * Returns the buffer which has changed.
 	 *
@@ -88,6 +88,7 @@ public class BufferChangedEvent extends EventObject {
 	public IBuffer getBuffer() {
 		return (IBuffer) source;
 	}
+
 	/**
 	 * Returns the length of text removed or replaced in the buffer, or
 	 * 0 if text has been inserted into the buffer.
@@ -98,6 +99,7 @@ public class BufferChangedEvent extends EventObject {
 	public int getLength() {
 		return this.length;
 	}
+
 	/**
 	 * Returns the index of the first character inserted, removed, or replaced
 	 * in the buffer.
@@ -107,6 +109,7 @@ public class BufferChangedEvent extends EventObject {
 	public int getOffset() {
 		return this.offset;
 	}
+
 	/**
 	 * Returns the text that was inserted, the replacement text,
 	 * or <code>null</code> if text has been removed.

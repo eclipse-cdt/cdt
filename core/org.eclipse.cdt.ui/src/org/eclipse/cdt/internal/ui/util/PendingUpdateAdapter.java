@@ -23,68 +23,68 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
-    boolean removed = false;
+	boolean removed = false;
 
-    /**
-     * Return whether or not this has been removed from the tree.
-     * @return boolean
-     */
-    public boolean isRemoved() {
-        return removed;
-    }
+	/**
+	 * Return whether or not this has been removed from the tree.
+	 * @return boolean
+	 */
+	public boolean isRemoved() {
+		return removed;
+	}
 
-    /**
-     * Set whether or not this has been removed from the tree.
-     * @param removedValue boolean
-     */
-    public void setRemoved(boolean removedValue) {
-        this.removed = removedValue;
-    }
+	/**
+	 * Set whether or not this has been removed from the tree.
+	 * @param removedValue boolean
+	 */
+	public void setRemoved(boolean removedValue) {
+		this.removed = removedValue;
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    public PendingUpdateAdapter() {
-        //No initial behavior
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public PendingUpdateAdapter() {
+		//No initial behavior
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return (T) this;
-        return null;
-    }
+		if (adapter == IWorkbenchAdapter.class)
+			return (T) this;
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	@Override
 	public Object[] getChildren(Object o) {
-        return new Object[0];
-    }
+		return new Object[0];
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+	 */
+	@Override
 	public String getLabel(Object o) {
-        return "Pending"; //$NON-NLS-1$
-    }
+		return "Pending"; //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	@Override
 	public Object getParent(Object o) {
-        return null;
-    }
+		return null;
+	}
 }

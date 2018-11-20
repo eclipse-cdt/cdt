@@ -193,7 +193,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * @param name   New name for the option.
 	 * @param option The existing option to clone, except for the above fields.
 	 */
-	public Option(IHoldsOptions parent, String Id, String name, Option option){
+	public Option(IHoldsOptions parent, String Id, String name, Option option) {
 		this.holder = parent;
 		superClass = option.superClass;
 		if (superClass != null) {
@@ -296,12 +296,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			case UNDEF_MACRO_FILES:
 				if (option.value != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.value);
+					ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+							(ArrayList<OptionStringValue>) option.value);
 					value = list;
 				}
 				if (option.defaultValue != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.defaultValue);
+					ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+							(ArrayList<OptionStringValue>) option.defaultValue);
 					defaultValue = list;
 				}
 				break;
@@ -338,7 +340,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			fieldEditorExtraArgument = option.fieldEditorExtraArgument;
 		}
 
-		if(copyIds){
+		if (copyIds) {
 			isDirty = option.isDirty;
 			rebuildState = option.rebuildState;
 		} else {
@@ -374,7 +376,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// isAbstract
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
-		if (isAbs != null){
+		if (isAbs != null) {
 			isAbstract = Boolean.parseBoolean(isAbs);
 		}
 
@@ -390,7 +392,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Get the command-generator, if any
 		String commandGeneratorStr = element.getAttribute(COMMAND_GENERATOR);
 		if (commandGeneratorStr != null && element instanceof DefaultManagedConfigElement) {
-			commandGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			commandGeneratorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 
 		// Get the command defined for a Boolean option when the value is False
@@ -398,7 +400,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// isForScannerDiscovery
 		String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
-		if (isForSD != null){
+		if (isForSD != null) {
 			isForScannerDiscovery = Boolean.parseBoolean(isForSD);
 		}
 
@@ -463,14 +465,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		//get enablements
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
-		if(enablements.length > 0) {
+		if (enablements.length > 0) {
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 		}
 
 		// get the applicability calculator, if any
 		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR);
 		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
-			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			applicabilityCalculatorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		} else {
 			applicabilityCalculator = booleanExpressionCalculator;
 		}
@@ -479,7 +481,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Store the configuration element IFF there is a value handler defined
 		String valueHandler = element.getAttribute(VALUE_HANDLER);
 		if (valueHandler != null && element instanceof DefaultManagedConfigElement) {
-			valueHandlerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			valueHandlerElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 		// valueHandlerExtraArgument
 		valueHandlerExtraArgument = SafeStringInterner.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
@@ -522,7 +524,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// isAbstract
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
-			if (isAbs != null){
+			if (isAbs != null) {
 				isAbstract = Boolean.parseBoolean(isAbs);
 			}
 		}
@@ -540,7 +542,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// isForScannerDiscovery
 		if (element.getAttribute(USE_BY_SCANNER_DISCOVERY) != null) {
 			String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
-			if (isForSD != null){
+			if (isForSD != null) {
 				isForScannerDiscovery = Boolean.parseBoolean(isForSD);
 			}
 		}
@@ -602,12 +604,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						if (i == 0) {
 							applicableValuesList = new ArrayList<String>();
 							if (defaultValue == null) {
-								defaultValue = optId;		//  Default value to be overridden is default is specified
+								defaultValue = optId; //  Default value to be overridden is default is specified
 							}
 						}
 						applicableValuesList.add(optId);
 						if (configElement.getAttribute(COMMAND) != null) {
-							getCommandMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(COMMAND)));
+							getCommandMap().put(optId,
+									SafeStringInterner.safeIntern(configElement.getAttribute(COMMAND)));
 						} else {
 							getCommandMap().put(optId, EMPTY_STRING);
 						}
@@ -653,44 +656,44 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				for (ICStorageElement veNode : configElements) {
 					if (veNode.getName().equals(LIST_VALUE)) {
 						OptionStringValue ve = new OptionStringValue(veNode);
-						if(ve.isBuiltIn()) {
+						if (ve.isBuiltIn()) {
 							biList.add(ve);
 						} else {
 							vList.add(ve);
 						}
 					}
 				}
-				
+
 				//Assume not empty unless specificaly flagged
 				boolean isValueEmpty = false;
 				boolean isBuiltinEmpty = false;
-				
+
 				if (element.getAttribute(IS_VALUE_EMPTY) != null) {
 					Boolean isEmpty = new Boolean(element.getAttribute(IS_VALUE_EMPTY));
 					if (isEmpty.booleanValue()) {
 						isValueEmpty = true;
 					}
-				}				
+				}
 				if (element.getAttribute(IS_BUILTIN_EMPTY) != null) {
 					Boolean isEmpty = new Boolean(element.getAttribute(IS_BUILTIN_EMPTY));
 					if (isEmpty.booleanValue()) {
 						isBuiltinEmpty = true;
 					}
 				}
-				
-				if(vList.size() != 0 || isValueEmpty) {
+
+				if (vList.size() != 0 || isValueEmpty) {
 					value = vList;
 				} else {
 					value = null;
 				}
-				if(biList.size() != 0 || isBuiltinEmpty) {
+				if (biList.size() != 0 || isBuiltinEmpty) {
 					builtIns = biList;
 				} else {
 					builtIns = null;
 				}
 
 				break;
-			default :
+			default:
 				break;
 			}
 		} catch (BuildException e) {
@@ -725,7 +728,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(BROWSE_FILTER_EXTENSIONS) != null) {
 			String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
 			if (browseFilterExtensionsStr != null) {
-				this.browseFilterExtensions = SafeStringInterner.safeIntern(browseFilterExtensionsStr.split("\\s*,\\s*")); //$NON-NLS-1$
+				this.browseFilterExtensions = SafeStringInterner
+						.safeIntern(browseFilterExtensionsStr.split("\\s*,\\s*")); //$NON-NLS-1$
 			}
 		}
 
@@ -759,7 +763,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// valueHandlerExtraArgument
 		if (element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT) != null) {
-			valueHandlerExtraArgument = SafeStringInterner.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
+			valueHandlerExtraArgument = SafeStringInterner
+					.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
 		}
 	}
 
@@ -807,7 +812,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return TREE;
 		} else {
 			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
-					"Invalid option type=\"" + valueTypeStr + "\" specified for option " + getId() )); //$NON-NLS-1$ //$NON-NLS-2$
+					"Invalid option type=\"" + valueTypeStr + "\" specified for option " + getId())); //$NON-NLS-1$ //$NON-NLS-2$
 			// This was the CDT 2.0 default
 			return PREPROCESSOR_SYMBOLS;
 		}
@@ -870,12 +875,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			storeValueType = true;
 			switch (getValueType()) {
 			case BOOLEAN:
-				element.setAttribute(VALUE, ((Boolean)value).toString());
+				element.setAttribute(VALUE, ((Boolean) value).toString());
 				break;
 			case STRING:
 			case ENUMERATED:
 			case TREE:
-				element.setAttribute(VALUE, (String)value);
+				element.setAttribute(VALUE, (String) value);
 				break;
 			case STRING_LIST:
 			case INCLUDE_PATH:
@@ -894,37 +899,37 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			case UNDEF_MACRO_FILES:
 				if (value != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<OptionStringValue> stringList = (ArrayList<OptionStringValue>)value;
+					ArrayList<OptionStringValue> stringList = (ArrayList<OptionStringValue>) value;
 					for (OptionStringValue optValue : stringList) {
 						ICStorageElement valueElement = element.createChild(LIST_VALUE);
 						optValue.serialize(valueElement);
 					}
-					
-					if(stringList.isEmpty()) {
-						element.setAttribute(IS_VALUE_EMPTY, Boolean.TRUE.toString());	
+
+					if (stringList.isEmpty()) {
+						element.setAttribute(IS_VALUE_EMPTY, Boolean.TRUE.toString());
 					} else {
-						element.setAttribute(IS_VALUE_EMPTY, Boolean.FALSE.toString());						
+						element.setAttribute(IS_VALUE_EMPTY, Boolean.FALSE.toString());
 					}
 				} else {
-					element.setAttribute(IS_VALUE_EMPTY, Boolean.FALSE.toString());					
+					element.setAttribute(IS_VALUE_EMPTY, Boolean.FALSE.toString());
 				}
-				
+
 				// Serialize the built-ins that have been overridden
 				if (builtIns != null) {
 					for (OptionStringValue optionValue : builtIns) {
 						ICStorageElement valueElement = element.createChild(LIST_VALUE);
 						optionValue.serialize(valueElement);
 					}
-					
-					if(builtIns.isEmpty()) {
-						element.setAttribute(IS_BUILTIN_EMPTY, Boolean.TRUE.toString());	
+
+					if (builtIns.isEmpty()) {
+						element.setAttribute(IS_BUILTIN_EMPTY, Boolean.TRUE.toString());
 					} else {
-						element.setAttribute(IS_BUILTIN_EMPTY, Boolean.FALSE.toString());						
+						element.setAttribute(IS_BUILTIN_EMPTY, Boolean.FALSE.toString());
 					}
 				} else {
-					element.setAttribute(IS_BUILTIN_EMPTY, Boolean.FALSE.toString());					
+					element.setAttribute(IS_BUILTIN_EMPTY, Boolean.FALSE.toString());
 				}
-				
+
 				break;
 			}
 		}
@@ -934,12 +939,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			storeValueType = true;
 			switch (getValueType()) {
 			case BOOLEAN:
-				element.setAttribute(DEFAULT_VALUE, ((Boolean)defaultValue).toString());
+				element.setAttribute(DEFAULT_VALUE, ((Boolean) defaultValue).toString());
 				break;
 			case STRING:
 			case ENUMERATED:
 			case TREE:
-				element.setAttribute(DEFAULT_VALUE, (String)defaultValue);
+				element.setAttribute(DEFAULT_VALUE, (String) defaultValue);
 				break;
 			default:
 				break;
@@ -1042,7 +1047,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// browse filter extensions
 		if (browseFilterExtensions != null) {
 			StringBuilder sb = new StringBuilder();
-			for(String ext : browseFilterExtensions) {
+			for (String ext : browseFilterExtensions) {
 				sb.append(ext).append(',');
 			}
 			element.setAttribute(BROWSE_FILTER_EXTENSIONS, sb.toString());
@@ -1142,7 +1147,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		} else {
 			// Return the elements in the order they are specified in the manifest
 			String[] enumNames = new String[applicableValuesList.size()];
-			for (int index = 0; index < applicableValuesList.size(); ++ index) {
+			for (int index = 0; index < applicableValuesList.size(); ++index) {
 				enumNames[index] = getNameMap().get(applicableValuesList.get(index));
 			}
 			return enumNames;
@@ -1151,7 +1156,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	@Override
 	public boolean getBooleanValue() {
-		return ((Boolean)getValue()).booleanValue();
+		return ((Boolean) getValue()).booleanValue();
 	}
 
 	@Override
@@ -1202,14 +1207,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return resourceFilter.intValue();
 	}
 
-
 	public IConfigurationElement getApplicabilityCalculatorElement() {
-/*		if (applicabilityCalculatorElement == null) {
-			if (superClass != null) {
-				return ((Option)superClass).getApplicabilityCalculatorElement();
-			}
-		}
-*/
+		/*		if (applicabilityCalculatorElement == null) {
+					if (superClass != null) {
+						return ((Option)superClass).getApplicabilityCalculatorElement();
+					}
+				}
+		*/
 		return applicabilityCalculatorElement;
 	}
 
@@ -1225,8 +1229,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				} catch (CoreException e) {
 					ManagedBuilderCorePlugin.log(e);
 				}
-			}
-			else if(superClass != null) {
+			} else if (superClass != null) {
 				applicabilityCalculator = superClass.getApplicabilityCalculator();
 			}
 		}
@@ -1240,7 +1243,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		List<OptionStringValue> list = getExactBuiltinsList();
 		List<String> valueList = listValueListToValueList(list);
 
-		if(valueList == null) {
+		if (valueList == null) {
 			return EMPTY_STRING_ARRAY;
 		}
 		return valueList.toArray(new String[valueList.size()]);
@@ -1250,7 +1253,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Return the list of built-ins as an array
 		if (builtIns == null) {
 			if (superClass != null) {
-				return ((Option)superClass).getExactBuiltinsList();
+				return ((Option) superClass).getExactBuiltinsList();
 			} else {
 				return null;
 			}
@@ -1266,7 +1269,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return superClass.getCategory();
 			} else {
 				if (getOptionHolder() instanceof ITool) {
-					return ((ITool)getOptionHolder()).getTopOptionCategory();
+					return ((ITool) getOptionHolder()).getTopOptionCategory();
 				} else {
 					return null;
 				}
@@ -1319,8 +1322,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				} catch (CoreException e) {
 					ManagedBuilderCorePlugin.log(e);
 				}
-			}
-			else if(superClass != null) {
+			} else if (superClass != null) {
 				commandGenerator = superClass.getCommandGenerator();
 			}
 		}
@@ -1378,7 +1380,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1402,7 +1404,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return EMPTY_STRING;
 			}
 		}
-		if (getValueType() != ENUMERATED && getValueType() !=  TREE) {
+		if (getValueType() != ENUMERATED && getValueType() != TREE) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 
@@ -1525,7 +1527,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1540,7 +1542,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1555,7 +1557,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1570,7 +1572,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1593,7 +1595,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1607,7 +1609,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != STRING && getValueType() != ENUMERATED && getValueType() != TREE) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		return getValue() == null ? EMPTY_STRING : (String)getValue();
+		return getValue() == null ? EMPTY_STRING : (String) getValue();
 	}
 
 	@Override
@@ -1617,7 +1619,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		// This is the right puppy, so return its list value
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
@@ -1769,9 +1771,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public Object getRawValue() {
 		Object ev = getExactRawValue();
-		if(ev instanceof List<?>) {
+		if (ev instanceof List<?>) {
 			@SuppressWarnings("unchecked")
-			List<String> evList = listValueListToValueList((List<OptionStringValue>)ev);
+			List<String> evList = listValueListToValueList((List<OptionStringValue>) ev);
 			return evList;
 		}
 		return ev;
@@ -1780,39 +1782,38 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public Object getExactRawValue() {
 		if (value == null) {
 			if (superClass != null) {
-				Option mySuperClass = (Option)superClass;
+				Option mySuperClass = (Option) superClass;
 				return mySuperClass.getExactRawValue();
 			}
 		}
 		return value;
 	}
 
-	private List<String> listValueListToValueList(List<OptionStringValue> list){
-		if(list == null) {
+	private List<String> listValueListToValueList(List<OptionStringValue> list) {
+		if (list == null) {
 			return null;
 		}
 
 		List<String> valueList = new ArrayList<String>(list.size());
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			OptionStringValue el = list.get(i);
 			valueList.add(el.getValue());
 		}
 		return valueList;
 	}
 
-	private List<OptionStringValue> valueListToListValueList(List<String> list, boolean builtIn){
-		if(list == null) {
+	private List<OptionStringValue> valueListToListValueList(List<String> list, boolean builtIn) {
+		if (list == null) {
 			return null;
 		}
 
 		List<OptionStringValue> lvList = new ArrayList<OptionStringValue>(list.size());
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			String v = list.get(i);
 			lvList.add(new OptionStringValue(v, builtIn));
 		}
 		return lvList;
 	}
-
 
 	/**
 	 * Gets the raw default value.
@@ -1820,9 +1821,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public Object getDefaultValue() {
 		Object ev = getExactDefaultValue();
-		if(ev instanceof List<?>) {
+		if (ev instanceof List<?>) {
 			@SuppressWarnings("unchecked")
-			List<String> evList = listValueListToValueList((List<OptionStringValue>)ev);
+			List<String> evList = listValueListToValueList((List<OptionStringValue>) ev);
 			return evList;
 		}
 		return ev;
@@ -1832,7 +1833,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Note: string-list options do not have a default value
 		if (defaultValue == null) {
 			if (superClass != null) {
-				return ((Option)superClass).getExactDefaultValue();
+				return ((Option) superClass).getExactDefaultValue();
 			}
 		}
 		return defaultValue;
@@ -1840,14 +1841,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	@Override
 	public void setDefaultValue(Object v) {
-		if(v instanceof List<?>) {
+		if (v instanceof List<?>) {
 			@SuppressWarnings("unchecked")
-			List<OptionStringValue> vList = valueListToListValueList((List<String>)v, false);
+			List<OptionStringValue> vList = valueListToListValueList((List<String>) v, false);
 			defaultValue = vList;
 		} else {
 			defaultValue = v;
 		}
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
@@ -1862,7 +1863,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			} else {
 				categoryId = null;
 			}
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				setDirty(true);
 				rebuildState = true;
 			}
@@ -1876,7 +1877,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (cmd == null || command == null || !cmd.equals(command)) {
 			command = cmd;
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1890,7 +1891,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (cmd == null || commandFalse == null || !cmd.equals(commandFalse)) {
 			commandFalse = cmd;
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1904,7 +1905,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (tooltip == null || tip == null || !tooltip.equals(tip)) {
 			tip = tooltip;
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1918,7 +1919,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (id == null || contextId == null || !id.equals(contextId)) {
 			contextId = id;
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1929,7 +1930,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void setResourceFilter(int filter) {
 		if (resourceFilter == null || !(filter == resourceFilter.intValue())) {
 			resourceFilter = Integer.valueOf(filter);
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1940,7 +1941,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void setBrowseType(int type) {
 		if (browseType == null || !(type == browseType.intValue())) {
 			browseType = Integer.valueOf(type);
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1951,7 +1952,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void setBrowseFilterPath(String path) {
 		if (browseFilterPath == null || !(browseFilterPath.equals(path))) {
 			browseFilterPath = path;
-			if(!isExtensionElement()) {
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1962,7 +1963,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void setBrowseFilterExtensions(String[] extensions) {
 		if (browseFilterExtensions == null || !(browseFilterExtensions.equals(extensions))) {
 			browseFilterExtensions = extensions;
-			if(!isExtensionElement()) {
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -1971,97 +1972,74 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	@Override
 	public void setValue(boolean value) throws BuildException {
-		if (/*!isExtensionElement() && */getValueType() == BOOLEAN){
+		if (/*!isExtensionElement() && */getValueType() == BOOLEAN) {
 			this.value = value;
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
 	}
-
 
 	@Override
 	public void setValue(String value) throws BuildException {
 		// Note that we can still set the human-readable value here
-		if (/*!isExtensionElement() && */(getValueType() == STRING || getValueType() == ENUMERATED || getValueType() == TREE)) {
+		if (/*!isExtensionElement() && */(getValueType() == STRING || getValueType() == ENUMERATED
+				|| getValueType() == TREE)) {
 			this.value = value;
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
 	}
 
-
 	@Override
-	public void setValue(String [] value) throws BuildException {
+	public void setValue(String[] value) throws BuildException {
 		if (/*!isExtensionElement() && */
-				(getValueType() == STRING_LIST
-				|| getValueType() == INCLUDE_PATH
-				|| getValueType() == PREPROCESSOR_SYMBOLS
-				|| getValueType() == LIBRARIES
-				|| getValueType() == OBJECTS
-				|| getValueType() == INCLUDE_FILES
-				|| getValueType() == LIBRARY_PATHS
-				|| getValueType() == LIBRARY_FILES
-				|| getValueType() == MACRO_FILES
-				|| getValueType() == UNDEF_INCLUDE_PATH
-				|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
-				|| getValueType() == UNDEF_INCLUDE_FILES
-				|| getValueType() == UNDEF_LIBRARY_PATHS
-				|| getValueType() == UNDEF_LIBRARY_FILES
-				|| getValueType() == UNDEF_MACRO_FILES
-						)) {
+		(getValueType() == STRING_LIST || getValueType() == INCLUDE_PATH || getValueType() == PREPROCESSOR_SYMBOLS
+				|| getValueType() == LIBRARIES || getValueType() == OBJECTS || getValueType() == INCLUDE_FILES
+				|| getValueType() == LIBRARY_PATHS || getValueType() == LIBRARY_FILES || getValueType() == MACRO_FILES
+				|| getValueType() == UNDEF_INCLUDE_PATH || getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
+				|| getValueType() == UNDEF_INCLUDE_FILES || getValueType() == UNDEF_LIBRARY_PATHS
+				|| getValueType() == UNDEF_LIBRARY_FILES || getValueType() == UNDEF_MACRO_FILES)) {
 			// Just replace what the option reference is holding onto
-			if(value == null) {
+			if (value == null) {
 				this.value = null;
 			} else {
 				this.value = valueListToListValueList(Arrays.asList(value), false);
 			}
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
 	}
 
-	public void setValue(OptionStringValue [] value) throws BuildException {
+	public void setValue(OptionStringValue[] value) throws BuildException {
 		if (/*!isExtensionElement() && */
-				(getValueType() == STRING_LIST
-				|| getValueType() == INCLUDE_PATH
-				|| getValueType() == PREPROCESSOR_SYMBOLS
-				|| getValueType() == LIBRARIES
-				|| getValueType() == OBJECTS
-				|| getValueType() == INCLUDE_FILES
-				|| getValueType() == LIBRARY_PATHS
-				|| getValueType() == LIBRARY_FILES
-				|| getValueType() == MACRO_FILES
-				|| getValueType() == UNDEF_INCLUDE_PATH
-				|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
-				|| getValueType() == UNDEF_INCLUDE_FILES
-				|| getValueType() == UNDEF_LIBRARY_PATHS
-				|| getValueType() == UNDEF_LIBRARY_FILES
-				|| getValueType() == UNDEF_MACRO_FILES
-						)) {
+		(getValueType() == STRING_LIST || getValueType() == INCLUDE_PATH || getValueType() == PREPROCESSOR_SYMBOLS
+				|| getValueType() == LIBRARIES || getValueType() == OBJECTS || getValueType() == INCLUDE_FILES
+				|| getValueType() == LIBRARY_PATHS || getValueType() == LIBRARY_FILES || getValueType() == MACRO_FILES
+				|| getValueType() == UNDEF_INCLUDE_PATH || getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
+				|| getValueType() == UNDEF_INCLUDE_FILES || getValueType() == UNDEF_LIBRARY_PATHS
+				|| getValueType() == UNDEF_LIBRARY_FILES || getValueType() == UNDEF_MACRO_FILES)) {
 			// Just replace what the option reference is holding onto
-			if(value == null) {
+			if (value == null) {
 				this.value = null;
 			} else {
 				this.value = new ArrayList<OptionStringValue>(Arrays.asList(value));
 			}
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
@@ -2069,14 +2047,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	@Override
 	public void setValue(Object v) {
-		if(v instanceof List<?>) {
+		if (v instanceof List<?>) {
 			@SuppressWarnings("unchecked")
-			List<OptionStringValue> vList = valueListToListValueList((List<String>)v, false);
+			List<OptionStringValue> vList = valueListToListValueList((List<String>) v, false);
 			value = vList;
 		} else {
 			value = v;
 		}
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
@@ -2087,7 +2065,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// TODO:  Verify that this is a valid type
 		if (valueType == null || valueType.intValue() != type) {
 			valueType = Integer.valueOf(type);
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				setDirty(true);
 				rebuildState = true;
 			}
@@ -2097,7 +2075,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public IConfigurationElement getValueHandlerElement() {
 		if (valueHandlerElement == null) {
 			if (superClass != null) {
-				return ((Option)superClass).getValueHandlerElement();
+				return ((Option) superClass).getValueHandlerElement();
 			}
 		}
 		return valueHandlerElement;
@@ -2105,7 +2083,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	public void setValueHandlerElement(IConfigurationElement element) {
 		valueHandlerElement = element;
-		if(!isExtensionElement()){
+		if (!isExtensionElement()) {
 			setDirty(true);
 			rebuildState = true;
 		}
@@ -2151,11 +2129,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (extraArgument == null && valueHandlerExtraArgument == null) {
 			return;
 		}
-		if (extraArgument == null ||
-				valueHandlerExtraArgument == null ||
-				!extraArgument.equals(valueHandlerExtraArgument)) {
+		if (extraArgument == null || valueHandlerExtraArgument == null
+				|| !extraArgument.equals(valueHandlerExtraArgument)) {
 			valueHandlerExtraArgument = extraArgument;
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
@@ -2166,7 +2143,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public String getFieldEditorId() {
 		if (fieldEditorId == null) {
 			if (superClass != null) {
-				return ((Option)superClass).getFieldEditorId();
+				return ((Option) superClass).getFieldEditorId();
 			}
 		}
 		return fieldEditorId;
@@ -2189,17 +2166,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (extraArgument == null && fieldEditorExtraArgument == null) {
 			return;
 		}
-		if (extraArgument == null ||
-				fieldEditorExtraArgument == null ||
-				!extraArgument.equals(fieldEditorExtraArgument)) {
+		if (extraArgument == null || fieldEditorExtraArgument == null
+				|| !extraArgument.equals(fieldEditorExtraArgument)) {
 			fieldEditorExtraArgument = extraArgument;
-			if(!isExtensionElement()){
+			if (!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}
 		}
 	}
-
 
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
@@ -2230,25 +2205,21 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				superClass = ManagedBuildManager.getExtensionOption(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.outputResolveError(
-							"superClass",	//$NON-NLS-1$
-							superClassId,
-							"option",	//$NON-NLS-1$
+					ManagedBuildManager.outputResolveError("superClass", //$NON-NLS-1$
+							superClassId, "option", //$NON-NLS-1$
 							getId());
 				} else {
 					//  All of our superclasses must be resolved in order to call
 					//  getValueType below.
-					((Option)superClass).resolveReferences();
+					((Option) superClass).resolveReferences();
 				}
 			}
 			if (categoryId != null) {
 				category = holder.getOptionCategory(categoryId);
 				if (category == null) {
 					// Report error
-					ManagedBuildManager.outputResolveError(
-							"category",	//$NON-NLS-1$
-							categoryId,
-							"option",	//$NON-NLS-1$
+					ManagedBuildManager.outputResolveError("category", //$NON-NLS-1$
+							categoryId, "option", //$NON-NLS-1$
 							getId());
 				}
 			}
@@ -2286,11 +2257,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						if (i == 0) {
 							applicableValuesList = new ArrayList<String>();
 							if (defaultValue == null) {
-								defaultValue = optId;		//  Default value to be overridden if default is specified
+								defaultValue = optId; //  Default value to be overridden if default is specified
 							}
 						}
 						applicableValuesList.add(optId);
-						getCommandMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(COMMAND)));
+						getCommandMap().put(optId,
+								SafeStringInterner.safeIntern(enumElements[i].getAttribute(COMMAND)));
 						getNameMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(NAME)));
 						Boolean isDefault = Boolean.valueOf(enumElements[i].getAttribute(IS_DEFAULT));
 						if (isDefault.booleanValue()) {
@@ -2310,7 +2282,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						iterateOnTree(treeRoot, new ITreeNodeIterator() {
 
 							@Override
-							public void iterateOnNode(ITreeOption node) {}
+							public void iterateOnNode(ITreeOption node) {
+							}
 
 							@Override
 							public void iterateOnLeaf(ITreeOption leafNode) {
@@ -2343,21 +2316,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					List<OptionStringValue> vList = null;
 					IManagedConfigElement[] vElements = element.getChildren(LIST_VALUE);
 					for (IManagedConfigElement vElement : vElements) {
-						if (vList==null) {
+						if (vList == null) {
 							vList = new ArrayList<OptionStringValue>();
 							builtIns = new ArrayList<OptionStringValue>();
 						}
 						OptionStringValue ve = new OptionStringValue(vElement);
-						if(ve.isBuiltIn()) {
+						if (ve.isBuiltIn()) {
 							builtIns.add(ve);
-						}
-						else {
+						} else {
 							vList.add(ve);
 						}
 					}
 					value = vList;
 					break;
-				default :
+				default:
 					break;
 				}
 			} catch (BuildException e) {
@@ -2371,8 +2343,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	@Override
 	public String getManagedBuildRevision() {
-		if ( managedBuildRevision == null) {
-			if ( getParent() != null) {
+		if (managedBuildRevision == null) {
+			if (getParent() != null) {
 				return getParent().getManagedBuildRevision();
 			}
 		}
@@ -2388,7 +2360,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
 		} else {
-			return false;	// Note: no inheritance from superClass
+			return false; // Note: no inheritance from superClass
 		}
 	}
 
@@ -2410,7 +2382,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		verified = true;
 		// Ignore elements that are superclasses
-		if ( getOptionHolder() instanceof IToolChain  &&  isAbstract() == false ) {
+		if (getOptionHolder() instanceof IToolChain && isAbstract() == false) {
 			// Check for error (a)
 			if (getCategory() == null) {
 				ManagedBuildManager.optionValidError(ManagedBuildManager.ERROR_CATEGORY, getId());
@@ -2420,8 +2392,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			// Check for error (b). Not specifying an attribute is OK.
 			// Do not use getResourceFilter as it does not allow
 			// differentiating between "all" and no attribute specified.
-			if ( resourceFilter != null )
-			{
+			if (resourceFilter != null) {
 				switch (getResourceFilter()) {
 				case IOption.FILTER_FILE:
 					// TODO: Cannot differentiate between "all" and attribute not
@@ -2445,7 +2416,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// The trade-off is that errors in the MBS grammar may not be
 		// detected on load, but only when a particular grammar element
 		// is used, say in the GUI.
-		if (verified == false  &&  resolved == true) {
+		if (verified == false && resolved == true) {
 			verify();
 		}
 		return isValid;
@@ -2468,8 +2439,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	@Override
 	public Version getVersion() {
-		if ( version == null) {
-			if ( getParent() != null) {
+		if (version == null) {
+			if (getParent() != null) {
 				return getParent().getVersion();
 			}
 		}
@@ -2481,16 +2452,16 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Do nothing
 	}
 
-	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(boolean isExtensionAdjustment){
-		if(booleanExpressionCalculator == null && !isExtensionAdjustment){
-			if(superClass != null){
-				return ((Option)superClass).getBooleanExpressionCalculator(isExtensionAdjustment);
+	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(boolean isExtensionAdjustment) {
+		if (booleanExpressionCalculator == null && !isExtensionAdjustment) {
+			if (superClass != null) {
+				return ((Option) superClass).getBooleanExpressionCalculator(isExtensionAdjustment);
 			}
 		}
 		return booleanExpressionCalculator;
 	}
 
-	public boolean isAdjustedExtension(){
+	public boolean isAdjustedExtension() {
 		return isUdjusted;
 	}
 
@@ -2499,15 +2470,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	public void setSuperClass(IOption superClass) {
-		if ( this.superClass != superClass ) {
+		if (this.superClass != superClass) {
 			this.superClass = superClass;
-			if ( this.superClass == null) {
+			if (this.superClass == null) {
 				superClassId = null;
 			} else {
 				superClassId = this.superClass.getId();
 			}
 
-			if(!isExtensionElement()) {
+			if (!isExtensionElement()) {
 				setDirty(true);
 			}
 		}
@@ -2518,20 +2489,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	public void setRebuildState(boolean rebuild) {
-		if(isExtensionElement() && rebuild) {
+		if (isExtensionElement() && rebuild) {
 			return;
 		}
 
 		rebuildState = rebuild;
 	}
 
-	public boolean matches(IOption option){
+	public boolean matches(IOption option) {
 		try {
-			if(option.getValueType() != getValueType()) {
+			if (option.getValueType() != getValueType()) {
 				return false;
 			}
 
-			if(!option.getName().equals(getName())) {
+			if (!option.getName().equals(getName())) {
 				return false;
 			}
 		} catch (BuildException e) {
@@ -2551,11 +2522,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		String referenced[] = null;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
 
-		if(calc != null){
+		if (calc != null) {
 			referenced = calc.getReferencedPropertyIds();
 		}
 
-		if(referenced == null) {
+		if (referenced == null) {
 			referenced = new String[0];
 		}
 		return referenced;
@@ -2566,11 +2537,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		String referenced[] = null;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
 
-		if(calc != null){
+		if (calc != null) {
 			referenced = calc.getReferencedValueIds(typeId);
 		}
 
-		if(referenced == null) {
+		if (referenced == null) {
 			referenced = new String[0];
 		}
 		return referenced;
@@ -2586,8 +2557,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		boolean supports = false;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
 
-		if(calc != null){
-			if(calc.referesProperty(id)){
+		if (calc != null) {
+			if (calc.referesProperty(id)) {
 				supports = true;
 			}
 		}
@@ -2599,8 +2570,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		boolean supports = false;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
 
-		if(calc != null){
-			if(calc.referesPropertyValue(typeId, valueId)){
+		if (calc != null) {
+			if (calc.referesPropertyValue(typeId, valueId)) {
 				supports = true;
 			}
 		}
@@ -2613,7 +2584,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		}
@@ -2627,7 +2598,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<OptionStringValue> v = (ArrayList<OptionStringValue>)getExactValue();
+		ArrayList<OptionStringValue> v = (ArrayList<OptionStringValue>) getExactValue();
 		if (v == null) {
 			return EMPTY_LV_ARRAY;
 		}
@@ -2635,10 +2606,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return v.toArray(new OptionStringValue[v.size()]);
 	}
 
-
 	@Override
 	public int getBasicValueType() throws BuildException {
-		switch(getValueType()){
+		switch (getValueType()) {
 		case IOption.BOOLEAN:
 			return IOption.BOOLEAN;
 		case IOption.STRING:
@@ -2652,20 +2622,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	}
 
-	public boolean hasCustomSettings(){
-		if(superClass == null) {
+	public boolean hasCustomSettings() {
+		if (superClass == null) {
 			return true;
 		}
 
-		if(value != null && !value.equals(superClass.getValue())){
+		if (value != null && !value.equals(superClass.getValue())) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public static int getOppositeType(int type){
-		switch(type){
+	public static int getOppositeType(int type) {
+		switch (type) {
 		case INCLUDE_PATH:
 			return UNDEF_INCLUDE_PATH;
 		case PREPROCESSOR_SYMBOLS:
@@ -2696,6 +2666,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	public static class TreeRoot extends TreeOption implements ITreeRoot {
 		private boolean selectLeafOnly = true;
+
 		TreeRoot(IManagedConfigElement element, IManagedConfigElement buildOption, boolean readTool) {
 			super(element, null, readTool);
 			String leaf = element.getAttribute(SELECT_LEAF_ONLY);
@@ -2724,7 +2695,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		@Override
 		public ITreeOption findNode(String id) {
-			if(id == null) {
+			if (id == null) {
 				return null;
 			}
 			return find(id, children);
@@ -2738,7 +2709,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						found = child;
 						break;
 					}
-					found = find(id, ((TreeOption)child).children);
+					found = find(id, ((TreeOption) child).children);
 					if (found != null) {
 						break;
 					}
@@ -2911,7 +2882,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		@Override
 		public void remove() {
-			((TreeOption)parent).children.remove(this);
+			((TreeOption) parent).children.remove(this);
 
 		}
 
@@ -2941,6 +2912,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	public interface ITreeNodeIterator {
 		void iterateOnNode(ITreeOption node);
+
 		void iterateOnLeaf(ITreeOption leafNode);
 	}
 

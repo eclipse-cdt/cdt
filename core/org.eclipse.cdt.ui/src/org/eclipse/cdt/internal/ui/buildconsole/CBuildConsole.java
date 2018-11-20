@@ -40,7 +40,7 @@ public class CBuildConsole implements ICConsole {
 
 	@Override
 	public void init(String contextId, String name, URL iconUrl) {
-		if (contextId==null)
+		if (contextId == null)
 			fConsoleManager = CUIPlugin.getDefault().getConsoleManager();
 		else
 			fConsoleManager = CUIPlugin.getDefault().getConsoleManager(name, contextId, iconUrl); // careful with order of arguments

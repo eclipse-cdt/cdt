@@ -19,7 +19,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
  * Custom assertions on a given {@link SWTBotButton}.
  */
 public class ButtonAssertions extends AbstractSWTBotAssertions<ButtonAssertions, SWTBotButton> {
-	
+
 	protected ButtonAssertions(final SWTBotButton actual) {
 		super(actual, ButtonAssertions.class);
 	}

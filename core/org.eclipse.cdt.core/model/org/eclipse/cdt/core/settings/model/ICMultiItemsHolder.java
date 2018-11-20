@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-
 /**
  * Implementors of this interface are intended 
  * to hold 1 or more items and perform

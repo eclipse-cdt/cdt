@@ -48,11 +48,11 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		}
 	}
 
-	private final Deque<WorkItem> fWorkItems= new ArrayDeque<>();
+	private final Deque<WorkItem> fWorkItems = new ArrayDeque<>();
 
 	/**
 	 * Creates a new formatting strategy.
- 	 */
+	 */
 	public CFormattingStrategy() {
 		super();
 	}
@@ -62,19 +62,17 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		super.format();
 
 		WorkItem workItem = fWorkItems.getFirst();
-		IDocument document= workItem.document;
-		TypedPosition partition= workItem.partition;
-		
+		IDocument document = workItem.document;
+		TypedPosition partition = workItem.partition;
+
 		if (document == null || partition == null)
 			return;
 
 		Map<String, String> preferences = getPreferences();
 
 		try {
-			TextEdit edit = CodeFormatterUtil.format(
-					CodeFormatter.K_TRANSLATION_UNIT, document.get(),
-					partition.getOffset(), partition.getLength(), 0,
-					TextUtilities.getDefaultLineDelimiter(document),
+			TextEdit edit = CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, document.get(),
+					partition.getOffset(), partition.getLength(), 0, TextUtilities.getDefaultLineDelimiter(document),
 					preferences);
 
 			if (edit != null)
@@ -85,14 +83,14 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 			// Can only happen on concurrent document modification - log and bail out.
 			CUIPlugin.log(e);
 		}
- 	}
+	}
 
 	@Override
 	public void formatterStarts(final IFormattingContext context) {
 		super.formatterStarts(context);
-		
+
 		TypedPosition partition = (TypedPosition) context.getProperty(FormattingContextProperties.CONTEXT_PARTITION);
-		IDocument document= (IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM);
+		IDocument document = (IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM);
 		fWorkItems.addLast(new WorkItem(document, partition));
 	}
 

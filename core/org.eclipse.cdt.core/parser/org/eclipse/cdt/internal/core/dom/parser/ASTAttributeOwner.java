@@ -36,8 +36,7 @@ public abstract class ASTAttributeOwner extends ASTNode implements IASTAttribute
 		IASTAttribute[] attributes = IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
 		for (IASTAttributeSpecifier attributeSpecifier : getAttributeSpecifiers()) {
 			if (attributeSpecifier instanceof IASTAttributeList) {
-				attributes = ArrayUtil.addAll(attributes,
-						((IASTAttributeList) attributeSpecifier).getAttributes());
+				attributes = ArrayUtil.addAll(attributes, ((IASTAttributeList) attributeSpecifier).getAttributes());
 			}
 		}
 		return attributes;

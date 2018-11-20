@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvi
 import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
 import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
 
-
 /**
  *
  * AllTests.java
@@ -33,28 +32,28 @@ import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
  */
 public class AllCoreTests {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(suite());
+	}
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AllCoreTests.class.getName());
+	public static Test suite() {
+		TestSuite suite = new TestSuite(AllCoreTests.class.getName());
 
-        // Just add more test cases here as you create them for
-        // each class being tested
+		// Just add more test cases here as you create them for
+		// each class being tested
 		suite.addTest(AllLanguageInterfaceTests.suite());
-        suite.addTest(CModelTests.suite());
-        suite.addTest(CModelElementsTests.suite());
-        suite.addTest(CModelIdentifierTests.suite());
-        suite.addTest(CModelExceptionTest.suite());
-        suite.addTest(CModelBuilderInactiveCodeTest.suite());
-        suite.addTest(FlagTests.suite());
-        suite.addTest(ArchiveTests.suite());
-        suite.addTest(BinaryTests.suite());
-        suite.addTest(TranslationUnitTests.suite());
+		suite.addTest(CModelTests.suite());
+		suite.addTest(CModelElementsTests.suite());
+		suite.addTest(CModelIdentifierTests.suite());
+		suite.addTest(CModelExceptionTest.suite());
+		suite.addTest(CModelBuilderInactiveCodeTest.suite());
+		suite.addTest(FlagTests.suite());
+		suite.addTest(ArchiveTests.suite());
+		suite.addTest(BinaryTests.suite());
+		suite.addTest(TranslationUnitTests.suite());
 		suite.addTest(DeclaratorsTests.suite());
 		suite.addTest(MacroTests.suite());
-//		suite.addTest(FailedMacroTests.suite());
+		//		suite.addTest(FailedMacroTests.suite());
 		suite.addTest(CPathEntryTest.suite());
 		//the CProjectDescriptionTests now groups all New Project Model related tests
 		//which includes the CConfigurationDescriptionReferenceTests
@@ -66,8 +65,7 @@ public class AllCoreTests {
 		suite.addTest(Bug311189.suite());
 
 		suite.addTest(AllLanguageSettingsProvidersCoreTests.suite());
-        return suite;
+		return suite;
 
-    }
+	}
 } // End of AllCoreTests.java
-

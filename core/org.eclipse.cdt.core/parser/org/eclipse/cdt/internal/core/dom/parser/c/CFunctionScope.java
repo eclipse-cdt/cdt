@@ -24,25 +24,24 @@ import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 
 public class CFunctionScope extends CScope implements ICFunctionScope {
 	public CFunctionScope(IASTFunctionDefinition function) {
-	    super(function, EScopeKind.eLocal);
+		super(function, EScopeKind.eLocal);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
+	 */
+	@Override
 	public IBinding getBinding(char[] name) {
-        return super.getBinding(NAMESPACE_TYPE_OTHER, name);
-    }
-
+		return super.getBinding(NAMESPACE_TYPE_OTHER, name);
+	}
 
 	@Override
 	public IScope getBodyScope() {
-	    IASTNode node = getPhysicalNode();
-	    IASTStatement statement = ((IASTFunctionDefinition) node).getBody();
-	    if (statement instanceof IASTCompoundStatement) {
-	        return ((IASTCompoundStatement) statement).getScope();
-	    }
-	    return null;
+		IASTNode node = getPhysicalNode();
+		IASTStatement statement = ((IASTFunctionDefinition) node).getBody();
+		if (statement instanceof IASTCompoundStatement) {
+			return ((IASTCompoundStatement) statement).getScope();
+		}
+		return null;
 	}
 }

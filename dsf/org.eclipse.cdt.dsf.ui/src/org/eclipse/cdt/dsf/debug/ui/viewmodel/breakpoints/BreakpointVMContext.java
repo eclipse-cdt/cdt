@@ -21,40 +21,39 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public class BreakpointVMContext extends AbstractVMContext {
 
-    private final IBreakpoint fBreakpoint;
-    
-    public BreakpointVMContext(BreakpointVMNode node, IBreakpoint breakpoint) {
-        super(node);
-        fBreakpoint = breakpoint;
-    }
+	private final IBreakpoint fBreakpoint;
 
-    public IBreakpoint getBreakpoint() {
-        return fBreakpoint;
-    }
-    
-    @SuppressWarnings("unchecked")
+	public BreakpointVMContext(BreakpointVMNode node, IBreakpoint breakpoint) {
+		super(node);
+		fBreakpoint = breakpoint;
+	}
+
+	public IBreakpoint getBreakpoint() {
+		return fBreakpoint;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
-    public <T> T getAdapter(Class<T> adapter) {
-        if (adapter.isInstance(fBreakpoint)) {
-            return (T)fBreakpoint;
-        }
-        return super.getAdapter(adapter);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof BreakpointVMContext &&
-        getBreakpoint().equals( ((BreakpointVMContext)obj).getBreakpoint() ) &&
-        fBreakpoint.equals(((BreakpointVMContext)obj).fBreakpoint); 
-    }
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isInstance(fBreakpoint)) {
+			return (T) fBreakpoint;
+		}
+		return super.getAdapter(adapter);
+	}
 
-    @Override
-    public int hashCode() {
-        return fBreakpoint.hashCode();
-    }
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof BreakpointVMContext && getBreakpoint().equals(((BreakpointVMContext) obj).getBreakpoint())
+				&& fBreakpoint.equals(((BreakpointVMContext) obj).fBreakpoint);
+	}
 
-    @Override
-    public String toString() {
-        return fBreakpoint.toString();
-    }
+	@Override
+	public int hashCode() {
+		return fBreakpoint.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return fBreakpoint.toString();
+	}
 }

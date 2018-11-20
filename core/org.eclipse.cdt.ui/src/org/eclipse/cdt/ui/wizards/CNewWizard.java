@@ -16,7 +16,6 @@ package org.eclipse.cdt.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
  * Interface to be used by extension point:
  * org.eclipse.cdt.managedbuilder.ui.CDTWizard
@@ -32,12 +31,12 @@ public abstract class CNewWizard {
 	 * Method should add 1 or more tree items, 
 	 * each of them should have data object attached,
 	 * data should be lt;ICProjectTypeHandler&gt; 
-     *
+	 *
 	 * @param supportedOnly - whether display supported types only
 	 * @param wizard - New Project wizard to be passed to ICWizardHandler 
 	 */
 	public abstract EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard);
-	
+
 	/**
 	 * Implementor will be informed about widget where additional
 	 * data should be displayed. Normally, it is right pane in the
@@ -49,6 +48,6 @@ public abstract class CNewWizard {
 	 *                 May be null if notification is not required
 	 *                 or implementor does not really support it. 
 	 */
-	public void setDependentControl(Composite parent, IWizardItemsListListener page){
+	public void setDependentControl(Composite parent, IWizardItemsListListener page) {
 	}
 }

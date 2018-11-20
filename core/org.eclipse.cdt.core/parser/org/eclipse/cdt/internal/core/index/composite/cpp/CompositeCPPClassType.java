@@ -43,7 +43,8 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	@Override
 	public Object clone() {
-		fail(); return null;
+		fail();
+		return null;
 	}
 
 	@Override
@@ -60,19 +61,19 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		private final ICPPBase base;
 		private IType baseClass;
 		private final boolean writable;
-		
+
 		CPPBaseDelegate(ICPPBase b) {
-			this(b, false); 
+			this(b, false);
 		}
-		
+
 		CPPBaseDelegate(ICPPBase b, boolean writable) {
-			this.base= b;
-			this.writable= writable; 
+			this.base = b;
+			this.writable = writable;
 		}
-		
+
 		@Override
 		public IBinding getBaseClass() {
-			IType type= getBaseClassType();
+			IType type = getBaseClassType();
 			type = getNestedType(type, TDEF);
 			if (type instanceof IBinding)
 				return (IBinding) type;
@@ -82,7 +83,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		@Override
 		public IType getBaseClassType() {
 			if (baseClass == null) {
-				baseClass= cf.getCompositeType(base.getBaseClassType());
+				baseClass = cf.getCompositeType(base.getBaseClassType());
 			}
 			return baseClass;
 		}
@@ -110,7 +111,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		@Override
 		public void setBaseClass(IBinding binding) {
 			if (writable && binding instanceof IType) {
-				baseClass= (IType) binding;
+				baseClass = (IType) binding;
 			} else {
 				base.setBaseClass(binding);
 			}
@@ -119,18 +120,18 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		@Override
 		public void setBaseClass(IType binding) {
 			if (writable) {
-				baseClass= binding;
+				baseClass = binding;
 			} else {
 				base.setBaseClass(binding);
 			}
 		}
 
-	    @Override
-		public ICPPBase clone(){
-	    	return new CPPBaseDelegate(base, true);
-	    }
+		@Override
+		public ICPPBase clone() {
+			return new CPPBaseDelegate(base, true);
+		}
 	}
-	
+
 	@Override
 	public ICPPBase[] getBases() {
 		ICPPBase[] bases = ((ICPPClassType) rbinding).getBases();
@@ -176,7 +177,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		ICPPClassType[] result = ((ICPPClassType) rbinding).getNestedClasses();
 		return wrapBindings(result);
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		ICPPUsingDeclaration[] result = ((ICPPClassType) rbinding).getUsingDeclarations();
@@ -205,7 +206,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	protected ICPPBase[] wrapBases(final ICPPBase[] bases) {
 		ICPPBase[] result = new ICPPBase[bases.length];
-		for (int i= 0; i < bases.length; i++) {
+		for (int i = 0; i < bases.length; i++) {
 			result[i] = new CPPBaseDelegate(bases[i]);
 		}
 		return result;
@@ -214,7 +215,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	@SuppressWarnings("unchecked")
 	protected <T extends IBinding> T[] wrapBindings(T[] bindings) {
 		T[] result = Arrays.copyOf(bindings, bindings.length);
-		for (int i= 0; i < bindings.length; i++) {
+		for (int i = 0; i < bindings.length; i++) {
 			// Cannot assume the incoming binding is an index binding in all cases. 
 			result[i] = (T) cf.getCompositeBinding(adaptBinding(bindings[i]));
 		}

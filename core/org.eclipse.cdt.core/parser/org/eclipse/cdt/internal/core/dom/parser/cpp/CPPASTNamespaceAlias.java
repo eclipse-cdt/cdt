@@ -22,8 +22,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAlias {
-    private IASTName alias;
-    private IASTName qualifiedName;
+	private IASTName alias;
+	private IASTName qualifiedName;
 
 	public CPPASTNamespaceAlias(IASTName alias, IASTName qualifiedName) {
 		setAlias(alias);
@@ -37,69 +37,78 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 
 	@Override
 	public CPPASTNamespaceAlias copy(CopyStyle style) {
-		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias(
-				alias == null ? null : alias.copy(style),
+		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias(alias == null ? null : alias.copy(style),
 				qualifiedName == null ? null : qualifiedName.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTName getAlias() {
-        return alias;
-    }
+		return alias;
+	}
 
-    @Override
+	@Override
 	public void setAlias(IASTName name) {
-        assertNotFrozen();
-        this.alias = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.alias = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ALIAS_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTName getMappingName() {
-        return qualifiedName;
-    }
+		return qualifiedName;
+	}
 
-    @Override
+	@Override
 	public void setMappingName(IASTName qualifiedName) {
-        assertNotFrozen();
-        this.qualifiedName = qualifiedName;
-        if (qualifiedName != null) {
+		assertNotFrozen();
+		this.qualifiedName = qualifiedName;
+		if (qualifiedName != null) {
 			qualifiedName.setParent(this);
 			qualifiedName.setPropertyInParent(MAPPING_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (alias != null && !alias.accept(action)) return false;
-        if (qualifiedName != null && !qualifiedName.accept(action)) return false;
+		if (alias != null && !alias.accept(action))
+			return false;
+		if (qualifiedName != null && !qualifiedName.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (alias == n) return r_definition;
-		if (qualifiedName == n) return r_reference;
+		if (alias == n)
+			return r_definition;
+		if (qualifiedName == n)
+			return r_reference;
 		return r_unclear;
 	}
 }

@@ -24,24 +24,24 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
  */
 public class GdbTerminalPageConnector extends PlatformObject implements ITerminalConnector {
 
-    private int fTerminalWidth, fTerminalHeight;
-    private ITerminalControl fControl;
-    private final PTY fPty;
-    private final IGdbTerminalControlConnector fGdbTerminalCtrlConnector;
+	private int fTerminalWidth, fTerminalHeight;
+	private ITerminalControl fControl;
+	private final PTY fPty;
+	private final IGdbTerminalControlConnector fGdbTerminalCtrlConnector;
 
-    public GdbTerminalPageConnector(IGdbTerminalControlConnector gdbTerminalCtrlConnector, PTY pty) {
-    	fPty = pty;
-    	fGdbTerminalCtrlConnector = gdbTerminalCtrlConnector;
+	public GdbTerminalPageConnector(IGdbTerminalControlConnector gdbTerminalCtrlConnector, PTY pty) {
+		fPty = pty;
+		fGdbTerminalCtrlConnector = gdbTerminalCtrlConnector;
 	}
-	
-    @Override
-	public void disconnect() {
-    	fGdbTerminalCtrlConnector.removePageTerminalControl(fControl);
 
-    	if (fControl != null) {
-    		fControl.setState(TerminalState.CLOSED);
-    	}
-    }
+	@Override
+	public void disconnect() {
+		fGdbTerminalCtrlConnector.removePageTerminalControl(fControl);
+
+		if (fControl != null) {
+			fControl.setState(TerminalState.CLOSED);
+		}
+	}
 
 	@Override
 	public OutputStream getTerminalToRemoteStream() {
@@ -50,9 +50,9 @@ public class GdbTerminalPageConnector extends PlatformObject implements ITermina
 
 	@Override
 	public void connect(ITerminalControl control) {
-    	if (control == null) {
-    		throw new IllegalArgumentException("Invalid ITerminalControl"); //$NON-NLS-1$
-    	}
+		if (control == null) {
+			throw new IllegalArgumentException("Invalid ITerminalControl"); //$NON-NLS-1$
+		}
 
 		fControl = control;
 		fGdbTerminalCtrlConnector.addPageTerminalControl(fControl);
@@ -61,69 +61,68 @@ public class GdbTerminalPageConnector extends PlatformObject implements ITermina
 		fControl.setState(TerminalState.CONNECTED);
 	}
 
+	@Override
+	public void setTerminalSize(int newWidth, int newHeight) {
+		if (newWidth != fTerminalWidth || newHeight != fTerminalHeight) {
+			fTerminalWidth = newWidth;
+			fTerminalHeight = newHeight;
+			if (fPty != null) {
+				fPty.setTerminalSize(newWidth, newHeight);
+			}
+		}
+	}
 
-    @Override
-    public void setTerminalSize(int newWidth, int newHeight) {
-    	if (newWidth != fTerminalWidth || newHeight != fTerminalHeight) {
-    		fTerminalWidth = newWidth;
-    		fTerminalHeight = newHeight;
-    		if (fPty != null) {
-    			fPty.setTerminalSize(newWidth, newHeight);
-    		}
-    	}
-    }
+	@Override
+	public String getId() {
+		// No need for an id, as we're are just used locally
+		return null;
+	}
 
-    @Override
-    public String getId() {
-    	// No need for an id, as we're are just used locally
-    	return null;
-    }
+	@Override
+	public String getName() {
+		// No name
+		return null;
+	}
 
-    @Override
-    public String getName() {
-    	// No name
-    	return null;
-    }
+	@Override
+	public boolean isHidden() {
+		// in case we do leak into the TM world, we shouldn't be visible
+		return true;
+	}
 
-    @Override
-    public boolean isHidden() {
-    	// in case we do leak into the TM world, we shouldn't be visible
-    	return true;
-    }
+	@Override
+	public boolean isInitialized() {
+		return true;
+	}
 
-    @Override
-    public boolean isInitialized() {
-    	return true;
-    }
+	@Override
+	public String getInitializationErrorMessage() {
+		return null;
+	}
 
-    @Override
-    public String getInitializationErrorMessage() {
-    	return null;
-    }
+	@Override
+	public boolean isLocalEcho() {
+		return false;
+	}
 
-    @Override
-    public boolean isLocalEcho() {
-    	return false;
-    }
+	@Override
+	public void setDefaultSettings() {
+		// we don't do settings
+	}
 
-    @Override
-    public void setDefaultSettings() {
-    	// we don't do settings
-    }
+	@Override
+	public String getSettingsSummary() {
+		// we don't do settings
+		return null;
+	}
 
-    @Override
-    public String getSettingsSummary() {
-    	// we don't do settings
-    	return null;
-    }
+	@Override
+	public void load(ISettingsStore arg0) {
+		// we don't do settings
+	}
 
-    @Override
-    public void load(ISettingsStore arg0) {
-    	// we don't do settings
-    }
-
-    @Override
-    public void save(ISettingsStore arg0) {
-    	// we don't do settings
-    }
+	@Override
+	public void save(ISettingsStore arg0) {
+		// we don't do settings
+	}
 }

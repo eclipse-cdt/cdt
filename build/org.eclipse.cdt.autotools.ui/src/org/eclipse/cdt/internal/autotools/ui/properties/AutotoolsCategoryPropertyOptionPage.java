@@ -40,49 +40,57 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class AutotoolsCategoryPropertyOptionPage extends
-		AbstractConfigurePropertyOptionsPage {
+public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigurePropertyOptionsPage {
 
 	private static final int MARGIN = 3;
 	private String catName = "";
 	private IAConfiguration cfg;
+
 	//  Label class for a preference page.
 	static class LabelFieldEditor extends FieldEditor {
 		private String fTitle;
 		private Label fTitleLabel;
 
-		public LabelFieldEditor( Composite parent, String title ) {
+		public LabelFieldEditor(Composite parent, String title) {
 			fTitle = title;
-			this.createControl( parent );
+			this.createControl(parent);
 		}
 
 		@Override
-		protected void adjustForNumColumns( int numColumns ) {
-			((GridData)fTitleLabel.getLayoutData()).horizontalSpan = 2;
+		protected void adjustForNumColumns(int numColumns) {
+			((GridData) fTitleLabel.getLayoutData()).horizontalSpan = 2;
 		}
 
 		@Override
-		protected void doFillIntoGrid( Composite parent, int numColumns ) {
-			fTitleLabel = new Label( parent, SWT.WRAP );
-			fTitleLabel.setText( fTitle );
+		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			fTitleLabel = new Label(parent, SWT.WRAP);
+			fTitleLabel.setText(fTitle);
 			GridData gd = new GridData();
 			gd.verticalAlignment = SWT.TOP;
 			gd.grabExcessHorizontalSpace = false;
 			gd.horizontalSpan = 2;
-			fTitleLabel.setLayoutData( gd );
+			fTitleLabel.setLayoutData(gd);
 		}
 
 		@Override
-		public int getNumberOfControls() {	return 1; }
+		public int getNumberOfControls() {
+			return 1;
+		}
+
 		/**
 		 * The label field editor is only used to present a text label on a preference page.
 		 */
 		@Override
-		protected void doLoad() {}
+		protected void doLoad() {
+		}
+
 		@Override
-		protected void doLoadDefault() {}
+		protected void doLoadDefault() {
+		}
+
 		@Override
-		protected void doStore() {}
+		protected void doStore() {
+		}
 	}
 
 	static class VariableListEditor extends ListEditor {
@@ -304,19 +312,19 @@ public class AutotoolsCategoryPropertyOptionPage extends
 	};
 
 	private List<FieldEditor> fieldEditors;
-	
+
 	public AutotoolsCategoryPropertyOptionPage(ToolListElement element, IAConfiguration cfg) {
- 		super(element.getName());
- 		this.catName = element.getName();
- 		this.cfg = cfg;
- 		fieldEditors = new ArrayList<>();
+		super(element.getName());
+		this.catName = element.getName();
+		this.cfg = cfg;
+		fieldEditors = new ArrayList<>();
 	}
 
 	@Override
 	protected void createFieldEditors() {
 		super.createFieldEditors();
 		Composite parent = getFieldEditorParent();
-		
+
 		// Add margin
 		parent.setLayout(new GridLayout(1, false));
 		Composite area = new Composite(parent, SWT.NONE);
@@ -326,8 +334,8 @@ public class AutotoolsCategoryPropertyOptionPage extends
 		gl.marginRight = MARGIN;
 		area.setLayout(gl);
 		area.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		
-//		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
+
+		//		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
 		AutotoolsConfiguration.Option[] options = AutotoolsConfiguration.getChildOptions(catName);
 		for (int i = 0; i < options.length; ++i) {
 			AutotoolsConfiguration.Option option = options[i];
@@ -369,29 +377,29 @@ public class AutotoolsCategoryPropertyOptionPage extends
 	public void updateFields() {
 		setValues();
 	}
-	
+
 	@Override
 	public void setValues() {
 		for (int i = 0; i < fieldEditors.size(); ++i) {
 			fieldEditors.get(i).load();
 		}
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);
 
 		if (event.getSource() instanceof StringFieldEditor) {
-			StringFieldEditor f = (StringFieldEditor)event.getSource();
+			StringFieldEditor f = (StringFieldEditor) event.getSource();
 			cfg.setOption(f.getPreferenceName(), f.getStringValue());
 		} else if (event.getSource() instanceof BooleanFieldEditor) {
-			BooleanFieldEditor b = (BooleanFieldEditor)event.getSource();
+			BooleanFieldEditor b = (BooleanFieldEditor) event.getSource();
 			cfg.setOption(b.getPreferenceName(), Boolean.toString(b.getBooleanValue()));
 		} else if (event.getSource() instanceof VariableListEditor) {
 			VariableListEditor v = (VariableListEditor) event.getSource();
 			cfg.setOption(v.getPreferenceName(), v.getVariablesValue());
 		}
 	}
-	
+
 }

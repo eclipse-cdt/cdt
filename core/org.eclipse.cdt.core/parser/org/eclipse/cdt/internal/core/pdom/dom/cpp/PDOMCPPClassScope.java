@@ -71,11 +71,11 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof PDOMBinding) {
-				final PDOMBinding binding= (PDOMBinding) node;
+				final PDOMBinding binding = (PDOMBinding) node;
 				final char[] nchars = binding.getNameCharArray();
-				List<PDOMBinding> list= fResult.get(nchars);
+				List<PDOMBinding> list = fResult.get(nchars);
 				if (list == null) {
-					list= new ArrayList<>();
+					list = new ArrayList<>();
 					fResult.put(nchars, list);
 				}
 				list.add(binding);
@@ -87,25 +87,25 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		}
 
 		@Override
-		public void leave(IPDOMNode node){}
+		public void leave(IPDOMNode node) {
+		}
 	}
 
-	private static final IndexFilter CONVERSION_FILTER =
-			new DeclaredBindingsFilter(ILinkage.CPP_LINKAGE_ID, true, false) {
+	private static final IndexFilter CONVERSION_FILTER = new DeclaredBindingsFilter(ILinkage.CPP_LINKAGE_ID, true,
+			false) {
 		@Override
 		public boolean acceptBinding(IBinding binding) throws CoreException {
-			return binding instanceof ICPPMethod && 
-				SemanticUtil.isConversionOperator(((ICPPMethod) binding)) &&
-				super.acceptBinding(binding);
+			return binding instanceof ICPPMethod && SemanticUtil.isConversionOperator(((ICPPMethod) binding))
+					&& super.acceptBinding(binding);
 		}
 	};
-	
+
 	private final IPDOMCPPClassType fBinding;
 
 	public PDOMCPPClassScope(IPDOMCPPClassType binding) {
-		fBinding= binding;
+		fBinding = binding;
 	}
-	
+
 	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
@@ -129,13 +129,14 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
-		    final char[] nameChars = name.getSimpleID();
+			final char[] nameChars = name.getSimpleID();
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
-	            // 9.2 ... The class-name is also inserted into the scope of the class itself
-		        return getClassNameBinding();
-		    }
-			
-			final IBinding[] candidates = getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
+				// 9.2 ... The class-name is also inserted into the scope of the class itself
+				return getClassNameBinding();
+			}
+
+			final IBinding[] candidates = getBindingsViaCache(fBinding, nameChars,
+					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
 			return CPPSemantics.resolveAmbiguities(name, candidates);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -146,8 +147,9 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	private IBinding getClassNameBinding() {
 		return fBinding;
 	}
-	
-	@Deprecated	@Override
+
+	@Deprecated
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
@@ -156,29 +158,29 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
 			if (lookup.getLookupName() instanceof ICPPASTConversionName) {
-				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(),
-						Keywords.cOPERATOR, CONVERSION_FILTER, true, false, true);
+				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), Keywords.cOPERATOR,
+						CONVERSION_FILTER, true, false, true);
 				acceptViaCache(fBinding, visitor, true);
 				return visitor.getBindings();
-			} 
+			}
 
 			final char[] nameChars = lookup.getLookupKey();
 			if (!lookup.isPrefixLookup()) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
-			        if (CPPClassScope.shallReturnConstructors(lookup.getLookupName(), false)){
-			        	return fBinding.getConstructors();
-			        }
-			        return new IBinding[] { getClassNameBinding() };
+					if (CPPClassScope.shallReturnConstructors(lookup.getLookupName(), false)) {
+						return fBinding.getConstructors();
+					}
+					return new IBinding[] { getClassNameBinding() };
 				}
-			    return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
+				return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
 			}
-			
+
 			// Prefix lookup.
 			BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), nameChars,
 					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, true, true, false);
 			if (ContentAssistMatcherFactory.getInstance().match(nameChars, fBinding.getNameCharArray())) {
 				// Add the class itself, constructors will be found during the visit.
-		        visitor.visit((IPDOMNode) getClassNameBinding());
+				visitor.visit((IPDOMNode) getClassNameBinding());
 			}
 			acceptViaCache(fBinding, visitor, true);
 			return visitor.getBindings();
@@ -188,23 +190,24 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return null;
 	}
 
-	public static IBinding[] getBindingsViaCache(IPDOMCPPClassType ct, final char[] name, IndexFilter filter) throws CoreException {
-		CharArrayObjectMap<List<PDOMBinding>> map = getBindingMap(ct);		
-		List<PDOMBinding> cached= map.get(name);
+	public static IBinding[] getBindingsViaCache(IPDOMCPPClassType ct, final char[] name, IndexFilter filter)
+			throws CoreException {
+		CharArrayObjectMap<List<PDOMBinding>> map = getBindingMap(ct);
+		List<PDOMBinding> cached = map.get(name);
 		if (cached == null)
 			return IBinding.EMPTY_BINDING_ARRAY;
-		
-		int i= 0;
-		IBinding[] result= new IBinding[cached.size()];
+
+		int i = 0;
+		IBinding[] result = new IBinding[cached.size()];
 		for (IBinding binding : cached) {
 			if (filter.acceptBinding(binding)) {
-				result[i++]= binding;
+				result[i++] = binding;
 			}
 		}
 		if (i == result.length)
 			return result;
-		
-		final IBinding[] bresult= new IBinding[i];
+
+		final IBinding[] bresult = new IBinding[i];
 		System.arraycopy(result, 0, bresult, 0, i);
 		return bresult;
 	}
@@ -212,10 +215,10 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	/**
 	 * Visit bindings via the cache.
 	 */
-	public static void acceptViaCache(IPDOMCPPClassType ct, IPDOMVisitor visitor,
-			boolean includeNestedInAnonymous) throws CoreException {
-		final long record= ct.getRecord();
-		CharArrayObjectMap<List<PDOMBinding>> map= getBindingMap(ct);
+	public static void acceptViaCache(IPDOMCPPClassType ct, IPDOMVisitor visitor, boolean includeNestedInAnonymous)
+			throws CoreException {
+		final long record = ct.getRecord();
+		CharArrayObjectMap<List<PDOMBinding>> map = getBindingMap(ct);
 		for (List<PDOMBinding> list : map.values()) {
 			for (PDOMBinding node : list) {
 				if (includeNestedInAnonymous || node.getParentNodeRec() == record) {
@@ -230,12 +233,12 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 
 	public static void updateCache(IPDOMCPPClassType ct, PDOMNode member) throws CoreException {
 		if (member instanceof PDOMBinding) {
-			final Long key= ct.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
+			final Long key = ct.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 			final PDOM pdom = ct.getPDOM();
 			@SuppressWarnings("unchecked")
-			Reference<CharArrayObjectMap<List<PDOMBinding>>> cached=
-					(Reference<CharArrayObjectMap<List<PDOMBinding>>>) pdom.getCachedResult(key);
-			CharArrayObjectMap<List<PDOMBinding>> map= cached == null ? null : cached.get();
+			Reference<CharArrayObjectMap<List<PDOMBinding>>> cached = (Reference<CharArrayObjectMap<List<PDOMBinding>>>) pdom
+					.getCachedResult(key);
+			CharArrayObjectMap<List<PDOMBinding>> map = cached == null ? null : cached.get();
 			if (map != null) {
 				new PopulateMap(map).visit(member);
 			}
@@ -243,17 +246,17 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	}
 
 	public static CharArrayObjectMap<List<PDOMBinding>> getBindingMap(IPDOMCPPClassType ct) throws CoreException {
-		final Long key= ct.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
+		final Long key = ct.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = ct.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayObjectMap<List<PDOMBinding>>> cached=
-				(Reference<CharArrayObjectMap<List<PDOMBinding>>>) pdom.getCachedResult(key);
-		CharArrayObjectMap<List<PDOMBinding>> map= cached == null ? null : cached.get();
-		
+		Reference<CharArrayObjectMap<List<PDOMBinding>>> cached = (Reference<CharArrayObjectMap<List<PDOMBinding>>>) pdom
+				.getCachedResult(key);
+		CharArrayObjectMap<List<PDOMBinding>> map = cached == null ? null : cached.get();
+
 		if (map == null) {
 			// There is no cache, build it:
-			map= new CharArrayObjectMap<>(8);
-			IPDOMVisitor visitor= new PopulateMap(map);
+			map = new CharArrayObjectMap<>(8);
+			IPDOMVisitor visitor = new PopulateMap(map);
 			visitor.visit(ct);
 			ct.acceptUncached(visitor);
 			pdom.putCachedResult(key, new SoftReference<>(map));
@@ -263,14 +266,15 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
-	    return CPPSemantics.findBindingsInScope(this, name, tu);
+		return CPPSemantics.findBindingsInScope(this, name, tu);
 	}
 
-	@Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return fBinding;

@@ -34,14 +34,14 @@ import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
  */
 public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvider {
 	IWizardDataPage[] pages;
-	
+
 	@Override
-	public IWizardDataPage[] createAdditionalPages(IWorkbenchWizard wizard,
-			IWorkbench workbench, IStructuredSelection selection) {
-		pages= new IWizardDataPage[3];
-		pages[0]= new MyPage("Example custom page 1", "exampleAttr1", "Value1");
-		pages[1]= new MyPage("Example custom page 2", "exampleAttr2", "Value2");
-		pages[2]= new MyPage("Example custom page 3", "exampleAttr3", "Value3");
+	public IWizardDataPage[] createAdditionalPages(IWorkbenchWizard wizard, IWorkbench workbench,
+			IStructuredSelection selection) {
+		pages = new IWizardDataPage[3];
+		pages[0] = new MyPage("Example custom page 1", "exampleAttr1", "Value1");
+		pages[1] = new MyPage("Example custom page 2", "exampleAttr2", "Value2");
+		pages[2] = new MyPage("Example custom page 3", "exampleAttr3", "Value3");
 		return pages;
 	}
 
@@ -55,15 +55,15 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 	 */
 	static class MyPage extends AbstractWizardDataPage implements IWizardDataPage {
 		String labelText, dataKey, dataValue;
-		
+
 		public MyPage(String labelText, String dataKey, String dataValue) {
 			super("CustomTestPageName", "Title", null);
 			setMessage("Custom test page message");
-			this.labelText= labelText;
-			this.dataKey= dataKey;
-			this.dataValue= dataValue;
+			this.labelText = labelText;
+			this.dataKey = dataKey;
+			this.dataValue = dataValue;
 		}
-		
+
 		@Override
 		public Map<String, String> getPageData() {
 			return Collections.singletonMap(dataKey, dataValue);
@@ -71,7 +71,7 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 
 		@Override
 		public void createControl(Composite parent) {
-			Label l= new Label(parent, SWT.NONE);
+			Label l = new Label(parent, SWT.NONE);
 			l.setText(labelText);
 			setControl(l);
 		}

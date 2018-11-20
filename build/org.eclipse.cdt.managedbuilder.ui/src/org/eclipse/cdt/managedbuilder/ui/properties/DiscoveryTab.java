@@ -94,7 +94,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	@Deprecated
 	protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
 
-	private static final String GCC_PER_PROJECT_PROFILE = MakeCorePlugin.getUniqueIdentifier() + ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
+	private static final String GCC_PER_PROJECT_PROFILE = MakeCorePlugin.getUniqueIdentifier()
+			+ ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
 	private static final String MAKEFILE_PROJECT_TOOLCHAIN_ID = "org.eclipse.cdt.build.core.prefbase.toolchain"; //$NON-NLS-1$
 	private static final String NAMESPACE = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String POINT = "DiscoveryProfilePage"; //$NON-NLS-1$
@@ -141,8 +142,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		usercomp.setLayout(new GridLayout(1, false));
 
 		if (page.isForProject() || page.isForPrefs()) {
-			Group scopeGroup = setupGroup(usercomp, Messages.DiscoveryTab_0,
-					1, GridData.FILL_HORIZONTAL);
+			Group scopeGroup = setupGroup(usercomp, Messages.DiscoveryTab_0, 1, GridData.FILL_HORIZONTAL);
 			scopeGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			scopeComboBox = new Combo(scopeGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 			scopeComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -202,11 +202,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private void createScannerConfigControls(Composite parent) {
-		autoDiscoveryGroup = setupGroup(parent, Messages.ScannerConfigOptionsDialog_scGroup_label,
-				2, GridData.FILL_HORIZONTAL);
+		autoDiscoveryGroup = setupGroup(parent, Messages.ScannerConfigOptionsDialog_scGroup_label, 2,
+				GridData.FILL_HORIZONTAL);
 
-		autoDiscoveryCheckBox = setupCheck(autoDiscoveryGroup, Messages.ScannerConfigOptionsDialog_scGroup_enabled_button,
-				2, GridData.FILL_HORIZONTAL);
+		autoDiscoveryCheckBox = setupCheck(autoDiscoveryGroup,
+				Messages.ScannerConfigOptionsDialog_scGroup_enabled_button, 2, GridData.FILL_HORIZONTAL);
 		autoDiscoveryCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,8 +222,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		});
 		reportProblemsCheckBox = setupCheck(autoDiscoveryGroup,
-				Messages.ScannerConfigOptionsDialog_scGroup_problemReporting_enabled_button,
-				2, GridData.FILL_HORIZONTAL);
+				Messages.ScannerConfigOptionsDialog_scGroup_problemReporting_enabled_button, 2,
+				GridData.FILL_HORIZONTAL);
 		reportProblemsCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -232,8 +232,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		});
 
 		// Add profile combo box
-		setupLabel(autoDiscoveryGroup, Messages.ScannerConfigOptionsDialog_scGroup_selectedProfile_combo,
-				1, GridData.BEGINNING);
+		setupLabel(autoDiscoveryGroup, Messages.ScannerConfigOptionsDialog_scGroup_selectedProfile_combo, 1,
+				GridData.BEGINNING);
 		profileComboBox = new Combo(autoDiscoveryGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		profileComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		profileComboBox.addSelectionListener(new SelectionAdapter() {
@@ -267,7 +267,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					clearDiscoveredEntries();
 					MessageDialog.openInformation(shell, title, Messages.DiscoveryTab_DiscoveredEntriesCleared);
 				} catch (CoreException e) {
-					MessageDialog.openError(shell, title, Messages.DiscoveryTab_ErrorClearingEntries + e.getLocalizedMessage());
+					MessageDialog.openError(shell, title,
+							Messages.DiscoveryTab_ErrorClearingEntries + e.getLocalizedMessage());
 				}
 			}
 		});
@@ -293,7 +294,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			if (!page.isForPrefs() && baseInfoMap == null) {
 				try {
 					IProject project = cfg.getOwner().getProject();
-					IScannerConfigBuilderInfo2Set baseCbi = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
+					IScannerConfigBuilderInfo2Set baseCbi = ScannerConfigProfileManager
+							.createScannerConfigBuildInfo2Set(project);
 					baseInfoMap = baseCbi.getInfoMap();
 				} catch (CoreException e) {
 				}
@@ -355,7 +357,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private void setEnablement() {
 		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
-		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject()) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject())
+				|| ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
 
 		scopeComboBox.setEnabled(isEnabled);
 		resTable.setEnabled(isEnabled);
@@ -370,14 +373,17 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private void showStatusLine() {
 		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
-		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject()) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject())
+				|| ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
 		IStatus status = null;
 		if (isEnabled) {
 			if (autoDiscoveryCheckBox.getSelection()) {
-				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "This discovery method is deprecated, use 'Preprocessor Include Paths' instead.");
+				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+						"This discovery method is deprecated, use 'Preprocessor Include Paths' instead.");
 			}
 		} else {
-			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, org.eclipse.cdt.internal.ui.newui.Messages.AbstractLangsListTab_MbsProviderNotEnabled);
+			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID,
+					org.eclipse.cdt.internal.ui.newui.Messages.AbstractLangsListTab_MbsProviderNotEnabled);
 		}
 		fStatusLine.setErrorStatus(status);
 	}
@@ -404,8 +410,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	 * Note that name of this toolchain set to "No ToolChain" in plugin.xml.
 	 */
 	private boolean isMakefileProjectToolChain(IToolChain toolchain) {
-		return toolchain!=null
-			&& (toolchain.getId().equals(MAKEFILE_PROJECT_TOOLCHAIN_ID) || isMakefileProjectToolChain(toolchain.getSuperClass()));
+		return toolchain != null && (toolchain.getId().equals(MAKEFILE_PROJECT_TOOLCHAIN_ID)
+				|| isMakefileProjectToolChain(toolchain.getSuperClass()));
 	}
 
 	private void handleToolSelected() {
@@ -424,8 +430,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
 		}
-		autoDiscoveryCheckBox.setSelection(autodiscoveryEnabled2
-				&& !selectedProfileId.equals(ScannerConfigProfileManager.NULL_PROFILE_ID));
+		autoDiscoveryCheckBox.setSelection(
+				autodiscoveryEnabled2 && !selectedProfileId.equals(ScannerConfigProfileManager.NULL_PROFILE_ID));
 		reportProblemsCheckBox.setSelection(buildInfo.isProblemReportingEnabled());
 
 		profileComboBox.removeAll();
@@ -451,9 +457,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			if (!needPerRcProfile) {
 				// configuration-wide (all in tool-chain)
 				IConfiguration cfg = iContext.getConfiguration();
-				IToolChain toolchain = cfg!=null ? cfg.getToolChain() : null;
+				IToolChain toolchain = cfg != null ? cfg.getToolChain() : null;
 
-				if (toolchain==null) {
+				if (toolchain == null) {
 					ManagedBuilderUIPlugin.log(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
 							"Toolchain=null while trying to get discovery profile per project")); //$NON-NLS-1$
 					return;
@@ -465,7 +471,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 				} else {
 					contextProfiles = CfgScannerConfigUtil.getAllScannerDiscoveryProfileIds(toolchain);
 				}
-				if (contextProfiles.size()==0) {
+				if (contextProfiles.size() == 0) {
 					// GCC profile is a sensible default for user to start with
 					contextProfiles.add(GCC_PER_PROJECT_PROFILE);
 				}
@@ -473,7 +479,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			} else {
 				// per language (i.e. input type)
 				ITool tool = iContext.getTool();
-				if (tool==null)
+				if (tool == null)
 					return;
 
 				contextProfiles = CfgScannerConfigUtil.getAllScannerDiscoveryProfileIds(tool);
@@ -486,7 +492,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		String[] labels = new String[visibleProfilesList.size()];
 		String[] profiles = new String[visibleProfilesList.size()];
 		int pos = 0;
-		for (int counter=0;counter<visibleProfilesList.size();counter++) {
+		for (int counter = 0; counter < visibleProfilesList.size(); counter++) {
 			String profileId = visibleProfilesList.get(counter);
 
 			labels[counter] = profiles[counter] = getProfileName(profileId);
@@ -518,7 +524,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		handleDiscoveryProfileChanged();
 	}
 
-
 	private String[] normalize(String[] labels, String[] ids, int counter) {
 		int mode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES);
 		String[] tmp = new String[counter];
@@ -526,9 +531,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		// These cases do not require checking for doubles.
 		if (mode == CDTPrefUtil.DISC_NAMING_ALWAYS_BOTH || mode == CDTPrefUtil.DISC_NAMING_ALWAYS_IDS) {
 			for (int i = 0; i < counter; i++) {
-				tmp[i] = (mode == CDTPrefUtil.DISC_NAMING_ALWAYS_IDS)
-						? ids[i]
-						: combine(labels[i], ids[i]);
+				tmp[i] = (mode == CDTPrefUtil.DISC_NAMING_ALWAYS_IDS) ? ids[i] : combine(labels[i], ids[i]);
 			}
 			return tmp;
 		}
@@ -536,8 +539,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		// For not-unique names only, either display ID or name + ID
 		boolean doubles = false;
 		// quick check for at least one double
-		outer:
-		for (int i = 0; i < counter; i++) {
+		outer: for (int i = 0; i < counter; i++) {
 			for (int j = 0; j < counter; j++) {
 				// sic! i < j, to avoid repeated comparison
 				if (i < j && labels[i].equals(labels[j])) {
@@ -615,8 +617,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		IConfigurationElement fElement;
 		private String profId, name;
 
-		protected DiscoveryProfilePageConfiguration(
-				IConfigurationElement element) {
+		protected DiscoveryProfilePageConfiguration(IConfigurationElement element) {
 			fElement = element;
 			profId = fElement.getAttribute(PROFILE_ID);
 			name = fElement.getAttribute(PROFILE_NAME);
@@ -636,11 +637,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	@Override
-	public void performApply(ICResourceDescription src,	ICResourceDescription dst) {
+	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isMultiCfg())
 			return;
-		ICfgScannerConfigBuilderInfo2Set cbi1 = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(getCfg(src.getConfiguration()));
-		ICfgScannerConfigBuilderInfo2Set cbi2 = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(getCfg(dst.getConfiguration()));
+		ICfgScannerConfigBuilderInfo2Set cbi1 = CfgScannerConfigProfileManager
+				.getCfgScannerConfigBuildInfo(getCfg(src.getConfiguration()));
+		ICfgScannerConfigBuilderInfo2Set cbi2 = CfgScannerConfigProfileManager
+				.getCfgScannerConfigBuildInfo(getCfg(dst.getConfiguration()));
 		cbi2.setPerRcTypeDiscovery(cbi1.isPerRcTypeDiscovery());
 
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> m1 = cbi1.getInfoMap();
@@ -654,7 +657,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					ManagedBuilderUIPlugin.log(e);
 				}
 			} else {
-				IStatus status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), Messages.DiscoveryTab_7);
+				IStatus status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
+						Messages.DiscoveryTab_7);
 				ManagedBuilderUIPlugin.log(status);
 			}
 		}
@@ -736,8 +740,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return list;
 	}
 
-	private boolean settingsEqual(IScannerConfigBuilderInfo2 info1,
-			IScannerConfigBuilderInfo2 info2) {
+	private boolean settingsEqual(IScannerConfigBuilderInfo2 info1, IScannerConfigBuilderInfo2 info2) {
 		if (!CDataUtil.objectsEqual(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
 			return false;
 		if (!CDataUtil.objectsEqual(info1.getBuildOutputFilePath(), info2.getBuildOutputFilePath()))
@@ -840,10 +843,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		CfgInfoContext cfgInfoContext = getContext();
 
 		IConfiguration cfg = cfgInfoContext.getConfiguration();
-		if (cfg==null) {
+		if (cfg == null) {
 			cfg = cfgInfoContext.getResourceInfo().getParent();
 		}
-		if (cfg==null) {
+		if (cfg == null) {
 			Status status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
 					"Unexpected cfg=null while trying to clear discovery entries"); //$NON-NLS-1$
 			throw new CoreException(status);
@@ -866,10 +869,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		ICfgScannerConfigBuilderInfo2Set info2 = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> infoMap2 = info2.getInfoMap();
 		IScannerConfigBuilderInfo2 buildInfo2 = infoMap2.get(cfgInfoContext);
-		if (buildInfo2!=null) {
+		if (buildInfo2 != null) {
 			ScannerConfigProfileManager scpManager = ScannerConfigProfileManager.getInstance();
 			String selectedProfileId = buildInfo2.getSelectedProfileId();
-			SCProfileInstance profileInstance = scpManager.getSCProfileInstance(project, infoContext, selectedProfileId);
+			SCProfileInstance profileInstance = scpManager.getSCProfileInstance(project, infoContext,
+					selectedProfileId);
 
 			IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
 			if (collector instanceof IScannerInfoCollectorCleaner) {

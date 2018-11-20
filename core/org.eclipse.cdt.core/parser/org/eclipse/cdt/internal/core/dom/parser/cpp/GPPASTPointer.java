@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 @Deprecated
 public class GPPASTPointer extends CPPASTPointer implements IGPPASTPointer {
 
-    @Override
+	@Override
 	public GPPASTPointer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}

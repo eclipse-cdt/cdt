@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Intel Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.autotools.core;
 

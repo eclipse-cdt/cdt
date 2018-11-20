@@ -29,20 +29,20 @@ public abstract class PathEntryContainerInitializer {
 
 	public abstract void initialize(IPath containerPath, ICProject project) throws CoreException;
 
-	 /**
-     * Returns <code>true</code> if this container initializer can be requested to perform updates 
-     * on its own container values. If so, then an update request will be performed using
-     * <code>PathEntryContainerInitializer#requestPathEntryContainerUpdate</code>/
-     * <p>
-     * @param containerPath the path of the container which requires to be updated
-     * @param project the project for which the container is to be updated
-     * @return returns <code>true</code> if the container can be updated
-     */
-    public boolean canUpdatePathEntryContainer(IPath containerPath, ICProject project) {
-    	
+	/**
+	* Returns <code>true</code> if this container initializer can be requested to perform updates 
+	* on its own container values. If so, then an update request will be performed using
+	* <code>PathEntryContainerInitializer#requestPathEntryContainerUpdate</code>/
+	* <p>
+	* @param containerPath the path of the container which requires to be updated
+	* @param project the project for which the container is to be updated
+	* @return returns <code>true</code> if the container can be updated
+	*/
+	public boolean canUpdatePathEntryContainer(IPath containerPath, ICProject project) {
+
 		// By default, path container initializers do not accept updating containers
-    	return false; 
-    }
+		return false;
+	}
 
 	/**
 	 * Request a registered container definition to be updated according to a container suggestion. The container suggestion 
@@ -59,18 +59,18 @@ public abstract class PathEntryContainerInitializer {
 	 * <code>PathEntryContainerInitializer#canUpdatePathEntryContainer</code> should be used.
 	 * <p>
 	 * @param containerPath the path of the container which requires to be updated
-     * @param project the project for which the container is to be updated
+	 * @param project the project for which the container is to be updated
 	 * @param containerSuggestion a suggestion to update the corresponding container definition
 	 * @throws CoreException when <code>CoreModel#setPathEntryContainer</code> would throw any.
 	 * @see CoreModel#setPathEntryContainer(ICProject[], IPathEntryContainer, org.eclipse.core.runtime.IProgressMonitor)
 	 * @see #canUpdatePathEntryContainer(IPath, ICProject)
 	 */
-    public void requestPathEntryContainerUpdate(IPath containerPath, ICProject project, IPathEntryContainer containerSuggestion) throws CoreException {
+	public void requestPathEntryContainerUpdate(IPath containerPath, ICProject project,
+			IPathEntryContainer containerSuggestion) throws CoreException {
 
 		// By default, path container initializers do not accept updating containers
-    }
-	
-	
+	}
+
 	public String getDescription(IPath containerPath, ICProject project) {
 		// By default, a container path is the only available description
 		return containerPath.makeRelative().toString();

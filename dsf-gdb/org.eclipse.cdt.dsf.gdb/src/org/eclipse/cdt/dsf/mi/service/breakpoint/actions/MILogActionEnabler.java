@@ -33,54 +33,53 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
  */
 public class MILogActionEnabler implements ILogActionEnabler {
 
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fServiceTracker;
-    private final IDMContext fContext;
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fServiceTracker;
+	private final IDMContext fContext;
 
-    public MILogActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
-        fExecutor = executor;
-        fServiceTracker = serviceTracker;
-        fContext = context;
-    }
+	public MILogActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
+		fExecutor = executor;
+		fServiceTracker = serviceTracker;
+		fContext = context;
+	}
 
 	@Override
-    public String evaluateExpression(final String expression) throws Exception {
-        // Use a Query to synchronize the call
-        Query<String> query = new Query<String>() {
-            @Override
-            protected void execute(final DataRequestMonitor<String> drm) {
-                final IExpressions expressionService = fServiceTracker.getService(IExpressions.class);
-                if (expressionService != null) {
-                    final IExpressionDMContext expressionDMC = expressionService.createExpression(fContext, expression);
-                    String formatId = IFormattedValues.NATURAL_FORMAT;
-                    FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
-                    expressionService.getFormattedExpressionValue(
-                            valueDmc, 
-                            new DataRequestMonitor<FormattedValueDMData>(fExecutor, drm) {
-                                @Override
-                                protected void handleCompleted() {
-                                    String result = expression + ": evaluation failed."; //$NON-NLS-1$
-                                    if (isSuccess()) {
-                                        result = getData().getFormattedValue();
-                                    }
-                                    drm.setData(result);
-                                    drm.done();
-                                }
-                            }
-                    );
-                }
-            }
-        };
-        fExecutor.execute(query);
+	public String evaluateExpression(final String expression) throws Exception {
+		// Use a Query to synchronize the call
+		Query<String> query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> drm) {
+				final IExpressions expressionService = fServiceTracker.getService(IExpressions.class);
+				if (expressionService != null) {
+					final IExpressionDMContext expressionDMC = expressionService.createExpression(fContext, expression);
+					String formatId = IFormattedValues.NATURAL_FORMAT;
+					FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC,
+							formatId);
+					expressionService.getFormattedExpressionValue(valueDmc,
+							new DataRequestMonitor<FormattedValueDMData>(fExecutor, drm) {
+								@Override
+								protected void handleCompleted() {
+									String result = expression + ": evaluation failed."; //$NON-NLS-1$
+									if (isSuccess()) {
+										result = getData().getFormattedValue();
+									}
+									drm.setData(result);
+									drm.done();
+								}
+							});
+				}
+			}
+		};
+		fExecutor.execute(query);
 
-        try {
-            // The happy case
-            return query.get();
-        } catch (InterruptedException e) {
-            return "Error evaluating \"" + expression + "\" (InterruptedException)."; //$NON-NLS-1$ //$NON-NLS-2$
-        } catch (ExecutionException e) {
-            return "Error evaluating \"" + expression + "\" (ExecutionException)."; //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
+		try {
+			// The happy case
+			return query.get();
+		} catch (InterruptedException e) {
+			return "Error evaluating \"" + expression + "\" (InterruptedException)."; //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (ExecutionException e) {
+			return "Error evaluating \"" + expression + "\" (ExecutionException)."; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 
 }

@@ -37,7 +37,7 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 
 	private IndexerBlock optionPage;
 
-	public IndexerOptionPropertyPage(){
+	public IndexerOptionPropertyPage() {
 		super();
 		optionPage = new IndexerBlock();
 		optionPage.setContainer(this);
@@ -70,13 +70,13 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 	}
 
 	@Override
-	public IProject getProject(){
-		IProject project= null;
+	public IProject getProject() {
+		IProject project = null;
 		IAdaptable elem = getElement();
 		if (elem instanceof IProject) {
-			project= (IProject) elem;
+			project = (IProject) elem;
 		} else if (elem != null) {
-			project= elem.getAdapter(IProject.class);
+			project = elem.getAdapter(IProject.class);
 		}
 		return project;
 	}

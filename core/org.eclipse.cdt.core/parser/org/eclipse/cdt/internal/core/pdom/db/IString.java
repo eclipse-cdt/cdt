@@ -28,7 +28,7 @@ public interface IString {
 	 * Get the offset of this IString record in the PDOM
 	 */
 	public long getRecord();
-	
+
 	// strcmp equivalents
 	/**
 	 * Compare this IString record and the specified IString record
@@ -41,7 +41,7 @@ public interface IString {
 	 * @throws CoreException
 	 */
 	public int compare(IString string, boolean caseSensitive) throws CoreException;
-	
+
 	/**
 	 * Compare this IString record and the specified String object
 	 * @param string
@@ -53,7 +53,7 @@ public interface IString {
 	 * @throws CoreException
 	 */
 	public int compare(String string, boolean caseSensitive) throws CoreException;
-	
+
 	/**
 	 * Compare this IString record and the specified character array
 	 * @param chars
@@ -89,7 +89,7 @@ public interface IString {
 	 * @throws CoreException
 	 */
 	public int compareCompatibleWithIgnoreCase(char[] chars) throws CoreException;
-	
+
 	/**
 	 * Compare this IString record and the specified character array
 	 * @param name the name to compare to
@@ -110,7 +110,7 @@ public interface IString {
 	 * @throws CoreException
 	 */
 	public char[] getChars() throws CoreException;
-	
+
 	/**
 	 * Get an equivalent String object to this IString record<p>
 	 * <b>N.B. This method can be expensive: compare and equals can be used for
@@ -119,7 +119,7 @@ public interface IString {
 	 * @throws CoreException
 	 */
 	public String getString() throws CoreException;
-	
+
 	/**
 	 * Free the associated record in the PDOM
 	 * @throws CoreException

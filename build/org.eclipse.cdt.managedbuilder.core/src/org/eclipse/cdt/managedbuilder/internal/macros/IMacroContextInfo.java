@@ -20,7 +20,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
  * 
  * @since 3.0
  */
-public interface IMacroContextInfo extends IVariableContextInfo{
+public interface IMacroContextInfo extends IVariableContextInfo {
 	/**
 	 * returns the context type
 	 * 

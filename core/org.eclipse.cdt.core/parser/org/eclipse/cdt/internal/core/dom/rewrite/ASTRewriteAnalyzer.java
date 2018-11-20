@@ -31,7 +31,7 @@ public class ASTRewriteAnalyzer {
 	}
 
 	public static void setCTextFileChangeFactory(ICTextFileChangeFactory factory) {
-		sFileChangeFactory= factory;
+		sFileChangeFactory = factory;
 	}
 
 	public static TextFileChange createCTextFileChange(IFile file) {

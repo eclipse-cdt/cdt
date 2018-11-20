@@ -23,8 +23,7 @@ import junit.framework.TestSuite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-	AsyncViewerTest.class,
-})
+		AsyncViewerTest.class, })
 public class ViewSupportTestSuite extends TestSuite {
 
 }

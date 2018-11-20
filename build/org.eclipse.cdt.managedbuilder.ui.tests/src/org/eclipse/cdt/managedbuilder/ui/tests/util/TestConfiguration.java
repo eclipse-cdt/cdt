@@ -79,15 +79,13 @@ public class TestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public IFileInfo createFileInfo(IPath path, IFolderInfo base,
-			ITool baseTool, String id, String name) {
+	public IFileInfo createFileInfo(IPath path, IFolderInfo base, ITool baseTool, String id, String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IFileInfo createFileInfo(IPath path, IFileInfo base, String id,
-			String name) {
+	public IFileInfo createFileInfo(IPath path, IFileInfo base, String id, String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -105,24 +103,21 @@ public class TestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public IFolderInfo createFolderInfo(IPath path, IFolderInfo base,
-			String id, String name) {
+	public IFolderInfo createFolderInfo(IPath path, IFolderInfo base, String id, String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IToolChain createToolChain(IToolChain superClass, String Id,
-			String name, boolean isExtensionElement) {
+	public IToolChain createToolChain(IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IManagedCommandLineInfo generateToolCommandLineInfo(
-			String sourceExtension, String[] flags, String outputFlag,
-			String outputPrefix, String outputName, String[] inputResources,
-			IPath inputLocation, IPath outputLocation) {
+	public IManagedCommandLineInfo generateToolCommandLineInfo(String sourceExtension, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation,
+			IPath outputLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -528,22 +523,19 @@ public class TestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, String value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option,
-			String[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -636,15 +628,17 @@ public class TestConfiguration implements IConfiguration {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public IOptionalBuildProperties getOptionalBuildProperties() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public IResource getOwner() { return null; }
+	public IResource getOwner() {
+		return null;
+	}
 
 	@Override
 	public IResourceConfiguration createResourceConfiguration(IFile file) {

@@ -31,6 +31,7 @@ import org.osgi.framework.Version;
 public class TestFolderInfo implements IFolderInfo {
 
 	IConfiguration cfg;
+
 	public TestFolderInfo(IConfiguration parent) {
 		cfg = parent;
 	}
@@ -42,8 +43,7 @@ public class TestFolderInfo implements IFolderInfo {
 	}
 
 	@Override
-	public IToolChain changeToolChain(IToolChain newSuperClass, String Id,
-			String name) throws BuildException {
+	public IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -79,8 +79,7 @@ public class TestFolderInfo implements IFolderInfo {
 	}
 
 	@Override
-	public IModificationStatus getToolChainModificationStatus(ITool[] removed,
-			ITool[] added) {
+	public IModificationStatus getToolChainModificationStatus(ITool[] removed, ITool[] added) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -116,8 +115,7 @@ public class TestFolderInfo implements IFolderInfo {
 	}
 
 	@Override
-	public void modifyToolChain(ITool[] removed, ITool[] added)
-			throws BuildException {
+	public void modifyToolChain(ITool[] removed, ITool[] added) throws BuildException {
 		// TODO Auto-generated method stub
 
 	}
@@ -200,22 +198,19 @@ public class TestFolderInfo implements IFolderInfo {
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, String value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option,
-			String[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -281,8 +276,7 @@ public class TestFolderInfo implements IFolderInfo {
 	}
 
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option,
-			OptionStringValue[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, OptionStringValue[] value) throws BuildException {
 		// TODO Auto-generated method stub
 		return null;
 	}

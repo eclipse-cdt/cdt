@@ -37,9 +37,8 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * This is a list of elements in the test .c file. It will be used in a
 	 * number of places in the tests
 	 */
-	private static final String[] expectedStringList = {
-			"stdio.h", "unistd.h", "func2p", "globalvar", "myenum", "mystruct_t",
-			"mystruct", "myunion", "mytype", "func1", "func2", "main", "func3" };
+	private static final String[] expectedStringList = { "stdio.h", "unistd.h", "func2p", "globalvar", "myenum",
+			"mystruct_t", "mystruct", "myunion", "mytype", "func1", "func2", "main", "func3" };
 
 	public TranslationUnitTests(String name) {
 		super(name);
@@ -87,8 +86,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 			if (myElement == null) {
 				missing.push(expectedStringList[x]);
 			} else {
-				assertTrue("Expected: \"" + expectedStringList[x]
-						+ "\". Got:" + myElement.getElementName(),
+				assertTrue("Expected: \"" + expectedStringList[x] + "\". Got:" + myElement.getElementName(),
 						expectedStringList[x].equals(myElement.getElementName()));
 			}
 		}
@@ -115,8 +113,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 			} else {
 				// Failed test: Include.getIncludeName() always returns "";
 				// assertTrue
-				assertTrue("PR:23478 Expected: an empty string. Got: "
-						+ include.getIncludeName(),
+				assertTrue("PR:23478 Expected: an empty string. Got: " + include.getIncludeName(),
 						includes[x].equals(include.getIncludeName()));
 			}
 		}
@@ -144,34 +141,34 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * Simple sanity tests for the getElementAtLine() call.
 	 */
 	// This test is disabled due to consistent failure.
-//	public void testGetElementAtLine() throws Exception {
-//		Deque<String> missing = new ArrayDeque<String>();
-//		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
-//
-//		for (int x = 0; x < expectedStringList.length; x++) {
-//			ICElement element = tu.getElementAtLine(expectedLines[x]);
-//			if (element == null) {
-//				missing.push(expectedStringList[x]);
-//			} else {
-//				if (expectedStringList[x].equals("mystruct_t")) {
-//					assertTrue("PR:23603 expected: " + expectedStringList[x]
-//							+ ". Got: " + element.getElementName(),
-//							expectedStringList[x].equals(element.getElementName()));
-//				} else {
-//					assertTrue("Expected: " + expectedStringList[x]
-//							+ ". Got: " + element.getElementName(),
-//							expectedStringList[x].equals(element.getElementName()));
-//				}
-//			}
-//		}
-//		if (!missing.isEmpty()) {
-//			StringBuilder output = new StringBuilder("PR:23603 Could not get elements:");
-//			while (!missing.isEmpty()) {
-//				output.append(" ").append(missing.pop());
-//			}
-//			assertTrue(output.toString(), false);
-//		}
-//	}
+	//	public void testGetElementAtLine() throws Exception {
+	//		Deque<String> missing = new ArrayDeque<String>();
+	//		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
+	//
+	//		for (int x = 0; x < expectedStringList.length; x++) {
+	//			ICElement element = tu.getElementAtLine(expectedLines[x]);
+	//			if (element == null) {
+	//				missing.push(expectedStringList[x]);
+	//			} else {
+	//				if (expectedStringList[x].equals("mystruct_t")) {
+	//					assertTrue("PR:23603 expected: " + expectedStringList[x]
+	//							+ ". Got: " + element.getElementName(),
+	//							expectedStringList[x].equals(element.getElementName()));
+	//				} else {
+	//					assertTrue("Expected: " + expectedStringList[x]
+	//							+ ". Got: " + element.getElementName(),
+	//							expectedStringList[x].equals(element.getElementName()));
+	//				}
+	//			}
+	//		}
+	//		if (!missing.isEmpty()) {
+	//			StringBuilder output = new StringBuilder("PR:23603 Could not get elements:");
+	//			while (!missing.isEmpty()) {
+	//				output.append(" ").append(missing.pop());
+	//			}
+	//			assertTrue(output.toString(), false);
+	//		}
+	//	}
 
 	public void testIsValidSourceUnitName() {
 		assertTrue(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.c"));
@@ -184,8 +181,8 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	// "asmSource" defined in org.eclipse.cdt.core and
 	// "org.eclipse.cdt.managedbuilder.llvm.ui.llvmAssemblyCode" defined in
 	// org.eclipse.cdt.managedbuilder.llvm.ui. 
-//	public void testAssemblyContentType_Bug186774() {
-//		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.s"));
-//		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.S"));
-//	}
+	//	public void testAssemblyContentType_Bug186774() {
+	//		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.s"));
+	//		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.S"));
+	//	}
 }

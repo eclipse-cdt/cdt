@@ -26,16 +26,16 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 	private List<ISettingsProcessor> selectedSettingsProcessors;
 	private ICConfigurationDescription selectedConfiguration;
 	private List<ISettingsProcessor> settingsProcessors;
-	
+
 	public void setDestinationFilePath(String path) {
 		this.path = path;
 	}
-	
+
 	@Override
 	public String getDestinationFilePath() {
 		return path;
 	}
-	
+
 	public void setSelectedConfiguration(ICConfigurationDescription config) {
 		this.selectedConfiguration = config;
 	}
@@ -48,7 +48,7 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 	public void setSelectedSettingsProcessors(List<ISettingsProcessor> processors) {
 		this.selectedSettingsProcessors = processors;
 	}
-	
+
 	@Override
 	public List<ISettingsProcessor> getSelectedSettingsProcessors() {
 		return selectedSettingsProcessors;
@@ -57,14 +57,14 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 	public void setSettingsProcessors(List<ISettingsProcessor> processors) {
 		this.settingsProcessors = processors;
 	}
-	
+
 	@Override
 	public List<ISettingsProcessor> getSettingsProcessors() {
 		return settingsProcessors;
 	}
-		
+
 	@Override
-	public void setDisplayedSettingsProcessors( List<ISettingsProcessor> processors) {
+	public void setDisplayedSettingsProcessors(List<ISettingsProcessor> processors) {
 		// do nothing
 	}
 

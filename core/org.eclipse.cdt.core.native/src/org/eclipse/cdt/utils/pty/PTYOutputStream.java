@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.pty;
 
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -53,12 +52,7 @@ public class PTYOutputStream extends OutputStream {
 	public void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();
-		} else if (
-			(off < 0)
-				|| (off > b.length)
-				|| (len < 0)
-				|| ((off + len) > b.length)
-				|| ((off + len) < 0)) {
+		} else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return;
@@ -67,6 +61,7 @@ public class PTYOutputStream extends OutputStream {
 		System.arraycopy(b, off, tmpBuf, 0, len);
 		write0(master.getFD(), tmpBuf, len);
 	}
+
 	/**
 	 * Implementation of read for the InputStream.
 	 *
@@ -103,6 +98,7 @@ public class PTYOutputStream extends OutputStream {
 	}
 
 	private native int write0(int fd, byte[] b, int len) throws IOException;
+
 	private native int close0(int fd) throws IOException;
 
 	static {

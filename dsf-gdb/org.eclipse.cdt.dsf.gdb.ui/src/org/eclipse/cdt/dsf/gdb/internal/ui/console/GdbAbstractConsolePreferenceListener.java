@@ -27,15 +27,21 @@ public abstract class GdbAbstractConsolePreferenceListener implements IPropertyC
 			boolean terminate = terminateStr.equals(Boolean.FALSE.toString()) ? false : true;
 			handleAutoTerminatePref(terminate);
 		} else if (property.equals(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS)) {
-			boolean enabled = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID, IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS, IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS_DEFAULT, null);
+			boolean enabled = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+					IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS,
+					IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS_DEFAULT, null);
 			handleInvertColorsPref(enabled);
 		} else if (property.equals(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES)) {
-			int bufferLines = Platform.getPreferencesService().getInt(GdbPlugin.PLUGIN_ID, IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES, IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES_DEFAULT, null);
+			int bufferLines = Platform.getPreferencesService().getInt(GdbPlugin.PLUGIN_ID,
+					IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES,
+					IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES_DEFAULT, null);
 			handleBufferLinesPref(bufferLines);
 		}
 	}
-	
+
 	protected abstract void handleAutoTerminatePref(boolean enabled);
+
 	protected abstract void handleInvertColorsPref(boolean enabled);
+
 	protected abstract void handleBufferLinesPref(int bufferLines);
 }

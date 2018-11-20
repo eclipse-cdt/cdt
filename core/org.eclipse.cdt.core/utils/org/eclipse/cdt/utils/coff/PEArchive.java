@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -68,10 +67,10 @@ public class PEArchive {
 	public class ARHeader {
 
 		private String object_name;
-//		private String modification_time;
-//		private String uid;
-//		private String gid;
-//		private String mode;
+		//		private String modification_time;
+		//		private String uid;
+		//		private String gid;
+		//		private String mode;
 		private long size;
 		private long elf_offset;
 
@@ -150,19 +149,17 @@ public class PEArchive {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = removeBlanks(new String(object_name));
-//			this.modification_time = new String(modification_time);
-//			this.uid = new String(uid);
-//			this.gid = new String(gid);
-//			this.mode = new String(mode);
+			//			this.modification_time = new String(modification_time);
+			//			this.uid = new String(uid);
+			//			this.gid = new String(gid);
+			//			this.mode = new String(mode);
 			this.size = Long.parseLong(removeBlanks(new String(size)));
 
 			//
 			// If the name is of the format "/<number>", get name from the
 			// string table.
 			//
-			if (strtbl_pos != -1
-				&& this.object_name.length() > 1
-				&& this.object_name.charAt(0) == '/') {
+			if (strtbl_pos != -1 && this.object_name.length() > 1 && this.object_name.charAt(0) == '/') {
 				try {
 					long offset = Long.parseLong(this.object_name.substring(1));
 					this.object_name = nameFromStringTable(offset);
@@ -215,14 +212,8 @@ public class PEArchive {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 7
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>')
+		if (ident == null || ident.length < 7 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a'
+				|| ident[3] != 'r' || ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>')
 			return false;
 		return true;
 	}
@@ -306,8 +297,7 @@ public class PEArchive {
 		return false;
 	}
 
-	public String[] extractFiles(String outdir, String[] names)
-		throws IOException {
+	public String[] extractFiles(String outdir, String[] names) throws IOException {
 		Vector<String> names_used = new Vector<String>();
 		String object_name;
 		int count;

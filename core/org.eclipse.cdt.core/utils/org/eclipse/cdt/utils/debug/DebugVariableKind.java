@@ -19,7 +19,7 @@ package org.eclipse.cdt.utils.debug;
  *
  */
 public final class DebugVariableKind {
-	
+
 	/* What is it ?? .  */
 	public final static DebugVariableKind UNKNOWN = new DebugVariableKind(0);
 	/* global variable  */
@@ -32,8 +32,9 @@ public final class DebugVariableKind {
 	public final static DebugVariableKind LOCAL = new DebugVariableKind(4);
 	/* variable is in register.  */
 	public final static DebugVariableKind REGISTER = new DebugVariableKind(5);
- 
+
 	private int id;
+
 	/**
 	 * 
 	 */
@@ -44,7 +45,7 @@ public final class DebugVariableKind {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DebugVariableKind) {
-			DebugVariableKind kind = (DebugVariableKind)obj;
+			DebugVariableKind kind = (DebugVariableKind) obj;
 			return kind.id == id;
 		}
 		return super.equals(obj);

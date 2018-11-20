@@ -33,15 +33,14 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 
 	private MbsEnvironmentSupplier fMbsSupplier = new MbsEnvironmentSupplier();
 
-	public BuildEnvironmentContributor(BuildBuildData buildData){
+	public BuildEnvironmentContributor(BuildBuildData buildData) {
 		fBuildData = buildData;
 		fCfg = fBuildData.getBuilder().getParent().getParent();
 		fCfgDes = ManagedBuildManager.getDescriptionForConfiguration(fCfg);
 	}
 
 	@Override
-	public IEnvironmentVariable getVariable(String name,
-			IEnvironmentVariableManager provider) {
+	public IEnvironmentVariable getVariable(String name, IEnvironmentVariableManager provider) {
 
 		EnvironmentCollector collector = new EnvironmentCollector();
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
@@ -61,8 +60,7 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 	}
 
 	@Override
-	public IEnvironmentVariable[] getVariables(
-			IEnvironmentVariableManager provider) {
+	public IEnvironmentVariable[] getVariables(IEnvironmentVariableManager provider) {
 		EnvironmentCollector collector = new EnvironmentCollector();
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
 
@@ -80,12 +78,13 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 		return collector.getVariables();
 	}
 
-	private boolean processVariable(String name, IEnvironmentVariable var, EnvironmentCollector collector, IEnvironmentVariableManager provider, boolean varFound){
-		if(var != null){
-			if(!varFound){
+	private boolean processVariable(String name, IEnvironmentVariable var, EnvironmentCollector collector,
+			IEnvironmentVariableManager provider, boolean varFound) {
+		if (var != null) {
+			if (!varFound) {
 				varFound = true;
 				IEnvironmentVariable base = provider.getVariable(name, fCfgDes, false);
-				if(base != null)
+				if (base != null)
 					collector.addVariable(base);
 			}
 			collector.addVariable(var);
@@ -94,21 +93,22 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 		return varFound;
 	}
 
-	private Set<String> processVariables(IEnvironmentVariable vars[], EnvironmentCollector collector, IEnvironmentVariableManager provider, Set<String> set){
+	private Set<String> processVariables(IEnvironmentVariable vars[], EnvironmentCollector collector,
+			IEnvironmentVariableManager provider, Set<String> set) {
 		boolean checkSet = true;
-		if(vars != null && vars.length != 0){
-			if(set == null){
+		if (vars != null && vars.length != 0) {
+			if (set == null) {
 				set = new HashSet<String>();
 				checkSet = false;
 			}
 
-			for(int i = 0; i < vars.length; i++){
-				if(vars[i] == null)
+			for (int i = 0; i < vars.length; i++) {
+				if (vars[i] == null)
 					continue;
 
-				if(set.add(vars[i].getName()) || !checkSet){
+				if (set.add(vars[i].getName()) || !checkSet) {
 					IEnvironmentVariable base = provider.getVariable(vars[i].getName(), fCfgDes, false);
-					if(base != null){
+					if (base != null) {
 						collector.addVariable(base);
 					}
 				}

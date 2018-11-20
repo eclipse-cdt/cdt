@@ -37,85 +37,77 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 
 	protected static final String NONE = ""; //$NON-NLS-1$
 	protected static final String CDATA = "CDATA"; //$NON-NLS-1$
-	
+
 	protected static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
 	protected static final String LANGUAGE_ELEMENT = "language"; //$NON-NLS-1$
-	
-	
+
 	/**
 	 * Returns a constant from the ICSettingEntry interface.
 	 */
 	protected abstract int getSettingsType();
-	
-	
+
 	protected abstract void writeSettings(ContentHandler content, ICLanguageSettingEntry setting)
-		throws SettingsImportExportException;
-	
-	
-	protected abstract void readSettings(ICLanguageSetting setting, Element language) 
-		throws SettingsImportExportException;
-	
-	
+			throws SettingsImportExportException;
+
+	protected abstract void readSettings(ICLanguageSetting setting, Element language)
+			throws SettingsImportExportException;
+
 	/**
 	 * Outputs a newline (\n) to the given ContentHandler.
 	 */
 	protected static void newline(ContentHandler handler) throws SAXException {
 		handler.ignorableWhitespace("\n".toCharArray(), 0, 1); //$NON-NLS-1$
 	}
-	
-	
 
 	@Override
-	public void writeSectionXML(ICFolderDescription projectRoot, ContentHandler content) throws SettingsImportExportException {
+	public void writeSectionXML(ICFolderDescription projectRoot, ContentHandler content)
+			throws SettingsImportExportException {
 		ICLanguageSetting[] languages = projectRoot.getLanguageSettings();
 		AttributesImpl attributes = new AttributesImpl();
-		
+
 		try {
-			for(ICLanguageSetting language : languages) {
+			for (ICLanguageSetting language : languages) {
 				//TODO for some reason language.getLanguageId() is returning null
 				String languageName = language.getName();
 				attributes.clear();
 				attributes.addAttribute(NONE, NONE, NAME_ATTRIBUTE, CDATA, languageName);
 				content.startElement(NONE, NONE, LANGUAGE_ELEMENT, attributes);
 				newline(content);
-				
+
 				ICLanguageSettingEntry[] settings = language.getSettingEntries(getSettingsType());
-				
-				for(ICLanguageSettingEntry setting : settings) {
-					if(!setting.isBuiltIn()) {
+
+				for (ICLanguageSettingEntry setting : settings) {
+					if (!setting.isBuiltIn()) {
 						writeSettings(content, setting);
 					}
 				}
-				
+
 				newline(content);
 				content.endElement(NONE, NONE, LANGUAGE_ELEMENT);
 				newline(content);
 			}
-		
-		} catch(SAXException e) {
+
+		} catch (SAXException e) {
 			throw new SettingsImportExportException(e);
 		}
 	}
-	
-	
-	
+
 	@Override
 	public void readSectionXML(ICFolderDescription projectRoot, Element section) throws SettingsImportExportException {
 		ICLanguageSetting[] languageSettings = projectRoot.getLanguageSettings();
-		
-		Map<String,ICLanguageSetting> languageMap = new HashMap<String,ICLanguageSetting>();
-		for(ICLanguageSetting language : languageSettings) {
+
+		Map<String, ICLanguageSetting> languageMap = new HashMap<String, ICLanguageSetting>();
+		for (ICLanguageSetting language : languageSettings) {
 			languageMap.put(language.getName(), language);
 		}
-	
+
 		List<Element> elements = XMLUtils.extractChildElements(section, LANGUAGE_ELEMENT); // throws SettingsImportExportException
-		for(Element languageElement : elements) {
+		for (Element languageElement : elements) {
 			String languageName = languageElement.getAttribute(NAME_ATTRIBUTE);
 			ICLanguageSetting setting = languageMap.get(languageName);
-			if(setting != null)
+			if (setting != null)
 				readSettings(setting, languageElement);
 		}
 	}
 
-	
 }

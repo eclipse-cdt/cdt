@@ -32,14 +32,16 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	/**
 	 * @since 5.9
 	 */
-	public enum RefQualifier { LVALUE, RVALUE }
-	
+	public enum RefQualifier {
+		LVALUE, RVALUE
+	}
+
 	/**
 	 * Used as return value for {@link #getExceptionSpecification()}.
 	 * @since 5.1
 	 */
 	public static final IASTTypeId[] NO_EXCEPTION_SPECIFICATION = {};
-	
+
 	/**
 	 * Used as return value for {@link #getVirtSpecifiers()}.
 	 * @since 5.7
@@ -50,8 +52,8 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * Represents a 'noexcept' specification without an expression.
 	 * @since 5.5
 	 */
-	public static final ICPPASTLiteralExpression NOEXCEPT_DEFAULT =
-			new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_true, Keywords.cTRUE);
+	public static final ICPPASTLiteralExpression NOEXCEPT_DEFAULT = new CPPASTLiteralExpression(
+			ICPPASTLiteralExpression.lk_true, Keywords.cTRUE);
 
 	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID [IASTTypeId]"); //$NON-NLS-1$
@@ -63,8 +65,8 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 			"ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE [IASTTypeId]"); //$NON-NLS-1$
 	/** @since 5.7 */
 	public static final ASTNodeProperty VIRT_SPECIFIER = new ASTNodeProperty(
-			"ICPPASTFunctionDeclarator.VIRT_SPECIFIER [ICPPASTVirtSpecifier]");  //$NON-NLS-1$
-	
+			"ICPPASTFunctionDeclarator.VIRT_SPECIFIER [ICPPASTVirtSpecifier]"); //$NON-NLS-1$
+
 	/**
 	 * Is this a const method?
 	 */
@@ -96,7 +98,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * @since 5.3
 	 */
 	public void setMutable(boolean value);
-	
+
 	/**
 	 * Is the method pure virtual?
 	 */
@@ -124,7 +126,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	@Override
 	public ICPPASTParameterDeclaration[] getParameters();
-	
+
 	/**
 	 * Returns an array of type-ids representing the exception specification. The return value
 	 * {@link #NO_EXCEPTION_SPECIFICATION} indicates that no exceptions are specified, whereas
@@ -208,7 +210,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * @since 5.7
 	 */
 	public ICPPASTVirtSpecifier[] getVirtSpecifiers();
-	
+
 	/**
 	 * Add a virt-specifiers to this function. 
 	 * @since 5.7
@@ -228,7 +230,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	@Deprecated
 	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER - Role of a Constructor Chain Initializer"); //$NON-NLS-1$
-	
+
 	/**
 	 * @deprecated Use {@link ICPPASTFunctionDefinition#getMemberInitializers}, instead.
 	 * @noreference This method is not intended to be referenced by clients.
@@ -242,7 +244,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	@Deprecated
 	public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer);
-	
+
 	/**
 	 * @since 5.5
 	 * @deprecated Use {@link #addVirtSpecifier(ICPPASTVirtSpecifier)} instead.

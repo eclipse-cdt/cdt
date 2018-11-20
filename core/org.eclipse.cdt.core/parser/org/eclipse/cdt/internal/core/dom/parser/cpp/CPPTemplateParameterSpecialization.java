@@ -37,8 +37,8 @@ public abstract class CPPTemplateParameterSpecialization extends PlatformObject
 	private final ICPPTemplateParameterMap fTemplateParameterMap;
 	private final ICPPTemplateArgument fDefaultValue;
 
-	public CPPTemplateParameterSpecialization(ICPPSpecialization owner, ICPPScope scope, ICPPTemplateParameter specialized,
-			ICPPTemplateArgument defaultValue) {
+	public CPPTemplateParameterSpecialization(ICPPSpecialization owner, ICPPScope scope,
+			ICPPTemplateParameter specialized, ICPPTemplateArgument defaultValue) {
 		fOwner = owner;
 		fScope = scope;
 		fSpecialized = specialized;

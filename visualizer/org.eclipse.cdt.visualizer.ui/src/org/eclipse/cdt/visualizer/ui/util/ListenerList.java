@@ -16,7 +16,6 @@ package org.eclipse.cdt.visualizer.ui.util;
 
 import java.util.ArrayList;
 
-
 // ---------------------------------------------------------------------------
 // ListenerList
 // ---------------------------------------------------------------------------
@@ -32,28 +31,26 @@ import java.util.ArrayList;
  * of listeners and events (for example, by having strongly-typed add/remove methods
  * that delegate to the add/remove methods on this class).
  */
-abstract public class ListenerList
-{
+abstract public class ListenerList {
 	// --- members ---
-	
+
 	/** Object that owns this listener list */
 	protected Object m_owner = null;
-	
+
 	/** listener list display label */
 	protected String m_label = null;
-	
+
 	/** listener list */
 	protected ArrayList<Object> m_listeners = null;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	public ListenerList(Object owner, String label) {
 		m_owner = owner;
 		m_label = label;
 	}
-	
+
 	/** Dispose method. */
 	public void dispose() {
 		m_owner = null;
@@ -63,45 +60,43 @@ abstract public class ListenerList
 			m_listeners = null;
 		}
 	}
-	
-	
+
 	// --- methods ---
-	
+
 	/** Clears list of listeners */
 	public synchronized void clear() {
 		if (m_listeners != null) {
 			m_listeners.clear();
 		}
 	}
-	
+
 	/** Returns count of current listeners. */
 	public synchronized int size() {
 		return (m_listeners == null) ? 0 : m_listeners.size();
 	}
-	
+
 	/** Adds a listener */
 	public synchronized void addListener(Object listener) {
 		if (m_listeners == null) {
 			m_listeners = new ArrayList<Object>();
 		}
-		if (! m_listeners.contains(listener)) {
+		if (!m_listeners.contains(listener)) {
 			m_listeners.add(listener);
 		}
 	}
-	
+
 	/** Removes a listener */
 	public synchronized void removeListener(Object listener) {
 		if (m_listeners != null) {
 			m_listeners.remove(listener);
 		}
 	}
-	
+
 	/**
 	 * Dispatches event to all attached listeners
 	 * Invokes raise(listener, event) for each attached listener.
 	 */
-	public void raise (final Object event)
-	{
+	public void raise(final Object event) {
 		// we can't use an iterator here, because
 		// the listener list might change while we're walking it,
 		// which would make the iterator throw a ConcurrentModificationException,
@@ -114,17 +109,16 @@ abstract public class ListenerList
 			}
 		}
 		int count = (listeners == null) ? 0 : listeners.size();
-		for (int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			Object listener = (Object) listeners.get(i);
 			try {
 				raise(listener, event);
-			}
-			catch (Throwable t) {
+			} catch (Throwable t) {
 				// TODO: decide how to log this
 			}
 		}
 	}
-	
+
 	/**
 	 * Dispatches typed event to specified listener
 	 * Intended to be overloaded by derived class to cast listener and event

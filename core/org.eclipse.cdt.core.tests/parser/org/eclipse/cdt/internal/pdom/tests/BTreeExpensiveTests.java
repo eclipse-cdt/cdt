@@ -24,25 +24,25 @@ import junit.framework.Test;
  * expensive and cpu hungry.
  */
 public class BTreeExpensiveTests extends BTreeTests {
-	
+
 	public static Test suite() {
 		return suite(BTreeExpensiveTests.class);
 	}
-	
+
 	public void testBySortedSetMirror() throws Exception {
 		sortedMirrorTest(100);
 	}
-	
+
 	// @Override
 	@Override
 	public void testInsertion() throws Exception {
 		super.testInsertion();
 	}
-	
+
 	/*
 	 * N.B. Each of the following tests are quite expensive (i.e. > 10mins each on a 2Ghz machine)
 	 */
-	
+
 	public void testBySortedSetMirror1682762087() throws Exception {
 		System.out.println("1682762087 Full Checking");
 		trial(1682762087, true); // exposed bugs in 2a,b

@@ -24,7 +24,7 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 	}
 
 	@Override
-	public boolean equals (Object obj) {
+	public boolean equals(Object obj) {
 		if (obj instanceof ISourceEntry) {
 			ISourceEntry otherEntry = (ISourceEntry) obj;
 			if (!super.equals(otherEntry)) {

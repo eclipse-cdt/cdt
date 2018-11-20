@@ -47,20 +47,20 @@ import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
-	public static final String PROJECTTYPE_ELEMENT_NAME = "projectType";	//$NON-NLS-1$
-	public static final String SUPERCLASS = "superClass";					//$NON-NLS-1$
-	public static final String IS_ABSTRACT = "isAbstract";					//$NON-NLS-1$
-	public static final String UNUSED_CHILDREN = "unusedChildren";			//$NON-NLS-1$
-	public static final String IS_TEST = "isTest";							//$NON-NLS-1$
-	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
-	public static final String CONFIGURATION_NAME_PROVIDER = "configurationNameProvider";  //$NON-NLS-1$
-	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier";			//$NON-NLS-1$
-	public static final String PROJECT_MACRO_SUPPLIER = "projectMacroSupplier";			//$NON-NLS-1$
+public interface IProjectType
+		extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
+	public static final String PROJECTTYPE_ELEMENT_NAME = "projectType"; //$NON-NLS-1$
+	public static final String SUPERCLASS = "superClass"; //$NON-NLS-1$
+	public static final String IS_ABSTRACT = "isAbstract"; //$NON-NLS-1$
+	public static final String UNUSED_CHILDREN = "unusedChildren"; //$NON-NLS-1$
+	public static final String IS_TEST = "isTest"; //$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId"; //$NON-NLS-1$
+	public static final String CONFIGURATION_NAME_PROVIDER = "configurationNameProvider"; //$NON-NLS-1$
+	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier"; //$NON-NLS-1$
+	public static final String PROJECT_MACRO_SUPPLIER = "projectMacroSupplier"; //$NON-NLS-1$
 	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
 
-	
 	/**
 	 * Creates a configuration for this project-type populated with the tools
 	 * and options settings from the parent configuration.  As options and 
@@ -111,7 +111,7 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	 * @return IProjectType
 	 */
 	public IProjectType getSuperClass();
-	
+
 	/**
 	 * Returns whether this element is abstract.  Returns <code>false</code>
 	 * if the attribute was not specified.
@@ -123,7 +123,7 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	 * Sets the isAbstract attribute of the tool-chain. 
 	 */
 	public void setIsAbstract(boolean b);
-	
+
 	/**
 	 * Returns a semi-colon delimited list of child Ids of the superclass'
 	 * children that should not be automatically inherited by this element.
@@ -131,7 +131,7 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	 * @return String 
 	 */
 	public String getUnusedChildren();
-	
+
 	/**
 	 * Returns <code>true</code> if the project-type is defined 
 	 * for testing purposes only, else <code>false</code>. A test project-type will 
@@ -147,16 +147,16 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	 * otherwise returns <code>false</code>
 	 * 
 	 * @return boolean 
-	 */	
+	 */
 	public boolean isSupported();
-	
+
 	/**
 	 * Returns the configurationNameProvider. 
 	 *  
 	 * @return IConfigurationNameProvider
 	 */
 	public IConfigurationNameProvider getConfigurationNameProvider();
-	
+
 	/**
 	 * Returns the tool-integrator provided implementation of the project environment variable supplier
 	 * or <code>null</code> if none. 
@@ -172,7 +172,7 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	 * @return IProjectBuildMacroSupplier
 	 */
 	public IProjectBuildMacroSupplier getBuildMacroSupplier();
-	
+
 	/**
 	 * Returns the 'convertToId' of this project type.
 	 * 
@@ -180,22 +180,22 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	 */
 
 	public String getConvertToId();
-	
+
 	/**
 	 * Sets the 'convertToId' attribute of the project type. 
 	 */
 	public void setConvertToId(String convertToId);
-	
+
 	/**
 	 *  check for migration support.
 	 *  @return boolean
 	 */
-	
+
 	public boolean checkForMigrationSupport();
-	
+
 	public String getNameAttribute();
-	
+
 	public IBuildPropertyValue getBuildArtefactType();
-	
+
 	boolean isSystemObject();
 }

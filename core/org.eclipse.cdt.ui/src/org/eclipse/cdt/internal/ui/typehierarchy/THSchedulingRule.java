@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -20,11 +20,11 @@ public class THSchedulingRule implements ISchedulingRule {
 
 	@Override
 	public boolean contains(ISchedulingRule rule) {
-		return rule==this;
+		return rule == this;
 	}
 
 	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
-		return rule==this;
+		return rule == this;
 	}
 }

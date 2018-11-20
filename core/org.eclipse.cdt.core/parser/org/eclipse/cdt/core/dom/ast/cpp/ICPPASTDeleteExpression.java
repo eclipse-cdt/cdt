@@ -29,7 +29,8 @@ public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicit
 	 * <code>OPERAND</code> is the expression representing the pointer being
 	 * deleted.
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("ICPPASTDeleteExpression.OPERAND - Expression of poniter being deleted"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+			"ICPPASTDeleteExpression.OPERAND - Expression of poniter being deleted"); //$NON-NLS-1$
 
 	/**
 	 * Get the operand.
@@ -73,13 +74,13 @@ public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicit
 	 * @return boolean
 	 */
 	public boolean isVectored();
-	
+
 	/**
 	 * @since 5.1
 	 */
 	@Override
 	public ICPPASTDeleteExpression copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

@@ -56,6 +56,7 @@ public class StreamProgressMonitor extends OutputStream {
 			nextProgress = currentIncrement;
 		}
 	}
+
 	/**
 	 * @see java.io.OutputStream#close()
 	 */

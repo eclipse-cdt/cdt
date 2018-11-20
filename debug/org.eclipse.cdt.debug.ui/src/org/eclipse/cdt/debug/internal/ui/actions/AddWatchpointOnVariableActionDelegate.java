@@ -20,6 +20,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
  * @deprecated Use the {@link org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate}
  * class instead.
  */
-public class AddWatchpointOnVariableActionDelegate extends org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate{
- 
+public class AddWatchpointOnVariableActionDelegate
+		extends org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate {
+
 }

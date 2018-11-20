@@ -41,8 +41,8 @@ public class SignalLabelProvider extends ElementLabelProvider {
 	}
 
 	@Override
-	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId)
-			throws CoreException {
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext,
+			String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (element instanceof ICSignal) {
 			String[] columns = presentationContext.getColumns();
@@ -61,11 +61,9 @@ public class SignalLabelProvider extends ElementLabelProvider {
 				case 0:
 					return ((ICSignal) element).getName();
 				case 1:
-					return (((ICSignal) element).isPassEnabled()) ? SignalsViewer.YES_VALUE
-							: SignalsViewer.NO_VALUE;
+					return (((ICSignal) element).isPassEnabled()) ? SignalsViewer.YES_VALUE : SignalsViewer.NO_VALUE;
 				case 2:
-					return (((ICSignal) element).isStopEnabled()) ? SignalsViewer.YES_VALUE
-							: SignalsViewer.NO_VALUE;
+					return (((ICSignal) element).isStopEnabled()) ? SignalsViewer.YES_VALUE : SignalsViewer.NO_VALUE;
 				case 3:
 					return ((ICSignal) element).getDescription();
 				}

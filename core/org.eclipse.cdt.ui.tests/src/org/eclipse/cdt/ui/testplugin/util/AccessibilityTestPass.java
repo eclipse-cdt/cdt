@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class AccessibilityTestPass implements IDialogTestPass {
 	private static final int CHECKLIST_SIZE = 5;
-	
+
 	@Override
 	public String title() {
 		return "Test Pass: Accessibility";
@@ -31,7 +31,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	@Override
 	public String label() {
 		return "&Accessibility";
-	}	
+	}
 
 	@Override
 	public ArrayList<String> checkListTexts() {

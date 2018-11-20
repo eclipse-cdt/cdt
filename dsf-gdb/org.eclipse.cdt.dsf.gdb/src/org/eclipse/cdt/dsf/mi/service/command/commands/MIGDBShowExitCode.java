@@ -32,15 +32,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class MIGDBShowExitCode extends MIDataEvaluateExpression<MIGDBShowExitCodeInfo> {
 
-    /**
-     * @since 1.1
-     */
-    public MIGDBShowExitCode(ICommandControlDMContext ctx) {
-        super(ctx, "$_exitcode"); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIGDBShowExitCodeInfo getResult(MIOutput output) {
-        return new MIGDBShowExitCodeInfo(output);
-    }
+	/**
+	 * @since 1.1
+	 */
+	public MIGDBShowExitCode(ICommandControlDMContext ctx) {
+		super(ctx, "$_exitcode"); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIGDBShowExitCodeInfo getResult(MIOutput output) {
+		return new MIGDBShowExitCodeInfo(output);
+	}
 }

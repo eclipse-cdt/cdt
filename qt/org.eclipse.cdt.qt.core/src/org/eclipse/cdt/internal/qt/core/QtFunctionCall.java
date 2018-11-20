@@ -54,7 +54,8 @@ public class QtFunctionCall {
 		return null;
 	}
 
-	private static Collection<QtMethodReference> getReferencesInConnect(ICPPFunction function, IASTFunctionCallExpression call) {
+	private static Collection<QtMethodReference> getReferencesInConnect(ICPPFunction function,
+			IASTFunctionCallExpression call) {
 		if (function == null)
 			return null;
 
@@ -71,9 +72,9 @@ public class QtFunctionCall {
 		IASTInitializerClause[] args = call.getArguments();
 		IType type3 = ASTUtil.getBaseType(params[3].getType());
 
-    	// static bool connect( const QObject *sender, const QMetaMethod &signal,
-    	//                      const QObject *receiver, const QMetaMethod &method,
-    	//                      Qt::ConnectionType type = Qt::AutoConnection )
+		// static bool connect( const QObject *sender, const QMetaMethod &signal,
+		//                      const QObject *receiver, const QMetaMethod &method,
+		//                      Qt::ConnectionType type = Qt::AutoConnection )
 		if (QtKeywords.isQMetaMethod(type3)) {
 			// QMetaMethod cannot be statically analyzed.
 			return null;
@@ -102,25 +103,26 @@ public class QtFunctionCall {
 		return mergeNonNull(signal, member);
 	}
 
-	private static Collection<QtMethodReference> getReferencesInDisconnect(ICPPFunction function, IASTFunctionCallExpression call) {
+	private static Collection<QtMethodReference> getReferencesInDisconnect(ICPPFunction function,
+			IASTFunctionCallExpression call) {
 		if (function == null)
 			return null;
 
-    	// There are 4 overloads of QObject::disconnect (Qt 4.8.4).  They can be distinguished by examining
-    	// the type of the second parameter.  The number of parameters is used to disambiguate one conflict.
+		// There are 4 overloads of QObject::disconnect (Qt 4.8.4).  They can be distinguished by examining
+		// the type of the second parameter.  The number of parameters is used to disambiguate one conflict.
 		// disconnect( , const char *, , )  && 4 params
-    	// disconnect( , QMetaMethod&, , )
-    	// disconnect( , const QObject *, )
-    	// disconnect( , const char * )     && 2 params
-    	ICPPParameter[] params = function.getParameters();
-    	if (params.length < 2)
+		// disconnect( , QMetaMethod&, , )
+		// disconnect( , const QObject *, )
+		// disconnect( , const char * )     && 2 params
+		ICPPParameter[] params = function.getParameters();
+		if (params.length < 2)
 			return null;
 
 		IASTInitializerClause[] args = call.getArguments();
-    	IType type1 = ASTUtil.getBaseType(params[1].getType());
+		IType type1 = ASTUtil.getBaseType(params[1].getType());
 
-        // static bool disconnect( const QObject *sender, const QMetaMethod &signal,
-    	//						   const QObject *receiver, const QMetaMethod &member );
+		// static bool disconnect( const QObject *sender, const QMetaMethod &signal,
+		//						   const QObject *receiver, const QMetaMethod &member );
 		if (QtKeywords.isQMetaMethod(type1)) {
 			// QMetaMethod cannot be statically analyzed.
 			return Collections.emptyList();
@@ -130,8 +132,8 @@ public class QtFunctionCall {
 		QtMethodReference signal = null;
 		QtMethodReference member = null;
 
-		if (type1 instanceof IBasicType && ( (IBasicType)type1 ).getKind() == IBasicType.Kind.eChar ) {
-			switch(params.length) {
+		if (type1 instanceof IBasicType && ((IBasicType) type1).getKind() == IBasicType.Kind.eChar) {
+			switch (params.length) {
 			// static bool disconnect( const QObject *sender, const char *signal,
 			//                         const QObject *receiver, const char *member );
 			case 4:
@@ -161,15 +163,15 @@ public class QtFunctionCall {
 		return args.length > index ? args[index] : null;
 	}
 
-	private static <T> Collection<T> mergeNonNull(T...withNulls) {
+	private static <T> Collection<T> mergeNonNull(T... withNulls) {
 		T firstNonNull = null;
 		ArrayList<T> list = null;
-		for(T t : withNulls) {
+		for (T t : withNulls) {
 			if (t == null)
 				continue;
-			else if(list != null)
+			else if (list != null)
 				list.add(t);
-			else if(firstNonNull == null)
+			else if (firstNonNull == null)
 				firstNonNull = t;
 			else {
 				list = new ArrayList<T>(withNulls.length);

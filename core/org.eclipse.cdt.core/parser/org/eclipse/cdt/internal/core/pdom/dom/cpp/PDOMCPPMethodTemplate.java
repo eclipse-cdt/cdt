@@ -33,16 +33,16 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	/** The size in bytes of a PDOMCPPMethodTemplate record in the database. */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionTemplate.RECORD_SIZE + 1;
-	
-	private byte methodAnnotation= -1;
-	
-	public PDOMCPPMethodTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) 
+
+	private byte methodAnnotation = -1;
+
+	public PDOMCPPMethodTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method)
 			throws CoreException, DOMException {
 		super(linkage, parent, (ICPPFunctionTemplate) method);
 		methodAnnotation = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
 		getDB().putByte(record + METHOD_ANNOTATION, methodAnnotation);
 	}
-	
+
 	public PDOMCPPMethodTemplate(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
@@ -79,7 +79,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 
 	private byte getMethodAnnotation() {
 		if (methodAnnotation == -1)
-			methodAnnotation= getByte(record + METHOD_ANNOTATION);
+			methodAnnotation = getByte(record + METHOD_ANNOTATION);
 		return methodAnnotation;
 	}
 
@@ -98,7 +98,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExternC() {
 		return false;

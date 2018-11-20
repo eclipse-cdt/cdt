@@ -45,7 +45,7 @@ public final class BuildJob extends Job {
 	 *            the projects to build
 	 */
 	public BuildJob(Collection<IProject> projects) {
-		super(Messages.WorkingSetConfigAction_21); 
+		super(Messages.WorkingSetConfigAction_21);
 		this.projects = new java.util.ArrayList<IProject>(projects);
 	}
 
@@ -56,7 +56,7 @@ public final class BuildJob extends Job {
 	 *            the working set configuration to build
 	 */
 	public BuildJob(IWorkingSetConfiguration workingSetConfig) {
-		super(Messages.WorkingSetConfigAction_21); 
+		super(Messages.WorkingSetConfigAction_21);
 		this.workingSetConfig = workingSetConfig;
 	}
 
@@ -73,12 +73,11 @@ public final class BuildJob extends Job {
 		try {
 			for (IProject p : projects) {
 				try {
-					setName(Messages.WorkingSetConfigAction_21 + p.getName()); 
+					setName(Messages.WorkingSetConfigAction_21 + p.getName());
 					p.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 				} catch (CoreException e) {
 					return new MultiStatus(CUIPlugin.PLUGIN_ID, 0, new IStatus[] { e.getStatus() },
-							Messages.WorkingSetConfigAction_22, 
-							null);
+							Messages.WorkingSetConfigAction_22, null);
 				}
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;

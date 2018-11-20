@@ -44,7 +44,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	 * or {@link ICPPASTPackExpansionExpression}.
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
-		fNodes= new ArrayList<IASTNode>(2);
+		fNodes = new ArrayList<IASTNode>(2);
 		for (IASTNode node : nodes) {
 			if (node instanceof IASTTypeId || node instanceof IASTExpression) {
 				fNodes.add(node);
@@ -62,7 +62,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		if (node instanceof IASTTypeId) {
 			IASTDeclSpecifier declSpec = ((IASTTypeId) node).getDeclSpecifier();
 			if (declSpec instanceof IASTNamedTypeSpecifier) {
-				IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier) declSpec;
+				IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpec;
 				final IASTName name = namedTypeSpec.getName();
 				name.setBinding(null);
 				namedTypeSpec.setName(name);
@@ -70,10 +70,10 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		} else {
 			// Unwrap variadic pack expansion if necessary.
 			if (node instanceof ICPPASTPackExpansionExpression)
-				node= ((ICPPASTPackExpansionExpression) node).getPattern();
+				node = ((ICPPASTPackExpansionExpression) node).getPattern();
 
 			if (node instanceof IASTIdExpression) {
-				IASTIdExpression id= (IASTIdExpression) node;
+				IASTIdExpression id = (IASTIdExpression) node;
 				final IASTName name = id.getName();
 				name.setBinding(null);
 				id.setName(name);
@@ -116,7 +116,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 
 	@Override
 	public void addTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
+		assertNotFrozen();
 		addNode(typeId);
 	}
 
@@ -128,13 +128,13 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 
 	@Override
 	public void addIdExpression(IASTIdExpression idExpression) {
-        addExpression(idExpression);
+		addExpression(idExpression);
 	}
 
 	@Deprecated
 	@Override
 	public void addIdExpression(IASTExpression idExpression) {
-        addExpression(idExpression);
+		addExpression(idExpression);
 	}
 
 	private void addNode(IASTNode node) {

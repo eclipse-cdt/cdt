@@ -30,6 +30,8 @@ public interface IConsole {
 	void start(IProject project);
 
 	ConsoleOutputStream getOutputStream() throws CoreException;
+
 	ConsoleOutputStream getInfoStream() throws CoreException;
+
 	ConsoleOutputStream getErrorStream() throws CoreException;
 }

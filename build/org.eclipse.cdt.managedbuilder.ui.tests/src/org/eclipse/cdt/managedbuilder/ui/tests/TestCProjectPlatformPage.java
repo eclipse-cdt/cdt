@@ -39,7 +39,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 	//TODO: migrate to the new UI functionality
 	private CDTProjectWizard wizard;
 	private TestPage page;
-	private boolean currentState=false;
+	private boolean currentState = false;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -56,6 +56,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		page = null;
 		wizard = null;
 	}
+
 	ArrayUtil x;
 
 	// testing methods
@@ -91,13 +92,13 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		NewModelProjectWizard wiz = new CDTProjectWizard();
 		/*
 		String s = System.getenv("TEMP");
-
+		
 		System.out.println(s);
 		assertNotNull(wiz);
 		/*
 		IProject pr1 = wiz.createIProject("test1", null);
 		assertNotNull(pr1);
-
+		
 		IProject pr2 = wiz.createIProject("test2", p.append("test2"));
 		assertNotNull(pr2);
 		*/
@@ -110,7 +111,6 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 	public void testSelectedProjectType3() throws Exception {
 	}
 
-
 	// helping methods and classes
 	//////////////////////////////
 
@@ -118,31 +118,37 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
-	class TestPage extends WizardPage implements IWizardItemsListListener{
+	class TestPage extends WizardPage implements IWizardItemsListListener {
 		TestPage(CDTProjectWizard wizard) throws Exception {
 			super(CDTMainWizardPage.class.getName());
 		}
+
 		IProjectType getFirstType() {
 			return null; //(IProjectType) projectTypes.get(0);
 		}
+
 		IProjectType getSecondType() {
 			return null; //(IProjectType) projectTypes.get(1);
 		}
+
 		@Override
 		public boolean isCurrent() {
 			// TODO Auto-generated method stub
 			return false;
 		}
+
 		@Override
 		public void toolChainListChanged(int count) {
 			// TODO Auto-generated method stub
 
 		}
+
 		@Override
 		public void createControl(Composite parent) {
 			// TODO Auto-generated method stub
 
 		}
+
 		@Override
 		public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {
 			return items;
@@ -151,10 +157,13 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 
 	// methods of IToolChainListListener
 	@Override
-	public boolean isCurrent() { return currentState; }
+	public boolean isCurrent() {
+		return currentState;
+	}
 
 	@Override
-	public void toolChainListChanged(int count) {}
+	public void toolChainListChanged(int count) {
+	}
 
 	@Override
 	public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {

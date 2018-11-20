@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -21,17 +21,16 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
-
 public class SavedFilesProvider extends InternalFileContentProvider {
-	
+
 	public SavedFilesProvider() {
 	}
-	
+
 	@Override
 	public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
-		
+
 		IResource file = ParserUtil.getResourceForFilename(path);
 		if (file instanceof IFile) {
 			return (InternalFileContent) FileContent.create((IFile) file);

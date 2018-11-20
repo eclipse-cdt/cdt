@@ -22,9 +22,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  * @since 7.1 
  */
 public class UngroupDebugContextsCommandHandler extends DebugCommandHandler {
-	
-    @Override
-    protected Class<?> getCommandType() {
-        return IUngroupDebugContextsHandler.class;
-    }
+
+	@Override
+	protected Class<?> getCommandType() {
+		return IUngroupDebugContextsHandler.class;
+	}
 }

@@ -21,6 +21,6 @@ public interface IPathSettingsContainerListener {
 	void aboutToRemove(PathSettingsContainer container);
 
 	void containerValueChanged(PathSettingsContainer container, Object oldValue);
-	
+
 	void containerPathChanged(PathSettingsContainer container, IPath oldPath, boolean childrenMoved);
 }

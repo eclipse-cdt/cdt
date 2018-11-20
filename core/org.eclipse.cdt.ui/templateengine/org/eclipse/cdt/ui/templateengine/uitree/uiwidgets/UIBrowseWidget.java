@@ -29,7 +29,6 @@ import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
-
 /**
  * This gives a Label and Browse widget.
  */
@@ -39,13 +38,13 @@ public class UIBrowseWidget extends UITextWidget {
 	/**
 	 * Browse Button of this widget.
 	 */
-	protected  Button button;
+	protected Button button;
 
 	/**
 	 * If set to true, open a DirectoryDialog otherwise FileDialog
 	 */
 	protected boolean isDirectoryBrowser;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -55,7 +54,7 @@ public class UIBrowseWidget extends UITextWidget {
 	public UIBrowseWidget(UIAttributes uiAttribute, boolean isDirectoryBrowser) {
 		super(uiAttribute);
 		this.textValue = uiAttribute.get(InputUIElement.DEFAULT);
-		this.isDirectoryBrowser= isDirectoryBrowser;
+		this.isDirectoryBrowser = isDirectoryBrowser;
 	}
 
 	/**
@@ -73,7 +72,7 @@ public class UIBrowseWidget extends UITextWidget {
 		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
 
 		// set the tool tip text
-		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null) {
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$, //$NON-NLS-2$
 			label.setToolTipText(tipText);
@@ -104,17 +103,17 @@ public class UIBrowseWidget extends UITextWidget {
 
 	protected void onBrowsePushed() {
 		String fileName;
-		if(isDirectoryBrowser) {
-			fileName= new DirectoryDialog(uiComposite.getShell()).open();
+		if (isDirectoryBrowser) {
+			fileName = new DirectoryDialog(uiComposite.getShell()).open();
 		} else {
-			fileName= new FileDialog(uiComposite.getShell()).open();
+			fileName = new FileDialog(uiComposite.getShell()).open();
 		}
 		if (fileName != null) {
 			textValue = fileName.toString();
 			text.setText(textValue);
 		}
 	}
-	
+
 	/**
 	 * call the dispose method on the widgets. This is to ensure that the
 	 * widgets are properly disposed.

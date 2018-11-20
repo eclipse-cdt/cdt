@@ -39,7 +39,7 @@ public class EvaluateAction extends AbstractTracepointAction {
 	private static final String EVALUATE_ACTION_ID = "org.eclipse.cdt.dsf.gdb.tracepointactions.EvaluateAction"; //$NON-NLS-1$
 
 	private String fEvalString = ""; //$NON-NLS-1$
-	
+
 	@Override
 	public String getDefaultName() {
 		return MessagesForTracepointActions.TracepointActions_Untitled_Evaluate;
@@ -48,7 +48,7 @@ public class EvaluateAction extends AbstractTracepointAction {
 	public String getEvalString() {
 		return fEvalString;
 	}
-	
+
 	public void setEvalString(String str) {
 		fEvalString = str;
 	}
@@ -118,7 +118,7 @@ public class EvaluateAction extends AbstractTracepointAction {
 			GdbPlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return getSummary();

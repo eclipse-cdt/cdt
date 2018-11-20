@@ -44,7 +44,8 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		try {
-			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index,
+					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTName astName = getASTNameFromMarker(marker, ast);
 			if (astName == null) {
 				return;
@@ -54,7 +55,8 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 			if (targetCompositeType == null) {
 				// We're not in an inline method;
 				// check if we're in a method at all
-				targetCompositeType = CxxAstUtils.getCompositeTypeFromFunction(CxxAstUtils.getEnclosingFunction(astName), index);
+				targetCompositeType = CxxAstUtils
+						.getCompositeTypeFromFunction(CxxAstUtils.getEnclosingFunction(astName), index);
 				if (targetCompositeType == null) {
 					return;
 				}
@@ -106,9 +108,11 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 			IASTNode child = children[i];
 			if (child instanceof ICPPASTVisibilityLabel) {
 				ICPPASTVisibilityLabel label = (ICPPASTVisibilityLabel) child;
-				inDesiredAccessibilityContext = (wantPublicContext && label.getVisibility() == ICPPASTVisibilityLabel.v_public)
+				inDesiredAccessibilityContext = (wantPublicContext
+						&& label.getVisibility() == ICPPASTVisibilityLabel.v_public)
 						|| (!wantPublicContext && label.getVisibility() == ICPPASTVisibilityLabel.v_private);
-			} else if (inDesiredAccessibilityContext && (child instanceof IASTDeclaration) && !(child instanceof IASTFunctionDefinition)) {
+			} else if (inDesiredAccessibilityContext && (child instanceof IASTDeclaration)
+					&& !(child instanceof IASTFunctionDefinition)) {
 				// TODO: the above condition needs to also check if child is not
 				// a typedef
 				for (IASTNode gchild : child.getChildren()) {

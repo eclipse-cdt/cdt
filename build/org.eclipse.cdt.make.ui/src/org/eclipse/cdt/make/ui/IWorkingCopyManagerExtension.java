@@ -26,7 +26,7 @@ import org.eclipse.cdt.make.core.makefile.IMakefile;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkingCopyManagerExtension {
-	
+
 	/**
 	 * Sets the given working copy for the given editor input. If the given editor input
 	 * is not connected to this working copy manager, this call has no effect. <p>
@@ -37,7 +37,7 @@ public interface IWorkingCopyManagerExtension {
 	 * @param workingCopy the working copy
 	 */
 	void setWorkingCopy(IEditorInput input, IMakefile workingCopy);
-	
+
 	/**
 	 * Removes the working copy set for the given editor input. If there is no
 	 * working copy set for this input or this input is not connected to this

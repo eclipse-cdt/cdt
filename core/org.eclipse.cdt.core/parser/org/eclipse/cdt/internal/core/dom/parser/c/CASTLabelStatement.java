@@ -27,10 +27,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTLabelStatement extends ASTAttributeOwner implements IASTLabelStatement, IASTAmbiguityParent {
-    private IASTName name;
-    private IASTStatement nestedStatement;
+	private IASTName name;
+	private IASTStatement nestedStatement;
 
-    public CASTLabelStatement() {
+	public CASTLabelStatement() {
 	}
 
 	public CASTLabelStatement(IASTName name, IASTStatement nestedStatement) {
@@ -53,42 +53,51 @@ public class CASTLabelStatement extends ASTAttributeOwner implements IASTLabelSt
 
 	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (name != null && !name.accept(action)) return false;
-        if (nestedStatement != null && !nestedStatement.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (name != null && !name.accept(action))
+			return false;
+		if (nestedStatement != null && !nestedStatement.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -97,27 +106,27 @@ public class CASTLabelStatement extends ASTAttributeOwner implements IASTLabelSt
 		return r_unclear;
 	}
 
-    @Override
+	@Override
 	public IASTStatement getNestedStatement() {
-        return nestedStatement;
-    }
+		return nestedStatement;
+	}
 
-    @Override
+	@Override
 	public void setNestedStatement(IASTStatement s) {
-        assertNotFrozen();
-        nestedStatement = s;
-        if (s != null) {
+		assertNotFrozen();
+		nestedStatement = s;
+		if (s != null) {
 			s.setParent(this);
 			s.setPropertyInParent(NESTED_STATEMENT);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == nestedStatement) {
-            other.setParent(this);
-            other.setPropertyInParent(child.getPropertyInParent());
-            setNestedStatement((IASTStatement) other);
-        }
-    }
+		if (child == nestedStatement) {
+			other.setParent(this);
+			other.setPropertyInParent(child.getPropertyInParent());
+			setNestedStatement((IASTStatement) other);
+		}
+	}
 }

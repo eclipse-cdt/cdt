@@ -40,31 +40,31 @@ public class CBreakpointPropertiesHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-	    IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
-        final ICBreakpoint bp = getBreakpoint(event.getApplicationContext());
-	    
-	    if (part != null && bp != null) {
-	        CDebugUIUtils.editBreakpointProperties(part, bp);
-        }
-	    
-	    return null;
+		IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
+		final ICBreakpoint bp = getBreakpoint(event.getApplicationContext());
+
+		if (part != null && bp != null) {
+			CDebugUIUtils.editBreakpointProperties(part, bp);
+		}
+
+		return null;
 	}
-	
+
 	@Override
 	public void setEnabled(Object evaluationContext) {
-	    setBaseEnabled( getBreakpoint(evaluationContext) != null );
+		setBaseEnabled(getBreakpoint(evaluationContext) != null);
 	}
-	
+
 	private ICBreakpoint getBreakpoint(Object evaluationContext) {
-	    if (evaluationContext instanceof IEvaluationContext) {
-	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-	        if (s instanceof IStructuredSelection) {
-	            IStructuredSelection ss = (IStructuredSelection)s;
-	            if (ss.size() == 1) {
-    	            return (ICBreakpoint)DebugPlugin.getAdapter(ss.getFirstElement(), ICBreakpoint.class);
-	            }
-	        }
-	    }
-	    return null;
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			if (s instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) s;
+				if (ss.size() == 1) {
+					return (ICBreakpoint) DebugPlugin.getAdapter(ss.getFirstElement(), ICBreakpoint.class);
+				}
+			}
+		}
+		return null;
 	}
 }

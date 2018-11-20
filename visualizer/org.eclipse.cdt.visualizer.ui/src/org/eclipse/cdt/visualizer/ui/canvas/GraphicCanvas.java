@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-
 // ---------------------------------------------------------------------------
 // GraphicCanvas
 // ---------------------------------------------------------------------------
@@ -36,16 +35,14 @@ import org.eclipse.swt.widgets.Listener;
  * so objects added last are drawn "on top" of others.
  * Use raise/lower methods to change the object z-ordering, if needed.
  */
-public class GraphicCanvas extends BufferedCanvas
-{
+public class GraphicCanvas extends BufferedCanvas {
 	// --- members ---
-	
+
 	/** Viewer elements. */
 	protected ArrayList<IGraphicObject> m_objects = null;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	public GraphicCanvas(Composite parent) {
 		super(parent);
@@ -67,7 +64,7 @@ public class GraphicCanvas extends BufferedCanvas
 		addListener(SWT.MouseMove, mouseListener);
 		addListener(SWT.MouseEnter, mouseListener);
 	}
-	
+
 	/** Dispose method. */
 	public void dispose() {
 		if (m_objects != null) {
@@ -76,28 +73,27 @@ public class GraphicCanvas extends BufferedCanvas
 		}
 		super.dispose();
 	}
-	
-	
+
 	// --- object management methods ---
 
 	/** Removes all elements */
 	public void clear() {
 		m_objects.clear();
 	}
-	
+
 	/** Adds an element */
 	public IGraphicObject add(IGraphicObject element) {
-		if (! m_objects.contains(element)) {
+		if (!m_objects.contains(element)) {
 			m_objects.add(element);
 		}
 		return element;
 	}
-	
+
 	/** Removes an element */
 	public void remove(IGraphicObject element) {
 		m_objects.remove(element);
 	}
-	
+
 	/** Raises an element to top of repaint z-ordering */
 	public void raiseToFront(IGraphicObject element) {
 		if (m_objects.contains(element)) {
@@ -105,7 +101,7 @@ public class GraphicCanvas extends BufferedCanvas
 			m_objects.add(element);
 		}
 	}
-	
+
 	/** Lowers an element to bottom of repaint z-ordering */
 	public void lowerToBack(IGraphicObject element) {
 		if (m_objects.contains(element)) {
@@ -114,14 +110,13 @@ public class GraphicCanvas extends BufferedCanvas
 		}
 	}
 
-	
 	// --- painting methods ---
-	
+
 	/** Paints elements on canvas. */
 	public void paintCanvas(GC gc) {
 		// paint background first
 		clearCanvas(gc);
-		
+
 		// we paint object list from start to end,
 		// so end of the list is "top" in z-ordering
 
@@ -136,10 +131,9 @@ public class GraphicCanvas extends BufferedCanvas
 				gobj.paint(gc, true);
 		}
 	}
-	
-	
+
 	// --- point-to-object accessors ---
-	
+
 	/** Returns first graphic object found under specified point */
 	public IGraphicObject getGraphicObject(int x, int y) {
 		return getGraphicObject(null, x, y);
@@ -150,27 +144,28 @@ public class GraphicCanvas extends BufferedCanvas
 	 */
 	public IGraphicObject getGraphicObject(Class<?> type, int x, int y) {
 		IGraphicObject result = null;
-		
+
 		// note: have to search list in reverse order we draw it,
 		// so we hit items "on top" in the z-ordering first
 		int count = (m_objects == null) ? 0 : m_objects.size();
-		for (int i=count-1; i>=0; i--) {
+		for (int i = count - 1; i >= 0; i--) {
 			IGraphicObject gobj = m_objects.get(i);
 			if (gobj.contains(x, y)) {
 				if (type != null) {
 					Class<?> objType = gobj.getClass();
-					if (! type.isAssignableFrom(objType)) continue;
+					if (!type.isAssignableFrom(objType))
+						continue;
 				}
 				result = gobj;
 				break;
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	// --- model data accessors ---
-	
+
 	/** Returns graphic object (if any) that has specified data value. */
 	public IGraphicObject getGraphicObjectFor(Object value) {
 		IGraphicObject result = null;
@@ -182,7 +177,7 @@ public class GraphicCanvas extends BufferedCanvas
 		}
 		return result;
 	}
-	
+
 	/** Returns data value (if any) for the specified graphic element. */
 	public Object getDataFor(IGraphicObject IGraphicObject) {
 		return (IGraphicObject == null) ? null : IGraphicObject.getData();

@@ -177,7 +177,6 @@ public class SWTUtils {
 		}
 	}
 
-
 	/**
 	 * @param viewBot
 	 *            the {@link SWTBotView} containing the {@link Tree} to traverse
@@ -482,7 +481,8 @@ public class SWTUtils {
 				.anyMatch(v -> v.getViewReference().getId().equals(IConsoleConstants.ID_CONSOLE_VIEW));
 	}
 
-	public static SWTBotToolbarButton getConsoleToolbarButtonWithTooltipText(final SWTWorkbenchBot bot, final String tooltipText) {
+	public static SWTBotToolbarButton getConsoleToolbarButtonWithTooltipText(final SWTWorkbenchBot bot,
+			final String tooltipText) {
 		return bot.viewById(IConsoleConstants.ID_CONSOLE_VIEW).getToolbarButtons().stream()
 				.filter(button -> button.getToolTipText().equals(tooltipText)).findFirst().get();
 	}

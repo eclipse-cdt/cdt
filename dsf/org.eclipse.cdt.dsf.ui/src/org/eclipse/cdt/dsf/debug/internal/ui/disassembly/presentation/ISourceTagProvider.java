@@ -48,5 +48,5 @@ public interface ISourceTagProvider {
 	 * information cannot be obtained.
 	 */
 	public int[] getActiveCodePositions();
-	
+
 }

@@ -21,13 +21,20 @@ import org.eclipse.debug.core.DebugException;
 
 public interface FPIViewportCache {
 
-    public void dispose();
-    public void refresh();
-    public FPMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException;
-    public void archiveDeltas();
-    public void setEditedValue(BigInteger address, FPMemoryByte[] bytes);
-    public void clearEditBuffer();
-    public void writeEditBuffer();
-    public boolean containsEditedCell(BigInteger address);
-    //    private void queueRequest(BigInteger startAddress, BigInteger endAddress);
+	public void dispose();
+
+	public void refresh();
+
+	public FPMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException;
+
+	public void archiveDeltas();
+
+	public void setEditedValue(BigInteger address, FPMemoryByte[] bytes);
+
+	public void clearEditBuffer();
+
+	public void writeEditBuffer();
+
+	public boolean containsEditedCell(BigInteger address);
+	//    private void queueRequest(BigInteger startAddress, BigInteger endAddress);
 }

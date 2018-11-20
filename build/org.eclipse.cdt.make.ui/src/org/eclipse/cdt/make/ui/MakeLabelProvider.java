@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui;
 
-
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.ui.CDTSharedImages;
@@ -45,6 +44,7 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 	public MakeLabelProvider(IPath removePrefix) {
 		pathPrefix = removePrefix;
 	}
+
 	/**
 	 * @see ILabelProvider#getImage(Object)
 	 */
@@ -96,20 +96,20 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 	@Override
 	public String getColumnText(Object obj, int columnIndex) {
 		switch (columnIndex) {
-			case 0 :
-				return getText(obj);
-			case 1 :
-				if (obj instanceof IMakeTarget) {
-					if (pathPrefix != null) {
-						IPath targetPath = ((IMakeTarget) obj).getContainer().getProjectRelativePath();
-						if (pathPrefix.isPrefixOf(targetPath)) {
-							targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
-						}
-						if (targetPath.segmentCount() > 0) {
-							return targetPath.toString();
-						}
+		case 0:
+			return getText(obj);
+		case 1:
+			if (obj instanceof IMakeTarget) {
+				if (pathPrefix != null) {
+					IPath targetPath = ((IMakeTarget) obj).getContainer().getProjectRelativePath();
+					if (pathPrefix.isPrefixOf(targetPath)) {
+						targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
+					}
+					if (targetPath.segmentCount() > 0) {
+						return targetPath.toString();
 					}
 				}
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}

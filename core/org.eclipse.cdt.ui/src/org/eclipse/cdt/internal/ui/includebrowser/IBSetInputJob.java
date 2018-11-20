@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -31,18 +31,17 @@ public class IBSetInputJob extends Job {
 	private Display fDisplay;
 	private IBViewPart fViewPart;
 
-
 	public IBSetInputJob(IBViewPart viewPart, Display disp) {
 		super(IBMessages.IBViewPart_waitingOnIndexerMessage);
 		setSystem(true);
-		fViewPart= viewPart;
-		fDisplay= disp;
+		fViewPart = viewPart;
+		fDisplay = disp;
 	}
-	
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-    	if (CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, monitor)) {
-    		try {
+		if (CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, monitor)) {
+			try {
 				fDisplay.asyncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -53,10 +52,10 @@ public class IBSetInputJob extends Job {
 				// display may be disposed
 			}
 		}
-    	return Status.OK_STATUS;
+		return Status.OK_STATUS;
 	}
 
 	public void setInput(ITranslationUnit input) {
-		fInput= input;
+		fInput = input;
 	}
 }

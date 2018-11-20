@@ -27,80 +27,32 @@ public class IncludeMapTest extends TestCase {
 	}
 
 	public void testOptionalCyclicMap() {
-		IncludeMap map = new IncludeMap(false, new String[] {
-				"a", "b",
-				"b", "c",
-				"c", "d",
-				"d", "b",
-		});
+		IncludeMap map = new IncludeMap(false, new String[] { "a", "b", "b", "c", "c", "d", "d", "b", });
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(false, new String[] {
-				"a", "b",
-				"a", "d",
-				"a", "c",
-				"b", "d",
-				"b", "c",
-				"c", "d",
-				"c", "b",
-				"d", "b",
-				"d", "c",
-		});
+		IncludeMap expected = new IncludeMap(false, new String[] { "a", "b", "a", "d", "a", "c", "b", "d", "b", "c",
+				"c", "d", "c", "b", "d", "b", "d", "c", });
 		assertEqualMaps(expected, map);
 	}
 
 	public void testUnconditionalCyclicMap() {
-		IncludeMap map = new IncludeMap(true, new String[] {
-				"a", "b",
-				"b", "c",
-				"c", "d",
-				"d", "b",
-		});
+		IncludeMap map = new IncludeMap(true, new String[] { "a", "b", "b", "c", "c", "d", "d", "b", });
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(true, new String[] {
-				"a", "b",
-				"c", "b",
-				"d", "b",
-		});
+		IncludeMap expected = new IncludeMap(true, new String[] { "a", "b", "c", "b", "d", "b", });
 		assertEqualMaps(expected, map);
 	}
 
 	public void testOptionalMap() {
-		IncludeMap map = new IncludeMap(false, new String[] {
-				"a", "b",
-				"a", "c",
-				"c", "d",
-				"c", "e",
-				"d", "f",
-		});
+		IncludeMap map = new IncludeMap(false, new String[] { "a", "b", "a", "c", "c", "d", "c", "e", "d", "f", });
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(false, new String[] {
-				"a", "b",
-				"a", "f",
-				"a", "d",
-				"a", "e",
-				"a", "c",
-				"c", "f",
-				"c", "d",
-				"c", "e",
-				"d", "f",
-		});
+		IncludeMap expected = new IncludeMap(false, new String[] { "a", "b", "a", "f", "a", "d", "a", "e", "a", "c",
+				"c", "f", "c", "d", "c", "e", "d", "f", });
 		assertEqualMaps(expected, map);
 	}
 
 	public void testUpconditionalMap() {
-		IncludeMap map = new IncludeMap(true, new String[] {
-				"a", "b",
-				"a", "c",
-				"c", "d",
-				"c", "e",
-				"d", "f",
-		});
+		IncludeMap map = new IncludeMap(true, new String[] { "a", "b", "a", "c", "c", "d", "c", "e", "d", "f", });
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(true, new String[] {
-				"a", "b",
-				"c", "f",
-				"d", "f",
-		});
+		IncludeMap expected = new IncludeMap(true, new String[] { "a", "b", "c", "f", "d", "f", });
 		assertEqualMaps(expected, map);
 	}
 }

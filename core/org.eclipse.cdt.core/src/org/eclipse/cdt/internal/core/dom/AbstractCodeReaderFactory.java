@@ -30,7 +30,7 @@ public abstract class AbstractCodeReaderFactory implements ICodeReaderFactory, I
 	private final IIncludeFileResolutionHeuristics fHeuristics;
 
 	public AbstractCodeReaderFactory(IIncludeFileResolutionHeuristics heuristics) {
-		fHeuristics= heuristics;
+		fHeuristics = heuristics;
 	}
 
 	@Override
@@ -42,5 +42,6 @@ public abstract class AbstractCodeReaderFactory implements ICodeReaderFactory, I
 		return null;
 	}
 
-	public abstract CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) throws CoreException, IOException;
+	public abstract CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath)
+			throws CoreException, IOException;
 }

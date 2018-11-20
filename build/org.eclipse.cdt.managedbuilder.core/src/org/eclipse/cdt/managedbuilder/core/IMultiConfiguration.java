@@ -26,13 +26,14 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder {
-	
+
 	/**
 	 * Check if all configurations' builders are operating in parallel mode.
 	 * @return {@code true} if parallel mode is enabled for all configurations,
 	 *    {@code false} otherwise.
 	 */
 	boolean getParallelDef();
+
 	/**
 	 * Set same parallel execution mode for all configurations' builders.
 	 * @see Builder#setParallelBuildOn(boolean)
@@ -57,7 +58,7 @@ public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder 
 	 *    {@link Builder#getOptimalParallelJobNum()}.
 	 */
 	void setParallelNumber(int jobs);
-	
+
 	/**
 	 * Check if all configurations' internal builders are operating in parallel mode.
 	 * @return {@code true} if parallel mode is enabled for all configurations,
@@ -69,13 +70,18 @@ public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder 
 	boolean getInternalBuilderParallel();
 
 	boolean isInternalBuilderEnabled();
+
 	boolean canEnableInternalBuilder(boolean v);
-	void    enableInternalBuilder(boolean v);
-	
-	void    setOutputPrefixForPrimaryOutput(String pref);
-	String  getToolOutputPrefix();
-	
+
+	void enableInternalBuilder(boolean v);
+
+	void setOutputPrefixForPrimaryOutput(String pref);
+
+	String getToolOutputPrefix();
+
 	IBuildProperty getBuildProperty(String id);
-	void    setBuildProperty(String id, String val);
+
+	void setBuildProperty(String id, String val);
+
 	IBuildPropertyValue[] getSupportedValues(String id);
 }

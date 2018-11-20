@@ -31,7 +31,7 @@ public class CHPinAction extends Action {
 		super(CHMessages.CHPinAction_label, IAction.AS_CHECK_BOX);
 		setToolTipText(CHMessages.CHPinAction_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "pin_view.gif"); //$NON-NLS-1$
-		fView= view;
+		fView = view;
 	}
 
 	@Override

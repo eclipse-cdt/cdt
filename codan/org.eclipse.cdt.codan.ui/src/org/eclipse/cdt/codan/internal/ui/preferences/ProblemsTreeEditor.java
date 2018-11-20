@@ -272,12 +272,12 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;
 					switch (p.getSeverity().intValue()) {
-						case IMarker.SEVERITY_INFO:
-							return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_INFO);
-						case IMarker.SEVERITY_WARNING:
-							return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_WARNING);
-						case IMarker.SEVERITY_ERROR:
-							return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_ERROR);
+					case IMarker.SEVERITY_INFO:
+						return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_INFO);
+					case IMarker.SEVERITY_WARNING:
+						return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_WARNING);
+					case IMarker.SEVERITY_ERROR:
+						return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_ERROR);
 					}
 				}
 				return null;
@@ -340,7 +340,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	@Override
 	protected void doLoadDefault() {
 		if (getTreeControl() != null) {
-			CodanPreferencesLoader defaultPreferences = new CodanPreferencesLoader(CodanRuntime.getInstance().getCheckersRegistry().getDefaultProfile());
+			CodanPreferencesLoader defaultPreferences = new CodanPreferencesLoader(
+					CodanRuntime.getInstance().getCheckersRegistry().getDefaultProfile());
 			IProblem[] probs = codanPreferencesLoader.getProblems();
 			for (int i = 0; i < probs.length; i++) {
 				String id = probs[i].getId();
@@ -394,8 +395,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	protected CheckboxTreeViewer doCreateTreeViewer(Composite parent, int style) {
 		PatternFilter filter = new PatternFilter();
 		filter.setIncludeLeadingWildcard(true);
-		FilteredTree filteredTree = new FilteredTree(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION,
-				filter, true) {
+		FilteredTree filteredTree = new FilteredTree(parent,
+				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, filter, true) {
 			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 				return new CheckboxTreeViewer(parent, style);

@@ -113,14 +113,10 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		layout.marginWidth = 0;
 		group.setLayout(layout);
 
-		String[] labels = new String[] {
-			Messages.ExtractFunctionInputPage_public,
-			Messages.ExtractFunctionInputPage_protected,
-			Messages.ExtractFunctionInputPage_private
-		};
-		VisibilityEnum[] visibilityValues = new VisibilityEnum[] {
-				VisibilityEnum.v_public, VisibilityEnum.v_protected, VisibilityEnum.v_private
-			};
+		String[] labels = new String[] { Messages.ExtractFunctionInputPage_public,
+				Messages.ExtractFunctionInputPage_protected, Messages.ExtractFunctionInputPage_private };
+		VisibilityEnum[] visibilityValues = new VisibilityEnum[] { VisibilityEnum.v_public, VisibilityEnum.v_protected,
+				VisibilityEnum.v_private };
 		VisibilityEnum visibility = info.getVisibility();
 		for (int i = 0; i < labels.length; i++) {
 			Button radio = new Button(group, SWT.RADIO);
@@ -140,11 +136,10 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		layouter.perform(label, group, 1);
 
 		if (!info.getParameters().isEmpty()) {
-			Mode mode = info.getMandatoryReturnVariable() != null ?
-					Mode.EXTRACT_METHOD_FIXED_RETURN : Mode.EXTRACT_METHOD;
+			Mode mode = info.getMandatoryReturnVariable() != null ? Mode.EXTRACT_METHOD_FIXED_RETURN
+					: Mode.EXTRACT_METHOD;
 			ChangeParametersControl paramControl = new ChangeParametersControl(result, SWT.NONE,
-					Messages.ExtractFunctionInputPage_parameters,
-					new IParameterListChangeListener() {
+					Messages.ExtractFunctionInputPage_parameters, new IParameterListChangeListener() {
 						@Override
 						public void parameterChanged(NameInformation parameter) {
 							parameterModified();
@@ -159,9 +154,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 						public void parameterAdded(NameInformation parameter) {
 							updatePreview(getText());
 						}
-					},
-					mode,
-					new StubTypeContext(refactoring.getTranslationUnit()));
+					}, mode, new StubTypeContext(refactoring.getTranslationUnit()));
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
 			paramControl.setLayoutData(gd);
@@ -175,8 +168,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		} else if (duplicates == 1) {
 			checkBox.setText(Messages.ExtractFunctionInputPage_duplicates_single);
 		} else {
-			checkBox.setText(NLS.bind(
-				Messages.ExtractFunctionInputPage_duplicates_multi, Integer.valueOf(duplicates)));
+			checkBox.setText(NLS.bind(Messages.ExtractFunctionInputPage_duplicates_multi, Integer.valueOf(duplicates)));
 		}
 		checkBox.setSelection(info.isReplaceDuplicates());
 		checkBox.setEnabled(duplicates > 0);
@@ -195,8 +187,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		createSignaturePreview(result, layouter);
 
 		Dialog.applyDialogFont(result);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-				ICHelpContextIds.EXTRACT_FUNCTION_WIZARD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.EXTRACT_FUNCTION_WIZARD_PAGE);
 	}
 
 	private Text createTextInputField(Composite parent, int style) {
@@ -217,7 +208,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		return textField.getText();
 	}
 
-	private String getLabelText(){
+	private String getLabelText() {
 		return Messages.ExtractFunctionInputPage_label_text;
 	}
 
@@ -232,8 +223,10 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		layouter.perform(previewLabel);
 
 		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
-		signaturePreview = new CSourceViewer(composite, null, null, false, SWT.READ_ONLY | SWT.V_SCROLL | SWT.WRAP /*| SWT.BORDER*/, store);
-		signaturePreview.configure(new CSourceViewerConfiguration(CUIPlugin.getDefault().getTextTools().getColorManager(), store, null, null));
+		signaturePreview = new CSourceViewer(composite, null, null, false,
+				SWT.READ_ONLY | SWT.V_SCROLL | SWT.WRAP /*| SWT.BORDER*/, store);
+		signaturePreview.configure(new CSourceViewerConfiguration(
+				CUIPlugin.getDefault().getTextTools().getColorManager(), store, null, null));
 		signaturePreview.getTextWidget().setFont(JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT));
 		signaturePreview.adaptBackgroundColor(composite);
 		signaturePreview.setDocument(signaturePreviewDocument);

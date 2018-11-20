@@ -50,11 +50,11 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 		List<IFile> selectedFiles = getSelectedFiles(event);
 		if (selectedFiles.isEmpty())
 			return null;
-		
+
 		Job buildFilesJob = new BuildFilesJob(selectedFiles);
 
 		Collection<IProject> projects = getProjectsToBuild(selectedFiles);
-		BuildUtilities.saveEditors(projects);  // Save all resources prior to doing build.
+		BuildUtilities.saveEditors(projects); // Save all resources prior to doing build.
 		buildFilesJob.schedule();
 		return null;
 	}
@@ -69,10 +69,9 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 		// Fix for bug 139663.
 		// If build automatically is turned on, then this command should be turned off as
 		// it will trigger the auto build.
-	    IPreferencesService preferences = Platform.getPreferencesService();
+		IPreferencesService preferences = Platform.getPreferencesService();
 
-		if (preferences.getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_AUTO_BUILDING,
-				false, null)) {
+		if (preferences.getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_AUTO_BUILDING, false, null)) {
 			// Auto building is on - do not enable the command.
 			return false;
 		}
@@ -92,14 +91,13 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 
 			IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(file.getProject());
 
-			if (buildInfo == null || !buildInfo.isValid()
-					|| buildInfo.getDefaultConfiguration() == null
+			if (buildInfo == null || !buildInfo.isValid() || buildInfo.getDefaultConfiguration() == null
 					|| !buildInfo.getDefaultConfiguration().isManagedBuildOn()) {
 				return false;
 			}
 
-			IManagedBuilderMakefileGenerator buildfileGenerator =
-					ManagedBuildManager.getBuildfileGenerator(buildInfo.getDefaultConfiguration());
+			IManagedBuilderMakefileGenerator buildfileGenerator = ManagedBuildManager
+					.getBuildfileGenerator(buildInfo.getDefaultConfiguration());
 
 			if (buildfileGenerator == null)
 				return false;
@@ -108,8 +106,7 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 			buildfileGenerator.initialize(file.getProject(), buildInfo, new NullProgressMonitor());
 
 			// If we have no build info or we can't build the file, then disable the command.
-			if (!buildInfo.buildsFileType(file.getFileExtension())
-					|| buildfileGenerator.isGeneratedResource(file)) {
+			if (!buildInfo.buildsFileType(file.getFileExtension()) || buildfileGenerator.isGeneratedResource(file)) {
 				return false;
 			}
 		}
@@ -127,46 +124,46 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 	}
 
 	/*
-     * Returns the projects to build. These are the projects which have builders,
-     * across all selected resources.
-     */
-    private Collection<IProject> getProjectsToBuild(List<IFile> selectedFiles) {
-    	Set<IProject> projectsToBuild = new HashSet<IProject>();
-    	for (IFile file : selectedFiles) {
-    		IProject project = file.getProject();
+	 * Returns the projects to build. These are the projects which have builders,
+	 * across all selected resources.
+	 */
+	private Collection<IProject> getProjectsToBuild(List<IFile> selectedFiles) {
+		Set<IProject> projectsToBuild = new HashSet<IProject>();
+		for (IFile file : selectedFiles) {
+			IProject project = file.getProject();
 			if (!projectsToBuild.contains(project)) {
 				if (hasBuilder(project)) {
 					projectsToBuild.add(project);
 				}
 			}
-    	}
+		}
 
-        return projectsToBuild;
-    }
+		return projectsToBuild;
+	}
 
-    /*
-     * Checks whether there are builders configured on the given project.
-     *
-     * @return {@code true} if it has builders, {@code false} if not, or if this couldn't be
-     *     determined
-     */
-    private boolean hasBuilder(IProject project) {
-    	if (!project.isAccessible())
-    		return false;
+	/*
+	 * Checks whether there are builders configured on the given project.
+	 *
+	 * @return {@code true} if it has builders, {@code false} if not, or if this couldn't be
+	 *     determined
+	 */
+	private boolean hasBuilder(IProject project) {
+		if (!project.isAccessible())
+			return false;
 
-        try {
-            ICommand[] commands = project.getDescription().getBuildSpec();
-            if (commands.length > 0)
-                return true;
-        } catch (CoreException e) {
-            // This method is called when selection changes, so just fall through if it
-        	// fails. This shouldn't happen anyway, since the list of selected resources
-        	// has already been checked for accessibility before this is called.
-        }
-        return false;
-    }
+		try {
+			ICommand[] commands = project.getDescription().getBuildSpec();
+			if (commands.length > 0)
+				return true;
+		} catch (CoreException e) {
+			// This method is called when selection changes, so just fall through if it
+			// fails. This shouldn't happen anyway, since the list of selected resources
+			// has already been checked for accessibility before this is called.
+		}
+		return false;
+	}
 
-    private static class BuildFilesJob extends Job {
+	private static class BuildFilesJob extends Job {
 		private final List<IFile> files;
 
 		BuildFilesJob(List<IFile> filesToBuild) {

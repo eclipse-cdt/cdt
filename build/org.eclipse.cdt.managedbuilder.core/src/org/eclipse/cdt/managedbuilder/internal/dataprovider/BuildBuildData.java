@@ -30,10 +30,11 @@ import org.eclipse.core.runtime.Path;
 public class BuildBuildData extends CBuildData {
 	private Builder fBuilder;
 	private Configuration fCfg;
-//	private BuildEnvironmentContributor fEnvContibutor;
-	public BuildBuildData(IBuilder builder){
-		fBuilder = (Builder)builder;
-		fCfg = (Configuration)fBuilder.getParent().getParent();
+
+	//	private BuildEnvironmentContributor fEnvContibutor;
+	public BuildBuildData(IBuilder builder) {
+		fBuilder = (Builder) builder;
+		fCfg = (Configuration) fBuilder.getParent().getParent();
 	}
 
 	@Override
@@ -41,11 +42,11 @@ public class BuildBuildData extends CBuildData {
 		return new Path(fBuilder.getBuildPath());//ManagedBuildManager.getBuildLocation(fCfg, fBuilder);
 	}
 
-//	private IPath createAbsolutePathFromWorkspacePath(IPath path){
-//		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-//		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
-//		return new Path(locationString);
-//	}
+	//	private IPath createAbsolutePathFromWorkspacePath(IPath path){
+	//		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+	//		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
+	//		return new Path(locationString);
+	//	}
 
 	@Override
 	public String[] getErrorParserIDs() {
@@ -93,9 +94,9 @@ public class BuildBuildData extends CBuildData {
 
 	@Override
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
-//		if(fEnvContibutor == null)
-//			fEnvContibutor = new BuildEnvironmentContributor(this);
-//		return fEnvContibutor;
+		//		if(fEnvContibutor == null)
+		//			fEnvContibutor = new BuildEnvironmentContributor(this);
+		//		return fEnvContibutor;
 		return new BuildEnvironmentContributor(this);
 	}
 
@@ -103,14 +104,13 @@ public class BuildBuildData extends CBuildData {
 	public ICommand getBuildSpecCommand() {
 		try {
 			return BuilderFactory.createCommandFromBuilder(this.fBuilder);
-		}
-		catch(CoreException cx) {
+		} catch (CoreException cx) {
 			ManagedBuilderCorePlugin.log(cx);
 			return null;
 		}
 	}
 
-	public IBuilder getBuilder(){
+	public IBuilder getBuilder() {
 		return fBuilder;
 	}
 

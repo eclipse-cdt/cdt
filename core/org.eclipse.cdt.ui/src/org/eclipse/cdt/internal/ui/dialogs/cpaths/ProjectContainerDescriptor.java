@@ -23,7 +23,7 @@ import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 
 public class ProjectContainerDescriptor implements IContainerDescriptor {
 	private int[] fFilterType;
-	
+
 	public ProjectContainerDescriptor(int[] filterType) {
 		fFilterType = filterType;
 	}
@@ -35,9 +35,9 @@ public class ProjectContainerDescriptor implements IContainerDescriptor {
 
 	@Override
 	public String getName() {
-		return CPathEntryMessages.ProjectContainer_label; 
+		return CPathEntryMessages.ProjectContainer_label;
 	}
-	
+
 	@Override
 	public Image getImage() {
 		return CUIPlugin.getDefault().getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
@@ -49,5 +49,4 @@ public class ProjectContainerDescriptor implements IContainerDescriptor {
 		return false;
 	}
 
-	
 }

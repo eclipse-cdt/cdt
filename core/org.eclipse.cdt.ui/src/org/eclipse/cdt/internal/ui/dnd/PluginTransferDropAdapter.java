@@ -31,13 +31,12 @@ import org.eclipse.cdt.core.model.ICElement;
  *
  */
 
-public class PluginTransferDropAdapter extends PluginDropAdapter implements
-		TransferDropTargetListener {
+public class PluginTransferDropAdapter extends PluginDropAdapter implements TransferDropTargetListener {
 
-	public PluginTransferDropAdapter (StructuredViewer viewer) {
+	public PluginTransferDropAdapter(StructuredViewer viewer) {
 		super(viewer);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener#getTransfer()
 	 */
@@ -46,13 +45,12 @@ public class PluginTransferDropAdapter extends PluginDropAdapter implements
 		return PluginTransfer.getInstance();
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener#isEnabled(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	@Override
 	public boolean isEnabled(DropTargetEvent event) {
-		Object target= event.item != null ? event.item.getData() : null;
+		Object target = event.item != null ? event.item.getData() : null;
 		if (target == null) {
 			return false;
 		}

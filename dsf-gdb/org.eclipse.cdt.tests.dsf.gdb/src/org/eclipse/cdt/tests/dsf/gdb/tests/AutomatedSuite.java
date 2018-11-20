@@ -25,8 +25,6 @@ import org.junit.runners.Suite;
  * -Dcdt.tests.dsf.gdb.versions=gdb.7.7,gdbserver.7.7,gdb.7.11
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	SuiteGdb.class,
-})
+@Suite.SuiteClasses({ SuiteGdb.class, })
 public class AutomatedSuite {
 }

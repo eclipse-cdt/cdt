@@ -23,7 +23,7 @@ public class PDOMQtLinkageFactory implements IPDOMLinkageFactory {
 	public PDOMLinkage getLinkage(PDOM pdom, long record) {
 		try {
 			return new QtPDOMLinkage(pdom, record);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			Activator.log(e);
 		}
 		return null;

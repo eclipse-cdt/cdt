@@ -50,6 +50,7 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 		if (viewer != null)
 			applyMinimumSize();
 	}
+
 	private void applyMinimumSize() {
 		if (minSize != null) {
 			GridData gd = (GridData) viewer.getControl().getLayoutData();

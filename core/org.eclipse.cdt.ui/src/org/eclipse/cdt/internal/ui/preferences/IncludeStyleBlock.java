@@ -37,8 +37,10 @@ public class IncludeStyleBlock extends TabConfigurationBlock {
 	static final Key KEY_STYLE_SAME_FOLDER = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_SAME_FOLDER);
 	static final Key KEY_STYLE_SUBFOLDER = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_SUBFOLDER);
 	static final Key KEY_STYLE_SYSTEM = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_SYSTEM);
-	static final Key KEY_STYLE_SYSTEM_WITH_EXTENSION = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITH_EXTENSION);
-	static final Key KEY_STYLE_SYSTEM_WITHOUT_EXTENSION = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION);
+	static final Key KEY_STYLE_SYSTEM_WITH_EXTENSION = getCDTUIKey(
+			PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITH_EXTENSION);
+	static final Key KEY_STYLE_SYSTEM_WITHOUT_EXTENSION = getCDTUIKey(
+			PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION);
 	static final Key KEY_STYLE_OTHER = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_OTHER);
 	static final Key KEY_STYLE_SAME_PROJECT = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_SAME_PROJECT);
 	static final Key KEY_STYLE_OTHER_PROJECT = getCDTUIKey(PreferenceConstants.INCLUDE_STYLE_OTHER_PROJECT);
@@ -47,28 +49,25 @@ public class IncludeStyleBlock extends TabConfigurationBlock {
 
 	static final Map<IncludeKind, Key> KEY_MAP = createKeyMap();
 	static final Key[] STYLE_KEYS = KEY_MAP.values().toArray(new Key[KEY_MAP.size()]);
-	
-	private static final String[] TAB_LABELS = {
-		PreferencesMessages.IncludeStyleBlock_categories_tab,
-		PreferencesMessages.IncludeStyleBlock_order_tab,
-	};
-	
+
+	private static final String[] TAB_LABELS = { PreferencesMessages.IncludeStyleBlock_categories_tab,
+			PreferencesMessages.IncludeStyleBlock_order_tab, };
+
 	private final List<IncludeGroupStyle> styles;
 
-	public IncludeStyleBlock(IStatusChangeListener context, IProject project,
-			IWorkbenchPreferenceContainer container) {
+	public IncludeStyleBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container) {
 		this(context, project, container, new ArrayList<IncludeGroupStyle>());
 	}
-	
-	private IncludeStyleBlock(IStatusChangeListener context, IProject project,
-			IWorkbenchPreferenceContainer container, List<IncludeGroupStyle> styles) {
+
+	private IncludeStyleBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container,
+			List<IncludeGroupStyle> styles) {
 		super(context, project, createTabs(context, project, container, styles), TAB_LABELS, container);
 		this.styles = styles;
 		settingsUpdated();
 	}
 
-	private static OptionsConfigurationBlock[] createTabs(IStatusChangeListener context,
-			IProject project, IWorkbenchPreferenceContainer container, List<IncludeGroupStyle> styles) {
+	private static OptionsConfigurationBlock[] createTabs(IStatusChangeListener context, IProject project,
+			IWorkbenchPreferenceContainer container, List<IncludeGroupStyle> styles) {
 		IncludeCategoriesBlock includeCategoriesBlock = new IncludeCategoriesBlock(context, project, container, styles);
 		IncludeOrderBlock includeOrderBlock = new IncludeOrderBlock(context, project, container, styles);
 		return new OptionsConfigurationBlock[] { includeCategoriesBlock, includeOrderBlock };

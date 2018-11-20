@@ -40,14 +40,14 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
-	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	protected ICModule getModule() {
 		return fModule;
 	}
 
-	private void setModule( ICModule module ) {
+	private void setModule(ICModule module) {
 		fModule = module;
 	}
 
@@ -55,26 +55,24 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-		final ICModule module = getModule(); 
-		if ( module != null ) {
-			
-			DebugPlugin.getDefault().asyncExec( 
-					new Runnable() {
-						@Override
-						public void run() {
-							try {
-								doAction( module );
-							}
-							catch( DebugException e ) {
-								failed( e );
-							}
-						}
-					} );
+	public void run(IAction action) {
+		final ICModule module = getModule();
+		if (module != null) {
+
+			DebugPlugin.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						doAction(module);
+					} catch (DebugException e) {
+						failed(e);
+					}
+				}
+			});
 		}
 	}
 
-	protected void doAction( ICModule module ) throws DebugException {
+	protected void doAction(ICModule module) throws DebugException {
 		module.loadSymbols();
 	}
 
@@ -82,31 +80,34 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void selectionChanged( IAction action, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
-			if ( ((IStructuredSelection)selection).size() == 1 ) {
-				Object element = ((IStructuredSelection)selection).getFirstElement();
-				if ( element instanceof ICModule ) {
-					boolean enabled = enablesFor( (ICModule)element );
-					action.setEnabled( enabled );
-					if ( enabled ) {
-						setModule( (ICModule)element );
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			if (((IStructuredSelection) selection).size() == 1) {
+				Object element = ((IStructuredSelection) selection).getFirstElement();
+				if (element instanceof ICModule) {
+					boolean enabled = enablesFor((ICModule) element);
+					action.setEnabled(enabled);
+					if (enabled) {
+						setModule((ICModule) element);
 						return;
 					}
 				}
 			}
 		}
-		action.setEnabled( false );
-		setModule( null );
+		action.setEnabled(false);
+		setModule(null);
 	}
 
-	private boolean enablesFor( ICModule module ) {
-		return ( module != null && module.canLoadSymbols() );
+	private boolean enablesFor(ICModule module) {
+		return (module != null && module.canLoadSymbols());
 	}
 
-	protected void failed( Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "LoadModuleSymbolsActionDelegate.0" ), null ); //$NON-NLS-1$
-		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null ) );
-		CDebugUtils.error( ms, getModule() );
+	protected void failed(Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR,
+				ActionMessages.getString("LoadModuleSymbolsActionDelegate.0"), null); //$NON-NLS-1$
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null));
+		CDebugUtils.error(ms, getModule());
 	}
 }

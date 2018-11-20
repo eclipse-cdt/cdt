@@ -63,7 +63,7 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 
 	@Override
 	protected Control createContents(Composite parent) {
-		pixelConverter =  new PixelConverter(parent);
+		pixelConverter = new PixelConverter(parent);
 
 		setShell(parent.getShell());
 
@@ -76,7 +76,7 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 		composite.setLayout(layout);
 		composite.setFont(parent.getFont());
 
-		Group group = ControlFactory.createGroup(composite,	description, 1);
+		Group group = ControlFactory.createGroup(composite, description, 1);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite envelope = new Composite(group, SWT.NONE);
@@ -87,54 +87,53 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 
 		addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_keep_includes_together, 0,
 				new BooleanDataSource() {
-			@Override
-			public boolean get() {
-				return style.isKeepTogether();
-			}
+					@Override
+					public boolean get() {
+						return style.isKeepTogether();
+					}
 
-			@Override
-			public void set(boolean value) {
-				style.setKeepTogether(value);
-			}
-		});
+					@Override
+					public void set(boolean value) {
+						style.setKeepTogether(value);
+					}
+				});
 		checkBoxBlankLine = addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_blank_line_before,
-				pixelConverter.convertHorizontalDLUsToPixels(10),
-				new BooleanDataSource() {
-			@Override
-			public boolean get() {
-				return style.isBlankLineBefore();
-			}
+				pixelConverter.convertHorizontalDLUsToPixels(10), new BooleanDataSource() {
+					@Override
+					public boolean get() {
+						return style.isBlankLineBefore();
+					}
 
-			@Override
-			public void set(boolean value) {
-				style.setBlankLineBefore(value);
-			}
-		});
+					@Override
+					public void set(boolean value) {
+						style.setBlankLineBefore(value);
+					}
+				});
 		if (!style.getIncludeKind().hasChildren()) {
 			addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_use_relative_path, 0,
 					new BooleanDataSource() {
-				@Override
-				public boolean get() {
-					return style.isRelativePath();
-				}
-	
-				@Override
-				public void set(boolean value) {
-					style.setRelativePath(value);
-				}
-			});
+						@Override
+						public boolean get() {
+							return style.isRelativePath();
+						}
+
+						@Override
+						public void set(boolean value) {
+							style.setRelativePath(value);
+						}
+					});
 			addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_use_angle_brackets, 0,
 					new BooleanDataSource() {
-				@Override
-				public boolean get() {
-					return style.isAngleBrackets();
-				}
-	
-				@Override
-				public void set(boolean value) {
-					style.setAngleBrackets(value);
-				}
-			});
+						@Override
+						public boolean get() {
+							return style.isAngleBrackets();
+						}
+
+						@Override
+						public void set(boolean value) {
+							style.setAngleBrackets(value);
+						}
+					});
 		}
 
 		updateControls();
@@ -143,11 +142,11 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 	}
 
 	private Button addCheckBox(Composite parent, String label, int indent, BooleanDataSource dataSource) {
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 3;
-		gd.horizontalIndent= indent;
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
+		gd.horizontalIndent = indent;
 
-		Button checkBox= new Button(parent, SWT.CHECK);
+		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setFont(JFaceResources.getDialogFont());
 		checkBox.setText(label);
 		checkBox.setData(dataSource);
@@ -166,7 +165,7 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 	@Override
 	protected void updateControls() {
 		super.updateControls();
-		for (int i= checkBoxes.size() - 1; i >= 0; i--) {
+		for (int i = checkBoxes.size() - 1; i >= 0; i--) {
 			updateCheckBox(checkBoxes.get(i));
 		}
 	}
@@ -198,11 +197,13 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 
 	private interface BooleanDataSource {
 		boolean get();
+
 		void set(boolean value);
 	}
 
 	private interface StringDataSource {
 		String get();
+
 		void set(String value);
 	}
 }

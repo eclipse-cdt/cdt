@@ -28,17 +28,17 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * AST implementation of ICPPDeferredVariableInstance.
  */
-public class CPPDeferredVariableInstance extends CPPUnknownBinding implements ICPPDeferredVariableInstance, 
-		ISerializableType {
+public class CPPDeferredVariableInstance extends CPPUnknownBinding
+		implements ICPPDeferredVariableInstance, ISerializableType {
 	private final ICPPVariableTemplate fTemplate;
 	private final ICPPTemplateArgument[] fArguments;
-	
+
 	public CPPDeferredVariableInstance(ICPPVariableTemplate template, ICPPTemplateArgument[] arguments) {
 		super(template.getNameCharArray());
 		fTemplate = template;
 		fArguments = arguments;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return fTemplate.getOwner();
@@ -124,7 +124,7 @@ public class CPPDeferredVariableInstance extends CPPUnknownBinding implements IC
 	public boolean isExplicitSpecialization() {
 		return false;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.DEFERRED_VARIABLE_INSTANCE;
@@ -135,14 +135,14 @@ public class CPPDeferredVariableInstance extends CPPUnknownBinding implements IC
 			buffer.marshalTemplateArgument(arg);
 		}
 	}
-	
+
 	public static ICPPDeferredVariableInstance unmarshal(IIndexFragment fragment, short firstBytes,
 			ITypeMarshalBuffer buffer) throws CoreException {
-		IBinding template= buffer.unmarshalBinding();
-		int argcount= buffer.getInt();
+		IBinding template = buffer.unmarshalBinding();
+		int argcount = buffer.getInt();
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];
 		for (int i = 0; i < argcount; i++) {
-			args[i]= buffer.unmarshalTemplateArgument();
+			args[i] = buffer.unmarshalTemplateArgument();
 		}
 		return new PDOMCPPDeferredVariableInstance(fragment, (ICPPVariableTemplate) template, args);
 	}

@@ -31,7 +31,7 @@ public interface ICPPASTElaboratedTypeSpecifier extends IASTElaboratedTypeSpecif
 	 * {@code k_last} is defined for subinterfaces.
 	 */
 	public static final int k_last = k_class;
-	
+
 	/**
 	 * @since 5.1
 	 */

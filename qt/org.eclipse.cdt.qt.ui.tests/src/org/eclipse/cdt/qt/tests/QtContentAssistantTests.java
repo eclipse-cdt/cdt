@@ -102,13 +102,13 @@ public class QtContentAssistantTests extends TestCase {
 
 		QPropertyExpansion inWRITE_e = QPropertyExpansion.create(new Context(doc, len - 4));
 		assertNotNull(inWRITE_e);
-		assertEquals("WRIT",  inWRITE_e.getPrefix());
+		assertEquals("WRIT", inWRITE_e.getPrefix());
 		assertEquals("WRITE", inWRITE_e.getCurrIdentifier());
 		assertEquals("accessor", inWRITE_e.getPrevIdentifier());
 
 		QPropertyExpansion inWRITE_b = QPropertyExpansion.create(new Context(doc, len - 6));
 		assertNotNull(inWRITE_b);
-		assertEquals("WR",    inWRITE_b.getPrefix());
+		assertEquals("WR", inWRITE_b.getPrefix());
 		assertEquals("WRITE", inWRITE_b.getCurrIdentifier());
 		assertEquals("accessor", inWRITE_b.getPrevIdentifier());
 

@@ -97,7 +97,7 @@ public class AccessContext {
 	 */
 	private boolean isUnqualifiedLookup;
 	private boolean isPrefixLookup;
-	private ICPPClassType namingClass;  // Depends on the binding for which we check the access.
+	private ICPPClassType namingClass; // Depends on the binding for which we check the access.
 	// The first candidate is independent of the binding for which we do the access-check.
 	private ICPPClassType firstCandidateForNamingClass;
 	private DOMException initializationException;
@@ -125,14 +125,13 @@ public class AccessContext {
 		if (binding instanceof ICPPMember) {
 			bindingVisibility = ((ICPPMember) binding).getVisibility();
 		} else {
-	        while (binding instanceof ICPPSpecialization) {
-	            binding = ((ICPPSpecialization) binding).getSpecializedBinding();
-	        }
+			while (binding instanceof ICPPSpecialization) {
+				binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+			}
 			if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 				// A class template partial specialization requires its primary
 				// template to be visible
-				if (!isAccessible(
-						((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate()))
+				if (!isAccessible(((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate()))
 					return false;
 			}
 			if (binding instanceof ICPPAliasTemplateInstance) {
@@ -160,8 +159,7 @@ public class AccessContext {
 	 */
 	public boolean isAccessible(IBinding binding, int bindingVisibility) {
 		IBinding owner;
-		while ((owner = binding.getOwner()) instanceof ICompositeType &&
-				((ICompositeType) owner).isAnonymous()) {
+		while ((owner = binding.getOwner()) instanceof ICompositeType && ((ICompositeType) owner).isAnonymous()) {
 			binding = owner;
 		}
 		if (!(owner instanceof ICPPClassType)) {
@@ -170,13 +168,12 @@ public class AccessContext {
 		if (!initialize()) {
 			return true; // Assume visibility if anything goes wrong.
 		}
-		ICPPClassType accessOwner= (ICPPClassType) owner;
+		ICPPClassType accessOwner = (ICPPClassType) owner;
 		namingClass = getNamingClass(accessOwner);
 		if (namingClass == null) {
 			return true;
 		}
-		return isAccessible(binding, bindingVisibility, accessOwner, namingClass,
-				v_public, 0);
+		return isAccessible(binding, bindingVisibility, accessOwner, namingClass, v_public, 0);
 	}
 
 	/**
@@ -189,7 +186,7 @@ public class AccessContext {
 			}
 			try {
 				context = getContext(name);
-				firstCandidateForNamingClass= getFirstCandidateForNamingClass(name);
+				firstCandidateForNamingClass = getFirstCandidateForNamingClass(name);
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 				initializationException = e;
@@ -232,14 +229,14 @@ public class AccessContext {
 				}
 			}
 		}
-		
+
 		ICPPBase[] bases = derivedClass.getBases();
 		if (bases != null) {
 			for (ICPPBase base : bases) {
 				IBinding baseBinding = base.getBaseClass();
 				if (baseBinding instanceof ICPPDeferredClassInstance) {
 					// Support content assist for members of deferred instances.
-					baseBinding= ((ICPPDeferredClassInstance) baseBinding).getTemplateDefinition();
+					baseBinding = ((ICPPDeferredClassInstance) baseBinding).getTemplateDefinition();
 				}
 				if (!(baseBinding instanceof ICPPClassType)) {
 					continue;
@@ -247,8 +244,8 @@ public class AccessContext {
 				if (!isAccessible(base.getVisibility(), accessLevel)) {
 					continue;
 				}
-				if (isAccessible(binding, bindingVisibility, owner,
-						(ICPPClassType) baseBinding, accessLevel == v_private ? v_protected : accessLevel, depth + 1)) {
+				if (isAccessible(binding, bindingVisibility, owner, (ICPPClassType) baseBinding,
+						accessLevel == v_private ? v_protected : accessLevel, depth + 1)) {
 					return true;
 				}
 			}
@@ -309,7 +306,7 @@ public class AccessContext {
 
 	private ICPPClassType getFirstCandidateForNamingClass(IASTName name) throws DOMException {
 		LookupData data = new LookupData(name);
-		isUnqualifiedLookup= !data.qualified;
+		isUnqualifiedLookup = !data.qualified;
 
 		ICPPScope scope = CPPSemantics.getLookupScope(name);
 		while (scope != null && !(scope instanceof ICPPClassScope)) {
@@ -338,17 +335,16 @@ public class AccessContext {
 		ICPPClassType classType = firstCandidateForNamingClass;
 		if (classType != null && isUnqualifiedLookup) {
 			IBinding owner = classType.getOwner();
-			while (owner instanceof ICPPClassType &&
-					!derivesFrom(classType, accessOwner, name, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
-				classType= (ICPPClassType) owner;
-				owner= classType.getOwner();
+			while (owner instanceof ICPPClassType
+					&& !derivesFrom(classType, accessOwner, name, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
+				classType = (ICPPClassType) owner;
+				owner = classType.getOwner();
 			}
 		}
 		return classType;
 	}
 
-	private static boolean derivesFrom(ICPPClassType derived, ICPPClassType target, IASTNode point,
-			int maxdepth) {
+	private static boolean derivesFrom(ICPPClassType derived, ICPPClassType target, IASTNode point, int maxdepth) {
 		if (derived == target || derived.isSameType(target)) {
 			return true;
 		}
@@ -375,12 +371,12 @@ public class AccessContext {
 
 	private static IBinding[] getContext(IASTName name) {
 		IBinding[] accessibilityContext = IBinding.EMPTY_BINDING_ARRAY;
-		for (IBinding binding = CPPVisitor.findEnclosingFunctionOrClass(name);
-				binding != null; binding = binding.getOwner()) {
+		for (IBinding binding = CPPVisitor.findEnclosingFunctionOrClass(name); binding != null; binding = binding
+				.getOwner()) {
 			if (binding instanceof ICPPMethod ||
-					// Definition of an undeclared method.
-					binding instanceof IProblemBinding &&
-					((IProblemBinding) binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
+			// Definition of an undeclared method.
+					binding instanceof IProblemBinding && ((IProblemBinding) binding)
+							.getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
 				continue;
 			}
 			if (binding instanceof ICPPFunction || binding instanceof ICPPClassType) {

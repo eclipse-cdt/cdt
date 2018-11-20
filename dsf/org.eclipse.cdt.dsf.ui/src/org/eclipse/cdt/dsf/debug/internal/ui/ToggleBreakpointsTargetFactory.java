@@ -52,7 +52,7 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 	 *       for the editor.
 	 */
 	public static final String TOGGLE_C_BREAKPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCBreakpointTarget"; //$NON-NLS-1$
-	
+
 	private static final Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
 	static {
 		TOGGLE_TARGET_IDS.add(TOGGLE_C_BREAKPOINT_TARGET_ID);
@@ -63,7 +63,7 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 	public ToggleBreakpointsTargetFactory() {
 	}
 
-    @Override
+	@Override
 	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
 		if (TOGGLE_C_BREAKPOINT_TARGET_ID.equals(targetID)) {
 			return fgDisassemblyToggleBreakpointsTarget;
@@ -71,45 +71,43 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IDisassemblyPart) {
-	        // Return the debug context as a default if the currently selected context
-	        // is a CDT element.  Otherwise return null.
-	        Object element = getDebugContext(part).getFirstElement();
-	        if (element instanceof IAdaptable) {
-	            IDebugModelProvider modelProvider = 
-	                ((IAdaptable)element).getAdapter(IDebugModelProvider.class);
-	            if (modelProvider != null) {
-	                String[] models = modelProvider.getModelIdentifiers();
-	                for (String model : models) {
-	                    if (CDIDebugModel.getPluginIdentifier().equals(model) ||
-	                        ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) 
-	                    {
-	                        return TOGGLE_C_BREAKPOINT_TARGET_ID;
-	                    }
-	                }
-	            } else if (element instanceof IDebugElement) {
-	                if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement)element).getModelIdentifier()) ) {
-	                    return TOGGLE_C_BREAKPOINT_TARGET_ID;
-	                }
-	            }
-	        }
+			// Return the debug context as a default if the currently selected context
+			// is a CDT element.  Otherwise return null.
+			Object element = getDebugContext(part).getFirstElement();
+			if (element instanceof IAdaptable) {
+				IDebugModelProvider modelProvider = ((IAdaptable) element).getAdapter(IDebugModelProvider.class);
+				if (modelProvider != null) {
+					String[] models = modelProvider.getModelIdentifiers();
+					for (String model : models) {
+						if (CDIDebugModel.getPluginIdentifier().equals(model)
+								|| ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) {
+							return TOGGLE_C_BREAKPOINT_TARGET_ID;
+						}
+					}
+				} else if (element instanceof IDebugElement) {
+					if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement) element).getModelIdentifier())) {
+						return TOGGLE_C_BREAKPOINT_TARGET_ID;
+					}
+				}
+			}
 		}
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getToggleTargetDescription(String targetID) {
 		return Messages.ToggleBreakpointsTargetFactory_description;
 	}
 
-    @Override
+	@Override
 	public String getToggleTargetName(String targetID) {
 		return Messages.ToggleBreakpointsTargetFactory_name;
 	}
 
-    @Override
+	@Override
 	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IDisassemblyPart) {
 			return TOGGLE_TARGET_IDS;
@@ -118,11 +116,11 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 	}
 
 	private IStructuredSelection getDebugContext(IWorkbenchPart part) {
-		ISelection selection = DebugUITools.getDebugContextManager().
-		getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
+		ISelection selection = DebugUITools.getDebugContextManager()
+				.getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
 		if (selection instanceof IStructuredSelection) {
-			return (IStructuredSelection)selection;
-		} 
+			return (IStructuredSelection) selection;
+		}
 		return StructuredSelection.EMPTY;
 	}
 

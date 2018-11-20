@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAChildrenCommand extends AbstractPDACommand<PDAListResult> {
 
-    public PDAChildrenCommand(PDAThreadDMContext thread, int frameId, String name  ) {
-        super(thread, "children " + thread.getID() + " " + frameId + " " + name);
-    }
-    
-    @Override
-    public PDAListResult createResult(String resultText) {
-        return new PDAListResult(resultText);
-    }
+	public PDAChildrenCommand(PDAThreadDMContext thread, int frameId, String name) {
+		super(thread, "children " + thread.getID() + " " + frameId + " " + name);
+	}
+
+	@Override
+	public PDAListResult createResult(String resultText) {
+		return new PDAListResult(resultText);
+	}
 }

@@ -28,8 +28,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwner, IASTDeclarationListOwner,
-		IASTAttributeOwner {
+public interface ICPPASTNamespaceDefinition
+		extends IASTDeclaration, IASTNameOwner, IASTDeclarationListOwner, IASTAttributeOwner {
 	/**
 	 * {@code OWNED_DECLARATION} is the role served by all the nested declarations.
 	 */
@@ -67,7 +67,7 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	 * @since 5.3
 	 */
 	public boolean isInline();
-	
+
 	/**
 	 * A namespace contains an ordered sequence of declarations.
 	 * 
@@ -89,7 +89,7 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	 * @return {@code IScope}
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

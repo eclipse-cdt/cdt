@@ -44,8 +44,7 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.xlc.ui.XlcSettingsWizardPage"; //$NON-NLS-1$
 
-	private final class BrowseButtonSelectionListener implements
-			SelectionListener {
+	private final class BrowseButtonSelectionListener implements SelectionListener {
 		private final Composite composite;
 
 		private BrowseButtonSelectionListener(Composite composite) {
@@ -92,9 +91,11 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 	}
 
 	private void setDefaultPreferences(String pageID) {
-		String compilerPath = XLCUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_XL_COMPILER_ROOT);
+		String compilerPath = XLCUIPlugin.getDefault().getPreferenceStore()
+				.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XL_COMPILER_ROOT, compilerPath);
-		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.P_XL_COMPILER_VERSION_8);
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION,
+				PreferenceConstants.P_XL_COMPILER_VERSION_8);
 	}
 
 	/* (non-Javadoc)
@@ -152,7 +153,8 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				// update the page manager with the setting
-				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XL_COMPILER_ROOT, fDirTextBox.getText());
+				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XL_COMPILER_ROOT,
+						fDirTextBox.getText());
 
 			}
 
@@ -165,8 +167,7 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		Button browseButton = new Button(fComposite, SWT.PUSH);
 		browseButton.setAlignment(SWT.CENTER);
 		browseButton.setText(Messages.XLCSettingsWizardPage_2);
-		browseButton.addSelectionListener(new BrowseButtonSelectionListener(fComposite)
-		);
+		browseButton.addSelectionListener(new BrowseButtonSelectionListener(fComposite));
 
 		browseButton.setVisible(true);
 
@@ -195,14 +196,16 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		fVersionCombo.setText(PreferenceConstants.getVersionLabel(compilerVersion));
 
 		// update the page manager with the setting
-		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.getVersion(fVersionCombo.getText()));
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION,
+				PreferenceConstants.getVersion(fVersionCombo.getText()));
 
 		fVersionCombo.addModifyListener(new ModifyListener() {
 
 			@Override
 			public void modifyText(ModifyEvent e) {
 				// update the page manager with the setting
-				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.getVersion(fVersionCombo.getText()));
+				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION,
+						PreferenceConstants.getVersion(fVersionCombo.getText()));
 
 			}
 

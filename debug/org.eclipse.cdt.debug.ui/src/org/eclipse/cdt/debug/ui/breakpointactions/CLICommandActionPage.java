@@ -21,8 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * @since 8.0
  */
-public class CLICommandActionPage extends PlatformObject implements
-		IBreakpointActionPage {
+public class CLICommandActionPage extends PlatformObject implements IBreakpointActionPage {
 	private CLICommandAction cliCommandAction;
 	private CLICommandActionComposite editor;
 

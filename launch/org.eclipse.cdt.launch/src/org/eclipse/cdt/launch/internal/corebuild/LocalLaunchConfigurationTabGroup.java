@@ -23,10 +23,7 @@ public class LocalLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		ILaunchConfigurationTab mainTab = new CoreBuildMainTab();
 		ILaunchConfigurationTab buildTab = new CoreBuildTab();
 
-		setTabs(new ILaunchConfigurationTab[] {
-				mainTab,
-				buildTab
-		});
+		setTabs(new ILaunchConfigurationTab[] { mainTab, buildTab });
 	}
 
 }

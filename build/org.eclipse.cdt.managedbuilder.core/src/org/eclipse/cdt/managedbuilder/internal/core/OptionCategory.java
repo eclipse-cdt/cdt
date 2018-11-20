@@ -50,11 +50,11 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	//  Parent and children
 	private IHoldsOptions holder;
-	private List<OptionCategory> children;			// Note: These are logical Option Category children, not "model" children
+	private List<OptionCategory> children; // Note: These are logical Option Category children, not "model" children
 	//  Managed Build model attributes
-	private IOptionCategory owner;	// The logical Option Category parent
+	private IOptionCategory owner; // The logical Option Category parent
 	private String ownerId;
-	private URL    iconPathURL;
+	private URL iconPathURL;
 
 	private IConfigurationElement applicabilityCalculatorElement = null;
 	private IOptionCategoryApplicability applicabilityCalculator = null;
@@ -135,21 +135,21 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		ownerId = SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.OWNER));
 
 		// icon
-		if ( element.getAttribute(IOptionCategory.ICON) != null  && element instanceof DefaultManagedConfigElement)
-		{
-		    String icon = element.getAttribute(IOptionCategory.ICON);
-			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions( (DefaultManagedConfigElement)element, new Path(icon) );
+		if (element.getAttribute(IOptionCategory.ICON) != null && element instanceof DefaultManagedConfigElement) {
+			String icon = element.getAttribute(IOptionCategory.ICON);
+			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions((DefaultManagedConfigElement) element,
+					new Path(icon));
 		}
 
 		//get enablements
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
-		if(enablements.length > 0)
+		if (enablements.length > 0)
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 
 		// get the applicability calculator, if any
 		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR);
 		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
-			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			applicabilityCalculatorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		} else {
 			applicabilityCalculator = booleanExpressionCalculator;
 		}
@@ -195,11 +195,11 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 		// Hook me in
 		if (owner == null)
-			((HoldsOptions)holder).addChildCategory(this);
+			((HoldsOptions) holder).addChildCategory(this);
 		else if (owner instanceof Tool)
-			((Tool)owner).addChildCategory(this);
+			((Tool) owner).addChildCategory(this);
 		else
-			((OptionCategory)owner).addChildCategory(this);
+			((OptionCategory) owner).addChildCategory(this);
 	}
 
 	private IOptionCategory getNullOptionCategory() {
@@ -207,7 +207,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		// the fact that Tool implements IOptionCategory. If so,
 		// the holder is in fact a parent category to this category.
 		if (holder instanceof IOptionCategory) {
-			return (IOptionCategory)holder;
+			return (IOptionCategory) holder;
 		}
 		return null;
 	}
@@ -296,9 +296,9 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		optionHolders[0] = optionHolder;
 		boolean isRoot = false;
 		if (resinfo instanceof ResourceInfo)
-			isRoot = ((ResourceInfo)resinfo).isRoot();
+			isRoot = ((ResourceInfo) resinfo).isRoot();
 		else if (resinfo instanceof MultiResourceInfo)
-			isRoot = ((MultiResourceInfo)resinfo).isRoot();
+			isRoot = ((MultiResourceInfo) resinfo).isRoot();
 		return getOptions(optionHolders, isRoot ? FILTER_PROJECT : FILTER_FILE);
 	}
 
@@ -328,9 +328,9 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	private IHoldsOptions getOptionHoldersSuperClass(IHoldsOptions optionHolder) {
 		if (optionHolder instanceof ITool)
-			return ((ITool)optionHolder).getSuperClass();
+			return ((ITool) optionHolder).getSuperClass();
 		else if (optionHolder instanceof IToolChain)
-			return ((IToolChain)optionHolder).getSuperClass();
+			return ((IToolChain) optionHolder).getSuperClass();
 		return null;
 	}
 
@@ -349,7 +349,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 						break;
 					}
 				} while ((current = getOptionHoldersSuperClass(current)) != null);
-				if (optionHolder != null) break;
+				if (optionHolder != null)
+					break;
 			}
 		}
 		if (optionHolder == null) {
@@ -366,7 +367,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			if (option.getCategory().equals(this)) {
 
 				// Check whether this option can be displayed for a specific resource type.
-				if( (option.getResourceFilter() == FILTER_ALL) || (option.getResourceFilter() == filterValue) ) {
+				if ((option.getResourceFilter() == FILTER_ALL) || (option.getResourceFilter() == filterValue)) {
 					myOptions[index] = new Object[2];
 					myOptions[index][0] = optionHolder;
 					myOptions[index][1] = option;
@@ -407,9 +408,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	public ITool getTool() {
 		// This will stop at the tool's top category
 		IHoldsOptions parent = owner.getOptionHolder();
-		if (parent instanceof ITool)
-		{
-			return (ITool)parent;
+		if (parent instanceof ITool) {
+			return (ITool) parent;
 		}
 		return null;
 	}
@@ -439,7 +439,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension OptionCategory
- 		if (isExtensionOptionCategory) return false;
+		if (isExtensionOptionCategory)
+			return false;
 		return isDirty;
 	}
 
@@ -461,18 +462,14 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 					if (holder instanceof IOptionCategory) {
 						// Report error, only if the parent is a tool and thus also
 						// an option category.
-						ManagedBuildManager.outputResolveError(
-								"owner",	//$NON-NLS-1$
-								ownerId,
-								"optionCategory",	//$NON-NLS-1$
+						ManagedBuildManager.outputResolveError("owner", //$NON-NLS-1$
+								ownerId, "optionCategory", //$NON-NLS-1$
 								getId());
 						error = true;
-					} else if ( false == holder.getId().equals(ownerId) ) {
+					} else if (false == holder.getId().equals(ownerId)) {
 						// Report error, if the holder ID does not match the owner's ID.
-						ManagedBuildManager.outputResolveError(
-								"owner",	//$NON-NLS-1$
-								ownerId,
-								"optionCategory",	//$NON-NLS-1$
+						ManagedBuildManager.outputResolveError("owner", //$NON-NLS-1$
+								ownerId, "optionCategory", //$NON-NLS-1$
 								getId());
 						error = true;
 					}
@@ -483,12 +480,12 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			}
 
 			// Hook me in
-			if (owner == null  &&  error == false)
-				((HoldsOptions)holder).addChildCategory(this);
+			if (owner == null && error == false)
+				((HoldsOptions) holder).addChildCategory(this);
 			else if (owner instanceof Tool)
-				((Tool)owner).addChildCategory(this);
+				((Tool) owner).addChildCategory(this);
 			else
-				((OptionCategory)owner).addChildCategory(this);
+				((OptionCategory) owner).addChildCategory(this);
 		}
 	}
 
@@ -497,8 +494,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 */
 	@Override
 	public String getManagedBuildRevision() {
-		if ( managedBuildRevision == null) {
-			if ( getOptionHolder() != null) {
+		if (managedBuildRevision == null) {
+			if (getOptionHolder() != null) {
 				return getOptionHolder().getManagedBuildRevision();
 			}
 		}
@@ -510,8 +507,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 */
 	@Override
 	public Version getVersion() {
-		if ( version == null) {
-			if ( getOptionHolder() != null) {
+		if (version == null) {
+			if (getOptionHolder() != null) {
 				return getOptionHolder().getVersion();
 			}
 		}
@@ -537,9 +534,10 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		// Build the match name.
 		do {
 			catName = catOrTool.getName() + "|" + catName; //$NON-NLS-1$
-			if (catOrTool instanceof ITool) break;
+			if (catOrTool instanceof ITool)
+				break;
 			else if (catOrTool instanceof IOptionCategory) {
-				catOrTool = ((IOptionCategory)catOrTool).getOwner();
+				catOrTool = ((IOptionCategory) catOrTool).getOwner();
 			} else
 				break;
 		} while (catOrTool != null);
@@ -559,7 +557,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	static public Object findOptionCategoryByMatchName(String matchName, IOptionCategory[] cats) {
 		Object primary = null;
 
-		for (int j=0; j<cats.length; j++) {
+		for (int j = 0; j < cats.length; j++) {
 			IBuildObject catOrTool = cats[j];
 			// Build the match name
 			String catName = makeMatchName(catOrTool);
@@ -589,7 +587,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 				try {
 					if (applicabilityCalculatorElement.getAttribute(APPLICABILITY_CALCULATOR) != null)
 						applicabilityCalculator = (IOptionCategoryApplicability) applicabilityCalculatorElement
-							.createExecutableExtension(APPLICABILITY_CALCULATOR);
+								.createExecutableExtension(APPLICABILITY_CALCULATOR);
 				} catch (CoreException e) {
 					ManagedBuilderCorePlugin.log(e);
 				}

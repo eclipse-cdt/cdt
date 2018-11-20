@@ -31,7 +31,7 @@ public class LabelPosition extends AddressRangePosition {
 		super(offset, length, addressOffset, BigInteger.ZERO);
 		fLabel = label;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition#toString()
 	 */

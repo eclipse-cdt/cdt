@@ -31,7 +31,7 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 	private final IReadOnlyPDOMProvider provider;
 
 	public ReadOnlyPDOMProviderBridge(IReadOnlyPDOMProvider provider) {
-		this.provider= provider;
+		this.provider = provider;
 	}
 
 	@Override
@@ -41,8 +41,7 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 
 		if (descriptions != null) {
 			for (IPDOMDescriptor desc : descriptions) {
-				PDOM pdom= PDOMCache.getInstance().getPDOM(desc.getLocation(),
-						desc.getIndexLocationConverter()); 
+				PDOM pdom = PDOMCache.getInstance().getPDOM(desc.getLocation(), desc.getIndexLocationConverter());
 				if (pdom != null) {
 					result.add(pdom);
 				}

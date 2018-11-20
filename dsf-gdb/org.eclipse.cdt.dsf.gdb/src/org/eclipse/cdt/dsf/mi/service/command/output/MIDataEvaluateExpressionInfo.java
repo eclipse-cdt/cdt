@@ -22,24 +22,24 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public class MIDataEvaluateExpressionInfo extends MIInfo {
 
-    String fValue;
+	String fValue;
 
-    public MIDataEvaluateExpressionInfo(MIOutput rr) {
-        super(rr);
-        fValue = ""; //$NON-NLS-1$
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord outr = out.getMIResultRecord();
-            if (outr != null) {
-                MIValue value = outr.getField("value"); //$NON-NLS-1$
-                if (value instanceof MIConst) {
-                    fValue = ((MIConst)value).getString();
-                }
-            }
-        }
-    }
+	public MIDataEvaluateExpressionInfo(MIOutput rr) {
+		super(rr);
+		fValue = ""; //$NON-NLS-1$
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord outr = out.getMIResultRecord();
+			if (outr != null) {
+				MIValue value = outr.getField("value"); //$NON-NLS-1$
+				if (value instanceof MIConst) {
+					fValue = ((MIConst) value).getString();
+				}
+			}
+		}
+	}
 
-    public String getValue() {
-        return fValue;
-    }
+	public String getValue() {
+		return fValue;
+	}
 }

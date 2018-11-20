@@ -26,19 +26,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class RequestMonitorWithProgress extends RequestMonitor {
 
-    private final IProgressMonitor fProgressMonitor;
-    
-    public RequestMonitorWithProgress(Executor executor, IProgressMonitor progressMonitor) {
-        super(executor, null);
-        fProgressMonitor = progressMonitor;
-    }
+	private final IProgressMonitor fProgressMonitor;
 
-    public IProgressMonitor getProgressMonitor() {
-        return fProgressMonitor;
-    }
-    
-    @Override
-    public synchronized boolean isCanceled() {
-        return super.isCanceled() || fProgressMonitor.isCanceled();
-    }
+	public RequestMonitorWithProgress(Executor executor, IProgressMonitor progressMonitor) {
+		super(executor, null);
+		fProgressMonitor = progressMonitor;
+	}
+
+	public IProgressMonitor getProgressMonitor() {
+		return fProgressMonitor;
+	}
+
+	@Override
+	public synchronized boolean isCanceled() {
+		return super.isCanceled() || fProgressMonitor.isCanceled();
+	}
 }

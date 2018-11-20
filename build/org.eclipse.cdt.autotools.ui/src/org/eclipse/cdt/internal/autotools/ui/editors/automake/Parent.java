@@ -61,7 +61,7 @@ public abstract class Parent extends Directive implements IParent {
 
 	public Directive[] getStatements() {
 		children.trimToSize();
-		return children.toArray(new Directive[0]);		
+		return children.toArray(new Directive[0]);
 	}
 
 	@Override

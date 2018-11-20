@@ -26,18 +26,17 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
-
 /**
  *
  * TranslationUnitAnnotationModelEvent
  *
  * Event sent out by changes of the compilation unit annotation model.
  */
-public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
-	
+public class TranslationUnitAnnotationModelEvent extends AnnotationModelEvent {
+
 	private boolean fIncludesProblemMarkerAnnotations;
 	private IResource fUnderlyingResource;
-	
+
 	/**
 	 * Constructor for CompilationUnitAnnotationModelEvent.
 	 * @param model
@@ -45,28 +44,28 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 	 */
 	public TranslationUnitAnnotationModelEvent(IAnnotationModel model, IResource underlyingResource) {
 		super(model);
-		fUnderlyingResource= underlyingResource;
-		fIncludesProblemMarkerAnnotations= false;
+		fUnderlyingResource = underlyingResource;
+		fIncludesProblemMarkerAnnotations = false;
 	}
-	
+
 	private void testIfProblemMarker(Annotation annotation) {
 		if (fIncludesProblemMarkerAnnotations) {
 			return;
 		}
 		if (annotation instanceof CMarkerAnnotation) {
-			fIncludesProblemMarkerAnnotations= ((CMarkerAnnotation) annotation).isProblem();
+			fIncludesProblemMarkerAnnotations = ((CMarkerAnnotation) annotation).isProblem();
 		} else if (annotation instanceof MarkerAnnotation) {
 			try {
-				IMarker marker= ((MarkerAnnotation) annotation).getMarker();
+				IMarker marker = ((MarkerAnnotation) annotation).getMarker();
 				if (!marker.exists() || marker.isSubtypeOf(IMarker.PROBLEM)) {
-					fIncludesProblemMarkerAnnotations= true;
+					fIncludesProblemMarkerAnnotations = true;
 				}
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
-		}	
+		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationAdded(org.eclipse.jface.text.source.Annotation)
 	 */
@@ -75,7 +74,6 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 		super.annotationAdded(annotation);
 		testIfProblemMarker(annotation);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
@@ -94,7 +92,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 		super.annotationRemoved(annotation);
 		testIfProblemMarker(annotation);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationChanged(org.eclipse.jface.text.source.Annotation)
 	 */
@@ -103,7 +101,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 		testIfProblemMarker(annotation);
 		super.annotationChanged(annotation);
 	}
-		
+
 	/**
 	 * Returns whether the change included problem marker annotations.
 	 * 
@@ -112,7 +110,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 	public boolean includesProblemMarkerAnnotationChanges() {
 		return fIncludesProblemMarkerAnnotations;
 	}
-	
+
 	/**
 	 * Returns the annotation model's underlying resource
 	 */

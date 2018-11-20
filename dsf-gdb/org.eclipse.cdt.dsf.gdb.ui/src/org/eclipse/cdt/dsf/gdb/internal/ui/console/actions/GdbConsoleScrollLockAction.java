@@ -24,10 +24,10 @@ public class GdbConsoleScrollLockAction extends Action {
 
 	private final ITerminalViewControl fTerminalCtrl;
 	private Boolean fScrollLocked = false;
-	
+
 	public GdbConsoleScrollLockAction(ITerminalViewControl terminalControl) {
 		super(ConsoleMessages.ConsoleScrollLockAction_name, IAction.AS_CHECK_BOX);
-		
+
 		fTerminalCtrl = terminalControl;
 		if (fTerminalCtrl == null || fTerminalCtrl.isDisposed()) {
 			setEnabled(false);
@@ -37,7 +37,8 @@ public class GdbConsoleScrollLockAction extends Action {
 
 		setToolTipText(ConsoleMessages.ConsoleScrollLockAction_description);
 		setImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_SCROLL_LOCK_ACTIVE_COLOR));
-		setDisabledImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_SCROLL_LOCK_DISABLED_COLOR));
+		setDisabledImageDescriptor(
+				GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_SCROLL_LOCK_DISABLED_COLOR));
 	}
 
 	@Override

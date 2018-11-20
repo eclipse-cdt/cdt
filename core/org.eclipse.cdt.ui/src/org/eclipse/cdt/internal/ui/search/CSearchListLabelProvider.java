@@ -31,13 +31,13 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 public class CSearchListLabelProvider extends ColoringLabelProvider {
 	private final CSearchViewPage fPage;
 	private final int fColumnIndex;
-	
+
 	public CSearchListLabelProvider(CSearchViewPage page, int columnIndex) {
 		super(new CSearchLabelProvider(page));
 		fPage = page;
 		fColumnIndex = columnIndex;
 	}
-	
+
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();

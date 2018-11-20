@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.ui.view.TestsHierarchyViewer;
 import org.eclipse.jface.action.Action;
 
@@ -23,7 +22,6 @@ import org.eclipse.jface.action.Action;
 public class ShowTimeAction extends Action {
 
 	private TestsHierarchyViewer testsHierarchyViewer;
-
 
 	public ShowTimeAction(TestsHierarchyViewer testsHierarchyViewer) {
 		super(ActionsMessages.ShowTimeAction_text, AS_CHECK_BOX);

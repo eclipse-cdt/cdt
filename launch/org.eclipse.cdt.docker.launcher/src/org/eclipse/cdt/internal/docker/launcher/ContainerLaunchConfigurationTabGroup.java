@@ -26,8 +26,7 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
-public class ContainerLaunchConfigurationTabGroup extends
-		AbstractLaunchConfigurationTabGroup {
+public class ContainerLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {

@@ -12,7 +12,7 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 
- package org.eclipse.cdt.managedbuilder.core.tests;
+package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -43,63 +43,50 @@ import org.osgi.framework.Version;
  *
  *
  */
-public class TestMacro implements
-	IConfigurationBuildMacroSupplier,
-	IProjectBuildMacroSupplier,
-	IReservedMacroNameSupplier,
-	IConfigurationEnvironmentVariableSupplier,
-	IProjectEnvironmentVariableSupplier,
-	IManagedIsToolChainSupported,
-	IManagedBuilderMakefileGenerator
-	{
+public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuildMacroSupplier,
+		IReservedMacroNameSupplier, IConfigurationEnvironmentVariableSupplier, IProjectEnvironmentVariableSupplier,
+		IManagedIsToolChainSupported, IManagedBuilderMakefileGenerator {
 
-	public static boolean supported[] = {false, false, false, false, false};
+	public static boolean supported[] = { false, false, false, false, false };
 	public static IPath topBuildDir = null;
 
 	public static String CFG_VAR = "CFG_PROVIDER_VAR"; //$NON-NLS-1$
 	public static String PRJ_VAR = "PRJ_PROVIDER_VAR"; //$NON-NLS-1$
 
-//	IConfigurationBuildMacroSupplier
+	//	IConfigurationBuildMacroSupplier
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier#getMacro(java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
 	@Override
-	public IBuildMacro getMacro(String macroName, IConfiguration configuration,
-			IBuildMacroProvider provider) {
+	public IBuildMacro getMacro(String macroName, IConfiguration configuration, IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_ONE_CONFIG;
 
 		IBuildMacro ms = null;
 		if (!(provider instanceof TestMacro)) {
-			ms = provider.getMacro(macroName,
-					IBuildMacroProvider.CONTEXT_CONFIGURATION,
-					configuration, false);
+			ms = provider.getMacro(macroName, IBuildMacroProvider.CONTEXT_CONFIGURATION, configuration, false);
 		}
 		return ms;
 	}
 
 	@Override
-	public IBuildMacro getMacro(String macroName, IManagedProject mproj,
-			IBuildMacroProvider provider) {
+	public IBuildMacro getMacro(String macroName, IManagedProject mproj, IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_ONE_PROJECT;
 
 		IBuildMacro ms = null;
 		if (!(provider instanceof TestMacro)) {
-			ms = provider.getMacro(macroName,
-					IBuildMacroProvider.CONTEXT_PROJECT,
-					mproj, false);
+			ms = provider.getMacro(macroName, IBuildMacroProvider.CONTEXT_PROJECT, mproj, false);
 		}
 		return ms;
 	}
 
-//	IProjectBuildMacroSupplier
+	//	IProjectBuildMacroSupplier
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier#getMacros(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
 	@Override
-	public IBuildMacro[] getMacros(IConfiguration configuration,
-			IBuildMacroProvider provider) {
+	public IBuildMacro[] getMacros(IConfiguration configuration, IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_MANY_CONFIG;
 		IBuildMacro[] ms = null;
 		if (!(provider instanceof TestMacro)) {
@@ -111,7 +98,7 @@ public class TestMacro implements
 			} else {
 				newms = new BuildMacro[1];
 			}
-			newms[ms.length] = new BuildMacro("NEW_FOR_CFG", 1, "NewMacrosForConfigContext");  //$NON-NLS-1$ //$NON-NLS-2$
+			newms[ms.length] = new BuildMacro("NEW_FOR_CFG", 1, "NewMacrosForConfigContext"); //$NON-NLS-1$ //$NON-NLS-2$
 			return newms;
 		}
 		return null;
@@ -121,8 +108,7 @@ public class TestMacro implements
 	 *
 	 */
 	@Override
-	public IBuildMacro[] getMacros(IManagedProject mproj,
-			IBuildMacroProvider provider) {
+	public IBuildMacro[] getMacros(IManagedProject mproj, IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_MANY_PROJECT;
 		IBuildMacro[] ms = null;
 		if (!(provider instanceof TestMacro)) {
@@ -134,13 +120,13 @@ public class TestMacro implements
 			} else {
 				newms = new BuildMacro[1];
 			}
-			newms[newms.length - 1] = new BuildMacro("NEW_FOR_PRJ", 1, "NewMacrosForProjectContext");  //$NON-NLS-1$ //$NON-NLS-2$
+			newms[newms.length - 1] = new BuildMacro("NEW_FOR_PRJ", 1, "NewMacrosForProjectContext"); //$NON-NLS-1$ //$NON-NLS-2$
 			return newms;
 		}
 		return null;
 	}
 
-//	IReservedMacroNameSupplier
+	//	IReservedMacroNameSupplier
 
 	/**
 	 *
@@ -148,18 +134,18 @@ public class TestMacro implements
 	@Override
 	public boolean isReservedName(String macroName, IConfiguration configuration) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.RESERVED_NAME;
-		if (macroName.equalsIgnoreCase("USERNAME")) return true;  //$NON-NLS-1$
+		if (macroName.equalsIgnoreCase("USERNAME")) //$NON-NLS-1$
+			return true;
 		return false;
 	}
 
-//	IConfigurationEnvironmentVariableSupplier
+	//	IConfigurationEnvironmentVariableSupplier
 
 	/**
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName,
-			IConfiguration configuration,
+	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		if (CFG_VAR.equals(variableName)) {
 			return new BuildEnvVar(CFG_VAR, CFG_VAR + configuration.getName());
@@ -171,25 +157,24 @@ public class TestMacro implements
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable[] getVariables (IConfiguration configuration,
+	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		IBuildEnvironmentVariable v = getVariable(CFG_VAR, configuration, provider);
 		if (v != null) {
 			IBuildEnvironmentVariable[] vs = new IBuildEnvironmentVariable[1];
 			vs[0] = v;
-			return(vs);
+			return (vs);
 		} else
 			return null;
 	}
 
-//	IProjectEnvironmentVariableSupplier
+	//	IProjectEnvironmentVariableSupplier
 
 	/**
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName,
-			IManagedProject project,
+	public IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		if (PRJ_VAR.equals(variableName)) {
 			return new BuildEnvVar(PRJ_VAR, PRJ_VAR + project.getName());
@@ -201,56 +186,74 @@ public class TestMacro implements
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable[] getVariables (IManagedProject project,
-			IEnvironmentVariableProvider provider) {
+	public IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
 		IBuildEnvironmentVariable v = getVariable(PRJ_VAR, project, provider);
 		if (v != null) {
 			IBuildEnvironmentVariable[] vs = new IBuildEnvironmentVariable[1];
 			vs[0] = v;
-			return(vs);
+			return (vs);
 		} else
 			return null;
 	}
 
-
-//	IManagedIsToolChainSupported
+	//	IManagedIsToolChainSupported
 
 	/**
 	 *
 	 */
 	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
-		if ("One".equals(toolChain.getParent().getName()))   return supported[0]; //$NON-NLS-1$
-		if ("Two".equals(toolChain.getParent().getName()))   return supported[1]; //$NON-NLS-1$
-		if ("Three".equals(toolChain.getParent().getName())) return supported[2]; //$NON-NLS-1$
-		if ("Four".equals(toolChain.getParent().getName()))  return supported[3]; //$NON-NLS-1$
+		if ("One".equals(toolChain.getParent().getName())) //$NON-NLS-1$
+			return supported[0];
+		if ("Two".equals(toolChain.getParent().getName())) //$NON-NLS-1$
+			return supported[1];
+		if ("Three".equals(toolChain.getParent().getName())) //$NON-NLS-1$
+			return supported[2];
+		if ("Four".equals(toolChain.getParent().getName())) //$NON-NLS-1$
+			return supported[3];
 		return false;
 	}
 
-
-//	IManagedBuilderMakefileGenerator
+	//	IManagedBuilderMakefileGenerator
 
 	/**
 	 */
 	@Override
 	public IPath getBuildWorkingDir() {
-//		System.out.println("---- getBuildWorkingDir: " + topBuildDir);
+		//		System.out.println("---- getBuildWorkingDir: " + topBuildDir);
 		return topBuildDir;
-		}
+	}
+
 	@Override
-	public void generateDependencies() {}
+	public void generateDependencies() {
+	}
+
 	@Override
-	public MultiStatus generateMakefiles(IResourceDelta delta) { return null; }
+	public MultiStatus generateMakefiles(IResourceDelta delta) {
+		return null;
+	}
+
 	@Override
-	public String getMakefileName() {return "test_instead_make"; } //$NON-NLS-1$
+	public String getMakefileName() {
+		return "test_instead_make"; //$NON-NLS-1$
+	}
+
 	@Override
 	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
-//		System.out.println("---- init: " + topBuildDir);
+		//		System.out.println("---- init: " + topBuildDir);
 	}
+
 	@Override
-	public boolean isGeneratedResource(IResource resource) { return false; }
+	public boolean isGeneratedResource(IResource resource) {
+		return false;
+	}
+
 	@Override
-	public void regenerateDependencies(boolean force) {}
+	public void regenerateDependencies(boolean force) {
+	}
+
 	@Override
-	public MultiStatus regenerateMakefiles() { return null; }
+	public MultiStatus regenerateMakefiles() {
+		return null;
+	}
 }

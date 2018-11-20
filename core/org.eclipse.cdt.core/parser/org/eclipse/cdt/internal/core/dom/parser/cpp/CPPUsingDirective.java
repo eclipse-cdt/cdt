@@ -36,19 +36,19 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	 * Constructor for explicit using directives
 	 */
 	public CPPUsingDirective(ICPPASTUsingDirective node) {
-		fNamespaceName= node.getQualifiedName();
+		fNamespaceName = node.getQualifiedName();
 	}
 
 	/**
 	 * Constructor for unnamed namespaces introducing an implicit using directive.
 	 */
 	public CPPUsingDirective(ICPPASTNamespaceDefinition nsdef) {
-		fNamespaceName= nsdef.getName();
+		fNamespaceName = nsdef.getName();
 	}
 
 	@Override
 	public ICPPNamespaceScope getNominatedScope() throws DOMException {
-		IBinding binding= fNamespaceName.resolveBinding();
+		IBinding binding = fNamespaceName.resolveBinding();
 		if (binding instanceof ICPPNamespace) {
 			return ((ICPPNamespace) binding).getNamespaceScope();
 		}

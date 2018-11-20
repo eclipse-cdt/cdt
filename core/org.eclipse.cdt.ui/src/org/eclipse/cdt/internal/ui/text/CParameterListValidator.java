@@ -41,28 +41,28 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 	private int fPosition;
 	private ITextViewer fViewer;
 	private IContextInformation fInformation;
-	
+
 	private int fCurrentParameter;
-	
+
 	public CParameterListValidator() {
 	}
-	
+
 	/**
 	 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
 	 * @see IContextInformationPresenter#install(IContextInformation, ITextViewer, int)
 	 */
 	@Override
 	public void install(IContextInformation info, ITextViewer viewer, int documentPosition) {
-		fPosition= documentPosition;
-		fViewer= viewer;
-		fInformation= info;
-		
-		fCurrentParameter= -1;
+		fPosition = documentPosition;
+		fViewer = viewer;
+		fInformation = info;
+
+		fCurrentParameter = -1;
 	}
-	
+
 	private int getCommentEnd(IDocument d, int pos, int end) throws BadLocationException {
 		while (pos < end) {
-			char curr= d.getChar(pos);
+			char curr = d.getChar(pos);
 			pos++;
 			if (curr == '*') {
 				if (pos < end && d.getChar(pos) == '/') {
@@ -75,7 +75,7 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 
 	private int getStringEnd(IDocument d, int pos, int end, char ch) throws BadLocationException {
 		while (pos < end) {
-			char curr= d.getChar(pos);
+			char curr = d.getChar(pos);
 			pos++;
 			if (curr == '\\') {
 				// Ignore escaped characters.
@@ -86,11 +86,11 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		}
 		return end;
 	}
-	
+
 	private int getCharCount(IDocument document, int start, int end, char increment, char decrement,
 			boolean considerNesting) throws BadLocationException {
 		Assert.isTrue((increment != 0 || decrement != 0) && increment != decrement);
-		
+
 		int parenNestingLevel = 0;
 		int braceNestingLevel = 0;
 		int charCount = 0;
@@ -99,31 +99,31 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 			switch (curr) {
 			case '/':
 				if (start < end) {
-					char next= document.getChar(start);
+					char next = document.getChar(start);
 					if (next == '*') {
 						// A comment starts, advance to the comment end.
-						start= getCommentEnd(document, start + 1, end);
+						start = getCommentEnd(document, start + 1, end);
 					} else if (next == '/') {
 						// '//'-comment: nothing to do anymore on this line 
-						start= end;
+						start = end;
 					}
 				}
 				break;
 
 			case '*':
 				if (start < end) {
-					char next= document.getChar(start);
+					char next = document.getChar(start);
 					if (next == '/') {
 						// We have been in a comment: forget what we read before.
-						charCount= 0;
-						++ start;
+						charCount = 0;
+						++start;
 					}
 				}
 				break;
 
 			case '"':
 			case '\'':
-				start= getStringEnd(document, start, end, curr);
+				start = getStringEnd(document, start, end, curr);
 				break;
 
 			default:
@@ -133,7 +133,7 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 					} else if (')' == curr) {
 						--parenNestingLevel;
 					}
-						
+
 					if (parenNestingLevel != 0)
 						break;
 
@@ -142,60 +142,60 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 					} else if ('}' == curr) {
 						--braceNestingLevel;
 					}
-						
+
 					if (braceNestingLevel != 0)
 						break;
 				}
-				
+
 				if (increment != 0) {
 					if (curr == increment)
 						++charCount;
 				}
-				
+
 				if (decrement != 0) {
 					if (curr == decrement)
 						--charCount;
 				}
 			}
 		}
-		
+
 		return charCount;
 	}
-	
+
 	/**
 	 * @see IContextInformationValidator#isContextInformationValid(int)
 	 */
 	@Override
-	public boolean isContextInformationValid(int position) {		
+	public boolean isContextInformationValid(int position) {
 		try {
 			if (position < fPosition)
 				return false;
-				
-			IDocument document= fViewer.getDocument();
+
+			IDocument document = fViewer.getDocument();
 			return getCharCount(document, fPosition, position, '(', ')', false) >= 0;
 		} catch (BadLocationException x) {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean updatePresentation(int position, TextPresentation presentation) {
-		int currentParameter= -1;
-		
+		int currentParameter = -1;
+
 		try {
-			currentParameter= getCharCount(fViewer.getDocument(), fPosition, position, ',', (char) 0, true);
+			currentParameter = getCharCount(fViewer.getDocument(), fPosition, position, ',', (char) 0, true);
 		} catch (BadLocationException x) {
 			return false;
 		}
-		
+
 		if (fCurrentParameter != -1) {
 			if (currentParameter == fCurrentParameter)
 				return false;
 		}
-		
+
 		presentation.clear();
-		fCurrentParameter= currentParameter;
-		
+		fCurrentParameter = currentParameter;
+
 		// Don't presume what has been done to the string, rather use as is.
 		String s = fInformation.getInformationDisplayString();
 		String params = s;
@@ -214,15 +214,15 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 				params = s.substring(paramlistStartIndex, paramlistEndIndex);
 			}
 		}
-		
-		int[] commas= computeCommaPositions(params);
+
+		int[] commas = computeCommaPositions(params);
 		if (commas.length - 2 < fCurrentParameter) {
 			presentation.addStyleRange(new StyleRange(0, s.length(), null, null, SWT.NORMAL));
 			return true;
 		}
-		
-		int start= commas[fCurrentParameter] + 1;
-		int end= commas[fCurrentParameter + 1];
+
+		int start = commas[fCurrentParameter] + 1;
+		int end = commas[fCurrentParameter + 1];
 		if (start > 0)
 			presentation.addStyleRange(new StyleRange(paramlistStartIndex, start, null, null, SWT.NORMAL));
 
@@ -230,53 +230,54 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 			presentation.addStyleRange(new StyleRange(paramlistStartIndex + start, end - start, null, null, SWT.BOLD));
 
 		if (end < s.length())
-			presentation.addStyleRange(new StyleRange(paramlistStartIndex + end, params.length() - end, null, null, SWT.NORMAL));
+			presentation.addStyleRange(
+					new StyleRange(paramlistStartIndex + end, params.length() - end, null, null, SWT.NORMAL));
 
 		return true;
 	}
 
 	private int[] computeCommaPositions(String code) {
-		final int length= code.length();
-	    int pos= 0;
-		List<Integer> positions= new ArrayList<>();
+		final int length = code.length();
+		int pos = 0;
+		List<Integer> positions = new ArrayList<>();
 		positions.add(Integer.valueOf(-1));
 		while (pos < length && pos != -1) {
-			char ch= code.charAt(pos);
+			char ch = code.charAt(pos);
 			switch (ch) {
-	            case ',':
-		            positions.add(Integer.valueOf(pos));
-		            break;
-	            case '(':
-	            	pos= indexOfClosingPeer(code, '(', ')', pos);
-	            	break;
-	            case '<':
-	            	pos= indexOfClosingPeer(code, '<', '>', pos);
-	            	break;
-	            case '[':
-	            	pos= indexOfClosingPeer(code, '[', ']', pos);
-	            	break;
-	            case '{':
-	            	pos= indexOfClosingPeer(code, '{', '}', pos);
-	            	break;
-	            default:
-	            	break;
-            }
+			case ',':
+				positions.add(Integer.valueOf(pos));
+				break;
+			case '(':
+				pos = indexOfClosingPeer(code, '(', ')', pos);
+				break;
+			case '<':
+				pos = indexOfClosingPeer(code, '<', '>', pos);
+				break;
+			case '[':
+				pos = indexOfClosingPeer(code, '[', ']', pos);
+				break;
+			case '{':
+				pos = indexOfClosingPeer(code, '{', '}', pos);
+				break;
+			default:
+				break;
+			}
 			if (pos != -1)
 				pos++;
 		}
 		positions.add(Integer.valueOf(length));
-		
-		int[] fields= new int[positions.size()];
-		for (int i= 0; i < fields.length; i++)
-	        fields[i]= positions.get(i).intValue();
-	    return fields;
-    }
+
+		int[] fields = new int[positions.size()];
+		for (int i = 0; i < fields.length; i++)
+			fields[i] = positions.get(i).intValue();
+		return fields;
+	}
 
 	private int indexOfClosingPeer(String code, char left, char right, int pos) {
-		int level= 0;
-		final int length= code.length();
+		int level = 0;
+		final int length = code.length();
 		while (pos < length) {
-			char ch= code.charAt(pos);
+			char ch = code.charAt(pos);
 			if (ch == left) {
 				++level;
 			} else if (ch == right) {
@@ -289,4 +290,3 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		return -1;
 	}
 }
-

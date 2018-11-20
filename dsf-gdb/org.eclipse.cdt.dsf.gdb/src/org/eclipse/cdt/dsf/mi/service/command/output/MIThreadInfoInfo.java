@@ -18,7 +18,6 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.Arrays;
 import java.util.Comparator;
 
-
 /**
  * GDB/MI thread list parsing.
  * 
@@ -116,7 +115,7 @@ public class MIThreadInfoInfo extends MIInfo {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("threads")) { //$NON-NLS-1$
@@ -124,8 +123,7 @@ public class MIThreadInfoInfo extends MIInfo {
 						if (val instanceof MIList) {
 							fThreadList = parseThreadsImpl((MIList) val);
 						}
-					}
-					else if (var.equals("current-thread-id")) { //$NON-NLS-1$
+					} else if (var.equals("current-thread-id")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							fCurrentThread = ((MIConst) value).getCString().trim();
@@ -151,7 +149,7 @@ public class MIThreadInfoInfo extends MIInfo {
 	static MIThread[] parseThreads(MIList list) {
 		MIValue[] values = list.getMIValues();
 		MIThread[] threadList = new MIThread[values.length];
-		
+
 		for (int i = 0; i < values.length; i++) {
 			threadList[i] = MIThread.parse((MITuple) values[i]);
 		}
@@ -161,8 +159,7 @@ public class MIThreadInfoInfo extends MIInfo {
 			public int compare(MIThread o1, MIThread o2) {
 				try {
 					return Integer.parseInt(o1.getThreadId()) - Integer.parseInt(o2.getThreadId());
-				}
-				catch(NumberFormatException e) {
+				} catch (NumberFormatException e) {
 					return 0;
 				}
 			}
@@ -170,4 +167,3 @@ public class MIThreadInfoInfo extends MIInfo {
 		return threadList;
 	}
 }
-

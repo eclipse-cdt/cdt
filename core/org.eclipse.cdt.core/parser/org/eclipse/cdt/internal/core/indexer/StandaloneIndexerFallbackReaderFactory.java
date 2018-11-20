@@ -11,7 +11,7 @@
  *  Contributors:
  *    IBM - Initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.internal.core.indexer;
 
 import java.io.File;
@@ -75,7 +75,8 @@ public class StandaloneIndexerFallbackReaderFactory extends AbstractCodeReaderFa
 	}
 
 	@Override
-	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) throws CoreException, IOException {
+	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath)
+			throws CoreException, IOException {
 		return createCodeReaderForInclusion(astPath);
 	}
 }

@@ -34,17 +34,17 @@ public class ProcessRunnerFactory {
 	private static final String ELEM_NAME = "name"; //$NON-NLS-1$
 	private static final String ELEM_PROCESS_RUNNER = "processRunner"; //$NON-NLS-1$
 	private static ProcessRunnerFactory instance;
-	
+
 	static {
 		instance = new ProcessRunnerFactory();
 	}
-	
+
 	private Map<String, ProcessRunner> processRunnerMap;
-	
+
 	private ProcessRunnerFactory() {
 		initializeProcessRunners();
 	}
-	
+
 	/**
 	 * Initialises the process runners.
 	 *
@@ -53,11 +53,11 @@ public class ProcessRunnerFactory {
 		processRunnerMap = new HashMap<String, ProcessRunner>();
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_PROCESSES);
 		IExtension[] extensions = point.getExtensions();
-		for(int i=0; i<extensions.length; i++) {
+		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
 			String prefix = extension.getNamespaceIdentifier() + "."; //$NON-NLS-1$
 			IConfigurationElement[] configurationElements = extension.getConfigurationElements();
-			for(int j=0; j<configurationElements.length; j++) {
+			for (int j = 0; j < configurationElements.length; j++) {
 				IConfigurationElement element = configurationElements[j];
 				String processType = element.getAttribute(ELEM_NAME);
 				if (processType != null) {
@@ -65,7 +65,7 @@ public class ProcessRunnerFactory {
 						ProcessRunner runner = (ProcessRunner) element.createExecutableExtension(ELEM_PROCESS_RUNNER);
 						List<ProcessParameter> params = null;
 						IConfigurationElement[] elementChildren = element.getChildren();
-						for (int k=0; k<elementChildren.length; k++) {
+						for (int k = 0; k < elementChildren.length; k++) {
 							if (params == null) {
 								params = new ArrayList<ProcessParameter>();
 							}
@@ -82,7 +82,7 @@ public class ProcessRunnerFactory {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return the singleton {@link ProcessRunnerFactory}
 	 */

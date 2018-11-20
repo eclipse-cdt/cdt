@@ -62,14 +62,14 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fIndexAllHeaderVersions;
 	private Text fIndexAllVersionsSpecificHeaders;
 
-    private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
-        @Override
+	private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-            if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 				updateValidState();
 			}
-        }
-    };
+		}
+	};
 	/** @since 5.3 */
 	protected PixelConverter pixelConverter;
 
@@ -87,31 +87,32 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	@Override
 	public void createControl(Composite parent) {
-    	pixelConverter = new PixelConverter(parent);
+		pixelConverter = new PixelConverter(parent);
 		GridLayout gl;
 		Composite page = new Composite(parent, SWT.NULL);
 		page.setFont(parent.getFont());
-		page.setLayout(gl= new GridLayout(1, true));
+		page.setLayout(gl = new GridLayout(1, true));
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		page.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Composite group= new Composite(page, SWT.NONE);
-		group.setLayout(gl= new GridLayout(3, false));
+		Composite group = new Composite(page, SWT.NONE);
+		group.setLayout(gl = new GridLayout(3, false));
 		gl.marginHeight = 0;
-		gl.marginWidth= 0;
+		gl.marginWidth = 0;
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fAllSources= createAllFilesButton(group);
-		IProject prj= getCurrentProject();
+		fAllSources = createAllFilesButton(group);
+		IProject prj = getCurrentProject();
 		if (prj == null || !CProject.hasCCNature(prj)) {
-			fAllHeadersDefault= createAllHeadersButton(group);
+			fAllHeadersDefault = createAllHeadersButton(group);
 		} else {
-			fAllHeadersDefault= createAllCppHeadersButton(group);
-			fAllHeadersAlt= createAllCHeadersButton(group);
+			fAllHeadersDefault = createAllCppHeadersButton(group);
+			fAllHeadersAlt = createAllCHeadersButton(group);
 		}
 
-		fIndexAllHeaderVersions = ControlFactory.createCheckBox(group, DialogsMessages.AbstractIndexerPage_indexAllHeaderVersions);
+		fIndexAllHeaderVersions = ControlFactory.createCheckBox(group,
+				DialogsMessages.AbstractIndexerPage_indexAllHeaderVersions);
 		fIndexAllHeaderVersions.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -119,7 +120,8 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			}
 		});
 
-		Label label = ControlFactory.createLabel(group, DialogsMessages.AbstractIndexerPage_indexAllVersionsSpecificHeaders);
+		Label label = ControlFactory.createLabel(group,
+				DialogsMessages.AbstractIndexerPage_indexAllVersionsSpecificHeaders);
 		int indent = pixelConverter.convertHorizontalDLUsToPixels(12);
 		GridData layoutData = new GridData();
 		layoutData.horizontalSpan = 3;
@@ -131,29 +133,29 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		layoutData.horizontalIndent = indent;
 		fIndexAllVersionsSpecificHeaders.setLayoutData(layoutData);
 
-		fIndexOnOpen= createIndexOnOpenButton(group);
+		fIndexOnOpen = createIndexOnOpenButton(group);
 
-		fIncludeHeuristics= createIncludeHeuristicsButton(group);
+		fIncludeHeuristics = createIncludeHeuristicsButton(group);
 
-		group= new Composite(page, SWT.NONE);
-		fFileSizeLimit= createFileSizeLimit(group, IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB,
+		group = new Composite(page, SWT.NONE);
+		fFileSizeLimit = createFileSizeLimit(group, IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB,
 				DialogsMessages.AbstractIndexerPage_fileSizeLimit);
-		fIncludedFileSizeLimit= createFileSizeLimit(group, IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB,
+		fIncludedFileSizeLimit = createFileSizeLimit(group, IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB,
 				DialogsMessages.AbstractIndexerPage_includedFileSizeLimit);
-		group.setLayout(gl= new GridLayout(3, false));
+		group.setLayout(gl = new GridLayout(3, false));
 		gl.marginHeight = 0;
-		gl.marginWidth= 0;
+		gl.marginWidth = 0;
 		group.setLayoutData(new GridData());
 
-		group= new Composite(page, SWT.NONE);
-		group.setLayout(gl= new GridLayout(1, false));
+		group = new Composite(page, SWT.NONE);
+		group.setLayout(gl = new GridLayout(1, false));
 		gl.marginHeight = 0;
-		gl.marginWidth= 0;
+		gl.marginWidth = 0;
 		group.setLayoutData(new GridData());
-		fSkipReferences= createSkipReferencesButton(group);
-		fSkipImplicitReferences= createSkipImplicitReferencesButton(group);
-		fSkipMacroAndTypeReferences= createSkipMacroAndTypeReferencesButton(group);
-		
+		fSkipReferences = createSkipReferencesButton(group);
+		fSkipImplicitReferences = createSkipImplicitReferencesButton(group);
+		fSkipMacroAndTypeReferences = createSkipMacroAndTypeReferencesButton(group);
+
 		final SelectionAdapter selectionListener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -172,73 +174,78 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	 */
 	public void setProperties(Properties properties) {
 		if (fAllSources != null) {
-			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ALL_FILES));
+			boolean indexAllFiles = TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ALL_FILES));
 			fAllSources.setSelection(indexAllFiles);
 		}
 		if (fAllHeadersDefault != null) {
-			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG));
+			boolean indexAllFiles = TRUE
+					.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG));
 			fAllHeadersDefault.setSelection(indexAllFiles);
 		}
 		if (fAllHeadersAlt != null) {
-			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
+			boolean indexAllFiles = TRUE
+					.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
 			fAllHeadersAlt.setSelection(indexAllFiles);
 		}
 		if (fIndexOnOpen != null) {
-			boolean indexOnOpen= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ON_OPEN));
+			boolean indexOnOpen = TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ON_OPEN));
 			fIndexOnOpen.setSelection(indexOnOpen);
 		}
 		if (fIncludeHeuristics != null) {
-			Object prop= properties.get(IndexerPreferences.KEY_INCLUDE_HEURISTICS);
-			boolean use= prop == null || TRUE.equals(prop);
+			Object prop = properties.get(IndexerPreferences.KEY_INCLUDE_HEURISTICS);
+			boolean use = prop == null || TRUE.equals(prop);
 			fIncludeHeuristics.setSelection(use);
 		}
 		if (fFileSizeLimit != null) {
-			Object prop= properties.get(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB);
-			int size= 0;
+			Object prop = properties.get(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB);
+			int size = 0;
 			if (prop != null) {
 				try {
-					size= Integer.parseInt(prop.toString());
+					size = Integer.parseInt(prop.toString());
 				} catch (NumberFormatException e) {
 				}
 			}
 			if (size <= 0) {
-				size= IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT_MB;
+				size = IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT_MB;
 			}
 			fFileSizeLimit.setStringValue(String.valueOf(size));
 		}
 		if (fIncludedFileSizeLimit != null) {
-			Object prop= properties.get(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB);
-			int size= 0;
+			Object prop = properties.get(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB);
+			int size = 0;
 			if (prop != null) {
 				try {
-					size= Integer.parseInt(prop.toString());
+					size = Integer.parseInt(prop.toString());
 				} catch (NumberFormatException e) {
 				}
 			}
 			if (size <= 0) {
-				size= IndexerPreferences.DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB;
+				size = IndexerPreferences.DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB;
 			}
 			fIncludedFileSizeLimit.setStringValue(String.valueOf(size));
 		}
 		if (fSkipReferences != null) {
-			boolean skipReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
+			boolean skipReferences = TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
 			fSkipReferences.setSelection(skipReferences);
 		}
 		if (fSkipImplicitReferences != null) {
-			boolean skipImplicitReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES));
+			boolean skipImplicitReferences = TRUE
+					.equals(properties.get(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES));
 			fSkipImplicitReferences.setSelection(skipImplicitReferences);
-		}		
+		}
 		if (fSkipMacroAndTypeReferences != null) {
-			boolean skipTypeReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES));
-			boolean skipMacroReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES));
+			boolean skipTypeReferences = TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES));
+			boolean skipMacroReferences = TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES));
 			fSkipMacroAndTypeReferences.setSelection(skipTypeReferences && skipMacroReferences);
 		}
 		if (fIndexAllHeaderVersions != null) {
-			boolean indexAllHeaderVersions = TRUE.equals(properties.get((IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS)));
+			boolean indexAllHeaderVersions = TRUE
+					.equals(properties.get((IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS)));
 			fIndexAllHeaderVersions.setSelection(indexAllHeaderVersions);
 		}
 		if (fIndexAllVersionsSpecificHeaders != null) {
-			String indexAllVersionsSpecificHeaders = properties.getProperty((IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS), ""); //$NON-NLS-1$
+			String indexAllVersionsSpecificHeaders = properties
+					.getProperty((IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS), ""); //$NON-NLS-1$
 			fIndexAllVersionsSpecificHeaders.setText(indexAllVersionsSpecificHeaders);
 		}
 		updateEnablement();
@@ -248,16 +255,18 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	 * Return the properties according to the selections on the page.
 	 * @since 4.0
 	 */
-	public Properties getProperties(){
-		Properties props= new Properties();
+	public Properties getProperties() {
+		Properties props = new Properties();
 		if (fAllSources != null) {
 			props.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(fAllSources.getSelection()));
 		}
 		if (fAllHeadersDefault != null) {
-			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, String.valueOf(fAllHeadersDefault.getSelection()));
+			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
+					String.valueOf(fAllHeadersDefault.getSelection()));
 		}
 		if (fAllHeadersAlt != null) {
-			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, String.valueOf(fAllHeadersAlt.getSelection()));
+			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG,
+					String.valueOf(fAllHeadersAlt.getSelection()));
 		}
 		if (fIndexOnOpen != null) {
 			props.put(IndexerPreferences.KEY_INDEX_ON_OPEN, String.valueOf(fIndexOnOpen.getSelection()));
@@ -269,13 +278,15 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			props.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(fFileSizeLimit.getIntValue()));
 		}
 		if (fIncludedFileSizeLimit != null) {
-			props.put(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB, String.valueOf(fIncludedFileSizeLimit.getIntValue()));
+			props.put(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB,
+					String.valueOf(fIncludedFileSizeLimit.getIntValue()));
 		}
 		if (fSkipReferences != null) {
 			props.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(fSkipReferences.getSelection()));
 		}
 		if (fSkipImplicitReferences != null) {
-			props.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(fSkipImplicitReferences.getSelection()));
+			props.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES,
+					String.valueOf(fSkipImplicitReferences.getSelection()));
 		}
 		if (fSkipMacroAndTypeReferences != null) {
 			final String value = String.valueOf(fSkipMacroAndTypeReferences.getSelection());
@@ -283,7 +294,8 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			props.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, value);
 		}
 		if (fIndexAllHeaderVersions != null) {
-			props.put((IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS), String.valueOf(fIndexAllHeaderVersions.getSelection()));
+			props.put((IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS),
+					String.valueOf(fIndexAllHeaderVersions.getSelection()));
 		}
 		if (fIndexAllVersionsSpecificHeaders != null) {
 			String[] headers = fIndexAllVersionsSpecificHeaders.getText().split(","); //$NON-NLS-1$
@@ -335,66 +347,66 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			fIndexAllVersionsSpecificHeaders.setEnabled(!fIndexAllHeaderVersions.getSelection());
 		}
 	}
-	
-    private void updateValidState() {
-    	if (!fFileSizeLimit.isValid()) {
-    		setErrorMessage(fFileSizeLimit.getErrorMessage());
-    		setValid(false);
-    	} else if (!fIncludedFileSizeLimit.isValid()) {
-        	setErrorMessage(fIncludedFileSizeLimit.getErrorMessage());
-        	setValid(false);
+
+	private void updateValidState() {
+		if (!fFileSizeLimit.isValid()) {
+			setErrorMessage(fFileSizeLimit.getErrorMessage());
+			setValid(false);
+		} else if (!fIncludedFileSizeLimit.isValid()) {
+			setErrorMessage(fIncludedFileSizeLimit.getErrorMessage());
+			setValid(false);
 		} else {
-    		setValid(true);
-    	}
-        final ICOptionContainer container = getContainer();
-        if (container != null) {
-        	container.updateContainer();
-        }
-    }
-    
+			setValid(true);
+		}
+		final ICOptionContainer container = getContainer();
+		if (container != null) {
+			container.updateContainer();
+		}
+	}
+
 	private Button createAllFilesButton(Composite page) {
-		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllFiles);
-		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		Button result = ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllFiles);
+		((GridData) result.getLayoutData()).horizontalSpan = 3;
 		return result;
 	}
 
 	private Button createAllHeadersButton(Composite page) {
-		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeaders);
-		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		Button result = ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeaders);
+		((GridData) result.getLayoutData()).horizontalSpan = 3;
 		return result;
 	}
 
 	private Button createAllCHeadersButton(Composite page) {
-		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersC);
-		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		Button result = ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersC);
+		((GridData) result.getLayoutData()).horizontalSpan = 3;
 		return result;
 	}
 
 	private Button createAllCppHeadersButton(Composite page) {
-		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersCpp);
-		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		Button result = ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersCpp);
+		((GridData) result.getLayoutData()).horizontalSpan = 3;
 		return result;
 	}
 
 	private Button createIndexOnOpenButton(Composite page) {
-		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexOpenedFiles);
-		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		Button result = ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexOpenedFiles);
+		((GridData) result.getLayoutData()).horizontalSpan = 3;
 		return result;
 	}
 
 	private Button createIncludeHeuristicsButton(Composite page) {
-		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_heuristicIncludes);
-		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		Button result = ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_heuristicIncludes);
+		((GridData) result.getLayoutData()).horizontalSpan = 3;
 		return result;
 	}
-	
+
 	private IntegerFieldEditor createFileSizeLimit(Composite group, String key, String label) {
-		IntegerFieldEditor result= new IntegerFieldEditor(key, label, group, 5);
+		IntegerFieldEditor result = new IntegerFieldEditor(key, label, group, 5);
 		result.setValidRange(1, 100000);
-		ControlFactory.createLabel(group, DialogsMessages.Megabyte); 
+		ControlFactory.createLabel(group, DialogsMessages.Megabyte);
 		Text control = result.getTextControl(group);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
-		LayoutUtil.setHorizontalGrabbing(control, false); 
+		LayoutUtil.setHorizontalGrabbing(control, false);
 
 		result.setPropertyChangeListener(validityChangeListener);
 		return result;
@@ -411,11 +423,11 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button createSkipMacroAndTypeReferencesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeAndMacroReferences);
 	}
-	
+
 	/**
 	 * @deprecated parsing files up-front is no longer necessary.
 	 */
 	@Deprecated
-	protected void setSupportForFilesParsedUpFront(boolean enable){
+	protected void setSupportForFilesParsedUpFront(boolean enable) {
 	}
 }

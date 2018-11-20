@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.pty;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -53,9 +52,7 @@ class PTYInputStream extends InputStream {
 	public int read(byte[] buf, int off, int len) throws IOException {
 		if (buf == null) {
 			throw new NullPointerException();
-		} else if ((off < 0) || (off > buf.length)
-					|| (len < 0) || ((off + len) > buf.length)
-					|| ((off + len) < 0)) {
+		} else if ((off < 0) || (off > buf.length) || (len < 0) || ((off + len) > buf.length) || ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return 0;
@@ -80,8 +77,8 @@ class PTYInputStream extends InputStream {
 			return;
 		close0(master.getFD());
 		// ignore error on close - see bug 286162
-//		if (status == -1)
-//			throw new IOException(Messages.Util_exception_closeError);
+		//		if (status == -1)
+		//			throw new IOException(Messages.Util_exception_closeError);
 		master.setFD(-1);
 	}
 
@@ -91,6 +88,7 @@ class PTYInputStream extends InputStream {
 	}
 
 	private native int read0(int fd, byte[] buf, int len) throws IOException;
+
 	private native int close0(int fd) throws IOException;
 
 	static {

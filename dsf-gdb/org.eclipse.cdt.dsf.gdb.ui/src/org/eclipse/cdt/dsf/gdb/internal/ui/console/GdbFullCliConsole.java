@@ -33,23 +33,23 @@ public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerCo
 	private final ILaunch fLaunch;
 	private final String fLabel;
 	private final PTY fGdbPty;
-	
+
 	private GdbFullCliConsolePage fConsolePage;
-	private final GdbTerminalConnector fTerminalConnector; 
+	private final GdbTerminalConnector fTerminalConnector;
 
 	public GdbFullCliConsole(ILaunch launch, String label, Process process, PTY pty) {
 		super(label, null, false);
 		fLaunch = launch;
-        fLabel = label;
-        fGdbPty = pty;
-        
-        // Create a lifecycle listener to call init() and dispose()
-        new GdbConsoleLifecycleListener(this);
-        fTerminalConnector = new GdbTerminalConnector(process);
-        
-        resetName();
+		fLabel = label;
+		fGdbPty = pty;
+
+		// Create a lifecycle listener to call init() and dispose()
+		new GdbConsoleLifecycleListener(this);
+		fTerminalConnector = new GdbTerminalConnector(process);
+
+		resetName();
 	}
-    
+
 	@Override
 	protected void dispose() {
 		fTerminalConnector.dispose();
@@ -57,62 +57,64 @@ public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerCo
 	}
 
 	@Override
-	public ILaunch getLaunch() { return fLaunch; }
-    
-    @Override
+	public ILaunch getLaunch() {
+		return fLaunch;
+	}
+
+	@Override
 	public void resetName() {
-    	String newName = computeName();
-    	String name = getName();
-    	if (!name.equals(newName)) {
-    		try {
-    			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> setName(newName));
-    		} catch (SWTException e) {
-    			// display may be disposed, so ignore the exception
-    			if (e.code != SWT.ERROR_WIDGET_DISPOSED && e.code != SWT.ERROR_DEVICE_DISPOSED) {
-    				throw e;
-    			}
-    		}
-    	}
-    }
-	
-    protected String computeName() {
-    	if (fLaunch == null) {
-    		return ""; //$NON-NLS-1$
-    	}
-    	
-        String label = fLabel;
+		String newName = computeName();
+		String name = getName();
+		if (!name.equals(newName)) {
+			try {
+				PlatformUI.getWorkbench().getDisplay().asyncExec(() -> setName(newName));
+			} catch (SWTException e) {
+				// display may be disposed, so ignore the exception
+				if (e.code != SWT.ERROR_WIDGET_DISPOSED && e.code != SWT.ERROR_DEVICE_DISPOSED) {
+					throw e;
+				}
+			}
+		}
+	}
 
-        ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
-        if (config != null && !DebugUITools.isPrivate(config)) {
-        	String type = null;
-        	try {
-        		type = config.getType().getName();
-        	} catch (CoreException e) {
-        	}
-        	StringBuffer buffer = new StringBuffer();
-        	buffer.append(config.getName());
-        	if (type != null) {
-        		buffer.append(" ["); //$NON-NLS-1$
-        		buffer.append(type);
-        		buffer.append("] "); //$NON-NLS-1$
-        	}
-        	buffer.append(label);
-        	label = buffer.toString();
-        }
+	protected String computeName() {
+		if (fLaunch == null) {
+			return ""; //$NON-NLS-1$
+		}
 
-        if (fLaunch.isTerminated()) {
-        	return ConsoleMessages.ConsoleMessages_console_terminated + label; 
-        }
-        
-        return label;
-    }
-    
+		String label = fLabel;
+
+		ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
+		if (config != null && !DebugUITools.isPrivate(config)) {
+			String type = null;
+			try {
+				type = config.getType().getName();
+			} catch (CoreException e) {
+			}
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(config.getName());
+			if (type != null) {
+				buffer.append(" ["); //$NON-NLS-1$
+				buffer.append(type);
+				buffer.append("] "); //$NON-NLS-1$
+			}
+			buffer.append(label);
+			label = buffer.toString();
+		}
+
+		if (fLaunch.isTerminated()) {
+			return ConsoleMessages.ConsoleMessages_console_terminated + label;
+		}
+
+		return label;
+	}
+
 	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		// This console is not meant for the standard console view
 		return null;
 	}
-	
+
 	@Override
 	public IPageBookViewPage createDebuggerPage(IDebuggerConsoleView view) {
 		view.setFocus();
@@ -123,5 +125,5 @@ public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerCo
 	public IGdbTerminalControlConnector getTerminalControlConnector() {
 		return fTerminalConnector;
 	}
-	
+
 }

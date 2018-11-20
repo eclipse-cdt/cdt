@@ -128,11 +128,8 @@ public class QtProjectFileModifier {
 				for (String value : var.getValues()) {
 					int offset = value.indexOf(oldValue);
 					if (offset >= 0) {
-						return replaceVariableValue(var,
-								line,
-								var.getValueOffsetForLine(line) + offset,
-								oldValue.length(),
-								newValue);
+						return replaceVariableValue(var, line, var.getValueOffsetForLine(line) + offset,
+								oldValue.length(), newValue);
 					}
 					line++;
 				}

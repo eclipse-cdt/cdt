@@ -49,7 +49,7 @@ public class ProblemFunctionType extends ProblemType implements ICPPFunctionType
 
 	@Override
 	public IType[] getParameterTypes() {
-		return new IType[] {new ProblemType(getID())};
+		return new IType[] { new ProblemType(getID()) };
 	}
 
 	@Override

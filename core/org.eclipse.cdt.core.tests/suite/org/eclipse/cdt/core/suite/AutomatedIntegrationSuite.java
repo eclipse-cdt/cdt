@@ -71,7 +71,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 
 		// Has intermittent failures
-		if (System.getProperty("cdt.skip.known.test.failures") == null) {		
+		if (System.getProperty("cdt.skip.known.test.failures") == null) {
 			suite.addTest(CDescriptorTests.suite());
 		}
 		suite.addTest(AllConstexprEvalTests.suite());

@@ -98,20 +98,22 @@ public class CodeReaderCache implements ICodeReaderCache {
 				return Status.OK_STATUS;
 			}
 
-            private void removeKeys(IResourceDelta[] deltas) {
-                for (IResourceDelta delta : deltas) {
-                    if (delta.getResource().getType() == IResource.PROJECT || delta.getResource().getType() == IResource.FOLDER) {
-                        removeKeys(delta.getAffectedChildren());
-                    } else if (delta.getResource() instanceof IFile && ((IFile)delta.getResource()).getLocation() != null) {
-                        removeKey(((IFile)delta.getResource()).getLocation().toOSString());
-                    }
-                }
-            }
+			private void removeKeys(IResourceDelta[] deltas) {
+				for (IResourceDelta delta : deltas) {
+					if (delta.getResource().getType() == IResource.PROJECT
+							|| delta.getResource().getType() == IResource.FOLDER) {
+						removeKeys(delta.getAffectedChildren());
+					} else if (delta.getResource() instanceof IFile
+							&& ((IFile) delta.getResource()).getLocation() != null) {
+						removeKey(((IFile) delta.getResource()).getLocation().toOSString());
+					}
+				}
+			}
 
-            private void removeKey(String key) {
-                if (key != null && cache1 != null)
-                    cache1.remove(key);
-            }
+			private void removeKey(String key) {
+				if (key != null && cache1 != null)
+					cache1.remove(key);
+			}
 
 		}
 
@@ -150,7 +152,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 	public synchronized CodeReader get(String key) {
 		CodeReader result = null;
 		if (cache.getSpaceLimit() > 0)
-			result= cache.get(key);
+			result = cache.get(key);
 
 		if (result != null)
 			return result;
@@ -164,10 +166,10 @@ public class CodeReaderCache implements ICodeReaderCache {
 		try {
 			IResource file = ParserUtil.getResourceForFilename(key);
 			if (file instanceof IFile) {
-				key= InternalParserUtil.normalizePath(key, (IFile) file);
-				result=  InternalParserUtil.createWorkspaceFileReader(key, (IFile) file, cache);
+				key = InternalParserUtil.normalizePath(key, (IFile) file);
+				result = InternalParserUtil.createWorkspaceFileReader(key, (IFile) file, cache);
 			}
-			result= InternalParserUtil.createExternalFileReader(key, cache);
+			result = InternalParserUtil.createExternalFileReader(key, cache);
 			if (cache.getSpaceLimit() > 0)
 				put(result);
 
@@ -188,12 +190,12 @@ public class CodeReaderCache implements ICodeReaderCache {
 	public CodeReader get(String key, IIndexFileLocation ifl) throws CoreException, IOException {
 		CodeReader result = null;
 		if (cache.getSpaceLimit() > 0)
-			result= cache.get(key);
+			result = cache.get(key);
 
 		if (result != null)
 			return result;
 
-		result= InternalParserUtil.createCodeReader(ifl, cache);
+		result = InternalParserUtil.createCodeReader(ifl, cache);
 		if (cache.getSpaceLimit() > 0)
 			put(result);
 
@@ -207,7 +209,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 * @return
 	 */
 	private synchronized CodeReader put(CodeReader value) {
-		if (value==null) return null;
+		if (value == null)
+			return null;
 		if (cache.isEmpty()) {
 			if (ResourcesPlugin.getWorkspace() != null)
 				ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
@@ -223,7 +226,6 @@ public class CodeReaderCache implements ICodeReaderCache {
 		cache.setSpaceLimit(size * MB_TO_KB_FACTOR);
 	}
 
-
 	/**
 	 * Removes the CodeReader from the cache corresponding to the path specified by the key and
 	 * returns the CodeReader that was removed.  If no CodeReader is removed then null is returned.
@@ -231,7 +233,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 */
 	@Override
 	public synchronized CodeReader remove(String key) {
-		CodeReader removed= cache.remove(key);
+		CodeReader removed = cache.remove(key);
 		if (cache.isEmpty()) {
 			if (ResourcesPlugin.getWorkspace() != null)
 				ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);

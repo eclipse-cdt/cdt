@@ -26,7 +26,7 @@ public interface IAsmInstruction {
 	 * @return the address of this instruction
 	 */
 	IAddress getAdress();
-	
+
 	/**
 	 * Returns the function name of this instruction, 
 	 * or empty string if function is not available.
@@ -34,14 +34,14 @@ public interface IAsmInstruction {
 	 * @return the function name of this instruction
 	 */
 	String getFunctionName();
-	
+
 	/**
 	 * Returns the instruction's text.
 	 * 
 	 * @return the instruction's text.
 	 */
 	String getInstructionText();
-  
+
 	/**
 	 * Returns the opcode of this instruction.
 	 * 

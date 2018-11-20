@@ -24,12 +24,12 @@ import junit.framework.TestSuite;
 public class DOMGCCParserExtensionTestSuite extends TestCase {
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(DOMGCCParserExtensionTestSuite.class.getName());
-//		suite.addTestSuite( GCCScannerExtensionsTest.class );
-//		suite.addTestSuite( GCCQuickParseExtensionsTest.class );
-//		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
-		suite.addTestSuite( DOMGCCSelectionParseExtensionsTest.class);
+		TestSuite suite = new TestSuite(DOMGCCParserExtensionTestSuite.class.getName());
+		//		suite.addTestSuite( GCCScannerExtensionsTest.class );
+		//		suite.addTestSuite( GCCQuickParseExtensionsTest.class );
+		//		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
+		suite.addTestSuite(DOMGCCSelectionParseExtensionsTest.class);
 		return suite;
 	}
-	
+
 }

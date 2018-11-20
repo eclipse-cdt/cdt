@@ -14,7 +14,5 @@
 package org.eclipse.cdt.internal.core.model;
 
 public enum DebugLogConstants {
-	PARSER,
-	MODEL,
-	SCANNER,
+	PARSER, MODEL, SCANNER,
 }

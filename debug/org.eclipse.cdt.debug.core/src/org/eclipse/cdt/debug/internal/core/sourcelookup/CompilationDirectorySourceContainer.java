@@ -48,15 +48,14 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	 * Unique identifier for the compilation directory source container type
 	 * (value <code>org.eclipse.debug.core.containerType.compilationDirectory</code>).
 	 */
-	public static final String TYPE_ID =
-			CDebugCorePlugin.getUniqueIdentifier() + ".containerType.compilationDirectory"; //$NON-NLS-1$
-	
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.compilationDirectory"; //$NON-NLS-1$
+
 	// Root directory.
 	private File fDirectory;
 	// Whether to each subdirectory of the compilation directory is also the compilation directory
 	// for the files it contains.
 	private boolean fSubfolders;
-	
+
 	/**
 	 * Constructs an external folder container for the
 	 * directory identified by the given path.
@@ -68,7 +67,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	public CompilationDirectorySourceContainer(IPath dirPath, boolean subfolders) {
 		this(dirPath.toFile(), subfolders);
 	}
-	
+
 	/**
 	 * Constructs an external folder container for the
 	 * directory identified by the given file.
@@ -80,13 +79,13 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	public CompilationDirectorySourceContainer(File dir, boolean subfolders) {
 		fDirectory = dir;
 		fSubfolders = subfolders;
-	}	
-		
+	}
+
 	@Override
 	public String getName() {
 		return fDirectory.getAbsolutePath();
-	}	
-	
+	}
+
 	/**
 	 * Returns the root directory in the local file system associated
 	 * with this source container.
@@ -97,7 +96,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	public File getDirectory() {
 		return fDirectory;
 	}
-	
+
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
@@ -117,7 +116,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		if (file.exists() && file.isFile()) {
 			Collections.addAll(sources, SourceUtils.findSourceElements(file, getDirector()));
 		}
-		
+
 		// Check sub-folders		
 		if (fSubfolders && (isFindDuplicates() || sources.isEmpty())) {
 			for (ISourceContainer container : getSourceContainers()) {
@@ -134,8 +133,8 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 					break;
 				}
 			}
-		}			
-		
+		}
+
 		if (sources.isEmpty())
 			return EMPTY;
 		return sources.toArray();
@@ -159,7 +158,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}
-	
+
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (fSubfolders) {
@@ -175,7 +174,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 				ISourceContainer[] containers = dirs.toArray(new ISourceContainer[dirs.size()]);
 				for (ISourceContainer container : containers) {
 					container.init(getDirector());
-				}				
+				}
 				return containers;
 			}
 		}

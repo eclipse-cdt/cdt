@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbench;
  */
 public class ProjectSettingsImportWizard extends ProjectSettingsWizard implements IImportWizard {
 
-
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		super.init(workbench, selection);

@@ -28,7 +28,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
-
 /**
  */
 public class MakefileEditorActionContributor extends BasicTextEditorActionContributor {
@@ -50,7 +49,7 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 		fContentAssistTip.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		fTogglePresentation = new MakefileEditorTogglePresentationAction();
 		fOpenDeclarationAction = new OpenDeclarationAction();
-		
+
 	}
 
 	@Override
@@ -72,7 +71,7 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 
 		fTogglePresentation.setEditor(editor);
 		fTogglePresentation.update();
-		
+
 		fOpenDeclarationAction.setEditor(editor);
 		fOpenDeclarationAction.update();
 	}
@@ -95,14 +94,15 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 			editMenu.add(fOpenDeclarationAction);
 		}
 
-		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY,
+				fTogglePresentation);
 		// there is a global action in the toolbar, that is retargeted,
 		// there is no need to add another one.
-//		IToolBarManager toolBarManager = bars.getToolBarManager();
-//		if (toolBarManager != null) {
-//			toolBarManager.add(new Separator());
-//			toolBarManager.add(fTogglePresentation);
-//		}
+		//		IToolBarManager toolBarManager = bars.getToolBarManager();
+		//		if (toolBarManager != null) {
+		//			toolBarManager.add(new Separator());
+		//			toolBarManager.add(fTogglePresentation);
+		//		}
 	}
 
 }

@@ -56,7 +56,7 @@ public class ASTInternal {
 		if (binding instanceof ICInternalBinding) {
 			return ((ICInternalBinding) binding).getDefinition();
 		}
-		CCorePlugin.log("ASTInternal.getDefinitionOfBinding() called for binding of type " +  //$NON-NLS-1$ 
+		CCorePlugin.log("ASTInternal.getDefinitionOfBinding() called for binding of type " + //$NON-NLS-1$ 
 				binding.getClass().getName());
 		assert false;
 		return null;
@@ -96,7 +96,7 @@ public class ASTInternal {
 	public static void addName(IScope scope, IASTName name) {
 		addName(scope, name, /* adlOnly = */ false);
 	}
-	
+
 	public static void addName(IScope scope, IASTName name, boolean adlOnly) {
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).addName(name, adlOnly);
@@ -133,7 +133,7 @@ public class ASTInternal {
 			}
 		}
 
-		IASTTranslationUnit tu= result.getTranslationUnit();
+		IASTTranslationUnit tu = result.getTranslationUnit();
 		if (tu != null) {
 			if (tu.getIndexFileSet().containsNonLocalDeclaration(binding, forFragment))
 				return null;
@@ -146,7 +146,7 @@ public class ASTInternal {
 		if (result == null)
 			return null;
 
-		IASTTranslationUnit ast= result.getTranslationUnit();
+		IASTTranslationUnit ast = result.getTranslationUnit();
 		if (ast != null) {
 			ITranslationUnit tu = ast.getOriginatingTranslationUnit();
 			if (tu == null)
@@ -165,31 +165,31 @@ public class ASTInternal {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
-			ICPPInternalBinding ib= (ICPPInternalBinding) binding;
-			decls= ib.getDeclarations();
-			def= ib.getDefinition();
+			ICPPInternalBinding ib = (ICPPInternalBinding) binding;
+			decls = ib.getDeclarations();
+			def = ib.getDefinition();
 		} else if (binding instanceof ICInternalBinding) {
-			ICInternalBinding ib= (ICInternalBinding) binding;
-			decls= ib.getDeclarations();
-			def= ib.getDefinition();
+			ICInternalBinding ib = (ICInternalBinding) binding;
+			decls = ib.getDeclarations();
+			def = ib.getDefinition();
 		} else {
 			return null;
 		}
 		if (requireDefinition && def == null) {
 			return null;
 		}
-		IASTNode result= null;
+		IASTNode result = null;
 		if (def != null) {
 			if (!isPartOfSource(def))
 				return null;
-			result= def;
+			result = def;
 		}
 		if (decls != null) {
 			for (final IASTNode node : decls) {
 				if (node != null) {
 					if (!isPartOfSource(node))
 						return null;
-					if ((result= resolveConflict(result, node)) == null)
+					if ((result = resolveConflict(result, node)) == null)
 						return null;
 				}
 			}
@@ -205,11 +205,11 @@ public class ASTInternal {
 		if (n1 == null)
 			return n2;
 
-		IASTFileLocation loc1= n1.getFileLocation();
+		IASTFileLocation loc1 = n1.getFileLocation();
 		if (loc1 == null)
 			return n2;
 
-		IASTFileLocation loc2= n2.getFileLocation();
+		IASTFileLocation loc2 = n2.getFileLocation();
 		if (loc2 != null && loc1.getContextInclusionStatement() != loc2.getContextInclusionStatement())
 			return null;
 
@@ -220,24 +220,24 @@ public class ASTInternal {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
-			ICPPInternalBinding ib= (ICPPInternalBinding) binding;
-			decls= ib.getDeclarations();
-			def= ib.getDefinition();
+			ICPPInternalBinding ib = (ICPPInternalBinding) binding;
+			decls = ib.getDeclarations();
+			def = ib.getDefinition();
 		} else if (binding instanceof ICInternalBinding) {
-			ICInternalBinding ib= (ICInternalBinding) binding;
-			decls= ib.getDeclarations();
-			def= ib.getDefinition();
+			ICInternalBinding ib = (ICInternalBinding) binding;
+			decls = ib.getDeclarations();
+			def = ib.getDefinition();
 		} else {
 			return null;
 		}
-		IASTNode result= null;
+		IASTNode result = null;
 		if (def != null) {
-			result= def;
+			result = def;
 		}
 		if (decls != null) {
 			for (final IASTNode node : decls) {
 				if (node != null) {
-					if ((result= resolveConflict(result, node)) == null)
+					if ((result = resolveConflict(result, node)) == null)
 						return null;
 				}
 			}
@@ -259,10 +259,10 @@ public class ASTInternal {
 
 	public static boolean hasDeclaration(IBinding binding) {
 		if (binding instanceof ICPPInternalBinding) {
-			ICPPInternalBinding internal= (ICPPInternalBinding) binding;
+			ICPPInternalBinding internal = (ICPPInternalBinding) binding;
 			if (internal.getDefinition() != null)
 				return true;
-			IASTNode[] decls= internal.getDeclarations();
+			IASTNode[] decls = internal.getDeclarations();
 			return decls != null && decls.length > 0 && decls[0] != null;
 		}
 		if (binding instanceof IIndexBinding) {
@@ -282,7 +282,7 @@ public class ASTInternal {
 		if (declarations != null) {
 			for (IASTNode node : declarations) {
 				if (!CPPVisitor.isNameOfFriendDeclaration(node))
-					return true; 
+					return true;
 			}
 		}
 		return false;

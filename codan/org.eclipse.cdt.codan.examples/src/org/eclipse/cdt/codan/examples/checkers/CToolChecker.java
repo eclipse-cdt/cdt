@@ -48,8 +48,7 @@ public class CToolChecker extends AbstractCElementChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		getTopLevelPreference(problem); // initialize
-		getLaunchModePreference(problem).enableInLaunchModes(
-				CheckerLaunchMode.RUN_ON_FILE_SAVE,
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_ON_FILE_SAVE,
 				CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
@@ -65,8 +64,9 @@ public class CToolChecker extends AbstractCElementChecker {
 		res.add(unit.getFile().getLocation().toPortableString());
 		String args[] = res.toArray(new String[res.size()]);
 		try {
-			externalToolInvoker.launchOnBuildConsole(unit.getResource().getProject(), new IConsoleParser[] { getConsoleParser(unit) },
-					"check", getToolPath(), args, new String[] {}, getWorkingDirectory(), new NullProgressMonitor());
+			externalToolInvoker.launchOnBuildConsole(unit.getResource().getProject(),
+					new IConsoleParser[] { getConsoleParser(unit) }, "check", getToolPath(), args, new String[] {},
+					getWorkingDirectory(), new NullProgressMonitor());
 		} catch (CoreException | InvocationFailure e) {
 			Activator.log(e);
 		}

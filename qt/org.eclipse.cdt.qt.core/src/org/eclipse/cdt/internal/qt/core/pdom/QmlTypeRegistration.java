@@ -32,7 +32,8 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 	private final IQmlRegistration.Kind kind;
 	private char[] simpleID;
 
-	public QmlTypeRegistration(IASTName ast, ICPPTemplateInstance functionInstanceBinding, IASTFunctionCallExpression fnCall) {
+	public QmlTypeRegistration(IASTName ast, ICPPTemplateInstance functionInstanceBinding,
+			IASTFunctionCallExpression fnCall) {
 		super(ast);
 		this.functionInstanceBinding = functionInstanceBinding;
 		this.fnCall = fnCall;
@@ -48,13 +49,9 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 		if (simpleID == null) {
 			IASTInitializerClause[] args = fnCall.getArguments();
 			simpleID = (functionInstanceBinding.getName()
-					 + ASTTypeUtil.getArgumentListString(functionInstanceBinding.getTemplateArguments(), true)
-					 + "\0("
-					 + asStringForName(args, 0) + ','
-					 + asStringForName(args, 1) + ','
-					 + asStringForName(args, 2) + ','
-					 + asStringForName(args, 3) + ')'
-					 ).toCharArray();
+					+ ASTTypeUtil.getArgumentListString(functionInstanceBinding.getTemplateArguments(), true) + "\0("
+					+ asStringForName(args, 0) + ',' + asStringForName(args, 1) + ',' + asStringForName(args, 2) + ','
+					+ asStringForName(args, 3) + ')').toCharArray();
 		}
 
 		return simpleID;
@@ -62,7 +59,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 
 	@Override
 	public QtPDOMBinding createPDOMBinding(QtPDOMLinkage linkage) throws CoreException {
-		switch(kind) {
+		switch (kind) {
 		case Type:
 			return new QtPDOMQmlRegistration(linkage, this, delegate);
 		case Uncreatable:
@@ -85,8 +82,8 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 		if (args.length < 2)
 			return null;
 
-		 IValue val = args[1].getNonTypeValue();
-		 return val == null ? null : val.numberValue().longValue();
+		IValue val = args[1].getNonTypeValue();
+		return val == null ? null : val.numberValue().longValue();
 	}
 
 	public String getUri() {
@@ -131,7 +128,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 		if (str != null)
 			try {
 				return Long.parseLong(str);
-			} catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				// This is caused by invalid user code, do not log it
 			}
 
@@ -141,7 +138,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 	private static String asString(IASTInitializerClause init) {
 		if (init instanceof IASTLiteralExpression) {
 			IASTLiteralExpression literal = (IASTLiteralExpression) init;
-			switch(literal.getKind()) {
+			switch (literal.getKind()) {
 			case IASTLiteralExpression.lk_integer_constant:
 				return new String(literal.getValue());
 			case IASTLiteralExpression.lk_string_literal:

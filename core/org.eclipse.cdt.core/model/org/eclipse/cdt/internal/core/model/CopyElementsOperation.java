@@ -75,7 +75,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 * given container.
 	 */
 	public CopyElementsOperation(ICElement[] elementsToCopy, ICElement destContainer, boolean force) {
-		this(elementsToCopy, new ICElement[]{destContainer}, force);
+		this(elementsToCopy, new ICElement[] { destContainer }, force);
 	}
 
 	/**
@@ -99,21 +99,21 @@ public class CopyElementsOperation extends MultiOperation {
 
 	protected ITranslationUnit getDestinationTranslationUnit(ICElement element) {
 		ICElement dest = getDestinationParent(element);
-		return (ITranslationUnit)dest.getAncestor(ICElement.C_UNIT);		
+		return (ITranslationUnit) dest.getAncestor(ICElement.C_UNIT);
 	}
 
 	protected ITranslationUnit getSourceTranslationUnit(ICElement element) {
-		return (ITranslationUnit)element.getAncestor(ICElement.C_UNIT);		
+		return (ITranslationUnit) element.getAncestor(ICElement.C_UNIT);
 	}
 
 	/**
 	 * Returns the cached source for this element or compute it if not already cached.
 	 */
-	private String getSourceFor(ICElement element)  {
+	private String getSourceFor(ICElement element) {
 		if (element instanceof ISourceReference) {
 			// TODO: remove this hack when we have ASTRewrite and doit properly
 			try {
-				ISourceReference source = (ISourceReference)element;
+				ISourceReference source = (ISourceReference) element;
 				ISourceRange range = source.getSourceRange();
 				String contents = source.getSource();
 				StringBuilder sb = new StringBuilder(contents);
@@ -121,17 +121,17 @@ public class CopyElementsOperation extends MultiOperation {
 				// the element.  Note: the DeleteElementAction is doing the same.
 				IBuffer buffer = getSourceTranslationUnit(element).getBuffer();
 				boolean newLineFound = false;
-				for (int offset = range.getStartPos() + range.getLength();;++offset) {
+				for (int offset = range.getStartPos() + range.getLength();; ++offset) {
 					try {
 						char c = buffer.getChar(offset);
 						// TODO:Bug in the Parser, it does not give the semicolon
 						if (c == ';') {
-							sb.append(c) ;
+							sb.append(c);
 						} else if (c == '\r' || c == '\n') {
 							newLineFound = true;
-							sb.append(c) ;
+							sb.append(c);
 						} else if (!newLineFound && c == ' ') { // Do not include the spaces after the newline
-							sb.append(c) ;
+							sb.append(c);
 						} else {
 							break;
 						}
@@ -140,7 +140,7 @@ public class CopyElementsOperation extends MultiOperation {
 					}
 				}
 				contents = sb.toString();
-				if (! contents.endsWith(Util.LINE_SEPARATOR)) {
+				if (!contents.endsWith(Util.LINE_SEPARATOR)) {
 					contents += Util.LINE_SEPARATOR;
 				}
 				return contents;
@@ -150,6 +150,7 @@ public class CopyElementsOperation extends MultiOperation {
 		}
 		return ""; //$NON-NLS-1$
 	}
+
 	/**
 	 * Copy/move the element from the source to destination, renaming
 	 * the elements as specified, honoring the collision policy.
@@ -172,7 +173,7 @@ public class CopyElementsOperation extends MultiOperation {
 		}
 
 		if (isInTUOperation) {
-			CreateElementInTUOperation inTUop = (CreateElementInTUOperation)op;
+			CreateElementInTUOperation inTUop = (CreateElementInTUOperation) op;
 			ICElement sibling = fInsertBeforeElements.get(element);
 			if (sibling != null) {
 				(inTUop).setRelativePosition(sibling, CreateElementInTUOperation.INSERT_BEFORE);
@@ -251,7 +252,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 *		this error occurs, the element provided in the operation status is the <code>element</code>.
 	 *	<li>INVALID_NAME - the new name for <code>element</code> does not have valid syntax.
 	 *      In this case the element and name are provided in the status.
-
+	
 	 * </ul>
 	 */
 	@Override

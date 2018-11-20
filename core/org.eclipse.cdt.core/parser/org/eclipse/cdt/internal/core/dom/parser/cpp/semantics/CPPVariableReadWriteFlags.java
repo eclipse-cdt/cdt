@@ -47,7 +47,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  * with the variable.
  */
 public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
-	private static CPPVariableReadWriteFlags INSTANCE= new CPPVariableReadWriteFlags();
+	private static CPPVariableReadWriteFlags INSTANCE = new CPPVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {
 		CPPSemantics.pushLookupPoint(variable);
@@ -65,7 +65,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 			return rwInCtorInitializer(node, indirection, (ICPPASTConstructorInitializer) parent);
 		}
 		if (parent instanceof ICPPASTFieldDesignator) {
-			return WRITE;	// Field is initialized via a designated initializer.
+			return WRITE; // Field is initialized via a designated initializer.
 		}
 		return super.rwAnyNode(node, indirection);
 	}
@@ -73,25 +73,24 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	@Override
 	protected int rwInDeclarator(IASTDeclarator parent, int indirection) {
 		IType type = CPPVisitor.createType(parent);
-		if (type instanceof ICPPUnknownType ||
-				type instanceof ICPPClassType &&
-				!TypeTraits.hasTrivialDefaultConstructor((ICPPClassType) type, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
+		if (type instanceof ICPPUnknownType || type instanceof ICPPClassType
+				&& !TypeTraits.hasTrivialDefaultConstructor((ICPPClassType) type, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
 			return WRITE;
 		}
 		return super.rwInDeclarator(parent, indirection);
 	}
 
 	private int rwInCtorInitializer(IASTNode node, int indirection, ICPPASTConstructorInitializer parent) {
-		IASTNode grand= parent.getParent();
+		IASTNode grand = parent.getParent();
 		if (grand instanceof IASTDeclarator || grand instanceof ICPPASTNewExpression) {
 			// Look for a constructor being called.
 			if (grand instanceof IASTImplicitNameOwner) {
 				IASTImplicitName[] names = ((IASTImplicitNameOwner) grand).getImplicitNames();
 				for (IASTImplicitName in : names) {
-					IBinding b= in.resolveBinding();
+					IBinding b = in.resolveBinding();
 					if (b instanceof ICPPConstructor) {
 						final ICPPConstructor ctor = (ICPPConstructor) b;
-						int idx= 0;
+						int idx = 0;
 						for (IASTInitializerClause child : parent.getArguments()) {
 							if (child == node) {
 								return rwArgumentForFunctionCall(ctor.getType(), idx, child, indirection);
@@ -103,14 +102,14 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 			}
 			// Allow for initialization of primitive types.
 			if (grand instanceof IASTDeclarator && parent.getArguments().length == 1) {
-				IBinding binding= ((IASTDeclarator) grand).getName().getBinding();
+				IBinding binding = ((IASTDeclarator) grand).getName().getBinding();
 				if (binding instanceof IVariable) {
-					IType type= ((IVariable) binding).getType();
+					IType type = ((IVariable) binding).getType();
 					return rwAssignmentToType(type, indirection);
 				}
 			}
 		}
-		return READ | WRITE;  // fallback
+		return READ | WRITE; // fallback
 	}
 
 	@Override
@@ -125,7 +124,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	@Override
 	protected int rwInFunctionName(IASTExpression node) {
 		if (!(node instanceof IASTIdExpression)) {
-			IType type= node.getExpressionType();
+			IType type = node.getExpressionType();
 			if (type instanceof ICPPFunctionType && !((ICPPFunctionType) type).isConst())
 				return READ | WRITE;
 		}
@@ -138,13 +137,13 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 			if (!(type instanceof ICPPReferenceType) || ((ICPPReferenceType) type).isRValueReference()) {
 				return READ;
 			}
-			type= ((ICPPReferenceType) type).getType();
+			type = ((ICPPReferenceType) type).getType();
 		}
 		while (indirection > 0 && (type instanceof ITypeContainer)) {
 			if (type instanceof IPointerType) {
 				indirection--;
 			}
-			type= ((ITypeContainer) type).getType();
+			type = ((ITypeContainer) type).getType();
 		}
 		if (indirection == 0) {
 			if (type instanceof IQualifierType) {
@@ -153,6 +152,6 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
 			}
 		}
-		return READ | WRITE;	// fallback
+		return READ | WRITE; // fallback
 	}
 }

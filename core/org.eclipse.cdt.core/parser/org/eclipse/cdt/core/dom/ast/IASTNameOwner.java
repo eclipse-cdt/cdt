@@ -31,10 +31,10 @@ public interface IASTNameOwner {
 	 */
 	public static final int r_reference = 1;
 
-    /**
-     * Role of name in this construct is a definition.
-     */
-    public static final int r_definition = 2;
+	/**
+	 * Role of name in this construct is a definition.
+	 */
+	public static final int r_definition = 2;
 	/**
 	 * Role is unclear.
 	 */

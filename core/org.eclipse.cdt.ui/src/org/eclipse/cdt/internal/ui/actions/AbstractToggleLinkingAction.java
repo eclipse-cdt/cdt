@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0
  */
 public abstract class AbstractToggleLinkingAction extends Action {
-	
+
 	/**
 	 * Constructs a new action.
 	 */

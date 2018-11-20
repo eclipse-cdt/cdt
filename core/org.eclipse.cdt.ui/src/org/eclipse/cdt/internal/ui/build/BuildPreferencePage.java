@@ -64,12 +64,12 @@ public class BuildPreferencePage extends PreferencePage implements IWorkbenchPre
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
 
-		Composite container= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= 0;
-		layout.verticalSpacing= convertVerticalDLUsToPixels(10);
-		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = 0;
+		layout.verticalSpacing = convertVerticalDLUsToPixels(10);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		container.setLayout(layout);
 
 		// Build either default configuration or all.
@@ -113,7 +113,7 @@ public class BuildPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void addNote(Group parent, String noteMessage) {
-		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), parent,
+		Composite noteControl = createNoteComposite(JFaceResources.getDialogFont(), parent,
 				PreferencesMessages.CPluginPreferencePage_note, noteMessage);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.verticalIndent = GROUP_VINDENT;
@@ -128,7 +128,7 @@ public class BuildPreferencePage extends PreferencePage implements IWorkbenchPre
 			// this is temporary fix for problem that 3 line note does not displayed properly within the group
 			Label messageLabel = (Label) children[1];
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.widthHint=500;
+			gd.widthHint = 500;
 			messageLabel.setLayoutData(gd);
 		}
 		return messageComposite;
@@ -166,13 +166,13 @@ public class BuildPreferencePage extends PreferencePage implements IWorkbenchPre
 		return true;
 	}
 
-    @Override
+	@Override
 	protected void performDefaults() {
 		ACBuilder.setAllConfigBuild(false);
 		ACBuilder.setBuildConfigResourceChanges(false);
 		buildActive.setSelection(true);
 		buildAll.setSelection(false);
 		buildOnlyOnRefChange.setSelection(false);
-    	super.performDefaults();
-    }
+		super.performDefaults();
+	}
 }

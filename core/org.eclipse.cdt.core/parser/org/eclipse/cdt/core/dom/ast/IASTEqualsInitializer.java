@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
@@ -21,14 +21,13 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTEqualsInitializer extends IASTInitializer {
-	ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-		"IASTEqualsInitializer - INITIALIZER [IASTInitializerClause]"); //$NON-NLS-1$
-	
+	ASTNodeProperty INITIALIZER = new ASTNodeProperty("IASTEqualsInitializer - INITIALIZER [IASTInitializerClause]"); //$NON-NLS-1$
+
 	/**
 	 * Returns the expression or braced initializer list of this initializer.
 	 */
 	IASTInitializerClause getInitializerClause();
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 */

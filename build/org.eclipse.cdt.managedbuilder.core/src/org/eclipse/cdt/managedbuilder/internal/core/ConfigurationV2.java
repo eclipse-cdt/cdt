@@ -75,8 +75,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			// If so, then get my parent from it
 			if (targetParent != null) {
 				parent = targetParent.getConfiguration(element.getAttribute(IConfigurationV2.PARENT));
-			}
-			else {
+			} else {
 				parent = null;
 			}
 		}
@@ -85,7 +84,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
 			if (configElement.getNodeName().equals(IConfigurationV2.TOOLREF_ELEMENT_NAME)) {
-				new ToolReference(this, (Element)configElement);
+				new ToolReference(this, (Element) configElement);
 			}
 		}
 
@@ -114,7 +113,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 
 		// Get the tool references from the target and parent
 		List<IToolReference> allToolRefs = new Vector<IToolReference>(target.getLocalToolReferences());
-		allToolRefs.addAll(((ConfigurationV2)parentConfig).getLocalToolReferences());
+		allToolRefs.addAll(((ConfigurationV2) parentConfig).getLocalToolReferences());
 		for (IToolReference toolRef : allToolRefs) {
 			// Make a new ToolReference based on the tool in the ref
 			ITool parentTool = toolRef.getTool();
@@ -131,31 +130,31 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				IOption opt = optRef.getOption();
 				try {
 					switch (opt.getValueType()) {
-						case IOption.BOOLEAN:
-							new OptionReference(newRef, opt).setValue(optRef.getBooleanValue());
-							break;
-						case IOption.STRING:
-						case IOption.TREE:
-							new OptionReference(newRef, opt).setValue(optRef.getStringValue());
-							break;
-						case IOption.ENUMERATED:
-							new OptionReference(newRef, opt).setValue(optRef.getSelectedEnum());
-							break;
-						case IOption.STRING_LIST :
-							new OptionReference(newRef, opt).setValue(optRef.getStringListValue());
-							break;
-						case IOption.INCLUDE_PATH :
-							new OptionReference(newRef, opt).setValue(optRef.getIncludePaths());
-							break;
-						case IOption.PREPROCESSOR_SYMBOLS :
-							new OptionReference(newRef, opt).setValue(optRef.getDefinedSymbols());
-							break;
-						case IOption.LIBRARIES :
+					case IOption.BOOLEAN:
+						new OptionReference(newRef, opt).setValue(optRef.getBooleanValue());
+						break;
+					case IOption.STRING:
+					case IOption.TREE:
+						new OptionReference(newRef, opt).setValue(optRef.getStringValue());
+						break;
+					case IOption.ENUMERATED:
+						new OptionReference(newRef, opt).setValue(optRef.getSelectedEnum());
+						break;
+					case IOption.STRING_LIST:
+						new OptionReference(newRef, opt).setValue(optRef.getStringListValue());
+						break;
+					case IOption.INCLUDE_PATH:
+						new OptionReference(newRef, opt).setValue(optRef.getIncludePaths());
+						break;
+					case IOption.PREPROCESSOR_SYMBOLS:
+						new OptionReference(newRef, opt).setValue(optRef.getDefinedSymbols());
+						break;
+					case IOption.LIBRARIES:
 						new OptionReference(newRef, opt).setValue(optRef.getLibraries());
-							break;
-						case IOption.OBJECTS :
+						break;
+					case IOption.OBJECTS:
 						new OptionReference(newRef, opt).setValue(optRef.getUserObjects());
-							break;
+						break;
 					}
 				} catch (BuildException e) {
 					continue;
@@ -210,10 +209,10 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-//			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
+			//			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			List<IToolReference> localToolReferences = getLocalToolReferences();
 			for (IToolReference ref : localToolReferences) {
-				((ToolReference)ref).resolveReferences();
+				((ToolReference) ref).resolveReferences();
 			}
 		}
 	}
@@ -246,7 +245,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// The option may already be a reference created to hold user settings
 		if (option instanceof OptionReference) {
 			// The option reference belongs to an existing tool reference
-			OptionReference optionRef = (OptionReference)option;
+			OptionReference optionRef = (OptionReference) option;
 			searchRef = optionRef.getToolReference();
 
 			// That tool reference may belong to a target or to the configuration
@@ -265,9 +264,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			// Find out if a tool reference already exists.
 			// Note: as in MBS 2.0 the ITool == IHoldsOptions was always
 			// true, just up-cast the pointers.
-			searchRef = (ToolReference) getToolReference((ITool)option.getOptionHolder());
+			searchRef = (ToolReference) getToolReference((ITool) option.getOptionHolder());
 			if (searchRef == null) {
-				answer = new ToolReference(this, (ITool)option.getOptionHolder());
+				answer = new ToolReference(this, (ITool) option.getOptionHolder());
 			} else {
 				// The reference may belong to the target
 				if (!searchRef.ownedByConfiguration(this)) {
@@ -306,21 +305,22 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			try {
 				// Make sure the tool is right for the project
 				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							tools.add(tool);
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							tools.add(tool);
-						}
-						break;
-					case ITool.FILTER_BOTH:
+				case ITool.FILTER_C:
+					if (project.hasNature(CProjectNature.C_NATURE_ID)
+							&& !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 						tools.add(tool);
-						break;
-					default:
-						break;
+					}
+					break;
+				case ITool.FILTER_CC:
+					if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+						tools.add(tool);
+					}
+					break;
+				case ITool.FILTER_BOTH:
+					tools.add(tool);
+					break;
+				default:
+					break;
 				}
 			} catch (CoreException e) {
 				continue;
@@ -357,12 +357,10 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	@Override
 	public ITool[] getTools() {
-		ITool[] tools = parent != null
-			? parent.getTools()
-			: target.getTools();
+		ITool[] tools = parent != null ? parent.getTools() : target.getTools();
 
 		// Validate that the tools correspond to the nature
-		IProject project = (IProject)target.getOwner();
+		IProject project = (IProject) target.getOwner();
 		if (project != null) {
 			List<ITool> validTools = new ArrayList<ITool>();
 
@@ -371,27 +369,28 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				ITool tool = tools[i];
 				// Make sure the tool filter and project nature agree
 				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						try {
-							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								validTools.add(tool);
-							}
-						} catch (CoreException e) {
-							continue;
+				case ITool.FILTER_C:
+					try {
+						if (project.hasNature(CProjectNature.C_NATURE_ID)
+								&& !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							validTools.add(tool);
 						}
-						break;
-					case ITool.FILTER_CC:
-						try {
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								validTools.add(tool);
-							}
-						} catch (CoreException e) {
-							continue;
+					} catch (CoreException e) {
+						continue;
+					}
+					break;
+				case ITool.FILTER_CC:
+					try {
+						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							validTools.add(tool);
 						}
-						break;
-					case ITool.FILTER_BOTH:
-						validTools.add(tool);
-						break;
+					} catch (CoreException e) {
+						continue;
+					}
+					break;
+				case ITool.FILTER_BOTH:
+					validTools.add(tool);
+					break;
 				}
 			}
 			// Now put the valid tools back into the array
@@ -414,12 +413,14 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	@Override
 	public boolean isDirty() {
 		// If I need saving, just say yes
-		if (isDirty) return true;
+		if (isDirty)
+			return true;
 
 		// Otherwise see if any tool references need saving
 		List<IToolReference> localToolReferences = getLocalToolReferences();
 		for (IToolReference ref : localToolReferences) {
-			if (ref.isDirty()) return true;
+			if (ref.isDirty())
+				return true;
 		}
 
 		return isDirty;
@@ -457,7 +458,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 
 		// See if there is anything that my parents add that I don't
 		if (parent != null) {
-			List<OptionReference> temp = ((ConfigurationV2)parent).getOptionReferences(tool);
+			List<OptionReference> temp = ((ConfigurationV2) parent).getOptionReferences(tool);
 			for (OptionReference ref : temp) {
 				if (!references.contains(ref)) {
 					references.add(ref);
@@ -473,9 +474,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	@Override
 	public ITool getToolById(String id) {
-		ITool[] tools = parent != null
-		? parent.getTools()
-		: target.getTools();
+		ITool[] tools = parent != null ? parent.getTools() : target.getTools();
 
 		// Replace tools with local overrides
 		for (int i = 0; i < tools.length; ++i) {
@@ -519,7 +518,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	private IToolReference getToolReference(ITool tool) {
 		// Sanity
-		if (tool == null) return null;
+		if (tool == null)
+			return null;
 
 		// See if the receiver has a reference to the tool
 		List<IToolReference> localToolReferences = getLocalToolReferences();
@@ -534,8 +534,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		for (int index = targetTools.length - 1; index >= 0; --index) {
 			ITool targetTool = targetTools[index];
 			if (targetTool instanceof ToolReference) {
-				if (((ToolReference)targetTool).references(tool)) {
-					return (ToolReference)targetTool;
+				if (((ToolReference) targetTool).references(tool)) {
+					return (ToolReference) targetTool;
 				}
 			}
 		}
@@ -573,7 +573,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		for (IToolReference toolRef : localToolReferences) {
 			Element toolRefElement = doc.createElement(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 			element.appendChild(toolRefElement);
-			((ToolReference)toolRef).serialize(doc, toolRefElement);
+			((ToolReference) toolRef).serialize(doc, toolRefElement);
 		}
 
 		// I am clean now
@@ -590,7 +590,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// And do the same for the tool references
 		List<IToolReference> localToolReferences = getLocalToolReferences();
 		for (IToolReference toolRef : localToolReferences) {
-			((ToolReference)toolRef).setDirty(isDirty);
+			((ToolReference) toolRef).setDirty(isDirty);
 		}
 	}
 
@@ -616,8 +616,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// Check whether this is an enumerated option
 		if (option.getValueType() == IOption.ENUMERATED) {
 			oldValue = option.getSelectedEnum();
-		}
-		else {
+		} else {
 			oldValue = option.getStringValue();
 		}
 		if (oldValue != null && !oldValue.equals(value)) {
@@ -635,26 +634,26 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// Is there a delta
 		String[] oldValue;
 		switch (option.getValueType()) {
-			case IOption.STRING_LIST :
-				oldValue = option.getStringListValue();
-				break;
-			case IOption.INCLUDE_PATH :
-				oldValue = option.getIncludePaths();
-				break;
-			case IOption.PREPROCESSOR_SYMBOLS :
-				oldValue = option.getDefinedSymbols();
-				break;
-			case IOption.LIBRARIES :
-				oldValue = option.getLibraries();
-				break;
-			case IOption.OBJECTS :
-				oldValue = option.getUserObjects();
-				break;
-			default :
-				oldValue = new String[0];
-				break;
+		case IOption.STRING_LIST:
+			oldValue = option.getStringListValue();
+			break;
+		case IOption.INCLUDE_PATH:
+			oldValue = option.getIncludePaths();
+			break;
+		case IOption.PREPROCESSOR_SYMBOLS:
+			oldValue = option.getDefinedSymbols();
+			break;
+		case IOption.LIBRARIES:
+			oldValue = option.getLibraries();
+			break;
+		case IOption.OBJECTS:
+			oldValue = option.getUserObjects();
+			break;
+		default:
+			oldValue = new String[0];
+			break;
 		}
-		if(!Arrays.equals(value, oldValue)) {
+		if (!Arrays.equals(value, oldValue)) {
 			createOptionReference(option).setValue(value);
 			isDirty = true;
 			rebuildNeeded = true;

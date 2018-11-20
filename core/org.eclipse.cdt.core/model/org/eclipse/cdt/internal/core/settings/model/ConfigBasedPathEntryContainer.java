@@ -21,20 +21,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class ConfigBasedPathEntryContainer implements IPathEntryContainer {
-	public static final IPath CONTAINER_PATH = new Path("org.eclipse.cdt.core.CFG_BASED_CONTAINER");	//$NON-NLS-1$
+	public static final IPath CONTAINER_PATH = new Path("org.eclipse.cdt.core.CFG_BASED_CONTAINER"); //$NON-NLS-1$
 	private IPathEntry[] fEntries;
 
-	public ConfigBasedPathEntryContainer(List<IPathEntry> list){
+	public ConfigBasedPathEntryContainer(List<IPathEntry> list) {
 		this.fEntries = list.toArray(new IPathEntry[list.size()]);
 	}
 
-	public ConfigBasedPathEntryContainer(IPathEntry entries[]){
+	public ConfigBasedPathEntryContainer(IPathEntry entries[]) {
 		this.fEntries = entries.clone();
 	}
 
 	@Override
 	public String getDescription() {
-		return "Configuration Description info container";	//$NON-NLS-1$
+		return "Configuration Description info container"; //$NON-NLS-1$
 	}
 
 	@Override

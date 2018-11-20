@@ -49,84 +49,87 @@ import org.junit.BeforeClass;
  */
 public class VMTestBase {
 
-    private PDALaunch fLaunch;
-    public PDALaunch getPDALaunch() { return fLaunch; }
+	private PDALaunch fLaunch;
 
-    @BeforeClass
-    public static void baseBeforeClassMethod() {
-        DebugUIPlugin.getDefault().getPreferenceStore().setValue(
-            IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.NEVER);
-        DebugUIPlugin.getDefault().getPreferenceStore().setValue(
-            IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.NEVER);
-    }
-    
-    @Before
-    public void baseBeforeMethod() throws Exception {
-        Map<String, Object> attrs = new HashMap<String, Object>();
-        
-        initLaunchAttributes(attrs);
-        
-        System.out.println("====================================================================");
+	public PDALaunch getPDALaunch() {
+		return fLaunch;
+	}
+
+	@BeforeClass
+	public static void baseBeforeClassMethod() {
+		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
+				MessageDialogWithToggle.NEVER);
+		DebugUIPlugin.getDefault().getPreferenceStore()
+				.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.NEVER);
+	}
+
+	@Before
+	public void baseBeforeMethod() throws Exception {
+		Map<String, Object> attrs = new HashMap<String, Object>();
+
+		initLaunchAttributes(attrs);
+
+		System.out.println("====================================================================");
 		System.out.println("Launching test application: " + attrs.get(PDAPlugin.ATTR_PDA_PROGRAM));
 		System.out.println("====================================================================");
-		
- 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
- 		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType("org.eclipse.cdt.examples.dsf.pda.launchType");
- 		assert lcType != null;
 
- 		ILaunchConfigurationWorkingCopy lcWorkingCopy = lcType.newInstance(
- 				null, 
- 				launchMgr.generateUniqueLaunchConfigurationNameFrom("Test Launch")); //$NON-NLS-1$
- 		assert lcWorkingCopy != null;
- 		lcWorkingCopy.setAttributes(attrs);
+		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType lcType = launchMgr
+				.getLaunchConfigurationType("org.eclipse.cdt.examples.dsf.pda.launchType");
+		assert lcType != null;
 
- 		final ILaunchConfiguration lc = lcWorkingCopy.doSave();
- 		assert lc != null;
+		ILaunchConfigurationWorkingCopy lcWorkingCopy = lcType.newInstance(null,
+				launchMgr.generateUniqueLaunchConfigurationNameFrom("Test Launch")); //$NON-NLS-1$
+		assert lcWorkingCopy != null;
+		lcWorkingCopy.setAttributes(attrs);
 
-        final ServiceEventWaitor<?> eventWaitor[] = new ServiceEventWaitor<?>[1];
-        
-        SessionStartedListener newSessionListener = new SessionStartedListener() {
-            @Override
-	    public void sessionStarted(DsfSession session) {
-                eventWaitor[0] = new ServiceEventWaitor<IStartedDMEvent>(session, IStartedDMEvent.class);
-            }
-        };
+		final ILaunchConfiguration lc = lcWorkingCopy.doSave();
+		assert lc != null;
 
-        DsfSession.addSessionStartedListener(newSessionListener);
-        try {
-            fLaunch = (PDALaunch)lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
-            Assert.assertNotNull(fLaunch);
-            Assert.assertNotNull(eventWaitor[0]);
-            Assert.assertSame(fLaunch.getSession(), eventWaitor[0].getSession());
+		final ServiceEventWaitor<?> eventWaitor[] = new ServiceEventWaitor<?>[1];
+
+		SessionStartedListener newSessionListener = new SessionStartedListener() {
+			@Override
+			public void sessionStarted(DsfSession session) {
+				eventWaitor[0] = new ServiceEventWaitor<IStartedDMEvent>(session, IStartedDMEvent.class);
+			}
+		};
+
+		DsfSession.addSessionStartedListener(newSessionListener);
+		try {
+			fLaunch = (PDALaunch) lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
+			Assert.assertNotNull(fLaunch);
+			Assert.assertNotNull(eventWaitor[0]);
+			Assert.assertSame(fLaunch.getSession(), eventWaitor[0].getSession());
 			eventWaitor[0].waitForEvent(60000);
 		} finally {
-		    DsfSession.removeSessionStartedListener(newSessionListener);
-		    if (eventWaitor[0] != null) {
-		        eventWaitor[0].dispose();
-		    }
+			DsfSession.removeSessionStartedListener(newSessionListener);
+			if (eventWaitor[0] != null) {
+				eventWaitor[0].dispose();
+			}
 		}
 	}
 
-    protected void initLaunchAttributes(Map<String, Object> attrs) {
-        attrs.put(PDAPlugin.ATTR_PDA_PROGRAM, getProgramPath());
-    }
-    
-    protected String getProgramPath() {
-        File programFile = PDAPlugin.getFileInPlugin(new Path("samples/example.pda"));
-        return programFile.getPath();
-    }
-    
-    protected ILaunch getLaunch() {
-        return fLaunch;
-    }
-    
- 	@After
-	public void baseAfterMethod() throws Exception {
- 		if (fLaunch != null) {
- 			fLaunch.terminate();
-            fLaunch = null;
- 		}
- 		
+	protected void initLaunchAttributes(Map<String, Object> attrs) {
+		attrs.put(PDAPlugin.ATTR_PDA_PROGRAM, getProgramPath());
 	}
- 	
+
+	protected String getProgramPath() {
+		File programFile = PDAPlugin.getFileInPlugin(new Path("samples/example.pda"));
+		return programFile.getPath();
+	}
+
+	protected ILaunch getLaunch() {
+		return fLaunch;
+	}
+
+	@After
+	public void baseAfterMethod() throws Exception {
+		if (fLaunch != null) {
+			fLaunch.terminate();
+			fLaunch = null;
+		}
+
+	}
+
 }

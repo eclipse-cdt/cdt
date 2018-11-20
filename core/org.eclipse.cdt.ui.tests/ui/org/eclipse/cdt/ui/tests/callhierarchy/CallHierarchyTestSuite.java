@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
@@ -19,14 +19,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    BasicCallHierarchyTest.class,
-    BasicCppCallHierarchyTest.class,
-    InitializersInCallHierarchyTest.class,
-    CppCallHierarchyTest.class,
-    CallHierarchyAcrossProjectsTest.class,
-    CallHierarchyBugs.class,
-})
+@Suite.SuiteClasses({ BasicCallHierarchyTest.class, BasicCppCallHierarchyTest.class,
+		InitializersInCallHierarchyTest.class, CppCallHierarchyTest.class, CallHierarchyAcrossProjectsTest.class,
+		CallHierarchyBugs.class, })
 public class CallHierarchyTestSuite {
 
 }

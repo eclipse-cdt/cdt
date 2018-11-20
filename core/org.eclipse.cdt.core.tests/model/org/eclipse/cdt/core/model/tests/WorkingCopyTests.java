@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -39,38 +38,38 @@ import org.eclipse.core.runtime.Path;
  * Contains unit test cases for Working Copies. Run using JUnit Plugin Test
  * configuration launcher.
  */
-public class WorkingCopyTests extends TestCase {	
+public class WorkingCopyTests extends TestCase {
 	private ICProject fCProject;
 	private IFile headerFile;
 	private NullProgressMonitor monitor;
-	
+
 	public static void main(String[] args) {
 		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), WorkingCopyTests.class, args);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(WorkingCopyTests.class.getName());
+		TestSuite suite = new TestSuite(WorkingCopyTests.class.getName());
 		suite.addTest(new WorkingCopyTests("testWorkingCopy"));
 		//suite.addTest(new WorkingCopyTests("testHashing"));
 		return suite;
-	}		
-	
+	}
+
 	public WorkingCopyTests(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-	
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
+
+		fCProject = CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
 		//Path filePath = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString()+ fCProject.getPath().toString()+ "/WorkingCopyTest.h");
 		headerFile = fCProject.getProject().getFile("WorkingCopyTest.h");
 		if (!headerFile.exists()) {
-			try{
+			try {
 				FileInputStream fileIn = new FileInputStream(
-						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/WorkingCopyTestStart.h"))); 
-				headerFile.create(fileIn,false, monitor);        
+						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/WorkingCopyTestStart.h")));
+				headerFile.create(fileIn, false, monitor);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
@@ -80,39 +79,38 @@ public class WorkingCopyTests extends TestCase {
 	}
 
 	@Override
-	protected void tearDown()  {
+	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
-	}	
-		
-		
+	}
+
 	public void testWorkingCopy() throws Exception {
-		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(headerFile);
+		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 		// CreateWorkingCopy		
-		assertNotNull (tu);
+		assertNotNull(tu);
 		IWorkingCopy wc = tu.getWorkingCopy();
-		assertNotNull (wc);
-		assertNotNull (wc.getBuffer());
-		assertTrue (wc.exists());
-		
+		assertNotNull(wc);
+		assertNotNull(wc.getBuffer());
+		assertTrue(wc.exists());
+
 		// ModifyWorkingCopy
 		IBuffer wcBuf = wc.getBuffer();
 		wcBuf.append("\n class Hello{ int x; };");
-		if (tu.getBuffer().getContents().equals(wc.getBuffer().getContents() ) )
-			fail("Buffers should NOT be equal at this point!");		
-		
+		if (tu.getBuffer().getContents().equals(wc.getBuffer().getContents()))
+			fail("Buffers should NOT be equal at this point!");
+
 		// ReconcileWorkingCopy
 		wc.reconcile();
-		
+
 		// CommitWorkingCopy
 		wc.commit(true, monitor);
-		
-		if(!tu.getBuffer().getContents().equals(wc.getBuffer().getContents())) 
+
+		if (!tu.getBuffer().getContents().equals(wc.getBuffer().getContents()))
 			fail("Buffers should be equal at this point!");
-		
+
 		// DestroyWorkingCopy
 		wc.destroy();
-		assertFalse(wc.exists());	
-		
-		Thread.sleep(1000);	
+		assertFalse(wc.exists());
+
+		Thread.sleep(1000);
 	}
 }

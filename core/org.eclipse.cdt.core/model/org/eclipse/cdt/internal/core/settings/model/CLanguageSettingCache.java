@@ -26,8 +26,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
 import org.eclipse.core.resources.IProject;
 
-public class CLanguageSettingCache extends CDefaultLanguageData implements
-		ICLanguageSetting, ICachedData {
+public class CLanguageSettingCache extends CDefaultLanguageData implements ICLanguageSetting, ICachedData {
 	private ICResourceDescription fParent;
 	protected EntryStore fResolvedEntriesStore;
 	private String fCachedExtensions[];
@@ -55,17 +54,17 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		// TODO Auto-generated method stub
 		return getSettingEntries();
 	}
-*/
+	*/
 	@Override
 	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
 		ICLanguageSettingEntry[] entries = getSettingEntries(kind);
-		if(entries.length != 0){
-			if(fResolvedEntriesStore == null){
+		if (entries.length != 0) {
+			if (fResolvedEntriesStore == null) {
 				fResolvedEntriesStore = new EntryStore();
 			}
 
 			ICLanguageSettingEntry[] resolved = fResolvedEntriesStore.getEntries(kind);
-			if(resolved.length == 0){
+			if (resolved.length == 0) {
 				resolved = CDataUtil.resolveEntries(entries, getConfiguration());
 				fResolvedEntriesStore.storeEntries(kind, resolved);
 			}
@@ -75,64 +74,62 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return entries;
 	}
 
-	private IProject getProject(){
+	private IProject getProject() {
 		return getConfiguration().getProjectDescription().getProject();
 	}
 
-
 	@Override
 	public String[] getSourceExtensions() {
-		if(fCachedExtensions == null ){
+		if (fCachedExtensions == null) {
 			String[] typeIds = getSourceContentTypeIds();
 			String exts[] = null;
-			if(typeIds != null && typeIds.length != 0){
+			if (typeIds != null && typeIds.length != 0) {
 				exts = CDataUtil.getExtensionsFromContentTypes(getProject(), typeIds);
 			} else {
 				exts = super.getSourceExtensions();
-				if(exts != null && exts.length != 0)
+				if (exts != null && exts.length != 0)
 					exts = exts.clone();
 				else
 					exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 			}
 
-			if(exts == null)
+			if (exts == null)
 				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 			fCachedExtensions = exts;
 		}
 
-		if(fCachedExtensions.length != 0)
+		if (fCachedExtensions.length != 0)
 			return fCachedExtensions.clone();
 		return fCachedExtensions;
 	}
 
 	@Override
 	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
-//		int kinds[] = KindBasedStore.getSupportedKinds();
-//		List list = new ArrayList();
-//		for(int i = 0; i < kinds.length; i++){
-//			ICLanguageSettingEntry entries[] = fStore.getEntries(kinds[i]);
-//			for(int j = 0; j < entries.length; j++){
-//				list.add(entries[j]);
-//			}
-//		}
-//		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+		//		int kinds[] = KindBasedStore.getSupportedKinds();
+		//		List list = new ArrayList();
+		//		for(int i = 0; i < kinds.length; i++){
+		//			ICLanguageSettingEntry entries[] = fStore.getEntries(kinds[i]);
+		//			for(int j = 0; j < entries.length; j++){
+		//				list.add(entries[j]);
+		//			}
+		//		}
+		//		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
 		return fStore.getEntries(kind);
 	}
 
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
-//		int kinds[] = KindBasedStore.getSupportedKinds();
-//		List list = new ArrayList();
-//		for(int i = 0; i < kinds.length; i++){
-//			ICLanguageSettingEntry entries[] = fStore.getEntries(kinds[i]);
-//			for(int j = 0; j < entries.length; j++){
-//				list.add(entries[j]);
-//			}
-//		}
-//		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+		//		int kinds[] = KindBasedStore.getSupportedKinds();
+		//		List list = new ArrayList();
+		//		for(int i = 0; i < kinds.length; i++){
+		//			ICLanguageSettingEntry entries[] = fStore.getEntries(kinds[i]);
+		//			for(int j = 0; j < entries.length; j++){
+		//				list.add(entries[j]);
+		//			}
+		//		}
+		//		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
 		return fStore.getEntriesList(kind);
 	}
-
 
 	@Override
 	public void setLanguageId(String id) {
@@ -180,7 +177,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 
 	@Override
 	protected ICLanguageSettingEntry[] processStoredEntries(ICLanguageSettingEntry[] entries, int op) {
-		for(int i = 0; i < entries.length; i++) {
+		for (int i = 0; i < entries.length; i++) {
 			entries[i] = CDataUtil.getPooledEntry(entries[i]);
 		}
 		return entries;

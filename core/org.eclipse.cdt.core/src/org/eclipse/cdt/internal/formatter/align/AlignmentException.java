@@ -20,14 +20,14 @@ package org.eclipse.cdt.internal.formatter.align;
  * @since 4.0
  */
 public class AlignmentException extends RuntimeException {
-	private static final long serialVersionUID= -1081237230006524966L;
+	private static final long serialVersionUID = -1081237230006524966L;
 	public static final int LINE_TOO_LONG = 1;
 	public static final int ALIGN_TOO_SMALL = 2;
-	
+
 	int reason;
 	int value;
 	public int relativeDepth;
-	
+
 	public AlignmentException(int reason, int relativeDepth) {
 		this(reason, 0, relativeDepth);
 	}
@@ -37,13 +37,13 @@ public class AlignmentException extends RuntimeException {
 		this.value = value;
 		this.relativeDepth = relativeDepth;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder(40);
 		switch (reason) {
 		case LINE_TOO_LONG:
-			buffer.append("LINE_TOO_LONG");	//$NON-NLS-1$
+			buffer.append("LINE_TOO_LONG"); //$NON-NLS-1$
 			break;
 		case ALIGN_TOO_SMALL:
 			buffer.append("ALIGN_TOO_SMALL"); //$NON-NLS-1$

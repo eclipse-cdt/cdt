@@ -13,21 +13,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
-
 public class ObjectSetList {
 	private IObjectSet[] fObjectSets;
-	
-	public ObjectSetList(IObjectSet[] objects){
+
+	public ObjectSetList(IObjectSet[] objects) {
 		this(objects, true);
 	}
 
-	ObjectSetList(IObjectSet[] objects, boolean copy){
-		if(copy)
+	ObjectSetList(IObjectSet[] objects, boolean copy) {
+		if (copy)
 			objects = objects.clone();
 		fObjectSets = objects;
 	}
 
-	public IObjectSet[] getObjectSets(){
+	public IObjectSet[] getObjectSets() {
 		return fObjectSets.clone();
 	}
 }

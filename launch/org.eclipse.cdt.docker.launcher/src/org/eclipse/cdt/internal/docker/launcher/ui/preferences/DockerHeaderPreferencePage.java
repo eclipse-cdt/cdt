@@ -36,8 +36,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class DockerHeaderPreferencePage extends PreferencePage
-		implements IWorkbenchPreferencePage, Listener {
+public class DockerHeaderPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Listener {
 
 	// SWT Widgets and content providers
 	private Table hdrTable;
@@ -46,8 +45,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 	private Button removeButton;
 	private List<IPath> directories;
 
-	private final class HeaderContentProvider
-	implements IStructuredContentProvider, ITableLabelProvider {
+	private final class HeaderContentProvider implements IStructuredContentProvider, ITableLabelProvider {
 
 		/**
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
@@ -69,8 +67,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 		 *      Object, Object)
 		 */
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput,
-				Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 		/**
@@ -90,8 +87,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 			String name = path.lastSegment();
 			if (namePath.toFile().exists()) {
 				try (FileReader reader = new FileReader(namePath.toFile());
-						BufferedReader bufferReader = new BufferedReader(
-								reader);) {
+						BufferedReader bufferReader = new BufferedReader(reader);) {
 					name = bufferReader.readLine();
 				} catch (IOException e) {
 					// ignore
@@ -149,9 +145,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 	@Override
 	public void init(IWorkbench workbench) {
 		directories = new ArrayList<>();
-		IPath pluginPath = Platform
-				.getStateLocation(
-						Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+		IPath pluginPath = Platform.getStateLocation(Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
 				.append("HEADERS"); //$NON-NLS-1$
 		File d = pluginPath.toFile();
 
@@ -162,9 +156,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 					File[] images = connection.listFiles();
 					for (File image : images) {
 						if (image.isDirectory()) {
-							directories
-									.add(pluginPath.append(connection.getName())
-											.append(image.getName()));
+							directories.add(pluginPath.append(connection.getName()).append(image.getName()));
 						}
 					}
 				}
@@ -174,8 +166,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 
 	@Override
 	protected Control createContents(Composite parent) {
-		Composite page = createComposite(parent, 1, 2, false, null, -1, -1,
-				GridData.FILL);
+		Composite page = createComposite(parent, 1, 2, false, null, -1, -1, GridData.FILL);
 		GridData gd = (GridData) page.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
@@ -184,8 +175,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 		// SystemResources.RESID_PREF_SIGNON_DESCRIPTION, 2);
 
 		// Header table
-		hdrTable = new Table(page, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL
-				| SWT.H_SCROLL | SWT.BORDER);
+		hdrTable = new Table(page, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		hdrTable.setLinesVisible(true);
 		hdrTable.setHeaderVisible(true);
 		hdrTable.addListener(SWT.Selection, this);
@@ -203,8 +193,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 
 		// Connection column
 		TableColumn connectionColumn = new TableColumn(hdrTable, SWT.NONE);
-		connectionColumn
-				.setText(Messages.HeaderPreferencePage_Connection_Label);
+		connectionColumn.setText(Messages.HeaderPreferencePage_Connection_Label);
 
 		// Image column
 		TableColumn imageColumn = new TableColumn(hdrTable, SWT.NONE);
@@ -216,23 +205,20 @@ public class DockerHeaderPreferencePage extends PreferencePage
 		hdrTableViewer.setInput(directories);
 
 		// Create the Button bar for add, change and remove
-		Composite buttonBar = createComposite(page, 1, 1, false, null, -1, -1,
-				GridData.FILL);
+		Composite buttonBar = createComposite(page, 1, 1, false, null, -1, -1, GridData.FILL);
 		gd = (GridData) buttonBar.getLayoutData();
 		gd.grabExcessHorizontalSpace = false;
 		gd.grabExcessVerticalSpace = true;
 
-		removeButton = createPushButton(buttonBar, this,
-				Messages.HeaderPreferencePage_Remove_Label,
+		removeButton = createPushButton(buttonBar, this, Messages.HeaderPreferencePage_Remove_Label,
 				Messages.HeaderPreferencePage_Remove_Tooltip);
 
 		removeButton.setEnabled(false);
 		return parent;
 	}
 
-	private static Composite createComposite(Composite parent, int parentSpan,
-			int numColumns, boolean border, String label, int marginSize,
-			int spacingSize, int verticalAlignment) {
+	private static Composite createComposite(Composite parent, int parentSpan, int numColumns, boolean border,
+			String label, int marginSize, int spacingSize, int verticalAlignment) {
 		// border = true;
 		boolean borderNeeded = border;
 		if (label != null)
@@ -273,8 +259,7 @@ public class DockerHeaderPreferencePage extends PreferencePage
 		return composite;
 	}
 
-	public static Button createPushButton(Composite group, Listener listener,
-			String label, String tooltip) {
+	public static Button createPushButton(Composite group, Listener listener, String label, String tooltip) {
 		Button button = new Button(group, SWT.PUSH);
 		button.setText(label);
 		if (listener != null)
@@ -353,4 +338,3 @@ public class DockerHeaderPreferencePage extends PreferencePage
 		dir.delete();
 	}
 }
-

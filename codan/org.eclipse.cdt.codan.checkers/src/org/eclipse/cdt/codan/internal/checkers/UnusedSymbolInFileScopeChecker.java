@@ -71,7 +71,8 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	/*
 	 * Various attributes that when present for a symbol should make it considered as used.
 	 */
-	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "constructor", "destructor" };  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "constructor", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			"destructor" }; //$NON-NLS-1$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
@@ -85,11 +86,12 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	public boolean runInEditor() {
 		return true;
 	}
-	
+
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro, Boolean.TRUE);
+		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
+				Boolean.TRUE);
 		if (problem.getId().equals(ER_UNUSED_VARIABLE_DECLARATION_ID)) {
 			unusedVariableProblem = problem;
 			ListProblemPreference pref = addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
@@ -109,11 +111,9 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	}
 
 	private boolean isAnyCandidate() {
-		return !externFunctionDeclarations.isEmpty() ||
-				!staticFunctionDeclarations.isEmpty() ||
-				!staticFunctionDefinitions.isEmpty() ||
-				!externVariableDeclarations.isEmpty() ||
-				!staticVariableDeclarations.isEmpty();
+		return !externFunctionDeclarations.isEmpty() || !staticFunctionDeclarations.isEmpty()
+				|| !staticFunctionDefinitions.isEmpty() || !externVariableDeclarations.isEmpty()
+				|| !staticVariableDeclarations.isEmpty();
 	}
 
 	@Override
@@ -157,21 +157,21 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 								int storageClass = simpleDeclaration.getDeclSpecifier().getStorageClass();
 
 								if (binding instanceof IFunction) {
-									if (storageClass == IASTDeclSpecifier.sc_extern ||
-											storageClass == IASTDeclSpecifier.sc_unspecified) {
-										if (shouldReportInMacro(ER_UNUSED_FUNCTION_DECLARATION_ID) ||
-												!CxxAstUtils.isInMacro(astName)) {
+									if (storageClass == IASTDeclSpecifier.sc_extern
+											|| storageClass == IASTDeclSpecifier.sc_unspecified) {
+										if (shouldReportInMacro(ER_UNUSED_FUNCTION_DECLARATION_ID)
+												|| !CxxAstUtils.isInMacro(astName)) {
 											externFunctionDeclarations.put(binding, decl);
 										}
 									} else if (storageClass == IASTDeclSpecifier.sc_static) {
-										if (shouldReportInMacro(ER_UNUSED_STATIC_FUNCTION_ID) ||
-												!CxxAstUtils.isInMacro(astName)) {
+										if (shouldReportInMacro(ER_UNUSED_STATIC_FUNCTION_ID)
+												|| !CxxAstUtils.isInMacro(astName)) {
 											staticFunctionDeclarations.put(binding, decl);
 										}
 									}
 								} else if (binding instanceof IVariable) {
-									if (shouldReportInMacro(ER_UNUSED_VARIABLE_DECLARATION_ID) ||
-											!CxxAstUtils.isInMacro(astName)) {
+									if (shouldReportInMacro(ER_UNUSED_VARIABLE_DECLARATION_ID)
+											|| !CxxAstUtils.isInMacro(astName)) {
 										if (storageClass == IASTDeclSpecifier.sc_extern) {
 											// Initializer makes "extern" declaration to become definition do not count these
 											if (decl.getInitializer() == null) {
@@ -189,17 +189,19 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 													clause = equalsInitializer.getInitializerClause();
 												} else if (initializer instanceof ICPPASTConstructorInitializer) {
 													ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
-													IASTInitializerClause[] args = constructorInitializer.getArguments();
+													IASTInitializerClause[] args = constructorInitializer
+															.getArguments();
 													if (args.length == 1)
 														clause = args[0];
 												}
 												if (clause instanceof IASTLiteralExpression) {
 													IASTLiteralExpression literalExpression = (IASTLiteralExpression) clause;
 													String literal = literalExpression.toString();
-													if (isFilteredOut(literal, unusedVariableProblem, PARAM_EXCEPT_ARG_LIST))
+													if (isFilteredOut(literal, unusedVariableProblem,
+															PARAM_EXCEPT_ARG_LIST))
 														continue;
 												}
-	
+
 												staticVariableDeclarations.put(binding, decl);
 											}
 										}
@@ -220,8 +222,8 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 								declarationsWithUsageAttributes.add(binding);
 							}
 
-							if (definition.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_static &&
-									!(astName instanceof ICPPASTQualifiedName)) {
+							if (definition.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_static
+									&& !(astName instanceof ICPPASTQualifiedName)) {
 								staticFunctionDefinitions.put(binding, declarator);
 							}
 
@@ -267,7 +269,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						filterOutByPlainName(externVariableDeclarations, plainName);
 						filterOutByPlainName(staticVariableDeclarations, plainName);
 					}
-					
+
 					if (binding instanceof ICPPDeferredFunction) {
 						// Function call inside a template - we don't know which overload(s)
 						// it might match, so to avoid false positives we consider all
@@ -283,7 +285,8 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 
 					IASTNode parentNode = name.getParent();
 
-					if (!(parentNode instanceof IASTFunctionDefinition || parentNode instanceof IASTFunctionDeclarator)) {
+					if (!(parentNode instanceof IASTFunctionDefinition
+							|| parentNode instanceof IASTFunctionDeclarator)) {
 						externFunctionDeclarations.remove(binding);
 						staticFunctionDefinitions.remove(binding);
 					}
@@ -311,7 +314,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 
 					return PROCESS_CONTINUE;
 				}
-				
+
 				@Override
 				public int visit(IASTDeclaration declaration) {
 					// Bug 393129: A variable could be used inside assembly code.
@@ -323,10 +326,10 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						filterOutByAssembly(externVariableDeclarations, assembly);
 						filterOutByAssembly(staticVariableDeclarations, assembly);
 					}
-					
+
 					if (!isAnyCandidate())
 						return PROCESS_ABORT;
-					
+
 					return PROCESS_CONTINUE;
 				}
 
@@ -340,7 +343,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 							iter.remove();
 					}
 				}
-				
+
 				private void filterOutByPlainName(Map<IBinding, IASTDeclarator> declarators, String id) {
 					Iterator<Entry<IBinding, IASTDeclarator>> iter = declarators.entrySet().iterator();
 					while (iter.hasNext()) {

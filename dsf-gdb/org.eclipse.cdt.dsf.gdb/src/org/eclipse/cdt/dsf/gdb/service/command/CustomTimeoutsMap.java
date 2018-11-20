@@ -33,50 +33,45 @@ public class CustomTimeoutsMap extends HashMap<String, Integer> {
 		super();
 	}
 
-	public CustomTimeoutsMap( CustomTimeoutsMap map ) {
-		super( map );
+	public CustomTimeoutsMap(CustomTimeoutsMap map) {
+		super(map);
 	}
 
 	private static final long serialVersionUID = -8281280275781904870L;
 
 	public String getMemento() {
 		StringBuilder sb = new StringBuilder();
-		for ( Map.Entry<String, Integer> entry : entrySet() ) {
-			sb.append( entry.getKey() );
-			sb.append( ',' );
-			sb.append( entry.getValue().intValue() );
-			sb.append( ';' );
+		for (Map.Entry<String, Integer> entry : entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(',');
+			sb.append(entry.getValue().intValue());
+			sb.append(';');
 		}
 		return sb.toString();
 	}
-	
-	public void initializeFromMemento( String memento ) {
+
+	public void initializeFromMemento(String memento) {
 		clear();
-		StringTokenizer st = new StringTokenizer( memento, ";" ); //$NON-NLS-1$
-		MultiStatus ms = new MultiStatus( GdbPlugin.PLUGIN_ID, 0, Messages.CustomTimeoutsMap_Error_initializing_custom_timeouts, null );
-		while( st.hasMoreTokens() ) {
+		StringTokenizer st = new StringTokenizer(memento, ";"); //$NON-NLS-1$
+		MultiStatus ms = new MultiStatus(GdbPlugin.PLUGIN_ID, 0,
+				Messages.CustomTimeoutsMap_Error_initializing_custom_timeouts, null);
+		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
-			String[] tokenParts = token.split( "," ); //$NON-NLS-1$
-			if ( tokenParts.length == 2 && tokenParts[0].length() > 0 && tokenParts[1].length() > 0 ) {
+			String[] tokenParts = token.split(","); //$NON-NLS-1$
+			if (tokenParts.length == 2 && tokenParts[0].length() > 0 && tokenParts[1].length() > 0) {
 				try {
-					put( tokenParts[0], Integer.valueOf( tokenParts[1] ) );
+					put(tokenParts[0], Integer.valueOf(tokenParts[1]));
+				} catch (NumberFormatException e) {
+					ms.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+							String.format(Messages.CustomTimeoutsMap_Invalid_custom_timeout_value, tokenParts[0])));
 				}
-				catch( NumberFormatException e ) {
-					ms.add( new Status(
-							IStatus.ERROR, 
-							GdbPlugin.PLUGIN_ID, 
-							String.format( Messages.CustomTimeoutsMap_Invalid_custom_timeout_value, tokenParts[0] ) ) );
-				}
-			}
-			else {
-				ms.add( new Status(
-						IStatus.ERROR, 
-						GdbPlugin.PLUGIN_ID, 
-						Messages.CustomTimeoutsMap_Invalid_custom_timeout_data ) );
+			} else {
+				ms.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+						Messages.CustomTimeoutsMap_Invalid_custom_timeout_data));
 			}
 		}
-		if ( !ms.isOK() ) {
-			GdbPlugin.getDefault().getLog().log( ms );
+		if (!ms.isOK()) {
+			GdbPlugin.getDefault().getLog().log(ms);
 		}
 	}
 }

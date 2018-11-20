@@ -23,18 +23,17 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 
-public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
-		implements IASTAmbiguousExpression, ICPPASTExpression {
-    private IASTExpression[] exp = new IASTExpression[2];
-    private int expPos;
+public class CPPASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression, ICPPASTExpression {
+	private IASTExpression[] exp = new IASTExpression[2];
+	private int expPos;
 
-    public CPPASTAmbiguousExpression(IASTExpression... expressions) {
+	public CPPASTAmbiguousExpression(IASTExpression... expressions) {
 		for (IASTExpression e : expressions) {
 			addExpression(e);
 		}
 	}
 
-    @Override
+	@Override
 	public IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
@@ -46,24 +45,24 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
 
 	@Override
 	public void addExpression(IASTExpression e) {
-        assertNotFrozen();
-    	if (e != null) {
-    		exp = ArrayUtil.appendAt(exp, expPos++, e);
-    		e.setParent(this);
+		assertNotFrozen();
+		if (e != null) {
+			exp = ArrayUtil.appendAt(exp, expPos++, e);
+			e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public IASTExpression[] getExpressions() {
-        exp = ArrayUtil.trim(exp, expPos);
-    	return exp;
-    }
+		exp = ArrayUtil.trim(exp, expPos);
+		return exp;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getExpressions();
-    }
+		return getExpressions();
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {

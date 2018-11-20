@@ -49,7 +49,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	public PDOMNamedNode(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
 		super(linkage, parent);
 
-		fName= name;
+		fName = name;
 		final Database db = linkage.getDB();
 		db.putRecPtr(record + NAME, name != null ? db.newString(name).getRecord() : 0);
 	}
@@ -59,7 +59,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	 */
 	protected PDOMNamedNode(Database db, char[] name) throws CoreException {
 		super(db);
-		fName= name;
+		fName = name;
 		db.putRecPtr(record + NAME, name != null ? db.newString(name).getRecord() : 0);
 	}
 
@@ -79,7 +79,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		if (fName != null)
 			return fName;
 
-		return fName= getDBName().getChars();
+		return fName = getDBName().getChars();
 	}
 
 	public boolean hasName(char[] name) throws CoreException {
@@ -97,19 +97,19 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		if (fName != null && CharArrayUtils.equals(fName, nameCharArray))
 			return;
 
-		IString name= getDBName();
+		IString name = getDBName();
 		if (!name.equals(nameCharArray)) {
 			name.delete();
-			final Database db= getDB();
+			final Database db = getDB();
 			db.putRecPtr(record + NAME, db.newString(nameCharArray).getRecord());
 		}
-		fName= nameCharArray;
+		fName = nameCharArray;
 	}
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		final Database db = getDB();
-		final long namerec= db.getRecPtr(record + NAME);
+		final long namerec = db.getRecPtr(record + NAME);
 		if (namerec != 0) {
 			db.free(namerec);
 		}
@@ -121,7 +121,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	}
 
 	public IIndexFragmentBinding getParentBinding() throws CoreException {
-		PDOMNode parent= getParentNode();
+		PDOMNode parent = getParentNode();
 		if (parent instanceof IIndexFragmentBinding) {
 			return (IIndexFragmentBinding) parent;
 		}

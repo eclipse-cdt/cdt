@@ -48,8 +48,8 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	 * @param context    The invocation context
 	 */
 	public WordIgnoreProposal(final String word, final IInvocationContext context) {
-		fWord= word;
-		fContext= context;
+		fWord = word;
+		fContext = context;
 	}
 
 	/*
@@ -57,17 +57,17 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	 */
 	@Override
 	public final void apply(final IDocument document) {
-        final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
-        final ISpellChecker checker= engine.getSpellChecker();
-        if (checker != null) {
-            checker.ignoreWord(fWord);
-            if (fContext instanceof IQuickAssistInvocationContext) {
-                ISourceViewer sourceViewer= ((IQuickAssistInvocationContext) fContext).getSourceViewer();
-                if (sourceViewer != null) {
-                    SpellingProblem.removeAll(sourceViewer, fWord);
-                }
-            }
-        }
+		final ISpellCheckEngine engine = SpellCheckEngine.getInstance();
+		final ISpellChecker checker = engine.getSpellChecker();
+		if (checker != null) {
+			checker.ignoreWord(fWord);
+			if (fContext instanceof IQuickAssistInvocationContext) {
+				ISourceViewer sourceViewer = ((IQuickAssistInvocationContext) fContext).getSourceViewer();
+				if (sourceViewer != null) {
+					SpellingProblem.removeAll(sourceViewer, fWord);
+				}
+			}
+		}
 	}
 
 	/*
@@ -101,6 +101,7 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NLS_NEVER_TRANSLATE);
 	}
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposal#getRelevance()
 	 */

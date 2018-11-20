@@ -74,16 +74,16 @@ public class Objdump {
 		}
 		return b.toString();
 	}
+
 	/**
 	 * Limit output to number of bytes
-     *  @since 5.8
+	 *  @since 5.8
 	 */
 	public byte[] getOutput(int limitBytes) throws IOException {
 		Process objdump = ProcessFactory.getFactory().exec(args);
 		try {
 			StringBuilder buffer = new StringBuilder();
-			BufferedReader stdout = new BufferedReader(new InputStreamReader(
-					objdump.getInputStream()));
+			BufferedReader stdout = new BufferedReader(new InputStreamReader(objdump.getInputStream()));
 			char[] buf = new char[4096];
 			int len;
 			while ((len = stdout.read(buf, 0, buf.length)) != -1) {

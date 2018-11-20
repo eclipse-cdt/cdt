@@ -24,7 +24,7 @@ public class Messages extends NLS {
 	public static String GdbStatusHandler_Warning;
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages( Messages.class.getName(), Messages.class );
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

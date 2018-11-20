@@ -31,35 +31,27 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
-
 public class AutomakefileCodeScanner extends AbstractMakefileCodeScanner {
 
-
 	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"-include", "sinclude", "override", "endef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"export", "unexport", "vpath", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		"if", "@if", "@endif" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"-include", "sinclude", "override", "endef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"export", "unexport", "vpath", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"if", "@if", "@endif" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private final static String[] functions = { "subst", "patsubst", "strip", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		"findstring", "filter", "sort", "dir", "notdir", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"suffix", "basename", "addsuffix", "addprefix", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"join", "word", "words", "wordlist", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"firstword", "wildcard", "error", "warning", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"shell", "origin", "foreach", "call" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	};
-	
-	private final static String[] automaticVariables = { "$<" , "$*" , "$@" , "$?" , "$%"
+			"findstring", "filter", "sort", "dir", "notdir", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"suffix", "basename", "addsuffix", "addprefix", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"join", "word", "words", "wordlist", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"firstword", "wildcard", "error", "warning", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"shell", "origin", "foreach", "call" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	};
 
-	static final String[] fTokenProperties = new String[] {
-			ColorManager.MAKE_COMMENT_COLOR,
-			ColorManager.MAKE_KEYWORD_COLOR,
-			ColorManager.MAKE_FUNCTION_COLOR,
-			ColorManager.MAKE_MACRO_REF_COLOR,
-			ColorManager.MAKE_MACRO_DEF_COLOR,
-			ColorManager.MAKE_DEFAULT_COLOR
-	};
+	private final static String[] automaticVariables = { "$<", "$*", "$@", "$?", "$%" };
+
+	static final String[] fTokenProperties = new String[] { ColorManager.MAKE_COMMENT_COLOR,
+			ColorManager.MAKE_KEYWORD_COLOR, ColorManager.MAKE_FUNCTION_COLOR, ColorManager.MAKE_MACRO_REF_COLOR,
+			ColorManager.MAKE_MACRO_DEF_COLOR, ColorManager.MAKE_DEFAULT_COLOR };
 
 	/**
 	 * Constructor for AutomakefileCodeScanner
@@ -68,7 +60,7 @@ public class AutomakefileCodeScanner extends AbstractMakefileCodeScanner {
 		super();
 		initialize();
 	}
-	
+
 	@Override
 	protected List<IRule> createRules() {
 		IToken keyword = getToken(ColorManager.MAKE_KEYWORD_COLOR);
@@ -85,14 +77,14 @@ public class AutomakefileCodeScanner extends AbstractMakefileCodeScanner {
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(character -> Character.isWhitespace(character)));
-		
+
 		// Put before the the word rules
 		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDef); //$NON-NLS-1$ //$NON-NLS-2$
 		defineRule.setColumnConstraint(0);
 		rules.add(defineRule);
-		
+
 		rules.add(new AutomakeMacroDefinitionRule(macroDef, Token.UNDEFINED));
-		
+
 		// @AC_SUBST_VAR@
 		IPredicateRule substVarRule = new AutoconfSubstRule(macroRef);
 		rules.add(substVarRule);
@@ -106,28 +98,27 @@ public class AutomakefileCodeScanner extends AbstractMakefileCodeScanner {
 		keyWordRule.setColumnConstraint(0);
 		rules.add(keyWordRule);
 
-
 		WordRule functionRule = new WordRule(new MakefileWordDetector(), Token.UNDEFINED);
 		for (int i = 0; i < functions.length; i++)
 			functionRule.addWord(functions[i], function);
 		rules.add(functionRule);
-		
+
 		WordRule automaticVarRule = new WordRule(new AutomakeWordDetector(), Token.UNDEFINED);
 		for (int i = 0; i < automaticVariables.length; i++)
 			automaticVarRule.addWord(automaticVariables[i], keyword);
 		rules.add(automaticVarRule);
 
-//		rules.add(new SingleLineRule("$(", ")", macroRef)); //$NON-NLS-1$ //$NON-NLS-2$
-//		rules.add(new SingleLineRule("${", "}", macroRef)); //$NON-NLS-1$ //$NON-NLS-2$
+		//		rules.add(new SingleLineRule("$(", ")", macroRef)); //$NON-NLS-1$ //$NON-NLS-2$
+		//		rules.add(new SingleLineRule("${", "}", macroRef)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new AutomakeMacroReferenceRule(macroRef, "$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new AutomakeMacroReferenceRule(macroRef, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$
 		// Add word rule for identifier.
 
 		rules.add(new AutoconfIdentifierRule(other));
-		
+
 		// Make sure we don't treat "\#" as comment start.
 		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED));
-		
+
 		rules.add(new WhitespaceRule(new AutoconfWhitespaceDetector()));
 
 		setDefaultReturnToken(other);

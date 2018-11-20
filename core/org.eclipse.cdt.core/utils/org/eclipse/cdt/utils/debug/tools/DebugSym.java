@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.utils.debug.tools;
 
-
 public class DebugSym implements Comparable<Object> {
 
 	public long addr;

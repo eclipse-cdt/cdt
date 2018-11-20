@@ -38,7 +38,7 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 	 * @param provider - selection provider.
 	 */
 	public AbstractSelectionDragAdapter(ISelectionProvider provider) {
-		fProvider= provider;
+		fProvider = provider;
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 	 */
 	@Override
 	public void dragStart(DragSourceEvent event) {
-		ISelection selection= fProvider.getSelection();
+		ISelection selection = fProvider.getSelection();
 		if (isDragable(selection)) {
 			dragInit(selection);
 		} else {
@@ -101,7 +101,6 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 			event.doit = false;
 		}
 	}
-
 
 	/**
 	 * Attach to the event the data from the drag source.
@@ -116,10 +115,9 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 		// Define data type so a listener could examine it with isSupportedType().
 		// The selection is not passed using event by the LocalSelectionTransfer internally.
 		if (isSupportedType(event.dataType)) {
-			event.data= prepareDataForTransfer(fProvider.getSelection());
+			event.data = prepareDataForTransfer(fProvider.getSelection());
 		}
 	}
-
 
 	/**
 	 * The function is called upon the completion of the drop. Cleanup is performed.

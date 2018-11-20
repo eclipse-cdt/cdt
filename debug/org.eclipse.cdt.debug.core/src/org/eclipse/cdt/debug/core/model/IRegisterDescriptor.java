@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.model; 
+package org.eclipse.cdt.debug.core.model;
 
 /**
  * Describes a register.

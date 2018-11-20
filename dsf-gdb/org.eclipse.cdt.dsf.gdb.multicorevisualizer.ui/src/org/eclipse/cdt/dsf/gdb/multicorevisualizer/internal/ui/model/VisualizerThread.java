@@ -21,19 +21,16 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
 
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 
-
 /** Represents single thread. */
-public class VisualizerThread
-	implements Comparable<VisualizerThread>, IVisualizerModelObject
-{
+public class VisualizerThread implements Comparable<VisualizerThread>, IVisualizerModelObject {
 	// --- members ---
-	
+
 	/** Current core this thread is on. */
 	protected VisualizerCore m_core;
-	
+
 	/** Process ID (pid). */
 	protected int m_pid;
-	
+
 	/** OS Thread ID (tid). */
 	protected int m_tid;
 
@@ -44,9 +41,8 @@ public class VisualizerThread
 	protected VisualizerExecutionState m_threadState;
 
 	/** Location of this Thread, if any, based on his MIFrame */
-    protected String m_locInfo;
+	protected String m_locInfo;
 
-	
 	// --- constructors/destructors ---
 
 	/** Constructor. */
@@ -55,7 +51,8 @@ public class VisualizerThread
 	}
 
 	/** Constructor. */
-	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state, IFrameDMData frame) {
+	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state,
+			IFrameDMData frame) {
 		m_core = core;
 		m_pid = pid;
 		m_tid = tid;
@@ -63,26 +60,21 @@ public class VisualizerThread
 		m_threadState = state;
 		setLocationInfo(frame);
 	}
-	
+
 	/** Dispose method */
 	public void dispose() {
 		m_core = null;
 	}
-	
-	
+
 	// --- Object methods ---
-	
+
 	/** Equality comparison. */
 	@Override
 	public boolean equals(Object obj) {
 		boolean result = false;
 		if (obj instanceof VisualizerThread) {
 			VisualizerThread v = (VisualizerThread) obj;
-			result = (
-				v.m_pid == m_pid &&
-				v.m_tid == m_tid &&
-				v.m_gdbtid == m_gdbtid
-			);
+			result = (v.m_pid == m_pid && v.m_tid == m_tid && v.m_gdbtid == m_gdbtid);
 		}
 		return result;
 	}
@@ -91,24 +83,23 @@ public class VisualizerThread
 	public int hashCode() {
 		return m_pid ^ m_tid ^ m_gdbtid;
 	}
-	
+
 	/** Returns string representation. */
 	@Override
 	public String toString() {
 		StringBuilder output = new StringBuilder();
 		output.append(m_core).append(",Proc:").append(m_pid) //$NON-NLS-1$
-		      .append(",Thread:(").append(m_tid).append(",").append(m_gdbtid).append(")");  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+				.append(",Thread:(").append(m_tid).append(",").append(m_gdbtid).append(")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		return output.toString();
 	}
 
-	
 	// --- accessors ---
-	
+
 	/** Gets core. */
-	public VisualizerCore getCore()	{
+	public VisualizerCore getCore() {
 		return m_core;
 	}
-	
+
 	public void setCore(VisualizerCore core) {
 		m_core = core;
 	}
@@ -116,23 +107,22 @@ public class VisualizerThread
 	/** Returns true if this is the "process" thread, i.e.
 	 *  its PID and OS TID are the same.
 	 */
-	public boolean isProcessThread()
-	{
+	public boolean isProcessThread() {
 		return m_pid == m_tid;
 	}
-	
+
 	/** Gets process id (pid). */
 	public int getPID() {
 		return m_pid;
 	}
-	
+
 	/** Gets thread id (tid). */
-	public int getTID()	{
+	public int getTID() {
 		return m_tid;
 	}
-	
+
 	/** Sets thread id (tid). */
-	public void setTID(int tid)	{
+	public void setTID(int tid) {
 		m_tid = tid;
 	}
 
@@ -147,9 +137,9 @@ public class VisualizerThread
 	public IVisualizerModelObject getParent() {
 		return getCore();
 	}
-	
+
 	/** Gets gdb thread id. */
-	public int getGDBTID()	{
+	public int getGDBTID() {
 		return m_gdbtid;
 	}
 
@@ -157,19 +147,16 @@ public class VisualizerThread
 	public VisualizerExecutionState getState() {
 		return m_threadState;
 	}
-	
+
 	/** Sets thread execution state. */
 	public void setState(VisualizerExecutionState state) {
 		m_threadState = state;
 	}
-	
-	
-	// --- methods ---
-	
 
-	
+	// --- methods ---
+
 	// --- Comparable implementation ---
-	
+
 	/** Compares this item to the specified item. */
 	@Override
 	public int compareTo(VisualizerThread o) {
@@ -177,26 +164,23 @@ public class VisualizerThread
 		if (o != null) {
 			if (m_pid < o.m_pid) {
 				result = -1;
-			}
-			else if (m_pid > o.m_pid) {
+			} else if (m_pid > o.m_pid) {
 				result = 1;
-			}
-			else if (getID() < o.getID()) {
+			} else if (getID() < o.getID()) {
 				result = -1;
-			}
-			else if (getID() > o.getID()) {
+			} else if (getID() > o.getID()) {
 				result = 1;
 			}
 		}
 		return result;
 	}
-	
+
 	/** IVisualizerModelObject version of compareTo() */
 	@Override
 	public int compareTo(IVisualizerModelObject o) {
 		if (o != null) {
 			if (o.getClass() == this.getClass()) {
-				return compareTo((VisualizerThread)o);
+				return compareTo((VisualizerThread) o);
 			}
 		}
 		return 1;
@@ -206,9 +190,9 @@ public class VisualizerThread
 	 * Sets the location info of this thread
 	 * @param s a string, displayinf location information of this thread.
 	 */
-    public void setLocationInfo(String s) {
-        this.m_locInfo = s;
-    }
+	public void setLocationInfo(String s) {
+		this.m_locInfo = s;
+	}
 
 	/**
 	 * Sets the location info of this thread, based on given
@@ -223,15 +207,13 @@ public class VisualizerThread
 		} else {
 			StringBuilder label = new StringBuilder();
 			// Add the function name
-			if (dmData.getFunction() != null
-					&& dmData.getFunction().length() != 0) {
+			if (dmData.getFunction() != null && dmData.getFunction().length() != 0) {
 				label.append(" "); //$NON-NLS-1$
 				label.append(dmData.getFunction());
 				label.append("()"); //$NON-NLS-1$
 			}
 
-			boolean hasFileName = dmData.getFile() != null
-					&& dmData.getFile().length() != 0;
+			boolean hasFileName = dmData.getFile() != null && dmData.getFile().length() != 0;
 
 			// Add full file name
 			if (hasFileName) {
@@ -247,9 +229,7 @@ public class VisualizerThread
 			}
 
 			// Add module
-			if (!hasFileName
-					&& (dmData.getModule() != null && dmData.getModule()
-							.length() != 0)) {
+			if (!hasFileName && (dmData.getModule() != null && dmData.getModule().length() != 0)) {
 				label.append(" "); //$NON-NLS-1$
 				label.append(dmData.getModule());
 				label.append(" "); //$NON-NLS-1$
@@ -270,8 +250,7 @@ public class VisualizerThread
 	 * @since 3.0
 	 */
 	public String getLocationInfo() {
-		if (m_threadState == VisualizerExecutionState.RUNNING
-				|| m_threadState == VisualizerExecutionState.EXITED) {
+		if (m_threadState == VisualizerExecutionState.RUNNING || m_threadState == VisualizerExecutionState.EXITED) {
 			return null;
 		}
 		return m_locInfo;

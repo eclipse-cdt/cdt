@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -29,13 +28,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ArchiveContainer extends Openable implements IArchiveContainer {
 
-	public ArchiveContainer (CProject cProject) {
-		super (cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), ICElement.C_VCONTAINER); //$NON-NLS-1$
+	public ArchiveContainer(CProject cProject) {
+		super(cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), //$NON-NLS-1$
+				ICElement.C_VCONTAINER);
 	}
 
 	@Override
 	public IArchive[] getArchives() throws CModelException {
-		((ArchiveContainerInfo)getElementInfo()).sync();
+		((ArchiveContainerInfo) getElementInfo()).sync();
 		ICElement[] e = getChildren();
 		IArchive[] a = new IArchive[e.length];
 		System.arraycopy(e, 0, a, 0, e.length);
@@ -65,8 +65,8 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
-		throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		// this will bootstrap/start the runner for the project.
 		CModelManager.getDefault().getBinaryRunner(getCProject());
 		return true;

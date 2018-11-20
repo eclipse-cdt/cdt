@@ -29,9 +29,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * @since 4.1
  * 
  */
-public class MIGDBSetPythonPrintStack extends MIGDBSet 
-{
-   public MIGDBSetPythonPrintStack(ICommandControlDMContext ctx, String option) {
-        super(ctx, new String[] {"python", "print-stack", option});  //$NON-NLS-1$//$NON-NLS-2$
-    }
+public class MIGDBSetPythonPrintStack extends MIGDBSet {
+	public MIGDBSetPythonPrintStack(ICommandControlDMContext ctx, String option) {
+		super(ctx, new String[] { "python", "print-stack", option }); //$NON-NLS-1$//$NON-NLS-2$
+	}
 }

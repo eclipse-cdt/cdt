@@ -28,15 +28,15 @@ import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
 public class DocCommentSpellDictionary extends AbstractSpellDictionary {
 
 	protected IDocCommentSimpleDictionary fDict;
-	
+
 	/**
 	 * @param dict
 	 */
 	public DocCommentSpellDictionary(IDocCommentSimpleDictionary dict) {
 		Assert.isNotNull(dict);
-		fDict= dict;
+		fDict = dict;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary#getName()
 	 */
@@ -52,10 +52,10 @@ public class DocCommentSpellDictionary extends AbstractSpellDictionary {
 	protected synchronized boolean load(final URL url) {
 		unload();
 
-		String[] words= fDict.getAdditionalWords();
-		for(int i=0; i<words.length; i++)
+		String[] words = fDict.getAdditionalWords();
+		for (int i = 0; i < words.length; i++)
 			hashWord(words[i]);
-		
+
 		return false;
 	}
 }

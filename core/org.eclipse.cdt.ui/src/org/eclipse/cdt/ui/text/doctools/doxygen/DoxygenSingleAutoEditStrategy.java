@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.DocumentRewriteSession;
@@ -40,160 +39,150 @@ import org.eclipse.cdt.ui.text.ICPartitions;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrategy {
-    private static final String SLASH_COMMENT = "///";  //$NON-NLS-1$
-    private static final String EXCL_COMMENT = "//!"; //$NON-NLS-1$
-    private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
+	private static final String SLASH_COMMENT = "///"; //$NON-NLS-1$
+	private static final String EXCL_COMMENT = "//!"; //$NON-NLS-1$
+	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
 
+	public DoxygenSingleAutoEditStrategy() {
+	}
 
-    public DoxygenSingleAutoEditStrategy() {
-    }
-
-    /**
-     * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
+	 */
+	@Override
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
-        fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
-        if(doc instanceof IDocumentExtension4) {
-            boolean forNewLine= cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
+		fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
+		if (doc instanceof IDocumentExtension4) {
+			boolean forNewLine = cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
 
-            if(forNewLine ) {
-                IDocumentExtension4 ext4= (IDocumentExtension4) doc;
-                DocumentRewriteSession drs= ext4.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
-                try {
-                    customizeDocumentAfterNewLine(doc, cmd);
-                } finally {
-                    ext4.stopRewriteSession(drs);
-                }
-            }
-        }
-    }
+			if (forNewLine) {
+				IDocumentExtension4 ext4 = (IDocumentExtension4) doc;
+				DocumentRewriteSession drs = ext4.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
+				try {
+					customizeDocumentAfterNewLine(doc, cmd);
+				} finally {
+					ext4.stopRewriteSession(drs);
+				}
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void customizeDocumentAfterNewLine(IDocument doc, final DocumentCommand c) {
-        int offset= c.offset;
-        if (offset == -1 || doc.getLength() == 0)
-            return;
+		int offset = c.offset;
+		if (offset == -1 || doc.getLength() == 0)
+			return;
 
-        final StringBuilder buf= new StringBuilder(c.text);
-        try {
-            IRegion line= doc.getLineInformationOfOffset(c.offset);
-            String lineDelimiter = doc.getLineDelimiter(doc.getLineOfOffset(c.offset));
-            int lineDelimiterLength = lineDelimiter.length();
+		final StringBuilder buf = new StringBuilder(c.text);
+		try {
+			IRegion line = doc.getLineInformationOfOffset(c.offset);
+			String lineDelimiter = doc.getLineDelimiter(doc.getLineOfOffset(c.offset));
+			int lineDelimiterLength = lineDelimiter.length();
 
-            
-            IRegion prefix= findPrefixRange(doc, line);
-            String indentationWithPrefix = doc.get(prefix.getOffset(), prefix.getLength());
-            String commentPrefix = getCommentPrefix(indentationWithPrefix);
-            String commentContent = doc.get(prefix.getOffset() + prefix.getLength(), 
-            		line.getLength() - prefix.getLength());
-            //String commentContentBeforeCursor = doc.get(prefix.getOffset() + prefix.getLength(), 
-            //		c.offset - line.getOffset() - prefix.getLength());
-            String commentContentBehindCursor = doc.get(c.offset, 
-            		line.getLength() - (c.offset - line.getOffset()));
- 
-            buf.append(indentationWithPrefix);
+			IRegion prefix = findPrefixRange(doc, line);
+			String indentationWithPrefix = doc.get(prefix.getOffset(), prefix.getLength());
+			String commentPrefix = getCommentPrefix(indentationWithPrefix);
+			String commentContent = doc.get(prefix.getOffset() + prefix.getLength(),
+					line.getLength() - prefix.getLength());
+			//String commentContentBeforeCursor = doc.get(prefix.getOffset() + prefix.getLength(), 
+			//		c.offset - line.getOffset() - prefix.getLength());
+			String commentContentBehindCursor = doc.get(c.offset, line.getLength() - (c.offset - line.getOffset()));
 
+			buf.append(indentationWithPrefix);
 
-            boolean commentAtStart = prefix.getOffset() + prefix.getLength() <= c.offset;
-            boolean commentFollows = false;
-            boolean commentAhead = false;
-            boolean firstLineContainsText = commentContent.trim().length() > 0;
+			boolean commentAtStart = prefix.getOffset() + prefix.getLength() <= c.offset;
+			boolean commentFollows = false;
+			boolean commentAhead = false;
+			boolean firstLineContainsText = commentContent.trim().length() > 0;
 
-            if (commentAtStart) {
-                if (line.getOffset() + line.getLength() + lineDelimiterLength < doc.getLength())
-                {
-                    IRegion nextLine = doc.getLineInformationOfOffset(line.getOffset() + line.getLength() + lineDelimiterLength);
-                    commentFollows = doc.get(nextLine.getOffset(), nextLine.getLength()).trim().startsWith(commentPrefix);
+			if (commentAtStart) {
+				if (line.getOffset() + line.getLength() + lineDelimiterLength < doc.getLength()) {
+					IRegion nextLine = doc
+							.getLineInformationOfOffset(line.getOffset() + line.getLength() + lineDelimiterLength);
+					commentFollows = doc.get(nextLine.getOffset(), nextLine.getLength()).trim()
+							.startsWith(commentPrefix);
 
-                    if (line.getOffset() >= 1)
-                    {
-                        IRegion previousLine = doc.getLineInformationOfOffset(line.getOffset() - 1);
-                        commentAhead = doc.get(previousLine.getOffset(), previousLine.getLength()).trim().startsWith(commentPrefix);
-                    }
-                }
-                // comment started on this line
-                buf.append(" "); //$NON-NLS-1$
-            }
+					if (line.getOffset() >= 1) {
+						IRegion previousLine = doc.getLineInformationOfOffset(line.getOffset() - 1);
+						commentAhead = doc.get(previousLine.getOffset(), previousLine.getLength()).trim()
+								.startsWith(commentPrefix);
+					}
+				}
+				// comment started on this line
+				buf.append(" "); //$NON-NLS-1$
+			}
 
-            c.shiftsCaret= false;
-            c.caretOffset= c.offset + buf.length();
+			c.shiftsCaret = false;
+			c.caretOffset = c.offset + buf.length();
 
-            if(commentAtStart && !commentFollows && !commentAhead) {
-                try {
-                	StringBuilder content = getDeclarationLines(doc, offset);
+			if (commentAtStart && !commentFollows && !commentAhead) {
+				try {
+					StringBuilder content = getDeclarationLines(doc, offset);
 
-                	boolean contentAlreadyThere = (firstLineContainsText && content != null && content.toString().contains(commentContentBehindCursor.trim()));
-                    if (content == null || content.toString().trim().length() == 0 || contentAlreadyThere)
-                    {
-                        buf.setLength(0);
-                        buf.append(fgDefaultLineDelim);
-                        buf.append(indentationWithPrefix).append(' ');
-                        c.shiftsCaret= false;
-                        c.caretOffset= c.offset + buf.length();
-                    } else {
-                        if (!firstLineContainsText)
-                        {
-                            c.shiftsCaret= false;
-                            c.caretOffset= c.offset + 1;
-                            buf.setLength(0);
-                            buf.append(' ').append(
-                            		indent(content, indentationWithPrefix + " ", //$NON-NLS-1$
-                            		fgDefaultLineDelim).substring((indentationWithPrefix + " ").length())); //$NON-NLS-1$
-                        }
-                        else
-                        {
-                            buf.append(fgDefaultLineDelim);
-                            buf.append(indent(content, indentationWithPrefix + " ", fgDefaultLineDelim)); //$NON-NLS-1$
-                        }
+					boolean contentAlreadyThere = (firstLineContainsText && content != null
+							&& content.toString().contains(commentContentBehindCursor.trim()));
+					if (content == null || content.toString().trim().length() == 0 || contentAlreadyThere) {
+						buf.setLength(0);
+						buf.append(fgDefaultLineDelim);
+						buf.append(indentationWithPrefix).append(' ');
+						c.shiftsCaret = false;
+						c.caretOffset = c.offset + buf.length();
+					} else {
+						if (!firstLineContainsText) {
+							c.shiftsCaret = false;
+							c.caretOffset = c.offset + 1;
+							buf.setLength(0);
+							buf.append(' ').append(indent(content, indentationWithPrefix + " ", //$NON-NLS-1$
+									fgDefaultLineDelim).substring((indentationWithPrefix + " ").length())); //$NON-NLS-1$
+						} else {
+							buf.append(fgDefaultLineDelim);
+							buf.append(indent(content, indentationWithPrefix + " ", fgDefaultLineDelim)); //$NON-NLS-1$
+						}
 
-                        buf.setLength(buf.length() - fgDefaultLineDelim.length());
-                    }
-                } catch(BadLocationException ble) {
-                    ble.printStackTrace();
-                }
-            }
+						buf.setLength(buf.length() - fgDefaultLineDelim.length());
+					}
+				} catch (BadLocationException ble) {
+					ble.printStackTrace();
+				}
+			}
 
-            c.text= buf.toString();
+			c.text = buf.toString();
 
-        } catch (BadLocationException excp) {
-        }
-    }
+		} catch (BadLocationException excp) {
+		}
+	}
 
-	private StringBuilder getDeclarationLines(IDocument doc, int offset)
-			throws BadLocationException {
-		IASTDeclaration dec= null;
-		IASTTranslationUnit ast= getAST();
+	private StringBuilder getDeclarationLines(IDocument doc, int offset) throws BadLocationException {
+		IASTDeclaration dec = null;
+		IASTTranslationUnit ast = getAST();
 
-		if(ast != null) {
-		    dec= findFollowingDeclaration(ast, offset);
-		    if(dec == null) {
-		        IASTNodeSelector ans= ast.getNodeSelector(ast.getFilePath());
-		        IASTNode node= ans.findEnclosingNode(offset, 0);
-		        if(node instanceof IASTDeclaration) {
-		            dec= (IASTDeclaration) node;
-		        }
-		    }
+		if (ast != null) {
+			dec = findFollowingDeclaration(ast, offset);
+			if (dec == null) {
+				IASTNodeSelector ans = ast.getNodeSelector(ast.getFilePath());
+				IASTNode node = ans.findEnclosingNode(offset, 0);
+				if (node instanceof IASTDeclaration) {
+					dec = (IASTDeclaration) node;
+				}
+			}
 		}
 
-		if(dec!=null) {
-		    ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset, false);
-		    return customizeAfterNewLineForDeclaration(doc, dec, partition);
+		if (dec != null) {
+			ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset,
+					false);
+			return customizeAfterNewLineForDeclaration(doc, dec, partition);
 		}
 		return null;
 	}
 
-    private String getCommentPrefix(String indent) throws BadLocationException {
-        if (indent.endsWith(SLASH_COMMENT))
-        {
-            return SLASH_COMMENT;
-        }
-        else
-        {
-            return EXCL_COMMENT;
-        }
-    }
-    
+	private String getCommentPrefix(String indent) throws BadLocationException {
+		if (indent.endsWith(SLASH_COMMENT)) {
+			return SLASH_COMMENT;
+		} else {
+			return EXCL_COMMENT;
+		}
+	}
+
 	/**
 	 * Returns the range of the comment prefix on the given line in
 	 * <code>document</code>. The prefix greedily matches the following regex
@@ -207,11 +196,11 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 	 * @throws BadLocationException if accessing the document fails
 	 */
 	protected static IRegion findPrefixRange(IDocument document, IRegion line) throws BadLocationException {
-		int lineOffset= line.getOffset();
-		int lineEnd= lineOffset + line.getLength();
-		int indentEnd= findEndOfWhiteSpaceAt(document, lineOffset, lineEnd);
-		if (indentEnd < lineEnd-2 && document.getChar(indentEnd) == '/' && document.getChar(indentEnd+1) == '/' && (
-				document.getChar(indentEnd+2) == '/' || document.getChar(indentEnd+2) == '!')) {
+		int lineOffset = line.getOffset();
+		int lineEnd = lineOffset + line.getLength();
+		int indentEnd = findEndOfWhiteSpaceAt(document, lineOffset, lineEnd);
+		if (indentEnd < lineEnd - 2 && document.getChar(indentEnd) == '/' && document.getChar(indentEnd + 1) == '/'
+				&& (document.getChar(indentEnd + 2) == '/' || document.getChar(indentEnd + 2) == '!')) {
 			indentEnd += 3;
 		}
 		return new Region(lineOffset, indentEnd - lineOffset);

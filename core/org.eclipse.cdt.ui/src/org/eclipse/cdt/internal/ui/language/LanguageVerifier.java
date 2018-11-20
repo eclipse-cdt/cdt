@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
  * Analyzes and repairs language mapping configurations.
  */
 public class LanguageVerifier {
-	
+
 	public static Map<String, ILanguage> computeAvailableLanguages() {
 		ILanguage[] registeredLanguages = LanguageManager.getInstance().getRegisteredLanguages();
 		Map<String, ILanguage> languages = new TreeMap<String, ILanguage>();
@@ -43,7 +43,7 @@ public class LanguageVerifier {
 		}
 		return languages;
 	}
-	
+
 	public static String computeAffectedLanguages(Set<String> missingLanguages) {
 		Iterator<String> languages = missingLanguages.iterator();
 		StringBuilder buffer = new StringBuilder();
@@ -54,11 +54,13 @@ public class LanguageVerifier {
 		return buffer.toString();
 	}
 
-	public static Set<String> removeMissingLanguages(ProjectLanguageConfiguration config, ICProjectDescription description, Map<String, ILanguage> availableLanguages) {
+	public static Set<String> removeMissingLanguages(ProjectLanguageConfiguration config,
+			ICProjectDescription description, Map<String, ILanguage> availableLanguages) {
 		Set<String> missingLanguages = new TreeSet<String>();
-		
+
 		// Check file mappings
-		Iterator<Entry<String, Map<String, String>>> fileConfigurationMappings = config.getFileMappings().entrySet().iterator();
+		Iterator<Entry<String, Map<String, String>>> fileConfigurationMappings = config.getFileMappings().entrySet()
+				.iterator();
 		while (fileConfigurationMappings.hasNext()) {
 			Entry<String, Map<String, String>> entry = fileConfigurationMappings.next();
 			String path = entry.getKey();
@@ -75,9 +77,10 @@ public class LanguageVerifier {
 				}
 			}
 		}
-		
+
 		// Check content type mappings
-		Iterator<Entry<String, Map<String, String>>> configurationContentTypeMappings = config.getContentTypeMappings().entrySet().iterator();
+		Iterator<Entry<String, Map<String, String>>> configurationContentTypeMappings = config.getContentTypeMappings()
+				.entrySet().iterator();
 		while (configurationContentTypeMappings.hasNext()) {
 			Entry<String, Map<String, String>> entry = configurationContentTypeMappings.next();
 			String configurationId = entry.getKey();
@@ -94,13 +97,14 @@ public class LanguageVerifier {
 				}
 			}
 		}
-		
+
 		return missingLanguages;
 	}
 
-	public static Set<String> removeMissingLanguages(WorkspaceLanguageConfiguration config, Map<String, ILanguage> availableLanguages) {
+	public static Set<String> removeMissingLanguages(WorkspaceLanguageConfiguration config,
+			Map<String, ILanguage> availableLanguages) {
 		Set<String> missingLanguages = new TreeSet<String>();
-		
+
 		// Check content type mappings
 		Iterator<Entry<String, String>> contentTypeMappings = config.getWorkspaceMappings().entrySet().iterator();
 		List<String> removals = new ArrayList<String>();
@@ -109,10 +113,10 @@ public class LanguageVerifier {
 			String languageId = entry.getValue();
 			if (!availableLanguages.containsKey(languageId)) {
 				missingLanguages.add(languageId);
-				removals.add(entry.getKey());			
+				removals.add(entry.getKey());
 			}
 		}
-		
+
 		for (String removal : removals) {
 			config.removeWorkspaceMapping(removal);
 		}

@@ -40,14 +40,13 @@ public class GDBBreakpointsManager_7_2 extends GDBBreakpointsManager_7_0 {
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-		register(new String[] { GDBBreakpointsManager_7_2.class.getName() },
-				 new Hashtable<String, String>());
+		register(new String[] { GDBBreakpointsManager_7_2.class.getName() }, new Hashtable<String, String>());
 
 		rm.done();
 	}
 
 	@Override
-    protected void updateContextOnStartEvent(IStartedDMEvent e) {
+	protected void updateContextOnStartEvent(IStartedDMEvent e) {
 		// No longer need to update the context as the logic
 		// of the base class was to work around an issue with 
 		// GDB 7.0 and 7.1

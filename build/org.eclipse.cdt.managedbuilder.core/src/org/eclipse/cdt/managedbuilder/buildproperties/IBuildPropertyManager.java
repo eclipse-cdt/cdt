@@ -19,6 +19,6 @@ package org.eclipse.cdt.managedbuilder.buildproperties;
  */
 public interface IBuildPropertyManager {
 	IBuildPropertyType[] getPropertyTypes();
-	
+
 	IBuildPropertyType getPropertyType(String id);
 }

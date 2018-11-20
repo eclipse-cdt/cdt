@@ -29,23 +29,24 @@ public class ConverterInfo {
 	private IBuildObject fToObject;
 	private boolean fIsConversionPerformed;
 	private IResourceInfo fRcInfo;
-	
-	public ConverterInfo(IResourceInfo rcInfo, IBuildObject fromObject, IBuildObject toObject, IConfigurationElement el){
+
+	public ConverterInfo(IResourceInfo rcInfo, IBuildObject fromObject, IBuildObject toObject,
+			IConfigurationElement el) {
 		fFromObject = fromObject;
 		fToObject = toObject;
 		fRcInfo = rcInfo;
 	}
-	
-	public IBuildObject getFromObject(){
+
+	public IBuildObject getFromObject() {
 		return fFromObject;
 	}
 
-	public IBuildObject getToObject(){
+	public IBuildObject getToObject() {
 		return fToObject;
 	}
-	
-	public IBuildObject getConvertedFromObject(){
-		if(!fIsConversionPerformed){
+
+	public IBuildObject getConvertedFromObject() {
+		if (!fIsConversionPerformed) {
 			ManagedProject mProj = getManagedProject();
 			IConfiguration[] cfgs = mProj.getConfigurations();
 			fConvertedFromObject = ManagedBuildManager.convert(fFromObject, fToObject.getId(), true);
@@ -55,20 +56,20 @@ public class ConverterInfo {
 			Set<IConfiguration> oldSetCopy = new HashSet<IConfiguration>(oldSet);
 			oldSet.removeAll(updatedSet);
 			updatedSet.removeAll(oldSetCopy);
-			if(updatedSet.size() != 0)
-				for(IConfiguration cfg : updatedSet)
+			if (updatedSet.size() != 0)
+				for (IConfiguration cfg : updatedSet)
 					mProj.removeConfiguration(cfg.getId());
-			if(oldSet.size() != 0)
-				for(IConfiguration cfg : oldSet)
-					mProj.applyConfiguration((Configuration)cfg); 
+			if (oldSet.size() != 0)
+				for (IConfiguration cfg : oldSet)
+					mProj.applyConfiguration((Configuration) cfg);
 			fIsConversionPerformed = true;
 		}
 		return fConvertedFromObject;
 	}
-	
-	private ManagedProject getManagedProject(){
-		if(fRcInfo != null)
-			return (ManagedProject)fRcInfo.getParent().getManagedProject();
+
+	private ManagedProject getManagedProject() {
+		if (fRcInfo != null)
+			return (ManagedProject) fRcInfo.getParent().getManagedProject();
 		return null;
 	}
 }

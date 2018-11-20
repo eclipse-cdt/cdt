@@ -55,29 +55,29 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 
 		private DataRequestMonitor<NewExecutableInfo> fRequestMonitor;
 		final private SessionType fSessionType;
-	
-		private PromptJob( SessionType sessionType, DataRequestMonitor<NewExecutableInfo> rm ) {
-			super( Messages.GdbDebugNewExecutableCommand_New_Executable_Prompt_Job );
+
+		private PromptJob(SessionType sessionType, DataRequestMonitor<NewExecutableInfo> rm) {
+			super(Messages.GdbDebugNewExecutableCommand_New_Executable_Prompt_Job);
 			fSessionType = sessionType;
 			fRequestMonitor = rm;
 		}
 
 		@Override
-		public IStatus runInUIThread( IProgressMonitor monitor ) {
+		public IStatus runInUIThread(IProgressMonitor monitor) {
 			final NewExecutableInfo info = new NewExecutableInfo(fSessionType);
 			NewExecutableDialog dialog = new NewExecutableDialog(GdbUIPlugin.getShell(), info);
 			final boolean canceled = dialog.open() == Window.CANCEL;
-			fExecutor.execute( new DsfRunnable() {
-				
+			fExecutor.execute(new DsfRunnable() {
+
 				@Override
 				public void run() {
-					if ( canceled )
+					if (canceled)
 						fRequestMonitor.cancel();
 					else
-						fRequestMonitor.setData( info );
+						fRequestMonitor.setData(info);
 					fRequestMonitor.done();
 				}
-			} );
+			});
 			return Status.OK_STATUS;
 		}
 	}
@@ -86,99 +86,89 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 	private final DsfExecutor fExecutor;
 	private final DsfServicesTracker fTracker;
 
-	public GdbDebugNewExecutableCommand( DsfSession session, ILaunch launch ) {
+	public GdbDebugNewExecutableCommand(DsfSession session, ILaunch launch) {
 		super();
 		fLaunch = launch;
 		fExecutor = session.getExecutor();
-		fTracker = new DsfServicesTracker( GdbUIPlugin.getBundleContext(), session.getId() );
+		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
 	}
 
 	public boolean canDebugNewExecutable() {
-		
-       	Query<Boolean> canDebugQuery = new Query<Boolean>() {
-            @Override
-			public void execute( DataRequestMonitor<Boolean> rm ) {
-				IProcesses procService = fTracker.getService( IProcesses.class );
-				ICommandControlService commandControl = fTracker.getService( ICommandControlService.class );
 
-				if ( procService == null || commandControl == null ) {
-					rm.setData( false );
+		Query<Boolean> canDebugQuery = new Query<Boolean>() {
+			@Override
+			public void execute(DataRequestMonitor<Boolean> rm) {
+				IProcesses procService = fTracker.getService(IProcesses.class);
+				ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+
+				if (procService == null || commandControl == null) {
+					rm.setData(false);
 					rm.done();
 					return;
 				}
-				procService.isDebugNewProcessSupported( commandControl.getContext(), rm );
-			}            
-       	};
+				procService.isDebugNewProcessSupported(commandControl.getContext(), rm);
+			}
+		};
 		try {
-			fExecutor.execute( canDebugQuery );
+			fExecutor.execute(canDebugQuery);
 			return canDebugQuery.get();
-		}
-		catch( InterruptedException e ) {
-		}
-		catch( ExecutionException e ) {
-		}
-		catch( RejectedExecutionException e ) {
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+		} catch (RejectedExecutionException e) {
 			// Can be thrown if the session is shutdown
 		}
 		return false;
 	}
 
-	public void debugNewExecutable( final RequestMonitor rm ) {
-		IGDBBackend backend = fTracker.getService( IGDBBackend.class );
-		final IProcesses procService = fTracker.getService( IProcesses.class );
-		final ICommandControlService commandControl = fTracker.getService( ICommandControlService.class );
-		if ( backend == null || procService == null || commandControl == null ) {
-			rm.setStatus( new Status( IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service is not available" ) ); //$NON-NLS-1$
+	public void debugNewExecutable(final RequestMonitor rm) {
+		IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+		final IProcesses procService = fTracker.getService(IProcesses.class);
+		final ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+		if (backend == null || procService == null || commandControl == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
 
-		PromptJob job = new PromptJob( 
-			backend.getSessionType(),
-			new DataRequestMonitor<NewExecutableInfo>( fExecutor, rm ){
-				
-				@Override
-				protected void handleCancel() {
-					rm.cancel();
-					rm.done();
-				};
+		PromptJob job = new PromptJob(backend.getSessionType(),
+				new DataRequestMonitor<NewExecutableInfo>(fExecutor, rm) {
 
-				@Override
-				protected void handleSuccess() {
-					try {
-						Map<String, Object> attributes = getLaunchConfiguration().getAttributes();
-						attributes.putAll(getData().getAttributes());
-						procService.debugNewProcess(
-								commandControl.getContext(), 
-								getData().getHostPath(), 
-								attributes, 
-								new ImmediateDataRequestMonitor<IDMContext>( rm ) );
-					}
-					catch( CoreException e ) {
-						rm.setStatus( e.getStatus() );
+					@Override
+					protected void handleCancel() {
+						rm.cancel();
 						rm.done();
-					}
-				};
-			} );
+					};
+
+					@Override
+					protected void handleSuccess() {
+						try {
+							Map<String, Object> attributes = getLaunchConfiguration().getAttributes();
+							attributes.putAll(getData().getAttributes());
+							procService.debugNewProcess(commandControl.getContext(), getData().getHostPath(),
+									attributes, new ImmediateDataRequestMonitor<IDMContext>(rm));
+						} catch (CoreException e) {
+							rm.setStatus(e.getStatus());
+							rm.done();
+						}
+					};
+				});
 		job.schedule();
 	}
 
 	@Override
-	protected void doExecute( Object[] targets, IProgressMonitor monitor, IRequest request ) throws CoreException {
+	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
 		Query<Boolean> query = new Query<Boolean>() {
 
 			@Override
-			protected void execute( DataRequestMonitor<Boolean> rm ) {
-				debugNewExecutable( rm );
+			protected void execute(DataRequestMonitor<Boolean> rm) {
+				debugNewExecutable(rm);
 			}
 		};
 		try {
-			fExecutor.execute( query );
+			fExecutor.execute(query);
 			query.get();
-		}
-		catch( InterruptedException e ) {
-		}
-		catch( ExecutionException e ) {
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
 			// There was an error.  Propagate it to the user
 			String errorMessage;
 			if (e.getCause() != null) {
@@ -186,13 +176,11 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 			} else {
 				errorMessage = e.getMessage();
 			}
-			request.setStatus( new Status( IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, errorMessage ) );
-		}
-		catch( CancellationException e ) {
+			request.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, errorMessage));
+		} catch (CancellationException e) {
 			// Nothing to do, just ignore the command since the user
 			// cancelled it.
-		}
-		catch( RejectedExecutionException e ) {
+		} catch (RejectedExecutionException e) {
 			// Can be thrown if the session is shutdown
 		} finally {
 			updateEnablement();
@@ -200,13 +188,14 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 	}
 
 	@Override
-	protected boolean isExecutable( Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request ) throws CoreException {
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+			throws CoreException {
 		return canDebugNewExecutable();
 	}
 
 	@Override
-	protected Object getTarget( Object element ) {
-		if ( element instanceof GdbLaunch || element instanceof IDMVMContext )
+	protected Object getTarget(Object element) {
+		if (element instanceof GdbLaunch || element instanceof IDMVMContext)
 			return element;
 		return null;
 	}

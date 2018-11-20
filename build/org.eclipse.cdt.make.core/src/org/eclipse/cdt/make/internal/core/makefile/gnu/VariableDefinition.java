@@ -19,7 +19,7 @@ import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
 
 /**
  */
-public class VariableDefinition extends MacroDefinition implements IVariableDefinition  {
+public class VariableDefinition extends MacroDefinition implements IVariableDefinition {
 
 	/**
 	 * ? is Conditional
@@ -39,7 +39,7 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	}
 
 	public VariableDefinition(Directive parent, String name, StringBuffer value, int type) {
-		this(parent,  "", name, value, type); //$NON-NLS-1$
+		this(parent, "", name, value, type); //$NON-NLS-1$
 	}
 
 	public VariableDefinition(Directive parent, String target, String name, StringBuffer value, int type) {

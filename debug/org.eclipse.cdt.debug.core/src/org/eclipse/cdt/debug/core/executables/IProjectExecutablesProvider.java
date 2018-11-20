@@ -36,8 +36,8 @@ public interface IProjectExecutablesProvider {
 	 * project natures the closest will be chosen.
 	 * @return the list of project nature id's
 	 */
-	List<String> getProjectNatures();	
-	
+	List<String> getProjectNatures();
+
 	/**
 	 * Get the list of executables for the active configuration of the given
 	 * project

@@ -108,8 +108,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_INCLUDES_FOLDER_SYSTEM = "icons/obj16/fldr_sys_obj.gif"; //$NON-NLS-1$
 	/** @since 5.4 */
 	public static final String IMG_OBJS_FRAMEWORKS_FOLDER = "icons/obj16/frameworks.png"; //$NON-NLS-1$
-	public static final String IMG_OBJS_MACROS_FILE= "icons/obj16/macros_file.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_LIBRARY_FOLDER=  "icons/obj16/fldr_lib_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_MACROS_FILE = "icons/obj16/macros_file.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_LIBRARY_FOLDER = "icons/obj16/fldr_lib_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER = "icons/obj16/cp_order_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXCLUSION_FILTER_ATTRIB = "icons/obj16/exclusion_filter_attrib.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE_ATTACH_ATTRIB = "icons/obj16/source_attach_attrib.gif"; //$NON-NLS-1$
@@ -256,7 +256,7 @@ public class CDTSharedImages {
 	 * Retrieves an overlaid image from the internal repository of images.
 	 * If there is no image one will be created.
 	 *
- 	* The decoration overlay for the base image will use the array of
+	* The decoration overlay for the base image will use the array of
 	 * provided overlays. The indices of the array correspond to the values
 	 * of the 5 overlay constants defined on {@link IDecoration}, i.e.
 	 * {@link IDecoration#TOP_LEFT},
@@ -312,4 +312,3 @@ public class CDTSharedImages {
 		return getImageOverlaid(baseKey, CDTSharedImages.IMG_OVR_ERROR, IDecoration.BOTTOM_LEFT);
 	}
 }
-

@@ -51,7 +51,7 @@ import org.eclipse.core.runtime.IPath;
  */
 
 public interface IManagedDependencyCalculator extends IManagedDependencyInfo {
-	
+
 	/**
 	 * Returns the list of source file specific dependencies.
 	 *   
@@ -61,7 +61,7 @@ public interface IManagedDependencyCalculator extends IManagedDependencyInfo {
 	 * @return IPath[]    
 	 */
 	public IPath[] getDependencies();
-	
+
 	/**
 	 * Returns the list of source file specific additional targets that the 
 	 * source file creates.  Most source files will return null.  An example 
@@ -75,7 +75,7 @@ public interface IManagedDependencyCalculator extends IManagedDependencyInfo {
 	 *   
 	 * The paths can be either relative to the top build directory, or absolute 
 	 * in the file system.
-     *
+	 *
 	 * @return IPath[]    
 	 */
 	public IPath[] getAdditionalTargets();

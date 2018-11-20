@@ -73,46 +73,46 @@ import org.eclipse.debug.core.model.IProcess;
 import org.osgi.framework.BundleContext;
 
 public class GDBProcesses extends MIProcesses implements IGDBProcesses {
-    
+
 	private class GDBContainerDMC extends MIContainerDMC implements IMemoryDMContext {
 		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc, groupId);
 		}
 	}
-	
-    private IGDBControl fGdb;
-    private IGDBBackend fBackend;
-    private CommandFactory fCommandFactory;
-    
-    // Indicates if we are currently connected to an inferior
-    // We only need a boolean type since we only support single process debugging
-    // in this version of the service
-    private boolean fConnected;
 
-    // A map of pid to names.  It is filled when we get all the
-    // processes that are running
-    private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
+	private IGDBControl fGdb;
+	private IGDBBackend fBackend;
+	private CommandFactory fCommandFactory;
 
-    // Id of our process.  Currently, we only know it for an attach session.
-    private String fProcId;
-    
-    // If we can use a PTY, we store it here
+	// Indicates if we are currently connected to an inferior
+	// We only need a boolean type since we only support single process debugging
+	// in this version of the service
+	private boolean fConnected;
+
+	// A map of pid to names.  It is filled when we get all the
+	// processes that are running
+	private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
+
+	// Id of our process.  Currently, we only know it for an attach session.
+	private String fProcId;
+
+	// If we can use a PTY, we store it here
 	private PTY fPty;
 
-    public GDBProcesses(DsfSession session) {
-    	super(session);
-    }
+	public GDBProcesses(DsfSession session) {
+		super(session);
+	}
 
-    @Override
-    public void initialize(final RequestMonitor requestMonitor) {
-    	super.initialize(new ImmediateRequestMonitor(requestMonitor) {
-    		@Override
-    		protected void handleSuccess() {
-    			doInitialize(requestMonitor);
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
+			@Override
+			protected void handleSuccess() {
+				doInitialize(requestMonitor);
 			}
 		});
 	}
-	
+
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
@@ -122,20 +122,16 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	 *            initialization is done.
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
-        
-        fGdb = getServicesTracker().getService(IGDBControl.class);
-    	fBackend = getServicesTracker().getService(IGDBBackend.class);
+
+		fGdb = getServicesTracker().getService(IGDBControl.class);
+		fBackend = getServicesTracker().getService(IGDBBackend.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		// Register this service.
-		register(new String[] { IProcesses.class.getName(),
-				IMIProcesses.class.getName(),
-				IGDBProcesses.class.getName(),
-				MIProcesses.class.getName(),
-				GDBProcesses.class.getName() },
-				new Hashtable<String, String>());
-        
-		getSession().addServiceEventListener(this, null);		
+		register(new String[] { IProcesses.class.getName(), IMIProcesses.class.getName(), IGDBProcesses.class.getName(),
+				MIProcesses.class.getName(), GDBProcesses.class.getName() }, new Hashtable<String, String>());
+
+		getSession().addServiceEventListener(this, null);
 
 		requestMonitor.done();
 	}
@@ -143,10 +139,10 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
 		unregister();
-		getSession().removeServiceEventListener(this);		
+		getSession().removeServiceEventListener(this);
 		super.shutdown(requestMonitor);
 	}
-	
+
 	/**
 	 * @return The bundle context of the plug-in to which this service belongs.
 	 */
@@ -156,27 +152,27 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 
 	@Override
-	public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
-			                                            String groupId) {
+	public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc, String groupId) {
 		return new GDBContainerDMC(getSession().getId(), processDmc, groupId);
 	}
-	
-    /** @since 4.0 */
+
+	/** @since 4.0 */
 	@Override
-    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
-    	IProcessDMContext processDmc;
+	public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc,
+			String groupId) {
+		IProcessDMContext processDmc;
 		if (fProcId != null) {
 			processDmc = createProcessContext(controlDmc, fProcId);
 		} else {
 			processDmc = createProcessContext(controlDmc, MIProcesses.UNKNOWN_PROCESS_ID);
 		}
-    	return createContainerContext(processDmc, groupId);
-    }
+		return createContainerContext(processDmc, groupId);
+	}
 
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
-			String pidStr = ((IMIProcessDMContext)dmc).getProcId();
+			String pidStr = ((IMIProcessDMContext) dmc).getProcId();
 			// In our context hierarchy we don't actually use the pid in this version, because in this version,
 			// we only debug a single process.  This means we will not have a proper pid in all cases
 			// inside the context, so must find it another way.  Note that this method is also called to find the name
@@ -189,7 +185,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 				pid = Integer.parseInt(pidStr);
 			} catch (NumberFormatException e) {
 			}
-			
+
 			String name = fProcessNames.get(pid);
 			if (name == null) {
 				// Hmm. Strange. But if the pid is our inferior's, we can just use the binary name
@@ -208,7 +204,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 				// Therefore, we assume we are looking for our own process
 				name = fBackend.getProgramPath().lastSegment();
 			}
-		
+
 			rm.setData(new MIThreadDMData(name, pidStr));
 			rm.done();
 		} else {
@@ -218,82 +214,81 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 	@Override
 	public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-	    if (fBackend.getIsAttachSession() && !fConnected) {
-	    	rm.setData(true);
-	    } else {
-	    	rm.setData(false);
-	    }
+		if (fBackend.getIsAttachSession() && !fConnected) {
+			rm.setData(true);
+		} else {
+			rm.setData(false);
+		}
 		rm.done();
 	}
 
 	@Override
-    public void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm) {
+	public void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm) {
 		attachDebuggerToProcess(procCtx, null, rm);
 	}
-	
-    /**
+
+	/**
 	 * @since 4.0
 	 */
 	@Override
-    public void attachDebuggerToProcess(final IProcessDMContext procCtx, String binaryPath, final DataRequestMonitor<IDMContext> rm) {
+	public void attachDebuggerToProcess(final IProcessDMContext procCtx, String binaryPath,
+			final DataRequestMonitor<IDMContext> rm) {
 		final IMIContainerDMContext containerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
 		DataRequestMonitor<MIInfo> attachRm = new ImmediateDataRequestMonitor<MIInfo>(rm) {
 			@Override
 			protected void handleSuccess() {
-				GDBProcesses.super.attachDebuggerToProcess(
-						procCtx, 
-						new ImmediateDataRequestMonitor<IDMContext>(rm) {
-							@Override
-							protected void handleSuccess() {
-								// For an attach, we actually know the pid, so let's remember it
-								fProcId = ((IMIProcessDMContext)procCtx).getProcId();
-								final IDMContext ctx = getData();
-								rm.setData(ctx);
+				GDBProcesses.super.attachDebuggerToProcess(procCtx, new ImmediateDataRequestMonitor<IDMContext>(rm) {
+					@Override
+					protected void handleSuccess() {
+						// For an attach, we actually know the pid, so let's remember it
+						fProcId = ((IMIProcessDMContext) procCtx).getProcId();
+						final IDMContext ctx = getData();
+						rm.setData(ctx);
 
-								ImmediateExecutor.getInstance().execute(
-									new Sequence(getExecutor(), rm) {
-										
-										private Step[] fSteps = new Step[] {
-											// Initialize memory data for this process
-											new Step() {
-												@Override
-												public void execute(RequestMonitor memoryDataRm) {
-													IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
-													IMemoryDMContext memContext = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);
-													if (memory == null || memContext == null) {
-														memoryDataRm.done();
-														return;
-													}
-													memory.initializeMemoryData(memContext, memoryDataRm);
-												};
-											},
-												
-											// Start tracking breakpoints.
-											new Step() {
-												@Override
-												public void execute(RequestMonitor trackBpRm) {
-													MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-													IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
-													bpmService.startTrackingBpForProcess(containerDmc, trackBpRm);
-												};
-											}
-										};
+						ImmediateExecutor.getInstance().execute(new Sequence(getExecutor(), rm) {
+
+							private Step[] fSteps = new Step[] {
+									// Initialize memory data for this process
+									new Step() {
 										@Override
-										public Step[] getSteps() {
-											return fSteps;
-										}
-										
-									});
+										public void execute(RequestMonitor memoryDataRm) {
+											IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+											IMemoryDMContext memContext = DMContexts.getAncestorOfType(ctx,
+													IMemoryDMContext.class);
+											if (memory == null || memContext == null) {
+												memoryDataRm.done();
+												return;
+											}
+											memory.initializeMemoryData(memContext, memoryDataRm);
+										};
+									},
+
+									// Start tracking breakpoints.
+									new Step() {
+										@Override
+										public void execute(RequestMonitor trackBpRm) {
+											MIBreakpointsManager bpmService = getServicesTracker()
+													.getService(MIBreakpointsManager.class);
+											IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctx,
+													IContainerDMContext.class);
+											bpmService.startTrackingBpForProcess(containerDmc, trackBpRm);
+										};
+									} };
+
+							@Override
+							public Step[] getSteps() {
+								return fSteps;
 							}
+
 						});
+					}
+				});
 			}
 		};
-		
+
 		if (binaryPath != null) {
-			fGdb.queueCommand(
-				fCommandFactory.createMIFileExecAndSymbols(containerDmc, binaryPath), 
-				attachRm);
+			fGdb.queueCommand(fCommandFactory.createMIFileExecAndSymbols(containerDmc, binaryPath), attachRm);
 			return;
 		}
 
@@ -302,55 +297,53 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 
 	@Override
-    public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-	    if (fConnected) {
-	    	rm.setData(true);
-	    } else {
-	    	rm.setData(false);
-	    }
-    	rm.done();
-    }
+	public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+		if (fConnected) {
+			rm.setData(true);
+		} else {
+			rm.setData(false);
+		}
+		rm.done();
+	}
 
 	@Override
-    public void detachDebuggerFromProcess(IDMContext dmc, final RequestMonitor rm) {
-		super.detachDebuggerFromProcess(
-			dmc, 
-			new RequestMonitor(getExecutor(), rm) {
-				@Override
-				protected void handleSuccess() {					
-					fProcId = null;
-					rm.done();
-				}
-			});
+	public void detachDebuggerFromProcess(IDMContext dmc, final RequestMonitor rm) {
+		super.detachDebuggerFromProcess(dmc, new RequestMonitor(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				fProcId = null;
+				rm.done();
+			}
+		});
 	}
-	
+
 	@Override
-	public void debugNewProcess(IDMContext dmc, String file, 
-			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
-		ImmediateExecutor.getInstance().execute(
-				getDebugNewProcessSequence(getExecutor(), true, dmc, file, attributes, rm));
+	public void debugNewProcess(IDMContext dmc, String file, Map<String, Object> attributes,
+			DataRequestMonitor<IDMContext> rm) {
+		ImmediateExecutor.getInstance()
+				.execute(getDebugNewProcessSequence(getExecutor(), true, dmc, file, attributes, rm));
 	}
-	
+
 	/**
 	 * Return the sequence that is to be used to create a new process.
 	 * Allows others to extend more easily.
 	 * @since 4.0
 	 */
-	protected Sequence getDebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
-												  Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+	protected Sequence getDebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file,
+			Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		return new DebugNewProcessSequence(executor, isInitial, dmc, file, attributes, rm);
 	}
-	
+
 	@Override
 	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
-	    if (fConnected) {
-   	    	super.getProcessesBeingDebugged(dmc, rm);
-	    } else {
-	    	rm.setData(new IDMContext[0]);
-	    	rm.done();
-	    }
+		if (fConnected) {
+			super.getProcessesBeingDebugged(dmc, rm);
+		} else {
+			rm.setData(new IDMContext[0]);
+			rm.done();
+		}
 	}
-	
+
 	@Override
 	public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
@@ -385,90 +378,90 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 	private IProcessDMContext[] makeProcessDMCs(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
 		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
-		for (int i=0; i<procDmcs.length; i++) {
-			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid())); 
+		for (int i = 0; i < procDmcs.length; i++) {
+			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid()));
 		}
 		return procDmcs;
 	}
-	
+
 	@Override
-    public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
+	public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
 		// For a core session, there is no concept of killing the inferior,
 		// so lets kill GDB
-   		if (fBackend.getSessionType() == SessionType.CORE) {
+		if (fBackend.getSessionType() == SessionType.CORE) {
 			fGdb.terminate(rm);
 		} else if (thread instanceof IMIProcessDMContext) {
-			getDebuggingContext(
-					thread, 
-					new ImmediateDataRequestMonitor<IDMContext>(rm) {
-						@Override
-						protected void handleSuccess() {
-							if (getData() instanceof IMIContainerDMContext) {
-								IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
-								if (runControl != null && !runControl.isTargetAcceptingCommands()) {
-									fBackend.interrupt();
-								}
-
-								final IMIContainerDMContext container = (IMIContainerDMContext)getData();
-								fGdb.queueCommand(
-										fCommandFactory.createMIInterpreterExecConsoleKill(container),
-										new ImmediateDataRequestMonitor<MIInfo>(rm) {
-											@Override
-											protected void handleSuccess() {
-												// Before GDB 7.0, we must send a container exited event ourselves
-									            getSession().dispatchEvent(
-									                       new ContainerExitedDMEvent(container), getProperties());
-
-												rm.done();
-											}
-										});
-							} else {
-					            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
-					            rm.done();								
-							}
+			getDebuggingContext(thread, new ImmediateDataRequestMonitor<IDMContext>(rm) {
+				@Override
+				protected void handleSuccess() {
+					if (getData() instanceof IMIContainerDMContext) {
+						IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+						if (runControl != null && !runControl.isTargetAcceptingCommands()) {
+							fBackend.interrupt();
 						}
-					});         
-	    } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
-            rm.done();
-	    }
+
+						final IMIContainerDMContext container = (IMIContainerDMContext) getData();
+						fGdb.queueCommand(fCommandFactory.createMIInterpreterExecConsoleKill(container),
+								new ImmediateDataRequestMonitor<MIInfo>(rm) {
+									@Override
+									protected void handleSuccess() {
+										// Before GDB 7.0, we must send a container exited event ourselves
+										getSession().dispatchEvent(new ContainerExitedDMEvent(container),
+												getProperties());
+
+										rm.done();
+									}
+								});
+					} else {
+						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+								"Invalid process context.", null)); //$NON-NLS-1$
+						rm.done();
+					}
+				}
+			});
+		} else {
+			rm.setStatus(
+					new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+			rm.done();
+		}
 	}
-	
-    /** @since 4.0 */
-	@Override
-    public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
-    	assert false; // This is not being used before GDB 7.0
-    	return null;
-    }
-    
+
 	/** @since 4.0 */
 	@Override
-	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {		
-    	if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
-        	rm.setData(false);
-        	rm.done();
-        	return;
-    	}
-    	
-    	// Before GDB6.8, the Linux gdbserver would restart a new
-    	// process when getting a -exec-run but the communication
-    	// with GDB had a bug and everything hung.
-    	// with GDB6.8 the program restarts properly one time,
-    	// but on a second attempt, gdbserver crashes.
-    	// So, lets just turn off the Restart for Remote debugging
-    	if (fBackend.getSessionType() == SessionType.REMOTE) {
-        	rm.setData(false);
-        	rm.done();
-        	return;
-    	}
-    	
-    	rm.setData(true);
-    	rm.done();
+	public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
+		assert false; // This is not being used before GDB 7.0
+		return null;
 	}
-	
+
 	/** @since 4.0 */
 	@Override
-	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {
+		if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
+		// Before GDB6.8, the Linux gdbserver would restart a new
+		// process when getting a -exec-run but the communication
+		// with GDB had a bug and everything hung.
+		// with GDB6.8 the program restarts properly one time,
+		// but on a second attempt, gdbserver crashes.
+		// So, lets just turn off the Restart for Remote debugging
+		if (fBackend.getSessionType() == SessionType.REMOTE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
+		rm.setData(true);
+		rm.done();
+	}
+
+	/** @since 4.0 */
+	@Override
+	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes,
+			DataRequestMonitor<IContainerDMContext> rm) {
 		// Before performing the restart, check if the process is properly suspended.
 		// Don't need to worry about non-stop before GDB 7.0, so we can simply
 		// interrupt the backend, if needed
@@ -482,17 +475,18 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		// a new process with a new pid, so we should create a container for it, and not use the old container with the old pid.
 		// We must create the process dmc explicitly because using createContainerContextFromGroupId() may automatically insert
 		// the old pid.
-    	IProcessDMContext processDmc = createProcessContext(fGdb.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
-    	IContainerDMContext newContainerDmc = createContainerContext(processDmc, MIProcesses.UNIQUE_GROUP_ID);
+		IProcessDMContext processDmc = createProcessContext(fGdb.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
+		IContainerDMContext newContainerDmc = createContainerContext(processDmc, MIProcesses.UNIQUE_GROUP_ID);
 		startOrRestart(newContainerDmc, attributes, true, rm);
 	}
-	
+
 	/** @since 4.0 */
 	@Override
-	public void start(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+	public void start(IContainerDMContext containerDmc, Map<String, Object> attributes,
+			DataRequestMonitor<IContainerDMContext> rm) {
 		startOrRestart(containerDmc, attributes, false, rm);
 	}
-	
+
 	/**
 	 * This method does the necessary work to setup the input/output streams for the
 	 * inferior process, by either preparing the PTY to be used, to simply leaving
@@ -502,59 +496,60 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	 * @since 4.0
 	 */
 	protected void initializeInputOutput(IContainerDMContext containerDmc, final RequestMonitor rm) {
-    	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
-    		// These types do not use a PTY
-    		fPty = null;
-    		rm.done();
-    	} else {
-    		// These types always use a PTY
-    		try {
-    			fPty = new PTY();
+		if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
+			// These types do not use a PTY
+			fPty = null;
+			rm.done();
+		} else {
+			// These types always use a PTY
+			try {
+				fPty = new PTY();
 				fPty.validateSlaveName();
 
-    			// Tell GDB to use this PTY
-    			fGdb.queueCommand(
-    					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)containerDmc, fPty.getSlaveName()), 
-    					new ImmediateDataRequestMonitor<MIInfo>(rm) {
-    						@Override
-    						protected void handleFailure() {
-    							// We were not able to tell GDB to use the PTY
-    							// so we won't use it at all.
-    			    			fPty = null;
-    			        		rm.done();
-    						}
-    					});
-    		} catch (IOException e) {
-    			fPty = null;
-        		rm.done();
-    		}
-    	}
+				// Tell GDB to use this PTY
+				fGdb.queueCommand(fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext) containerDmc,
+						fPty.getSlaveName()), new ImmediateDataRequestMonitor<MIInfo>(rm) {
+							@Override
+							protected void handleFailure() {
+								// We were not able to tell GDB to use the PTY
+								// so we won't use it at all.
+								fPty = null;
+								rm.done();
+							}
+						});
+			} catch (IOException e) {
+				fPty = null;
+				rm.done();
+			}
+		}
 	}
+
 	/**
 	 * @since 4.0
 	 */
-	protected void createConsole(final IContainerDMContext containerDmc, final boolean restart, final RequestMonitor rm) {
-    	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
-    		// Remote or attach sessions shouldn't have a console, since the inferior is not started
-    		// by eclipse but by gdbserver
-    		rm.done();
-    		return;
-    	}
-    	
+	protected void createConsole(final IContainerDMContext containerDmc, final boolean restart,
+			final RequestMonitor rm) {
+		if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
+			// Remote or attach sessions shouldn't have a console, since the inferior is not started
+			// by eclipse but by gdbserver
+			rm.done();
+			return;
+		}
+
 		initializeInputOutput(containerDmc, new ImmediateRequestMonitor(rm) {
 			@Override
 			protected void handleSuccess() {
 				Process inferiorProcess;
-		    	if (fPty == null) {
-		    		inferiorProcess = new MIInferiorProcess(containerDmc, fBackend.getMIOutputStream());
-		    	} else {
-		    		inferiorProcess = new MIInferiorProcess(containerDmc, fPty);
-		    	}
+				if (fPty == null) {
+					inferiorProcess = new MIInferiorProcess(containerDmc, fBackend.getMIOutputStream());
+				} else {
+					inferiorProcess = new MIInferiorProcess(containerDmc, fPty);
+				}
 
-		    	final Process inferior = inferiorProcess;
+				final Process inferior = inferiorProcess;
 
 				final String label = fBackend.getProgramPath().lastSegment();
-				final ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+				final ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
 
 				// Add the inferior to the launch.
 				// This cannot be done on the executor or things deadlock.
@@ -579,11 +574,12 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 						// First set attribute to specify we want to create an inferior process.
 						// Bug 210366
 						Map<String, String> attributes = new HashMap<String, String>();
-					    attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
-					    		       IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
-					    IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
-					    // Now set the inferior groupId
-			            runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, MIProcesses.UNIQUE_GROUP_ID);
+						attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
+								IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+						IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
+						// Now set the inferior groupId
+						runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR,
+								MIProcesses.UNIQUE_GROUP_ID);
 
 						rm.done();
 					}
@@ -592,121 +588,122 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		});
 	}
 
-    /**
-     * Insert breakpoint at entry if set, and start or restart the program.
-     *
-     * @since 4.0 
-     */
-    protected void startOrRestart(final IContainerDMContext containerDmc, final Map<String, Object> attributes,
-    		                      boolean restart, final DataRequestMonitor<IContainerDMContext> requestMonitor) {
-    	if (fBackend.getIsAttachSession()) {
-    		// When attaching to a running process, we do not need to set a breakpoint or
-    		// start the program; it is left up to the user.
-    		requestMonitor.setData(containerDmc);
-    		requestMonitor.done();
-    		return;
-    	}
-    	
-    	createConsole(containerDmc, restart, new ImmediateRequestMonitor(requestMonitor) {
-    		@Override
-    		protected void handleSuccess() {
-    			final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-    				@Override
-    				protected void handleSuccess() {
-    					if (fBackend.getSessionType() != SessionType.REMOTE) {
-    						// Don't send the ContainerStarted event for a remote session because
-    						// it has already been done by MIRunControlEventProcessor when receiving
-    						// the ^connect
-    						getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
-    					}
-    					requestMonitor.setData(containerDmc);
-    					requestMonitor.done();
-    				}
-    			};
+	/**
+	 * Insert breakpoint at entry if set, and start or restart the program.
+	 *
+	 * @since 4.0 
+	 */
+	protected void startOrRestart(final IContainerDMContext containerDmc, final Map<String, Object> attributes,
+			boolean restart, final DataRequestMonitor<IContainerDMContext> requestMonitor) {
+		if (fBackend.getIsAttachSession()) {
+			// When attaching to a running process, we do not need to set a breakpoint or
+			// start the program; it is left up to the user.
+			requestMonitor.setData(containerDmc);
+			requestMonitor.done();
+			return;
+		}
 
-    			final ICommand<MIInfo> execCommand;
-    			if (useContinueCommand()) {
-    				execCommand = fCommandFactory.createMIExecContinue(containerDmc);
-    			} else {
-    				execCommand = fCommandFactory.createMIExecRun(containerDmc);	
-    			}
+		createConsole(containerDmc, restart, new ImmediateRequestMonitor(requestMonitor) {
+			@Override
+			protected void handleSuccess() {
+				final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(),
+						requestMonitor) {
+					@Override
+					protected void handleSuccess() {
+						if (fBackend.getSessionType() != SessionType.REMOTE) {
+							// Don't send the ContainerStarted event for a remote session because
+							// it has already been done by MIRunControlEventProcessor when receiving
+							// the ^connect
+							getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
+						}
+						requestMonitor.setData(containerDmc);
+						requestMonitor.done();
+					}
+				};
 
-    			boolean stopInMain = CDebugUtils.getAttribute(attributes, 
-    					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-    					LaunchUtils.getStopAtMainDefault());
+				final ICommand<MIInfo> execCommand;
+				if (useContinueCommand()) {
+					execCommand = fCommandFactory.createMIExecContinue(containerDmc);
+				} else {
+					execCommand = fCommandFactory.createMIExecRun(containerDmc);
+				}
 
-    			if (!stopInMain) {
-    				// Just start the program.
-    				fGdb.queueCommand(execCommand, execMonitor);
-    			} else {
-    				String stopSymbol = CDebugUtils.getAttribute(attributes, 
-    						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-    						LaunchUtils.getStopAtMainSymbolDefault());
+				boolean stopInMain = CDebugUtils.getAttribute(attributes,
+						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
+						LaunchUtils.getStopAtMainDefault());
 
-    				// Insert a breakpoint at the requested stop symbol.
-    				IBreakpointsTargetDMContext bpTarget = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-    				fGdb.queueCommand(
-    						fCommandFactory.createMIBreakInsert(bpTarget, true, false, null, 0, stopSymbol, "0"),  //$NON-NLS-1$
-    						new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
-    							@Override
-    							protected void handleSuccess() {
-    								// After the break-insert is done, execute the -exec-run or -exec-continue command.
-    								fGdb.queueCommand(execCommand, execMonitor);
-    							}
-    						});
-    			}
-    		}
-    	});
-    }
+				if (!stopInMain) {
+					// Just start the program.
+					fGdb.queueCommand(execCommand, execMonitor);
+				} else {
+					String stopSymbol = CDebugUtils.getAttribute(attributes,
+							ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+							LaunchUtils.getStopAtMainSymbolDefault());
 
-    /**
-     * This method indicates if we should use the -exec-continue command
-     * instead of the -exec-run command.
-     * This method can be overridden to allow for customization.
-     * @since 4.0
-     */
-    protected boolean useContinueCommand() {
-    	// When doing remote debugging, we use -exec-continue instead of -exec-run
-    	// Restart does not apply to remote sessions
-    	return fBackend.getSessionType() == SessionType.REMOTE;
-    }
-
-    @Override
-    @DsfServiceEventHandler
-    public void eventDispatched(IStartedDMEvent e) {
-    	if (e.getDMContext() instanceof IContainerDMContext) {
-    		fConnected = true;
-    	}
-    	super.eventDispatched(e);
+					// Insert a breakpoint at the requested stop symbol.
+					IBreakpointsTargetDMContext bpTarget = DMContexts.getAncestorOfType(containerDmc,
+							IBreakpointsTargetDMContext.class);
+					fGdb.queueCommand(
+							fCommandFactory.createMIBreakInsert(bpTarget, true, false, null, 0, stopSymbol, "0"), //$NON-NLS-1$
+							new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) {
+								@Override
+								protected void handleSuccess() {
+									// After the break-insert is done, execute the -exec-run or -exec-continue command.
+									fGdb.queueCommand(execCommand, execMonitor);
+								}
+							});
+				}
+			}
+		});
 	}
 
-    @Override
-    @DsfServiceEventHandler
-    public void eventDispatched(IExitedDMEvent e) {
-    	if (e.getDMContext() instanceof IContainerDMContext) {
-    		fConnected = false;
-    		
-    		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-    				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-    				true, null)) {
-    			// If the inferior finishes, let's terminate GDB
-    			fGdb.terminate(new ImmediateRequestMonitor());
-    		}
-    	}
-    	super.eventDispatched(e);
-    }
-    
-    /**
+	/**
+	 * This method indicates if we should use the -exec-continue command
+	 * instead of the -exec-run command.
+	 * This method can be overridden to allow for customization.
+	 * @since 4.0
+	 */
+	protected boolean useContinueCommand() {
+		// When doing remote debugging, we use -exec-continue instead of -exec-run
+		// Restart does not apply to remote sessions
+		return fBackend.getSessionType() == SessionType.REMOTE;
+	}
+
+	@Override
+	@DsfServiceEventHandler
+	public void eventDispatched(IStartedDMEvent e) {
+		if (e.getDMContext() instanceof IContainerDMContext) {
+			fConnected = true;
+		}
+		super.eventDispatched(e);
+	}
+
+	@Override
+	@DsfServiceEventHandler
+	public void eventDispatched(IExitedDMEvent e) {
+		if (e.getDMContext() instanceof IContainerDMContext) {
+			fConnected = false;
+
+			if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+					IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true, null)) {
+				// If the inferior finishes, let's terminate GDB
+				fGdb.terminate(new ImmediateRequestMonitor());
+			}
+		}
+		super.eventDispatched(e);
+	}
+
+	/**
 	 * @since 3.0
 	 */
-    @DsfServiceEventHandler
-    public void eventDispatched(MIStoppedEvent e) {
-// Postponed because 'info program' yields different result on different platforms.
-// https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20
-//
-//    	// Get the PID of the inferior through gdb (if we don't have it already) 
-//    	
-//    	
-//    	fGdb.getInferiorProcess().update();
-    }
+	@DsfServiceEventHandler
+	public void eventDispatched(MIStoppedEvent e) {
+		// Postponed because 'info program' yields different result on different platforms.
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20
+		//
+		//    	// Get the PID of the inferior through gdb (if we don't have it already) 
+		//    	
+		//    	
+		//    	fGdb.getInferiorProcess().update();
+	}
 }

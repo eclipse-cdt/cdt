@@ -39,94 +39,86 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 	private int fType;
 	private Object fData;
 
-	public DefaultMacroContextInfo(int type, Object data){
+	public DefaultMacroContextInfo(int type, Object data) {
 		fType = type;
 		fData = data;
 	}
 
-	public DefaultMacroContextInfo(int type, Object data, ICdtVariableSupplier suppliers[]){
+	public DefaultMacroContextInfo(int type, Object data, ICdtVariableSupplier suppliers[]) {
 		fType = type;
 		fData = data;
 		fSuppliers = suppliers;
 	}
 
-	protected ICdtVariableSupplier[] getSuppliers(int type, Object data){
-		switch(type){
+	protected ICdtVariableSupplier[] getSuppliers(int type, Object data) {
+		switch (type) {
 		case IBuildMacroProvider.CONTEXT_FILE:
-			if(data instanceof IFileContextData){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fMbsMacroSupplier
-				};
+			if (data instanceof IFileContextData) {
+				return new ICdtVariableSupplier[] { BuildMacroProvider.fMbsMacroSupplier };
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
-			if(data instanceof IOptionContextData){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fMbsMacroSupplier
-				};
+			if (data instanceof IOptionContextData) {
+				return new ICdtVariableSupplier[] { BuildMacroProvider.fMbsMacroSupplier };
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_TOOL:
-			if(data instanceof ITool){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fMbsMacroSupplier
-				};
+			if (data instanceof ITool) {
+				return new ICdtVariableSupplier[] { BuildMacroProvider.fMbsMacroSupplier };
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			IConfiguration cfg = null;
 
-			if(data instanceof IConfiguration){
-				cfg = (IConfiguration)data;
-			} else if(data instanceof IBuilder){
-				cfg = ((IBuilder)data).getParent().getParent();
+			if (data instanceof IConfiguration) {
+				cfg = (IConfiguration) data;
+			} else if (data instanceof IBuilder) {
+				cfg = ((IBuilder) data).getParent().getParent();
 			}
 
-			if(cfg != null){
+			if (cfg != null) {
 				CoreMacrosSupplier supplier = BuildMacroProvider.createCoreSupplier(cfg);
-				if(supplier != null){
-					return new ICdtVariableSupplier[]{
-						supplier
-					};
+				if (supplier != null) {
+					return new ICdtVariableSupplier[] { supplier };
 				}
 			}
 			break;
-/*		case IBuildMacroProvider.CONTEXT_PROJECT:
-			if(data instanceof IManagedProject){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fUserDefinedMacroSupplier,
-						BuildMacroProvider.fExternalExtensionMacroSupplier,
-						BuildMacroProvider.fEnvironmentMacroSupplier,
-						BuildMacroProvider.fMbsMacroSupplier
-				};
-			}
-			break;
-		case IBuildMacroProvider.CONTEXT_WORKSPACE:
-			if(data instanceof IWorkspace){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fUserDefinedMacroSupplier,
-						BuildMacroProvider.fEnvironmentMacroSupplier,
-						BuildMacroProvider.fMbsMacroSupplier,
-						BuildMacroProvider.fCdtPathEntryMacroSupplier,
-						BuildMacroProvider.fEclipseVariablesMacroSupplier
-				};
-			}
-			break;
-		case IBuildMacroProvider.CONTEXT_INSTALLATIONS:
-			if(data == null){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fMbsMacroSupplier
-				};
-			}
-			break;
-		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
-			if(data == null){
-				return new ICdtVariableSupplier[]{
-						BuildMacroProvider.fEnvironmentMacroSupplier
-				};
-			}
-			break;
-		*/
+		/*		case IBuildMacroProvider.CONTEXT_PROJECT:
+					if(data instanceof IManagedProject){
+						return new ICdtVariableSupplier[]{
+								BuildMacroProvider.fUserDefinedMacroSupplier,
+								BuildMacroProvider.fExternalExtensionMacroSupplier,
+								BuildMacroProvider.fEnvironmentMacroSupplier,
+								BuildMacroProvider.fMbsMacroSupplier
+						};
+					}
+					break;
+				case IBuildMacroProvider.CONTEXT_WORKSPACE:
+					if(data instanceof IWorkspace){
+						return new ICdtVariableSupplier[]{
+								BuildMacroProvider.fUserDefinedMacroSupplier,
+								BuildMacroProvider.fEnvironmentMacroSupplier,
+								BuildMacroProvider.fMbsMacroSupplier,
+								BuildMacroProvider.fCdtPathEntryMacroSupplier,
+								BuildMacroProvider.fEclipseVariablesMacroSupplier
+						};
+					}
+					break;
+				case IBuildMacroProvider.CONTEXT_INSTALLATIONS:
+					if(data == null){
+						return new ICdtVariableSupplier[]{
+								BuildMacroProvider.fMbsMacroSupplier
+						};
+					}
+					break;
+				case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
+					if(data == null){
+						return new ICdtVariableSupplier[]{
+								BuildMacroProvider.fEnvironmentMacroSupplier
+						};
+					}
+					break;
+				*/
 		}
 		return null;
 	}
@@ -152,7 +144,7 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 	 */
 	@Override
 	public ICdtVariableSupplier[] getSuppliers() {
-		if(fSuppliers == null)
+		if (fSuppliers == null)
 			fSuppliers = getSuppliers(fType, fData);
 		return fSuppliers;
 	}
@@ -162,105 +154,88 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 	 */
 	@Override
 	public IVariableContextInfo getNext() {
-		switch(fType){
+		switch (fType) {
 		case IBuildMacroProvider.CONTEXT_FILE:
-			if(fData instanceof IFileContextData){
-				IFileContextData fileContext = (IFileContextData)fData;
+			if (fData instanceof IFileContextData) {
+				IFileContextData fileContext = (IFileContextData) fData;
 				IOptionContextData optionContext = fileContext.getOptionContextData();
-				if(optionContext != null)
-					return new DefaultMacroContextInfo(
-							IBuildMacroProvider.CONTEXT_OPTION,
-							optionContext);
+				if (optionContext != null)
+					return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_OPTION, optionContext);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
-			if(fData instanceof IOptionContextData){
-				IOptionContextData optionContext = (IOptionContextData)fData;
+			if (fData instanceof IOptionContextData) {
+				IOptionContextData optionContext = (IOptionContextData) fData;
 				IHoldsOptions ho = OptionContextData.getHolder(optionContext);
-				if(ho instanceof ITool)
-					return new DefaultMacroContextInfo(
-							IBuildMacroProvider.CONTEXT_TOOL,
-							ho);
-				else if(ho instanceof IToolChain)
-					return new DefaultMacroContextInfo(
-							IBuildMacroProvider.CONTEXT_CONFIGURATION,
-							((IToolChain)ho).getParent());
+				if (ho instanceof ITool)
+					return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_TOOL, ho);
+				else if (ho instanceof IToolChain)
+					return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_CONFIGURATION,
+							((IToolChain) ho).getParent());
 				else {
 					IBuildObject buildObj = optionContext.getParent();
-                    IConfiguration cfg = null;
-                    if(buildObj instanceof ITool)
-                       buildObj = ((ITool)buildObj).getParent();
-                    if(buildObj instanceof IToolChain)
-                       cfg = ((IToolChain)buildObj).getParent();
-                    else if(buildObj instanceof IResourceConfiguration)
-                       cfg = ((IResourceConfiguration)buildObj).getParent();
-                    else if(buildObj instanceof IConfiguration)
-                       cfg = (IConfiguration)buildObj;
+					IConfiguration cfg = null;
+					if (buildObj instanceof ITool)
+						buildObj = ((ITool) buildObj).getParent();
+					if (buildObj instanceof IToolChain)
+						cfg = ((IToolChain) buildObj).getParent();
+					else if (buildObj instanceof IResourceConfiguration)
+						cfg = ((IResourceConfiguration) buildObj).getParent();
+					else if (buildObj instanceof IConfiguration)
+						cfg = (IConfiguration) buildObj;
 
-                    if(cfg != null){
-                        return new DefaultMacroContextInfo(
-                        		IBuildMacroProvider.CONTEXT_CONFIGURATION,
-                        		cfg);
-                    }
+					if (cfg != null) {
+						return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
+					}
 				}
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_TOOL:
-			if(fData instanceof ITool){
-				IBuildObject parent = ((ITool)fData).getParent();
+			if (fData instanceof ITool) {
+				IBuildObject parent = ((ITool) fData).getParent();
 				IConfiguration cfg = null;
-				if(parent instanceof IToolChain)
-					cfg = ((IToolChain)parent).getParent();
-				else if(parent instanceof IResourceConfiguration)
-					cfg = ((IResourceConfiguration)parent).getParent();
+				if (parent instanceof IToolChain)
+					cfg = ((IToolChain) parent).getParent();
+				else if (parent instanceof IResourceConfiguration)
+					cfg = ((IResourceConfiguration) parent).getParent();
 
-				if(cfg != null)
-					return new DefaultMacroContextInfo(
-							IBuildMacroProvider.CONTEXT_CONFIGURATION,
-							cfg);
+				if (cfg != null)
+					return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			IConfiguration configuration = null;
-			if(fData instanceof IConfiguration){
-				configuration = (IConfiguration)fData;
-			} else if(fData instanceof IBuilder){
-				configuration = ((IBuilder)fData).getParent().getParent();
+			if (fData instanceof IConfiguration) {
+				configuration = (IConfiguration) fData;
+			} else if (fData instanceof IBuilder) {
+				configuration = ((IBuilder) fData).getParent().getParent();
 			}
 
-			if(configuration != null){
+			if (configuration != null) {
 				IManagedProject managedProject = configuration.getManagedProject();
-				if(managedProject != null)
-					return new DefaultMacroContextInfo(
-							IBuildMacroProvider.CONTEXT_PROJECT,
-							managedProject);
+				if (managedProject != null)
+					return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_PROJECT, managedProject);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:
-			if(fData instanceof IManagedProject){
+			if (fData instanceof IManagedProject) {
 				IWorkspace wsp = ResourcesPlugin.getWorkspace();
-				if(wsp != null)
-					return new DefaultMacroContextInfo(
-							IBuildMacroProvider.CONTEXT_WORKSPACE,
-							wsp);
+				if (wsp != null)
+					return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_WORKSPACE, wsp);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_WORKSPACE:
-			if(fData instanceof IWorkspace){
-				return new DefaultMacroContextInfo(
-						IBuildMacroProvider.CONTEXT_INSTALLATIONS,
-						null);
+			if (fData instanceof IWorkspace) {
+				return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_INSTALLATIONS, null);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_INSTALLATIONS:
-			if(fData == null){
-				return new DefaultMacroContextInfo(
-						IBuildMacroProvider.CONTEXT_ECLIPSEENV,
-						null);
+			if (fData == null) {
+				return new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_ECLIPSEENV, null);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
-			if(fData == null){
+			if (fData == null) {
 				return null;
 			}
 			break;

@@ -38,7 +38,7 @@ public class NodeCommentMap {
 	protected final Map<IASTNode, List<IASTComment>> trailingMap = new HashMap<IASTNode, List<IASTComment>>();
 	protected final Map<IASTNode, List<IASTComment>> freestandingMap = new HashMap<IASTNode, List<IASTComment>>();
 	protected final List<IASTTranslationUnit> coveredUnits = new ArrayList<IASTTranslationUnit>();
-	
+
 	/**
 	 * Add a comment to the map with the trailing comments.
 	 * @param node The node is the key.
@@ -52,7 +52,7 @@ public class NodeCommentMap {
 		comments.add(comment);
 		trailingMap.put(node, comments);
 	}
-	
+
 	/**
 	 * Returns a List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty
@@ -64,7 +64,7 @@ public class NodeCommentMap {
 		List<IASTComment> list = trailingMap.get(node);
 		return list != null ? list : new ArrayList<IASTComment>();
 	}
-	
+
 	/**
 	 * Add a comment to the map with the leading comments.
 	 * @param node The node is the key.
@@ -78,7 +78,7 @@ public class NodeCommentMap {
 		comments.add(comment);
 		leadingMap.put(node, comments);
 	}
-	
+
 	/**
 	 * Returns a List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty
@@ -90,7 +90,7 @@ public class NodeCommentMap {
 		List<IASTComment> list = leadingMap.get(node);
 		return list != null ? list : new ArrayList<IASTComment>();
 	}
-	
+
 	/**
 	 * Add a comment to the map with the freestanding comments.
 	 * @param node The node is the key.
@@ -104,7 +104,7 @@ public class NodeCommentMap {
 		comments.add(comment);
 		freestandingMap.put(node, comments);
 	}
-	
+
 	/**
 	 * Returns a List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty

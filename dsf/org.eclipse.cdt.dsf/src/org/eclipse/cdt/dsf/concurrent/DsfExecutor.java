@@ -26,12 +26,11 @@ import java.util.concurrent.ScheduledExecutorService;
  * @since 1.0
  */
 @ThreadSafe
-public interface DsfExecutor extends ScheduledExecutorService
-{
-    /**
-     * Checks if the thread that this method is called in is the same as the
-     * executor's dispatch thread.
-     * @return true if in DSF executor's dispatch thread
-     */
-    public boolean isInExecutorThread();
+public interface DsfExecutor extends ScheduledExecutorService {
+	/**
+	 * Checks if the thread that this method is called in is the same as the
+	 * executor's dispatch thread.
+	 * @return true if in DSF executor's dispatch thread
+	 */
+	public boolean isInExecutorThread();
 }

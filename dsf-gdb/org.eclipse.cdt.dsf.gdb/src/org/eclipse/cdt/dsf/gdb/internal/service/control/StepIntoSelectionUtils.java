@@ -29,7 +29,7 @@ import org.eclipse.osgi.util.NLS;
 public class StepIntoSelectionUtils {
 
 	public static final String cppSep = "::"; //$NON-NLS-1$
-	
+
 	public static boolean sameSignature(MIFrame currentFrame, StepIntoSelectionActiveOperation stepOperation) {
 		String currentFunctionName = currentFrame.getFunction();
 		String targetFunctionName = stepOperation.getTargetFunctionSignature();
@@ -59,7 +59,7 @@ public class StepIntoSelectionUtils {
 			// Simple enough for initial implementation.
 			return true;
 		}
-		
+
 		// TODO: A more detailed check can be implemented in order to cover for parameter types return types, etc..
 		// This with the intention to avoid early stops, however this implementation need to be tested extensively in
 		// order to avoid missing the target due to unexpected formatting mismatch between declaration and GDB representation.
@@ -77,12 +77,16 @@ public class StepIntoSelectionUtils {
 			}
 		}
 
-		return ((currentFrame.getArgs().length - argSizeAdjustment) == stepOperation.getTargetFunctionDeclaration().getNumberOfParameters());
+		return ((currentFrame.getArgs().length - argSizeAdjustment) == stepOperation.getTargetFunctionDeclaration()
+				.getNumberOfParameters());
 	}
-	
+
 	public static void missedSelectedTarget(StepIntoSelectionActiveOperation stepOperation) {
 		final String functionName = stepOperation.getTargetFunctionDeclaration().getElementName();
-		IStatus status = new Status(IStatus.INFO, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE, Messages.StepIntoSelection + "\n" + NLS.bind(Messages.StepIntoSelection_Execution_did_not_enter_function, functionName), null); //$NON-NLS-1$
+		IStatus status = new Status(
+				IStatus.INFO, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE, Messages.StepIntoSelection
+						+ "\n" + NLS.bind(Messages.StepIntoSelection_Execution_did_not_enter_function, functionName), //$NON-NLS-1$
+				null);
 		IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 		if (statusHandler != null) {
 			try {
@@ -92,5 +96,5 @@ public class StepIntoSelectionUtils {
 			}
 		}
 	}
-	
+
 }

@@ -60,8 +60,7 @@ public class TestMakeTargets extends AbstractTest {
 		assertTrue(f.exists());
 
 		projectExplorer.bot().tree().getTreeItem(projectName).select();
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Targets", "Build...");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Targets", "Build...");
 		shell = bot.shell("Build Targets");
 		shell.activate();
 		bot.table().getTableItem("info").select();
@@ -79,8 +78,7 @@ public class TestMakeTargets extends AbstractTest {
 		bot.button("Build").click();
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		p = Pattern.compile(".*make check.*Making check in src.*",
-				Pattern.DOTALL);
+		p = Pattern.compile(".*make check.*Making check in src.*", Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 

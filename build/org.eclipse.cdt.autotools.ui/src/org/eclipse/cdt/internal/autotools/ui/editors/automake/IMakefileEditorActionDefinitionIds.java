@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 /**
  */
 public interface IMakefileEditorActionDefinitionIds {

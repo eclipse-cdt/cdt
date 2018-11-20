@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -21,7 +21,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTyp
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
- 
+
 /**
  * The map entry container type.
  */
@@ -37,7 +37,7 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			if (ELEMENT_NAME.equals(element.getNodeName())) {
 				String backend = element.getAttribute(BACKEND_PATH);
 				if (backend == null || backend.isEmpty()) {

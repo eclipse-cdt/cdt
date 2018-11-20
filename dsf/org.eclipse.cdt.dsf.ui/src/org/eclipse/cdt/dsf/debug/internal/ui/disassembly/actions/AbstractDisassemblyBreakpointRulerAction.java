@@ -63,7 +63,8 @@ public abstract class AbstractDisassemblyBreakpointRulerAction extends AbstractD
 							Position position = annotationModel.getPosition(markerAnnotation);
 							int line = document.getLineOfOffset(position.getOffset());
 							if (line == getRulerInfo().getLineOfLastMouseButtonActivity()) {
-								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager()
+										.getBreakpoint(marker);
 								if (breakpoint != null) {
 									return breakpoint;
 								}

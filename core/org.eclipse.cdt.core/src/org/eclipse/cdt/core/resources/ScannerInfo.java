@@ -42,7 +42,7 @@ public class ScannerInfo implements IExtendedScannerInfo {
 		fLocalIncludePaths = (localIncludePaths == null) ? EMPTY_ARRAY_STRING : localIncludePaths;
 		fIncludeFiles = (includeFiles == null) ? EMPTY_ARRAY_STRING : includeFiles;
 		fMacroFiles = (macroFiles == null) ? EMPTY_ARRAY_STRING : macroFiles;
-		fMacroMap= nonNullMap(macroMap);
+		fMacroMap = nonNullMap(macroMap);
 	}
 
 	private Map<String, String> nonNullMap(Map<String, String> macroMap) {
@@ -51,6 +51,7 @@ public class ScannerInfo implements IExtendedScannerInfo {
 		}
 		return macroMap;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 *

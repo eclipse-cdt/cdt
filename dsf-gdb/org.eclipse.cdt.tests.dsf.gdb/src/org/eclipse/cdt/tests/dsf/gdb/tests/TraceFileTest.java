@@ -73,10 +73,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	private final static String TRACE_NAME = "trace";
 	private final static String TRACE_FILE_PATH = EXEC_PATH + TRACE_NAME;
 	// Breakpoint tags in TracepointTestApp.cc
-	public static final String[] LINE_TAGS = new String[] {
-			"IF_X_NE_A",
-			"INCR_X",
-	};
+	public static final String[] LINE_TAGS = new String[] { "IF_X_NE_A", "INCR_X", };
 	private final static String END_FUNCTION = "lastCall";
 	private final static String TEVAL_STRING = "a";
 	private final static String COLLECT_STRING1 = "x";
@@ -90,41 +87,40 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	private ITraceTargetDMContext fTraceTargetDmc;
 	private boolean suppressRemoveAllPlatformBreakpoints;
 
-
-    @Override
+	@Override
 	public void doBeforeTest() throws Exception {
 		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
-    	assumeRemoteSession();
+		assumeRemoteSession();
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
-    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
-    	removeTeminatedLaunchesBeforeTest();
-    	// Suppress settings of the launch attributes and launching.
-    	// Each test sets its own launch attributes
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
+		removeTeminatedLaunchesBeforeTest();
+		// Suppress settings of the launch attributes and launching.
+		// Each test sets its own launch attributes
 	}
 
-    @AfterClass
-    public static void doAfterClassTraceFileTest_7_4() {
-    	try {
-    		// Make sure we don't have any tracepoint actions
-    		// or any kind of breakpoints in the workspace
-    		// so that tests run after this class are not affected
+	@AfterClass
+	public static void doAfterClassTraceFileTest_7_4() {
+		try {
+			// Make sure we don't have any tracepoint actions
+			// or any kind of breakpoints in the workspace
+			// so that tests run after this class are not affected
 			deleteActionsAndBreakpoints();
 		} catch (Throwable e) {
 			System.out.println("ERROR: Failed to delete all breakpoints");
 		}
-    }
-    
+	}
+
 	/**
 	 * Some tests call doBefore/After in the middle of their test and rely on
 	 * platform breakpoints to survive that step. So override with the ability
 	 * to disable.
 	 */
 	@Override
-    public void removeAllPlatformBreakpoints() throws CoreException {
-    	if (!suppressRemoveAllPlatformBreakpoints) {
-    		super.removeAllPlatformBreakpoints();
-    	}
-    }
+	public void removeAllPlatformBreakpoints() throws CoreException {
+		if (!suppressRemoveAllPlatformBreakpoints) {
+			super.removeAllPlatformBreakpoints();
+		}
+	}
 
 	@Override
 	@After
@@ -144,17 +140,17 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	 * This method implements the following steps.
 	 * 1. Starts a remote session
 	 * 2. Sets two tracepoints in data/launch/src/TracepointTestApp.cc
-     *    The first tracepoint's command is "teval a".
-     *    The second tracepoint's commands are "collect counter" and "collect $regs".
-     * 3. Sets a regular breakpoint at the end of the source file.
+	 *    The first tracepoint's command is "teval a".
+	 *    The second tracepoint's commands are "collect counter" and "collect $regs".
+	 * 3. Sets a regular breakpoint at the end of the source file.
 	 * 4. Starts tracing
 	 * 5. Resumes and runs until the breakpoint is hit
 	 * 6. Stops tracing
 	 * 7. Saves the trace data into a file (data/launch/bin/trace).
 	 */
 	protected void createTraceFile() throws Throwable {
-    	// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
-    	deleteActionsAndBreakpoints();
+		// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
+		deleteActionsAndBreakpoints();
 		deleteOldTraceFile();
 
 		startRemoteSession();
@@ -163,7 +159,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		startTracing();
 		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
 		assertTrue(stoppedEvent instanceof MIBreakpointHitEvent
-				&& ((MIBreakpointHitEvent)stoppedEvent).getNumber().equals(bptDMC.getReference()));
+				&& ((MIBreakpointHitEvent) stoppedEvent).getNumber().equals(bptDMC.getReference()));
 		stopTracing();
 		saveTraceData();
 	}
@@ -184,166 +180,168 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		createTraceFile();
 	}
 
-    /**
-     * This test sets up by first creating a trace file
-     * by calling {@link #createTraceFile}
-     * 
-     * It then removes all existing tracepoint actions and tracepoints
-     * and verifies that corresponding platform tracepoints with the proper
-     * actions are created.
-     */
-    @Test
-    public void testTraceFile() throws Throwable {
-    	// This test will force a local post-mortem session, so only run it in local mode
+	/**
+	 * This test sets up by first creating a trace file
+	 * by calling {@link #createTraceFile}
+	 * 
+	 * It then removes all existing tracepoint actions and tracepoints
+	 * and verifies that corresponding platform tracepoints with the proper
+	 * actions are created.
+	 */
+	@Test
+	public void testTraceFile() throws Throwable {
+		// This test will force a local post-mortem session, so only run it in local mode
 		Assume.assumeTrue("Skipping remote", !remote);
 
 		try {
-    		createTraceFile();
-    		suppressRemoveAllPlatformBreakpoints = true;
-    		try {
-	    		// Cleanup the interim launch that we just caused
-	    		doAfterTest();
-	    		// Setup for the upcoming launch
-	    		doBeforeTest();
-    		} finally {
-    			suppressRemoveAllPlatformBreakpoints = false;
-    		}
-    	} catch (Throwable t) {
-    		// If we cannot create the trace file, ignore the test using the
-    		// assume check below.  The reason for the failure could be a missing
-    		// gdbserver, and we don't want to fail a local test due to that
-    	}
-    	
+			createTraceFile();
+			suppressRemoveAllPlatformBreakpoints = true;
+			try {
+				// Cleanup the interim launch that we just caused
+				doAfterTest();
+				// Setup for the upcoming launch
+				doBeforeTest();
+			} finally {
+				suppressRemoveAllPlatformBreakpoints = false;
+			}
+		} catch (Throwable t) {
+			// If we cannot create the trace file, ignore the test using the
+			// assume check below.  The reason for the failure could be a missing
+			// gdbserver, and we don't want to fail a local test due to that
+		}
+
 		Assume.assumeTrue("Cannot find trace file: " + TRACE_FILE_PATH, new File(TRACE_FILE_PATH).exists());
 
-    	// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
-    	deleteActionsAndBreakpoints();
+		// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
+		deleteActionsAndBreakpoints();
 
-    	startTraceFileSession();
-    	// Verify that required tracepoints and new tracepoint actions are created.
-    	checkActionsAndTracepoints();
-    }
+		startTraceFileSession();
+		// Verify that required tracepoints and new tracepoint actions are created.
+		checkActionsAndTracepoints();
+	}
 
-    /**
-     * This test sets up by first creating a trace file and importing it back
-     * by calling {@link #testTraceFile} which also calls {@link #createTraceFile}
-
-     * It then verifies that the tracepoint actions and platform tracepoints
-     * created by {@link #testTraceFile()} are associated with the corresponding target
-     * tracepoints and are not created a second time.
-     */
-    @Test
-    public void testTraceFileWithExistingTracepoints() throws Throwable {
-    	// This test will force a local post-mortem session, so only run it in local mode
+	/**
+	 * This test sets up by first creating a trace file and importing it back
+	 * by calling {@link #testTraceFile} which also calls {@link #createTraceFile}
+	
+	 * It then verifies that the tracepoint actions and platform tracepoints
+	 * created by {@link #testTraceFile()} are associated with the corresponding target
+	 * tracepoints and are not created a second time.
+	 */
+	@Test
+	public void testTraceFileWithExistingTracepoints() throws Throwable {
+		// This test will force a local post-mortem session, so only run it in local mode
 		Assume.assumeTrue("Skipping remote", !remote);
 
 		// This test requires the presence of tracepoints created by another test.
 		// To allow our current test to be independent, we explicitly call
-    	// the required test ourselves.
+		// the required test ourselves.
 		testTraceFile();
 		suppressRemoveAllPlatformBreakpoints = true;
 		try {
-    		// Cleanup the interim launch that we just caused
-    		doAfterTest();
-    		// Setup for the upcoming launch
-    		clearLineTags();
-    		doBeforeTest();
+			// Cleanup the interim launch that we just caused
+			doAfterTest();
+			// Setup for the upcoming launch
+			clearLineTags();
+			doBeforeTest();
 		} finally {
 			suppressRemoveAllPlatformBreakpoints = false;
 		}
 
 		// Verify that actions and tracepoints required for this test are in place.
-    	checkActionsAndTracepoints();
-    	startTraceFileSession();
-    	// Verify that no new platform tracepoints or new tracepoint actions are created.
-    	checkActionsAndTracepoints();
-    }
+		checkActionsAndTracepoints();
+		startTraceFileSession();
+		// Verify that no new platform tracepoints or new tracepoint actions are created.
+		checkActionsAndTracepoints();
+	}
 
-    private void startTraceFileSession() throws Throwable {
-    	// Set launch attributes
-    	super.setLaunchAttributes();
+	private void startTraceFileSession() throws Throwable {
+		// Set launch attributes
+		super.setLaunchAttributes();
 		// Set a working directory for GDB that is different than eclipse's directory.
 		// This allows us to make sure we properly handle finding the core file,
 		// especially in the case of a relative path
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "${workspace_loc}");
 		// Because we just set a different working directory, we must use an absolute path for the program
-    	String absoluteProgram = new Path(EXEC_PATH + EXEC_NAME).toFile().getAbsolutePath();
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, absoluteProgram);
+		String absoluteProgram = new Path(EXEC_PATH + EXEC_NAME).toFile().getAbsolutePath();
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, absoluteProgram);
 
-        // Set post-mortem launch
+		// Set post-mortem launch
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-				           ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
+				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
 		// Set post-mortem type to trace file
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-		                   IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
+				IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
 		// Set core file path
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, TRACE_FILE_PATH);
 
 		doLaunch();
 
-    	// Allow time to create tracepoint actions
-    	Thread.sleep(1000);
-    }
+		// Allow time to create tracepoint actions
+		Thread.sleep(1000);
+	}
 
-    /**
-     * Deletes all tracepoint actions and all existing platform breakpoints.
-     */
-    private static void deleteActionsAndBreakpoints() throws Throwable {
-    	TracepointActionManager tam = TracepointActionManager.getInstance();
-    	IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+	/**
+	 * Deletes all tracepoint actions and all existing platform breakpoints.
+	 */
+	private static void deleteActionsAndBreakpoints() throws Throwable {
+		TracepointActionManager tam = TracepointActionManager.getInstance();
+		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
 
-    	// Delete all existing actions
-    	@SuppressWarnings( "unchecked" )
-		ArrayList<ITracepointAction> actions = (ArrayList<ITracepointAction>)tam.getActions().clone();
-    	for (ITracepointAction a : actions) {
-    		tam.deleteAction(a);
-    	}
+		// Delete all existing actions
+		@SuppressWarnings("unchecked")
+		ArrayList<ITracepointAction> actions = (ArrayList<ITracepointAction>) tam.getActions().clone();
+		for (ITracepointAction a : actions) {
+			tam.deleteAction(a);
+		}
 
-    	IBreakpoint[] bpts = bm.getBreakpoints();
-    	for (IBreakpoint b : bpts) {
-    		bm.removeBreakpoint(b, true);
-    	}
-    }
+		IBreakpoint[] bpts = bm.getBreakpoints();
+		for (IBreakpoint b : bpts) {
+			bm.removeBreakpoint(b, true);
+		}
+	}
 
-    /**
-     * Checks whether there are only two platform tracepoints and three tracepoint actions.
-     */
-    private void checkActionsAndTracepoints() throws Throwable {
-    	TracepointActionManager tam = TracepointActionManager.getInstance();
-    	IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
-    	ArrayList<ITracepointAction> actions = tam.getActions();
-    	IBreakpoint[] bpts = bm.getBreakpoints();
-    	actions = tam.getActions();
-    	assertTrue(String.format("Unexpected count of tracepoint actions: %d", actions.size()), actions.size() == 3);
-    	bpts = bm.getBreakpoints();
-    	assertTrue(String.format("Unexpected count of breakpoints: %d", bpts.length), bpts.length == 2);
-    	for (IBreakpoint b : bpts) {
-    		assertTrue(b instanceof ICTracepoint);
-    		checkTracepoint((ICTracepoint)b);
-    	}
-    }
+	/**
+	 * Checks whether there are only two platform tracepoints and three tracepoint actions.
+	 */
+	private void checkActionsAndTracepoints() throws Throwable {
+		TracepointActionManager tam = TracepointActionManager.getInstance();
+		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+		ArrayList<ITracepointAction> actions = tam.getActions();
+		IBreakpoint[] bpts = bm.getBreakpoints();
+		actions = tam.getActions();
+		assertTrue(String.format("Unexpected count of tracepoint actions: %d", actions.size()), actions.size() == 3);
+		bpts = bm.getBreakpoints();
+		assertTrue(String.format("Unexpected count of breakpoints: %d", bpts.length), bpts.length == 2);
+		for (IBreakpoint b : bpts) {
+			assertTrue(b instanceof ICTracepoint);
+			checkTracepoint((ICTracepoint) b);
+		}
+	}
 
-    private void checkTracepoint(ICTracepoint tracepoint) throws Throwable {
-    	TracepointActionManager tam = TracepointActionManager.getInstance();
+	private void checkTracepoint(ICTracepoint tracepoint) throws Throwable {
+		TracepointActionManager tam = TracepointActionManager.getInstance();
 		assertTrue(SOURCE_NAME.equals(new Path(tracepoint.getFileName()).lastSegment()));
-		assertTrue(getLineForTag("IF_X_NE_A") == tracepoint.getLineNumber() || getLineForTag("INCR_X") == tracepoint.getLineNumber());
-		String[] actionNames =
-			((String)tracepoint.getMarker().getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE)).split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
+		assertTrue(getLineForTag("IF_X_NE_A") == tracepoint.getLineNumber()
+				|| getLineForTag("INCR_X") == tracepoint.getLineNumber());
+		String[] actionNames = ((String) tracepoint.getMarker()
+				.getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE))
+						.split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
 		for (String name : actionNames) {
 			ITracepointAction a = tam.findAction(name);
 			assertNotNull(a);
 			if (a instanceof EvaluateAction) {
-				assertTrue(TEVAL_STRING.equals(((EvaluateAction)a).getEvalString()));
+				assertTrue(TEVAL_STRING.equals(((EvaluateAction) a).getEvalString()));
 			}
 			if (a instanceof CollectAction) {
-				assertTrue(COLLECT_STRING1.equals(((CollectAction)a).getCollectString())
-							|| COLLECT_STRING2.equals(((CollectAction)a).getCollectString()));
+				assertTrue(COLLECT_STRING1.equals(((CollectAction) a).getCollectString())
+						|| COLLECT_STRING2.equals(((CollectAction) a).getCollectString()));
 			}
 		}
-    }
+	}
 
-    private void startRemoteSession() throws Throwable {
-    	// Set launch attributes
+	private void startRemoteSession() throws Throwable {
+		// Set launch attributes
 		super.setLaunchAttributes();
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
@@ -369,35 +367,32 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		assertNotNull(fBreakpointsDmc);
 		fTraceTargetDmc = DMContexts.getAncestorOfType(containerDmc, ITraceTargetDMContext.class);
 		assertNotNull(fTraceTargetDmc);
-    }
+	}
 
-    private void startTracing() throws Throwable {
+	private void startTracing() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		fSession.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
-				fTraceService.getTraceStatus(
-					fTraceTargetDmc,
-					new DataRequestMonitor<ITraceStatusDMData>(fSession.getExecutor(), null) {
-						@Override
-						@ConfinedToDsfExecutor("fExecutor")
-						protected void handleCompleted() {
-							if (isSuccess() && getData().isTracingSupported()) {
-								fTraceService.startTracing(
-										fTraceTargetDmc,
-										new RequestMonitor(fSession.getExecutor(), null) {
-											@Override
-											@ConfinedToDsfExecutor("fExecutor")
-											protected void handleCompleted() {
-												wait.waitFinished(getStatus());
-											}
-										});
+				fTraceService.getTraceStatus(fTraceTargetDmc,
+						new DataRequestMonitor<ITraceStatusDMData>(fSession.getExecutor(), null) {
+							@Override
+							@ConfinedToDsfExecutor("fExecutor")
+							protected void handleCompleted() {
+								if (isSuccess() && getData().isTracingSupported()) {
+									fTraceService.startTracing(fTraceTargetDmc,
+											new RequestMonitor(fSession.getExecutor(), null) {
+												@Override
+												@ConfinedToDsfExecutor("fExecutor")
+												protected void handleCompleted() {
+													wait.waitFinished(getStatus());
+												}
+											});
+								} else {
+									wait.waitFinished(getStatus());
+								}
 							}
-							else {
-								wait.waitFinished(getStatus());
-							}
-						}
-					});
+						});
 			}
 		});
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -409,15 +404,13 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		fSession.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
-				fTraceService.stopTracing(
-					fTraceTargetDmc,
-					new RequestMonitor(fSession.getExecutor(), null) {
-						@Override
-						@ConfinedToDsfExecutor("fExecutor")
-						protected void handleCompleted() {
-							wait.waitFinished(getStatus());
-						}
-					});
+				fTraceService.stopTracing(fTraceTargetDmc, new RequestMonitor(fSession.getExecutor(), null) {
+					@Override
+					@ConfinedToDsfExecutor("fExecutor")
+					protected void handleCompleted() {
+						wait.waitFinished(getStatus());
+					}
+				});
 			}
 		});
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -431,7 +424,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		attributes.put(MIBreakpoints.FUNCTION, END_FUNCTION);
 		IBreakpointDMContext bptDMC = insertBreakpoint(fBreakpointsDmc, attributes);
 		assertTrue(bptDMC instanceof MIBreakpointDMContext);
-		return (MIBreakpointDMContext)bptDMC;
+		return (MIBreakpointDMContext) bptDMC;
 	}
 
 	private void setTracepoints() throws Throwable {
@@ -441,7 +434,6 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		collectAction1.setCollectString(COLLECT_STRING1);
 		collectAction1.setName(String.format("Collect %s", COLLECT_STRING1));
 		tam.addAction(collectAction1);
-
 
 		CollectAction collectAction2 = new CollectAction();
 		collectAction2.setCollectString(COLLECT_STRING2);
@@ -461,15 +453,13 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		insertBreakpoint(fBreakpointsDmc, attributes);
 
 		attributes.put(MIBreakpoints.LINE_NUMBER, getLineForTag("INCR_X"));
-		attributes.put(MIBreakpoints.COMMANDS,
-			String.format("%s%s%s", collectAction1.getName(),
-					TracepointActionManager.TRACEPOINT_ACTION_DELIMITER, collectAction2.getName()));
+		attributes.put(MIBreakpoints.COMMANDS, String.format("%s%s%s", collectAction1.getName(),
+				TracepointActionManager.TRACEPOINT_ACTION_DELIMITER, collectAction2.getName()));
 		insertBreakpoint(fBreakpointsDmc, attributes);
 	}
 
-	private IBreakpointDMContext insertBreakpoint(
-			final IBreakpointsTargetDMContext context,
-			final Map<String,Object> attributes) throws InterruptedException {
+	private IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
+			final Map<String, Object> attributes) throws InterruptedException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fSession.getExecutor().submit(new Runnable() {
@@ -477,12 +467,12 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 			public void run() {
 				fBreakpointService.insertBreakpoint(context, attributes,
 						new DataRequestMonitor<IBreakpointDMContext>(fBreakpointService.getExecutor(), null) {
-					@Override
-					protected void handleCompleted() {
-						wait.setReturnInfo(getData());
-						wait.waitFinished(getStatus());
-					}
-				});
+							@Override
+							protected void handleCompleted() {
+								wait.setReturnInfo(getData());
+								wait.waitFinished(getStatus());
+							}
+						});
 			}
 		});
 
@@ -490,26 +480,23 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
 
-		return (IBreakpointDMContext)wait.getReturnInfo();
+		return (IBreakpointDMContext) wait.getReturnInfo();
 	}
 
 	private void saveTraceData() throws Throwable {
-    	final File traceFile = new Path(TRACE_FILE_PATH).toFile();
+		final File traceFile = new Path(TRACE_FILE_PATH).toFile();
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fSession.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
-				fTraceService.saveTraceData(
-					fTraceTargetDmc,
-					traceFile.getAbsolutePath(),
-					false,
-					new RequestMonitor(fSession.getExecutor(), null) {
-						@Override
-						protected void handleCompleted() {
-							wait.waitFinished(getStatus());
-						}
-					});
+				fTraceService.saveTraceData(fTraceTargetDmc, traceFile.getAbsolutePath(), false,
+						new RequestMonitor(fSession.getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								wait.waitFinished(getStatus());
+							}
+						});
 			}
 		});
 
@@ -520,7 +507,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	}
 
 	private void deleteOldTraceFile() throws Throwable {
-    	File traceFile = new Path(TRACE_FILE_PATH).toFile();
+		File traceFile = new Path(TRACE_FILE_PATH).toFile();
 		traceFile.delete();
 		assertFalse(traceFile.exists());
 	}

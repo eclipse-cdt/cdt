@@ -18,8 +18,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	SettingsImportExportTest.class
-})
+@Suite.SuiteClasses({ SettingsImportExportTest.class })
 public class SettingsWizardTestSuite {
 }

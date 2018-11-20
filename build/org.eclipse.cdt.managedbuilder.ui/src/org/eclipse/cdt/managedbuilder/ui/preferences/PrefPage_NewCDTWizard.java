@@ -29,7 +29,7 @@ public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 
 	@Override
 	protected String getHeader() {
-		return Messages.PrefPage_NewCDTWizard_0; 
+		return Messages.PrefPage_NewCDTWizard_0;
 	}
 
 	/*
@@ -42,9 +42,15 @@ public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 		forEach(ICPropertyTab.OK, null);
 		return true;
 	}
+
 	@Override
-	public ICResourceDescription getResDesc() { return null; } 
+	public ICResourceDescription getResDesc() {
+		return null;
+	}
+
 	@Override
-	protected boolean isSingle() { return false; }
+	protected boolean isSingle() {
+		return false;
+	}
 
 }

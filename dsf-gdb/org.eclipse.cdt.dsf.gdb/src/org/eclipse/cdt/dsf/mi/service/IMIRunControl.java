@@ -24,15 +24,14 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl2;
  * 
  * @since 2.0
  */
-public interface IMIRunControl extends IRunControl2
-{
+public interface IMIRunControl extends IRunControl2 {
 	/**
 	 * Returns true if the target currently accepting commands.
 	 *
 	 * @since 4.0
 	 */
 	public boolean isTargetAcceptingCommands();
-	
+
 	/**
 	 * Request that the specified steps be executed by first ensuring the target is available
 	 * to receive commands.  Once the specified steps are executed, the target should be
@@ -52,15 +51,18 @@ public interface IMIRunControl extends IRunControl2
 	 *  
 	 * @since 4.0 
 	 */
-	public interface IRunMode {};
-	
+	public interface IRunMode {
+	};
+
 	/** 
 	 * The run-modes supported by GDB.
 	 * 
 	 * @since 4.0
 	 */
-	public enum MIRunMode implements IRunMode { ALL_STOP, NON_STOP };
-	
+	public enum MIRunMode implements IRunMode {
+		ALL_STOP, NON_STOP
+	};
+
 	/**
 	 * Returns the RunMode that is currently being used by this RunControl service.
 	 * @returns The current RunMode used by this service.
@@ -69,4 +71,3 @@ public interface IMIRunControl extends IRunControl2
 	 */
 	public IRunMode getRunMode();
 }
-

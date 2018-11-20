@@ -19,16 +19,8 @@ import org.junit.runners.Suite;
 
 /** On Windows requires either Cygwin or MinGW to be in PATH */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	AutotoolsProjectTest0.class,
-	AutotoolsProjectNatureTest.class,
-	AutotoolsProjectTest1.class,
-	AutotoolsProjectTest2.class,
-	AutotoolsVirtualFolderTest.class,
-	AutotoolsEnvironmentVarTest.class,
-	LibtoolGCCBuildCommandParserTest.class,
-	UpdateConfigureTest.class,
-	EditorTests.class
-})
+@Suite.SuiteClasses({ AutotoolsProjectTest0.class, AutotoolsProjectNatureTest.class, AutotoolsProjectTest1.class,
+		AutotoolsProjectTest2.class, AutotoolsVirtualFolderTest.class, AutotoolsEnvironmentVarTest.class,
+		LibtoolGCCBuildCommandParserTest.class, UpdateConfigureTest.class, EditorTests.class })
 public class AutomatedIntegrationSuite {
 }

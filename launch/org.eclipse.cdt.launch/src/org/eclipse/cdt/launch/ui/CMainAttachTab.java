@@ -21,14 +21,14 @@ public class CMainAttachTab extends CMainTab {
 	public CMainAttachTab() {
 		super(false);
 	}
-	
+
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		if (super.isValid(config) == false) {
 			String name = fProgText.getText().trim();
-			if (name.length() == 0) {  // allow no program for attach config.
+			if (name.length() == 0) { // allow no program for attach config.
 				setErrorMessage(null);
-				return true; 
+				return true;
 			}
 			return false;
 		}

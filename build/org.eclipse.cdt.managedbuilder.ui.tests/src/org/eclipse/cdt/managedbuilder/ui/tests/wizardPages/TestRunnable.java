@@ -16,15 +16,13 @@ package org.eclipse.cdt.managedbuilder.ui.tests.wizardPages;
 
 import org.eclipse.cdt.managedbuilder.ui.tests.TestCustomPageManager;
 
-public class TestRunnable implements Runnable
-{
+public class TestRunnable implements Runnable {
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
-	public void run()
-	{
+	public void run() {
 		TestCustomPageManager.testFlag = true;
 
 	}

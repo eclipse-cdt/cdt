@@ -43,8 +43,8 @@ public class StatusInfo implements IStatus {
 	 * WARNING and INFO.
 	 */
 	public StatusInfo(int severity, String message) {
-		fStatusMessage= message;
-		fSeverity= severity;
+		fStatusMessage = message;
+		fSeverity = severity;
 	}
 
 	/**
@@ -90,8 +90,8 @@ public class StatusInfo implements IStatus {
 	 */
 	public void setError(String errorMessage) {
 		Assert.isNotNull(errorMessage);
-		fStatusMessage= errorMessage;
-		fSeverity= IStatus.ERROR;
+		fStatusMessage = errorMessage;
+		fSeverity = IStatus.ERROR;
 	}
 
 	/**
@@ -100,8 +100,8 @@ public class StatusInfo implements IStatus {
 	 */
 	public void setWarning(String warningMessage) {
 		Assert.isNotNull(warningMessage);
-		fStatusMessage= warningMessage;
-		fSeverity= IStatus.WARNING;
+		fStatusMessage = warningMessage;
+		fSeverity = IStatus.WARNING;
 	}
 
 	/**
@@ -110,16 +110,16 @@ public class StatusInfo implements IStatus {
 	 */
 	public void setInfo(String infoMessage) {
 		Assert.isNotNull(infoMessage);
-		fStatusMessage= infoMessage;
-		fSeverity= IStatus.INFO;
+		fStatusMessage = infoMessage;
+		fSeverity = IStatus.INFO;
 	}
 
 	/**
 	 * Sets the status to OK.
 	 */
 	public void setOK() {
-		fStatusMessage= null;
-		fSeverity= IStatus.OK;
+		fStatusMessage = null;
+		fSeverity = IStatus.OK;
 	}
 
 	/*

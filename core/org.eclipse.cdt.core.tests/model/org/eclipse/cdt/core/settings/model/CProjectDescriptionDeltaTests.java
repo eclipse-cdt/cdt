@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
-public class CProjectDescriptionDeltaTests  extends BaseTestCase{
+public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	private MockListener listener;
 
@@ -41,7 +41,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		private String fProjName;
 		private ICDescriptionDelta fDelta;
 
-		public MockListener(String projName){
+		public MockListener(String projName) {
 			fProjName = projName;
 			fIsNotified = false;
 			fDelta = null;
@@ -49,17 +49,17 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
-			if(!event.getProject().getName().equals(fProjName))
+			if (!event.getProject().getName().equals(fProjName))
 				return;
 			fIsNotified = true;
 			fDelta = event.getProjectDelta();
 		}
 
-		boolean isNotified(){
+		boolean isNotified() {
 			return fIsNotified;
 		}
 
-		void clearNotified(){
+		void clearNotified() {
 			fIsNotified = false;
 			fDelta = null;
 		}
@@ -82,10 +82,9 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		ResourceHelper.cleanUp(getName());
 	}
 
-
-	private void initListener(String projName){
+	private void initListener(String projName) {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-		if(listener != null)
+		if (listener != null)
 			mngr.removeCProjectDescriptionListener(listener);
 		listener = new MockListener(projName);
 		mngr.addCProjectDescriptionListener(listener, CProjectDescriptionEvent.APPLIED);
@@ -96,7 +95,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 	private static List<ICDescriptionDelta> findDeltas(ICDescriptionDelta delta, int type) {
 		List<ICDescriptionDelta> list = new ArrayList<ICDescriptionDelta>();
-		if ((delta.getChangeFlags()&type)!=0) {
+		if ((delta.getChangeFlags() & type) != 0) {
 			list.add(delta);
 		}
 
@@ -113,7 +112,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		initListener(projName);
 		IProject project = ResourceHelper.createCDTProject(projName, null,
-				new String[] {"test.configuration.1", "test.configuration.2"});
+				new String[] { "test.configuration.1", "test.configuration.2" });
 
 		// Get writable project description and its configurations
 		ICProjectDescription prjDescription = mngr.getProjectDescription(project, true);
@@ -146,12 +145,12 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICProjectDescription);
-		ICProjectDescription oldSetting = (ICProjectDescription)delta.getOldSetting();
+		ICProjectDescription oldSetting = (ICProjectDescription) delta.getOldSetting();
 		assertEquals(cfgDescription0.getName(), oldSetting.getActiveConfiguration().getName());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICProjectDescription);
-		ICProjectDescription newSetting = (ICProjectDescription)delta.getNewSetting();
+		ICProjectDescription newSetting = (ICProjectDescription) delta.getNewSetting();
 		assertEquals(cfgDescription1.getName(), newSetting.getActiveConfiguration().getName());
 	}
 
@@ -189,12 +188,12 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 		assertEquals(oldName, oldSetting.getName());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 		assertEquals(newName, newSetting.getName());
 	}
 
@@ -231,12 +230,12 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 		assertEquals(oldDescription, oldSetting.getDescription());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 		assertEquals(cfgDescription.getDescription(), newSetting.getDescription());
 
 	}
@@ -278,12 +277,12 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting oldSetting = (ICLanguageSetting)delta.getOldSetting();
+		ICLanguageSetting oldSetting = (ICLanguageSetting) delta.getOldSetting();
 		assertEquals(oldLanguageId, oldSetting.getLanguageId());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting newSetting = (ICLanguageSetting)delta.getNewSetting();
+		ICLanguageSetting newSetting = (ICLanguageSetting) delta.getNewSetting();
 		assertEquals(newLanguageId, newSetting.getLanguageId());
 
 	}
@@ -305,7 +304,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Modification SOURCE_CONTENT_TYPE
 		final String testContentType = "test.content.type";
 		ICLanguageSetting langSetting = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), false);
-		langSetting.setSourceContentTypeIds(new String[] {testContentType});
+		langSetting.setSourceContentTypeIds(new String[] { testContentType });
 
 		// Write project description
 		listener.clearNotified();
@@ -322,13 +321,13 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting oldSetting = (ICLanguageSetting)delta.getOldSetting();
+		ICLanguageSetting oldSetting = (ICLanguageSetting) delta.getOldSetting();
 		List<String> oldContentTypes = Arrays.asList(oldSetting.getSourceContentTypeIds());
 		assertTrue(!oldContentTypes.contains(testContentType));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting newSetting = (ICLanguageSetting)delta.getNewSetting();
+		ICLanguageSetting newSetting = (ICLanguageSetting) delta.getNewSetting();
 		List<String> newContentTypes = Arrays.asList(newSetting.getSourceContentTypeIds());
 		assertTrue(newContentTypes.contains(testContentType));
 
@@ -351,11 +350,10 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Modification SOURCE_EXTENSIONS
 		ICLanguageSetting langSetting = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), false);
 		final String testContentType = CCorePlugin.CONTENT_TYPE_ASMSOURCE;
-		langSetting.setSourceContentTypeIds(new String[] {testContentType});
-		String[] exts = CDataUtil.getExtensionsFromContentTypes(project, new String[] {testContentType});
-		assertTrue(exts.length>0);
+		langSetting.setSourceContentTypeIds(new String[] { testContentType });
+		String[] exts = CDataUtil.getExtensionsFromContentTypes(project, new String[] { testContentType });
+		assertTrue(exts.length > 0);
 		final String testSourceExtension = exts[0];
-
 
 		// Write project description
 		listener.clearNotified();
@@ -369,17 +367,17 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		assertEquals(1, deltas.size());
 		ICDescriptionDelta delta = deltas.get(0);
 		assertNotNull(delta);
-//		assertEquals(ICDescriptionDelta.SOURCE_EXTENSIONS, delta.getChangeFlags());
+		//		assertEquals(ICDescriptionDelta.SOURCE_EXTENSIONS, delta.getChangeFlags());
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting oldSetting = (ICLanguageSetting)delta.getOldSetting();
+		ICLanguageSetting oldSetting = (ICLanguageSetting) delta.getOldSetting();
 		List<String> oldSourceExtensions = Arrays.asList(oldSetting.getSourceExtensions());
 		assertTrue(!oldSourceExtensions.contains(testSourceExtension));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting newSetting = (ICLanguageSetting)delta.getNewSetting();
+		ICLanguageSetting newSetting = (ICLanguageSetting) delta.getNewSetting();
 		List<String> newSourceExtensions = Arrays.asList(newSetting.getSourceExtensions());
 		assertTrue(newSourceExtensions.contains(testSourceExtension));
 
@@ -402,7 +400,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Modification SETTING_ENTRIES
 		ICLanguageSettingEntry testSettingEntry = new CIncludePathEntry("/path", 0);
 		ICLanguageSetting langSetting = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), false);
-		ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] {testSettingEntry};
+		ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] { testSettingEntry };
 		langSetting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, entries);
 
 		// Write project description
@@ -421,13 +419,13 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting oldSetting = (ICLanguageSetting)delta.getOldSetting();
+		ICLanguageSetting oldSetting = (ICLanguageSetting) delta.getOldSetting();
 		List<ICLanguageSettingEntry> oldSettingEntries = oldSetting.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH);
 		assertTrue(!oldSettingEntries.contains(testSettingEntry));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICLanguageSetting);
-		ICLanguageSetting newSetting = (ICLanguageSetting)delta.getNewSetting();
+		ICLanguageSetting newSetting = (ICLanguageSetting) delta.getNewSetting();
 		List<ICLanguageSettingEntry> newSettingEntries = newSetting.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH);
 		assertTrue(newSettingEntries.contains(testSettingEntry));
 	}
@@ -448,7 +446,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Modification BINARY_PARSER_IDS
 		final String testBinaryParserId = "test.binary.parser.id";
 		ICTargetPlatformSetting targetPlatformSetting = cfgDescription.getTargetPlatformSetting();
-		targetPlatformSetting.setBinaryParserIds(new String[] {testBinaryParserId});
+		targetPlatformSetting.setBinaryParserIds(new String[] { testBinaryParserId });
 
 		// Write project description
 		listener.clearNotified();
@@ -466,13 +464,13 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICTargetPlatformSetting);
-		ICTargetPlatformSetting oldSetting = (ICTargetPlatformSetting)delta.getOldSetting();
+		ICTargetPlatformSetting oldSetting = (ICTargetPlatformSetting) delta.getOldSetting();
 		List<String> oldBinaryParserIds = Arrays.asList(oldSetting.getBinaryParserIds());
 		assertTrue(!oldBinaryParserIds.contains(testBinaryParserId));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICTargetPlatformSetting);
-		ICTargetPlatformSetting newSetting = (ICTargetPlatformSetting)delta.getNewSetting();
+		ICTargetPlatformSetting newSetting = (ICTargetPlatformSetting) delta.getNewSetting();
 		List<String> newBinaryParserIds = Arrays.asList(newSetting.getBinaryParserIds());
 		assertTrue(newBinaryParserIds.contains(testBinaryParserId));
 
@@ -493,7 +491,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Modification ERROR_PARSER_IDS
 		String testErrorParserId = "test.error.parser.id";
-		cfgDescription.getBuildSetting().setErrorParserIDs(new String[] {testErrorParserId});
+		cfgDescription.getBuildSetting().setErrorParserIDs(new String[] { testErrorParserId });
 
 		// Write project description
 		listener.clearNotified();
@@ -511,13 +509,13 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICBuildSetting);
-		ICBuildSetting oldSetting = (ICBuildSetting)delta.getOldSetting();
+		ICBuildSetting oldSetting = (ICBuildSetting) delta.getOldSetting();
 		List<String> oldErrorParserIds = Arrays.asList(oldSetting.getErrorParserIDs());
 		assertTrue(!oldErrorParserIds.contains(testErrorParserId));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICBuildSetting);
-		ICBuildSetting newSetting = (ICBuildSetting)delta.getNewSetting();
+		ICBuildSetting newSetting = (ICBuildSetting) delta.getNewSetting();
 		List<String> newErrorParserIds = Arrays.asList(newSetting.getErrorParserIDs());
 		assertTrue(newErrorParserIds.contains(testErrorParserId));
 
@@ -538,9 +536,10 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 			assertNotNull(cfgDescription);
 
-			cfgDescription.createFileDescription(file.getProjectRelativePath(),cfgDescription.getRootFolderDescription());
+			cfgDescription.createFileDescription(file.getProjectRelativePath(),
+					cfgDescription.getRootFolderDescription());
 			ICFileDescription[] fileDescriptions = cfgDescription.getFileDescriptions();
-			assertTrue(fileDescriptions.length>0);
+			assertTrue(fileDescriptions.length > 0);
 
 			mngr.setProjectDescription(project, prjDescription);
 		}
@@ -554,7 +553,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 			// Modification EXCLUDE
 			ICFileDescription[] fileDescriptions = cfgDescription.getFileDescriptions();
-			assertTrue(fileDescriptions.length>0);
+			assertTrue(fileDescriptions.length > 0);
 			ICFileDescription fileDescription = fileDescriptions[0];
 			fileDescription.setExcluded(true);
 
@@ -574,12 +573,12 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 			// Check old setting
 			assertTrue(delta.getOldSetting() instanceof ICFileDescription);
-			ICFileDescription oldSetting = (ICFileDescription)delta.getOldSetting();
+			ICFileDescription oldSetting = (ICFileDescription) delta.getOldSetting();
 			assertTrue(!oldSetting.isExcluded());
 
 			// Check new setting
 			assertTrue(delta.getNewSetting() instanceof ICFileDescription);
-			ICFileDescription newSetting = (ICFileDescription)delta.getNewSetting();
+			ICFileDescription newSetting = (ICFileDescription) delta.getNewSetting();
 			assertTrue(newSetting.isExcluded());
 		}
 
@@ -599,8 +598,10 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		assertNotNull(cfgDescription);
 
 		// Modification SOURCE_ADDED
-		List<ICSourceEntry> sourceEntries = new ArrayList<ICSourceEntry>(Arrays.asList(cfgDescription.getSourceEntries()));
-		ICSourceEntry testSourceEntry = new CSourceEntry(project.getFullPath().append("test_src"), null, ICSettingEntry.RESOLVED);
+		List<ICSourceEntry> sourceEntries = new ArrayList<ICSourceEntry>(
+				Arrays.asList(cfgDescription.getSourceEntries()));
+		ICSourceEntry testSourceEntry = new CSourceEntry(project.getFullPath().append("test_src"), null,
+				ICSettingEntry.RESOLVED);
 		sourceEntries.add(testSourceEntry);
 		cfgDescription.setSourceEntries(sourceEntries.toArray(new ICSourceEntry[0]));
 
@@ -616,17 +617,17 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		assertEquals(1, deltas.size());
 		ICDescriptionDelta delta = deltas.get(0);
 		assertNotNull(delta);
-//		assertEquals(ICDescriptionDelta.SOURCE_ADDED, delta.getChangeFlags());
+		//		assertEquals(ICDescriptionDelta.SOURCE_ADDED, delta.getChangeFlags());
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 		List<ICSourceEntry> oldSourceEntries = Arrays.asList(oldSetting.getSourceEntries());
 		assertTrue(!oldSourceEntries.contains(testSourceEntry));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 		List<ICSourceEntry> newSourceEntries = Arrays.asList(newSetting.getSourceEntries());
 		assertTrue(newSourceEntries.contains(testSourceEntry));
 	}
@@ -638,7 +639,8 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		initListener(projName);
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projName);
 
-		ICSourceEntry testSourceEntry = new CSourceEntry(project.getFullPath().append("test_src"), null, ICSettingEntry.RESOLVED);
+		ICSourceEntry testSourceEntry = new CSourceEntry(project.getFullPath().append("test_src"), null,
+				ICSettingEntry.RESOLVED);
 		{
 			// Add some source entry to remove it during the test
 			ICProjectDescription prjDescription = mngr.getProjectDescription(project, true);
@@ -646,7 +648,8 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 			assertNotNull(cfgDescription);
 
-			List<ICSourceEntry> sourceEntries = new ArrayList<ICSourceEntry>(Arrays.asList(cfgDescription.getSourceEntries()));
+			List<ICSourceEntry> sourceEntries = new ArrayList<ICSourceEntry>(
+					Arrays.asList(cfgDescription.getSourceEntries()));
 			sourceEntries.add(testSourceEntry);
 			cfgDescription.setSourceEntries(sourceEntries.toArray(new ICSourceEntry[0]));
 
@@ -675,17 +678,17 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			assertEquals(1, deltas.size());
 			ICDescriptionDelta delta = deltas.get(0);
 			assertNotNull(delta);
-//			assertEquals(ICDescriptionDelta.SOURCE_REMOVED, delta.getChangeFlags());
+			//			assertEquals(ICDescriptionDelta.SOURCE_REMOVED, delta.getChangeFlags());
 
 			// Check old setting
 			assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-			ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+			ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 			List<ICSourceEntry> oldSourceEntries = Arrays.asList(oldSetting.getSourceEntries());
 			assertTrue(oldSourceEntries.contains(testSourceEntry));
 
 			// Check new setting
 			assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-			ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+			ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 			List<ICSourceEntry> newSourceEntries = Arrays.asList(newSetting.getSourceEntries());
 			assertTrue(!newSourceEntries.contains(testSourceEntry));
 		}
@@ -707,7 +710,8 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Modification EXTERNAL_SETTINGS_ADDED
 		ICSettingEntry testSettingEntry = new CIncludePathEntry("/path", 0);
-		ICExternalSetting testExternalSetting = cfgDescription.createExternalSetting(null, null, null, new ICSettingEntry[] {testSettingEntry});
+		ICExternalSetting testExternalSetting = cfgDescription.createExternalSetting(null, null, null,
+				new ICSettingEntry[] { testSettingEntry });
 
 		// Write project description
 		listener.clearNotified();
@@ -725,13 +729,13 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 		List<ICExternalSetting> oldExternalSettings = Arrays.asList(oldSetting.getExternalSettings());
 		assertEquals(0, oldExternalSettings.size());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 		List<ICExternalSetting> newExternalSettings = Arrays.asList(newSetting.getExternalSettings());
 		assertEquals(1, newExternalSettings.size());
 		List<ICSettingEntry> newSettingEntries = Arrays.asList(newExternalSettings.get(0).getEntries());
@@ -753,7 +757,8 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 			assertNotNull(cfgDescription);
 
-			ICExternalSetting testExternalSetting = cfgDescription.createExternalSetting(null, null, null, new ICSettingEntry[] {testSettingEntry});
+			ICExternalSetting testExternalSetting = cfgDescription.createExternalSetting(null, null, null,
+					new ICSettingEntry[] { testSettingEntry });
 			mngr.setProjectDescription(project, prjDescription);
 		}
 
@@ -783,7 +788,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 			// Check old setting
 			assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-			ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+			ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 			List<ICExternalSetting> oldExternalSettings = Arrays.asList(oldSetting.getExternalSettings());
 			assertEquals(1, oldExternalSettings.size());
 			List<ICSettingEntry> oldSettingEntries = Arrays.asList(oldExternalSettings.get(0).getEntries());
@@ -791,7 +796,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 			// Check new setting
 			assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-			ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+			ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 			List<ICExternalSetting> newExternalSettings = Arrays.asList(newSetting.getExternalSettings());
 			assertEquals(0, newExternalSettings.size());
 		}
@@ -834,13 +839,13 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 		Map<String, String> oldReferenceInfo = oldSetting.getReferenceInfo();
 		assertEquals(0, oldReferenceInfo.size());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 		Map<String, String> newReferenceInfo = newSetting.getReferenceInfo();
 		assertEquals(1, newReferenceInfo.size());
 		assertEquals(testValue, newReferenceInfo.get(testKey));
@@ -894,14 +899,14 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 			// Check old setting
 			assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-			ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+			ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 			Map<String, String> oldReferenceInfo = oldSetting.getReferenceInfo();
 			assertEquals(1, oldReferenceInfo.size());
 			assertEquals(testValue, oldReferenceInfo.get(testKey));
 
 			// Check new setting
 			assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-			ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+			ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 			Map<String, String> newReferenceInfo = newSetting.getReferenceInfo();
 			assertEquals(0, newReferenceInfo.size());
 		}
@@ -924,7 +929,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Modification EXT_REF, currently binary parsers are represented as CConfigExtensionReference
 		final String testBinaryParserId = "test.binary.parser.id";
 		ICTargetPlatformSetting targetPlatformSetting = cfgDescription.getTargetPlatformSetting();
-		targetPlatformSetting.setBinaryParserIds(new String[] {testBinaryParserId});
+		targetPlatformSetting.setBinaryParserIds(new String[] { testBinaryParserId });
 
 		// Write project description
 		listener.clearNotified();
@@ -942,14 +947,14 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription) delta.getOldSetting();
 		ICTargetPlatformSetting oldTargetPlatformSetting = oldSetting.getTargetPlatformSetting();
 		List<String> oldBinaryParserIds = Arrays.asList(oldTargetPlatformSetting.getBinaryParserIds());
 		assertTrue(!oldBinaryParserIds.contains(testBinaryParserId));
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
-		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription newSetting = (ICConfigurationDescription) delta.getNewSetting();
 		ICTargetPlatformSetting newTargetPlatformSetting = newSetting.getTargetPlatformSetting();
 		List<String> newBinaryParserIds = Arrays.asList(newTargetPlatformSetting.getBinaryParserIds());
 		assertTrue(newBinaryParserIds.contains(testBinaryParserId));
@@ -961,7 +966,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		initListener(projName);
 		IProject project = ResourceHelper.createCDTProject(projName, null,
-				new String[] {"test.configuration.1", "test.configuration.2"});
+				new String[] { "test.configuration.1", "test.configuration.2" });
 
 		// Get writable project description and its configuration
 		ICProjectDescription prjDescription = mngr.getProjectDescription(project, true);
@@ -995,12 +1000,12 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICProjectDescription);
-		ICProjectDescription oldSetting = (ICProjectDescription)delta.getOldSetting();
+		ICProjectDescription oldSetting = (ICProjectDescription) delta.getOldSetting();
 		assertEquals(cfgDescription0.getName(), oldSetting.getDefaultSettingConfiguration().getName());
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICProjectDescription);
-		ICProjectDescription newSetting = (ICProjectDescription)delta.getNewSetting();
+		ICProjectDescription newSetting = (ICProjectDescription) delta.getNewSetting();
 		assertEquals(cfgDescription1.getName(), newSetting.getDefaultSettingConfiguration().getName());
 	}
 
@@ -1017,7 +1022,8 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 		assertNotNull(cfgDescription);
 		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
-		List<ILanguageSettingsProvider> originalProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+		List<ILanguageSettingsProvider> originalProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+				.getLanguageSettingProviders();
 
 		// Modification LANGUAGE_SETTINGS_PROVIDERS
 		ILanguageSettingsProvider provider = new LanguageSettingsSerializableProvider("test.id", "test.name");
@@ -1042,14 +1048,14 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
 		assertTrue(delta.getOldSetting() instanceof ILanguageSettingsProvidersKeeper);
-		ILanguageSettingsProvidersKeeper oldSetting = (ILanguageSettingsProvidersKeeper)delta.getOldSetting();
+		ILanguageSettingsProvidersKeeper oldSetting = (ILanguageSettingsProvidersKeeper) delta.getOldSetting();
 		List<ILanguageSettingsProvider> oldProviders = oldSetting.getLanguageSettingProviders();
 		assertEquals(originalProviders, oldProviders);
 
 		// Check new setting
 		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
 		assertTrue(delta.getNewSetting() instanceof ILanguageSettingsProvidersKeeper);
-		ILanguageSettingsProvidersKeeper newSetting = (ILanguageSettingsProvidersKeeper)delta.getNewSetting();
+		ILanguageSettingsProvidersKeeper newSetting = (ILanguageSettingsProvidersKeeper) delta.getNewSetting();
 		List<ILanguageSettingsProvider> newProviders = newSetting.getLanguageSettingProviders();
 		assertEquals(providers, newProviders);
 	}

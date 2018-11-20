@@ -17,16 +17,17 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ITemplate;
 
 public class Template implements ITemplate {
-	protected static final String[] fgEmptyList= {};
+	protected static final String[] fgEmptyList = {};
 	protected String[] fTemplateParameterTypes;
 	protected String[] fTemplateArgs;
 	protected String fName;
 
 	public Template(String name) {
 		fName = name;
-		fTemplateParameterTypes= fgEmptyList;
-		fTemplateArgs= fgEmptyList;
+		fTemplateParameterTypes = fgEmptyList;
+		fTemplateArgs = fgEmptyList;
 	}
+
 	/**
 	 * Returns the parameterTypes.
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
@@ -49,7 +50,7 @@ public class Template implements ITemplate {
 		if (templateParameterTypes != null)
 			fTemplateParameterTypes = templateParameterTypes;
 		if (args != null) {
-			fTemplateArgs= args;
+			fTemplateArgs = args;
 		}
 	}
 
@@ -64,18 +65,17 @@ public class Template implements ITemplate {
 	@Override
 	public String getTemplateSignature() {
 		StringBuilder sig = new StringBuilder(fName);
-		if(getNumberOfTemplateParameters() > 0){
+		if (getNumberOfTemplateParameters() > 0) {
 			sig.append("<"); //$NON-NLS-1$
 			String[] paramTypes = getTemplateParameterTypes();
 			int i = 0;
 			sig.append(paramTypes[i++]);
-			while (i < paramTypes.length){
+			while (i < paramTypes.length) {
 				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
 			sig.append(">"); //$NON-NLS-1$
-		}
-		else{
+		} else {
 			sig.append("<>"); //$NON-NLS-1$
 		}
 		return sig.toString();

@@ -24,9 +24,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
  * @author jcamelon
  */
 public class CASTGotoStatement extends ASTAttributeOwner implements IASTGotoStatement {
-    private IASTName name;
+	private IASTName name;
 
-    public CASTGotoStatement() {
+	public CASTGotoStatement() {
 	}
 
 	public CASTGotoStatement(IASTName name) {
@@ -46,45 +46,54 @@ public class CASTGotoStatement extends ASTAttributeOwner implements IASTGotoStat
 
 	@Override
 	public IASTName getName() {
-        return this.name;
-    }
+		return this.name;
+	}
 
-    @Override
-    public void setName(IASTName name) {
-    	assertNotFrozen();
-    	this.name = name;
-    	if (name != null) {
-    		name.setParent(this);
-    		name.setPropertyInParent(NAME);
-    	}
-    }
+	@Override
+	public void setName(IASTName name) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(NAME);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (name != null && !name.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (name != null && !name.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (n == name) return r_reference;
+		if (n == name)
+			return r_reference;
 		return r_unclear;
 	}
 }

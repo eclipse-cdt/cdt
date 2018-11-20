@@ -21,15 +21,18 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 /**
  * Represents a CLI command.
  */
-public class CLICommand<V extends MIInfo> extends MICommand<V>
-{
-    public CLICommand(IDMContext ctx, String oper) {
-        super(ctx, oper);
-    }
-    
-    @Override
-	public boolean supportsThreadAndFrameOptions() { return false; }
-    
-    @Override
-    public boolean supportsThreadGroupOption() { return false; }
+public class CLICommand<V extends MIInfo> extends MICommand<V> {
+	public CLICommand(IDMContext ctx, String oper) {
+		super(ctx, oper);
+	}
+
+	@Override
+	public boolean supportsThreadAndFrameOptions() {
+		return false;
+	}
+
+	@Override
+	public boolean supportsThreadGroupOption() {
+		return false;
+	}
 }

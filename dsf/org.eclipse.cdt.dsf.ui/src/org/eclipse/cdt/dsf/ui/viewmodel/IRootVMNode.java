@@ -22,21 +22,21 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
  * 
  * @since 1.0
  */
-public interface IRootVMNode extends IVMNode{
-    
-    /**
-     * Returns whether the given event should be processed for delta generation.
-     * Root node is different than other nodes in that there is only one root
-     * element in the view model provider hierarchy.  This method allows the root
-     * node to match up the root object of the provider with the given event.  If 
-     * the root node can determine that the given event does not apply to the root
-     * object, it should return false so that the event is ignored.
-     *  
-     * @param rootObject The root object of the VM provider 
-     * @param event
-     * @return
-     */
-    public boolean isDeltaEvent(Object rootObject, Object event);
+public interface IRootVMNode extends IVMNode {
+
+	/**
+	 * Returns whether the given event should be processed for delta generation.
+	 * Root node is different than other nodes in that there is only one root
+	 * element in the view model provider hierarchy.  This method allows the root
+	 * node to match up the root object of the provider with the given event.  If 
+	 * the root node can determine that the given event does not apply to the root
+	 * object, it should return false so that the event is ignored.
+	 *  
+	 * @param rootObject The root object of the VM provider 
+	 * @param event
+	 * @return
+	 */
+	public boolean isDeltaEvent(Object rootObject, Object event);
 
 	/**
 	 * The VM proxy calls this to produce the starting point for a delta, which

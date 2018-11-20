@@ -12,7 +12,7 @@
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *****************************************************************/
-package org.eclipse.cdt.debug.ui; 
+package org.eclipse.cdt.debug.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,28 +39,28 @@ public interface IPinProvider {
 		/**
 		 * Default number of color count.
 		 */
-		final int DEFAULT_COLOR_COUNT = 3; 
-		
+		final int DEFAULT_COLOR_COUNT = 3;
+
 		/**
 		 * An undefined color
 		 */
 		int UNDEFINED = -1;
-		
+
 		/**
 		 * Green color (Default)
 		 */
 		int GREEN = 0;
-		
+
 		/**
 		 * Red color
 		 */
 		int RED = 1;
-		
+
 		/**
 		 * Blue color
 		 */
 		int BLUE = 2;
-		
+
 		/**
 		 * Returns the overlay pin color. The overlay pin will be used to decorate the debug view for an element that
 		 * is pinned to a view.
@@ -68,7 +68,7 @@ public interface IPinProvider {
 		 * @return one of the overlay colors
 		 */
 		int getOverlayColor();
-		
+
 		/**
 		 * Returns the toolbar pin action image description to use when the view is pinned, can be <code>null</code>. 
 		 * If <code>null</code>, then the default image description will be used.
@@ -77,7 +77,7 @@ public interface IPinProvider {
 		 */
 		ImageDescriptor getToolbarIconDescriptor();
 	}
-	
+
 	/**
 	 * Pin element handler interface. 
 	 */
@@ -88,14 +88,14 @@ public interface IPinProvider {
 		 * @return the debug context
 		 */
 		Object getDebugContext();
-		
+
 		/**
 		 * Returns the label that will be used in the pinned view's description.
 		 *  
 		 * @return the handle label
 		 */
 		String getLabel();
-		
+
 		/**
 		 * Returns color descriptor for this element.
 		 * 
@@ -103,7 +103,7 @@ public interface IPinProvider {
 		 */
 		IPinElementColorDescriptor getPinElementColorDescriptor();
 	}
-	
+
 	/**
 	 * A callback interface that can be used by an IPinProvider to indicate 
 	 * that the model has changed for a pinned view and that the view must be
@@ -129,7 +129,7 @@ public interface IPinProvider {
 	 * @return true if the debug context is pinnable
 	 */
 	boolean isPinnable(IWorkbenchPart part, Object debugContext);
-	
+
 	/**
 	 * Pin the debug context and returns a handle for the pinned debug context.
 	 * 
@@ -138,7 +138,7 @@ public interface IPinProvider {
 	 * @return a handle for the pinned debug context
 	 */
 	IPinElementHandle pin(IWorkbenchPart part, Object debugContext, IPinModelListener listener);
-	
+
 	/**
 	 * Unpin the debug context for the given pin handle.
 	 *  
@@ -146,8 +146,7 @@ public interface IPinProvider {
 	 * @param handle the handle for the pinned debug context
 	 */
 	void unpin(IWorkbenchPart part, IPinElementHandle handle);
-	
-	
+
 	/**
 	 * Returns true if the debug context belongs to the handle. If returning true,
 	 * then the debug context change event will be delegated to the view. 

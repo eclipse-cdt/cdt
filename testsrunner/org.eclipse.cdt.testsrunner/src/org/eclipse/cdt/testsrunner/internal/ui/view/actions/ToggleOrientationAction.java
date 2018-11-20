@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.ui.view.ResultsView;
 import org.eclipse.jface.action.Action;
@@ -25,7 +24,6 @@ public class ToggleOrientationAction extends Action {
 
 	private ResultsView resultsView;
 	private ResultsView.Orientation orientation;
-
 
 	public ToggleOrientationAction(ResultsView resultsView, ResultsView.Orientation orientation) {
 		super("", AS_RADIO_BUTTON); //$NON-NLS-1$

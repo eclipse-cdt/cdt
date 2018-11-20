@@ -22,17 +22,17 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 public class CPPAliasTemplateSpecialization extends CPPSpecialization implements ICPPAliasTemplate {
 	private ICPPTemplateParameter[] fParameters;
 	private IType fAliasedType;
-	
-	public CPPAliasTemplateSpecialization(ICPPAliasTemplate specialized, IBinding owner, 
+
+	public CPPAliasTemplateSpecialization(ICPPAliasTemplate specialized, IBinding owner,
 			ICPPTemplateParameterMap argumentMap, IType aliasedType) {
 		super(specialized, owner, argumentMap);
 		fAliasedType = aliasedType;
 	}
-	
+
 	public void setTemplateParameters(ICPPTemplateParameter[] parameters) {
 		fParameters = parameters;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == null) {
@@ -51,14 +51,14 @@ public class CPPAliasTemplateSpecialization extends CPPSpecialization implements
 		return fAliasedType;
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen
+		}
+		return t;
+	}
 }

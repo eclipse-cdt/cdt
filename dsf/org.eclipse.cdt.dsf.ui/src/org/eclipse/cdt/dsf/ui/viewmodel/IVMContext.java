@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 @Immutable
 public interface IVMContext extends IAdaptable {
-    
-    /**
-     * Returns the view model node that originated this element.
-     */
-    public IVMNode getVMNode();
+
+	/**
+	 * Returns the view model node that originated this element.
+	 */
+	public IVMNode getVMNode();
 }

@@ -39,44 +39,42 @@ import org.eclipse.osgi.util.NLS;
 
 public class BuildConfigurationData extends CConfigurationData {
 	private Configuration fCfg;
-//	private BuildVariablesContributor fCdtVars;
-	public BuildConfigurationData(IConfiguration cfg){
-		fCfg = (Configuration)cfg;
+
+	//	private BuildVariablesContributor fCdtVars;
+	public BuildConfigurationData(IConfiguration cfg) {
+		fCfg = (Configuration) cfg;
 	}
 
-	public IConfiguration getConfiguration(){
+	public IConfiguration getConfiguration() {
 		return fCfg;
 	}
 
 	@Override
-	public CFileData createFileData(IPath path, CFileData base)
-			throws CoreException {
-		String id = ManagedBuildManager.calculateChildId(fCfg.getId(),null);
-		IFileInfo info = fCfg.createFileInfo(path, ((BuildFileData)base).getFileInfo(), id, path.lastSegment());
+	public CFileData createFileData(IPath path, CFileData base) throws CoreException {
+		String id = ManagedBuildManager.calculateChildId(fCfg.getId(), null);
+		IFileInfo info = fCfg.createFileInfo(path, ((BuildFileData) base).getFileInfo(), id, path.lastSegment());
 		return info.getFileData();
 	}
 
 	@Override
-	public CFileData createFileData(IPath path, CFolderData base, CLanguageData baseLangData)
-		throws CoreException {
-		String id = ManagedBuildManager.calculateChildId(fCfg.getId(),null);
+	public CFileData createFileData(IPath path, CFolderData base, CLanguageData baseLangData) throws CoreException {
+		String id = ManagedBuildManager.calculateChildId(fCfg.getId(), null);
 		ITool baseTool;
-		if(baseLangData instanceof BuildLanguageData){
-			baseTool = ((BuildLanguageData)baseLangData).getTool();
+		if (baseLangData instanceof BuildLanguageData) {
+			baseTool = ((BuildLanguageData) baseLangData).getTool();
 		} else {
 			baseTool = null;
 		}
-		IFileInfo info = fCfg.createFileInfo(path, ((BuildFolderData)base).getFolderInfo(), baseTool, id, path.lastSegment());
+		IFileInfo info = fCfg.createFileInfo(path, ((BuildFolderData) base).getFolderInfo(), baseTool, id,
+				path.lastSegment());
 		return info.getFileData();
 	}
 
-
-
 	@Override
-	public CFolderData createFolderData(IPath path, CFolderData base)
-			throws CoreException {
-		String id = ManagedBuildManager.calculateChildId(fCfg.getId(),null);
-		IFolderInfo folderInfo = fCfg.createFolderInfo(path, ((BuildFolderData)base).getFolderInfo(), id, base.getName());
+	public CFolderData createFolderData(IPath path, CFolderData base) throws CoreException {
+		String id = ManagedBuildManager.calculateChildId(fCfg.getId(), null);
+		IFolderInfo folderInfo = fCfg.createFolderInfo(path, ((BuildFolderData) base).getFolderInfo(), id,
+				base.getName());
 		return folderInfo.getFolderData();
 	}
 
@@ -89,7 +87,7 @@ public class BuildConfigurationData extends CConfigurationData {
 	public CResourceData[] getResourceDatas() {
 		IResourceInfo infos[] = fCfg.getResourceInfos();
 		CResourceData datas[] = new CResourceData[infos.length];
-		for(int i = 0; i < infos.length; i++){
+		for (int i = 0; i < infos.length; i++) {
 			datas[i] = infos[i].getResourceData();
 		}
 		return datas;
@@ -152,26 +150,25 @@ public class BuildConfigurationData extends CConfigurationData {
 
 	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
-//		if(fCdtVars == null)
-//			fCdtVars = new BuildVariablesContributor(this);
-//		return fCdtVars;
+		//		if(fCdtVars == null)
+		//			fCdtVars = new BuildVariablesContributor(this);
+		//		return fCdtVars;
 		return new BuildVariablesContributor(this);
 	}
 
-	void clearCachedData(){
+	void clearCachedData() {
 		fCfg.clearCachedData();
 		CResourceData[] datas = getResourceDatas();
 		CResourceData data;
-//		BuildLanguageData lData;
-//		BuildLanguageData[] lDatas;
+		//		BuildLanguageData lData;
+		//		BuildLanguageData[] lDatas;
 
-
-		for(int i = 0; i < datas.length; i++){
+		for (int i = 0; i < datas.length; i++) {
 			data = datas[i];
-			if(data.getType() == ICSettingBase.SETTING_FOLDER){
-				((BuildFolderData)data).clearCachedData();
+			if (data.getType() == ICSettingBase.SETTING_FOLDER) {
+				((BuildFolderData) data).clearCachedData();
 			} else {
-				((BuildFileData)data).clearCachedData();
+				((BuildFileData) data).clearCachedData();
 			}
 		}
 	}
@@ -180,17 +177,18 @@ public class BuildConfigurationData extends CConfigurationData {
 	public CConfigurationStatus getStatus() {
 		int flags = 0;
 		String msg = null;
-		if(!fCfg.isSupported()){
+		if (!fCfg.isSupported()) {
 			flags |= CConfigurationStatus.TOOLCHAIN_NOT_SUPPORTED;
 			IToolChain toolChain = fCfg.getToolChain();
 			String tname = toolChain != null ? toolChain.getName() : ""; //$NON-NLS-1$
 			msg = NLS.bind(DataProviderMessages.getString("BuildConfigurationData.NoToolchainSupport"), tname); //$NON-NLS-1$
-		} else if (ManagedBuildManager.getExtensionConfiguration(fCfg)==null){
+		} else if (ManagedBuildManager.getExtensionConfiguration(fCfg) == null) {
 			flags |= CConfigurationStatus.SETTINGS_INVALID;
-			msg = NLS.bind(DataProviderMessages.getString("BuildConfigurationData.OrphanedConfiguration"), fCfg.getId()); //$NON-NLS-1$
+			msg = NLS.bind(DataProviderMessages.getString("BuildConfigurationData.OrphanedConfiguration"), //$NON-NLS-1$
+					fCfg.getId());
 		}
 
-		if(flags != 0)
+		if (flags != 0)
 			return new CConfigurationStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), flags, msg, null);
 
 		return CConfigurationStatus.CFG_STATUS_OK;

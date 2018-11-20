@@ -226,8 +226,7 @@ public class ArduinoManager {
 		return platforms;
 	}
 
-	public synchronized Collection<ArduinoPlatform> getPlatformUpdates(IProgressMonitor monitor)
-			throws CoreException {
+	public synchronized Collection<ArduinoPlatform> getPlatformUpdates(IProgressMonitor monitor) throws CoreException {
 		List<ArduinoPlatform> platforms = new ArrayList<>();
 		URL[] urls = ArduinoPreferences.getBoardUrlList();
 		SubMonitor sub = SubMonitor.convert(monitor, urls.length + 1);
@@ -291,7 +290,7 @@ public class ArduinoManager {
 			} else {
 				c1 = plat1.getPackage().getName().compareToIgnoreCase(plat2.getPackage().getName());
 			}
-			
+
 			if (c1 > 0) {
 				return 1;
 			} else if (c1 < 0) {

@@ -45,7 +45,7 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	private ArrayList<String> activeSymbols;
 	private ArrayList<String> removedSymbols;
 
-	private  org.eclipse.cdt.make.core.MakeScannerInfo userInfo;
+	private org.eclipse.cdt.make.core.MakeScannerInfo userInfo;
 
 	public DiscoveredScannerInfo(IProject project) {
 		this.project = project;
@@ -64,6 +64,7 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		dSymbols.putAll(userInfo.getDefinedSymbols());
 		return dSymbols;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerInfo#getIncludePaths()
 	 */
@@ -71,15 +72,16 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	public synchronized String[] getIncludePaths() {
 		String[] iPaths = new String[getUserIncludePaths().length + getActiveIncludePaths().length];
 		System.arraycopy(getUserIncludePaths(), 0, iPaths, 0, getUserIncludePaths().length);
-		System.arraycopy(getActiveIncludePaths(), 0, iPaths, getUserIncludePaths().length, getActiveIncludePaths().length);
+		System.arraycopy(getActiveIncludePaths(), 0, iPaths, getUserIncludePaths().length,
+				getActiveIncludePaths().length);
 		return iPaths;
 	}
 
-	public  org.eclipse.cdt.make.core.MakeScannerInfo getUserScannerInfo() {
+	public org.eclipse.cdt.make.core.MakeScannerInfo getUserScannerInfo() {
 		return userInfo;
 	}
 
-	public synchronized void setUserScannerInfo( org.eclipse.cdt.make.core.MakeScannerInfo info) {
+	public synchronized void setUserScannerInfo(org.eclipse.cdt.make.core.MakeScannerInfo info) {
 		userInfo = info;
 	}
 
@@ -89,6 +91,7 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		}
 		return new LinkedHashMap<String, Boolean>(discoveredPaths);
 	}
+
 	public synchronized void setDiscoveredIncludePaths(LinkedHashMap<String, Boolean> paths) {
 		discoveredPaths = new LinkedHashMap<String, Boolean>(paths);
 		createPathLists();
@@ -108,8 +111,7 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 			Boolean removed = discoveredPaths.get(path);
 			if (removed == null || removed.booleanValue() == false) {
 				aPaths.add(path);
-			}
-			else {
+			} else {
 				rPaths.add(path);
 			}
 		}
@@ -121,6 +123,7 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		}
 		return new LinkedHashMap<String, SymbolEntry>(discoveredSymbols);
 	}
+
 	public synchronized void setDiscoveredSymbolDefinitions(LinkedHashMap<String, SymbolEntry> symbols) {
 		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>(symbols);
 		createSymbolsLists();
@@ -145,9 +148,11 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		}
 		return userInfo.getIncludePaths();
 	}
+
 	public String[] getActiveIncludePaths() {
 		return getActivePathList().toArray(new String[getActivePathList().size()]);
 	}
+
 	public String[] getRemovedIncludePaths() {
 		return getRemovedPathList().toArray(new String[getRemovedPathList().size()]);
 	}
@@ -158,12 +163,15 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		}
 		return userInfo.getPreprocessorSymbols();
 	}
+
 	public String[] getActiveSymbolDefinitions() {
 		return getActiveSymbolsList().toArray(new String[getActiveSymbolsList().size()]);
 	}
+
 	public String[] getRemovedSymbolDefinitions() {
 		return getRemovedSymbolsList().toArray(new String[getRemovedSymbolsList().size()]);
 	}
+
 	public String[] getPreprocessorSymbols() {
 		// user specified + active
 		String[] userSymbols = getUserSymbolDefinitions();

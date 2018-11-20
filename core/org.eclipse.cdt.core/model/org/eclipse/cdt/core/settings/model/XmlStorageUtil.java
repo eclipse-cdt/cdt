@@ -49,12 +49,12 @@ public class XmlStorageUtil {
 		NodeList list = doc.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				return createCStorageTree((Element)list.item(i));
+				return createCStorageTree((Element) list.item(i));
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return an ICStorageElement tree based around the specified 
 	 * Element.

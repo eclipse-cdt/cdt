@@ -22,9 +22,10 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * @since 1.0
  */
 public interface ISignals extends IDsfService {
-    /**
-     * Marker interface for a context for which signals can be set.
-     */
-    public interface ISignalsDMContext extends IDMContext {};
+	/**
+	 * Marker interface for a context for which signals can be set.
+	 */
+	public interface ISignalsDMContext extends IDMContext {
+	};
 
 }

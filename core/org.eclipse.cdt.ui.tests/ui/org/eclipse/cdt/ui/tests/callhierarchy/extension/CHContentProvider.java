@@ -27,14 +27,14 @@ public class CHContentProvider implements ICHEContentProvider {
 
 	@Override
 	public Object[] asyncComputeExtendedRoot(Object parentElement) {
-		Object[] object  =null;
+		Object[] object = null;
 		if (parentElement instanceof ICElement) {
-			ICElement element = (ICElement)parentElement;
-			if ( isDslFunction(element)) {
+			ICElement element = (ICElement) parentElement;
+			if (isDslFunction(element)) {
 				// check if this function declaration comes from a DSL file
 				DslNode node = new DslNode(element);
 				node.setProject(element.getCProject());
-				return new Object[]{node};
+				return new Object[] { node };
 			}
 		}
 		return object;
@@ -53,8 +53,8 @@ public class CHContentProvider implements ICHEContentProvider {
 	 */
 	private static boolean isDslFunction(ICElement cElement) {
 		if (cElement instanceof FunctionDeclarationHandle) {
-			FunctionDeclarationHandle f = (FunctionDeclarationHandle)cElement;
-			if (f.getElementName() !=null & f.getElementName().endsWith("_dsl")) {
+			FunctionDeclarationHandle f = (FunctionDeclarationHandle) cElement;
+			if (f.getElementName() != null & f.getElementName().endsWith("_dsl")) {
 				return true;
 			}
 		}

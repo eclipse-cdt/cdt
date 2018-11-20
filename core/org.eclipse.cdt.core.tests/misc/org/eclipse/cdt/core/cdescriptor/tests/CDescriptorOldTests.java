@@ -81,7 +81,7 @@ public class CDescriptorOldTests extends TestCase {
 		suite.addTest(new CDescriptorOldTests("testConcurrentDescriptorCreation2"));
 		suite.addTest(new CDescriptorOldTests("testDeadlockDuringProjectCreation"));
 		suite.addTest(new CDescriptorOldTests("testProjectStorageDelete"));
-		
+
 		TestSetup wrapper = new TestSetup(suite) {
 
 			@Override
@@ -98,7 +98,8 @@ public class CDescriptorOldTests extends TestCase {
 		return wrapper;
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor)
+			throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
@@ -168,7 +169,7 @@ public class CDescriptorOldTests extends TestCase {
 	public void testConcurrentDescriptorCreation() throws Exception {
 		fProject.close(null);
 		fProject.open(null);
-		Thread t= new Thread() {
+		Thread t = new Thread() {
 			@Override
 			public void run() {
 				try {
@@ -180,57 +181,61 @@ public class CDescriptorOldTests extends TestCase {
 		t.start();
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		t.join();
-		
+
 		Element data = desc.getProjectData("testElement0");
 		data.appendChild(data.getOwnerDocument().createElement("test"));
 		desc.saveProjectData();
 		fLastEvent = null;
- 	}
+	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185930
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193503
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
 	public void testConcurrentDescriptorCreation2() throws Exception {
 		int lastLength = 0;
-		for (int i=0; i<200; ++i) {
+		for (int i = 0; i < 200; ++i) {
 			final int indexi = i;
-			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
+			PDOMManager pdomMgr = (PDOMManager) CCorePlugin.getIndexManager();
 			pdomMgr.shutdown();
 			fProject.close(null);
 			fProject.open(null);
 			pdomMgr.startup().schedule();
-			ICDescriptor desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			if (lastLength == 0)
 				lastLength = countChildElements(desc.getProjectData("testElement"));
-			final Throwable[] exception= new Throwable[10];
-			Thread[] threads= new Thread[10];
+			final Throwable[] exception = new Throwable[10];
+			Thread[] threads = new Thread[10];
 			for (int j = 0; j < 10; j++) {
 				final int indexj = j;
-				Thread t= new Thread() {
+				Thread t = new Thread() {
 					@Override
 					public void run() {
 						try {
-							ICDescriptorOperation operation= new ICDescriptorOperation() {
+							ICDescriptorOperation operation = new ICDescriptorOperation() {
 								@Override
-								public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+								public void execute(ICDescriptor descriptor, IProgressMonitor monitor)
+										throws CoreException {
 									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
 									Element data = descriptor.getProjectData("testElement");
-									String test = "test"+(indexi*10 + indexj);
+									String test = "test" + (indexi * 10 + indexj);
 									data.appendChild(data.getOwnerDocument().createElement(test));
 									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
 									// BUG196118 the model cached in memory doesn't reflect the contents of .cproject
 									//
 									// descriptor.saveProjectData() doesn't actually save despite what the API says
 									// see CConfigBasedDescriptor.fApplyOnChange
-//									((CConfigBasedDescriptor)descriptor).apply(false);
-//									System.out.println("Saved " + test);
-								}};
-								CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation, null);
-								ICDescriptor descriptor = CCorePlugin.getDefault().getCDescriptorManager().getDescriptor(fProject);
-								// perform apply outside descriptor operation to avoid deadlock - http://bugs.eclipse.org/241288 
-								descriptor.saveProjectData();
+									//									((CConfigBasedDescriptor)descriptor).apply(false);
+									//									System.out.println("Saved " + test);
+								}
+							};
+							CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation,
+									null);
+							ICDescriptor descriptor = CCorePlugin.getDefault().getCDescriptorManager()
+									.getDescriptor(fProject);
+							// perform apply outside descriptor operation to avoid deadlock - http://bugs.eclipse.org/241288 
+							descriptor.saveProjectData();
 						} catch (Throwable exc) {
-							exception[indexj]= exc;
+							exception[indexj] = exc;
 							exc.printStackTrace();
 						}
 					}
@@ -242,9 +247,9 @@ public class CDescriptorOldTests extends TestCase {
 				if (threads[j] != null) {
 					threads[j].join();
 				}
-				assertNull("Exception occurred: "+exception[j], exception[j]);
+				assertNull("Exception occurred: " + exception[j], exception[j]);
 			}
-			desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			int lengthAfter = countChildElements(desc.getProjectData("testElement"));
 			lastLength += threads.length; // Update last lengths to what we expect
 			assertEquals("Iteration count: " + i, lastLength, lengthAfter);
@@ -263,17 +268,17 @@ public class CDescriptorOldTests extends TestCase {
 	private int countChildElements(Element parent) {
 		int numElements = 0;
 		NodeList childNodes = parent.getChildNodes();
-		for (int k = 0 ; k < childNodes.getLength() ; k++)
+		for (int k = 0; k < childNodes.getLength(); k++)
 			if (childNodes.item(k).getNodeType() == Node.ELEMENT_NODE)
-				numElements ++;
+				numElements++;
 		return numElements;
 	}
 
 	public void testDeadlockDuringProjectCreation() throws Exception {
-		for (int i=0; i < 10; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			oneTimeTearDown();
 			oneTimeSetUp();
-			Thread t= new Thread() {
+			Thread t = new Thread() {
 				@Override
 				public void run() {
 					try {
@@ -292,10 +297,10 @@ public class CDescriptorOldTests extends TestCase {
 			data.appendChild(data.getOwnerDocument().createElement("test"));
 			desc.saveProjectData();
 			t.join();
-			
+
 			fLastEvent = null;
 		}
- 	}
+	}
 
 	public void testDescriptorOwner() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
@@ -404,7 +409,7 @@ public class CDescriptorOldTests extends TestCase {
 		// 3rd check the item no longer exists
 		desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		data = desc.getProjectData("testElement");
-		assertTrue(data.getChildNodes().getLength() == 0);		
+		assertTrue(data.getChildNodes().getLength() == 0);
 		fLastEvent = null;
 	}
 

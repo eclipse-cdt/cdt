@@ -24,12 +24,13 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
 public class RestrictedEndOfLineRule extends EndOfLineRule {
-	
+
 	private List<IRule> rules;
 	private int startIndex;
 	private int endIndex;
 	private String startSequence;
 	private String restrictedChars;
+
 	/**
 	 * Creates a rule for the given starting and ending sequence
 	 * which, if detected, will return the specified token.
@@ -71,7 +72,8 @@ public class RestrictedEndOfLineRule extends EndOfLineRule {
 	 * @param breaksOnEOF indicates whether the end of the file successfully terminates this rule
 	 * @since 2.1
 	 */
-	public RestrictedEndOfLineRule(String startSequence, String restrictedChars, IToken token, char escapeCharacter, boolean breaksOnEOF) {
+	public RestrictedEndOfLineRule(String startSequence, String restrictedChars, IToken token, char escapeCharacter,
+			boolean breaksOnEOF) {
 		super(startSequence, token, escapeCharacter, breaksOnEOF);
 		this.startSequence = startSequence;
 		this.restrictedChars = restrictedChars;
@@ -80,18 +82,16 @@ public class RestrictedEndOfLineRule extends EndOfLineRule {
 		endIndex = 0;
 	}
 
-	
 	public void addRule(SingleLineRule rule) {
 		rules.add(rule);
 	}
-	
-	
+
 	protected void backupScanner(ICharacterScanner scanner, int position) {
 		int count = scanner.getColumn() - position;
 		while (count-- > 0)
 			scanner.unread();
 	}
-	
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		int column = scanner.getColumn();
@@ -108,21 +108,19 @@ public class RestrictedEndOfLineRule extends EndOfLineRule {
 				endIndex = scanner.getColumn();
 				// Back up scanner to just after start sequence.
 				backupScanner(scanner, startIndex + startSequence.length());
-			}
-			else
+			} else
 				// Base rule doesn't hold.
 				return Token.UNDEFINED;
 		}
 
 		// At this point, we want to check for restricted chars in the
 		// token.  If we find them, we stop there.
-		
+
 		int start = scanner.getColumn();
 		column = start;
 		while (column < endIndex) {
 			int ch = scanner.read();
-			if (ch == ICharacterScanner.EOF
-					|| restrictedChars.indexOf(ch) >= 0) {
+			if (ch == ICharacterScanner.EOF || restrictedChars.indexOf(ch) >= 0) {
 				scanner.unread();
 				return getSuccessToken();
 			}

@@ -39,42 +39,70 @@ import org.eclipse.ui.IWorkbenchPartSite;
  */
 public interface IDisassemblyPartCallback {
 	void gotoFrame(int frame);
+
 	void gotoFrameIfActive(int frame);
+
 	void updateVisibleArea();
+
 	void updateInvalidSource();
-	void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed, boolean ignoreFile);
+
+	void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed,
+			boolean ignoreFile);
+
 	void insertError(BigInteger address, String message);
+
 	int getAddressSize();
+
 	void addressSizeChanged(int addressSize);
+
 	AddressRangePosition getPositionOfAddress(BigInteger address);
+
 	void gotoFrame(int frame, BigInteger address);
+
 	void updatePC(BigInteger pc);
+
 	void doPending();
+
 	void doScrollLocked(final Runnable doit);
+
 	void lockScroller();
+
 	void unlockScroller();
+
 	void insertSource(AddressRangePosition pos);
+
 	AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNumber);
-	AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int firstLine, int lastLine);
-	void setUpdatePending(boolean pending); 
+
+	AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int firstLine,
+			int lastLine);
+
+	void setUpdatePending(boolean pending);
+
 	boolean getUpdatePending();
+
 	void setGotoAddressPending(BigInteger address);
+
 	BigInteger getGotoAddressPending();
+
 	IDisassemblyDocument getDocument();
+
 	Object getStorageForFile(String file);
+
 	void gotoAddress(BigInteger address);
+
 	IWorkbenchPartSite getSite();
+
 	boolean hasViewer();
-	
+
 	/** Thread-safe */
 	void handleTargetSuspended();
-	
+
 	/** Thread-safe */
 	void handleTargetResumed();
-	
+
 	/** Thread-safe */
 	void handleTargetEnded();
-	
+
 	/** Thread-safe */
-	void asyncExec(Runnable runnable);	
+	void asyncExec(Runnable runnable);
 }

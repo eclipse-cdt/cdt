@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 
-
 /**
  * Represents a symbol definition with possible multiple values
  * example:
@@ -31,10 +30,10 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
  * @author vhirsl
  */
 public class SymbolEntry {
-	private static final String UNSPECIFIED_VALUE = "1";	//$NON-NLS-1$
+	private static final String UNSPECIFIED_VALUE = "1"; //$NON-NLS-1$
 	private String name;
-	private Map<String, Boolean> values;	// Values can be either in the active (selected) group or in the removed group 
-	
+	private Map<String, Boolean> values; // Values can be either in the active (selected) group or in the removed group 
+
 	public SymbolEntry(String name, String value, boolean active) {
 		this.name = SafeStringInterner.safeIntern(name);
 		if (values == null) {
@@ -44,35 +43,38 @@ public class SymbolEntry {
 	}
 
 	public boolean add(String value, boolean active) {
-		Boolean old= values.put(SafeStringInterner.safeIntern(value), Boolean.valueOf(active));
+		Boolean old = values.put(SafeStringInterner.safeIntern(value), Boolean.valueOf(active));
 		return old == null || old.booleanValue() != active;
 	}
-		
+
 	public void remove(String value) {
 		values.remove(value);
 	}
-	
+
 	public void removeAll() {
 		values = null;
 	}
-	
+
 	public List<String> getActive() {
 		return get(true, true, true);
 	}
+
 	public List<String> getActiveRaw() {
 		return get(false, true, true);
 	}
-	
+
 	public List<String> getRemoved() {
 		return get(true, true, false);
 	}
+
 	public List<String> getRemovedRaw() {
 		return get(false, true, false);
 	}
-	
+
 	public List<String> getAll() {
 		return get(true, false, true /*don't care*/);
 	}
+
 	public List<String> getAllRaw() {
 		return get(false, false, true /*don't care*/);
 	}
@@ -92,13 +94,13 @@ public class SymbolEntry {
 				continue;
 			if (format) {
 				rv.add(name + "=" + (val == null ? UNSPECIFIED_VALUE : val));//$NON-NLS-1$
-			}
-			else {
+			} else {
 				rv.add(name + (val == null ? "" : "=" + val));//$NON-NLS-1$ //$NON-NLS-2$
-			}				
+			}
 		}
 		return rv;
 	}
+
 	/**
 	 * Returns only value part of all active entries
 	 * @return List
@@ -113,11 +115,11 @@ public class SymbolEntry {
 		}
 		return rv;
 	}
-	
+
 	public int numberOfValues() {
 		return values.size();
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder(name);

@@ -18,7 +18,5 @@ import org.eclipse.core.runtime.Plugin;
 public class XlcParserPlugin extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.lrparser.xlc";
-	
-
 
 }

@@ -98,7 +98,8 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		private boolean fIsDefaultContext;
 		private List<IResource> fChangedResources;
 
-		public ScannerConfigUpdateJob(InfoContext context, IDiscoveredPathInfo pathInfo, boolean isDefaultContext, List<IResource> changedResources) {
+		public ScannerConfigUpdateJob(InfoContext context, IDiscoveredPathInfo pathInfo, boolean isDefaultContext,
+				List<IResource> changedResources) {
 			super(Messages.getString("PerFileXLCScannerInfoCollector.0")); //$NON-NLS-1$);
 			fContext = context;
 			fPathInfo = pathInfo;
@@ -108,9 +109,9 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			 try {
+			try {
 
-				 // get the scanner info profile ID
+				// get the scanner info profile ID
 
 				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 				IConfiguration config = info.getDefaultConfiguration();
@@ -118,25 +119,28 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				String profileID = config.getToolChain().getScannerConfigDiscoveryProfileId();
 				IDiscoveredPathManager manager = MakeCorePlugin.getDefault().getDiscoveryManager();
 
-				if(manager instanceof DiscoveredPathManager) {
-					((DiscoveredPathManager)manager).updateDiscoveredInfo(fContext, fPathInfo, fIsDefaultContext, fChangedResources, profileID);
+				if (manager instanceof DiscoveredPathManager) {
+					((DiscoveredPathManager) manager).updateDiscoveredInfo(fContext, fPathInfo, fIsDefaultContext,
+							fChangedResources, profileID);
 				}
 
 				// reload project description to hopefully get the data to take
 				ICProjectDescriptionManager descriptionManager = CoreModel.getDefault().getProjectDescriptionManager();
-				ICProjectDescription cProjectDescription = descriptionManager.getProjectDescription(project, true /* writable */);
+				ICProjectDescription cProjectDescription = descriptionManager.getProjectDescription(project,
+						true /* writable */);
 				ICConfigurationDescription configDes = cProjectDescription.getActiveConfiguration();
 
 				IToolChain toolchain = config.getToolChain();
-				for(ITool tool : toolchain.getTools()) {
-					for(IInputType inputType : tool.getInputTypes()) {
+				for (ITool tool : toolchain.getTools()) {
+					for (IInputType inputType : tool.getInputTypes()) {
 						IContentType contentType = inputType.getSourceContentType();
-						if(contentType != null) {
-							for(IResource resource : fChangedResources) {
+						if (contentType != null) {
+							for (IResource resource : fChangedResources) {
 								// get language settings for the resource
-								ICLanguageSetting langSetting = configDes.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
+								ICLanguageSetting langSetting = configDes
+										.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
 
-								if(langSetting == null) {
+								if (langSetting == null) {
 									continue;
 								}
 
@@ -145,14 +149,14 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 								// if the setting doesn't handle our content type ID, then go to the next resource
 								boolean found = false;
-								for(String id : contentTypeIDs) {
-									if(id.equals(contentType.getId())) {
+								for (String id : contentTypeIDs) {
+									if (id.equals(contentType.getId())) {
 										found = true;
 										break;
 									}
 								}
 
-								if(!found) {
+								if (!found) {
 									continue;
 								}
 
@@ -166,22 +170,21 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 					}
 				}
 
-			descriptionManager.setProjectDescription(project, cProjectDescription, true /* force */, monitor);
+				descriptionManager.setProjectDescription(project, cProjectDescription, true /* force */, monitor);
 
 			} catch (CoreException e) {
 				Activator.log(e);
 				return Activator.createStatus(Messages.getString("PerFileXLCScannerInfoCollector.1")); //$NON-NLS-1$
 			}
-			 return Status.OK_STATUS;
+			return Status.OK_STATUS;
 		}
 
 		private boolean updateMacroSettings(ICLanguageSetting langSetting) {
 			ICLanguageSettingEntry[] entries = langSetting.getSettingEntries(ICSettingEntry.MACRO);
 			List<ICLanguageSettingEntry> newEntries = new LinkedList<ICLanguageSettingEntry>();
-			for(ICLanguageSettingEntry entry : entries) {
+			for (ICLanguageSettingEntry entry : entries) {
 				newEntries.add(entry);
 			}
-
 
 			boolean entriesChanged = false;
 
@@ -198,15 +201,16 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				}
 
 				// if we didn't find the path, add it
-				if(!symbolFound) {
+				if (!symbolFound) {
 					entriesChanged = true;
-					CMacroEntry newEntry = CDataUtil.createCMacroEntry(symbol, discSymbols.get(symbol), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
+					CMacroEntry newEntry = CDataUtil.createCMacroEntry(symbol, discSymbols.get(symbol),
+							ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
 					newEntries.add(newEntry);
 				}
 			}
 
 			// if we changed the entries, then set the new ones
-			if(entriesChanged) {
+			if (entriesChanged) {
 				langSetting.setSettingEntries(ICSettingEntry.MACRO, newEntries.toArray(new ICLanguageSettingEntry[0]));
 			}
 
@@ -216,7 +220,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		private boolean updateIncludeSettings(ICLanguageSetting langSetting) {
 			ICLanguageSettingEntry[] entries = langSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 			List<ICLanguageSettingEntry> newEntries = new LinkedList<ICLanguageSettingEntry>();
-			for(ICLanguageSettingEntry entry : entries) {
+			for (ICLanguageSettingEntry entry : entries) {
 				newEntries.add(entry);
 			}
 
@@ -235,16 +239,18 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				}
 
 				// if we didn't find the path, add it
-				if(!pathFound) {
+				if (!pathFound) {
 					entriesChanged = true;
-					CIncludePathEntry newEntry = CDataUtil.createCIncludePathEntry(path.toString(), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
+					CIncludePathEntry newEntry = CDataUtil.createCIncludePathEntry(path.toString(),
+							ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
 					newEntries.add(newEntry);
 				}
 			}
 
 			// if we changed the entries, then set the new ones
-			if(entriesChanged) {
-				langSetting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, newEntries.toArray(new ICLanguageSettingEntry[0]));
+			if (entriesChanged) {
+				langSetting.setSettingEntries(ICSettingEntry.INCLUDE_PATH,
+						newEntries.toArray(new ICLanguageSettingEntry[0]));
 			}
 
 			return entriesChanged;
@@ -261,7 +267,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 
 		private IPerFileDiscoveredPathInfo2 getPerFileInfo1() {
-			if(fInfo1 instanceof IPerFileDiscoveredPathInfo2) {
+			if (fInfo1 instanceof IPerFileDiscoveredPathInfo2) {
 				return (IPerFileDiscoveredPathInfo2) fInfo1;
 			}
 
@@ -460,176 +466,176 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	}
 
 	/**
-     * Per file DPI object
-     *
-     * @author vhirsl
-     */
-    protected class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo2 {
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeFiles(org.eclipse.core.runtime.IPath)
-         */
-        @Override
+	 * Per file DPI object
+	 *
+	 * @author vhirsl
+	 */
+	protected class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo2 {
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeFiles(org.eclipse.core.runtime.IPath)
+		 */
+		@Override
 		public IPath[] getIncludeFiles(IPath path) {
-        	synchronized (fLock) {
+			synchronized (fLock) {
 
-        		Set<IPath> pathSet = new LinkedHashSet<IPath>();
-	            // get the command
-	            CCommandDSC cmd = getCommand(path);
-	            if (cmd != null) {
-	            	IPath[] paths = stringListToPathArray(cmd.getIncludeFile());
-	                pathSet.addAll(Arrays.asList(paths));
-	            }
-	            // use project scope scanner info
-	            if (psi == null) {
-	            	generateProjectScannerInfo();
-	            }
+				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				// get the command
+				CCommandDSC cmd = getCommand(path);
+				if (cmd != null) {
+					IPath[] paths = stringListToPathArray(cmd.getIncludeFile());
+					pathSet.addAll(Arrays.asList(paths));
+				}
+				// use project scope scanner info
+				if (psi == null) {
+					generateProjectScannerInfo();
+				}
 
-	            for(IPath path2 : psi.includeFiles) {
-	            	pathSet.add(path2);
-	            }
+				for (IPath path2 : psi.includeFiles) {
+					pathSet.add(path2);
+				}
 
-	            return pathSet.toArray(new IPath[0]);
-        	}
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths()
-         */
-        @Override
-		public IPath[] getIncludePaths() {
-        	final IPath[] includepaths;
-        	final IPath[] quotepaths;
-        	synchronized (fLock) {
-//      		return new IPath[0];
-	        	includepaths = getAllIncludePaths(INCLUDE_PATH);
-	        	quotepaths = getAllIncludePaths(QUOTE_INCLUDE_PATH);
-        	}
-        	if (quotepaths == null || quotepaths.length == 0) {
-        		return includepaths;
-        	}
-        	if (includepaths == null || includepaths.length == 0) {
-        		return quotepaths;
-        	}
-        	ArrayList<IPath> result = new ArrayList<IPath>(includepaths.length + quotepaths.length);
-        	result.addAll(Arrays.asList(includepaths));
-        	result.addAll(Arrays.asList(quotepaths));
-            return result.toArray(new IPath[result.size()]);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
-         */
-        @Override
-		public IPath[] getIncludePaths(IPath path) {
-        	synchronized (fLock) {
-        		Set<IPath> pathSet = new LinkedHashSet<IPath>();
-	            // get the command
-	            CCommandDSC cmd = getCommand(path);
-	            if (cmd != null) {
-	            	IPath[] paths = stringListToPathArray(cmd.getIncludes());
-	                pathSet.addAll(Arrays.asList(paths));
-	            }
-	            // use project scope scanner info
-	            if (psi == null) {
-	            	generateProjectScannerInfo();
-	            }
-
-	            for(IPath path2 : psi.includePaths) {
-	            	pathSet.add(path2);
-	            }
-
-	            return pathSet.toArray(new IPath[0]);
-        	}
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
-         */
-        @Override
-		public IPath[] getMacroFiles(IPath path) {
-        	synchronized (fLock) {
-        		Set<IPath> pathSet = new LinkedHashSet<IPath>();
-	            // get the command
-	            CCommandDSC cmd = getCommand(path);
-	            if (cmd != null) {
-	                IPath[] paths = stringListToPathArray(cmd.getImacrosFile());
-	                pathSet.addAll(Arrays.asList(paths));
-	            }
-	            // use project scope scanner info
-	            if (psi == null) {
-	            	generateProjectScannerInfo();
-	            }
-
-	            for(IPath path2 : psi.macrosFiles) {
-	            	pathSet.add(path2);
-	            }
-
-	            return pathSet.toArray(new IPath[0]);
-        	}
-        }
-
-        @Override
-		public Map<IResource, PathInfo> getPathInfoMap() {
-        	synchronized (fLock) {
-				//TODO: do we need to cache this?
-				return calculatePathInfoMap();
-        	}
+				return pathSet.toArray(new IPath[0]);
+			}
 		}
 
 		/* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getProject()
-         */
-        @Override
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths()
+		 */
+		@Override
+		public IPath[] getIncludePaths() {
+			final IPath[] includepaths;
+			final IPath[] quotepaths;
+			synchronized (fLock) {
+				//      		return new IPath[0];
+				includepaths = getAllIncludePaths(INCLUDE_PATH);
+				quotepaths = getAllIncludePaths(QUOTE_INCLUDE_PATH);
+			}
+			if (quotepaths == null || quotepaths.length == 0) {
+				return includepaths;
+			}
+			if (includepaths == null || includepaths.length == 0) {
+				return quotepaths;
+			}
+			ArrayList<IPath> result = new ArrayList<IPath>(includepaths.length + quotepaths.length);
+			result.addAll(Arrays.asList(includepaths));
+			result.addAll(Arrays.asList(quotepaths));
+			return result.toArray(new IPath[result.size()]);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
+		 */
+		@Override
+		public IPath[] getIncludePaths(IPath path) {
+			synchronized (fLock) {
+				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				// get the command
+				CCommandDSC cmd = getCommand(path);
+				if (cmd != null) {
+					IPath[] paths = stringListToPathArray(cmd.getIncludes());
+					pathSet.addAll(Arrays.asList(paths));
+				}
+				// use project scope scanner info
+				if (psi == null) {
+					generateProjectScannerInfo();
+				}
+
+				for (IPath path2 : psi.includePaths) {
+					pathSet.add(path2);
+				}
+
+				return pathSet.toArray(new IPath[0]);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
+		 */
+		@Override
+		public IPath[] getMacroFiles(IPath path) {
+			synchronized (fLock) {
+				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				// get the command
+				CCommandDSC cmd = getCommand(path);
+				if (cmd != null) {
+					IPath[] paths = stringListToPathArray(cmd.getImacrosFile());
+					pathSet.addAll(Arrays.asList(paths));
+				}
+				// use project scope scanner info
+				if (psi == null) {
+					generateProjectScannerInfo();
+				}
+
+				for (IPath path2 : psi.macrosFiles) {
+					pathSet.add(path2);
+				}
+
+				return pathSet.toArray(new IPath[0]);
+			}
+		}
+
+		@Override
+		public Map<IResource, PathInfo> getPathInfoMap() {
+			synchronized (fLock) {
+				//TODO: do we need to cache this?
+				return calculatePathInfoMap();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getProject()
+		 */
+		@Override
 		public IProject getProject() {
-            return project;
-        }
+			return project;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getQuoteIncludePaths(org.eclipse.core.runtime.IPath)
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getQuoteIncludePaths(org.eclipse.core.runtime.IPath)
+		 */
+		@Override
 		public IPath[] getQuoteIncludePaths(IPath path) {
-        	synchronized (fLock) {
-        		Set<IPath> pathSet = new LinkedHashSet<IPath>();
-	            // get the command
-	            CCommandDSC cmd = getCommand(path);
-	            if (cmd != null) {
-	            	IPath[] paths = stringListToPathArray(cmd.getQuoteIncludes());
-	                pathSet.addAll(Arrays.asList(paths));
-	            }
-	            // use project scope scanner info
-	            if (psi == null) {
-	            	generateProjectScannerInfo();
-	            }
+			synchronized (fLock) {
+				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				// get the command
+				CCommandDSC cmd = getCommand(path);
+				if (cmd != null) {
+					IPath[] paths = stringListToPathArray(cmd.getQuoteIncludes());
+					pathSet.addAll(Arrays.asList(paths));
+				}
+				// use project scope scanner info
+				if (psi == null) {
+					generateProjectScannerInfo();
+				}
 
-	            for(IPath path2 : psi.quoteIncludePaths) {
-	            	pathSet.add(path2);
-	            }
+				for (IPath path2 : psi.quoteIncludePaths) {
+					pathSet.add(path2);
+				}
 
-	            return pathSet.toArray(new IPath[0]);
-        	}
-        }
+				return pathSet.toArray(new IPath[0]);
+			}
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getSerializable()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getSerializable()
+		 */
+		@Override
 		public IDiscoveredScannerInfoSerializable getSerializable() {
-        	synchronized (fLock) {
-        		return sid;
-        	}
-        }
+			synchronized (fLock) {
+				return sid;
+			}
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols()
+		 */
+		@Override
 		public Map<String, String> getSymbols() {
-//            return new HashMap();
-        	synchronized (fLock) {
-        		return getAllSymbols();
-        	}
-        }
+			//            return new HashMap();
+			synchronized (fLock) {
+				return getAllSymbols();
+			}
+		}
 
 		/*
 		 * (non-Javadoc)
@@ -691,198 +697,195 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			}
 		}
 
-    }
+	}
 
 	public static class ProjectScannerInfo {
-    	public Map<String, String> definedSymbols;
-    	public IPath[] includeFiles;
-    	public IPath[] includePaths;
-    	public IPath[] macrosFiles;
-    	public IPath[] quoteIncludePaths;
+		public Map<String, String> definedSymbols;
+		public IPath[] includeFiles;
+		public IPath[] includePaths;
+		public IPath[] macrosFiles;
+		public IPath[] quoteIncludePaths;
+
 		public boolean isEmpty() {
-			return (includePaths.length == 0 &&
-					quoteIncludePaths.length == 0 &&
-					includeFiles.length == 0 &&
-					macrosFiles.length == 0 &&
-					definedSymbols.size() == 0);
+			return (includePaths.length == 0 && quoteIncludePaths.length == 0 && includeFiles.length == 0
+					&& macrosFiles.length == 0 && definedSymbols.size() == 0);
 		}
-    }
+	}
 
 	public class ScannerInfoData implements IDiscoveredScannerInfoSerializable {
-        public static final String DEFINED_SYMBOL = "definedSymbol"; //$NON-NLS-1$
-        public static final String ID_ATTR = "id"; //$NON-NLS-1$
-        public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
+		public static final String DEFINED_SYMBOL = "definedSymbol"; //$NON-NLS-1$
+		public static final String ID_ATTR = "id"; //$NON-NLS-1$
+		public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
 
-        private static final String NAME = "name"; //$NON-NLS-1$
+		private static final String NAME = "name"; //$NON-NLS-1$
 
-    	public static final String PATH = "path"; //$NON-NLS-1$
-    	private static final String PROJECT = "project"; //$NON-NLS-1$
-    	public static final String REMOVED = "removed"; //$NON-NLS-1$
-    	public static final String SYMBOL = "symbol"; //$NON-NLS-1$
-    	public final Map<Integer, CCommandDSC> commandIdCommandMap; // map of all commands
+		public static final String PATH = "path"; //$NON-NLS-1$
+		private static final String PROJECT = "project"; //$NON-NLS-1$
+		public static final String REMOVED = "removed"; //$NON-NLS-1$
+		public static final String SYMBOL = "symbol"; //$NON-NLS-1$
+		public final Map<Integer, CCommandDSC> commandIdCommandMap; // map of all commands
 		public final Map<Integer, Set<IFile>> commandIdToFilesMap; // command id and set of files it applies to
-		public final Map<IFile, Integer> fileToCommandIdMap;  // maps each file to the corresponding command id
+		public final Map<IFile, Integer> fileToCommandIdMap; // maps each file to the corresponding command id
 
-        public ScannerInfoData() {
-            commandIdCommandMap = new LinkedHashMap<Integer, CCommandDSC>();  // [commandId, command]
-            fileToCommandIdMap = new HashMap<IFile, Integer>();         // [file, commandId]
-            commandIdToFilesMap = new HashMap<Integer, Set<IFile>>();        // [commandId, set of files]
-        }
+		public ScannerInfoData() {
+			commandIdCommandMap = new LinkedHashMap<Integer, CCommandDSC>(); // [commandId, command]
+			fileToCommandIdMap = new HashMap<IFile, Integer>(); // [file, commandId]
+			commandIdToFilesMap = new HashMap<Integer, Set<IFile>>(); // [commandId, set of files]
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#deserialize(org.w3c.dom.Element)
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#deserialize(org.w3c.dom.Element)
+		 */
+		@Override
 		public void deserialize(Element collectorElem) {
-        	synchronized (fLock) {
+			synchronized (fLock) {
 
-        		for (Node child = collectorElem.getFirstChild(); child != null; child = child.getNextSibling()) {
-	            	if(child.getNodeName().equals(PROJECT)) {
-	            		Element projectElement = (Element) child;
-	            		String projectName = projectElement.getAttribute(NAME);
+				for (Node child = collectorElem.getFirstChild(); child != null; child = child.getNextSibling()) {
+					if (child.getNodeName().equals(PROJECT)) {
+						Element projectElement = (Element) child;
+						String projectName = projectElement.getAttribute(NAME);
 
-	            		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
-	            		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+						Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
 
-	            		List<String> includes = new LinkedList<String>();
-	            		List<String> symbols = new LinkedList<String>();
+						List<String> includes = new LinkedList<String>();
+						List<String> symbols = new LinkedList<String>();
 
-	            		// iterate over children
-	            		for(Node projectChild = projectElement.getFirstChild(); projectChild != null; projectChild = projectChild.getNextSibling()) {
-	            			if(projectChild.getNodeName().equals(INCLUDE_PATH)) {
-	            				Element childElem = (Element) projectChild;
-	            				String path = childElem.getAttribute(PATH);
-								if(path != null) {
+						// iterate over children
+						for (Node projectChild = projectElement
+								.getFirstChild(); projectChild != null; projectChild = projectChild.getNextSibling()) {
+							if (projectChild.getNodeName().equals(INCLUDE_PATH)) {
+								Element childElem = (Element) projectChild;
+								String path = childElem.getAttribute(PATH);
+								if (path != null) {
 									includes.add(path);
 								}
-	            			}
-	            			else if(projectChild.getNodeName().equals(DEFINED_SYMBOL)) {
-	            				Element childElem = (Element) projectChild;
-	            				String symbol = childElem.getAttribute(SYMBOL);
+							} else if (projectChild.getNodeName().equals(DEFINED_SYMBOL)) {
+								Element childElem = (Element) projectChild;
+								String symbol = childElem.getAttribute(SYMBOL);
 
-								if(symbol != null) {
+								if (symbol != null) {
 									symbols.add(symbol);
 								}
-	            			}
-	            		}
+							}
+						}
 
-	            		// add loaded scanner info to project settings for this collector
-	            		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
-	            		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
-	            		fProjectSettingsMap.put(project, scannerInfo);
-	            	}
-
-
-        			else if (child.getNodeName().equals(CC_ELEM)) {
-	                    Element cmdElem = (Element) child;
-	                    boolean cppFileType = cmdElem.getAttribute(FILE_TYPE_ATTR).equals("c++"); //$NON-NLS-1$
-	                    XLCCommandDSC command = new XLCCommandDSC(cppFileType, project);
-	                    command.setCommandId(Integer.parseInt(cmdElem.getAttribute(ID_ATTR)));
-	                    // deserialize command
-	                    command.deserialize(cmdElem);
-	                    // get set of files the command applies to
-	                    NodeList appliesList = cmdElem.getElementsByTagName(APPLIES_TO_ATTR);
-	                    if (appliesList.getLength() > 0) {
-	                        Element appliesElem = (Element) appliesList.item(0);
-	                        NodeList fileList = appliesElem.getElementsByTagName(FILE_ELEM);
-	                        for (int i = 0; i < fileList.getLength(); ++i) {
-	                            Element fileElem = (Element) fileList.item(i);
-	                            String fileName = fileElem.getAttribute(PATH_ATTR);
-	                            IFile file = project.getFile(fileName);
-	                            addCompilerCommand(file, command);
-	                        }
-							applyFileDeltas();
-	                    }
-	                }
-	            }
-        	}
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#getCollectorId()
-         */
-        @Override
-		public String getCollectorId() {
-            return COLLECTOR_ID;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#serialize(org.w3c.dom.Element)
-         */
-        @Override
-		public void serialize(Element collectorElem) {
-        	try {
-        	synchronized (fLock) {
-	            Document doc = collectorElem.getOwnerDocument();
-
-	            // serialize project level info
-				for (IProject project : fProjectSettingsMap.keySet()) {
-					// create a project node
-					Element projectElement = doc.createElement(PROJECT);
-					projectElement.setAttribute(NAME, project.getName());
-
-					Map<ScannerInfoTypes, List<String>> scannerInfo = (Map<ScannerInfoTypes, List<String>>) fProjectSettingsMap.get(project);
-
-					List<String> includes = scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
-					for(String include : includes) {
-						Element pathElement = doc.createElement(INCLUDE_PATH);
-						pathElement.setAttribute(PATH, include);
-						//Boolean removed = (Boolean) includes.contains(include);
-						//if (removed != null && removed.booleanValue() == true) {
-						//	pathElement.setAttribute(REMOVED, "true"); //$NON-NLS-1$
-						//}
-						pathElement.setAttribute(REMOVED, "false"); //$NON-NLS-1$
-						projectElement.appendChild(pathElement);
+						// add loaded scanner info to project settings for this collector
+						scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
+						scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
+						fProjectSettingsMap.put(project, scannerInfo);
 					}
 
-					// Now do the same for the symbols
-					List<String> symbols = scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
+					else if (child.getNodeName().equals(CC_ELEM)) {
+						Element cmdElem = (Element) child;
+						boolean cppFileType = cmdElem.getAttribute(FILE_TYPE_ATTR).equals("c++"); //$NON-NLS-1$
+						XLCCommandDSC command = new XLCCommandDSC(cppFileType, project);
+						command.setCommandId(Integer.parseInt(cmdElem.getAttribute(ID_ATTR)));
+						// deserialize command
+						command.deserialize(cmdElem);
+						// get set of files the command applies to
+						NodeList appliesList = cmdElem.getElementsByTagName(APPLIES_TO_ATTR);
+						if (appliesList.getLength() > 0) {
+							Element appliesElem = (Element) appliesList.item(0);
+							NodeList fileList = appliesElem.getElementsByTagName(FILE_ELEM);
+							for (int i = 0; i < fileList.getLength(); ++i) {
+								Element fileElem = (Element) fileList.item(i);
+								String fileName = fileElem.getAttribute(PATH_ATTR);
+								IFile file = project.getFile(fileName);
+								addCompilerCommand(file, command);
+							}
+							applyFileDeltas();
+						}
+					}
+				}
+			}
+		}
 
-					for(String symbol : symbols) {
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#getCollectorId()
+		 */
+		@Override
+		public String getCollectorId() {
+			return COLLECTOR_ID;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#serialize(org.w3c.dom.Element)
+		 */
+		@Override
+		public void serialize(Element collectorElem) {
+			try {
+				synchronized (fLock) {
+					Document doc = collectorElem.getOwnerDocument();
+
+					// serialize project level info
+					for (IProject project : fProjectSettingsMap.keySet()) {
+						// create a project node
+						Element projectElement = doc.createElement(PROJECT);
+						projectElement.setAttribute(NAME, project.getName());
+
+						Map<ScannerInfoTypes, List<String>> scannerInfo = (Map<ScannerInfoTypes, List<String>>) fProjectSettingsMap
+								.get(project);
+
+						List<String> includes = scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
+						for (String include : includes) {
+							Element pathElement = doc.createElement(INCLUDE_PATH);
+							pathElement.setAttribute(PATH, include);
+							//Boolean removed = (Boolean) includes.contains(include);
+							//if (removed != null && removed.booleanValue() == true) {
+							//	pathElement.setAttribute(REMOVED, "true"); //$NON-NLS-1$
+							//}
+							pathElement.setAttribute(REMOVED, "false"); //$NON-NLS-1$
+							projectElement.appendChild(pathElement);
+						}
+
+						// Now do the same for the symbols
+						List<String> symbols = scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
+
+						for (String symbol : symbols) {
 							Element symbolElement = doc.createElement(DEFINED_SYMBOL);
 							symbolElement.setAttribute(SYMBOL, symbol);
 							projectElement.appendChild(symbolElement);
+						}
+						collectorElem.appendChild(projectElement);
 					}
-					collectorElem.appendChild(projectElement);
+
+					// serialize file level info
+					List<Integer> commandIds = new ArrayList<Integer>(commandIdCommandMap.keySet());
+					Collections.sort(commandIds);
+					for (Iterator<Integer> i = commandIds.iterator(); i.hasNext();) {
+						Integer commandId = i.next();
+						CCommandDSC command = commandIdCommandMap.get(commandId);
+
+						Element cmdElem = doc.createElement(CC_ELEM);
+						collectorElem.appendChild(cmdElem);
+						cmdElem.setAttribute(ID_ATTR, commandId.toString());
+						cmdElem.setAttribute(FILE_TYPE_ATTR, command.appliesToCPPFileType() ? "c++" : "c"); //$NON-NLS-1$ //$NON-NLS-2$
+						// write command and scanner info
+						command.serialize(cmdElem);
+						// write files command applies to
+						Element filesElem = doc.createElement(APPLIES_TO_ATTR);
+						cmdElem.appendChild(filesElem);
+						Set<IFile> files = commandIdToFilesMap.get(commandId);
+						if (files != null) {
+							for (Iterator<IFile> j = files.iterator(); j.hasNext();) {
+								Element fileElem = doc.createElement(FILE_ELEM);
+								IFile file = j.next();
+								IPath path = file.getProjectRelativePath();
+								fileElem.setAttribute(PATH_ATTR, path.toString());
+								filesElem.appendChild(fileElem);
+							}
+						}
+					}
 				}
 
-				// serialize file level info
-	            List<Integer> commandIds = new ArrayList<Integer>(commandIdCommandMap.keySet());
-	            Collections.sort(commandIds);
-	            for (Iterator<Integer> i = commandIds.iterator(); i.hasNext(); ) {
-	                Integer commandId = i.next();
-	                CCommandDSC command = commandIdCommandMap.get(commandId);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
 
-	                Element cmdElem = doc.createElement(CC_ELEM);
-	                collectorElem.appendChild(cmdElem);
-	                cmdElem.setAttribute(ID_ATTR, commandId.toString());
-	                cmdElem.setAttribute(FILE_TYPE_ATTR, command.appliesToCPPFileType() ? "c++" : "c"); //$NON-NLS-1$ //$NON-NLS-2$
-	                // write command and scanner info
-	                command.serialize(cmdElem);
-	                // write files command applies to
-	                Element filesElem = doc.createElement(APPLIES_TO_ATTR);
-	                cmdElem.appendChild(filesElem);
-	                Set<IFile> files = commandIdToFilesMap.get(commandId);
-	                if (files != null) {
-	                    for (Iterator<IFile> j = files.iterator(); j.hasNext(); ) {
-	                        Element fileElem = doc.createElement(FILE_ELEM);
-	                        IFile file = j.next();
-	                        IPath path = file.getProjectRelativePath();
-	                        fileElem.setAttribute(PATH_ATTR, path.toString());
-	                        filesElem.appendChild(fileElem);
-	                    }
-	                }
-	            }
-        	}
-
-        	}
-        	catch(Throwable e) {
-        		e.printStackTrace();
-        	}
-        }
-
-    }
+	}
 
 	protected static final String APPLIES_TO_ATTR = "appliesToFiles"; //$NON-NLS-1$
 
@@ -896,34 +899,33 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 	protected static final String ID_ATTR = "id"; //$NON-NLS-1$
 
-	protected static final int INCLUDE_FILE		= 3;
+	protected static final int INCLUDE_FILE = 3;
 
-	protected static final int INCLUDE_PATH 		= 1;
+	protected static final int INCLUDE_PATH = 1;
 
-
-
-	protected static final int MACROS_FILE		= 4;
+	protected static final int MACROS_FILE = 4;
 
 	protected static final String PATH_ATTR = "path"; //$NON-NLS-1$
 
 	protected static final int QUOTE_INCLUDE_PATH = 2;
 
-	protected static PathInfo createFilePathInfo(CCommandDSC cmd){
-    	IPath[] includes = stringListToPathArray(cmd.getIncludes());
-    	IPath[] quotedIncludes = stringListToPathArray(cmd.getQuoteIncludes());
-    	IPath[] incFiles = stringListToPathArray(cmd.getIncludeFile());
-    	IPath[] macroFiles = stringListToPathArray(cmd.getImacrosFile());
-        List symbols = cmd.getSymbols();
-        Map<String, String> definedSymbols = new HashMap<String, String>(symbols.size());
-        for (Iterator i = symbols.iterator(); i.hasNext(); ) {
-            String symbol = (String) i.next();
-            String key = ScannerConfigUtil.getSymbolKey(symbol);
-            String value = ScannerConfigUtil.getSymbolValue(symbol);
-            definedSymbols.put(key, value);
-        }
+	protected static PathInfo createFilePathInfo(CCommandDSC cmd) {
+		IPath[] includes = stringListToPathArray(cmd.getIncludes());
+		IPath[] quotedIncludes = stringListToPathArray(cmd.getQuoteIncludes());
+		IPath[] incFiles = stringListToPathArray(cmd.getIncludeFile());
+		IPath[] macroFiles = stringListToPathArray(cmd.getImacrosFile());
+		List symbols = cmd.getSymbols();
+		Map<String, String> definedSymbols = new HashMap<String, String>(symbols.size());
+		for (Iterator i = symbols.iterator(); i.hasNext();) {
+			String symbol = (String) i.next();
+			String key = ScannerConfigUtil.getSymbolKey(symbol);
+			String value = ScannerConfigUtil.getSymbolValue(symbol);
+			definedSymbols.put(key, value);
+		}
 
-        return new PathInfo(includes, quotedIncludes, definedSymbols, incFiles, macroFiles);
-    }
+		return new PathInfo(includes, quotedIncludes, definedSymbols, incFiles, macroFiles);
+	}
+
 	/**
 	 * @param discovered
 	 * @param allIncludes
@@ -931,48 +933,49 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	 */
 	protected static IPath[] stringListToPathArray(List<String> discovered) {
 		List<Path> allIncludes = new ArrayList<Path>(discovered.size());
-		for (Iterator<String> j = discovered.iterator(); j.hasNext(); ) {
-		    String include = j.next();
-		    if (!allIncludes.contains(include)) {
-		        allIncludes.add(new Path(include));
-		    }
+		for (Iterator<String> j = discovered.iterator(); j.hasNext();) {
+			String include = j.next();
+			if (!allIncludes.contains(include)) {
+				allIncludes.add(new Path(include));
+			}
 		}
 		return allIncludes.toArray(new IPath[allIncludes.size()]);
 	}
+
 	protected int commandIdCounter = 0;
 	protected InfoContext context;
 
-    /** monitor for data access */
-    protected final Object fLock = new Object();
+	/** monitor for data access */
+	protected final Object fLock = new Object();
 
-    private Map<IProject, Map<?, ?>> fProjectSettingsMap = new HashMap<IProject, Map<?, ?>>();
+	private Map<IProject, Map<?, ?>> fProjectSettingsMap = new HashMap<IProject, Map<?, ?>>();
 
-    protected final SortedSet<Integer> freeCommandIdPool;   // sorted set of free command ids
+	protected final SortedSet<Integer> freeCommandIdPool; // sorted set of free command ids
 	protected IProject project;
-	protected ProjectScannerInfo psi = null;	// sum of all scanner info
-	protected final List<Integer> siChangedForCommandIdList;	// list of command ids for which scanner info has changed
+	protected ProjectScannerInfo psi = null; // sum of all scanner info
+	protected final List<Integer> siChangedForCommandIdList; // list of command ids for which scanner info has changed
 	//    protected List siChangedForFileList; 		// list of files for which scanner info has changed
-	protected final Map<IResource, Integer> siChangedForFileMap;		// (file, comandId) map for deltas
+	protected final Map<IResource, Integer> siChangedForFileMap; // (file, comandId) map for deltas
 	protected ScannerInfoData sid; // scanner info data
 
 	/**
-     *
-     */
-    public PerFileXLCScannerInfoCollector() {
-        sid = new ScannerInfoData();
+	 *
+	 */
+	public PerFileXLCScannerInfoCollector() {
+		sid = new ScannerInfoData();
 
-//        siChangedForFileList = new ArrayList();
+		//        siChangedForFileList = new ArrayList();
 		siChangedForFileMap = new HashMap<IResource, Integer>();
 		siChangedForCommandIdList = new ArrayList<Integer>();
 
-        freeCommandIdPool = new TreeSet<Integer>();
-    }
+		freeCommandIdPool = new TreeSet<Integer>();
+	}
 
-    /**
-     * @param file
-     * @param object
-     */
-    protected void addCompilerCommand(IFile file, CCommandDSC cmd) {
+	/**
+	 * @param file
+	 * @param object
+	 */
+	protected void addCompilerCommand(IFile file, CCommandDSC cmd) {
 		synchronized (fLock) {
 			List<CCommandDSC> existingCommands = new ArrayList<CCommandDSC>(sid.commandIdCommandMap.values());
 			int index = existingCommands.indexOf(cmd);
@@ -995,11 +998,11 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /**
-     * @param commandId
-     * @param scannerInfo
-     */
-    protected void addScannerInfo(Integer commandId, Map scannerInfo) {
+	/**
+	 * @param commandId
+	 * @param scannerInfo
+	 */
+	protected void addScannerInfo(Integer commandId, Map scannerInfo) {
 		synchronized (fLock) {
 			CCommandDSC cmd = sid.commandIdCommandMap.get(commandId);
 			if (cmd != null) {
@@ -1019,15 +1022,16 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /**
-     * @param type
-     * @param object
-     */
-    protected void addScannerInfo(ScannerInfoTypes type, List delta) {
-        // TODO Auto-generated method stub
+	/**
+	 * @param type
+	 * @param object
+	 */
+	protected void addScannerInfo(ScannerInfoTypes type, List delta) {
+		// TODO Auto-generated method stub
 
-    }
-    /**
+	}
+
+	/**
 	 * @param file
 	 * @param cmd
 	 */
@@ -1077,7 +1081,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-
 	protected Map<IResource, PathInfo> calculatePathInfoMap() {
 		synchronized (fLock) {
 			Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>(sid.fileToCommandIdMap.size() + 1);
@@ -1113,19 +1116,18 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 	@Override
 	public void contributeToScannerConfig(Object resource, Map scannerInfo) {
-        // check the resource
-        String errorMessage = null;
-        if (resource == null) {
-            errorMessage = "resource is null";//$NON-NLS-1$
-        }
-        else if (resource instanceof Integer) {
-        	synchronized (fLock) {
-                addScannerInfo(((Integer)resource), scannerInfo);
+		// check the resource
+		String errorMessage = null;
+		if (resource == null) {
+			errorMessage = "resource is null";//$NON-NLS-1$
+		} else if (resource instanceof Integer) {
+			synchronized (fLock) {
+				addScannerInfo(((Integer) resource), scannerInfo);
 			}
-            return;
-        }
+			return;
+		}
 
-       if ((resource instanceof IFile)) {
+		if ((resource instanceof IFile)) {
 
 			if (((IFile) resource).getProject() == null) {
 				errorMessage = "project is null";//$NON-NLS-1$
@@ -1154,27 +1156,28 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			}
 		}
 
-       else if(resource instanceof IProject) {
-    	   // save to project level settings
-    	   synchronized (fLock) {
-    		   fProjectSettingsMap.put(((IProject) resource), scannerInfo);
-    	   }
-       }
+		else if (resource instanceof IProject) {
+			// save to project level settings
+			synchronized (fLock) {
+				fProjectSettingsMap.put(((IProject) resource), scannerInfo);
+			}
+		}
 
-       else { // error
-    	   TraceUtil.outputError("PerFileSICollector.contributeToScannerConfig : ", "Not a project or file."); //$NON-NLS-1$ //$NON-NLS-2$
+		else { // error
+			TraceUtil.outputError("PerFileSICollector.contributeToScannerConfig : ", "Not a project or file."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
-       }
-    }
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#createPathInfoObject()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#createPathInfoObject()
+	 */
+	@Override
 	public IDiscoveredPathInfo createPathInfoObject() {
-        return new PerFileDiscoveredPathInfo();
-    }
-    /* (non-Javadoc)
+		return new PerFileDiscoveredPathInfo();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#deleteAll(org.eclipse.core.resources.IResource)
 	 */
 	public void deleteAll(IResource resource) {
@@ -1185,32 +1188,32 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner#deleteAll(org.eclipse.core.resources.IResource)
-     */
-    public void deleteAll1(IResource resource) {
-        if (resource.equals(project)) {
-        	synchronized (fLock) {
-//            	siChangedForFileList = new ArrayList();
-	            siChangedForFileMap.clear();
-	            Set<IFile> changedFiles = sid.fileToCommandIdMap.keySet();
-	            for (Iterator<IFile> i = changedFiles.iterator(); i.hasNext(); ) {
-	                IFile file = i.next();
-//	                IPath path = file.getFullPath();
-//	                siChangedForFileList.add(path);
-	                siChangedForFileMap.put(file, null);
-	            }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner#deleteAll(org.eclipse.core.resources.IResource)
+	 */
+	public void deleteAll1(IResource resource) {
+		if (resource.equals(project)) {
+			synchronized (fLock) {
+				//            	siChangedForFileList = new ArrayList();
+				siChangedForFileMap.clear();
+				Set<IFile> changedFiles = sid.fileToCommandIdMap.keySet();
+				for (Iterator<IFile> i = changedFiles.iterator(); i.hasNext();) {
+					IFile file = i.next();
+					//	                IPath path = file.getFullPath();
+					//	                siChangedForFileList.add(path);
+					siChangedForFileMap.put(file, null);
+				}
 
-	            sid = new ScannerInfoData();
-	            psi = null;
+				sid = new ScannerInfoData();
+				psi = null;
 
-	            commandIdCounter = 0;
+				commandIdCounter = 0;
 				freeCommandIdPool.clear();
-        	}
-        }
-    }
+			}
+		}
+	}
 
-    /*
+	/*
 	 * (non-Javadoc)
 	 *
 	 * @see
@@ -1225,7 +1228,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /*
+	/*
 	 * (non-Javadoc)
 	 *
 	 * @see
@@ -1240,7 +1243,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /*
+	/*
 	 * (non-Javadoc)
 	 *
 	 * @see
@@ -1270,7 +1273,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /**
+	/**
 	 * @param file
 	 * @param cmd
 	 */
@@ -1289,7 +1292,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    protected void generateProjectScannerInfo() {
+	protected void generateProjectScannerInfo() {
 		synchronized (fLock) {
 			psi = new ProjectScannerInfo();
 			psi.includePaths = getAllIncludePaths(INCLUDE_PATH);
@@ -1300,7 +1303,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#getAllIncludePaths(int)
 	 */
 	protected IPath[] getAllIncludePaths(int type) {
@@ -1333,15 +1336,15 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	}
 
 	/**
-     * @param type can be one of the following:
-     * <li><code>INCLUDE_PATH</code>
-     * <li><code>QUOTE_INCLUDE_PATH</code>
-     * <li><code>INCLUDE_FILE</code>
-     * <li><code>MACROS_FILE</code>
-     *
-     * @return list of IPath(s).
-     */
-    protected IPath[] getAllIncludePaths1(int type) {
+	 * @param type can be one of the following:
+	 * <li><code>INCLUDE_PATH</code>
+	 * <li><code>QUOTE_INCLUDE_PATH</code>
+	 * <li><code>INCLUDE_FILE</code>
+	 * <li><code>MACROS_FILE</code>
+	 *
+	 * @return list of IPath(s).
+	 */
+	protected IPath[] getAllIncludePaths1(int type) {
 		synchronized (fLock) {
 			List<String> allIncludes = new ArrayList<String>();
 			for (Iterator<Integer> i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext();) {
@@ -1404,7 +1407,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 					for (String symbol : projectSymbols) {
 						if (symbol.matches("_Builtin")) //$NON-NLS-1$
-							symbols.put(symbol,""); //$NON-NLS-1$
+							symbols.put(symbol, ""); //$NON-NLS-1$
 						else
 							symbols.put(symbol, "1"); //$NON-NLS-1$
 					}
@@ -1419,10 +1422,10 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /**
-     * @return
-     */
-    protected Map<String, String> getAllSymbols1() {
+	/**
+	 * @return
+	 */
+	protected Map<String, String> getAllSymbols1() {
 		synchronized (fLock) {
 			Map<String, String> symbols = new HashMap<String, String>();
 			for (Iterator<Integer> i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext();) {
@@ -1442,75 +1445,71 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
+	 */
+	@Override
 	public List<CCommandDSC> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
 
-        List<CCommandDSC> rv = new ArrayList<CCommandDSC>();
-        // check the resource
-        String errorMessage = null;
-        if (resource == null) {
-            errorMessage = "resource is null";//$NON-NLS-1$
-        }
-        else if (!(resource instanceof IResource)) {
-            errorMessage = "resource is not an IResource";//$NON-NLS-1$
-        }
-        else if (((IResource) resource).getProject() == null) {
-            errorMessage = "project is null";//$NON-NLS-1$
-        }
-        else if (((IResource) resource).getProject() != project) {
-            errorMessage = "wrong project";//$NON-NLS-1$
-        }
-
-        if (errorMessage != null) {
-            TraceUtil.outputError("PerProjectSICollector.getCollectedScannerInfo : ", errorMessage); //$NON-NLS-1$
-            return rv;
-        }
-        if (project.equals(((IResource)resource).getProject())) {
-        	if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
-        		synchronized (fLock) {
-        			for (Iterator<Integer> i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext(); ) {
-        				Integer cmdId = i.next();
-        				Set<IFile> fileSet = sid.commandIdToFilesMap.get(cmdId);
-        				if (fileSet != null && !fileSet.isEmpty()) {
-        					rv.add(sid.commandIdCommandMap.get(cmdId));
-        				}
-        			}
-        		}
-        	}
-        	else if (type.equals(ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND)) {
-//      		if (!siChangedForFileList.isEmpty()) {
-    			synchronized (fLock) {
-    				if (scannerInfoChanged()) {
-    					if (siChangedForCommandIdList.isEmpty()) {
-//  						for (Iterator i = siChangedForFileList.iterator(); i.hasNext(); ) {
-    						for (Iterator<IResource> i = siChangedForFileMap.keySet().iterator(); i.hasNext(); ) {
-//  							IPath path = (IPath) i.next();
-    							IFile file = (IFile) i.next();
-    							Integer cmdId = siChangedForFileMap.get(file);
-    							if (cmdId != null) {
-    								if (!siChangedForCommandIdList.contains(cmdId)) {
-    									siChangedForCommandIdList.add(cmdId);
-    								}
-    							}
-    						}
-    					}
-    					Collections.sort(siChangedForCommandIdList);
-    					for (Iterator<Integer> i = siChangedForCommandIdList.iterator(); i.hasNext(); ) {
-    						Integer cmdId = i.next();
-    						CCommandDSC command = sid.commandIdCommandMap.get(cmdId);
-    						rv.add(command);
-    					}
-    				}
-    			}
-            }
+		List<CCommandDSC> rv = new ArrayList<CCommandDSC>();
+		// check the resource
+		String errorMessage = null;
+		if (resource == null) {
+			errorMessage = "resource is null";//$NON-NLS-1$
+		} else if (!(resource instanceof IResource)) {
+			errorMessage = "resource is not an IResource";//$NON-NLS-1$
+		} else if (((IResource) resource).getProject() == null) {
+			errorMessage = "project is null";//$NON-NLS-1$
+		} else if (((IResource) resource).getProject() != project) {
+			errorMessage = "wrong project";//$NON-NLS-1$
 		}
-        return rv;
-    }
 
-    protected CCommandDSC getCommand(IFile file) {
+		if (errorMessage != null) {
+			TraceUtil.outputError("PerProjectSICollector.getCollectedScannerInfo : ", errorMessage); //$NON-NLS-1$
+			return rv;
+		}
+		if (project.equals(((IResource) resource).getProject())) {
+			if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
+				synchronized (fLock) {
+					for (Iterator<Integer> i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext();) {
+						Integer cmdId = i.next();
+						Set<IFile> fileSet = sid.commandIdToFilesMap.get(cmdId);
+						if (fileSet != null && !fileSet.isEmpty()) {
+							rv.add(sid.commandIdCommandMap.get(cmdId));
+						}
+					}
+				}
+			} else if (type.equals(ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND)) {
+				//      		if (!siChangedForFileList.isEmpty()) {
+				synchronized (fLock) {
+					if (scannerInfoChanged()) {
+						if (siChangedForCommandIdList.isEmpty()) {
+							//  						for (Iterator i = siChangedForFileList.iterator(); i.hasNext(); ) {
+							for (Iterator<IResource> i = siChangedForFileMap.keySet().iterator(); i.hasNext();) {
+								//  							IPath path = (IPath) i.next();
+								IFile file = (IFile) i.next();
+								Integer cmdId = siChangedForFileMap.get(file);
+								if (cmdId != null) {
+									if (!siChangedForCommandIdList.contains(cmdId)) {
+										siChangedForCommandIdList.add(cmdId);
+									}
+								}
+							}
+						}
+						Collections.sort(siChangedForCommandIdList);
+						for (Iterator<Integer> i = siChangedForCommandIdList.iterator(); i.hasNext();) {
+							Integer cmdId = i.next();
+							CCommandDSC command = sid.commandIdCommandMap.get(cmdId);
+							rv.add(command);
+						}
+					}
+				}
+			}
+		}
+		return rv;
+	}
+
+	protected CCommandDSC getCommand(IFile file) {
 		synchronized (fLock) {
 			CCommandDSC cmd = null;
 			if (file != null) {
@@ -1524,11 +1523,11 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-     /**
-     * @param path
-     * @return
-     */
-    protected CCommandDSC getCommand(IPath path) {
+	/**
+	* @param path
+	* @return
+	*/
+	protected CCommandDSC getCommand(IPath path) {
 		synchronized (fLock) {
 			try {
 				IFile file = project.getWorkspace().getRoot().getFile(path);
@@ -1539,7 +1538,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector#getDefinedSymbols()
 	 */
 	@Override
@@ -1549,7 +1548,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector#getIncludePaths()
 	 */
 	@Override
@@ -1568,11 +1567,11 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    protected InfoContext getInfoContext() {
+	protected InfoContext getInfoContext() {
 		return context;
 	}
 
-    protected void removeUnusedCommands() {
+	protected void removeUnusedCommands() {
 		synchronized (fLock) {
 			for (Iterator i = sid.commandIdToFilesMap.entrySet().iterator(); i.hasNext();) {
 				Entry entry = (Entry) i.next();
@@ -1600,13 +1599,13 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-    protected boolean scannerInfoChanged() {
-    	synchronized (fLock) {
-    		return (!fProjectSettingsMap.isEmpty()) || !siChangedForFileMap.isEmpty();
-    	}
+	protected boolean scannerInfoChanged() {
+		synchronized (fLock) {
+			return (!fProjectSettingsMap.isEmpty()) || !siChangedForFileMap.isEmpty();
+		}
 	}
 
-    @Override
+	@Override
 	public void setInfoContext(InfoContext context) {
 		synchronized (fLock) {
 			this.project = context.getProject();
@@ -1622,83 +1621,79 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	}
 
 	/* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#setProject(org.eclipse.core.resources.IProject)
-     */
-    @Override
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#setProject(org.eclipse.core.resources.IProject)
+	 */
+	@Override
 	public void setProject(IProject project) {
-    	synchronized (fLock) {
+		synchronized (fLock) {
 			setInfoContext(new InfoContext(project));
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
-	       if (monitor == null) {
-	            monitor = new NullProgressMonitor();
-	        }
-	        monitor.beginTask(Messages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
-	        monitor.subTask(Messages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-	        ArrayList<IResource> changedResources = new ArrayList<IResource>();
-	        synchronized (fLock) {
-	        	if (scannerInfoChanged()) {
-	        		applyFileDeltas();
-	        		removeUnusedCommands();
-	        		changedResources.addAll(siChangedForFileMap.keySet());
-	        		siChangedForFileMap.clear();
-	        	}
-	        	siChangedForCommandIdList.clear();
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		monitor.beginTask(Messages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
+		monitor.subTask(Messages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
+		ArrayList<IResource> changedResources = new ArrayList<IResource>();
+		synchronized (fLock) {
+			if (scannerInfoChanged()) {
+				applyFileDeltas();
+				removeUnusedCommands();
+				changedResources.addAll(siChangedForFileMap.keySet());
+				siChangedForFileMap.clear();
+			}
+			siChangedForCommandIdList.clear();
 
-		        // add in any projects that got project level info (from the specs provider)
-		        changedResources.addAll(fProjectSettingsMap.keySet());
+			// add in any projects that got project level info (from the specs provider)
+			changedResources.addAll(fProjectSettingsMap.keySet());
 
-			    monitor.worked(50);
-		        if (!changedResources.isEmpty()) {
-			        // update outside monitor scope
-			        try {
-			        	// update scanner configuration
-			        	monitor.subTask(Messages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
-			        	IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project, context);
-			        	//IDiscoveredPathInfo pathInfo = new PerFileDiscoveredPathInfo();
-			        	if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
-			        		pathInfo = createPathInfoObject();
-			        	}
-			        	else {
-			        		PerFileDiscoveredPathInfo perFilePathInfo = new PerFileDiscoveredPathInfo();
+			monitor.worked(50);
+			if (!changedResources.isEmpty()) {
+				// update outside monitor scope
+				try {
+					// update scanner configuration
+					monitor.subTask(Messages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
+					IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager()
+							.getDiscoveredInfo(project, context);
+					//IDiscoveredPathInfo pathInfo = new PerFileDiscoveredPathInfo();
+					if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
+						pathInfo = createPathInfoObject();
+					} else {
+						PerFileDiscoveredPathInfo perFilePathInfo = new PerFileDiscoveredPathInfo();
 
-			        		// merge them
-			        		if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
-			        			pathInfo = new MergedPerFileDiscoveredPathInfo(pathInfo, perFilePathInfo);
-			        		}
-			        		else {
-			        			pathInfo = perFilePathInfo;
-			        		}
-			        	}
+						// merge them
+						if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
+							pathInfo = new MergedPerFileDiscoveredPathInfo(pathInfo, perFilePathInfo);
+						} else {
+							pathInfo = perFilePathInfo;
+						}
+					}
 
+					Job job = new ScannerConfigUpdateJob(context, pathInfo, context.isDefaultContext(),
+							changedResources);
+					ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
+					job.setRule(rule);
+					job.schedule();
 
-			        	Job job = new ScannerConfigUpdateJob(context, pathInfo, context.isDefaultContext(), changedResources);
-			        	ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
-			        	job.setRule(rule);
-			        	job.schedule();
+					//			        	} finally {
+					//			        	    manager.endRule(rule);
+					//			        	}
 
+				} catch (CoreException e) {
+					MakeCorePlugin.log(e);
+				}
 
+				catch (Throwable e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
-//			        	} finally {
-//			        	    manager.endRule(rule);
-//			        	}
-
-			        } catch (CoreException e) {
-			        	MakeCorePlugin.log(e);
-			        }
-
-			        catch (Throwable e) {
-			        	e.printStackTrace();
-			        }
-			    }
-	        }
-
-
-		    monitor.worked(50);
-			monitor.done();
+		monitor.worked(50);
+		monitor.done();
 	}
 
 }

@@ -52,16 +52,17 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderManager;
  */
 
 public class Template extends TemplateCore {
-	
+
 	private TemplateDescriptor templateDescriptor;
 	private UIElementTreeBuilderManager uiElementTreeBuilderManager;
 	private UIPagesProvider uiPagesProvider;
 	private Map<String, UIWizardPage> pageMap;
-	
+
 	public Template(TemplateInfo templateInfo) throws TemplateInitializationException {
 		super(templateInfo);
 		templateDescriptor = getTemplateDescriptor();
-		uiElementTreeBuilderManager = new UIElementTreeBuilderManager(new UIElementTreeBuilderHelper(templateDescriptor, templateInfo));
+		uiElementTreeBuilderManager = new UIElementTreeBuilderManager(
+				new UIElementTreeBuilderHelper(templateDescriptor, templateInfo));
 		uiPagesProvider = new UIPagesProvider();
 	}
 
@@ -76,40 +77,40 @@ public class Template extends TemplateCore {
 		if (pageMap == null) {
 			pageMap = new HashMap<String, UIWizardPage>();
 			List<Element> rootPropertyGrouplist = templateDescriptor.getPropertyGroupList();
-			
+
 			uiPagesProvider.clearOrderVector();
-	
+
 			for (int i = 0; i < rootPropertyGrouplist.size(); i++) {
 				// since the tree is constructed for a list of PropertyGroup's tree
 				// root is set to null
 				// before invoking createUIElementTree(...).
 				uiElementTreeBuilderManager.setUIElementTreeRootNull();
 				uiElementTreeBuilderManager.createUIElementTree(null, rootPropertyGrouplist.get(i));
-				pageMap.putAll(uiPagesProvider.getWizardUIPages(uiElementTreeBuilderManager.getUIElementTreeRoot(), getValueStore()));
+				pageMap.putAll(uiPagesProvider.getWizardUIPages(uiElementTreeBuilderManager.getUIElementTreeRoot(),
+						getValueStore()));
 			}
 		}
 
 		return pageMap;
 	}
-	
-	
+
 	public IWizardPage[] getTemplateWizardPages(IWizardPage predatingPage, IWizardPage followingPage, IWizard wizard) {
-		List<IWizardDataPage> pages= new ArrayList<IWizardDataPage>();
-//		if (predatingPage != null) { 
-//			pages.add(predatingPage);
-//		}
-		
+		List<IWizardDataPage> pages = new ArrayList<IWizardDataPage>();
+		//		if (predatingPage != null) { 
+		//			pages.add(predatingPage);
+		//		}
+
 		Map<String, UIWizardPage> templatePages = getUIPages();
 		List<String> templatePagesOrderVector = getPagesOrderVector();
 		if (templatePagesOrderVector.size() != 0) {
 			IWizardPage prevPage = predatingPage;
 
-			for (int i=0; i < templatePagesOrderVector.size(); i++) {
+			for (int i = 0; i < templatePagesOrderVector.size(); i++) {
 				UIWizardPage page = templatePages.get(templatePagesOrderVector.get(i));
 				pages.add(page);
 				page.setPreviousPage(prevPage);
-				if (i+1 < templatePagesOrderVector.size()) {
-					page.setNextPage(templatePages.get(templatePagesOrderVector.get(i+1)));
+				if (i + 1 < templatePagesOrderVector.size()) {
+					page.setNextPage(templatePages.get(templatePagesOrderVector.get(i + 1)));
 				} else {
 					page.setNextPage(followingPage);
 				}
@@ -117,47 +118,49 @@ public class Template extends TemplateCore {
 				prevPage = page;
 			}
 
-			predatingPage= prevPage;
+			predatingPage = prevPage;
 		}
-		
+
 		try {
 			IWizardPage prevPage = predatingPage;
-			IWizardDataPage[] extraPages = getExtraCreatedPages((IWorkbenchWizard)wizard, PlatformUI.getWorkbench(), null);
+			IWizardDataPage[] extraPages = getExtraCreatedPages((IWorkbenchWizard) wizard, PlatformUI.getWorkbench(),
+					null);
 			for (IWizardDataPage page : extraPages) {
 				pages.add(page);
 				page.setPreviousPage(prevPage);
-				
-				if(prevPage instanceof IWizardDataPage) {
-					((IWizardDataPage)prevPage).setNextPage(page);					
+
+				if (prevPage instanceof IWizardDataPage) {
+					((IWizardDataPage) prevPage).setNextPage(page);
 				}
 
 				page.setWizard(wizard);
 				prevPage = page;
 			}
-			
-			if(prevPage instanceof IWizardDataPage) {
-				((IWizardDataPage)prevPage).setNextPage(followingPage);					
+
+			if (prevPage instanceof IWizardDataPage) {
+				((IWizardDataPage) prevPage).setNextPage(followingPage);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if (followingPage != null)
-			followingPage.setPreviousPage(predatingPage);	
-		
+			followingPage.setPreviousPage(predatingPage);
+
 		return pages.toArray(new IWizardPage[pages.size()]);
 	}
-	
-	IWizardDataPage[] getExtraCreatedPages(IWorkbenchWizard wizard, IWorkbench workbench, IStructuredSelection selection) {
+
+	IWizardDataPage[] getExtraCreatedPages(IWorkbenchWizard wizard, IWorkbench workbench,
+			IStructuredSelection selection) {
 		TemplateInfo templateInfo = getTemplateInfo();
-		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
+		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
+				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
 			return extraPagesProvider.createAdditionalPages(wizard, null, null);
 		}
-		return new IWizardDataPage[0];		
+		return new IWizardDataPage[0];
 	}
-	
-	
+
 	/**
 	 * 
 	 * @return List,which contains Page display order
@@ -176,7 +179,7 @@ public class Template extends TemplateCore {
 	public UIElementTreeBuilderManager getUIElementTreeBuilderManager() {
 		return uiElementTreeBuilderManager;
 	}
-	
+
 	/**
 	 * initializeProcessBlockList() will create the ProcessBlockList,
 	 * processPorcessBlockList() will invoke each process execution by assigning
@@ -190,22 +193,24 @@ public class Template extends TemplateCore {
 		final IStatus[][] result = new IStatus[1][];
 		WorkspaceModifyOperation wmo = new WorkspaceModifyOperation() {
 			@Override
-			protected void execute(IProgressMonitor monitor) throws org.eclipse.core.runtime.CoreException ,java.lang.reflect.InvocationTargetException ,InterruptedException {
+			protected void execute(IProgressMonitor monitor) throws org.eclipse.core.runtime.CoreException,
+					java.lang.reflect.InvocationTargetException, InterruptedException {
 				try {
 					result[0] = getProcessHandler().processAll(monitor);
 				} catch (ProcessFailureException e) {
 					if (showError) {
 						TemplateEngineUIUtil.showError(e.getMessage(), e.getCause());
 					}
-					result[0] = new IStatus[] {new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e)};
+					result[0] = new IStatus[] {
+							new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e) };
 				}
 			}
 		};
 		try {
 			wmo.run(monitor);
-		} catch(InterruptedException ie) {
+		} catch (InterruptedException ie) {
 			throw new RuntimeException(ie);
-		} catch(InvocationTargetException ite) {
+		} catch (InvocationTargetException ite) {
 			throw new RuntimeException(ite.getTargetException());
 		}
 		return result[0];

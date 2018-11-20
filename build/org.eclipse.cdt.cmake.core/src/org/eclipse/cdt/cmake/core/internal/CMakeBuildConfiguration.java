@@ -113,7 +113,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
 		IProject project = getProject();
-		
+
 		try {
 			String generator = getProperty(CMAKE_GENERATOR);
 			if (generator == null) {
@@ -132,7 +132,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			if (toolChainFile == null && !isLocal()) {
 				ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
 				toolChainFile = manager.getToolChainFileFor(getToolChain());
-				
+
 				if (toolChainFile == null) {
 					// error
 					console.getErrorStream().write(Messages.CMakeBuildConfiguration_NoToolchainFile);
@@ -150,7 +150,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			}
 
 			if (runCMake) { // $NON-NLS-1$
-				
+
 				List<String> command = new ArrayList<>();
 
 				command.add("cmake"); //$NON-NLS-1$
@@ -171,7 +171,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					break;
 				}
 				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$
-				
+
 				String userArgs = getProperty(CMAKE_ARGUMENTS);
 				if (userArgs != null) {
 					command.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
@@ -181,22 +181,23 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+						getBuildDirectory().toString());
 				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, console, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 					return null;
 				}
-				
+
 				watchProcess(p, console);
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
-				
+
 				List<String> command = new ArrayList<>();
-				
+
 				String envStr = getProperty(CMAKE_ENV);
 				List<IEnvironmentVariable> envVars = new ArrayList<>();
 				if (envStr != null) {
@@ -210,7 +211,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 						}
 					}
 				}
-				
+
 				String buildCommand = getProperty(BUILD_COMMAND);
 				if (buildCommand == null) {
 					command.add("cmake"); //$NON-NLS-1$
@@ -225,9 +226,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				}
 
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
-				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir, console, monitor);
+
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+						getBuildDirectory().toString());
+				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir,
+						console, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 					return null;
@@ -240,13 +243,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// Load compile_commands.json file
 				processCompileCommandsFile(monitor);
 
-				outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(), 
+				outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
 						epm.getWarningCount(), buildDir.toString()));
 			}
 
 			return new IProject[] { project };
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_Building, project.getName()), e));
+			throw new CoreException(Activator
+					.errorStatus(String.format(Messages.CMakeBuildConfiguration_Building, project.getName()), e));
 		}
 	}
 
@@ -277,28 +281,30 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					command.add("make"); //$NON-NLS-1$
 					command.add("clean"); //$NON-NLS-1$
 				}
-		 	} else {
-		 		command.addAll(Arrays.asList(cleanCommand.split(" "))); //$NON-NLS-1$
-		 	}
-			
+			} else {
+				command.addAll(Arrays.asList(cleanCommand.split(" "))); //$NON-NLS-1$
+			}
+
 			IEnvironmentVariable[] env = new IEnvironmentVariable[0];
 
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-			
-			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+
+			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+					getBuildDirectory().toString());
 			Process p = startBuildProcess(command, env, workingDir, console, monitor);
 			if (p == null) {
 				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 				return;
 			}
-			
+
 			watchProcess(p, console);
-			
-			outStream.write(Messages.CMakeBuildConfiguration_BuildComplete); 
-	
+
+			outStream.write(Messages.CMakeBuildConfiguration_BuildComplete);
+
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_Cleaning, project.getName()), e));
+			throw new CoreException(Activator
+					.errorStatus(String.format(Messages.CMakeBuildConfiguration_Cleaning, project.getName()), e));
 		}
 	}
 
@@ -327,8 +333,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				}
 				shutdown();
 			} catch (IOException e) {
-				throw new CoreException(
-						Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_ProcCompCmds, project.getName()), e));
+				throw new CoreException(Activator.errorStatus(
+						String.format(Messages.CMakeBuildConfiguration_ProcCompCmds, project.getName()), e));
 			}
 		}
 	}

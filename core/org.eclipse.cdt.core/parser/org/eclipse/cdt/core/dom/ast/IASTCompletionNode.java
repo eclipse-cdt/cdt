@@ -42,11 +42,11 @@ public interface IASTCompletionNode {
 			fName = name;
 			fParent = parent;
 		}
-		
+
 		public IASTName fName;
 		public IASTNode fParent;
 	}
-	
+
 	/**
 	 * If the point of completion was at the end of a potential identifier, this
 	 * string contains the text of that identifier.
@@ -67,14 +67,14 @@ public interface IASTCompletionNode {
 	 * @since 6.4
 	 */
 	public boolean containsName(IASTName name);
-	
+
 	/**
 	 * Returns a list of names that fit in this context.
 	 * If doing computations based on the name's parent, prefer calling getEntries() instead
 	 * and obtaining the parent from there.
 	 */
 	public IASTName[] getNames();
-	
+
 	/**
 	 * Returns a list of names that fir in this context, along with their parents.
 	 * See {@link CompletionNameEntry} for more details.

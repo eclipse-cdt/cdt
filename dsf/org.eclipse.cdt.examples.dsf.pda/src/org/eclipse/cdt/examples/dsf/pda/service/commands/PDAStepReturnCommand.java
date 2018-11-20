@@ -39,12 +39,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAStepReturnCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAStepReturnCommand(PDAThreadDMContext thread) {
-        super(thread, "stepreturn " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAStepReturnCommand(PDAThreadDMContext thread) {
+		super(thread, "stepreturn " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

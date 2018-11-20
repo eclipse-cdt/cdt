@@ -101,7 +101,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	private final String fVersion;
 	private final ILaunchConfiguration fConfiguration;
-		
+
 	/** @since 5.0 */
 	public GdbDebugServicesFactory(String version, ILaunchConfiguration config) {
 		fVersion = version;
@@ -141,48 +141,46 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return LaunchUtils.getIsNonStopMode(configuration);
 	}
 
-	public String getVersion() { return fVersion; }
-	
+	public String getVersion() {
+		return fVersion;
+	}
+
 	@Override
-    @SuppressWarnings("unchecked")
-    public <V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments) {
+	@SuppressWarnings("unchecked")
+	public <V> V createService(Class<V> clazz, DsfSession session, Object... optionalArguments) {
 		if (MIBreakpointsManager.class.isAssignableFrom(clazz)) {
-			return (V)createBreakpointManagerService(session);
-		} 
-		else if (ICommandControl.class.isAssignableFrom(clazz)) {
+			return (V) createBreakpointManagerService(session);
+		} else if (ICommandControl.class.isAssignableFrom(clazz)) {
 			for (Object arg : optionalArguments) {
 				if (arg instanceof ILaunchConfiguration) {
-					return (V)createCommandControl(session, (ILaunchConfiguration)arg);
+					return (V) createCommandControl(session, (ILaunchConfiguration) arg);
 				}
 			}
-		}
-		else if (IMIBackend.class.isAssignableFrom(clazz)) {
+		} else if (IMIBackend.class.isAssignableFrom(clazz)) {
 			for (Object arg : optionalArguments) {
 				if (arg instanceof ILaunchConfiguration) {
-					return (V)createBackendGDBService(session, (ILaunchConfiguration)arg);
+					return (V) createBackendGDBService(session, (ILaunchConfiguration) arg);
 				}
 			}
 		} else if (IGDBTraceControl.class.isAssignableFrom(clazz)) {
 			for (Object arg : optionalArguments) {
 				if (arg instanceof ILaunchConfiguration) {
-					return (V)createTraceControlService(session, (ILaunchConfiguration)arg);
+					return (V) createTraceControlService(session, (ILaunchConfiguration) arg);
 				}
 			}
 		} else if (IGDBHardwareAndOS.class.isAssignableFrom(clazz)) {
 			for (Object arg : optionalArguments) {
 				if (arg instanceof ILaunchConfiguration) {
-					return (V)createHardwareAndOSService(session, (ILaunchConfiguration)arg);
+					return (V) createHardwareAndOSService(session, (ILaunchConfiguration) arg);
 				}
 			}
-		}
-		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
-			return (V)createBreakpointsSynchronizerService(session);
-		}
-		else if (IGDBFocusSynchronizer.class.isAssignableFrom(clazz)) {
-			return (V)createFocusSynchronizerService(session);
+		} else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V) createBreakpointsSynchronizerService(session);
+		} else if (IGDBFocusSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V) createFocusSynchronizerService(session);
 		}
 
-        return super.createService(clazz, session, optionalArguments);
+		return super.createService(clazz, session, optionalArguments);
 	}
 
 	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {
@@ -216,10 +214,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		return new MIBreakpoints(session);
 	}
-	
+
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
 		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
-			return new GDBControl_7_12(session, config, new CommandFactory_6_8());			
+			return new GDBControl_7_12(session, config, new CommandFactory_6_8());
 		}
 		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBControl_7_7(session, config, new CommandFactory_6_8());
@@ -253,7 +251,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		return new MIDisassembly(session);
 	}
-	
+
 	@Override
 	protected IExpressions createExpressionService(DsfSession session) {
 		// Replace the standard Expressions service with a version that supports pattern matching.
@@ -281,7 +279,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	protected IModules createModulesService(DsfSession session) {
 		return new MIModules(session);
 	}
-		
+
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
 		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
@@ -349,12 +347,12 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	protected ISourceLookup createSourceLookupService(DsfSession session) {
 		return new GDBSourceLookup(session);
 	}
-	
+
 	@Override
 	protected IStack createStackService(DsfSession session) {
 		return new MIStack(session);
 	}
-	
+
 	/** @since 3.0 */
 	protected IGDBTraceControl createTraceControlService(DsfSession session, ILaunchConfiguration config) {
 		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
@@ -369,9 +367,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		// It could be done with restricted functionality for GDB 7.1 and maybe even 7.0
 		// but the service would have to be properly coded, as some MI commands don't exists
 		// in those older GDB versions.  Also, gdbserver only supports tracing starting with 7.2
-		return null;		
+		return null;
 	}
-	
+
 	/** @since 4.1 */
 	protected IGDBHardwareAndOS createHardwareAndOSService(DsfSession session, ILaunchConfiguration config) {
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
@@ -382,21 +380,21 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		return new GDBHardwareAndOS(session);
 	}
-	
+
 	/**
 	 * @since 4.2
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
 	}
-	
+
 	/**
 	 * @since 5.2
 	 */
 	protected IGDBFocusSynchronizer createFocusSynchronizerService(DsfSession session) {
 		return new GDBFocusSynchronizer(session);
 	}
-	
+
 	/**
 	 * Compares the GDB version of the current debug session with the one specified by 
 	 * parameter 'version'.  Returns -1, 0, or 1 if the current version is less than, 
@@ -422,20 +420,17 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 * @since 4.8
 	 */
 	public static void validateGdbVersion(DsfSession session, String minVersion, IDsfService service) {
-		ILaunch launch = (ILaunch)session.getModelAdapter(ILaunch.class);
+		ILaunch launch = (ILaunch) session.getModelAdapter(ILaunch.class);
 		if (launch instanceof GdbLaunch) {
-			IDsfDebugServicesFactory servicesFactory = ((GdbLaunch)launch).getServiceFactory();
+			IDsfDebugServicesFactory servicesFactory = ((GdbLaunch) launch).getServiceFactory();
 			if (servicesFactory instanceof GdbDebugServicesFactory) {
-				String version = ((GdbDebugServicesFactory)servicesFactory).getVersion();
+				String version = ((GdbDebugServicesFactory) servicesFactory).getVersion();
 				if (LaunchUtils.compareVersions(minVersion, version) > 0) {
 					assert false;
-					
+
 					GdbPlugin.log(
-							new Status(
-								IStatus.WARNING, GdbPlugin.PLUGIN_ID,
-							    NLS.bind(
-							    	Messages.GDB_Version_Mismatch, 
-							    	new Object[] { version, service.getClass().getName(), minVersion })));
+							new Status(IStatus.WARNING, GdbPlugin.PLUGIN_ID, NLS.bind(Messages.GDB_Version_Mismatch,
+									new Object[] { version, service.getClass().getName(), minVersion })));
 				}
 				return;
 			}

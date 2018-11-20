@@ -25,11 +25,11 @@ import org.eclipse.jface.text.source.Annotation;
  * This interface is experimental
  */
 public interface IDocumentElementAnnotationUpdate extends IDocumentUpdate {
-    
-    /**
-     * Adds an annotation to this request.
-     * 
-     * @param annotation the annotation to add
-     */
-    public void addAnnotation( Annotation annotation );
+
+	/**
+	 * Adds an annotation to this request.
+	 * 
+	 * @param annotation the annotation to add
+	 */
+	public void addAnnotation(Annotation annotation);
 }

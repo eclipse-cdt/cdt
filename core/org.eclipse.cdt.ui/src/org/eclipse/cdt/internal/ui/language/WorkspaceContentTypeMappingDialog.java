@@ -79,20 +79,17 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 
 		return area;
 	}
-	
+
 	private void configureContentTypes(Combo combo) {
 		combo.removeAll();
-		String[] contentTypesIDs = LanguageManager.getInstance()
-				.getRegisteredContentTypeIds();
+		String[] contentTypesIDs = LanguageManager.getInstance().getRegisteredContentTypeIds();
 
-		IContentTypeManager contentTypeManager = Platform
-				.getContentTypeManager();
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
 		for (int i = 0; i < contentTypesIDs.length; i++) {
 			if (!fFilteredContentTypes.contains(contentTypesIDs[i])) {
 
-				String name = contentTypeManager.getContentType(
-						contentTypesIDs[i]).getName();
+				String name = contentTypeManager.getContentType(contentTypesIDs[i]).getName();
 
 				combo.add(name);
 

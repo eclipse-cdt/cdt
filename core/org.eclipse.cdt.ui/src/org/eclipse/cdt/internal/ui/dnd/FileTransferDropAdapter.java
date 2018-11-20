@@ -38,15 +38,15 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 	}
 
 	//---- TransferDropTargetListener interface ---------------------------------------
-	
+
 	@Override
 	public Transfer getTransfer() {
 		return FileTransfer.getInstance();
 	}
-	
+
 	@Override
 	public boolean isEnabled(DropTargetEvent event) {
-		Object target= event.item != null ? event.item.getData() : null;
+		Object target = event.item != null ? event.item.getData() : null;
 		if (target == null) {
 			return false;
 		}
@@ -54,23 +54,23 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 	}
 
 	//---- Actual DND -----------------------------------------------------------------
-	
+
 	@Override
 	public void validateDrop(Object target, DropTargetEvent event, int operation) {
-		event.detail= DND.DROP_NONE;
+		event.detail = DND.DROP_NONE;
 		boolean isContainer = false;
 		if (target instanceof IContainer) {
 			isContainer = true;
 		} else if (target instanceof IAdaptable) {
-			target = ((IAdaptable)target).getAdapter(IResource.class);
+			target = ((IAdaptable) target).getAdapter(IResource.class);
 			isContainer = target instanceof IContainer;
 		}
 		if (isContainer) {
-			IContainer container= (IContainer)target;
+			IContainer container = (IContainer) target;
 			if (container.isAccessible()) {
 				ResourceAttributes attributes = container.getResourceAttributes();
 				if (attributes != null && !attributes.isReadOnly()) {
-					event.detail= DND.DROP_COPY;
+					event.detail = DND.DROP_COPY;
 				}
 			}
 		}
@@ -78,17 +78,17 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 
 	@Override
 	public void drop(Object dropTarget, final DropTargetEvent event) {
-		int operation= event.detail;
-		
-		event.detail= DND.DROP_NONE;
-		final Object data= event.data;
+		int operation = event.detail;
+
+		event.detail = DND.DROP_NONE;
+		final Object data = event.data;
 		if (data == null || !(data instanceof String[]) || operation != DND.DROP_COPY)
 			return;
-		
-		final IContainer target= getActualTarget(dropTarget);
+
+		final IContainer target = getActualTarget(dropTarget);
 		if (target == null)
 			return;
-		
+
 		// Run the import operation asynchronously. 
 		// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
 		// while the operation executes. Fixes bug 35796.
@@ -98,20 +98,20 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 				getShell().forceActive();
 				new CopyFilesAndFoldersOperation(getShell()).copyFiles((String[]) data, target);
 				// Import always performs a copy.
-				event.detail= DND.DROP_COPY;
+				event.detail = DND.DROP_COPY;
 			}
 		});
 	}
-	
+
 	private IContainer getActualTarget(Object dropTarget) {
 		if (dropTarget instanceof IContainer) {
-			return (IContainer)dropTarget;
+			return (IContainer) dropTarget;
 		} else if (dropTarget instanceof ICElement) {
-			return getActualTarget(((ICElement)dropTarget).getResource());
+			return getActualTarget(((ICElement) dropTarget).getResource());
 		}
 		return null;
 	}
-	
+
 	Shell getShell() {
 		return getViewer().getControl().getShell();
 	}

@@ -32,21 +32,22 @@ public abstract class ArithmeticConversion {
 	private static final int DOMAIN_FLAGS = IBasicType.IS_IMAGINARY | IBasicType.IS_COMPLEX;
 
 	private enum Domain {
-		eReal(0),
-		eImaginary(IBasicType.IS_IMAGINARY),
-		eComplex(IBasicType.IS_COMPLEX);
+		eReal(0), eImaginary(IBasicType.IS_IMAGINARY), eComplex(IBasicType.IS_COMPLEX);
 
 		private final int fModifier;
 
 		private Domain(int modifier) {
-			fModifier= modifier;
+			fModifier = modifier;
 		}
 
 		int getModifier() {
 			return fModifier;
 		}
 	}
-	private enum Rank {eInt, eLong, eLongLong}
+
+	private enum Rank {
+		eInt, eLong, eLongLong
+	}
 
 	protected abstract IBasicType createBasicType(IBasicType.Kind kind, int modifiers);
 
@@ -65,14 +66,14 @@ public abstract class ArithmeticConversion {
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_modulo:
 		case IASTBinaryExpression.op_multiply:
-		// Additive operators
+			// Additive operators
 		case IASTBinaryExpression.op_minus:
 		case IASTBinaryExpression.op_plus:
-		// Bitwise operators
+			// Bitwise operators
 		case IASTBinaryExpression.op_binaryAnd:
 		case IASTBinaryExpression.op_binaryOr:
 		case IASTBinaryExpression.op_binaryXor:
-		// Gcc's minimum/maximum operators
+			// Gcc's minimum/maximum operators
 		case IASTBinaryExpression.op_max:
 		case IASTBinaryExpression.op_min:
 			return convert(op1, op2);
@@ -94,7 +95,7 @@ public abstract class ArithmeticConversion {
 	}
 
 	private boolean isArithmeticOrUnscopedEnum(IType op1) {
-		if (op1 instanceof IBasicType)  {
+		if (op1 instanceof IBasicType) {
 			final Kind kind = ((IBasicType) op1).getKind();
 			switch (kind) {
 			case eUnspecified:
@@ -118,7 +119,7 @@ public abstract class ArithmeticConversion {
 			return true;
 
 		if (op1 instanceof IBasicType) {
-			Kind kind= ((IBasicType) op1).getKind();
+			Kind kind = ((IBasicType) op1).getKind();
 			switch (kind) {
 			case eBoolean:
 			case eChar:
@@ -145,7 +146,7 @@ public abstract class ArithmeticConversion {
 	}
 
 	private final IType convert(IType type1, IType type2) {
-		Domain domain= getDomain(type1, type2);
+		Domain domain = getDomain(type1, type2);
 
 		// If either type is a long double, return that type
 		if (isLongDouble(type1)) {
@@ -185,15 +186,15 @@ public abstract class ArithmeticConversion {
 
 		IBasicType unsignedType, signedType;
 		if (btype1.isUnsigned()) {
-			unsignedType= btype1;
-			signedType= btype2;
+			unsignedType = btype1;
+			signedType = btype2;
 		} else {
-			unsignedType= btype2;
-			signedType= btype1;
+			unsignedType = btype2;
+			signedType = btype1;
 		}
 
-		final Rank signedRank= getIntegerRank(signedType);
-		final Rank unsignedRank= getIntegerRank(unsignedType);
+		final Rank signedRank = getIntegerRank(signedType);
+		final Rank unsignedRank = getIntegerRank(unsignedType);
 
 		// same rank -> use unsigned
 		if (unsignedRank.ordinal() >= signedRank.ordinal()) {
@@ -211,13 +212,13 @@ public abstract class ArithmeticConversion {
 
 	private IBasicType promote(IType type, Domain domain) {
 		if (type instanceof IEnumeration) {
-			IType fixedType= null;
+			IType fixedType = null;
 			if (type instanceof ICPPEnumeration) {
-				fixedType= ((ICPPEnumeration) type).getFixedType();
+				fixedType = ((ICPPEnumeration) type).getFixedType();
 			}
 			if (fixedType == null)
 				return createBasicType(Kind.eInt, domain.getModifier() | getEnumIntTypeModifiers((IEnumeration) type));
-			type= fixedType;
+			type = fixedType;
 		}
 
 		if (type instanceof IBasicType) {
@@ -258,8 +259,8 @@ public abstract class ArithmeticConversion {
 	}
 
 	private Domain getDomain(IType type1, IType type2) {
-		Domain d1= getDomain(type1);
-		Domain d2= getDomain(type2);
+		Domain d1 = getDomain(type1);
+		Domain d2 = getDomain(type2);
 		if (d1 == d2)
 			return d1;
 		return Domain.eComplex;
@@ -267,7 +268,7 @@ public abstract class ArithmeticConversion {
 
 	private Domain getDomain(IType type) {
 		if (type instanceof IBasicType) {
-			IBasicType bt= (IBasicType) type;
+			IBasicType bt = (IBasicType) type;
 			if (bt.isComplex())
 				return Domain.eComplex;
 			if (bt.isImaginary())
@@ -277,7 +278,7 @@ public abstract class ArithmeticConversion {
 	}
 
 	private IBasicType adjustDomain(IBasicType t, Domain d) {
-		Domain myDomain= getDomain(t);
+		Domain myDomain = getDomain(t);
 		if (myDomain == d)
 			return t;
 
@@ -301,16 +302,16 @@ public abstract class ArithmeticConversion {
 
 	private boolean isLongDouble(IType type) {
 		if (type instanceof IBasicType) {
-			final IBasicType bt= (IBasicType) type;
-			return bt.isLong() && bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eFloat128 ||
-					bt.getKind() == Kind.eDecimal128;
+			final IBasicType bt = (IBasicType) type;
+			return bt.isLong() && bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eFloat128
+					|| bt.getKind() == Kind.eDecimal128;
 		}
 		return false;
 	}
 
 	private static boolean isDouble(IType type) {
 		if (type instanceof IBasicType) {
-			final IBasicType bt= (IBasicType) type;
+			final IBasicType bt = (IBasicType) type;
 			return bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eDecimal64;
 		}
 		return false;
@@ -318,7 +319,7 @@ public abstract class ArithmeticConversion {
 
 	private static boolean isFloat(IType type) {
 		if (type instanceof IBasicType) {
-			final IBasicType bt= (IBasicType) type;
+			final IBasicType bt = (IBasicType) type;
 			return bt.getKind() == Kind.eFloat || bt.getKind() == Kind.eDecimal32;
 		}
 		return false;
@@ -345,7 +346,7 @@ public abstract class ArithmeticConversion {
 		switch (kind) {
 		case eBoolean:
 			return n == 0 || n == 1;
-			
+
 		case eInt:
 			if (!basicTarget.isUnsigned()) {
 				if (basicTarget.isShort()) {
@@ -383,11 +384,11 @@ public abstract class ArithmeticConversion {
 			return Integer.MIN_VALUE <= n && n <= Integer.MAX_VALUE;
 
 		case eFloat:
-			float f= n;
+			float f = n;
 			return (long) f == n;
 
 		case eDouble:
-			double d= n;
+			double d = n;
 			return (long) d == n;
 
 		default:
@@ -400,21 +401,25 @@ public abstract class ArithmeticConversion {
 	 */
 	private static long getApproximateSize(IBasicType type) {
 		switch (type.getKind()) {
-			case eChar: return 1;
-			case eWChar: return 2;
-			case eInt:
-				// Note: we return 6 for long so that both long -> int
-				//       and long long -> long conversions are reported
-				//       as narrowing, to be on the safe side.
-				return type.isShort() ? 2
-				     : type.isLong() ? 6
-				     : type.isLongLong() ? 8
-				     : 4;
-			case eBoolean: return 1;
-			case eChar16: return 2;
-			case eChar32: return 4;
-			case eInt128: return 16;
-			default: return 0;  // shouldn't happen
+		case eChar:
+			return 1;
+		case eWChar:
+			return 2;
+		case eInt:
+			// Note: we return 6 for long so that both long -> int
+			//       and long long -> long conversions are reported
+			//       as narrowing, to be on the safe side.
+			return type.isShort() ? 2 : type.isLong() ? 6 : type.isLongLong() ? 8 : 4;
+		case eBoolean:
+			return 1;
+		case eChar16:
+			return 2;
+		case eChar32:
+			return 4;
+		case eInt128:
+			return 16;
+		default:
+			return 0; // shouldn't happen
 		}
 	}
 

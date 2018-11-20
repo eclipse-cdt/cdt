@@ -142,7 +142,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 									String str = getTrimmedComment(comment);
 									if (str.toLowerCase().contains(fNoBreakComment.toLowerCase()))
 										continue;
-						
+
 									if (fNoBreakRegex != null && fNoBreakRegex.matcher(str).find()) {
 										continue;
 									}
@@ -223,8 +223,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		int line = astLocation.getEndingLineNumber();
 		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
 		int offset = astLocation.getNodeOffset();
-		return locFactory.createProblemLocation(getFile(), offset, 
-				offset + astLocation.getNodeLength(), line);
+		return locFactory.createProblemLocation(getFile(), offset, offset + astLocation.getNodeLength(), line);
 	}
 
 	/**
@@ -273,12 +272,12 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_NO_BREAK_COMMENT, CheckersMessages.CaseBreakChecker_DefaultNoBreakCommentDescription,
-				DEFAULT_NO_BREAK_COMMENT);
+		addPreference(problem, PARAM_NO_BREAK_COMMENT,
+				CheckersMessages.CaseBreakChecker_DefaultNoBreakCommentDescription, DEFAULT_NO_BREAK_COMMENT);
 		addPreference(problem, PARAM_LAST_CASE, CheckersMessages.CaseBreakChecker_LastCaseDescription, Boolean.FALSE);
 		addPreference(problem, PARAM_EMPTY_CASE, CheckersMessages.CaseBreakChecker_EmptyCaseDescription, Boolean.FALSE);
-		addPreference(problem, PARAM_ENABLE_FALLTHROUGH_QUICKFIX, CheckersMessages.CaseBreakChecker_EnableFallthroughQuickfixDescription,
-				Boolean.FALSE);
+		addPreference(problem, PARAM_ENABLE_FALLTHROUGH_QUICKFIX,
+				CheckersMessages.CaseBreakChecker_EnableFallthroughQuickfixDescription, Boolean.FALSE);
 	}
 
 	@Override

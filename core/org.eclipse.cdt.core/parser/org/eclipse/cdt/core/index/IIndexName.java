@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIndexName extends IName {
-	IIndexName[] EMPTY_ARRAY= {};
+	IIndexName[] EMPTY_ARRAY = {};
 
 	/**
 	 * Returns the file the name belongs to.
@@ -79,7 +79,7 @@ public interface IIndexName extends IName {
 	 * @since 6.5
 	 */
 	public boolean isPotentialMatch() throws CoreException;
-	
+
 	/**
 	 * Returns whether this name specifies an inline namespace.
 	 * @since 5.3

@@ -38,7 +38,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * It needs a real name for the name of the build directory, for example.
 	 */
 	public static final String DEFAULT_NAME = "default"; //$NON-NLS-1$
-	
+
 	/**
 	 * @since 6.4
 	 */
@@ -63,7 +63,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @return the toolchain for this build configuration
 	 */
 	IToolChain getToolChain() throws CoreException;
-	
+
 	/**
 	 * Return the launch mode associated with this build configuration.
 	 * 
@@ -115,7 +115,8 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *         next time it is run or <code>null</code> if none
 	 * @throws CoreException
 	 */
-	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
+	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Perform clean.
@@ -127,7 +128,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @throws CoreException
 	 */
 	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * The binaries produced by the build.
 	 * 

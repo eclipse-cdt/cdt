@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -43,7 +43,7 @@ public class CompositeCPPUnknownMemberClass extends CPPUnknownMemberClass implem
 	public IIndexBinding getOwner() {
 		return (IIndexBinding) super.getOwner();
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {
@@ -52,7 +52,7 @@ public class CompositeCPPUnknownMemberClass extends CPPUnknownMemberClass implem
 			return null;
 		}
 	}
-	
+
 	@Override
 	protected CPPUnknownTypeScope createScope() {
 		return new CompositeCPPUnknownScope(this, new CPPASTName(getNameCharArray()));

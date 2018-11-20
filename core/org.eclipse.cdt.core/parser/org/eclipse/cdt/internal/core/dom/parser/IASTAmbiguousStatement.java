@@ -17,9 +17,10 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 public interface IASTAmbiguousStatement extends IASTStatement {
-    public static final ASTNodeProperty STATEMENT = new ASTNodeProperty("IASTAmbiguousStatement.STATEMENT - Ambiguous statement."); //$NON-NLS-1$
+	public static final ASTNodeProperty STATEMENT = new ASTNodeProperty(
+			"IASTAmbiguousStatement.STATEMENT - Ambiguous statement."); //$NON-NLS-1$
 
-    public void addStatement(IASTStatement s);
+	public void addStatement(IASTStatement s);
 
-    public IASTStatement[] getStatements();
+	public IASTStatement[] getStatements();
 }

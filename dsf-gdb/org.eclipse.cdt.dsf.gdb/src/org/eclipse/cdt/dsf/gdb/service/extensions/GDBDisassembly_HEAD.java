@@ -42,12 +42,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GDBDisassembly_HEAD extends GDBDisassembly_7_3 {
 	public GDBDisassembly_HEAD(DsfSession session) {
 		super(session);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_3_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_3_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}

@@ -22,9 +22,9 @@ import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
  * 
  */
 public class ToggleLinkingAction extends AbstractToggleLinkingAction {
-	
-    IndexView fCView;
-    
+
+	IndexView fCView;
+
 	/**
 	 * Constructs a new action.
 	 */
@@ -38,7 +38,7 @@ public class ToggleLinkingAction extends AbstractToggleLinkingAction {
 	 */
 	@Override
 	public void run() {
-	    fCView.toggleLinking();
+		fCView.toggleLinking();
 	}
 
 }

@@ -41,18 +41,18 @@ class FieldDescriptor {
 	private final AccessorDescriptor setter;
 	private final AccessorDescriptor[] childNodes;
 	private final GetterSetterContext context;
-	
+
 	FieldDescriptor(IASTDeclarator field, GetterSetterContext context) {
 		this.fieldName = GetterSetterContext.getDeclaratorName(field);
 		this.fieldDeclarator = field;
 		this.context = context;
 		Set<String> namesToAvoid = getNamesToAvoid();
 		String name = GetterSetterNameGenerator.generateGetterName(fieldName, namesToAvoid);
-		this.getter = new AccessorDescriptor(AccessorKind.GETTER, name,	this);
+		this.getter = new AccessorDescriptor(AccessorKind.GETTER, name, this);
 		name = GetterSetterNameGenerator.generateSetterName(fieldName, namesToAvoid);
-		 if (!isAssignable(field))
-			 name = null;
-		this.setter = new AccessorDescriptor(AccessorKind.SETTER, name,	this);
+		if (!isAssignable(field))
+			name = null;
+		this.setter = new AccessorDescriptor(AccessorKind.SETTER, name, this);
 
 		List<AccessorDescriptor> children = new ArrayList<AccessorDescriptor>(2);
 		if (getter.canBeGenerated()) {

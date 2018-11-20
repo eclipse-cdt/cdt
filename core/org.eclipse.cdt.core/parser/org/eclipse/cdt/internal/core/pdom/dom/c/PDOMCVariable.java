@@ -52,13 +52,13 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	 * record).
 	 */
 	private static final int ANNOTATIONS = VALUE_OFFSET + Database.VALUE_SIZE;
-	
+
 	/**
 	 * The size in bytes of a PDOMCVariable record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
-	
+
 	public PDOMCVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
@@ -70,7 +70,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
-			IVariable var= (IVariable) newBinding;
+			IVariable var = (IVariable) newBinding;
 			linkage.storeType(record + TYPE_OFFSET, var.getType());
 			linkage.storeValue(record + VALUE_OFFSET, var.getInitialValue());
 			getDB().putByte(record + ANNOTATIONS, PDOMCAnnotations.encodeVariableAnnotations(var));
@@ -90,7 +90,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	public int getNodeType() {
 		return IIndexCBindingConstants.CVARIABLE;
 	}
-	
+
 	@Override
 	public IType getType() {
 		try {

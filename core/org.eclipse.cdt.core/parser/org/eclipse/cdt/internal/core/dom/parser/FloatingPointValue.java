@@ -107,7 +107,7 @@ public final class FloatingPointValue implements IValue {
 
 	@Override
 	public ICPPEvaluation[] getAllSubValues() {
-		return new ICPPEvaluation[]{ getEvaluation() };
+		return new ICPPEvaluation[] { getEvaluation() };
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public final class FloatingPointValue implements IValue {
 	}
 
 	private static char[] toCharArray(double value) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append(value);
 		return CharArrayUtils.extractChars(buf);
 	}
@@ -166,7 +166,7 @@ public final class FloatingPointValue implements IValue {
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
 		return new FloatingPointValue(buf.getCharArray());
 	}
-	
+
 	@Override
 	public boolean isEquivalentTo(IValue other) {
 		if (!(other instanceof FloatingPointValue)) {

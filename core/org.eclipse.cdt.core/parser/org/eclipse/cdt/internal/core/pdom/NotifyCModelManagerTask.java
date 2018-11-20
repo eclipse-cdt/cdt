@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -31,7 +31,7 @@ public class NotifyCModelManagerTask implements IPDOMIndexerTask {
 	private final IProject fProject;
 
 	public NotifyCModelManagerTask(IProject project) {
-		fProject= project;
+		fProject = project;
 	}
 
 	@Override
@@ -46,14 +46,12 @@ public class NotifyCModelManagerTask implements IPDOMIndexerTask {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
-		IContentType ct1= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER);
-		IContentType ct2= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+		IContentType ct1 = Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER);
+		IContentType ct2 = Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 		if (ct1 != null && ct2 != null) {
 			final ProjectScope scope = new ProjectScope(fProject);
 			CModelManager.getDefault().contentTypeChanged(new ContentTypeChangeEvent[] {
-					new ContentTypeChangeEvent(ct1, scope),
-					new ContentTypeChangeEvent(ct2, scope)
-			});
+					new ContentTypeChangeEvent(ct1, scope), new ContentTypeChangeEvent(ct2, scope) });
 		}
 	}
 

@@ -41,7 +41,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	protected ITranslationUnit fUnit;
 	protected String fName;
 	private final boolean fMemberGrouping;
-	
+
 	public NamespacesGrouping(ITranslationUnit unit, INamespace namespace) {
 		this(unit, namespace, false);
 	}
@@ -84,7 +84,6 @@ public class NamespacesGrouping extends CElementGrouping {
 		return list.toArray();
 	}
 
-
 	/**
 	 * @since 5.1
 	 */
@@ -115,7 +114,7 @@ public class NamespacesGrouping extends CElementGrouping {
 		Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
 		for (int i = 0; i < children.length; ++i) {
 			if (children[i] instanceof IMember) {
-				final ICElement member = (ICElement)children[i];
+				final ICElement member = (ICElement) children[i];
 				String name = member.getElementName();
 				int idx = name.lastIndexOf("::"); //$NON-NLS-1$
 				if (idx < 0) {
@@ -160,7 +159,7 @@ public class NamespacesGrouping extends CElementGrouping {
 			return true;
 		}
 		if (obj instanceof NamespacesGrouping) {
-			NamespacesGrouping other = (NamespacesGrouping)obj;
+			NamespacesGrouping other = (NamespacesGrouping) obj;
 			return fUnit.equals(other.fUnit) && fName.equals(other.fName);
 		}
 		return false;
@@ -173,7 +172,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	public int hashCode() {
 		return fUnit.hashCode() * 17 + fName.hashCode();
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.CElementGrouping#toString()
 	 */

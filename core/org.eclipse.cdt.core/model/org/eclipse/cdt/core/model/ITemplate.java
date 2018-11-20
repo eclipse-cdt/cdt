@@ -43,7 +43,7 @@ public interface ITemplate {
 	 * name, its  template parameters, followed by its normal parameters.
 	 * @return String
 	 * @throws CModelException
-	 */	
+	 */
 	String getTemplateSignature() throws CModelException;
 
 	/**

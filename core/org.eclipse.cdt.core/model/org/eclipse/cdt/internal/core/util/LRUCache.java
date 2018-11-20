@@ -48,32 +48,32 @@ public class LRUCache<K, T> implements Cloneable {
 		 * Hash table key
 		 */
 		public K _fKey;
-		 
+
 		/**
 		 * Hash table value (an LRUCacheEntry object)
 		 */
-		public T _fValue;		 
+		public T _fValue;
 
 		/**
 		 * Time value for queue sorting
 		 */
 		public int _fTimestamp;
-		
+
 		/**
 		 * Cache footprint of this entry
 		 */
 		public int _fSpace;
-		
+
 		/**
 		 * Previous entry in queue
 		 */
 		public LRUCacheEntry<K, T> _fPrevious;
-			
+
 		/**
 		 * Next entry in queue
 		 */
 		public LRUCacheEntry<K, T> _fNext;
-			
+
 		/**
 		 * Creates a new instance of the receiver with the provided values
 		 * for key, value, and space.
@@ -91,38 +91,38 @@ public class LRUCache<K, T> implements Cloneable {
 		public String toString() {
 			return "LRUCacheEntry [" + _fKey + "-->" + _fValue + "]"; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
 		}
-	}	
+	}
 
 	/**
 	 * Amount of cache space used so far
 	 */
 	protected int fCurrentSpace;
-	
+
 	/**
 	 * Maximum space allowed in cache
 	 */
 	protected int fSpaceLimit;
-	
+
 	/**
 	 * Counter for handing out sequential timestamps
 	 */
-	protected int	fTimestampCounter;
-	
+	protected int fTimestampCounter;
+
 	/**
 	 * Hash table for fast random access to cache entries
 	 */
-	protected Hashtable<K,LRUCacheEntry<K, T>> fEntryTable;
+	protected Hashtable<K, LRUCacheEntry<K, T>> fEntryTable;
 
 	/**
 	 * Start of queue (most recently used entry) 
-	 */	
+	 */
 	protected LRUCacheEntry<K, T> fEntryQueue;
 
 	/**
 	 * End of queue (least recently used entry)
-	 */	
+	 */
 	protected LRUCacheEntry<K, T> fEntryQueueTail;
-		
+
 	/**
 	 * Default amount of space in the cache
 	 */
@@ -143,7 +143,7 @@ public class LRUCache<K, T> implements Cloneable {
 	public LRUCache(int size) {
 		fTimestampCounter = fCurrentSpace = 0;
 		fEntryQueue = fEntryQueueTail = null;
-		fEntryTable = new Hashtable<K,LRUCacheEntry<K, T>>(size);
+		fEntryTable = new Hashtable<K, LRUCacheEntry<K, T>>(size);
 		fSpaceLimit = size;
 	}
 
@@ -156,7 +156,7 @@ public class LRUCache<K, T> implements Cloneable {
 	public Object clone() {
 		LRUCache<K, T> newCache = newInstance(fSpaceLimit);
 		LRUCacheEntry<K, T> qEntry;
-		
+
 		/* Preserve order of entries by copying from oldest to newest */
 		qEntry = this.fEntryQueueTail;
 		while (qEntry != null) {
@@ -172,9 +172,9 @@ public class LRUCache<K, T> implements Cloneable {
 	public void flush() {
 		fCurrentSpace = 0;
 		LRUCacheEntry<K, T> entry = fEntryQueueTail; // Remember last entry
-		fEntryTable = new Hashtable<K,LRUCacheEntry<K, T>>();  // Clear it out
-		fEntryQueue = fEntryQueueTail = null;  
-		while (entry != null) {  // send deletion notifications in LRU order
+		fEntryTable = new Hashtable<K, LRUCacheEntry<K, T>>(); // Clear it out
+		fEntryQueue = fEntryQueueTail = null;
+		while (entry != null) { // send deletion notifications in LRU order
 			privateNotifyDeletionFromCache(entry);
 			entry = entry._fPrevious;
 		}
@@ -208,7 +208,7 @@ public class LRUCache<K, T> implements Cloneable {
 		if (entry == null) {
 			return null;
 		}
-		
+
 		this.updateTimestamp(entry);
 		return entry._fValue;
 	}
@@ -234,9 +234,9 @@ public class LRUCache<K, T> implements Cloneable {
 		return fEntryTable.keys();
 	}
 
-    /**
-     * Tests if this cache is empty.
-     */
+	/**
+	 * Tests if this cache is empty.
+	 */
 	public boolean isEmpty() {
 		return fEntryTable.isEmpty();
 	}
@@ -250,17 +250,17 @@ public class LRUCache<K, T> implements Cloneable {
 	 */
 	protected boolean makeSpace(int space) {
 		int limit = this.getSpaceLimit();
-		
+
 		/* if space is already available */
 		if (fCurrentSpace + space <= limit) {
 			return true;
 		}
-		
+
 		/* if entry is too big for cache */
 		if (space > limit) {
 			return false;
 		}
-		
+
 		/* Free up space by removing oldest entries */
 		while (fCurrentSpace + space > limit && fEntryQueueTail != null) {
 			this.privateRemoveEntry(fEntryQueueTail, false);
@@ -293,18 +293,18 @@ public class LRUCache<K, T> implements Cloneable {
 			fEntryTable.put(entry._fKey, entry);
 			fCurrentSpace += entry._fSpace;
 		}
-		
+
 		entry._fTimestamp = fTimestampCounter++;
 		entry._fNext = this.fEntryQueue;
 		entry._fPrevious = null;
-		
+
 		if (fEntryQueue == null) {
 			/* this is the first and last entry */
 			fEntryQueueTail = entry;
 		} else {
 			fEntryQueue._fPrevious = entry;
 		}
-		
+
 		fEntryQueue = entry;
 	}
 
@@ -325,7 +325,7 @@ public class LRUCache<K, T> implements Cloneable {
 	protected void privateRemoveEntry(LRUCacheEntry<K, T> entry, boolean shuffle) {
 		LRUCacheEntry<K, T> previous = entry._fPrevious;
 		LRUCacheEntry<K, T> next = entry._fNext;
-		
+
 		if (!shuffle) {
 			fEntryTable.remove(entry._fKey);
 			fCurrentSpace -= entry._fSpace;
@@ -356,11 +356,11 @@ public class LRUCache<K, T> implements Cloneable {
 	 */
 	public T put(K key, T value) {
 		int oldSpace, newTotal;
-		
+
 		/* Check whether there's an entry in the cache */
 		int newSpace = spaceFor(key, value);
 		LRUCacheEntry<K, T> entry = fEntryTable.get(key);
-		
+
 		if (entry != null) {
 			/*
 			 * Replace the entry in the cache if it would not overflow
@@ -446,17 +446,16 @@ public class LRUCache<K, T> implements Cloneable {
 		for (int i = 0; i < length; i++) {
 			Object key = e.nextElement();
 			unsortedKeys[i] = key;
-			unsortedToStrings[i] = 
-				(key instanceof org.eclipse.cdt.internal.core.model.CElement) ?
-					((org.eclipse.cdt.internal.core.model.CElement)key).getElementName() :
-					key.toString();
+			unsortedToStrings[i] = (key instanceof org.eclipse.cdt.internal.core.model.CElement)
+					? ((org.eclipse.cdt.internal.core.model.CElement) key).getElementName()
+					: key.toString();
 		}
 		ToStringSorter sorter = new ToStringSorter();
 		sorter.sort(unsortedKeys, unsortedToStrings);
 		for (int i = 0; i < length; i++) {
 			String toString = sorter.sortedStrings[i];
 			Object value = this.get(sorter.sortedObjects[i]);
-			result.append(toString);		
+			result.append(toString);
 			result.append(" -> "); //$NON-NLS-1$
 			result.append(value);
 			result.append("\n"); //$NON-NLS-1$

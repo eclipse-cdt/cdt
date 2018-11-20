@@ -75,9 +75,8 @@ public abstract class SemanticHighlightingWithOwnPreference extends SemanticHigh
 	 */
 	public abstract String getDisplayName();
 
-
 	private String getThemeColorKey() {
-		return CUIPlugin.PLUGIN_ID + "." + getPreferenceKey() + "Highlighting";  //$NON-NLS-1$//$NON-NLS-2$
+		return CUIPlugin.PLUGIN_ID + "." + getPreferenceKey() + "Highlighting"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
@@ -92,8 +91,8 @@ public abstract class SemanticHighlightingWithOwnPreference extends SemanticHigh
 		if (!PlatformUI.isWorkbenchRunning())
 			return defaultRGB;
 
-		ColorRegistry registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
-		RGB rgb= registry.getRGB(key);
+		ColorRegistry registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
+		RGB rgb = registry.getRGB(key);
 		if (rgb != null)
 			return rgb;
 		return defaultRGB;

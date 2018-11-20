@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDiscoveredScannerInfoSerializable {
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
 	public static final String PATH = "path"; //$NON-NLS-1$
@@ -70,7 +69,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 
 	@Override
 	public synchronized IPath[] getIncludePaths() {
-		if ( activePaths == null) {
+		if (activePaths == null) {
 			createPathLists();
 		}
 		return activePaths.toArray(new IPath[activePaths.size()]);
@@ -161,8 +160,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		Set<String> symbolsSet = symbols.keySet();
 		for (String symbol : symbolsSet) {
 			SymbolEntry se = symbols.get(symbol);
-			if (se != null)
-			{
+			if (se != null) {
 				List<String> activeValues = se.getActiveRaw();
 				for (String value : activeValues) {
 					Element symbolElement = doc.createElement(DEFINED_SYMBOL);
@@ -192,11 +190,12 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		while (child != null) {
 			if (child.getNodeName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
-				includes.put( SafeStringInterner.safeIntern(((Element)child).getAttribute(PATH)), Boolean.valueOf( ((Element)child).getAttribute(REMOVED)));
+				includes.put(SafeStringInterner.safeIntern(((Element) child).getAttribute(PATH)),
+						Boolean.valueOf(((Element) child).getAttribute(REMOVED)));
 			} else if (child.getNodeName().equals(DEFINED_SYMBOL)) {
 				// Add the symbol to the symbol list
-				String symbol = SafeStringInterner.safeIntern(((Element)child).getAttribute(SYMBOL));
-				String removed = ((Element)child).getAttribute(REMOVED);
+				String symbol = SafeStringInterner.safeIntern(((Element) child).getAttribute(SYMBOL));
+				String removed = ((Element) child).getAttribute(REMOVED);
 				boolean bRemoved = (removed != null && removed.equals("true")); //$NON-NLS-1$
 				ScannerConfigUtil.scAddSymbolString2SymbolEntryMap(symbols, symbol, !bRemoved);
 			}
@@ -215,12 +214,12 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		return PerProjectSICollector.COLLECTOR_ID;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
+	 */
+	@Override
 	public IDiscoveredScannerInfoSerializable getSerializable() {
-        return this;
-    }
+		return this;
+	}
 
 }

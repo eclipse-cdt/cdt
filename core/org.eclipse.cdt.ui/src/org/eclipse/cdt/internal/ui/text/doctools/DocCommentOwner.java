@@ -25,15 +25,19 @@ public class DocCommentOwner implements IDocCommentOwner {
 	private final String id;
 	private final String name;
 	private final IDocCommentViewerConfiguration multi, single;
-	
-	public DocCommentOwner(String id, String name, IDocCommentViewerConfiguration multi, IDocCommentViewerConfiguration single) {
-		Assert.isNotNull(id); Assert.isNotNull(name); Assert.isNotNull(multi); Assert.isNotNull(single);
-		this.id= id;
-		this.name= name;
-		this.multi= multi;
-		this.single= single;
+
+	public DocCommentOwner(String id, String name, IDocCommentViewerConfiguration multi,
+			IDocCommentViewerConfiguration single) {
+		Assert.isNotNull(id);
+		Assert.isNotNull(name);
+		Assert.isNotNull(multi);
+		Assert.isNotNull(single);
+		this.id = id;
+		this.name = name;
+		this.multi = multi;
+		this.single = single;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getID()
 	 */
@@ -41,7 +45,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	public String getID() {
 		return id;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getName()
 	 */
@@ -49,7 +53,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	public String getName() {
 		return name;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getMultilineConfiguration()
 	 */
@@ -57,7 +61,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	public IDocCommentViewerConfiguration getMultilineConfiguration() {
 		return multi;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getSinglelineConfiguration()
 	 */

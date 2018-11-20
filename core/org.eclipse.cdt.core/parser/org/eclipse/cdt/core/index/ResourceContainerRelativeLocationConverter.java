@@ -42,7 +42,7 @@ public class ResourceContainerRelativeLocationConverter implements IIndexLocatio
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		IResource member= root.getFile(fullPath.append(raw)); 
 		return new IndexFileLocation(member.getLocationURI(), member.getFullPath().toString());
-	}
+	}
 	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
 		String sFullPath= location.getFullPath();

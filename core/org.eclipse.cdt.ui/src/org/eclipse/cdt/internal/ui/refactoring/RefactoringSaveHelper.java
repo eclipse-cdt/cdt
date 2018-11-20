@@ -17,6 +17,10 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -40,12 +44,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListDialog;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * Helper to save dirty editors prior to starting a refactoring.

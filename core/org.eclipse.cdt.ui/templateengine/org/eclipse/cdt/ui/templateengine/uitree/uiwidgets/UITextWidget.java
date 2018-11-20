@@ -18,6 +18,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
+import org.eclipse.cdt.ui.templateengine.Messages;
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
+import org.eclipse.cdt.ui.templateengine.uitree.IPatternMatchingTable;
+import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
+import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -26,14 +33,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
-import org.eclipse.cdt.ui.templateengine.Messages;
-import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
-import org.eclipse.cdt.ui.templateengine.uitree.IPatternMatchingTable;
-import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
-import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * This gives a Label and Text widget. The Text widget can be SINGLE type of

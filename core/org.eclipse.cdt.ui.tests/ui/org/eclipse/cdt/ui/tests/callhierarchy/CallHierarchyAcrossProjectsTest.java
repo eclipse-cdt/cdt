@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Tree;
@@ -22,13 +26,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
 
 public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 

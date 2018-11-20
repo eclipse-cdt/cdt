@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
-import junit.framework.TestCase;
-
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -23,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+
+import junit.framework.TestCase;
 
 /**
  * @author Guido Zgraggen IFS

@@ -19,6 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexChangeEvent;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IIndexerStateEvent;
+import org.eclipse.cdt.core.index.IIndexerStateListener;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,18 +43,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexChangeEvent;
-import org.eclipse.cdt.core.index.IIndexChangeListener;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IIndexerStateEvent;
-import org.eclipse.cdt.core.index.IIndexerStateListener;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
 
 class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, ILabelProviderListener {
 	private static final String DECORATOR_ID = "org.eclipse.cdt.ui.indexedFiles"; //$NON-NLS-1$

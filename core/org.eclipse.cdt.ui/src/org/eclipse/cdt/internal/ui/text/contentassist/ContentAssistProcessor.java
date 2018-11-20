@@ -22,6 +22,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -59,13 +64,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * A content assist processor that aggregates the proposals of the

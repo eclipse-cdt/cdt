@@ -16,25 +16,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
+import org.eclipse.cdt.core.model.AssemblyLanguage;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
+import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.core.model.AssemblyLanguage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
-import org.eclipse.cdt.internal.ui.text.CCommentScanner;
-import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
-import org.eclipse.cdt.internal.ui.text.TokenStore;
-import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 /**
  * This type shares all scanners and the color manager between

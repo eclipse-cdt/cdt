@@ -16,6 +16,8 @@ package org.eclipse.cdt.ui.wizards;
 
 import java.util.List;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,9 +27,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 
 /**
  * This class is basic implementation for ICWizardHandler interface.

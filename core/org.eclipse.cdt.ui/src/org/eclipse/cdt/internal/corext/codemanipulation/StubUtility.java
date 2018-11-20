@@ -23,6 +23,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContext;
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContext;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.corext.util.Strings;
+import org.eclipse.cdt.internal.ui.text.CBreakIterator;
+import org.eclipse.cdt.internal.ui.util.NameComposer;
+import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -51,33 +75,6 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 
 import com.ibm.icu.text.BreakIterator;
-
-import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.utils.PathUtil;
-
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContext;
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContext;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-import org.eclipse.cdt.internal.corext.util.Strings;
-
-import org.eclipse.cdt.internal.ui.text.CBreakIterator;
-import org.eclipse.cdt.internal.ui.util.NameComposer;
-import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 
 public class StubUtility {
 	private static final String[] EMPTY = {};

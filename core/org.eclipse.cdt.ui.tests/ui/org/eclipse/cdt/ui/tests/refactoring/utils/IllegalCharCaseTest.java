@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
+
+import junit.framework.TestCase;
 
 /**
  * @author Thomas Corbat

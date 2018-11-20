@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.internal.ui.MembersGrouping;
 
 /**

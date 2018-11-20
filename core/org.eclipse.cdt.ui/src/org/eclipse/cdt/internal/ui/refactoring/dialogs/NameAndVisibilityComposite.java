@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
+import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -21,8 +22,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
   * Composite to query for a name and visibility.

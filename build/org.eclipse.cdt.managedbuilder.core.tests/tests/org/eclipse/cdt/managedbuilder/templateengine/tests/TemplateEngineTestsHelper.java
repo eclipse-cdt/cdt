@@ -20,8 +20,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -39,6 +37,8 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+
+import junit.framework.TestCase;
 
 /**
  *

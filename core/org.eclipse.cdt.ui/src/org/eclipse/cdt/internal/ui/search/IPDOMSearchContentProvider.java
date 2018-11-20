@@ -15,10 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The content in the tree and list views may be either:

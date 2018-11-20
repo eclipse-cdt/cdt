@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import junit.framework.TestSuite;
-
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -76,6 +74,8 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 /**
  * @author jcamelon

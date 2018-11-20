@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 
 public abstract class ConfigurationBlockPropertyAndPreferencePage extends PropertyAndPreferencePage {
 	private OptionsConfigurationBlock fConfigurationBlock;

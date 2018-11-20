@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.BitSet;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -27,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+
+import junit.framework.TestSuite;
 
 /**
  * Testcases for inactive code in ast.

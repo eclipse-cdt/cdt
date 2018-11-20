@@ -14,11 +14,9 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.jface.action.Action;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TableViewer;
-
 import org.eclipse.ui.PlatformUI;
 
 /**

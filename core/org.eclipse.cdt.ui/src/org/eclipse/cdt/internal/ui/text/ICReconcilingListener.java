@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Interface of an object listening to (AST-) reconciling.

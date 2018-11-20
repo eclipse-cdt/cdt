@@ -16,6 +16,9 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 import java.net.URI;
 import java.net.URL;
 
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -26,11 +29,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.Preferences;
-
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 /**
  * Build console manager managing the global CDT build console.

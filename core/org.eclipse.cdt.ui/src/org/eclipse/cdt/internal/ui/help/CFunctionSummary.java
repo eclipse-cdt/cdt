@@ -15,13 +15,12 @@ package org.eclipse.cdt.internal.ui.help;
 
 import java.util.ArrayList;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class CFunctionSummary implements IFunctionSummary {
 	private static final String ATTR_STD = "standard"; //$NON-NLS-1$

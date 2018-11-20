@@ -15,11 +15,10 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This interface represents a utility of some sort that is used in the build process.

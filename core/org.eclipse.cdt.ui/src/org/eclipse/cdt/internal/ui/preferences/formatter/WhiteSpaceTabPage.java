@@ -19,6 +19,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.InnerNode;
+import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.Node;
+import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.OptionNode;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -45,12 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.part.PageBook;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.InnerNode;
-import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.Node;
-import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.OptionNode;
 
 public class WhiteSpaceTabPage extends FormatterTabPage {
 

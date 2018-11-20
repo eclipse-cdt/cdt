@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;

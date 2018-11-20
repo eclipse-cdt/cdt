@@ -14,6 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
+import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.refactoring.actions.CRenameAction;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -21,18 +30,6 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.refactoring.actions.CRenameAction;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.corext.util.Messages;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
-import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
 
 /**
  * A quick assist proposal that starts the Rename refactoring.

@@ -18,13 +18,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.cdt.testsrunner.test.TestsRunnerTestActivator;
 import org.eclipse.core.runtime.Plugin;
+
+import junit.framework.TestCase;
 
 /**
  * Base test case for Tests Runner provider plug-ins testing.

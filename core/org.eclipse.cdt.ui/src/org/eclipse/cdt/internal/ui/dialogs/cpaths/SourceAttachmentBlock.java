@@ -18,6 +18,22 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILibraryEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -50,24 +66,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILibraryEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 
 /**
  * UI to set the source attachment archive and root. Same implementation for both setting attachments for libraries from variable

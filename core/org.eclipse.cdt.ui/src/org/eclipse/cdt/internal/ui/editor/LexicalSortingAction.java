@@ -15,14 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CElementSorter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-
-import org.eclipse.cdt.ui.CElementSorter;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class LexicalSortingAction extends Action {
 

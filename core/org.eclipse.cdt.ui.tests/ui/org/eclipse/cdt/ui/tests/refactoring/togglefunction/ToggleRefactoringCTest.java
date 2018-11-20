@@ -16,10 +16,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoring;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 /**
  * Tests for ToggleRefactoring for C projects.

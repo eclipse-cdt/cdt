@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import com.ibm.icu.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.core.runtime.Assert;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * Breaks C text into word starts, also stops at line start and end. No

@@ -15,13 +15,12 @@
 
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
 
 /**
  * Set whether to show error in editor when moving to next/prev error in Build Console

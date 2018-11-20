@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -25,6 +23,8 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about

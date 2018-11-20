@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A semantic highlighting which has its own preferences for specifying

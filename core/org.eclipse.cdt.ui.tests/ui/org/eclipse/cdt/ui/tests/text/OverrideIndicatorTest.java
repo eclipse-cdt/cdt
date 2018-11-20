@@ -14,12 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import org.eclipse.jface.text.source.Annotation;
-
-import org.eclipse.cdt.ui.tests.AnnotationTestCase;
-
 import org.eclipse.cdt.internal.ui.editor.OverrideIndicatorManager;
 import org.eclipse.cdt.internal.ui.editor.OverrideIndicatorManager.OverrideIndicator;
+import org.eclipse.cdt.ui.tests.AnnotationTestCase;
+import org.eclipse.jface.text.source.Annotation;
 
 /**
  * Test for {@see OverrideIndicatorManager} class.

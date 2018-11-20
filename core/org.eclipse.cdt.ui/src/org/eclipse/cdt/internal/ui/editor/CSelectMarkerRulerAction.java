@@ -16,28 +16,23 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-
+import org.eclipse.cdt.internal.ui.text.c.hover.CExpandHover;
+import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
+import org.eclipse.cdt.internal.ui.text.correction.QuickAssistLightBulbUpdater.AssistAnnotation;
 import org.eclipse.jface.action.IAction;
-
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.VerticalRulerEvent;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISelectionListener;
-
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.SelectAnnotationRulerAction;
-
-import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
-import org.eclipse.cdt.internal.ui.text.correction.QuickAssistLightBulbUpdater.AssistAnnotation;
-import org.eclipse.cdt.internal.ui.text.c.hover.CExpandHover;
 
 /**
  * A special select marker ruler action which activates quick fix if clicked on a quick fixable problem.

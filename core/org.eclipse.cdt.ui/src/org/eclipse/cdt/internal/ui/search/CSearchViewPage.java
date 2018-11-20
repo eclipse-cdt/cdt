@@ -16,6 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -41,14 +47,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * Implementation of the search view page for index based searches.

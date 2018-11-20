@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 /**
  * The label provider for the c model elements.

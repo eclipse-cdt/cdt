@@ -13,6 +13,12 @@ package org.eclipse.cdt.ui.build;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.build.IUserToolChainProvider;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.build.NewToolChainWizard;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -50,14 +56,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.tools.templates.ui.internal.Activator;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.core.build.IUserToolChainProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.build.NewToolChainWizard;
 
 /**
  * Preference page to manage Toolchains for Core Build.

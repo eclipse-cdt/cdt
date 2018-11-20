@@ -15,9 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.ui.navigator.ICommonMenuConstants;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * Constants for menu groups used in context menus for C views and editors.

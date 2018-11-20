@@ -19,6 +19,12 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -50,14 +56,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * Source viewer for C/C++ et al.

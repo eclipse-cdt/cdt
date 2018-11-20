@@ -16,6 +16,15 @@ package org.eclipse.cdt.ui.templateengine;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -45,17 +54,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public class ProjectSelectionPage extends WizardPage implements IWizardDataPage {
 

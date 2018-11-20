@@ -17,6 +17,7 @@ package org.eclipse.cdt.ui.tests.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
@@ -27,8 +28,6 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * This scanner is not actually use in the code it was relace by

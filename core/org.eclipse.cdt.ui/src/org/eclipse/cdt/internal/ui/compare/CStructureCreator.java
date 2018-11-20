@@ -21,6 +21,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ISharedDocumentAdapter;
 import org.eclipse.compare.IStreamContentAccessor;
@@ -38,22 +52,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.Position;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
 /**
  * A structure creator for C/C++ translation units.

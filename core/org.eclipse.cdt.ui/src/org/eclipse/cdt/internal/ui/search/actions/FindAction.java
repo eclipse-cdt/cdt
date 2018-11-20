@@ -14,6 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchElementQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
@@ -23,17 +32,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IWorkbenchSite;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchElementQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 public abstract class FindAction extends SelectionParseAction {
 	public FindAction(CEditor editor) {

@@ -21,16 +21,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.Region;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -62,17 +52,24 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Based on class OpenDeclarationsJob

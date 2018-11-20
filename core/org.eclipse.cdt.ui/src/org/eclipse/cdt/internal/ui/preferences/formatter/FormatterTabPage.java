@@ -17,6 +17,9 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,10 +27,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public abstract class FormatterTabPage extends ModifyDialogTabPage {
 	private final static String SHOW_INVISIBLE_PREFERENCE_KEY = CUIPlugin.PLUGIN_ID

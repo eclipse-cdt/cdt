@@ -16,13 +16,6 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkbenchPartSite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -32,10 +25,15 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
-import org.eclipse.cdt.ui.CElementContentProvider;
-
 import org.eclipse.cdt.internal.ui.util.RemoteTreeContentManager;
 import org.eclipse.cdt.internal.ui.util.RemoteTreeViewer;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * CViewContentProvider

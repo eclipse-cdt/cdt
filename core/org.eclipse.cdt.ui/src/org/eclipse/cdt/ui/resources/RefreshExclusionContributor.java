@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.resources;
 
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.core.resources.RefreshExclusion;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There

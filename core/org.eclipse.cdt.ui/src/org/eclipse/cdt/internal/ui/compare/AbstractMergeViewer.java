@@ -15,6 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.compare;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -29,10 +32,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Abstract implementation of a merge viewer.

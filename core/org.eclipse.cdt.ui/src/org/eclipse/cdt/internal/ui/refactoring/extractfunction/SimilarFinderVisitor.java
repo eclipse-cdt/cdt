@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
 

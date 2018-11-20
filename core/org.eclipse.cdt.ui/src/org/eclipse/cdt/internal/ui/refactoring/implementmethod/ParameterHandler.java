@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.PseudoNameGenerator;
 

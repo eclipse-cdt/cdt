@@ -15,9 +15,9 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.SegmentMatcher;
+
+import junit.framework.TestCase;
 
 public class SegmentMatcherTest extends TestCase {
 

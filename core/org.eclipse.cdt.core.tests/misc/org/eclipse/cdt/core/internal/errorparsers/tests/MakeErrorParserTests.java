@@ -15,10 +15,10 @@ package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.ErrorParserManager;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.core.ErrorParserManager;
 
 /**
  * This test is designed to exercise the error parser capabilities for GNU make.

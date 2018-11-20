@@ -14,12 +14,10 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
  * @author Emanuel Graf IFS

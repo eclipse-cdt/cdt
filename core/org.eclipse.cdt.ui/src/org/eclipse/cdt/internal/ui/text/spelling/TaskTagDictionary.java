@@ -18,14 +18,12 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import java.net.URL;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Dictionary for task tags.

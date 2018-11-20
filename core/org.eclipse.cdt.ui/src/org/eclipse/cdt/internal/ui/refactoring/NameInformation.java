@@ -18,8 +18,6 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -40,9 +38,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Additional information about an IASTName in code being refactored.

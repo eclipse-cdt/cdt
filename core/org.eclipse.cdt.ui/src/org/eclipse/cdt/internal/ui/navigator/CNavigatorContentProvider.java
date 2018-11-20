@@ -19,6 +19,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.internal.core.model.CModel;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -39,21 +51,6 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.core.model.CModel;
-import org.eclipse.cdt.internal.core.model.CModelManager;
-
-import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
 
 /**
  * A content provider populating a Common Navigator view with CDT model content.

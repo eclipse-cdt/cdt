@@ -16,6 +16,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,22 +43,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CodeGeneration;
-
-import org.eclipse.cdt.internal.core.model.CProject;
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardPage {
 	private final String KEY_LAST_USED_TEMPLATE = "LastUsedSourceTemplate"; //$NON-NLS-1$

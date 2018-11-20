@@ -20,6 +20,14 @@ package org.eclipse.cdt.visualizer.ui;
 // Java classes
 import java.util.List;
 
+import org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewAction;
+import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
+// Custom classes
+import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
+import org.eclipse.cdt.visualizer.ui.events.VisualizerViewerEvent;
+import org.eclipse.cdt.visualizer.ui.util.SelectionProviderAdapter;
+import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
+import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 // SWT/JFace classes
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
@@ -32,18 +40,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-
 // Eclipse/CDT classes
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewAction;
-import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
-
-// Custom classes
-import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
-import org.eclipse.cdt.visualizer.ui.events.VisualizerViewerEvent;
-import org.eclipse.cdt.visualizer.ui.util.SelectionProviderAdapter;
-import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
-import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 
 // ----------------------------------------------------------------------------
 // VisualizerView

@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy.extension;
 
-import org.eclipse.jface.viewers.IOpenListener;
-
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.ICHEContentProvider;
-
 import org.eclipse.cdt.internal.core.model.ext.FunctionDeclarationHandle;
+import org.eclipse.cdt.ui.ICHEContentProvider;
+import org.eclipse.jface.viewers.IOpenListener;
 
 /**
  * This class implements ICHEProvider and provides test information

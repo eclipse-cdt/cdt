@@ -19,9 +19,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -33,16 +38,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.FileManager;
-
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * It is required to test the selection performance independent of the indexer to make sure that the DOM is functioning properly.

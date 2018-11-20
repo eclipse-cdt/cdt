@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.TrailNodeEqualityChecker;
 
 public class ASTHelper {

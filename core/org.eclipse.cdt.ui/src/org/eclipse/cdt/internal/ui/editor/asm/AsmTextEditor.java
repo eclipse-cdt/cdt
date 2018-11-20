@@ -17,6 +17,24 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
+import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
+import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -50,26 +68,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
-import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
-import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
 
 /**
  * Assembly text editor.

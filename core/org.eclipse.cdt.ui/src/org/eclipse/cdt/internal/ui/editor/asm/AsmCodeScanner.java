@@ -19,18 +19,16 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
+import org.eclipse.cdt.ui.text.AbstractCScanner;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
-
-import org.eclipse.cdt.core.model.IAsmLanguage;
-import org.eclipse.cdt.ui.text.AbstractCScanner;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
-import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
 
 /*
  * An assembly code scanner.

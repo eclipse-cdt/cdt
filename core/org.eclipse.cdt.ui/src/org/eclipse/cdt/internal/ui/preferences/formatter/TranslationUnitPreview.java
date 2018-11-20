@@ -18,6 +18,9 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.internal.ui.ICStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.Region;
@@ -27,11 +30,6 @@ import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatterExtension;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICStatusConstants;
 
 public class TranslationUnitPreview extends CPreview {
 	private String fPreviewText;

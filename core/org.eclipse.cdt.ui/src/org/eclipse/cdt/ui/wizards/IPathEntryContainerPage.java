@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.jface.wizard.IWizardPage;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.jface.wizard.IWizardPage;
 
 public interface IPathEntryContainerPage extends IWizardPage {
 	/**

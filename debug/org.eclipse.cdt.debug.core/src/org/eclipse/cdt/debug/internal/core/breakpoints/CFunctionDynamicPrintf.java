@@ -16,8 +16,8 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 

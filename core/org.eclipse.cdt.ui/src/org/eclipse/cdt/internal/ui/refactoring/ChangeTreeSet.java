@@ -17,10 +17,9 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 /**
  * @author Emanuel Graf

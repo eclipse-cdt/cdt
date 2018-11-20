@@ -16,14 +16,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -39,6 +31,13 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 public class CPElement {
 	public static final String SOURCEATTACHMENT = "sourcepath"; //$NON-NLS-1$

@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
@@ -24,6 +22,8 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.Token;
+
+import junit.framework.TestSuite;
 
 public class LexerTests extends BaseTestCase {
 	private static final LexerOptions DEFAULT_OPTIONS = new LexerOptions();

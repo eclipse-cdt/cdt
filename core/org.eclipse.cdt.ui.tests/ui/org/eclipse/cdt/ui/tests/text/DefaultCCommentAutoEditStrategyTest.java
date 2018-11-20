@@ -17,26 +17,24 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.HashMap;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import junit.framework.Test;
 
 /**
  * Testing the auto indent strategies.

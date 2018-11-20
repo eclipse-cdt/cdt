@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -20,13 +25,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchSite;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
 
 /**
  * Common base class for refactoring actions.

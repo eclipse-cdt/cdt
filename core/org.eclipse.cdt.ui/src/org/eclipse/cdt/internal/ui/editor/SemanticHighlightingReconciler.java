@@ -20,17 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPartSite;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -49,16 +38,24 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.parser.scanner.ASTPreprocessorName;
-
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Semantic highlighting reconciler - Background thread implementation.

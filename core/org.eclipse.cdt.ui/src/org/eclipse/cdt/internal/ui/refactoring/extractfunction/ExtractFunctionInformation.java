@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;

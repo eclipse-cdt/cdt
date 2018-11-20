@@ -15,6 +15,15 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.PixelConverter;
@@ -32,17 +41,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * The preference block for configuring header file substitution rules.

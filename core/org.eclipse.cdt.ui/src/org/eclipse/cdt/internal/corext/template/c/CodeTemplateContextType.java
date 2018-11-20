@@ -15,15 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 
 public class CodeTemplateContextType extends FileTemplateContextType {
 	/* Context types */

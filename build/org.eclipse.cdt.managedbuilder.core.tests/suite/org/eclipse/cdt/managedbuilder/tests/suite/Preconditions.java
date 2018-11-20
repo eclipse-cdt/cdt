@@ -17,14 +17,14 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+
+import junit.framework.TestCase;
 
 public class Preconditions extends TestCase {
 	@Override

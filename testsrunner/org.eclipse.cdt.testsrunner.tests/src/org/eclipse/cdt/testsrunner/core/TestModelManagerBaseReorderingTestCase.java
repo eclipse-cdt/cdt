@@ -16,11 +16,11 @@ package org.eclipse.cdt.testsrunner.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.testsrunner.internal.model.TestModelManager;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
+
+import junit.framework.TestCase;
 
 /**
  * Base test case for test suites & test cases reordering in TestModelManager.

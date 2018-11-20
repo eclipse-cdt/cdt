@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -31,8 +32,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Preference page for work in progress.

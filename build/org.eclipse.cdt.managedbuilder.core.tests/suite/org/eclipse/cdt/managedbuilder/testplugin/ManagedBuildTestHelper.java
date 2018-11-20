@@ -29,9 +29,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipFile;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.ICProject;
@@ -75,6 +72,9 @@ import org.eclipse.ui.internal.ide.filesystem.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class ManagedBuildTestHelper {
 	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs"; //$NON-NLS-1$

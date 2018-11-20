@@ -17,8 +17,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
 
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
+import org.eclipse.swt.graphics.Rectangle;
 import org.junit.Test;
 
 public class VisualizerVirtualBoundsGraphicObjectTest {

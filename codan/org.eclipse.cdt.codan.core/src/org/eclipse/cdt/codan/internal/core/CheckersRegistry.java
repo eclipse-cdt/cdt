@@ -14,6 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
@@ -42,13 +49,6 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of checker registry interface

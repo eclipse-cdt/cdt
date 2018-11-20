@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,13 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * A combined dialog which allows selecting file or folder from workspace or filesystem

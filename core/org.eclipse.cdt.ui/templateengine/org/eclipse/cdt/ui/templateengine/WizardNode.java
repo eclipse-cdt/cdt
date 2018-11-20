@@ -15,6 +15,7 @@ package org.eclipse.cdt.ui.templateengine;
 
 import java.util.Map;
 
+import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -22,8 +23,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
 /**
  * Wizard Node

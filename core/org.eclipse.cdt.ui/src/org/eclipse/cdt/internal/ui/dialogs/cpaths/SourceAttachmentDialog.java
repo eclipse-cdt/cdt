@@ -16,6 +16,12 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILibraryEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -25,14 +31,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILibraryEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * A dialog to configure the source attachment of a library (library and zip archive).

@@ -14,8 +14,6 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;

@@ -19,6 +19,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -40,18 +50,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 
 /**
  * Base for project property and preference pages

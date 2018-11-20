@@ -14,13 +14,12 @@
 
 package org.eclipse.cdt.visualizer.ui.test;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 
 // ---------------------------------------------------------------------------
 // TestCanvasVisualizer

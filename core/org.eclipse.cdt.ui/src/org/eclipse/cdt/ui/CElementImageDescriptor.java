@@ -16,14 +16,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.viewsupport.CustomBuildSettingsDecorator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.viewsupport.CustomBuildSettingsDecorator;
 
 /**
  * A CImageDescriptor consists of a base image and several adornments. The adornments

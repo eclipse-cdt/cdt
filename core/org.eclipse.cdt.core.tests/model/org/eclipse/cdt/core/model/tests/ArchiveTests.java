@@ -17,9 +17,6 @@ package org.eclipse.cdt.core.model.tests;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
@@ -35,6 +32,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author Peter Graves

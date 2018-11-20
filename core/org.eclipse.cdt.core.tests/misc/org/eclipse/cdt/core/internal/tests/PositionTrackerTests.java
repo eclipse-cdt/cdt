@@ -15,13 +15,13 @@ package org.eclipse.cdt.core.internal.tests;
 
 import java.util.Random;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.internal.core.PositionTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class PositionTrackerTests extends TestCase {
 	public static Test suite() {

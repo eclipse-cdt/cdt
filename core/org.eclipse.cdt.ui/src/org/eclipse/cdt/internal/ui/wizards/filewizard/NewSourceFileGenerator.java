@@ -18,11 +18,9 @@ package org.eclipse.cdt.internal.ui.wizards.filewizard;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.eclipse.cdt.internal.ui.util.NameComposer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.util.NameComposer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;

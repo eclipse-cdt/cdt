@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -28,11 +32,6 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
-
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is a modified version of org.eclipse.jdt.internal.ui.text.java.JavaMethodCompletionProposal

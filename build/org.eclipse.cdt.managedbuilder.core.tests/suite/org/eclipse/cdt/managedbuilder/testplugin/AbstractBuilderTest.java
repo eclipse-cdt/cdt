@@ -20,8 +20,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -44,6 +42,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
+
+import junit.framework.TestCase;
 
 /**
  * Abstract builder test which provides utility methods for:

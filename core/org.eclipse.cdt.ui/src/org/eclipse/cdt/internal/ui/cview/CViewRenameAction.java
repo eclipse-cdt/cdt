@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
@@ -25,8 +26,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.RenameResourceAction;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * The ResourceNavigatorRenameAction is the rename action used by the

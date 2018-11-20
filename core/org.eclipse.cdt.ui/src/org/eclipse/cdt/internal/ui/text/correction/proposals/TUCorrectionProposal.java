@@ -14,6 +14,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.fix.LinkedProposalModel;
+import org.eclipse.cdt.internal.corext.fix.LinkedProposalPositionGroup;
+import org.eclipse.cdt.internal.corext.util.Resources;
+import org.eclipse.cdt.internal.corext.util.Strings;
+import org.eclipse.cdt.internal.ui.CUIStatus;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.viewsupport.LinkedProposalModelPresenter;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -40,24 +55,6 @@ import org.eclipse.text.edits.TextEditVisitor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-import org.eclipse.cdt.internal.corext.fix.LinkedProposalModel;
-import org.eclipse.cdt.internal.corext.fix.LinkedProposalPositionGroup;
-import org.eclipse.cdt.internal.corext.util.Resources;
-import org.eclipse.cdt.internal.corext.util.Strings;
-
-import org.eclipse.cdt.internal.ui.CUIStatus;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.viewsupport.LinkedProposalModelPresenter;
 
 /**
  * A proposal for quick fixes and quick assist that work on a single compilation unit.

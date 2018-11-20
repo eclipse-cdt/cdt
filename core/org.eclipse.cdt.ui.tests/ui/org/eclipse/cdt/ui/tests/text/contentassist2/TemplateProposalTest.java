@@ -13,18 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import junit.framework.Test;
 
 public class TemplateProposalTest extends AbstractContentAssistTest {
 

@@ -14,8 +14,8 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 
 public class CArithmeticConversion extends ArithmeticConversion {

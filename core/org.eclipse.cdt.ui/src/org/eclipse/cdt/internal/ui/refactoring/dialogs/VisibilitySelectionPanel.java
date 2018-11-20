@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
+import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -21,8 +22,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * Three radio buttons in a group, labeled according to the corresponding visibility name

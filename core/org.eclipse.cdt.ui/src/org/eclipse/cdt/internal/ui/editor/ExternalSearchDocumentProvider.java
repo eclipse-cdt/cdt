@@ -17,6 +17,8 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.net.URI;
 
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -30,10 +32,6 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.ILocationProviderExtension;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 

@@ -25,8 +25,8 @@ import org.eclipse.cdt.internal.qt.core.index.IQEnum;
 import org.eclipse.cdt.internal.qt.core.index.IQMethod;
 import org.eclipse.cdt.internal.qt.core.index.IQObject;
 import org.eclipse.cdt.internal.qt.core.index.IQProperty;
-import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 import org.eclipse.cdt.internal.qt.core.index.IQProperty.Attribute;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 
 public class QObjectTests extends BaseQtTestCase {
 

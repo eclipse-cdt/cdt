@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 
 /**
  * A set of header file substitution rules.

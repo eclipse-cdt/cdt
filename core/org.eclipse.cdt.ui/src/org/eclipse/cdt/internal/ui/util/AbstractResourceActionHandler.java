@@ -20,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.core.AdapterUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -39,10 +41,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.ResourceUtil;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.AdapterUtil;
 
 /**
  * Base class for command handlers operating on resources.

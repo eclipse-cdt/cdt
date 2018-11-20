@@ -21,6 +21,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExternalSetting;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -43,19 +54,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.model.util.CDTListComparator;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICExternalSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	protected Table table;

@@ -21,6 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -43,11 +46,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class FileTransferDragAdapter implements TransferDragSourceListener {
 	private final ISelectionProvider provider;

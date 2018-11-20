@@ -13,21 +13,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
 /**
  * A Job specialized to give access to the shared AST of the currently active editor.

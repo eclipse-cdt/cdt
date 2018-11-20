@@ -14,10 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -27,9 +25,9 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests to verify the Asm partitioning.

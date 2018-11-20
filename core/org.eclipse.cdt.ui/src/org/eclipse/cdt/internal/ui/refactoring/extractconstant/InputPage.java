@@ -15,6 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
+import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
+import org.eclipse.cdt.internal.ui.refactoring.dialogs.NameAndVisibilityComposite;
+import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
+import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
+import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -27,12 +32,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
-import org.eclipse.cdt.internal.ui.refactoring.dialogs.NameAndVisibilityComposite;
-import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
-import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 public class InputPage extends UserInputWizardPage {
 	private static final String PAGE_NAME = "InputPage"; //$NON-NLS-1$

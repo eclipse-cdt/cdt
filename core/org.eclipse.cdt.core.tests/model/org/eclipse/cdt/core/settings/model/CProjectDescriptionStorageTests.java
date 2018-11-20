@@ -21,8 +21,6 @@ import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -45,6 +43,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+
+import junit.framework.TestSuite;
 
 /**
  * Testsuite for the project description storage. This

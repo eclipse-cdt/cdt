@@ -16,6 +16,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
+import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.dialogs.LabeledTextField;
+import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
+import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -25,11 +29,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
-import org.eclipse.cdt.internal.ui.refactoring.dialogs.LabeledTextField;
-import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 
 /**
  * Input verification page for the ExtractLocalVariable refactoring, cloned

@@ -17,12 +17,11 @@ package org.eclipse.cdt.ui.tests.misc;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.model.ILanguage;
-
 import org.eclipse.cdt.internal.ui.language.LanguageVerifier;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for CDT Language Verifier.

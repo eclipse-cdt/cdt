@@ -20,6 +20,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.wizards.indexwizards.StringVariableSelectionDialog;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -50,16 +58,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.wizards.indexwizards.StringVariableSelectionDialog;
 
 /**
  * Options configuration block for spell check related settings.

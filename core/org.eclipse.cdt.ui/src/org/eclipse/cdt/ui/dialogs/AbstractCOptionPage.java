@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -22,8 +23,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 public abstract class AbstractCOptionPage extends DialogPage implements ICOptionPage {
 

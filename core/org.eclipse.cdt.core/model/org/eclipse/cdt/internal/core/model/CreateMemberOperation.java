@@ -14,8 +14,8 @@
 
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.IStructure;
 
 /**
  * Implements functionality common to

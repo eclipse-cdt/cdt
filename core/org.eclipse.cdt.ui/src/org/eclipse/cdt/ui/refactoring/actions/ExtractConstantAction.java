@@ -14,13 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.IShellProvider;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoringRunner;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.window.IShellProvider;
 
 /**
  * Launches an Extract Constant refactoring.

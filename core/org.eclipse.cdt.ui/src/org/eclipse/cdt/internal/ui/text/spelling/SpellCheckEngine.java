@@ -28,6 +28,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.LocaleSensitiveSpellDictionary;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.PersistentSpellDictionary;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -35,15 +42,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.LocaleSensitiveSpellDictionary;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.PersistentSpellDictionary;
 
 /**
  * Spell check engine for C/C++ source spell checking.

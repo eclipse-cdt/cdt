@@ -20,16 +20,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 
 public class FormatterProfileManager extends ProfileManager {
 	private static final List<String> EMPTY_LIST = Collections.emptyList();

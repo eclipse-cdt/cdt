@@ -21,11 +21,11 @@ import java.util.Set;
 
 import org.eclipse.cdt.testsrunner.internal.model.ITestingSessionsManagerListener;
 import org.eclipse.cdt.testsrunner.internal.model.TestingSessionsManager;
+import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
+import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
 import org.eclipse.cdt.testsrunner.model.ITestingSessionListener;
-import org.eclipse.cdt.testsrunner.model.ITestCase;
-import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

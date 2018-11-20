@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import java.util.Map;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;

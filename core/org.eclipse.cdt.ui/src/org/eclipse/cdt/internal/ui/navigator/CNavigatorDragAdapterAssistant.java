@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,10 +27,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * A Common Navigator drag assistant supporting <code>LocalSelectionTransfer</code> of

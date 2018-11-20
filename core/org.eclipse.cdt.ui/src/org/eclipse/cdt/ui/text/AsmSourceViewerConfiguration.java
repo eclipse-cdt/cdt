@@ -16,6 +16,22 @@ package org.eclipse.cdt.ui.text;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.AssemblyLanguage;
+import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmCodeScanner;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmPreprocessorScanner;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmReconcilingStrategy;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.PartitionDamager;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -38,24 +54,6 @@ import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.AssemblyLanguage;
-import org.eclipse.cdt.core.model.IAsmLanguage;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ILanguageUI;
-
-import org.eclipse.cdt.internal.ui.editor.asm.AsmCodeScanner;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmPreprocessorScanner;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmReconcilingStrategy;
-import org.eclipse.cdt.internal.ui.text.CCommentScanner;
-import org.eclipse.cdt.internal.ui.text.PartitionDamager;
-import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
-import org.eclipse.cdt.internal.ui.text.TokenStore;
 
 /**
  * Configuration for a source viewer which shows Assembly code.

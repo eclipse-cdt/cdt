@@ -18,13 +18,12 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import org.eclipse.cdt.core.templateengine.SharedDefaults;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
 * Executes all the test cases of SharedDefaults backend functionality

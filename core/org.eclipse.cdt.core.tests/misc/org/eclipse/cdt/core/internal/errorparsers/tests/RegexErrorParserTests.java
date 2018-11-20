@@ -16,9 +16,6 @@ package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParser;
@@ -35,6 +32,9 @@ import org.eclipse.cdt.internal.errorparsers.GASErrorParser;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Test cases testing RegexErrorParser functionality

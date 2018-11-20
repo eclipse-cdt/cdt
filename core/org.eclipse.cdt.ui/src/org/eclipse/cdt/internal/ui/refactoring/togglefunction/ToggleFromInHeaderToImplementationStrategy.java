@@ -20,11 +20,6 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -62,12 +57,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
-
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefactoringStrategy {
 	private class NamespaceFinderVisitor extends ASTVisitor {

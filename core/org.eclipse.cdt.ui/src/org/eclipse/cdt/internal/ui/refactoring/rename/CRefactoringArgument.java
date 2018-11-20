@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import org.eclipse.core.resources.IFile;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -35,9 +33,9 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
 
 /**
  * Represents the input to a refactoring. Important are file and offset, the rest

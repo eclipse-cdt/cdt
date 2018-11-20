@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -30,8 +31,6 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.

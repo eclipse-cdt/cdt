@@ -14,10 +14,10 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
+import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
 
 /**
  * @author Guido Zgraggen IFS

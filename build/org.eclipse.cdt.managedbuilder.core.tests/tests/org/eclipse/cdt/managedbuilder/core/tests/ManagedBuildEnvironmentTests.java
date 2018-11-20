@@ -14,10 +14,6 @@
 
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -27,6 +23,10 @@ import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListene
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  *

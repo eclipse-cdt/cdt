@@ -23,8 +23,8 @@ import org.eclipse.cdt.visualizer.ui.util.SelectionManager;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 

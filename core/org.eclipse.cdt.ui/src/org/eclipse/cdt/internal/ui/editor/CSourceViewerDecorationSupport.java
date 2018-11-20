@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -24,8 +25,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-
-import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 
 /**
  * <code>SourceViewerDecorationSupport</code> with extension(s):

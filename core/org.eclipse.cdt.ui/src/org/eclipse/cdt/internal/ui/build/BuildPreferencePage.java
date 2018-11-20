@@ -17,6 +17,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.build;
 
+import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
@@ -33,12 +37,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.resources.ACBuilder;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 /**
  * The page for top-level build preferences

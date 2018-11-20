@@ -23,6 +23,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,12 +51,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
-
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 /**
  * Abstract base for all different rename processors used by the top processor.

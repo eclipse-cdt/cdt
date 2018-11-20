@@ -15,9 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.search.ui.text.Match;
-
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.search.ui.text.Match;
 
 /**
  * Base class for search matches found by various index searches.

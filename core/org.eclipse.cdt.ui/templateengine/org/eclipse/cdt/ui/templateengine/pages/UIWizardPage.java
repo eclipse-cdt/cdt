@@ -17,6 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
+import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
+import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardContainer;
@@ -25,12 +30,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
-import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
-import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
-import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 /**
  * UIWizardPage provides implementation IWizardPage. UIWizardPage is a

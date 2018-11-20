@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CUIStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.IDocument;
@@ -22,11 +25,6 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.CUIStatus;
 
 /**
  * A proposal for quick fixes and quick assists that works on a AST rewriter.

@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -45,9 +47,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * @deprecated as of CDT 4.0. This class was used for property pages

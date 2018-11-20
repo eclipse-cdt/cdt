@@ -22,10 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -35,11 +31,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Finds the information that are needed to tell where a method definition of a certain

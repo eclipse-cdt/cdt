@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
+import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -24,9 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
-import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
 
 /**
  * Preference page for build logging options, such as whether the

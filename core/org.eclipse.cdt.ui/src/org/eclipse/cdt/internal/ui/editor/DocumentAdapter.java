@@ -21,6 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.BufferChangedEvent;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IBufferChangedListener;
+import org.eclipse.cdt.core.model.IOpenable;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -44,13 +50,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.core.model.BufferChangedEvent;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.IBufferChangedListener;
-import org.eclipse.cdt.core.model.IOpenable;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Adapts <code>IDocument</code> to <code>IBuffer</code>. Uses the

@@ -14,10 +14,12 @@
  ****************************************************************************/
 package org.eclipse.cdt.managedbuilder.bupc.ui;
 
-import org.eclipse.ui.plugin.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import java.util.*;
 
 /**
  * Based on plugin class for PLDT Wizards (MPI & OpenMP)

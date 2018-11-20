@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -55,6 +52,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests to verify the operation of FormattedValuesVMUtil

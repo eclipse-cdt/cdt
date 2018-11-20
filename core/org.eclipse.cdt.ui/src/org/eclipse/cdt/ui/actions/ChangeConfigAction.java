@@ -16,13 +16,12 @@ package org.eclipse.cdt.ui.actions;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.Action;
-
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPropertyManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
 
 /**
  * Action which changes active build configuration of the current project to

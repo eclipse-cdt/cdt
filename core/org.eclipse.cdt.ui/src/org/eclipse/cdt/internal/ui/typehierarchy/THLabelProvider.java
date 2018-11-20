@@ -16,6 +16,13 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -25,15 +32,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.ui.CElementImageDescriptor;
-
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
 public class THLabelProvider extends AppearanceAwareLabelProvider {
 

@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
@@ -27,11 +30,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
 
 /**
  * Action to run content assist on a specific proposal category.

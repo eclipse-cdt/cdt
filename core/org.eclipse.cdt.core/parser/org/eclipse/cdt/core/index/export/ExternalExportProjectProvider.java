@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -50,6 +47,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * An IExportProjectProvider suitable for indexing an external folder. The arguments understood by this provider

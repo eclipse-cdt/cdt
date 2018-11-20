@@ -21,8 +21,6 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.
 import java.util.LinkedList;
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -62,6 +60,8 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.ITypeable;
 import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.C99SymbolTable;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+
+import lpg.lpgjavaruntime.IToken;
 
 /**
  * This class was an attempt at doing full binding resolution during the parse

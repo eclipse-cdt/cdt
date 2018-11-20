@@ -23,14 +23,13 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public abstract class CompletionProposalsBaseTest extends AbstractContentAssistTest {
 	private boolean fFailingTest;

@@ -16,12 +16,13 @@ package org.eclipse.cdt.utils.xcoff;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * Representation of AIX XCOFF32 binary format

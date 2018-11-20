@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.contentassist;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
-
-import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Describes the context of a content assist invocation in a C/C++ editor.

@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorPart;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
  * Listener to be informed on text selection changes in an editor (post selection), including the corresponding AST.

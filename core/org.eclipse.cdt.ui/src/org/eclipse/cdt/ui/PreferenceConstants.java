@@ -20,6 +20,11 @@ package org.eclipse.cdt.ui;
 
 import java.util.Locale;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.preferences.formatter.FormatterProfileManager;
+import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -31,13 +36,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-
-import org.eclipse.cdt.internal.ui.preferences.formatter.FormatterProfileManager;
-import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
 
 /**
  * Preference constants used in the CDT-UI preference store. Clients should only read

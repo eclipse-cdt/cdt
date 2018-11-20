@@ -15,8 +15,8 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;

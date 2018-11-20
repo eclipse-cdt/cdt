@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.vm;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -31,6 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.PlatformUI;
+
+import junit.framework.TestCase;
 
 /**
  * Tests to measure the performance of the viewer updates.

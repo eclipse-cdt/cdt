@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
 
 public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDeferredWorkbenchAdapter {
 

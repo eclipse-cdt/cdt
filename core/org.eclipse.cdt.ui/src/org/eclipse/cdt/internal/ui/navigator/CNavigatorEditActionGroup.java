@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.cdt.internal.ui.cview.CopyAction;
+import org.eclipse.cdt.internal.ui.cview.PasteAction;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,9 +32,6 @@ import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.ide.ResourceSelectionUtil;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-
-import org.eclipse.cdt.internal.ui.cview.CopyAction;
-import org.eclipse.cdt.internal.ui.cview.PasteAction;
 
 /**
  * Provides clipboard actions.

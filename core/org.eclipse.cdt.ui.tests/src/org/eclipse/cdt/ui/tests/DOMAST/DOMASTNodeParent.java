@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**

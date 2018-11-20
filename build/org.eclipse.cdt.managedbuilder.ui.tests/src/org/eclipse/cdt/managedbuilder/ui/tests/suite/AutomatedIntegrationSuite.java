@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.tests.suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.managedbuilder.ui.tests.TestCProjectPlatformPage;
 import org.eclipse.cdt.managedbuilder.ui.tests.TestCustomPageManager;
 import org.eclipse.cdt.managedbuilder.ui.tests.properties.ToolListContentProviderTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  *

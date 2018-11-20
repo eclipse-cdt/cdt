@@ -16,12 +16,6 @@
 
 package org.eclipse.cdt.core.cdescriptor.tests;
 
-import junit.extensions.TestSetup;
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
@@ -42,6 +36,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import junit.extensions.TestSetup;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * This class exists because the tests in CDescriptorTests

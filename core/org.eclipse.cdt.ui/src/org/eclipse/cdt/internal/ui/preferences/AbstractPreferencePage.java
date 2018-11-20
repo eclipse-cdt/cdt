@@ -24,6 +24,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
@@ -48,11 +51,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 
 /**
  * AbstractPreferencePage

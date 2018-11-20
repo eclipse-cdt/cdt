@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
@@ -28,8 +29,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Action that encloses the editor's current selection with C block comment terminators

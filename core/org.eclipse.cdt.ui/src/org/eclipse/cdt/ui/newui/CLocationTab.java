@@ -21,6 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -51,15 +58,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
-import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * CLocationTab implements common features for "Source Location" and "Output Location"

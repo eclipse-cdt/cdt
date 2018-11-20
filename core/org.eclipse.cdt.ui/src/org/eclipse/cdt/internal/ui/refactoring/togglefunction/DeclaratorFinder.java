@@ -15,8 +15,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
-import org.eclipse.jface.text.ITextSelection;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -28,8 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.jface.text.ITextSelection;
 
 /**
  * Given a selection and a translation unit, this class finds a

@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -27,10 +30,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-
-import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
 /**
  * Any wizard intending to use template (@see org.eclipse.cdt.core.templateenginee.Template) based pages

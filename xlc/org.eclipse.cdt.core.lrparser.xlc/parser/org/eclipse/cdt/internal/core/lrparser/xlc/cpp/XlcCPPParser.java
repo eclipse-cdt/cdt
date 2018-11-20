@@ -16,30 +16,52 @@
 
 package org.eclipse.cdt.internal.core.lrparser.xlc.cpp;
 
-import lpg.lpgjavaruntime.*;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
-import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
-import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
-import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
-
-import org.eclipse.cdt.core.dom.ast.cpp.*;
-
-import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
-
-import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.*;
-
 import org.eclipse.cdt.core.lrparser.xlc.action.XlcCPPBuildASTParserAction;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.lrparser.xlc.ast.XlcCPPNodeFactory;
+
+import lpg.lpgjavaruntime.BadParseException;
+import lpg.lpgjavaruntime.BadParseSymFileException;
+import lpg.lpgjavaruntime.DiagnoseParser;
+import lpg.lpgjavaruntime.ErrorToken;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.LexStream;
+import lpg.lpgjavaruntime.Monitor;
+import lpg.lpgjavaruntime.NotBacktrackParseTableException;
+import lpg.lpgjavaruntime.NullExportedSymbolsException;
+import lpg.lpgjavaruntime.NullTerminalSymbolsException;
+import lpg.lpgjavaruntime.ParseErrorCodes;
+import lpg.lpgjavaruntime.ParseTable;
+import lpg.lpgjavaruntime.PrsStream;
+import lpg.lpgjavaruntime.RuleAction;
+import lpg.lpgjavaruntime.TokenStream;
+import lpg.lpgjavaruntime.UndefinedEofSymbolException;
+import lpg.lpgjavaruntime.UnimplementedTerminalsException;
 
 public class XlcCPPParser extends PrsStream
 		implements RuleAction, ITokenStream, ITokenCollector, IParser<IASTTranslationUnit>

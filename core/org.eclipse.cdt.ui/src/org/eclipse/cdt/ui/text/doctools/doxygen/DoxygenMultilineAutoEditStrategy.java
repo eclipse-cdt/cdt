@@ -16,13 +16,6 @@ package org.eclipse.cdt.ui.text.doctools.doxygen;
 
 import java.util.LinkedHashSet;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.TextUtilities;
-
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -43,6 +36,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.TextUtilities;
 
 /**
  * {@link IAutoEditStrategy} for adding Doxygen tags for comments.

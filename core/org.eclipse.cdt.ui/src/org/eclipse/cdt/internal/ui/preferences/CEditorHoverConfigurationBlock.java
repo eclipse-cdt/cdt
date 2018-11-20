@@ -21,6 +21,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
@@ -57,16 +65,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 
 /**
  * Configures C/C++ Editor hover preferences.

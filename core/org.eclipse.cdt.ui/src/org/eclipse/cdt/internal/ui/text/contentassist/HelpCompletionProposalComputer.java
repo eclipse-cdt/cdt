@@ -18,24 +18,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.IContentAssistHelpInvocationContext;
-
-import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
-
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Image;
 
 public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer {
 

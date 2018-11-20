@@ -19,15 +19,6 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.text.ISynchronizable;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelExtension;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -41,16 +32,22 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.ui.CDTUITools;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
 public class OverrideIndicatorManager implements ICReconcilingListener {
 	public static final String ANNOTATION_TYPE = "org.eclipse.cdt.ui.overrideIndicator"; //$NON-NLS-1$

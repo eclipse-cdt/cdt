@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -27,9 +29,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Displays CDT variables dialog with ability to filter.

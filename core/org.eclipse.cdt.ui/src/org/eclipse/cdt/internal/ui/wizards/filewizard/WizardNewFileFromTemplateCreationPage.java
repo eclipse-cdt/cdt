@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -47,11 +50,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-
-import org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage;
 
 /**
  * A new file creation wizard page with support for templates.

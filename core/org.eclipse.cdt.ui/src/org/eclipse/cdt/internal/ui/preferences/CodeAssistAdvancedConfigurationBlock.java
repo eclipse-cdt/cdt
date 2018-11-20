@@ -22,6 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
@@ -65,16 +73,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  *

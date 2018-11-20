@@ -23,6 +23,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -47,17 +56,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 public abstract class ModifyDialog extends StatusDialog implements IModifyDialogTabPage.IModificationListener {
 

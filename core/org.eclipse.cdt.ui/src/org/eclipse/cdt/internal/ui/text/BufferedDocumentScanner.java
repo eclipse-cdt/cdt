@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * A buffered document scanner. The buffer always contains a section

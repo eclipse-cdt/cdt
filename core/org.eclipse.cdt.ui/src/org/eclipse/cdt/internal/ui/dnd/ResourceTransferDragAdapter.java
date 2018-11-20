@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -33,8 +34,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * A drag adapter that transfers the current selection as </code>

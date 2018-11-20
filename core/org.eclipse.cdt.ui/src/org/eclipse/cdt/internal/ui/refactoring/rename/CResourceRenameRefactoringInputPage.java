@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
+import org.eclipse.cdt.internal.ui.preferences.OrganizeIncludesPreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -34,10 +36,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.OrganizeIncludesPreferencePage;
 
 public class CResourceRenameRefactoringInputPage extends UserInputWizardPage {
 

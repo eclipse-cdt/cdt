@@ -19,6 +19,27 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.util.Resources;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -55,30 +76,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.Resources;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * Formats the code of the translation units contained in the selection.

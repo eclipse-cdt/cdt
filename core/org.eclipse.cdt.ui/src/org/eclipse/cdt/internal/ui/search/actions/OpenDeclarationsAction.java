@@ -17,22 +17,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-
-import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 /**
  * Navigates to the definition of a name, or to the declaration if invoked on the definition.

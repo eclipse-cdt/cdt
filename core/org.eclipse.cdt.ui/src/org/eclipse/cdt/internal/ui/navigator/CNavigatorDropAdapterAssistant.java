@@ -19,6 +19,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -47,17 +56,6 @@ import org.eclipse.ui.ide.dialogs.ImportTypeDialog;
 import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * A Common Navigator drop adapter assistant handling dropping of <code>ICElement</code>s.

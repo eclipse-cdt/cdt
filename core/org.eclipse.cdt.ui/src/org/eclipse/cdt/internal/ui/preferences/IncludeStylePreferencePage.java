@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /*
  * The preference page for configuring styles of include statements.

@@ -18,6 +18,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.cdt.internal.ui.compare.CMergeViewer;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
@@ -41,14 +47,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-
-import org.eclipse.cdt.internal.ui.compare.CMergeViewer;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * @author Emanuel Graf

@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.cview;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
@@ -33,8 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * Standard action for copying the currently selected resources to the clipboard.

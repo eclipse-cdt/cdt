@@ -17,13 +17,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoring;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests for ToggleRefactoring for C++ projects.

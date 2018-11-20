@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.language;
 
 import java.util.Collections;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.content.IContentType;
+
+import junit.framework.Test;
 
 /**
  * Tests for language inheritance computations.

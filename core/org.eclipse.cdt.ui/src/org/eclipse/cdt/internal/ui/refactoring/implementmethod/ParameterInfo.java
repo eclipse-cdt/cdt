@@ -17,9 +17,7 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 
 /**

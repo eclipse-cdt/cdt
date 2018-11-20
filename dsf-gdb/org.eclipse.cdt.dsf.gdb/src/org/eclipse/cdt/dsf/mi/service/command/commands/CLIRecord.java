@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 
 /**
  * This command turns on on off the recording of "Process Record and Replay".

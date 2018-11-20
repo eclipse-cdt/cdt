@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.core.parser.AbstractPersistableProblem;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.cdt.core.parser.AbstractPersistableProblem;
 
 /**
  * Spelling problem to be accepted by problem requesters.

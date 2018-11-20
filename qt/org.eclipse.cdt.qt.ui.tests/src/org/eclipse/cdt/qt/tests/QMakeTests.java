@@ -16,12 +16,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.internal.qt.core.index.IQMakeInfo;
 import org.eclipse.cdt.internal.qt.core.index.QMakeInfo;
 import org.eclipse.cdt.internal.qt.core.index.QMakeParser;
 import org.eclipse.cdt.internal.qt.core.index.QMakeVersion;
+
+import junit.framework.TestCase;
 
 public class QMakeTests extends TestCase {
 

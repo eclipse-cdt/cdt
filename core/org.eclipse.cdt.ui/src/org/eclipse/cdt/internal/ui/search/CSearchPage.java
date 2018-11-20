@@ -18,6 +18,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.util.RowLayouter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -58,19 +69,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.RowLayouter;
 
 /**
  * @author Doug Schaefer

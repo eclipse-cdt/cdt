@@ -16,6 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -24,14 +30,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
-
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 /**
  * Tools required to configure a C/C++ source viewer.

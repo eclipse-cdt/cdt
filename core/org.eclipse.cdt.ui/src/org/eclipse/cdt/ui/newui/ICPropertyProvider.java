@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.swt.widgets.Button;
-
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.swt.widgets.Button;
 
 /**
  * Interface provides a set of utility methods

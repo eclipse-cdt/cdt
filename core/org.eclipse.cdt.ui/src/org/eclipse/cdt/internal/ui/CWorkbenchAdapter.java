@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * An implementation of the IWorkbenchAdapter for CElements.

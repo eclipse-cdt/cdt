@@ -20,6 +20,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
+import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -40,22 +53,6 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ibm.icu.text.Collator;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-
-import org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage;
 
 /**
  * This <code>IndexerBlock</code> is used in the <code>MakeProjectWizardOptionPage</code> and

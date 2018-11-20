@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
@@ -26,8 +27,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Action that removes the enclosing comment marks from a C block comment.

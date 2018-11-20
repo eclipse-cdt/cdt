@@ -19,6 +19,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.workingsets.WorkspaceSnapshot.ProjectState;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.IWorkspace;
@@ -33,11 +36,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.workingsets.WorkspaceSnapshot.ProjectState;
 
 /**
  * Protocol for a factory of {@link IWorkingSetProjectConfiguration}s. Factories are {@linkplain Registry

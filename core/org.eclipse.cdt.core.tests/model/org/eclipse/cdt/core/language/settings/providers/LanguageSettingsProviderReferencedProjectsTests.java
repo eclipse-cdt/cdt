@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -36,6 +34,8 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.TestSuite;
 
 /**
  * Test cases testing ReferencedProjectsLanguageSettingsProvider functionality

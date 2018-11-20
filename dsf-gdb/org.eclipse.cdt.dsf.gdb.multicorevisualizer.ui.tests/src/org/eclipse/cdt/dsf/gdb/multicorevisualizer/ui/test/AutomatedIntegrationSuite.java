@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
 
-import org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test.PersistentSettingsManagerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

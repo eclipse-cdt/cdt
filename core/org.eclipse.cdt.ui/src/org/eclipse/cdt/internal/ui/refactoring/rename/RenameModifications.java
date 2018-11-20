@@ -18,6 +18,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.corext.refactoring.participants.ResourceModifications;
+import org.eclipse.cdt.internal.ui.refactoring.reorg.RefactoringModifications;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
@@ -31,15 +37,6 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
-
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
-import org.eclipse.cdt.internal.corext.refactoring.participants.ResourceModifications;
-
-import org.eclipse.cdt.internal.ui.refactoring.reorg.RefactoringModifications;
 
 /**
  * Stores objects renamed by the rename refactoring.

@@ -14,13 +14,13 @@
 
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * CModelExceptionTest

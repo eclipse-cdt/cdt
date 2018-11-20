@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Abstract Option Page for C/C++ Project Paths page for 3.X projects.

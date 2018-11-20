@@ -16,12 +16,11 @@ package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
 /**
  * <p>

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,8 +30,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Synchronously executes a {@link Job} while allowing user to cancel it if it takes too long.

@@ -24,6 +24,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParserNamed;
+import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.dialogs.IInputStatusValidator;
+import org.eclipse.cdt.ui.dialogs.InputStatusDialog;
+import org.eclipse.cdt.ui.dialogs.RegexErrorParserOptionPage;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -55,25 +72,6 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.IErrorParserNamed;
-import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.IInputStatusValidator;
-import org.eclipse.cdt.ui.dialogs.InputStatusDialog;
-import org.eclipse.cdt.ui.dialogs.RegexErrorParserOptionPage;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * This class represents Error Parser Tab in Project Properties or workspace Preferences

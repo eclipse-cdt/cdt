@@ -15,19 +15,17 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IPathEntry;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * Block for C/C++ Project Paths page for 3.X projects.

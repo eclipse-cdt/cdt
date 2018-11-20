@@ -14,17 +14,15 @@ package org.eclipse.cdt.ui.tests.text;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-
-import org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 import junit.framework.TestCase;
 

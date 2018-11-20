@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -26,9 +28,6 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.ResourcePropertySource;
-
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * Implements basic UI support for C elements.

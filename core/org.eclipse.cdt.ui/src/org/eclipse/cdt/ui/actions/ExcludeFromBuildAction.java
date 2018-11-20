@@ -16,6 +16,20 @@ package org.eclipse.cdt.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.ExcludeFromBuildHandler;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,22 +49,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.AbstractPage;
-
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.actions.ExcludeFromBuildHandler;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Action which excludes resources from build.

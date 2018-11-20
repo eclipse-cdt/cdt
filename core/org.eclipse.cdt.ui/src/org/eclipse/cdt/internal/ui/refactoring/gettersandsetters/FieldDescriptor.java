@@ -29,9 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
-
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 
 class FieldDescriptor {

@@ -32,6 +32,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
+import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.PixelConverter;
@@ -60,26 +77,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-import org.eclipse.cdt.internal.corext.util.Messages;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
-import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
  */

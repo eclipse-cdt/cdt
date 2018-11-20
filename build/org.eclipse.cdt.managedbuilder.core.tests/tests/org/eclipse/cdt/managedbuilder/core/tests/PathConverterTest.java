@@ -11,10 +11,6 @@
 
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -28,6 +24,10 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * This is a test for the pathConverter attribute

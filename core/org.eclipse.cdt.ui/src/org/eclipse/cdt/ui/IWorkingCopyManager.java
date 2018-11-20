@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * Interface for accessing working copies of {@code ITranslationUnit}

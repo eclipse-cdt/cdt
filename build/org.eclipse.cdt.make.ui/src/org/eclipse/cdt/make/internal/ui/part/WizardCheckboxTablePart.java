@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.part;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -23,6 +21,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @version 	1.0

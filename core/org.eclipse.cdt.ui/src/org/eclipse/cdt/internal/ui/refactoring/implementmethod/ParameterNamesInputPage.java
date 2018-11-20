@@ -17,6 +17,12 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.internal.ui.preferences.formatter.TranslationUnitPreview;
+import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
+import org.eclipse.cdt.internal.ui.refactoring.dialogs.ValidatingLabeledTextField;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -37,14 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
-
-import org.eclipse.cdt.internal.ui.preferences.formatter.TranslationUnitPreview;
-import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
-import org.eclipse.cdt.internal.ui.refactoring.dialogs.ValidatingLabeledTextField;
 
 /**
  * InputPage used by the ImplementMethod refactoring if its necessary to enter additional parameter names.

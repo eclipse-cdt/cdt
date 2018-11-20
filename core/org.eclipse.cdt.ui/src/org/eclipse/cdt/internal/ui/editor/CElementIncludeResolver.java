@@ -15,6 +15,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
@@ -29,17 +38,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.utils.PathUtil;
-import org.eclipse.cdt.utils.UNCPathConverter;
-
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 /**
  * Handles resolution of an include represented as a CElement (IInclude).

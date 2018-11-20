@@ -19,15 +19,14 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.help.IHelpResource;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.help.IHelpResource;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class CHelpBook implements ICHelpBook {
 	private static final String ATTR_TITLE = "title"; //$NON-NLS-1$

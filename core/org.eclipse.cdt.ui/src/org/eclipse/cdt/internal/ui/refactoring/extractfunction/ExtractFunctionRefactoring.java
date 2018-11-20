@@ -24,19 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -91,9 +78,6 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -112,7 +96,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
@@ -130,6 +113,20 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ExtractFunctionRefactoring extends CRefactoring {
 	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$

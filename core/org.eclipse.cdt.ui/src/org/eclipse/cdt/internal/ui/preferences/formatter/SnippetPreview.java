@@ -18,17 +18,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.ICStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.Document;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.ICStatusConstants;
 
 public class SnippetPreview extends CPreview {
 

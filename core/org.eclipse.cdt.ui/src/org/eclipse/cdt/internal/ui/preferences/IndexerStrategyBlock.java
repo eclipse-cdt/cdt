@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -24,16 +32,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
-import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 /**
  * This OptionPage is used in the IndexerPreference page to allow for adjusting

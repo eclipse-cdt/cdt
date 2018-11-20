@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Property page for language settings providers tabs.

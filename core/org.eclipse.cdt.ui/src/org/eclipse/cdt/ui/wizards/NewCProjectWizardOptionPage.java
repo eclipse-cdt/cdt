@@ -14,15 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import org.eclipse.cdt.ui.dialogs.ICOptionContainerExtension;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.dialogs.ICOptionContainerExtension;
-import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 
 /**
  * @deprecated as of CDT 4.0. This abstract was used for New Project Wizards

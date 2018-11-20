@@ -16,10 +16,18 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.Iterator;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
+import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
+import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.DisplayHelper;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -46,19 +54,9 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.testplugin.DisplayHelper;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
-import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
-import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the C/C++ Editor's occurrence marking feature.

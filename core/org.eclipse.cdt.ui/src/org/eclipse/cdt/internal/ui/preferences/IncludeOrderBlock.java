@@ -19,6 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,12 +36,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * The preference block for configuring relative order of include statements.

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,9 +24,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 /**
  * Abstract page to be used as base for preference pages

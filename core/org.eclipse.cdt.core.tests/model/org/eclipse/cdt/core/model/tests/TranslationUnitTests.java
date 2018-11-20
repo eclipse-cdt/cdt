@@ -17,14 +17,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
+
+import junit.framework.TestSuite;
 
 /**
  * @author Peter Graves

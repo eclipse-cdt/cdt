@@ -13,6 +13,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.selection;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction.ITargetDisambiguator;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionParseAction;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,24 +42,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionParseAction;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction.ITargetDisambiguator;
 
 /**
  * Base class for all selection tests, using the indexer or not.

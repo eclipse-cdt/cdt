@@ -17,6 +17,12 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -30,15 +36,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
 /**
  * Infrastructure to share an AST for editor post selection listeners.

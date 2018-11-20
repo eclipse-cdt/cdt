@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.ui.views;
 
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A debug view that uses an event handler to update its

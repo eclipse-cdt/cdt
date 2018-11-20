@@ -16,9 +16,8 @@ package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
 import java.util.Map;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 /**
  * @author Emanuel Graf IFS

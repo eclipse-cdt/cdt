@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.util.HashSet;
 
+import org.eclipse.cdt.internal.ui.editor.TranslationUnitAnnotationModelEvent;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -31,10 +33,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.TranslationUnitAnnotationModelEvent;
 
 /**
  * Listens to resource deltas and filters for marker changes of type

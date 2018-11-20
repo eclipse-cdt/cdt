@@ -19,9 +19,9 @@ import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
 
 public class MIStringHandlerTests {
 	@Test

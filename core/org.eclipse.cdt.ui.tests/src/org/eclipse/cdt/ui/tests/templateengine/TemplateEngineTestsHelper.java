@@ -18,8 +18,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
@@ -35,6 +33,8 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+
+import junit.framework.Assert;
 
 /**
  * All supporting functions which are not part of Testing class.

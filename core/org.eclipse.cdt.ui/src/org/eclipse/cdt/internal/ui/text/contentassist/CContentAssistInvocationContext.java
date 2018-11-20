@@ -19,13 +19,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
@@ -46,14 +39,19 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.Symbols;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Describes the context of a content assist invocation in a C/C++ editor.

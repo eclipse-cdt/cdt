@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.cdt.utils.debug.DebugArrayType;
 import org.eclipse.cdt.utils.debug.DebugBaseType;

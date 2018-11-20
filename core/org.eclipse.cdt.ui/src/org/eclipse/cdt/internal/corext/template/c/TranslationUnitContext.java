@@ -16,6 +16,12 @@
 
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -23,14 +29,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.corext.util.Strings;
 
 /**
  * A translation unit context.

@@ -20,6 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposalComparator;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.ChangeCorrectionProposal;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
+import org.eclipse.cdt.ui.text.IProblemLocation;
+import org.eclipse.cdt.ui.text.IQuickAssistProcessor;
+import org.eclipse.cdt.ui.text.IQuickFixProcessor;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -42,18 +52,6 @@ import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
-import org.eclipse.cdt.ui.text.IProblemLocation;
-import org.eclipse.cdt.ui.text.IQuickAssistProcessor;
-import org.eclipse.cdt.ui.text.IQuickFixProcessor;
-
-import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposalComparator;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.ChangeCorrectionProposal;
 
 public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.IQuickAssistProcessor {
 	private static final String QUICKFIX_PROCESSOR_CONTRIBUTION_ID = "quickFixProcessors"; //$NON-NLS-1$

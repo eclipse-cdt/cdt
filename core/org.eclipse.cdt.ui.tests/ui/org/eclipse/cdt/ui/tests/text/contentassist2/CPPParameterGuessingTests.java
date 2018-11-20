@@ -16,12 +16,11 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import junit.framework.Test;
 
 public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "PGTest.h";

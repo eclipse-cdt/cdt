@@ -19,6 +19,16 @@ package org.eclipse.cdt.internal.ui.text.correction;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -46,19 +56,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.core.model.ASTCache;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 public class CCorrectionAssistant extends QuickAssistAssistant {
 	private ITextViewer fViewer;

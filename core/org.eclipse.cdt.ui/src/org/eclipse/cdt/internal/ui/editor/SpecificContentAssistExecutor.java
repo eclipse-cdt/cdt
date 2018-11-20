@@ -17,13 +17,12 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
 
 /**
  * A content assist executor can invoke content assist for a specific proposal category on an editor.

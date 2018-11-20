@@ -15,6 +15,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.refactoring.ChangeParametersControl;
+import org.eclipse.cdt.internal.ui.refactoring.ChangeParametersControl.Mode;
+import org.eclipse.cdt.internal.ui.refactoring.IParameterListChangeListener;
+import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.StubTypeContext;
+import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
+import org.eclipse.cdt.internal.ui.util.RowLayouter;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.PixelConverter;
@@ -37,24 +52,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.refactoring.ChangeParametersControl;
-import org.eclipse.cdt.internal.ui.refactoring.ChangeParametersControl.Mode;
-import org.eclipse.cdt.internal.ui.refactoring.IParameterListChangeListener;
-import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
-import org.eclipse.cdt.internal.ui.refactoring.StubTypeContext;
-import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
-import org.eclipse.cdt.internal.ui.util.RowLayouter;
 
 public class ExtractFunctionInputPage extends UserInputWizardPage {
 	public static final String PAGE_NAME = "ExtractFunctionInputPage"; //$NON-NLS-1$

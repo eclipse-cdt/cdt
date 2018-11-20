@@ -21,7 +21,6 @@ import lpg.lpgjavaruntime.IntTuple;
 import lpg.lpgjavaruntime.Monitor;
 import lpg.lpgjavaruntime.NotBacktrackParseTableException;
 import lpg.lpgjavaruntime.ParseTable;
-import lpg.lpgjavaruntime.PrsStream;
 import lpg.lpgjavaruntime.RuleAction;
 import lpg.lpgjavaruntime.Stacks;
 import lpg.lpgjavaruntime.TokenStream;

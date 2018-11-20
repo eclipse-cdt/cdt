@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.ui.tests.viewsupport;
 
+import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeWorkInProgressNode;
+import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -25,12 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeWorkInProgressNode;
-import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 
 public class AsyncViewerTest extends BaseUITestCase {
 	private class Node {

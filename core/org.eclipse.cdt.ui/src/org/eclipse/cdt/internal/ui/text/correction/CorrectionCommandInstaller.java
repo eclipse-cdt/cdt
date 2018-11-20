@@ -19,16 +19,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class CorrectionCommandInstaller {
 	/**

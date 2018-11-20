@@ -16,14 +16,13 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
+import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
-import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * By extending Composite we can create our own Container. UIComposite can act

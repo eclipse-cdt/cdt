@@ -18,13 +18,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Represents a node in the include browser

@@ -22,6 +22,20 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -40,22 +54,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.osgi.framework.Bundle;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
  * Common base for refactoring tests.

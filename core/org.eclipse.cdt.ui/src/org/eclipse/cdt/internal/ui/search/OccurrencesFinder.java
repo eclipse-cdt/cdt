@@ -27,9 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-
 import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class OccurrencesFinder implements IOccurrencesFinder {

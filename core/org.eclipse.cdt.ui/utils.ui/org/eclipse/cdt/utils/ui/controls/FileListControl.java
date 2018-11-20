@@ -18,6 +18,19 @@ package org.eclipse.cdt.utils.ui.controls;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTStatusInfo;
+import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
+import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -80,22 +93,6 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
-import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.CDTStatusInfo;
-import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
-import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
-import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
-import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
-import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
-import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
-
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Instances of this class allow the user to add, remove, delete, moveup and movedown

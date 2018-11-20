@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -22,10 +25,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
-
-import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Helper class to match pairs of characters.

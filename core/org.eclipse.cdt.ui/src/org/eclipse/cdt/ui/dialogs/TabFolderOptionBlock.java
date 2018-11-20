@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -33,11 +36,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
 
 public abstract class TabFolderOptionBlock {
 

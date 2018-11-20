@@ -15,17 +15,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersRefactoringRunner;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Launches a getter and setter source code generation.

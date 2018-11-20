@@ -16,12 +16,11 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.io.File;
 
+import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.IWorkingSet;
-
-import org.eclipse.cdt.internal.corext.util.Strings;
 
 /**
  * A label provider for basic elements like paths. The label provider will make sure that the labels are correctly

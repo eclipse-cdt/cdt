@@ -17,6 +17,15 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.util.IProblemChangedListener;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -33,17 +42,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CElementImageDescriptor;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.IProblemChangedListener;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 
 /**
  * LabelDecorator that decorates an element's image with error and warning overlays that

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -34,8 +35,6 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class BuildConsoleViewer extends TextViewer
 		implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseListener {

@@ -21,6 +21,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,14 +36,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 
 /**
  */

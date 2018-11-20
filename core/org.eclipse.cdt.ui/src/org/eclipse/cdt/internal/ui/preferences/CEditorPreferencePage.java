@@ -24,6 +24,16 @@ import static org.eclipse.cdt.ui.PreferenceConstants.FORMATTING_SCOPE_STATEMENT;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.dialogs.DocCommentOwnerComposite;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.ColorSelector;
@@ -49,18 +59,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.dialogs.DocCommentOwnerComposite;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
 /**
  * The preference page for setting the editor options.

@@ -16,12 +16,12 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 import java.util.LinkedList;
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99PointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+
+import lpg.lpgjavaruntime.IToken;
 
 /**
  * Represents a frame on the declaration stack used by the resolver actions.

@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,9 +26,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 
 public class IBDragSourceListener implements DragSourceListener {
 

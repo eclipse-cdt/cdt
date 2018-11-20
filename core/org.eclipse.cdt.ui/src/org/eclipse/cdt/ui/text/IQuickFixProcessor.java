@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface to be implemented by contributors to the extension point

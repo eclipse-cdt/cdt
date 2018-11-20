@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.io.File;
+
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
@@ -21,14 +22,14 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 /**
  * A source container that converts relative paths to absolute ones using the

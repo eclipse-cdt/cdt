@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.asm;
 
+import org.eclipse.cdt.internal.ui.text.BufferedDocumentScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.BufferedDocumentScanner;
 
 /**
  * This scanner recognizes

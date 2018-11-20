@@ -17,6 +17,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -32,14 +38,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.Bundle;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
-
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 public class CPathContainerDescriptor implements IContainerDescriptor {
 

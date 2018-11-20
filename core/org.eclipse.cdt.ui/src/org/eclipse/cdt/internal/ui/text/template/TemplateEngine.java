@@ -23,6 +23,14 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -42,17 +50,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
-import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
-
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
-import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public class TemplateEngine {
 

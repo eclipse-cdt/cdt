@@ -16,6 +16,9 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
+import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,10 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
-import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * This gives a Label and Boolean widget.

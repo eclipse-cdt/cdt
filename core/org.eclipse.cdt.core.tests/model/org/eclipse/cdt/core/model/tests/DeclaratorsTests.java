@@ -17,9 +17,6 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunction;
@@ -27,6 +24,9 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariable;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author bnicolle

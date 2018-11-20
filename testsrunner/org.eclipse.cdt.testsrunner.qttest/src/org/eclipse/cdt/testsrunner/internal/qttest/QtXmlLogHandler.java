@@ -18,11 +18,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
+import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
-import org.eclipse.cdt.testsrunner.model.ITestCase;
-import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

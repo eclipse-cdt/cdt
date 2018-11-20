@@ -22,9 +22,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -35,16 +41,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TabsToSpacesConverter;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
-
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Testing the auto indent strategies.

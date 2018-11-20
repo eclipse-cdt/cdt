@@ -21,10 +21,9 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
 
 /**
  * Default spell checker for standard text.

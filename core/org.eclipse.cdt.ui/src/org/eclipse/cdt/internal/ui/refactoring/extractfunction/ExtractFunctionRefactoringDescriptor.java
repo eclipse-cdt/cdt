@@ -17,16 +17,14 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
+import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
-import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * @author Emanuel Graf IFS

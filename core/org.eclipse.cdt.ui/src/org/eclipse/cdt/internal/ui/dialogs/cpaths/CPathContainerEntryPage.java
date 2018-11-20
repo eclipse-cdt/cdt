@@ -17,6 +17,17 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,19 +39,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
  * Path Containers tab for C/C++ Project Paths page for 3.X projects.

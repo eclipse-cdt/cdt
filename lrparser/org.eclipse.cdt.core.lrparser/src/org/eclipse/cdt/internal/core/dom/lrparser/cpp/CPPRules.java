@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.lrparser.cpp;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CPPRules {
 	static Map fRules = new HashMap();

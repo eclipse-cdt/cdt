@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.internal.ui.editor.OverrideIndicatorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -35,10 +37,6 @@ import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.OverrideIndicatorManager;
 
 /**
  * Action which gets triggered when selecting (annotations) in the vertical ruler.

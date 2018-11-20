@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -26,12 +30,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 
 public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate {
 

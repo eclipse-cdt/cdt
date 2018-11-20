@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.util.ViewerPane;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -25,14 +31,6 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.util.ViewerPane;
 
 /**
  * @author Emanuel Graf

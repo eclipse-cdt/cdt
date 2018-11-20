@@ -13,12 +13,12 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 
 public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	private IType getReturnType(String functionName) throws Exception {

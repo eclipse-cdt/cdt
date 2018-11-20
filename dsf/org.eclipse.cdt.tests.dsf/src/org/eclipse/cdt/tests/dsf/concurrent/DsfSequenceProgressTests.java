@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
@@ -33,6 +31,8 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Test whether a step in a sequence can control the progress monitor.

@@ -15,9 +15,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.core.runtime.CoreException;
 
 public interface IToggleRefactoringStrategy {
 	public void run(ModificationCollector modifications) throws CoreException;

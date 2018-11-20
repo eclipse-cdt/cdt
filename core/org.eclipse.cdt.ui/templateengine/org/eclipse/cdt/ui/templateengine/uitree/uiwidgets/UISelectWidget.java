@@ -16,6 +16,11 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.templateengine.Messages;
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
+import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
+import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -26,12 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.ui.templateengine.Messages;
-import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
-import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
-import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * This gives a Label and Combo widget.

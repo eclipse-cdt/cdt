@@ -19,6 +19,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -33,13 +39,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetUpdater;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 
 public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementChangedListener {
 

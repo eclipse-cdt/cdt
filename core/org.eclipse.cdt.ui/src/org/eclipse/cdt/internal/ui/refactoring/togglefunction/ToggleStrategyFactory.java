@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 public class ToggleStrategyFactory {

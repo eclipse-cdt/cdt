@@ -15,9 +15,9 @@ package org.eclipse.cdt.core.dom.lrparser;
 
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+
+import lpg.lpgjavaruntime.IToken;
 
 public interface ISecondaryParser<N extends IASTNode> extends IParser<N> {
 

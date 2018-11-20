@@ -17,14 +17,13 @@ import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-
-import org.eclipse.cdt.core.templateengine.TemplateCore;
 
 public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWizard, IExecutableExtension {
 

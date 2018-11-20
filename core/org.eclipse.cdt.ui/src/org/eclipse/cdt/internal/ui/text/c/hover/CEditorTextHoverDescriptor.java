@@ -14,13 +14,16 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,11 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.osgi.framework.Bundle;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import com.ibm.icu.text.Collator;
 
 /**
  * CEditorTexHoverDescriptor

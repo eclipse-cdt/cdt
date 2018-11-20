@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,15 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * Configures C Editor typing preferences.

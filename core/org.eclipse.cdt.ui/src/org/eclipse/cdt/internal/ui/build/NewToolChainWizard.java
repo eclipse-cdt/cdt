@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.build;
 
-import org.eclipse.jface.wizard.Wizard;
-
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.jface.wizard.Wizard;
 
 public class NewToolChainWizard extends Wizard {
 

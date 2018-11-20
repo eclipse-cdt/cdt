@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -45,6 +43,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 /**
  * Test cases testing LanguageSettingsProvider functionality

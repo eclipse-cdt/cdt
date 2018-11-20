@@ -19,16 +19,14 @@ import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CodeGeneration;
-
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

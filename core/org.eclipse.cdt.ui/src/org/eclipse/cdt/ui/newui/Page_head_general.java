@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.DocCommentOwnerBlock;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -22,10 +25,6 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.DocCommentOwnerBlock;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

@@ -17,6 +17,19 @@ package org.eclipse.cdt.internal.ui.text.correction;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
+import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
@@ -41,22 +54,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
-import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 
 /**
  *

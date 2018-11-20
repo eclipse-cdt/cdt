@@ -17,6 +17,11 @@ package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistInvocationContext;
+import org.eclipse.cdt.internal.ui.text.contentassist.TemplateCompletionProposalComputer;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -50,13 +55,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.actions.QuickMenuCreator;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistInvocationContext;
-import org.eclipse.cdt.internal.ui.text.contentassist.TemplateCompletionProposalComputer;
 
 public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownDelegate2 {
 	public static final String SURROUND_WITH_QUICK_MENU_ACTION_ID = "org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"; //$NON-NLS-1$

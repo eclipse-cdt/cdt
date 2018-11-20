@@ -15,6 +15,8 @@ package org.eclipse.cdt.ui.tests.callhierarchy.extension;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -34,9 +36,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public class CHOpenListener implements IOpenListener {
 

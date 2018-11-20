@@ -20,16 +20,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
-
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 /**
  * IAutoEditStrategy related tests

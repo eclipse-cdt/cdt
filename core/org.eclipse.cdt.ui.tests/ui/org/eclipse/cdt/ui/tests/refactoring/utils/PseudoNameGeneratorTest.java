@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.internal.ui.refactoring.utils.PseudoNameGenerator;
+
+import junit.framework.TestCase;
 
 /**
  * @author Mirko Stocker

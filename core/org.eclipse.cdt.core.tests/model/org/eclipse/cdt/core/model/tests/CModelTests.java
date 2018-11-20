@@ -20,9 +20,6 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -62,6 +59,9 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.osgi.framework.Bundle;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * This file contains a set of generic tests for the core C model. Nothing

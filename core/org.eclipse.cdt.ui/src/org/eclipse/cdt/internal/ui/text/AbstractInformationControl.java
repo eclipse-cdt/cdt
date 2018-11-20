@@ -18,6 +18,14 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
@@ -65,16 +73,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
 /**
  * Abstract class for "quick" views in light-weight controls.

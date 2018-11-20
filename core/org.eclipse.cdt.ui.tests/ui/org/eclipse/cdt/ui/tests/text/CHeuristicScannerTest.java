@@ -16,22 +16,20 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.HashMap;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.CIndenter;
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.FastPartitioner;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CIndenter;
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * CHeuristicScannerTest.

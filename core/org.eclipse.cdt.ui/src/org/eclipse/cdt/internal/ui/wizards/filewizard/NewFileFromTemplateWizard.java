@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -29,8 +30,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * A generic new file wizard with support for file templates.

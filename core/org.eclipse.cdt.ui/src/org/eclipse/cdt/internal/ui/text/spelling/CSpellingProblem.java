@@ -19,6 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEvent;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.RankedWordProposal;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -26,15 +33,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
-
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEvent;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.RankedWordProposal;
 
 /**
  * A {@link SpellingProblem} that adapts a {@link ISpellEvent}.

@@ -18,6 +18,15 @@ package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -26,17 +35,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 public class OpenActionUtil {
 

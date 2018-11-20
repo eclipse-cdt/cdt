@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
-import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.texteditor.ITextEditor;
-
+import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-
-import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
+import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Content outline page for assembly translation units.

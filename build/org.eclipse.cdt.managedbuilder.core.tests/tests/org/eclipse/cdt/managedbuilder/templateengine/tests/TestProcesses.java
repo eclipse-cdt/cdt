@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
@@ -35,6 +33,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.TestCase;
 
 public class TestProcesses extends TestCase {
 	private static final String INCLUDE_FOLDER = "Include"; //$NON-NLS-1$

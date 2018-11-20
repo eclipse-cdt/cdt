@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -38,8 +36,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author dsteffle

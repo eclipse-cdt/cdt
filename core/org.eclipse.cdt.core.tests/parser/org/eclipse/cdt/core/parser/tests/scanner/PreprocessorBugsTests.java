@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+
+import junit.framework.TestSuite;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in

@@ -20,6 +20,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.utils.envvar.StorableEnvironment;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -50,19 +60,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.model.util.CDTListComparator;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.utils.envvar.StorableEnvironment;
-import org.eclipse.cdt.utils.spawner.EnvironmentReader;
-
-import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

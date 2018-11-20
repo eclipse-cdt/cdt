@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -30,6 +28,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Assert;
 
 /**
  * Based on org.eclipse.core.tests.resources.ResourceDeltaVerifier with

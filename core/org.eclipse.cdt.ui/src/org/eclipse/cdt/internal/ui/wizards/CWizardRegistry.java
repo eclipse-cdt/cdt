@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
@@ -24,8 +25,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Convenience class for drop-in C/C++ Wizard contributions.

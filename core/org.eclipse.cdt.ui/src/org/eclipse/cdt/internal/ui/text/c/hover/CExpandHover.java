@@ -19,15 +19,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-
+import org.eclipse.cdt.internal.ui.editor.CDocumentProvider.ProblemAnnotation;
+import org.eclipse.cdt.internal.ui.editor.CMarkerAnnotation;
+import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
+import org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.AnnotationHoverInput;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.Position;
@@ -39,18 +38,14 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ImageUtilities;
-
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.internal.ui.editor.CDocumentProvider.ProblemAnnotation;
-import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
-import org.eclipse.cdt.internal.ui.editor.CMarkerAnnotation;
-import org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.AnnotationHoverInput;
 
 /**
  * Originally copied from org.eclipse.jdt.internal.ui.text.java.hover.JavaExpandHover

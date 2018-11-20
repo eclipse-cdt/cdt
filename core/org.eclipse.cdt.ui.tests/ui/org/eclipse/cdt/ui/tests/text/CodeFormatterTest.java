@@ -18,21 +18,19 @@ package org.eclipse.cdt.ui.tests.text;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.text.edits.TextEdit;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.text.edits.TextEdit;
 
 import junit.framework.TestSuite;
 

@@ -14,15 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.ui.IWorkingSet;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.ui.IWorkingSet;
 
 public class CSearchUtil {
 	public static int LRU_WORKINGSET_LIST_SIZE = 3;

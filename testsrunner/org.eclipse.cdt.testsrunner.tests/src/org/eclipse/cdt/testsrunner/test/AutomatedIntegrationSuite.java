@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.testsrunner.core.TestModelManagerCasesReorderingTestCase;
 import org.eclipse.cdt.testsrunner.core.TestModelManagerSuitesReorderingTestCase;
 import org.eclipse.cdt.testsrunner.testsrunners.BoostTestCase;
 import org.eclipse.cdt.testsrunner.testsrunners.GoogleTestCase;
 import org.eclipse.cdt.testsrunner.testsrunners.QtTestCase;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Test suite with all the tests on Tests Runner.

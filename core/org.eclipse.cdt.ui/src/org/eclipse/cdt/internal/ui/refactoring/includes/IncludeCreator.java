@@ -26,17 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.MultiTextEdit;
-
-import com.ibm.icu.text.Collator;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -74,11 +63,6 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.IRequiredInclude;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -90,8 +74,21 @@ import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
-
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.IRequiredInclude;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MultiTextEdit;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Adds an include statement and, optionally, a 'using' declaration for the currently

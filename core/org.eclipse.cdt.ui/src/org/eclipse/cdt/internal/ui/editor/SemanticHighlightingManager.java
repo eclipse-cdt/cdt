@@ -19,6 +19,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.AbstractPositionCollector;
+import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -32,30 +53,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.ISemanticToken;
-
-import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
-
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.AbstractPositionCollector;
-import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
 
 /**
  * Semantic highlighting manager.

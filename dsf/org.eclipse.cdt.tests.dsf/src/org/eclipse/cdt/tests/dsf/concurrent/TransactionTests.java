@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.cdt.dsf.concurrent.RequestCache;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestCache;
 import org.eclipse.cdt.dsf.concurrent.Transaction;
 import org.eclipse.cdt.tests.dsf.TestDsfExecutor;
 import org.eclipse.core.runtime.CoreException;

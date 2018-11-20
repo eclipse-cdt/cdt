@@ -15,6 +15,13 @@
 
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
+import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,15 +42,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
-import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * Implementation of a C completion proposal to be used for quick fix and quick assist

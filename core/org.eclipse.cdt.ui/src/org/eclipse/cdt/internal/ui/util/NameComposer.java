@@ -17,11 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.ibm.icu.text.BreakIterator;
-
+import org.eclipse.cdt.internal.ui.text.CBreakIterator;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
-import org.eclipse.cdt.internal.ui.text.CBreakIterator;
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * Composes names according to a particular style. A seed name is split into

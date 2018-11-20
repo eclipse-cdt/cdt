@@ -17,6 +17,23 @@ package org.eclipse.cdt.internal.ui.text.correction.proposals;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
+import org.eclipse.cdt.internal.ui.search.LinkedNamesFinder;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
+import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -43,26 +60,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
-
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
-import org.eclipse.cdt.internal.ui.search.LinkedNamesFinder;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
-import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
-import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * A proposal allowing user to edit in place all occurrences of a name.

@@ -20,6 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -35,14 +41,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.osgi.framework.Bundle;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * The description of an extension to the

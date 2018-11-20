@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,8 +43,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the action group for workspace actions such as Build

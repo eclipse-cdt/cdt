@@ -14,8 +14,8 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * GDB tdump CLI command.

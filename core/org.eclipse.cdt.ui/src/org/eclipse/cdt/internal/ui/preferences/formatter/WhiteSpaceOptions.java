@@ -23,7 +23,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-
 import org.eclipse.cdt.internal.ui.preferences.formatter.SnippetPreview.PreviewSnippet;
 
 /**

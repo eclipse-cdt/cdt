@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,7 +29,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import com.ibm.icu.text.Collator;
 
 /**
  * Represents a custom filter which is provided by the

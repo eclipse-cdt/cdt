@@ -14,8 +14,8 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  *

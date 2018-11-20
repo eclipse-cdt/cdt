@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link IncludeMap}.

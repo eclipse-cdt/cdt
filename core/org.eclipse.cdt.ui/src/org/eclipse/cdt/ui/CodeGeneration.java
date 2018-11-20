@@ -15,12 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.templates.Template;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 
 /**
  * Class that offers access to the templates contained in the 'Code Templates' preference page.

@@ -20,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
-
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class CElementSet {

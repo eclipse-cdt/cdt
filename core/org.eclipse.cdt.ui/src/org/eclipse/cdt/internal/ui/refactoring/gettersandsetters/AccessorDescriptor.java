@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
-import com.ibm.icu.text.Collator;
-
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+
+import com.ibm.icu.text.Collator;
 
 public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 	public enum AccessorKind {

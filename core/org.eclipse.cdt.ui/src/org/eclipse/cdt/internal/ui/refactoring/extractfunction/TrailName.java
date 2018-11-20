@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 class TrailName extends ASTNode {

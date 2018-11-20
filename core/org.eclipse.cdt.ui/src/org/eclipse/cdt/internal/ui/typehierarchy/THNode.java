@@ -19,9 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.runtime.IAdaptable;
 
 public class THNode implements IAdaptable {
 	private THNode fParent;

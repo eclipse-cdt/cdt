@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import org.eclipse.cdt.internal.ui.editor.SpecificContentAssistExecutor;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,8 +23,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.internal.ui.editor.SpecificContentAssistExecutor;
 
 /**
  * A command handler to invoke a content assist for a specific proposal category.

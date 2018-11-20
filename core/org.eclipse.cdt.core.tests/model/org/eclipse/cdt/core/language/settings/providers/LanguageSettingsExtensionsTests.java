@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
@@ -35,6 +33,8 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 /**
  * Test cases testing LanguageSettingsProvider extensions

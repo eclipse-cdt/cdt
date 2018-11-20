@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,9 +27,6 @@ import org.eclipse.jface.viewers.IViewerLabelProvider;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Helper class for updating error markers and other decorators that work on resources.

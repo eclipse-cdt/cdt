@@ -17,10 +17,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -39,14 +45,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 

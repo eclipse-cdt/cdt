@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -39,6 +37,8 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 public class ExpressionWriterTest extends TestCase {
 	private static final String BR = System.getProperty("line.separator");

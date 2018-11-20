@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,8 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
-
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 
 /**
  * This is the action group for refactor actions,

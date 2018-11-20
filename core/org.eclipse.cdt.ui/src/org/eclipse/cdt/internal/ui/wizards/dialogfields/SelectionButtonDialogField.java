@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -20,8 +21,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * Dialog Field containing a single button such as a radio or checkbox button.

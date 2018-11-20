@@ -20,8 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -30,6 +28,8 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationD
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.TestSuite;
 
 /**
  * Test ICConfigurationDescription reference behaviours

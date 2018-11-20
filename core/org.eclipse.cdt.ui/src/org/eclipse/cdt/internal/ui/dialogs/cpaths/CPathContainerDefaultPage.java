@@ -15,19 +15,10 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
-
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
@@ -35,6 +26,13 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 
 public class CPathContainerDefaultPage extends NewElementWizardPage implements IPathEntryContainerPage {
 	private StringDialogField fEntryField;

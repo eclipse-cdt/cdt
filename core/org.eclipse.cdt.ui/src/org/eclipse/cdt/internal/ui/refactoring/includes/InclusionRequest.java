@@ -19,14 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.util.StringUtil;
+import org.eclipse.core.runtime.IPath;
 
 class InclusionRequest {
 	private static final String UNINITIALIZED = "uninitialized"; //$NON-NLS-1$

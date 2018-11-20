@@ -19,6 +19,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.RankedWordProposal;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -26,16 +34,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.RankedWordProposal;
 
 /**
  * Content assist processor to complete words.

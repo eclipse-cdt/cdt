@@ -17,6 +17,19 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.Splitter;
@@ -69,21 +82,6 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Information control for macro expansion exploration.

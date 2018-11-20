@@ -17,8 +17,6 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
@@ -31,10 +29,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Helps with IASTNames.

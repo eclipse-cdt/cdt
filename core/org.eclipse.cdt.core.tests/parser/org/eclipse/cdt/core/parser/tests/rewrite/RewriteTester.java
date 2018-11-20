@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.TextSelection;
 import org.osgi.framework.Bundle;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author Emanuel Graf

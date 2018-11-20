@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -26,8 +27,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
 
 public class DeleteTaskAction extends ActionDelegate implements IObjectActionDelegate {
 	private IStructuredSelection selection;

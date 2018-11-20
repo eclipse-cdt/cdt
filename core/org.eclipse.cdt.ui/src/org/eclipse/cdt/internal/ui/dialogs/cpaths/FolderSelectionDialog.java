@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -34,8 +35,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * @deprecated as of CDT 4.0. This class was used for property pages

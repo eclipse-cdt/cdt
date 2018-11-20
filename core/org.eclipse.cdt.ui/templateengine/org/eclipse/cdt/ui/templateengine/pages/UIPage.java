@@ -16,17 +16,16 @@ package org.eclipse.cdt.ui.templateengine.pages;
 import java.net.URL;
 import java.util.Map;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Control;
 
 /**
  *

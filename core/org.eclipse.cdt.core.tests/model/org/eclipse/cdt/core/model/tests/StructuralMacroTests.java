@@ -19,6 +19,7 @@ package org.eclipse.cdt.core.model.tests;
  */
 
 import org.eclipse.cdt.core.model.CModelException;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

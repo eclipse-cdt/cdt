@@ -14,15 +14,13 @@
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class TeamProjectIndexExportWizard extends Wizard implements IExportWizard {
 	private static final String DIALOG_SETTINGS_SECTION = "TeamProjectIndexExportWizard"; //$NON-NLS-1$

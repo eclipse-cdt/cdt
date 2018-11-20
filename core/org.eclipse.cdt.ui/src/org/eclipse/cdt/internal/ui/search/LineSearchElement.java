@@ -20,16 +20,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 
 /**
  * Element representing a line with one ore more matches.

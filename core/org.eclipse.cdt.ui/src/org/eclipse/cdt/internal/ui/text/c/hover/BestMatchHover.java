@@ -18,6 +18,9 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
@@ -26,10 +29,6 @@ import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.ui.IEditorPart;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 
 /**
  * 'Fake' hover used to choose the best available hover.

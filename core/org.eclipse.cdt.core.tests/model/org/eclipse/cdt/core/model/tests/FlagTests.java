@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.Flags;
 import org.eclipse.cdt.internal.core.model.IConstants;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author Peter Graves

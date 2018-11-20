@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.Iterator;
+
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;

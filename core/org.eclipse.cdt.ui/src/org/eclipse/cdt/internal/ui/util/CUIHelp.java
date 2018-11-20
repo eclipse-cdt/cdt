@@ -18,7 +18,6 @@ package org.eclipse.cdt.internal.ui.util;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.HelpSystem;

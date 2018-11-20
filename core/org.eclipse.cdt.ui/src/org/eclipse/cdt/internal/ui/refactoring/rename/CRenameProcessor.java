@@ -14,6 +14,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -29,21 +43,6 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the processor used for the rename. It decides which of the delegates to

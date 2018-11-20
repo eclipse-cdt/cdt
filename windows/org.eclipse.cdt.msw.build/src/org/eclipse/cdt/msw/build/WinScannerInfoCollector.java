@@ -13,10 +13,10 @@ package org.eclipse.cdt.msw.build;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
+import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -32,12 +36,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
-import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 
 /**
  * Semantic highlighting presenter - UI thread implementation.

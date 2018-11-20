@@ -16,17 +16,16 @@ package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.tests.FailingTest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.tests.FailingTest;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class RenameRegressionTests extends RenameTestBase {
 	public RenameRegressionTests() {

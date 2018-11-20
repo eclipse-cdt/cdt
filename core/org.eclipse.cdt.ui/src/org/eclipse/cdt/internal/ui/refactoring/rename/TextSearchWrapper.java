@@ -30,6 +30,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.formatter.scanner.SimpleScanner;
+import org.eclipse.cdt.internal.formatter.scanner.Token;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -46,14 +52,6 @@ import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.utils.PathUtil;
-
-import org.eclipse.cdt.internal.formatter.scanner.SimpleScanner;
-import org.eclipse.cdt.internal.formatter.scanner.Token;
 
 /**
  * Wraps the platform text search and uses a scanner to categorize the text-matches

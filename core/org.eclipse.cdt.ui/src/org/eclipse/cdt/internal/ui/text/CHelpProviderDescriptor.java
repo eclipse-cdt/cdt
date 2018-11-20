@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.ICHelpBook;
+import org.eclipse.cdt.ui.ICHelpProvider;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -25,10 +28,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import org.eclipse.cdt.ui.ICHelpBook;
-import org.eclipse.cdt.ui.ICHelpProvider;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 /**
  * This class represents the CHelpProvider settings

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
+import org.eclipse.cdt.core.CConventions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
@@ -35,8 +36,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-
-import org.eclipse.cdt.core.CConventions;
 
 /**
  * Input page added to the standard refactoring wizard.

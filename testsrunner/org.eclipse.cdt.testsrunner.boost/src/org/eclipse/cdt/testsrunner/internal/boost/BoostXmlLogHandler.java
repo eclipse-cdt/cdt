@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
-import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestItem.Status;
+import org.eclipse.cdt.testsrunner.model.ITestMessage;
+import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

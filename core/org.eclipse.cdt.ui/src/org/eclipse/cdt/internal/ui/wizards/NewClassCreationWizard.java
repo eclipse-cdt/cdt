@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
 
 public class NewClassCreationWizard extends NewElementWizard {
 	private NewClassCreationWizardPage fPage;

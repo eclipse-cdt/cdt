@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-import lpg.lpgjavaruntime.IToken;
-import lpg.lpgjavaruntime.Token;
-
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.Token;
 
 /**
  * Adapts the CPreprocessor from the CDT core for use with LPG based parsers.

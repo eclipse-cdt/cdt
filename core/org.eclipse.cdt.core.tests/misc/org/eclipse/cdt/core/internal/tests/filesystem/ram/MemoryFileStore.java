@@ -17,9 +17,14 @@ package org.eclipse.cdt.core.internal.tests.filesystem.ram;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import org.eclipse.core.filesystem.*;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileStore;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * In memory file system implementation used for testing.

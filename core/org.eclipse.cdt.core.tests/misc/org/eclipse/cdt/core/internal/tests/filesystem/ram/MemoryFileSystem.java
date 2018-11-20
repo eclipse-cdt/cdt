@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.internal.tests.filesystem.ram;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.IPath;

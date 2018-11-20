@@ -15,9 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
  * The wizard page for Extract Constant refactoring, creates the UI page.

@@ -34,15 +34,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.text.spelling.Messages;
+import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.spelling.Messages;
-import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
 
 /**
  * Partial implementation of a spell dictionary.

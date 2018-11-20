@@ -15,9 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 public class ExtractFunctionWizard extends RefactoringWizard {
 	public ExtractFunctionWizard(ExtractFunctionRefactoring refactoring) {

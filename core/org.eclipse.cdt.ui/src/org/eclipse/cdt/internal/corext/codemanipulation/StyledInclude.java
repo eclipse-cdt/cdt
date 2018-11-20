@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Represents a new or an existing include statement together with the style associated with it.

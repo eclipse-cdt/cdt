@@ -15,13 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import junit.framework.Test;
 
 public class ParameterHintTests extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "PHTest.h";

@@ -15,15 +15,14 @@ package org.eclipse.cdt.ui.internal.templateengine.wizard;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
 import org.eclipse.cdt.ui.templateengine.Template;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
-import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.cdt.ui.wizards.CNewWizard;
+import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  *

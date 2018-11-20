@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -26,8 +27,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-
-import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 
 /**
  * Dialog-based header chooser.

@@ -18,10 +18,6 @@ package org.eclipse.cdt.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
@@ -31,6 +27,10 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariable;
 import org.eclipse.core.resources.IProject;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class StorableCdtVariablesTest extends TestCase {
 

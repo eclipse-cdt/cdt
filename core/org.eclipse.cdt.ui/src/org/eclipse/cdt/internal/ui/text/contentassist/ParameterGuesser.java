@@ -22,11 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -53,14 +48,16 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost;
-
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * This class is based on org.eclipse.jdt.internal.ui.text.java.ParameterGuesser

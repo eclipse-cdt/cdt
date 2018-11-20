@@ -19,12 +19,9 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
-
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;

@@ -29,6 +29,20 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.ResizableStatusDialog;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ComboDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
@@ -58,22 +72,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 
 import com.ibm.icu.text.Collator;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.ResizableStatusDialog;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ComboDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 /**
  * Dialog for editing a header file substitution map.

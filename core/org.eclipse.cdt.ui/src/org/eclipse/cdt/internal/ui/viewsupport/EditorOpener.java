@@ -16,6 +16,17 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.net.URI;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IPositionConverter;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -31,20 +42,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
  * An utility to open editors for references or elements.

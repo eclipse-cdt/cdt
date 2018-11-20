@@ -18,6 +18,9 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.StringConverter;
@@ -29,10 +32,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.ITokenStore;
 
 /**
  * Maintains a pool of tokens identified by a String ID.

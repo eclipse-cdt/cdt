@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.ui.CUIStatus;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -26,10 +28,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
-
-import org.eclipse.cdt.core.model.CoreModel;
-
-import org.eclipse.cdt.internal.ui.CUIStatus;
 
 /**
  * An <code>IRunnableWithProgress</code> that adapts and  <code>IWorkspaceRunnable</code>

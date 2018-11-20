@@ -16,9 +16,9 @@ package org.eclipse.cdt.ui.testplugin;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import junit.framework.Assert;
-
 import org.eclipse.swt.widgets.Display;
+
+import junit.framework.Assert;
 
 /**
  * Runs the event loop of the given display until {@link #condition()} becomes

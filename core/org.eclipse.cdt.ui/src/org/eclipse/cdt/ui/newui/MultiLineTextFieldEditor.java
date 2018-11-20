@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
@@ -26,8 +27,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  *	MultiLineTextFieldEditor.

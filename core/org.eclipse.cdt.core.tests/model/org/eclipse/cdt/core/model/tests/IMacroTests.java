@@ -17,16 +17,15 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMacro;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import java.util.List;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.tests.IntegratedCModelTest;
 
 /**
  * IMacroTest - Class for testing IMacro

@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr32Factory;

@@ -17,10 +17,9 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 
 /**
  * @author Emanuel Graf IFS

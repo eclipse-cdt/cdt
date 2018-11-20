@@ -28,6 +28,12 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.internal.ui.filters.CustomFiltersDialog;
+import org.eclipse.cdt.internal.ui.filters.FilterDescriptor;
+import org.eclipse.cdt.internal.ui.filters.FilterMessages;
+import org.eclipse.cdt.internal.ui.filters.NamePatternFilter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
@@ -52,14 +58,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionGroup;
-
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.filters.CustomFiltersDialog;
-import org.eclipse.cdt.internal.ui.filters.FilterDescriptor;
-import org.eclipse.cdt.internal.ui.filters.FilterMessages;
-import org.eclipse.cdt.internal.ui.filters.NamePatternFilter;
 
 /**
  * Action group to add the filter action to a view part's tool bar

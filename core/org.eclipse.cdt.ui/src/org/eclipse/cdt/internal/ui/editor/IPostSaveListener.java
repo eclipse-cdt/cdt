@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Listener that is informed when a translation unit is saved.

@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsExportWizard;
+import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImportWizard;
+import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsWizard;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -25,13 +30,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsExportWizard;
-import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImportWizard;
-import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsWizard;
 
 /**
  * Utility class that adds buttons for "Import Settings..." and "Export Settings..."

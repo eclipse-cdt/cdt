@@ -63,14 +63,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 public class ToggleNodeHelper extends NodeHelper {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$

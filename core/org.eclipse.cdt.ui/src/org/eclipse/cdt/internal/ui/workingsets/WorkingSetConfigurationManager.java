@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,9 +37,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.XMLMemento;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 
 /**
  * The purveyor of working set configurations. It provides a current view of the {@linkplain IWorkingSetProxy

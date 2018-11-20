@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import org.eclipse.cdt.internal.core.WeakHashSet;
+import org.eclipse.cdt.internal.core.WeakHashSetSynchronized;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.internal.core.WeakHashSet;
-import org.eclipse.cdt.internal.core.WeakHashSetSynchronized;
 
 /**
  * Test suite to test {@link WeakHashSet}.

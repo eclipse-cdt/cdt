@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 
 /**
  * The exported XML file is divided into 'section' elements, each

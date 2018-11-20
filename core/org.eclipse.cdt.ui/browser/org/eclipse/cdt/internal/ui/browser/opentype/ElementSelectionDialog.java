@@ -17,6 +17,23 @@ package org.eclipse.cdt.internal.ui.browser.opentype;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.IndexTypeInfo;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.browser.IndexModelUtil;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.search.CSearchUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -38,26 +55,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.IndexTypeInfo;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
-
-import org.eclipse.cdt.internal.core.browser.IndexModelUtil;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 
 /**
  * A dialog to select an element from a filterable list of elements.

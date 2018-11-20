@@ -14,11 +14,10 @@
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
-import junit.framework.TestCase;
-
+import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleNodeHelper;
 import org.junit.Test;
 
-import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleNodeHelper;
+import junit.framework.TestCase;
 
 /**
  * @author egraf

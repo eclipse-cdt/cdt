@@ -15,12 +15,10 @@ package org.eclipse.cdt.internal.ui.text.doctools;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
-
 import org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Adapter from interim public {@link IDocCommentSimpleDictionary} to internal {@link ISpellDictionary}

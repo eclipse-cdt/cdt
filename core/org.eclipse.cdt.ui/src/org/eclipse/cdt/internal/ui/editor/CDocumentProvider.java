@@ -22,6 +22,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.ToolFactory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.IPersistableProblem;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.saveactions.AlignConstSaveAction;
+import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
+import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -72,30 +93,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
-
-import org.eclipse.cdt.core.ToolFactory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IProblemRequestor;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.IPersistableProblem;
-import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-import org.eclipse.cdt.internal.ui.saveactions.AlignConstSaveAction;
-import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
-import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * A document provider for C/C++ content.

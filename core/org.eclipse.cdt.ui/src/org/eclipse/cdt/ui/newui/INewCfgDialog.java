@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Represents class which is able to display

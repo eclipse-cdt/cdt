@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * A settable IStatus

@@ -22,11 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.ui.PreferenceConstants;
 
 public class GetterSetterNameGenerator {
 	private static Set<String> generateGetterSettersPreferenceKeys = new HashSet<String>();

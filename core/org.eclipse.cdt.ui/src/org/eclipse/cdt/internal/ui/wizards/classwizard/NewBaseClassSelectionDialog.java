@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
-
 import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.core.runtime.IStatus;

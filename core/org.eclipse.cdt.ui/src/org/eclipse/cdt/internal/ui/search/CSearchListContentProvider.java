@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -27,10 +30,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Doug Schaefer

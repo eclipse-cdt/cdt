@@ -15,7 +15,6 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -23,6 +22,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 public class AccessControlTests extends AST2TestBase {
 

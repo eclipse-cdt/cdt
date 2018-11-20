@@ -17,13 +17,12 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.ui.texteditor.HippieProposalProcessor;
-
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
 /**
  * A computer wrapper for the hippie processor.

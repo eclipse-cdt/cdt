@@ -21,6 +21,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingWithOwnPreference;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
@@ -65,20 +77,6 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 import com.ibm.icu.text.Collator;
-
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingWithOwnPreference;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 /**
  * Configures C/C++ Editor code coloring preferences.

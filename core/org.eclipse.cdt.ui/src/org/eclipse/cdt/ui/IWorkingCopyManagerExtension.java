@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * Extension interface for {@code IWorkingCopyManager}.

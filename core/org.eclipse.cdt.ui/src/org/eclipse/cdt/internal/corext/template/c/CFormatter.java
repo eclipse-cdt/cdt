@@ -22,6 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -40,17 +48,6 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.editor.IndentUtil;
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 
 /**
  * A template editor using the C/C++ formatter to format a template buffer.

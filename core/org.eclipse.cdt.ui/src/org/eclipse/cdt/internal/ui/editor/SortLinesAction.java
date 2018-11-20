@@ -15,6 +15,12 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.corext.util.Strings;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -32,15 +38,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 import com.ibm.icu.text.Collator;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.corext.util.Strings;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Sorts selected lines in alphabetical order. If both, comment and non-comment lines

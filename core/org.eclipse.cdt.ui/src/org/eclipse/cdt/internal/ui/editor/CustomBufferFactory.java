@@ -17,16 +17,15 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.net.URI;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * CustomBufferFactory

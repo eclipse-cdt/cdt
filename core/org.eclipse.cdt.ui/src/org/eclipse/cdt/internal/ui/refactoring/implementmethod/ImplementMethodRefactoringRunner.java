@@ -16,14 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.window.IShellProvider;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.IShellProvider;
 
 /**
  * @author Lukas Felber

@@ -17,6 +17,10 @@ package org.eclipse.cdt.internal.ui.text;
 
 import static org.eclipse.cdt.internal.ui.text.CHeuristicScanner.NOT_FOUND;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
@@ -27,12 +31,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 /**
  * Uses the {@link org.eclipse.cdt.internal.ui.text.CHeuristicScanner} to

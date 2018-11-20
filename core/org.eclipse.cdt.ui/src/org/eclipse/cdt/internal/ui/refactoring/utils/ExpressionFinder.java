@@ -14,15 +14,13 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexName;
-
 import org.eclipse.cdt.internal.ui.refactoring.Container;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Guido Zgraggen IFS

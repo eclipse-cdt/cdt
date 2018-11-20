@@ -13,10 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.AnnotationModel;

@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.tests;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IChecker;
@@ -45,8 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import junit.framework.TestCase;
 
 /**
  * TODO: add description

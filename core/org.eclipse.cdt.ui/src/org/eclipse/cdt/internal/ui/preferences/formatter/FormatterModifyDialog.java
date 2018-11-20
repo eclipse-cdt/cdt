@@ -17,9 +17,8 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.Map;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.swt.widgets.Shell;
 
 public class FormatterModifyDialog extends ModifyDialog {
 

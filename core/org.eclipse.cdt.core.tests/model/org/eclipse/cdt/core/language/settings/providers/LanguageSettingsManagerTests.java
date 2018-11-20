@@ -17,8 +17,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -40,6 +38,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 /**
  * Test cases testing {@link LanguageSettingsManager} utility methods.

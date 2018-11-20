@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests.base;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.lrparser.tests.LRCPPTests;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+
+import junit.framework.TestSuite;
 
 public class XlcLRCPPTests extends LRCPPTests {
 	public static TestSuite suite() {

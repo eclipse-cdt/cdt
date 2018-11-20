@@ -26,8 +26,8 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 import org.eclipse.cdt.utils.debug.stabs.StabConstant;
+import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 /**
  * @since 5.2

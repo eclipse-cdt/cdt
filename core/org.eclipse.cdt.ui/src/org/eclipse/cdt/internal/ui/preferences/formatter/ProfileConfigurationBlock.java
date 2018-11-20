@@ -21,6 +21,14 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -43,17 +51,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.prefs.BackingStoreException;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.util.Messages;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 public abstract class ProfileConfigurationBlock {
 

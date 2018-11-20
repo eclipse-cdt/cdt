@@ -18,8 +18,6 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -32,11 +30,10 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
-
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
+import org.eclipse.text.edits.TextEditGroup;
 
 /**
  * @author Mirko Stocker

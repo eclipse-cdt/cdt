@@ -19,18 +19,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
-import org.eclipse.cdt.ui.text.IProblemLocation;
-import org.eclipse.cdt.ui.text.IQuickFixProcessor;
-
 import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.RankedWordProposal;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
+import org.eclipse.cdt.ui.text.IProblemLocation;
+import org.eclipse.cdt.ui.text.IQuickFixProcessor;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Quick fix processor for incorrectly spelled words.

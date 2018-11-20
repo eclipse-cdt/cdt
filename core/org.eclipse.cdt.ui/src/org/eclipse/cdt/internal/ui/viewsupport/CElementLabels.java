@@ -15,13 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.osgi.util.TextProcessor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IField;
@@ -30,10 +23,15 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
-
 import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
 import org.eclipse.cdt.internal.corext.util.Strings;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.osgi.util.TextProcessor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /*
  * This class is basically a clone of org.eclipse.cdt.core.model.util.CElementLabels

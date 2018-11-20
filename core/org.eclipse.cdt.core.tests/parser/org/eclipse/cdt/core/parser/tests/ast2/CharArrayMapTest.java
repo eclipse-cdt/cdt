@@ -19,10 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+
+import junit.framework.TestCase;
 
 /**
  *

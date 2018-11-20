@@ -17,20 +17,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IProjectEntry;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
-
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class CPathContainerWizard extends Wizard {
 

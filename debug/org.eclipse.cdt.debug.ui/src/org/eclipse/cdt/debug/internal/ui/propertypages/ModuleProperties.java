@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.cdt.debug.core.model.ICModule;
 
 /**

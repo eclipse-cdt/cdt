@@ -15,6 +15,15 @@ package org.eclipse.cdt.ui;
 
 import java.net.URI;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
+import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
@@ -25,17 +34,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * This class provides utilities for clients of the CDT UI plug-in.

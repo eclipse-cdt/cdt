@@ -16,6 +16,9 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -28,11 +31,6 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
-
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> {
 

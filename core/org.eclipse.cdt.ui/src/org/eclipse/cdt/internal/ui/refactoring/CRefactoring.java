@@ -18,25 +18,6 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
-import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -57,12 +38,28 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
-
 import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
+import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * The base class for all AST based refactorings, provides some common implementations for

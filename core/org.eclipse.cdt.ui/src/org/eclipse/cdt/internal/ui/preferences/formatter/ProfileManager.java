@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,11 +35,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.TextProcessor;
 import org.osgi.service.prefs.BackingStoreException;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * The model for the set of profiles which are available in the workbench.

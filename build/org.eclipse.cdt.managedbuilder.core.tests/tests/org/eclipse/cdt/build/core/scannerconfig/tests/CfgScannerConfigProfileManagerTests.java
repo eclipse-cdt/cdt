@@ -15,9 +15,6 @@ package org.eclipse.cdt.build.core.scannerconfig.tests;
 
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
@@ -34,6 +31,9 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 	IProject fProject;

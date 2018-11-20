@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * CElementLabelProvider that respects settings from the Appearance preference page.

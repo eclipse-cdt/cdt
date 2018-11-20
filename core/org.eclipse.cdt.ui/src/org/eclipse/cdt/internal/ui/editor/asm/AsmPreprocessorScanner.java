@@ -17,19 +17,18 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.rules.EndOfLineRule;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.cdt.core.model.IAsmLanguage;
-import org.eclipse.cdt.ui.text.AbstractCScanner;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
 import org.eclipse.cdt.internal.ui.text.CHeaderRule;
 import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
 import org.eclipse.cdt.internal.ui.text.PreprocessorRule;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
+import org.eclipse.cdt.ui.text.AbstractCScanner;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.text.rules.EndOfLineRule;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
 
 /**
  * A preprocessor directive scanner for Asm source.

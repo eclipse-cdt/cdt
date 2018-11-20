@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,9 +22,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 /**
  * <em>This class is not intended for use outside of CDT</em>

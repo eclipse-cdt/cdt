@@ -27,17 +27,16 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.core.resources.ResourcesUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-
-import org.eclipse.cdt.core.resources.ResourcesUtil;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Custom behavior for the Export wizard.

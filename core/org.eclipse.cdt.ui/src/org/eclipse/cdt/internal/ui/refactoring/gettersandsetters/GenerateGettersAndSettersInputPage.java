@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
+import org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -32,11 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage implements IPreferenceChangeListener {
 	private GetterSetterContext context;

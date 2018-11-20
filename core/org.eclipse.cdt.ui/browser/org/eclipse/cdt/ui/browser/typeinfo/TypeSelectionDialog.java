@@ -23,6 +23,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.IndexTypeInfo;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -40,16 +48,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
-
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.IndexTypeInfo;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
 /**
  * A dialog to select a type from a list of types.

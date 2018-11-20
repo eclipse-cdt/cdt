@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -22,10 +24,6 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Combo;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
  * A class which encapsulates several utility functions

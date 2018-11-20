@@ -22,8 +22,8 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.utils.AR;
-import org.eclipse.cdt.utils.BinaryFile;
 import org.eclipse.cdt.utils.AR.ARHeader;
+import org.eclipse.cdt.utils.BinaryFile;
 import org.eclipse.core.runtime.IPath;
 
 /**

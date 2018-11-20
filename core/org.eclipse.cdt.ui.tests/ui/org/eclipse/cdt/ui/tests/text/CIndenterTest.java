@@ -17,19 +17,17 @@ package org.eclipse.cdt.ui.tests.text;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.LineRange;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
-import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import junit.framework.TestSuite;
 
 /**
  * Tests for the CIndenter.

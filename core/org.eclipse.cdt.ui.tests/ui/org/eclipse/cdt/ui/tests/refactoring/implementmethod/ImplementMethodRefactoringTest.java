@@ -15,12 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.implementmethod;
 
-import junit.framework.Test;
-
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.ImplementMethodRefactoring;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
+
+import junit.framework.Test;
 
 /**
  * Tests for Extract Local Variable refactoring.

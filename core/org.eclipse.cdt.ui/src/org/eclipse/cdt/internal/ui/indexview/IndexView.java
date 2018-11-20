@@ -20,6 +20,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.IPDOM;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
@@ -41,30 +62,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
-
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.IPDOM;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-
-import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 
 /**
  * @author Doug Schaefer

@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.jface.viewers.IElementComparer;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.jface.viewers.IElementComparer;
 
 public class CViewElementComparer implements IElementComparer {
 

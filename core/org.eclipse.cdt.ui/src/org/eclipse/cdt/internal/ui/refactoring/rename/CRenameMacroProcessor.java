@@ -16,10 +16,9 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * Rename processor that sets up the input page for renaming a global entity.

@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -28,10 +30,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.EditorsUI;
-
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
-
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 /**
  * Abstract class for providing hover information for C elements.

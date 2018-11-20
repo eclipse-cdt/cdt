@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -34,12 +30,14 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.testplugin.util.OneSourceMultipleHeadersTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.ui.refactoring.includes.BindingClassifier;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreationContext;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 
-import org.eclipse.cdt.internal.ui.refactoring.includes.BindingClassifier;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreationContext;
+import com.ibm.icu.text.MessageFormat;
 
 import junit.framework.TestSuite;
 

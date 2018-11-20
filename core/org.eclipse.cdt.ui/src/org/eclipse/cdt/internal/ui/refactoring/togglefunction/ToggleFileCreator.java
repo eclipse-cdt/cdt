@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
+import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,10 +26,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
 
 public class ToggleFileCreator {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$

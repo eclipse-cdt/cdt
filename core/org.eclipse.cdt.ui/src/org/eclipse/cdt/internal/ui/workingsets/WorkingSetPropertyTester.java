@@ -14,12 +14,11 @@
 
 package org.eclipse.cdt.internal.ui.workingsets;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkingSet;
-
-import org.eclipse.cdt.core.model.CoreModel;
 
 /**
  * Property tester for working sets that CDT can manipulate in cool ways, such

@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests.base;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.lrparser.tests.LRSelectionParseTest;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+
+import junit.framework.TestSuite;
 
 public class XlcLRSelectionParseTest extends LRSelectionParseTest {
 

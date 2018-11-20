@@ -17,13 +17,13 @@ package org.eclipse.cdt.core.autotools.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

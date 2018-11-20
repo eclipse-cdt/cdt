@@ -18,6 +18,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
+import org.eclipse.cdt.internal.ui.editor.AddIncludeAction;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.editor.OrganizeIncludesAction;
+import org.eclipse.cdt.internal.ui.editor.SortLinesAction;
+import org.eclipse.cdt.ui.refactoring.actions.GettersAndSettersAction;
+import org.eclipse.cdt.ui.refactoring.actions.ImplementMethodAction;
+import org.eclipse.cdt.ui.refactoring.actions.RefactoringAction;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
@@ -42,21 +55,6 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.refactoring.actions.GettersAndSettersAction;
-import org.eclipse.cdt.ui.refactoring.actions.ImplementMethodAction;
-import org.eclipse.cdt.ui.refactoring.actions.RefactoringAction;
-
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
-import org.eclipse.cdt.internal.ui.editor.AddIncludeAction;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.editor.OrganizeIncludesAction;
-import org.eclipse.cdt.internal.ui.editor.SortLinesAction;
 
 /**
  * Action group that adds the source and generate actions to a part's context

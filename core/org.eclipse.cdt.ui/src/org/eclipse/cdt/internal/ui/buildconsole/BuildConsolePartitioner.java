@@ -26,6 +26,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.ResourcesUtil;
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartitionerEditData.UpdateUIData;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
@@ -42,15 +49,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
-
-import org.eclipse.cdt.core.ConsoleOutputStream;
-import org.eclipse.cdt.core.ProblemMarkerInfo;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.ResourcesUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartitionerEditData.UpdateUIData;
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 /*
  * XXX the wrap lines is way too slow to be usable on large {@link #fMaxLines}

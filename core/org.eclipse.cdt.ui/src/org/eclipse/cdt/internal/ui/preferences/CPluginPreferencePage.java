@@ -19,6 +19,12 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.PixelConverter;
@@ -39,14 +45,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * The page for general C/C++ preferences.

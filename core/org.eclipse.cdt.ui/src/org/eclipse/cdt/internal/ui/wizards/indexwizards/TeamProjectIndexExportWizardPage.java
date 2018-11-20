@@ -19,6 +19,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.pdom.TeamPDOMExportOperation;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,17 +57,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.pdom.TeamPDOMExportOperation;
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-
-import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
 public class TeamProjectIndexExportWizardPage extends WizardPage implements Listener {
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;

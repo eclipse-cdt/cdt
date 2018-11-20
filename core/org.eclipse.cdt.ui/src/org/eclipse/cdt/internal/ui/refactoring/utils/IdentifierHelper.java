@@ -19,12 +19,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Class to verify that an identifier meets the C++ rules for valid names.

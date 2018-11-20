@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Bug #183341 : Single property page which does not

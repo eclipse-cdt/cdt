@@ -20,6 +20,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -36,22 +50,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
-import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties

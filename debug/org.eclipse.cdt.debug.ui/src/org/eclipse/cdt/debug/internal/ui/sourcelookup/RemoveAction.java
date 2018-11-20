@@ -16,7 +16,9 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 import java.util.List;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * The action used to remove source containers in the source location dialog/tab.

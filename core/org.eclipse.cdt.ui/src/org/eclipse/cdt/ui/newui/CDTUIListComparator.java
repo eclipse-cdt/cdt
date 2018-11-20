@@ -15,11 +15,10 @@ package org.eclipse.cdt.ui.newui;
 
 import java.util.Comparator;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.ui.newui.AbstractExportTab.ExtData;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

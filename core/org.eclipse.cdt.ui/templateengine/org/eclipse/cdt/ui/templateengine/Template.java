@@ -19,18 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.w3c.dom.Element;
-
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
@@ -42,6 +30,17 @@ import org.eclipse.cdt.ui.templateengine.pages.UIPagesProvider;
 import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderHelper;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderManager;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.w3c.dom.Element;
 
 /**
  * Template class is responsible for initiating GUI construction. Collecting data from GUI and

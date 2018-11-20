@@ -16,7 +16,6 @@
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import static org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind.REPLACE;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -39,6 +38,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+
+import junit.framework.TestSuite;
 
 public class RemoveTests extends ChangeGeneratorTest {
 

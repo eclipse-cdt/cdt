@@ -17,6 +17,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -43,14 +49,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
-
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
 
 /**
  * Configures C Editor folding preferences.

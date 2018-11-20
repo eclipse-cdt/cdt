@@ -18,16 +18,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 public abstract class ContentTypeMappingDialog extends Dialog {
 

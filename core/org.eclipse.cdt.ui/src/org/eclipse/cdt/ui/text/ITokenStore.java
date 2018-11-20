@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.IToken;
-
 import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.rules.IToken;
 
 /**
  * An ITokenStore manages a set of tokens for a specified set of color property identifiers. Responsibilities include

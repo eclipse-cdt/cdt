@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.jface.wizard.IWizardPage;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.jface.wizard.IWizardPage;
 
 /**
  * A path container page allows the user to create a new or edit an

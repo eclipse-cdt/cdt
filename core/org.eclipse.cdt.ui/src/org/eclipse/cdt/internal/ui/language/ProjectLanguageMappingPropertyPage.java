@@ -16,6 +16,17 @@ package org.eclipse.cdt.internal.ui.language;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
+import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
+import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
@@ -30,19 +41,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
-import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
-import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -25,6 +23,8 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.prefix.BasicCompletionTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 @SuppressWarnings({ "restriction", "nls" })
 public class LRCompletionBasicTest extends BasicCompletionTest {

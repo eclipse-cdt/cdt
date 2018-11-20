@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * Helper class concerning files.

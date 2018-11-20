@@ -15,16 +15,14 @@
  ******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoringRunner;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoringRunner;
 
 /**
  * @since 5.3

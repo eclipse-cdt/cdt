@@ -15,14 +15,12 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.io.IOException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
-
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Adapter that wraps a project console and the global console to allow builders

@@ -16,6 +16,14 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -33,17 +41,6 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
-
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
 
 public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerConfiguration {
 

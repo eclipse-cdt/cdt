@@ -20,6 +20,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -39,11 +42,6 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 
 /**
  * Once registered as windows listener, observes all part activations. Whenever the

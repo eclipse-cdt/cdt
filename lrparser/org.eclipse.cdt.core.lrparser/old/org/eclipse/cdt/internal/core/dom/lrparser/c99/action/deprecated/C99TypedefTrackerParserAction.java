@@ -15,11 +15,11 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
 import java.util.LinkedList;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.TypedefSymbolTable;
+
+import lpg.lpgjavaruntime.IToken;
 
 /**
  * A simple set of trial and undo actions that just keep track

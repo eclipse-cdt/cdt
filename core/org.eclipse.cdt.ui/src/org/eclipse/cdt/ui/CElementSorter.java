@@ -18,6 +18,16 @@ package org.eclipse.cdt.ui;
 
 import java.util.Comparator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -30,17 +40,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchiveContainer;
-import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IIncludeReference;
-import org.eclipse.cdt.core.model.ILibraryReference;
-import org.eclipse.cdt.core.model.IMember;
-import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.model.ISourceRoot;
 
 /**
  *	A sorter to sort the file and the folders in the C viewer in the following order:

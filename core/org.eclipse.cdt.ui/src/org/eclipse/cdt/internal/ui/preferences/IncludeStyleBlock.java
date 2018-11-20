@@ -19,14 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * The preference block for configuring style of include statements.

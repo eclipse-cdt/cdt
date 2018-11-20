@@ -22,21 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.IHelpResource;
-import org.junit.Assert;
-
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.text.CHelpSettings;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.CHelpSettings;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IHelpResource;
+import org.junit.Assert;
 
 /**
  *

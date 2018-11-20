@@ -15,8 +15,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -28,6 +26,8 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.TestSuite;
 
 /**
  * Test overloaded symbols are correctly resolved when in a common header. This

@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationMan
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,8 +30,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Default implementation of the {@link IWorkingSetConfiguration} interface.

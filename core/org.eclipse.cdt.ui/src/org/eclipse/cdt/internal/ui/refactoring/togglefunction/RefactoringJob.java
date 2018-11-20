@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,10 +28,6 @@ import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 class RefactoringJob extends Job {
 	public final static Object FAMILY_TOGGLE_DEFINITION = new Object();

@@ -17,13 +17,11 @@ package org.eclipse.cdt.internal.ui.workingsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 
 class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider {
 

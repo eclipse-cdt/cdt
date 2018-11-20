@@ -20,9 +20,9 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2;
-import org.eclipse.cdt.dsf.debug.service.IBreakpointAttributeTranslator2;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2.BreakpointEventType;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2.ITargetBreakpointInfo;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointAttributeTranslator2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;

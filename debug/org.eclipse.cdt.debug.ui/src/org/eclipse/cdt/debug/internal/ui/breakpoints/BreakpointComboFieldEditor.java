@@ -16,6 +16,7 @@ package org.eclipse.cdt.debug.internal.ui.breakpoints;
 import org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContributionUser;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**

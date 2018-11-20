@@ -14,11 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CodeGeneration;
+import org.eclipse.core.runtime.CoreException;
 
 public final class DestructorMethodStub extends AbstractMethodStub {
 

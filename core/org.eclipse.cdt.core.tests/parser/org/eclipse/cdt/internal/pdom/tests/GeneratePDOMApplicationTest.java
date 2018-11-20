@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -52,6 +50,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Bundle;
+
+import junit.framework.Test;
 
 /**
  * Tests the GeneratePDOMApplication

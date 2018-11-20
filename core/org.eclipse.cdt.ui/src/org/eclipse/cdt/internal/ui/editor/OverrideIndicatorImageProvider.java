@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.IAnnotationImageProvider;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * @author Tomasz Wesolowski

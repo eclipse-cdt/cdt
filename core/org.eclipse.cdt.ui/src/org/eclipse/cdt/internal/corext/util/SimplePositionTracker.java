@@ -14,11 +14,10 @@
 
 package org.eclipse.cdt.internal.corext.util;
 
+import org.eclipse.cdt.internal.core.PositionTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPositionUpdater;
-
-import org.eclipse.cdt.internal.core.PositionTracker;
 
 /**
  * A simple general purpose position tracker.

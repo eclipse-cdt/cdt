@@ -20,18 +20,6 @@ import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextInputListener;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TypedPosition;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
@@ -44,12 +32,21 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.model.ASTCache;
-
 import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TypedPosition;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Paints code lines disabled by preprocessor directives (#ifdef etc.)

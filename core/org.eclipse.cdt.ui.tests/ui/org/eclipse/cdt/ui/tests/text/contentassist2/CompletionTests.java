@@ -32,16 +32,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.text.IDocument;
+
+import junit.framework.Test;
 
 /**
  * A collection of code completion tests.

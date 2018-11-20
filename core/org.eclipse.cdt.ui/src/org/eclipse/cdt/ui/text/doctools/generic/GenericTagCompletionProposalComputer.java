@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,12 +28,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 
 /**
  * CompletionProposalComputer based on a specified set of GenericTag objects.

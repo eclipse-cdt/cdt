@@ -22,15 +22,15 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.testsrunner.model.IModelVisitor;
-import org.eclipse.cdt.testsrunner.model.ITestMessage;
-import org.eclipse.cdt.testsrunner.model.ITestModelAccessor;
-import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
-import org.eclipse.cdt.testsrunner.model.ITestingSessionListener;
 import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestItem.Status;
+import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
+import org.eclipse.cdt.testsrunner.model.ITestModelAccessor;
+import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
+import org.eclipse.cdt.testsrunner.model.ITestingSessionListener;
 
 /**
  * Manages the testing model (creates, fill and update it) and notifies the

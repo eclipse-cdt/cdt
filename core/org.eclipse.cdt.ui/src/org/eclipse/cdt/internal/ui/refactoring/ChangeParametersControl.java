@@ -22,6 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.ui.dialogs.TableTextCellEditor;
+import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.resource.JFaceResources;
@@ -61,13 +66,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-
-import org.eclipse.cdt.internal.ui.dialogs.TableTextCellEditor;
-import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 
 /**
  * A special control to edit and reorder method parameters.

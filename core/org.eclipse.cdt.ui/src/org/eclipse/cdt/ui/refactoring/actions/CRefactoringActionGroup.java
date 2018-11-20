@@ -17,6 +17,10 @@ package org.eclipse.cdt.ui.refactoring.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -32,12 +36,6 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.actions.CdtActionConstants;
-
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 
 /**
  * Action group that adds refactoring actions (for example Rename..., Move..., etc)

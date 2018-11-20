@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -42,6 +40,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestCase;
 
 /**
  * @author jcamelon

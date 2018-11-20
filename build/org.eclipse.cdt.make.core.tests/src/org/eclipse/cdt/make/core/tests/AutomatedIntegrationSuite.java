@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core.tests;
 
+import org.eclipse.cdt.make.builder.tests.StandardBuildTests;
+import org.eclipse.cdt.make.scannerdiscovery.ScannerDiscoveryTests;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.make.builder.tests.StandardBuildTests;
-import org.eclipse.cdt.make.scannerdiscovery.ScannerDiscoveryTests;
 
 public class AutomatedIntegrationSuite extends TestSuite {
 

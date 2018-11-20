@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
 
 public class PDOMNameTests extends BaseTestCase {
 	private ICProject cproject;

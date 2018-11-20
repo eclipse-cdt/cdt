@@ -15,12 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Is returned when using the find method of the MethodDefinitionInsertLocationFinder.

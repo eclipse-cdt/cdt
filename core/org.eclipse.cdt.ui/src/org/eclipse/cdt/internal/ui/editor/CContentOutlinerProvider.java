@@ -17,6 +17,18 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CShiftData;
+import org.eclipse.cdt.internal.core.model.SourceManipulation;
+import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -27,21 +39,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.core.model.CShiftData;
-import org.eclipse.cdt.internal.core.model.SourceManipulation;
-
-import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 
 /**
  * Manages contents of the outliner.

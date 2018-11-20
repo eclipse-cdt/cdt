@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -42,12 +40,11 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
+import org.eclipse.text.edits.TextEditGroup;
 
 /**
  * Handles the extraction of expression nodes, for example, return type determination.

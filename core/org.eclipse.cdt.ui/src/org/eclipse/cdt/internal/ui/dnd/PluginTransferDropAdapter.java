@@ -14,14 +14,13 @@
 
 package org.eclipse.cdt.internal.ui.dnd;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
-
-import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * PluginTransferDropAdapter

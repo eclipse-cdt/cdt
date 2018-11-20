@@ -16,15 +16,13 @@ package org.eclipse.cdt.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 
 /**
  * Manages the population and selection of the doc-comment {@link Combo} box

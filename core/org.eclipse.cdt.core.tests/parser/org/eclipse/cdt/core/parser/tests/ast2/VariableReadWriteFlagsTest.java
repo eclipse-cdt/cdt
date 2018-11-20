@@ -15,13 +15,13 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+
+import junit.framework.TestSuite;
 
 /**
  * Unit tests for CPPVariableReadWriteFlags and CVariableReadWriteFlags classes.

@@ -17,14 +17,13 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.ui.texteditor.MarkerUtilities;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 
 public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnotation, ICAnnotation {
 

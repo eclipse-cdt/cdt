@@ -16,9 +16,6 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -43,6 +40,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "depLibsProjects";

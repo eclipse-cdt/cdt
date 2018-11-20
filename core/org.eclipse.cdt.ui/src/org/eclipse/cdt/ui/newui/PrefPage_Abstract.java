@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.core.model.CoreModel;
 
 /* This class is a base for preference pages
  * which store data in preferences

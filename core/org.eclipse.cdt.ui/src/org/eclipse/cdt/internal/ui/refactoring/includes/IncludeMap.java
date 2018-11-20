@@ -24,9 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.ui.IMemento;
-
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.ui.IMemento;
 
 /**
  * A set of header file substitution rules.

@@ -13,20 +13,18 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.ListResourceBundle;
 
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.SourceViewer;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-
 import org.eclipse.cdt.internal.ui.actions.AlignConstAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.SourceViewer;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.vm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Hashtable;
 
@@ -34,9 +38,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
-
-import static org.junit.Assert.*;
-
 import org.osgi.framework.BundleContext;
 
 /**

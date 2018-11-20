@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CProposalContextInformation;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -28,8 +29,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CProposalContextInformation;
 
 /**
  * This class provides the function parameter parsing for the C/C++ Editor hover.

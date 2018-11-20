@@ -20,10 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITypedRegion;
-
-import org.eclipse.cdt.core.ProblemMarkerInfo;
 
 public class BuildConsolePartitionerEditData {
 

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import org.eclipse.cdt.ui.newui.IConfigManager;
+import org.eclipse.cdt.ui.newui.ManageConfigSelector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,9 +25,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-
-import org.eclipse.cdt.ui.newui.IConfigManager;
-import org.eclipse.cdt.ui.newui.ManageConfigSelector;
 
 /**
  * Action which lets to manage (add/remove etc.) build configurations of the project.

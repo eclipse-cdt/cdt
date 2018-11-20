@@ -18,13 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -39,12 +32,16 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Helper class for finding definitions and class member declarations

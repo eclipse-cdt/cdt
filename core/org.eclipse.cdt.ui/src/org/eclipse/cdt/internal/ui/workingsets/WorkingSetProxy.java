@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IMemento;
@@ -28,8 +29,6 @@ import org.eclipse.ui.IWorkingSet;
 
 import com.ibm.icu.text.UCharacterIterator;
 import com.ibm.icu.text.UForwardCharacterIterator;
-
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
 /**
  * Default implementation of the {@link IWorkingSetProxy} interface.

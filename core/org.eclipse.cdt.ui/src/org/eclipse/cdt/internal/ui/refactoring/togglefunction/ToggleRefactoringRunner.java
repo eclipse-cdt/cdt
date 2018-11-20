@@ -15,16 +15,14 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.IShellProvider;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
  * Responsible for scheduling a job which runs the ToggleRefactoring. Differs

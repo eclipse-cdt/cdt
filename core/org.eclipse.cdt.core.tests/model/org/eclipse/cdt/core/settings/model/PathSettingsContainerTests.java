@@ -14,12 +14,12 @@
 
 package org.eclipse.cdt.core.settings.model;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 /**
  */

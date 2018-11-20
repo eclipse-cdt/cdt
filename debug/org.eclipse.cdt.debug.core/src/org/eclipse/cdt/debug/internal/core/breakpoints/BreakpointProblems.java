@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -24,6 +22,8 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class BreakpointProblems {
 

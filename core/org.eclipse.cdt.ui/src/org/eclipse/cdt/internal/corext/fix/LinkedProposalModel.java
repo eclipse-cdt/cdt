@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
-
 import org.eclipse.cdt.internal.corext.fix.LinkedProposalPositionGroup.PositionInformation;
 
 public class LinkedProposalModel {

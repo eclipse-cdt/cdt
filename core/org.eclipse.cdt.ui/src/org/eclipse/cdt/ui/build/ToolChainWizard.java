@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.build;
 
-import org.eclipse.jface.wizard.Wizard;
-
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.jface.wizard.Wizard;
 
 /**
  * Parent class for toolChain wizards that create or edit toolchains.

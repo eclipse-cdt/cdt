@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -43,11 +46,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 
 /**
  * Abstract class for "quick" compare views in light-weight controls.

@@ -15,14 +15,13 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.Objects;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Represents a node in the include browser

@@ -14,17 +14,15 @@
 
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * Configuration for an <code>SourceViewer</code> which shows C/C++ code.

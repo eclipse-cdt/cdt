@@ -22,6 +22,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -48,24 +64,6 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 
 /**
  * This tab presents language settings entries categorized by language

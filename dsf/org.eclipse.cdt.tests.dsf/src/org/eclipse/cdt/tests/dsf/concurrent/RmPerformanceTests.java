@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
+
+import junit.framework.TestCase;
 
 /**
  * Tests to measure the performance of the viewer updates.

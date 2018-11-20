@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IToken;
@@ -23,9 +25,6 @@ import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 
 /**
  * Which words should be recognized as task tags is specified under {@link CCorePreferenceConstants#TODO_TASK_TAGS} as a

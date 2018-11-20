@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
@@ -22,7 +24,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import java.text.MessageFormat;
 
 /**
  * Shows a simple tests count statics information (run/error/failed).

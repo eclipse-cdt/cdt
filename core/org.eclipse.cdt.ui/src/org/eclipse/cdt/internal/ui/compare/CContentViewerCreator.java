@@ -14,13 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IViewerCreator;
-
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Required when creating a CMergeViewer from the plugin.xml file.

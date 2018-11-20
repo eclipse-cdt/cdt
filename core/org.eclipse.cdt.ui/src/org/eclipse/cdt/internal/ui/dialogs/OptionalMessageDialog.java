@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,10 +29,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * This is a <code>MessageDialog</code> which allows the user

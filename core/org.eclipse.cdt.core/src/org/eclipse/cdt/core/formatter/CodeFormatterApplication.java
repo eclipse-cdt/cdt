@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ToolFactory;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;

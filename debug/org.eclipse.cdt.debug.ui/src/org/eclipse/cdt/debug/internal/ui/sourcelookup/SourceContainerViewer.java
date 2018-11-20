@@ -15,8 +15,11 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;

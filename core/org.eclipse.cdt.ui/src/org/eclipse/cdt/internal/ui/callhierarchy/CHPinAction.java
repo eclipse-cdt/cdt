@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class CHPinAction extends Action {
 	private CHViewPart fView;

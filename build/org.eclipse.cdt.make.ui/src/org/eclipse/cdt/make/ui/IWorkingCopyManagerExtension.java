@@ -14,9 +14,8 @@
 
 package org.eclipse.cdt.make.ui;
 
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * Extension interface for <code>IWorkingCopyManager</code>.

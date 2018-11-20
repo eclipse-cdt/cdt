@@ -16,6 +16,9 @@ package org.eclipse.cdt.ui.tests;
 import java.io.File;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -25,11 +28,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.PartInitException;
-
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * Base class for tests. If you want to use outside of this plugin, you need

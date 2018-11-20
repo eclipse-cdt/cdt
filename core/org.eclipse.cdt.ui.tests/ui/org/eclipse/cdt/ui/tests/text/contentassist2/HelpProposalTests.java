@@ -13,9 +13,8 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.ID;
 
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider;
-
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider;
 
 import junit.framework.Test;
 

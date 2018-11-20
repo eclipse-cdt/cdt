@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,8 +31,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * A TreeContentProvider that supports asyncronous computation of child nodes.

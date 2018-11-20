@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
+import org.eclipse.cdt.core.formatter.IndentManipulation;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.text.BadLocationException;
@@ -23,9 +25,6 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;
-
-import org.eclipse.cdt.core.formatter.IndentManipulation;
-import org.eclipse.cdt.core.model.ICProject;
 
 /**
  * Helper class to provide String manipulation functions not available in standard JDK.

@@ -14,14 +14,13 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * IncludeRefContainer

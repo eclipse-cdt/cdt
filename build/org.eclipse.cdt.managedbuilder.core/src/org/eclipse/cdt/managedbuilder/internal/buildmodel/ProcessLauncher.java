@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.ProcessClosure;

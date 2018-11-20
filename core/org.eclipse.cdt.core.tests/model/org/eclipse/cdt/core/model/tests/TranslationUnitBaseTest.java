@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileInputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -29,6 +27,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestCase;
 
 /**
  * @author jcamelon

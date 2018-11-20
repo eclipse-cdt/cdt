@@ -19,10 +19,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Some helper methods to access part of the content of an iFile

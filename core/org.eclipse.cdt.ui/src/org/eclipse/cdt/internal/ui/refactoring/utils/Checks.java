@@ -14,6 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.corext.util.Resources;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -28,17 +37,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
-
-import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
-import org.eclipse.cdt.internal.corext.util.Resources;
 
 /**
  * This class defines a set of reusable static checks methods.

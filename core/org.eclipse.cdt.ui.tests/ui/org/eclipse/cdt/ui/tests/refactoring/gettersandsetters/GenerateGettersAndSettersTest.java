@@ -16,15 +16,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.gettersandsetters;
 
-import junit.framework.Test;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
+
+import junit.framework.Test;
 
 /**
  * Tests for Generate Getters and Setters refactoring.

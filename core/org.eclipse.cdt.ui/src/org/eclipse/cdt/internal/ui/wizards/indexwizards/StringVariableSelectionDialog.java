@@ -15,6 +15,7 @@
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -30,8 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Copied from org.eclipse.debug.ui

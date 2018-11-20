@@ -14,9 +14,9 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.IMarkerGenerator;
+
+import junit.framework.TestCase;
 
 public class TestLinkerErrorWhileReading extends TestCase {
 	String err_msg;

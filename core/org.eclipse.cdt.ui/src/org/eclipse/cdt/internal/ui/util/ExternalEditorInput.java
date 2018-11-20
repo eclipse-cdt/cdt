@@ -16,6 +16,9 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.net.URI;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -25,11 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ide.FileStoreEditorInput;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
 /**
  * An EditorInput for an external (non-workspace) file.

@@ -15,9 +15,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.util.Stack;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -27,6 +24,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ILineTracker;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author bnicolle

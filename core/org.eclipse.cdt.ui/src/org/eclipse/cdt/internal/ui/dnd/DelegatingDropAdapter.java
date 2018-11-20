@@ -14,8 +14,8 @@
 
 package org.eclipse.cdt.internal.ui.dnd;
 
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;

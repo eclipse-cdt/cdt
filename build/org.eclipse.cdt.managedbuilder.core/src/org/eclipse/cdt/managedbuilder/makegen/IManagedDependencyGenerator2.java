@@ -16,9 +16,9 @@ package org.eclipse.cdt.managedbuilder.makegen;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 
 /**
  * @since 3.1

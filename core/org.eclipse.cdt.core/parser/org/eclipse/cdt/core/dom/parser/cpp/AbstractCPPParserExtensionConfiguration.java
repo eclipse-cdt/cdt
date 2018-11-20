@@ -16,13 +16,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.IToken.ContextSensitiveTokenType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Abstract C++ parser extension configuration to help model C++ dialects.

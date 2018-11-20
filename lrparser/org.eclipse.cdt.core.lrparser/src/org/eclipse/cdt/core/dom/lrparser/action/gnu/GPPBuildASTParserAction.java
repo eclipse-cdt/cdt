@@ -17,8 +17,6 @@ import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemov
 
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
@@ -37,6 +35,8 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
 import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParsersym;
+
+import lpg.lpgjavaruntime.IToken;
 
 public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	private final ICPPNodeFactory nodeFactory;

@@ -14,6 +14,11 @@
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,12 +26,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
 
 /**
  * @author markus.schorn@windriver.com

@@ -17,8 +17,6 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 
 import java.util.Collections;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
@@ -33,6 +31,8 @@ import org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.TestSuite;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor

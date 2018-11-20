@@ -21,6 +21,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -39,21 +51,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
  * A proposal computer for include directives.

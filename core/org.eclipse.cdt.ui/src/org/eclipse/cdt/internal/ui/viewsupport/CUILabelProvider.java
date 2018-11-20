@@ -17,22 +17,20 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CUILabelProvider extends LabelProvider implements IColorProvider, IStyledLabelProvider {
 	protected CElementImageProvider fImageLabelProvider;

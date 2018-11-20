@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Internal implementation of IDocCommentOwner

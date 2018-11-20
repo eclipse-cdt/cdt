@@ -14,6 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.changes;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,16 +33,6 @@ import org.eclipse.ltk.core.refactoring.UndoTextFileChange;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
 
 /**
  * UndoCTextFileChange that uses a working copy in order to generate CModel events.

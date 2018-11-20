@@ -25,10 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
@@ -38,6 +34,10 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class MakefileReaderProviderTests extends TestCase {
 	private String[] inclDirs;

@@ -15,6 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.CIndenter;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -22,16 +29,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.LineRange;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CIndenter;
 
 /**
  * Utility that indents a number of lines in a document.

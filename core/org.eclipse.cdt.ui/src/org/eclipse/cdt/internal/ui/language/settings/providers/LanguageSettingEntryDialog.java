@@ -14,6 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.ImageCombo;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.ui.newui.AbstractPropertyDialog;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -31,17 +40,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.cdt.ui.newui.AbstractPropertyDialog;
-
-import org.eclipse.cdt.internal.ui.ImageCombo;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

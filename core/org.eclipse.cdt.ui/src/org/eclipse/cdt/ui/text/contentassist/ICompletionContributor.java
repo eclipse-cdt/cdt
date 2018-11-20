@@ -15,10 +15,9 @@ package org.eclipse.cdt.ui.text.contentassist;
 
 import java.util.List;
 
-import org.eclipse.jface.text.ITextViewer;
-
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.jface.text.ITextViewer;
 
 /**
  * This interface must be implemented by clients extending the extension point

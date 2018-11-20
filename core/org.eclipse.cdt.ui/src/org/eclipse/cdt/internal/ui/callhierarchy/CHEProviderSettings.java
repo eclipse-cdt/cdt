@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.ICHEContentProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -23,8 +24,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
-
-import org.eclipse.cdt.ui.ICHEContentProvider;
 
 /**
  * The Call Hierarchy Extension provider Settings

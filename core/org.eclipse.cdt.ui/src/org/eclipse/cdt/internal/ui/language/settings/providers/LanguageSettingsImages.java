@@ -13,6 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.settings.model.ACPathEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -21,18 +31,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.core.settings.model.ACPathEntry;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.UNCPathConverter;
-import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.

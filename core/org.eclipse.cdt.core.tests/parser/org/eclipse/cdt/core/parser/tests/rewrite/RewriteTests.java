@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.parser.tests.rewrite.astwriter.AstWriterTestSuite;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTestSuite;
 import org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTestSuite;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class RewriteTests extends TestSuite {
 

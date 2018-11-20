@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class that gives access to the folding messages resource bundle.

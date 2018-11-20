@@ -14,13 +14,41 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_SemiColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Complex;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_for;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_restrict;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_union;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_volatile;
 
 import java.util.Collections;
 import java.util.List;
-
-import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -78,6 +106,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousStatement;
+
+import lpg.lpgjavaruntime.IToken;
 
 /**
  * Semantic actions called by the C99 parser to build an AST.

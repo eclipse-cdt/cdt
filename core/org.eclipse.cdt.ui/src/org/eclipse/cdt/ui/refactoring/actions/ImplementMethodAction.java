@@ -15,19 +15,17 @@
 
 package org.eclipse.cdt.ui.refactoring.actions;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.ImplementMethodRefactoringRunner;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Launches the implement method source generator (refactoring).

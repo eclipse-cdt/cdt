@@ -27,7 +27,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParser2;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.utils.EFSExtensionManager;

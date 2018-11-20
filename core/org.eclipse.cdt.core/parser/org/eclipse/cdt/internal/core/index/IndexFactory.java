@@ -16,7 +16,16 @@
 
 package org.eclipse.cdt.internal.core.index;
 
-import static org.eclipse.cdt.core.index.IIndexManager.*;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_DEPENDENCIES;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_DEPENDENT;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY;
 
 import java.util.ArrayList;
 import java.util.Collection;

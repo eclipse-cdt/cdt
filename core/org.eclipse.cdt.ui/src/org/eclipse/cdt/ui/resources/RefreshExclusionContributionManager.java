@@ -17,13 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There

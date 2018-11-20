@@ -14,9 +14,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -25,22 +36,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * This test just checks that hyperlinks are created in the right

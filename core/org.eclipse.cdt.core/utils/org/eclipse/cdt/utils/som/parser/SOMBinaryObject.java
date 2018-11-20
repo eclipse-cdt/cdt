@@ -34,8 +34,8 @@ import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.som.AR;
-import org.eclipse.cdt.utils.som.SOM;
 import org.eclipse.cdt.utils.som.AR.ARHeader;
+import org.eclipse.cdt.utils.som.SOM;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 

@@ -17,7 +17,6 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,6 +61,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class SourceUtils {
 	private static final String NAME_COMMON_SOURCE_LOCATIONS = "commonSourceLocations"; //$NON-NLS-1$

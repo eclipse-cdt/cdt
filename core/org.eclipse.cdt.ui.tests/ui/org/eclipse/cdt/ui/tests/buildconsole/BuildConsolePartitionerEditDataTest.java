@@ -25,15 +25,13 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.eclipse.cdt.core.ProblemMarkerInfo;
-
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartition;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartitionerEditData;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartitionerEditData.UpdateUIData;
 import org.eclipse.cdt.internal.ui.buildconsole.IBuildConsoleStreamDecorator;
+import org.junit.Before;
+import org.junit.Test;
 
 public class BuildConsolePartitionerEditDataTest {
 

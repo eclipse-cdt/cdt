@@ -21,14 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
 import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
@@ -36,6 +28,13 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This gives a Label and StringList Widget.

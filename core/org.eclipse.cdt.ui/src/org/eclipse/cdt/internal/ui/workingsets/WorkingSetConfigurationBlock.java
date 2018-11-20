@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,10 +47,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 
 /**
  * A block of UI controls for management of working set configurations. These collect the selection of project

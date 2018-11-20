@@ -16,20 +16,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractconstant;
 
-import junit.framework.Test;
-
 import java.util.Arrays;
 import java.util.function.Predicate;
-import org.eclipse.core.runtime.CoreException;
-import org.junit.Before;
-
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantInfo;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
+import org.eclipse.core.runtime.CoreException;
+import org.junit.Before;
+
+import junit.framework.Test;
 
 /**
  * Tests for Extract Constant refactoring.

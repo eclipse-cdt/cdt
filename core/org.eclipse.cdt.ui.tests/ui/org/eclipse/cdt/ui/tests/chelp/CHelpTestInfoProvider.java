@@ -13,13 +13,12 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.chelp;
 
-import org.junit.Assert;
-
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpProvider;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.junit.Assert;
 
 /**
  * This class implements ICHelpProvider and provides test information

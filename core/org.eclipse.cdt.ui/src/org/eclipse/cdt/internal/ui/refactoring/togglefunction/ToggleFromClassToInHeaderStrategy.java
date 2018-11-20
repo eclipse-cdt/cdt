@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -30,10 +28,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStrategy {
 	protected TextEditGroup infoText = new TextEditGroup(Messages.EditGroupName);

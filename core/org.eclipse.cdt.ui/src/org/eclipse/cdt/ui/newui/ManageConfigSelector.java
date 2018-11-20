@@ -16,6 +16,11 @@ package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
+import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -23,13 +28,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
-import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
 
 /**
  * This class provides static methods to work with multiple

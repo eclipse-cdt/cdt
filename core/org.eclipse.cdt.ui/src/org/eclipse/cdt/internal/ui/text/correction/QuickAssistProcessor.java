@@ -19,29 +19,26 @@ package org.eclipse.cdt.internal.ui.text.correction;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.RenameRefactoringProposal;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.IInvocationContext;
 import org.eclipse.cdt.ui.text.IProblemLocation;
 import org.eclipse.cdt.ui.text.IQuickAssistProcessor;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.RenameRefactoringProposal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * see org.eclipse.cdt.ui.text.IQuickAssistProcessor

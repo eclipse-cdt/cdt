@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -32,8 +33,6 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.ide.IDEActionFactory;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the action group for actions such as Refresh Local, and Open/Close

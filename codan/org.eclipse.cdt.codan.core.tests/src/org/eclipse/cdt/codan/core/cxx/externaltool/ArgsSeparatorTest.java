@@ -14,6 +14,7 @@
 package org.eclipse.cdt.codan.core.cxx.externaltool;
 
 import static org.junit.Assert.assertArrayEquals;
+
 import junit.framework.TestCase;
 
 /**

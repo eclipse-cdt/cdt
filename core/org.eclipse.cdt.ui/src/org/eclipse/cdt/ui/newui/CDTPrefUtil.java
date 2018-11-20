@@ -22,12 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

@@ -15,6 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,11 +31,6 @@ import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 
 /**
  * This is basically a clone of {@link org.eclipse.cdt.internal.ui.cview.OpenFileGroup},

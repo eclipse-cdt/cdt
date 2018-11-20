@@ -19,11 +19,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Mirko Stocker

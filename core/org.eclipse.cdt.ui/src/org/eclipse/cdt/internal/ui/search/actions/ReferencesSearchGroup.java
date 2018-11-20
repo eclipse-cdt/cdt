@@ -16,6 +16,10 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -24,11 +28,6 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 
 public class ReferencesSearchGroup extends ActionGroup {
 

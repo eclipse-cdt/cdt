@@ -15,20 +15,18 @@
 
 package org.eclipse.cdt.ui.refactoring.actions;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.IShellProvider;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.ui.actions.ActionUtil;
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
 import org.eclipse.cdt.internal.ui.refactoring.rename.RenameLinkedMode;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.window.IShellProvider;
 
 /**
  * Launches a rename refactoring.

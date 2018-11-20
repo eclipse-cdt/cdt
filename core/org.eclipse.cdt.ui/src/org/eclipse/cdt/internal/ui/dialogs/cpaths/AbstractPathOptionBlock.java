@@ -16,6 +16,19 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,21 +39,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 /**
  * Abstract block for C/C++ Project Paths page for 3.X projects.

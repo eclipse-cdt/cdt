@@ -16,8 +16,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.util.Arrays;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
@@ -32,6 +30,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+
+import junit.framework.Test;
 
 /**
  * Regression test for Bug 311189.

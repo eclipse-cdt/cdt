@@ -19,24 +19,6 @@ package org.eclipse.cdt.internal.core.dom.parser.upc;
 import java.util.List;
 import java.util.Map;
 
-import lpg.lpgjavaruntime.BadParseException;
-import lpg.lpgjavaruntime.BadParseSymFileException;
-import lpg.lpgjavaruntime.DiagnoseParser;
-import lpg.lpgjavaruntime.ErrorToken;
-import lpg.lpgjavaruntime.IToken;
-import lpg.lpgjavaruntime.LexStream;
-import lpg.lpgjavaruntime.Monitor;
-import lpg.lpgjavaruntime.NotBacktrackParseTableException;
-import lpg.lpgjavaruntime.NullExportedSymbolsException;
-import lpg.lpgjavaruntime.NullTerminalSymbolsException;
-import lpg.lpgjavaruntime.ParseErrorCodes;
-import lpg.lpgjavaruntime.ParseTable;
-import lpg.lpgjavaruntime.PrsStream;
-import lpg.lpgjavaruntime.RuleAction;
-import lpg.lpgjavaruntime.Token;
-import lpg.lpgjavaruntime.UndefinedEofSymbolException;
-import lpg.lpgjavaruntime.UnimplementedTerminalsException;
-
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -65,6 +47,24 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IScanner;
+
+import lpg.lpgjavaruntime.BadParseException;
+import lpg.lpgjavaruntime.BadParseSymFileException;
+import lpg.lpgjavaruntime.DiagnoseParser;
+import lpg.lpgjavaruntime.ErrorToken;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.LexStream;
+import lpg.lpgjavaruntime.Monitor;
+import lpg.lpgjavaruntime.NotBacktrackParseTableException;
+import lpg.lpgjavaruntime.NullExportedSymbolsException;
+import lpg.lpgjavaruntime.NullTerminalSymbolsException;
+import lpg.lpgjavaruntime.ParseErrorCodes;
+import lpg.lpgjavaruntime.ParseTable;
+import lpg.lpgjavaruntime.PrsStream;
+import lpg.lpgjavaruntime.RuleAction;
+import lpg.lpgjavaruntime.Token;
+import lpg.lpgjavaruntime.UndefinedEofSymbolException;
+import lpg.lpgjavaruntime.UnimplementedTerminalsException;
 
 public class UPCExpressionParser extends PrsStream implements RuleAction, ITokenStream, ITokenCollector,
 		IParser<IASTExpression>, ISecondaryParser<IASTExpression> {

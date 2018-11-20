@@ -16,8 +16,6 @@ package org.eclipse.cdt.core.lrparser.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -36,6 +34,8 @@ import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Utility methods for parsing test code using the C99 LPG parser.

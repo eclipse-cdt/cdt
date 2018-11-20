@@ -28,25 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.browser.ITypeReference;
@@ -67,17 +48,33 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.extensions.IExternalSearchProvider;
-
 import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-
 import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.extensions.IExternalSearchProvider;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public abstract class CSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS = IIndex.FIND_DECLARATIONS;

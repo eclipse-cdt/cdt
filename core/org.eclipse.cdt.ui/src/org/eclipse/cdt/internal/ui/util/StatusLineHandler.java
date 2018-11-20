@@ -15,12 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Utilities for clearing and setting status line.  Client should

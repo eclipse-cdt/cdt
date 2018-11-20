@@ -18,6 +18,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.cdt.ui.CElementSorter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,22 +59,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CElementSorter;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
  * The C element working set page allows the user to create

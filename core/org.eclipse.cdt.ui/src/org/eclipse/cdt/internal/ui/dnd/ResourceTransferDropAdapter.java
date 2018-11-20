@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.dnd;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,8 +34,6 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * ResourceTransferDropAdapter

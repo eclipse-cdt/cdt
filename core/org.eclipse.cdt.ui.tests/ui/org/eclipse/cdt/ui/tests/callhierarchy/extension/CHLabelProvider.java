@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy.extension;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CHLabelProvider implements IStyledLabelProvider {
 

@@ -18,6 +18,9 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
@@ -83,11 +86,6 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
 
 /**
  * AbstractAnnotationHover

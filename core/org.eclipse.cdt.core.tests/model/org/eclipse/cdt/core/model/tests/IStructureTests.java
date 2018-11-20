@@ -15,9 +15,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
@@ -25,6 +22,9 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author bnicolle

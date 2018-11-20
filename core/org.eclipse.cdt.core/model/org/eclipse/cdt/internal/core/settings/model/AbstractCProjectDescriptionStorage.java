@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
@@ -35,6 +33,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Version;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This abstract class provides an extension point for functionality for loading

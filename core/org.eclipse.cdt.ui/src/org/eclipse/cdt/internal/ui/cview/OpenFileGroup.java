@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -29,14 +35,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenWithMenu;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * This is the action group for the open actions.

@@ -16,6 +16,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
+import org.eclipse.cdt.internal.ui.editor.LexicalSortingAction;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -25,17 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
-import org.eclipse.cdt.internal.ui.editor.LexicalSortingAction;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
  * Control which shows outline information in C/C++ editor. Based on

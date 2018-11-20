@@ -16,6 +16,11 @@ package org.eclipse.cdt.ui.text.doctools.generic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.TaskTagRule;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICTokenScanner;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
@@ -24,13 +29,6 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICTokenScanner;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
-import org.eclipse.cdt.internal.ui.text.TaskTagRule;
 
 /**
  * ICTokenScanner which recognizes a specified set of tags, starting with a specified name.

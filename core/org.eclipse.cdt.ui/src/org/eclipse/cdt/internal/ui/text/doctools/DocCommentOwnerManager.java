@@ -15,12 +15,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,11 +42,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class manages which IDocCommentOwner's are available in the run-time, and how they map to

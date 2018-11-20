@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests.suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.parser.xlc.tests.XlcExtensionsTestSuite;
 import org.eclipse.cdt.core.parser.xlc.tests.base.XlcLRParserTestSuite;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class AutomatedIntegrationSuite extends TestSuite {
 

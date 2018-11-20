@@ -18,6 +18,14 @@ package org.eclipse.cdt.ui.newui;
 
 import java.lang.reflect.Method;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -55,17 +63,6 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
-import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * It is a parent for all standard property tabs

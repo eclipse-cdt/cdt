@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextViewer;
@@ -27,8 +28,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * Groups the CDT folding actions.

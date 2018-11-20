@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * Interface for accessing working copies of <code>IMakefile</code>

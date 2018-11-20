@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
-import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * Filters closed projects

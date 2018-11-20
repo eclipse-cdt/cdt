@@ -15,17 +15,16 @@
 
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEvent;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEventListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.spelling.ISpellingEngine;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
-
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEvent;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEventListener;
 
 /**
  * Internal abstract spelling engine, subclasses provide a content-type specific implementation.

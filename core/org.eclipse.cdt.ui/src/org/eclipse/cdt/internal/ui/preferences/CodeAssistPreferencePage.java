@@ -21,6 +21,9 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,10 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
  * Content Assist preference page.

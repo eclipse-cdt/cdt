@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This implementation of <code>IRangeComparator</code> compares lines of a document.

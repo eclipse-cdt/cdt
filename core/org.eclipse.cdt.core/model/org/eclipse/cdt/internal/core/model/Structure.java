@@ -13,17 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class Structure extends StructureDeclaration implements IStructure {
 	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<String, ASTAccessVisibility>();

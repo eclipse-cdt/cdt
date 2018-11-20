@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,8 +30,6 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.MoveProjectAction;
 import org.eclipse.ui.actions.MoveResourceAction;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator

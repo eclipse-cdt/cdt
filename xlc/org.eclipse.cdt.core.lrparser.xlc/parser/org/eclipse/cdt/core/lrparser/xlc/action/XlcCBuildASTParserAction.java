@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.xlc.action;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
@@ -22,6 +20,8 @@ import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCASTVectorTypeSpecifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCNodeFactory;
 import org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym;
+
+import lpg.lpgjavaruntime.IToken;
 
 public class XlcCBuildASTParserAction extends GCCBuildASTParserAction {
 

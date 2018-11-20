@@ -16,8 +16,6 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import java.util.List;
 
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -32,11 +30,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStrategy {
 	private TextEditGroup infoText;

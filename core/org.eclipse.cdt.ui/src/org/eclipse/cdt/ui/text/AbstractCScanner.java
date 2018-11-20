@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 
 /**
  * Convenience implementation for {@link ICTokenScanner}.

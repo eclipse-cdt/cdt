@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.eclipse.cdt.core.resources.ExclusionInstance;
+import org.eclipse.cdt.core.resources.ExclusionType;
+import org.eclipse.cdt.core.resources.RefreshExclusion;
+import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
+import org.eclipse.cdt.ui.resources.Messages;
+import org.eclipse.cdt.ui.resources.RefreshExclusionContributor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -40,14 +46,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.resources.ExclusionInstance;
-import org.eclipse.cdt.core.resources.ExclusionType;
-import org.eclipse.cdt.core.resources.RefreshExclusion;
-import org.eclipse.cdt.ui.resources.Messages;
-import org.eclipse.cdt.ui.resources.RefreshExclusionContributor;
-
-import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
 
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There

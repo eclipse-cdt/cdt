@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
@@ -27,12 +28,9 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.xlc.core.activator.Activator;
-import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 
 /**
  * Parses output of ppuxlc -E -v specs.c or ppuxlc -E -v specs.cpp command

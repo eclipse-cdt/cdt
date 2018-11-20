@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
+import org.eclipse.cdt.internal.ui.compare.CMergeViewer;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
@@ -29,10 +31,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
-
-import org.eclipse.cdt.internal.ui.compare.CMergeViewer;
 
 /**
  * A viewer for comparison of macro expansions.

@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy.extension;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.ICHENode;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * The dsl node sample

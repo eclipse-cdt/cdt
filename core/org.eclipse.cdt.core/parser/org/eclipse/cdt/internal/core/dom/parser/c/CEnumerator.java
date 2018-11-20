@@ -26,8 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**

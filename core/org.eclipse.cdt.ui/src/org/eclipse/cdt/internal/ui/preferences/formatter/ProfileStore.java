@@ -43,6 +43,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.internal.ui.CUIException;
+import org.eclipse.cdt.internal.ui.CUIStatus;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -53,13 +58,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CUIException;
-import org.eclipse.cdt.internal.ui.CUIStatus;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 
 public class ProfileStore {
 	/** The default encoding to use */

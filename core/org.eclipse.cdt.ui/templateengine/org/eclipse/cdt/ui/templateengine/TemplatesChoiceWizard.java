@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.templateengine.TemplateInfo;
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -30,10 +33,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-
-import org.eclipse.cdt.core.templateengine.TemplateInfo;
-import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A wizard intending to show a choice of templates (@see org.eclipse.cdt.core.templateenginee.Template)

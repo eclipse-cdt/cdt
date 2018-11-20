@@ -24,11 +24,11 @@ public class IndexCPPBindingResolutionBugsSingleProjectFirstAST extends IndexCPP
 		return suite(IndexCPPBindingResolutionBugsSingleProjectFirstAST.class);
 	}
 
-	// Invalid tests for this strategy, they assume that the second file is already indexed.
+	/* Invalid tests for this strategy, they assume that the second file is already indexed. */
 	@Override public void test_208558() {}
 	@Override public void test_176708_CCE() {}
 	@Override public void testIsSameAnonymousType_193962() {}
 	@Override public void testIsSameNestedAnonymousType_193962() {}
-	// For some unknown reason this test is flaky for this strategy.
+	/* For some unknown reason this test is flaky for this strategy. */
 	@Override public void testTemplateArgumentResolution_450888() {}
 }

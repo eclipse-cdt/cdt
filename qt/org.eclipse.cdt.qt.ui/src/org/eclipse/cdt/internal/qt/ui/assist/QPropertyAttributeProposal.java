@@ -467,7 +467,7 @@ public class QPropertyAttributeProposal {
 			if (binding == null)
 				return null;
 
-			return (ICPPClassType) binding.getAdapter(ICPPClassType.class);
+			return binding.getAdapter(ICPPClassType.class);
 		} catch (CoreException e) {
 			Activator.log(e);
 		}

@@ -274,7 +274,7 @@ public class BuildConsoleViewer extends TextViewer
 		if (partitioner == null)
 			return;
 
-		BuildConsolePartition partition = (BuildConsolePartition) partitioner.getPartition(event.lineOffset);
+		BuildConsolePartition partition = partitioner.getPartition(event.lineOffset);
 		// Set background for error partitions
 		if (partition != null) {
 			String type = partition.getType();

@@ -336,7 +336,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	protected void configureWorkspaceSettings() {
 		try {
 			// create a new instance of the current class
-			IPreferencePage page = (IPreferencePage) this.getClass().newInstance();
+			IPreferencePage page = this.getClass().newInstance();
 			page.setTitle(getTitle());
 			page.setImageDescriptor(image);
 			// and show it

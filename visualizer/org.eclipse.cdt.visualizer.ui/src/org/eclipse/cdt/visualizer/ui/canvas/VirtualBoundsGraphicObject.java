@@ -234,9 +234,9 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		float ow = 0.0f;
 		float oh = 0.0f;
 
-		ox = (float) this.getBounds().x
+		ox = this.getBounds().x
 				+ childsVirtualBounds.x * ((float) this.getBounds().width / (this.getVirtualBounds().width));
-		oy = (float) this.getBounds().y
+		oy = this.getBounds().y
 				+ childsVirtualBounds.y * ((float) this.getBounds().height / this.getVirtualBounds().height);
 		ow = ((float) childsVirtualBounds.width / this.getVirtualBounds().width) * this.getBounds().width;
 		oh = ((float) childsVirtualBounds.height / this.getVirtualBounds().height) * this.getBounds().height;

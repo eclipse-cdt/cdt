@@ -605,7 +605,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected IMemoryBlockExtension getMemoryBlock() {
 		IMemoryBlock block = fParent.getMemoryBlock();
 		if (block != null)
-			return (IMemoryBlockExtension) block.getAdapter(IMemoryBlockExtension.class);
+			return block.getAdapter(IMemoryBlockExtension.class);
 
 		return null;
 	}

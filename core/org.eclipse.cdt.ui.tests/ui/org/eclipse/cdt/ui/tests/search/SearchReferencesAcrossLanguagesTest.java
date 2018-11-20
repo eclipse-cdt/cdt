@@ -105,7 +105,7 @@ public class SearchReferencesAcrossLanguagesTest extends BaseUITestCase {
 		assertNotNull(page);
 		IEditorPart editor = IDE.openEditor(page, f_h, CUIPlugin.EDITOR_ID);
 		assertNotNull(editor);
-		CEditor ceditor = (CEditor) editor.getAdapter(CEditor.class);
+		CEditor ceditor = editor.getAdapter(CEditor.class);
 		assertNotNull(ceditor);
 
 		ceditor.selectAndReveal(hcontent.indexOf("m1"), 2);

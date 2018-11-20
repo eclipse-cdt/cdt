@@ -63,7 +63,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 
 		IBinding cppBinding = getPDOM().findBinding(cppName);
 		if (cppBinding != null) {
-			IPDOMBinding cppPDOMBinding = (IPDOMBinding) cppBinding.getAdapter(IPDOMBinding.class);
+			IPDOMBinding cppPDOMBinding = cppBinding.getAdapter(IPDOMBinding.class);
 			if (cppPDOMBinding != null) {
 				if (cppPDOMBinding.getLinkage() != null
 						&& cppPDOMBinding.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)

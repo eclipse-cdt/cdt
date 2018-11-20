@@ -133,7 +133,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 			if (baseCls == null)
 				continue;
 
-			PDOMBinding pdomBinding = (PDOMBinding) baseCls.getAdapter(PDOMBinding.class);
+			PDOMBinding pdomBinding = baseCls.getAdapter(PDOMBinding.class);
 			QtPDOMQObject baseQObj = ASTNameReference.findFromBinding(QtPDOMQObject.class, pdomBinding);
 			if (baseQObj != null)
 				bases.add(baseQObj);

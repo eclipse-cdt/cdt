@@ -113,7 +113,7 @@ public class ExtensionElement {
 			for (int i = 0; i < argumentsLength; ++i) {
 				argumentTypes[i] = (arguments[i] == null) ? NullType.class : arguments[i].getClass();
 			}
-			Constructor<?> constructor = (Constructor<?>) instance.getConstructor(argumentTypes);
+			Constructor<?> constructor = instance.getConstructor(argumentTypes);
 
 			// Invoke the constructor.
 			result = (T) constructor.newInstance(arguments);

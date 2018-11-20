@@ -415,7 +415,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		super.activated();
 
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 
 		if (commandSupport != null) {
 			Command gotoCommand = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
@@ -449,7 +449,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	@Override
 	public void deactivated() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 
 		if (commandSupport != null) {
 			// 	remove handler

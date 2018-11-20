@@ -243,7 +243,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate impl
 				}
 
 				String image = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
-				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
+				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
 				boolean keepContainer = configuration.getAttribute(ILaunchConstants.ATTR_KEEP_AFTER_LAUNCH, false);
 
 				boolean supportStdin = configuration.getAttribute(ILaunchConstants.ATTR_STDIN_SUPPORT, false);
@@ -356,7 +356,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate impl
 				}
 
 				String image = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
-				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
+				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
 				boolean isLocalConnection = true;
 				try {
 					Pattern ipaddrPattern = Pattern.compile("[a-z]*://([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)[:]*[0-9]*");
@@ -448,7 +448,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate impl
 	 * @throws CoreException
 	 */
 	private String getProgramArguments(ILaunchConfiguration config) throws CoreException {
-		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) "");
+		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "");
 		if (args != null && args.length() > 0) {
 			args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 		}

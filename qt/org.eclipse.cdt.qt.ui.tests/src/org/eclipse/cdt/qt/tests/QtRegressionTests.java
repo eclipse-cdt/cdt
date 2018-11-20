@@ -369,7 +369,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		assertNotNull(page);
 		IEditorPart editor = IDE.openEditor(page, file, CUIPlugin.EDITOR_ID);
 		assertNotNull(editor);
-		CEditor ceditor = (CEditor) editor.getAdapter(CEditor.class);
+		CEditor ceditor = editor.getAdapter(CEditor.class);
 		assertNotNull(ceditor);
 
 		// NOTE: This offset relies on the above comment being exactly as expected.  If it is edited,

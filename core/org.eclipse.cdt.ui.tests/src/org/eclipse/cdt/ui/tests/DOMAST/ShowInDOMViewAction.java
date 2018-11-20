@@ -148,7 +148,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements IEditorAction
 				return location.toOSString();
 			}
 		}
-		ILocationProvider locationProvider = (ILocationProvider) input.getAdapter(ILocationProvider.class);
+		ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
 		if (locationProvider != null) {
 			IPath location = locationProvider.getPath(input);
 			if (location != null) {

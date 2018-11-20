@@ -85,7 +85,7 @@ class FindIASTNameDialog extends Dialog {
 
 			updateCombo(fFindField, fFindHistory);
 			if (!fFindHistory.equals(oldList) && !fFindHistory.isEmpty())
-				fFindField.setText((String) fFindHistory.get(0));
+				fFindField.setText(fFindHistory.get(0));
 			else
 				fFindField.setText(oldText);
 			if (findFieldHadFocus())
@@ -880,7 +880,7 @@ class FindIASTNameDialog extends Dialog {
 			} else {
 				if (BLANK_STRING.equals(fFindField.getText())) {
 					if (fFindHistory.size() > 0)
-						fFindField.setText((String) fFindHistory.get(0));
+						fFindField.setText(fFindHistory.get(0));
 					else
 						fFindField.setText(BLANK_STRING);
 				}
@@ -1032,7 +1032,7 @@ class FindIASTNameDialog extends Dialog {
 		if (editor == null)
 			return null;
 
-		return (IEditorStatusLine) editor.getAdapter(IEditorStatusLine.class);
+		return editor.getAdapter(IEditorStatusLine.class);
 	}
 
 	/**

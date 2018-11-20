@@ -456,7 +456,7 @@ public class GoToAddressBarWidget {
 		ILaunch launch = null;
 		if (context instanceof IAdaptable) {
 			adaptable = (IAdaptable) context;
-			launch = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+			launch = (adaptable.getAdapter(ILaunch.class));
 		}
 
 		return launch;
@@ -476,7 +476,7 @@ public class GoToAddressBarWidget {
 		String id = UNKNOWN_CONTEXT_ID;
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			IRecurringDebugContext recurringDebugContext = (IRecurringDebugContext) adaptable
+			IRecurringDebugContext recurringDebugContext = adaptable
 					.getAdapter(IRecurringDebugContext.class);
 			if (recurringDebugContext != null) {
 				try {

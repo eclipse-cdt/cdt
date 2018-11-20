@@ -110,7 +110,7 @@ abstract public class ListenerList {
 		}
 		int count = (listeners == null) ? 0 : listeners.size();
 		for (int i = 0; i < count; i++) {
-			Object listener = (Object) listeners.get(i);
+			Object listener = listeners.get(i);
 			try {
 				raise(listener, event);
 			} catch (Throwable t) {

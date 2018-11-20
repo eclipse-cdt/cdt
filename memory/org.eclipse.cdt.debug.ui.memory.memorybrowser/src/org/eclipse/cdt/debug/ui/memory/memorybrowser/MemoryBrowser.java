@@ -665,7 +665,7 @@ public class MemoryBrowser extends ViewPart
 			// Memory view support this (it was done in the call to
 			// rendering.getLabel() above)
 			IMemoryBlock block = rendering.getMemoryBlock();
-			ILabelDecorator labelDec = (ILabelDecorator) block.getAdapter(ILabelDecorator.class);
+			ILabelDecorator labelDec = block.getAdapter(ILabelDecorator.class);
 			if (labelDec != null) {
 				String newLabel = labelDec.decorateText(label, rendering);
 				if (newLabel != null) {
@@ -1059,8 +1059,8 @@ public class MemoryBrowser extends ViewPart
 
 		if (context instanceof IAdaptable) {
 			adaptable = (IAdaptable) context;
-			retrieval = ((IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class));
-			launch = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+			retrieval = (adaptable.getAdapter(IMemoryBlockRetrieval.class));
+			launch = (adaptable.getAdapter(ILaunch.class));
 		}
 
 		if (retrieval != null && launch != null && !launch.isTerminated()) {
@@ -1113,7 +1113,7 @@ public class MemoryBrowser extends ViewPart
 				CTabFolder tabFolder = fContextFolders.get(retrieval);
 				if (tabFolder != null) {
 					fStackLayout.topControl = tabFolder;
-					CTabItem tabItem = (CTabItem) tabFolder.getSelection();
+					CTabItem tabItem = tabFolder.getSelection();
 					if (tabItem != null) {
 						getSite().getSelectionProvider()
 								.setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
@@ -1412,7 +1412,7 @@ public class MemoryBrowser extends ViewPart
 		if (retrieval instanceof IMemoryBlockRetrievalExtension) {
 			retrievalExtension = (IMemoryBlockRetrievalExtension) retrieval;
 		} else if (retrieval instanceof IAdaptable) {
-			retrievalExtension = (IMemoryBlockRetrievalExtension) ((IAdaptable) retrieval)
+			retrievalExtension = ((IAdaptable) retrieval)
 					.getAdapter(IMemoryBlockRetrievalExtension.class);
 		}
 		if (retrievalExtension != null) {

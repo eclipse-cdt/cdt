@@ -113,7 +113,7 @@ public class SelectionUtils {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			result = structuredSelection.size();
 		} else if (selection instanceof ISelection) {
-			result = ((ISelection) selection).isEmpty() ? 0 : 1;
+			result = selection.isEmpty() ? 0 : 1;
 		}
 		// collections are not ISelections, this just makes the method a little more generic
 		else if (selection instanceof Collection) {
@@ -135,7 +135,7 @@ public class SelectionUtils {
 		List<Object> result = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			result = new ArrayList<Object>((List<?>) structuredSelection.toList());
+			result = new ArrayList<Object>(structuredSelection.toList());
 		} else if (selection instanceof Collection) {
 			Collection<?> collection = (Collection<?>) selection;
 			result = new ArrayList<Object>(collection);
@@ -260,7 +260,7 @@ public class SelectionUtils {
 			result = workbench.getActiveWorkbenchWindow();
 			if (result == null) {
 				if (workbench.getWorkbenchWindowCount() > 0) {
-					result = (IWorkbenchWindow) workbench.getWorkbenchWindows()[0];
+					result = workbench.getWorkbenchWindows()[0];
 				}
 			}
 		}

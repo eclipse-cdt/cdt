@@ -225,7 +225,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
 
-			final IMemoryBlockAddressInfoRetrieval addrInfo = ((IMemoryBlockAddressInfoRetrieval) adaptable
+			final IMemoryBlockAddressInfoRetrieval addrInfo = (adaptable
 					.getAdapter(IMemoryBlockAddressInfoRetrieval.class));
 
 			if (addrInfo == null) {

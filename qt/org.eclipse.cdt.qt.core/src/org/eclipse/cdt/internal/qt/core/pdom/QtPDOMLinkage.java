@@ -126,7 +126,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 			return null;
 
 		// If a binding has already been persisted for this instance then return it now.
-		QtPDOMBinding pdomBinding = (QtPDOMBinding) binding.getAdapter(QtPDOMBinding.class);
+		QtPDOMBinding pdomBinding = binding.getAdapter(QtPDOMBinding.class);
 		if (pdomBinding != null && pdomBinding.getLinkage() == this)
 			return pdomBinding;
 
@@ -149,7 +149,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		if (binding == null)
 			return 0;
 
-		IPDOMBinding pdomBinding = (IPDOMBinding) binding.getAdapter(IPDOMBinding.class);
+		IPDOMBinding pdomBinding = binding.getAdapter(IPDOMBinding.class);
 		if (pdomBinding == null)
 			return 0;
 

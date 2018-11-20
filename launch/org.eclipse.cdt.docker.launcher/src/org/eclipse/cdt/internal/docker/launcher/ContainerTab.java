@@ -612,7 +612,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 					tableViewer.setChecked(m, true);
 				}
 			}
-			connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
+			connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
 			int defaultIndex = 0;
 			connections = DockerConnectionManager.getInstance().getConnections();
 			if (connections.length > 0) {

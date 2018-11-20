@@ -1029,7 +1029,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							pdomBinding = createBinding(type, method, fileLocalRec);
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
-							old.remove((ICPPMethod) pdomBinding);
+							old.remove(pdomBinding);
 
 							// Update the tags based on the tags from the new binding.  This was in
 							// PDOMBinding.update, but not all subclasses (e.g., PDOMCPPFunction)

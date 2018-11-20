@@ -151,7 +151,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 			fLocalLauncher = localLauncher;
 		}
 		if (getProject() != null) {
-			IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
+			IRemoteResource remRes = getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {
 				URI uri = remRes.getActiveLocationURI();
 				IRemoteServicesManager remoteServicesManager = Activator.getService(IRemoteServicesManager.class);

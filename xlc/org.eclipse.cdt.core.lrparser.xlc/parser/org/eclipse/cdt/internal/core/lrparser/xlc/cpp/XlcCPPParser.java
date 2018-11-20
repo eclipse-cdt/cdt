@@ -171,7 +171,7 @@ public class XlcCPPParser extends PrsStream
 	}
 
 	public PrsStream getParseStream() {
-		return (PrsStream) this;
+		return this;
 	}
 
 	//
@@ -202,7 +202,7 @@ public class XlcCPPParser extends PrsStream
 
 	public void parser(Monitor monitor, int error_repair_count) {
 		try {
-			btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+			btParser = new FixedBacktrackingParser(monitor, this, prs, this);
 		} catch (NotBacktrackParseTableException e) {
 			throw new Error(
 					new NotBacktrackParseTableException("Regenerate XlcCPPParserprs.java with -BACKTRACK option"));

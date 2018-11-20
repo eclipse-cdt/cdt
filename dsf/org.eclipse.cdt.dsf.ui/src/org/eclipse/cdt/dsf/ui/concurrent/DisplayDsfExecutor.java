@@ -278,6 +278,6 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 	@SuppressWarnings({ "cast", "unchecked" })
 	@Override
 	public List<Runnable> shutdownNow() {
-		return (List<Runnable>) Collections.EMPTY_LIST;
+		return Collections.EMPTY_LIST;
 	}
 }

@@ -138,7 +138,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 						if (independentCategories != null) {
 							for (IAdaptable category : independentCategories) {
 								if (!bpsLists.containsKey(category)) {
-									bpsLists.put(category, (List<IBreakpoint>) Collections.EMPTY_LIST);
+									bpsLists.put(category, Collections.EMPTY_LIST);
 								}
 							}
 						}

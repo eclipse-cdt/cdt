@@ -128,7 +128,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 							IProgressMonitor sub = new SubProgressMonitor(pm, 1);
 							for (int i = 0; i < nElements; i++) {
 								if (elements[i] instanceof IAdaptable) {
-									IResource r = (IResource) ((IAdaptable) elements[i]).getAdapter(IResource.class);
+									IResource r = ((IAdaptable) elements[i]).getAdapter(IResource.class);
 									if (r != null) {
 										ICProject cproject = CoreModel.getDefault().create(r.getProject());
 										if (cproject != null) {

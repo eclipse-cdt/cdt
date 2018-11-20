@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
  * An event object describing the details of a change to a preference
  * in the preference store.
  *
- * @noextend This class is not intended to be extended by clients.
  * @since 2.0
  * @deprecated use {@link IEclipsePreferences} change listener event instead.
  */

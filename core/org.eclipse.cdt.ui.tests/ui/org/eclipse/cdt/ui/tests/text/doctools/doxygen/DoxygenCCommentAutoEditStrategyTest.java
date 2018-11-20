@@ -103,7 +103,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// /**   X
 	//  void foo() {}
 	
-	// /**   
+	// /**   ${whitespace_eol}
 	//  * X
 	//  */
 	//  void foo() {}
@@ -126,7 +126,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// /**   X
 	//  int foo_bar() {}
 	
-	// /**   
+	// /**   ${whitespace_eol}
 	//  * X
 	//  * @return
 	//  */
@@ -506,7 +506,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// /**   X
 	//  int foo_bar();
 	
-	// /**   
+	// /**   ${whitespace_eol}
 	//  * X
 	//  * @return
 	//  */

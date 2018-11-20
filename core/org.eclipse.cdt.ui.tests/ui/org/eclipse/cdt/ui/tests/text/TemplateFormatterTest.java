@@ -102,7 +102,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//}
 	
 	//for(int var=0; var<max; var++) {
-	//	
+	//	${whitespace_eol}
 	//}
 	public void testForLoopTemplateDefault() throws Exception {
 		assertFormatterResult();
@@ -113,7 +113,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//}
 	
 	//for(int var=0; var<max; var++) {
-	//    
+	//    ${whitespace_eol}
 	//}
 	public void testForLoopTemplateMixedIndent() throws Exception {
 		setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);

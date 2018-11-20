@@ -156,6 +156,10 @@ public class TestSourceReader {
 			    StringBuilder content = new StringBuilder();
 			    for (String line = br.readLine(); line != null; line = br.readLine()) {
 			    	line = line.replaceFirst("^\\s*", ""); // Replace leading whitespace, preserve trailing
+			    	// Trailing whitespace can be removed by editor/clean-up actions. To enforce whitespace
+			    	// at end of line, use ${whitspace_eol}, which will be removed, but cause the
+			    	// whitespace to the left of it to be preserved.
+			    	line = line.replace("${whitespace_eol}", "");
 			    	if (line.startsWith("//")) {
 			    		content.append(line.substring(2)).append('\n');
 			    	} else {

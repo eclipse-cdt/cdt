@@ -132,11 +132,6 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// The button bar will work better if we make the parent composite
@@ -227,22 +222,12 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		return fIdLabelMap.size() > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(DialogMessages.getString("AddEventBreakpointDialog.2")); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		if (fEventTypeInput != null) {
@@ -270,11 +255,6 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		fEventType = (String) data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-	 */
 	@Override
 	public void modifyText(ModifyEvent e) {
 		if (e.getSource() == fEventTypeInput) {
@@ -283,31 +263,16 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		updateUI();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		return super.createButtonBar(parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// ignore
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (e.getSource() == fEventTypeInput) {

@@ -1323,13 +1323,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	// return new DefaultPathEntryStore(project);
 	// }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#
-	 * pathEntryStoreChanged(org.eclipse.cdt.core.resources.
-	 * PathEntryChangedEvent)
-	 */
 	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		IProject project = event.getProject();

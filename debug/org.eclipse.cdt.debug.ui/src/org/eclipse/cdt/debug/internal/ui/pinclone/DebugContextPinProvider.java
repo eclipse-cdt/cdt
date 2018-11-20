@@ -75,19 +75,11 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider2#isWindowContextProvider()
-	 */
 	@Override
 	public boolean isWindowContextProvider() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getActiveContext()
-	 */
 	@Override
 	public ISelection getActiveContext() {
 		return fActiveContext;

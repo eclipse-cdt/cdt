@@ -216,9 +216,6 @@ public class ManageConfigDialog extends Dialog {
 		return null;
 	}
 
-	/*
-	 * (non-javadoc) Event handler for the rename button
-	 */
 	protected void handleRenamePressed() {
 		int sel = table.getSelectionIndex();
 		if (sel != -1) {
@@ -233,9 +230,6 @@ public class ManageConfigDialog extends Dialog {
 		}
 	}
 
-	/*
-	 * (non-javadoc) Event handler for the remove button
-	 */
 	protected void handleRemovePressed() {
 		TableItem[] tis = table.getSelection();
 		if (tis == null || tis.length < 1)

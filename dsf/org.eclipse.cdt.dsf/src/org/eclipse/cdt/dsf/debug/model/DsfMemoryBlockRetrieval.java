@@ -375,11 +375,6 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	// IMemoryBlockRetrieval - obsoleted by IMemoryBlockRetrievalExtension
 	///////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
-	 */
 	@Override
 	public boolean supportsStorageRetrieval() {
 		return true;
@@ -398,12 +393,6 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	// IMemoryBlockRetrievalExtension
 	///////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension#getExtendedMemoryBlock(java.lang.String,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
 		// Drill for the actual DMC

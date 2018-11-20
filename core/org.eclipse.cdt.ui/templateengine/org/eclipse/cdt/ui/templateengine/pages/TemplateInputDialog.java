@@ -100,11 +100,6 @@ public class TemplateInputDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 
 	@Override
 	protected void configureShell(Shell shell) {
@@ -113,11 +108,6 @@ public class TemplateInputDialog extends Dialog {
 		display = shell.getDisplay();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -226,12 +216,6 @@ public class TemplateInputDialog extends Dialog {
 		aText.addModifyListener(mListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed() This method is
-	 *      overridden to perform custom events on OK button.
-	 */
 
 	@Override
 	protected void okPressed() {
@@ -288,11 +272,6 @@ public class TemplateInputDialog extends Dialog {
 		return result[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-	 */
 	@Override
 	protected void cancelPressed() {
 

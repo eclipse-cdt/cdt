@@ -299,10 +299,6 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		fIsDirty = dirty;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptor#create(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public ICExtensionReference create(String extensionPoint, String id) throws CoreException {
 		try {
@@ -396,10 +392,6 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptor#get(java.lang.String, boolean)
-	 */
 	@Override
 	public ICExtensionReference[] get(String extensionPoint, boolean update) throws CoreException {
 		try {
@@ -416,10 +408,6 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptor#getPlatform()
-	 */
 	@Override
 	public String getPlatform() {
 		try {
@@ -430,10 +418,6 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptor#getProject()
-	 */
 	@Override
 	public IProject getProject() {
 		try {
@@ -657,10 +641,6 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptor#saveProjectData()
-	 */
 	@Override
 	public void saveProjectData() throws CoreException {
 		try {
@@ -678,10 +658,6 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptor#getConfigurationDescription()
-	 */
 	@Override
 	public ICConfigurationDescription getConfigurationDescription() {
 		try {

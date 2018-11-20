@@ -34,10 +34,6 @@ public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMement
 		super(provider);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-	 */
 	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 		for (IElementMementoRequest request : requests) {
@@ -45,10 +41,6 @@ public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMement
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-	 */
 	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 

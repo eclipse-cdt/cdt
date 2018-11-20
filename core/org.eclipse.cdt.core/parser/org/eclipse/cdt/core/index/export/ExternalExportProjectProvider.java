@@ -77,10 +77,6 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.export.IProjectForExportManager#createProject(java.util.Map)
-	 */
 	@Override
 	public ICProject createProject() throws CoreException {
 		// -source

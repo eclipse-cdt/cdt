@@ -575,11 +575,6 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		return primary;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#getApplicabilityCalculator()
-	 */
 	@Override
 	public IOptionCategoryApplicability getApplicabilityCalculator() {
 		if (applicabilityCalculator == null) {

@@ -577,10 +577,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#setReadOnly(boolean, boolean)
-	 */
 	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify) {
 		for (ICConfigurationDescription cfg : fCfgs)

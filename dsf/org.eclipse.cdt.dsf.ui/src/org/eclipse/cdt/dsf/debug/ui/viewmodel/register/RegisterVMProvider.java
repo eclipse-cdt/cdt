@@ -127,20 +127,12 @@ public class RegisterVMProvider extends AbstractElementVMProvider {
 		setRootNode(rootNode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider#createUpdateModes()
-	 */
 	@Override
 	protected IVMUpdatePolicy[] createUpdateModes() {
 		return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy(), new DebugManualUpdatePolicy(),
 				new BreakpointHitUpdatePolicy() };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
@@ -148,28 +140,16 @@ public class RegisterVMProvider extends AbstractElementVMProvider {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		return new RegisterColumnPresentation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		return RegisterColumnPresentation.ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#canSkipHandlingEvent(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
 		/*
@@ -180,10 +160,6 @@ public class RegisterVMProvider extends AbstractElementVMProvider {
 		return newEvent instanceof ISuspendedDMEvent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate)
-	 */
 	@Override
 	public void update(IViewerInputUpdate update) {
 		/*

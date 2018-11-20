@@ -29,63 +29,31 @@ public class NodeFactory implements INodeFactory {
 	public NodeFactory() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createPlainNode ()
-	 */
 	@Override
 	public IPlainNode createPlainNode() {
 		return new PlainNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createJumpNode ()
-	 */
 	@Override
 	public IJumpNode createJumpNode() {
 		return new JumpNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#
-	 * createDecisionNode()
-	 */
 	@Override
 	public IDecisionNode createDecisionNode() {
 		return new DecisionNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#
-	 * createConnectiorNode()
-	 */
 	@Override
 	public IConnectorNode createConnectorNode() {
 		return new ConnectorNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createStartNode ()
-	 */
 	@Override
 	public IStartNode createStartNode() {
 		return new StartNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createExitNode ()
-	 */
 	@Override
 	public IExitNode createExitNode() {
 		return new ExitNode();

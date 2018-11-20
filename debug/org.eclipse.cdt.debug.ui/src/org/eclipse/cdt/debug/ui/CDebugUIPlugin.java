@@ -287,11 +287,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		return OldDefaultSourceLocator.ID_OLD_DEFAULT_SOURCE_LOCATOR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -335,11 +330,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener(CBreakpointUpdater.getInstance());

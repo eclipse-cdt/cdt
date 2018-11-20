@@ -132,10 +132,6 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 		fProjectDescriptorMap.remove(project);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#configure(org.eclipse.core.resources.IProject, java.lang.String)
-	 */
 	@Override
 	public void configure(IProject project, String id) throws CoreException {
 		if (id.equals(NULLCOwner.getOwnerID())) {
@@ -208,10 +204,6 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#convert(org.eclipse.core.resources.IProject, java.lang.String)
-	 */
 	@Override
 	public void convert(IProject project, String id) throws CoreException {
 		CConfigBasedDescriptor dr = findDescriptor(project, false);
@@ -230,37 +222,21 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#getDescriptor(org.eclipse.core.resources.IProject)
-	 */
 	@Override
 	public ICDescriptor getDescriptor(IProject project) throws CoreException {
 		return getDescriptor(project, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#getDescriptor(org.eclipse.core.resources.IProject, boolean)
-	 */
 	@Override
 	public ICDescriptor getDescriptor(IProject project, boolean create) throws CoreException {
 		return findDescriptor(project, create);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#addDescriptorListener(org.eclipse.cdt.core.ICDescriptorListener)
-	 */
 	@Override
 	public void addDescriptorListener(ICDescriptorListener listener) {
 		fListeners.add(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#removeDescriptorListener(org.eclipse.cdt.core.ICDescriptorListener)
-	 */
 	@Override
 	public void removeDescriptorListener(ICDescriptorListener listener) {
 		fListeners.remove(listener);

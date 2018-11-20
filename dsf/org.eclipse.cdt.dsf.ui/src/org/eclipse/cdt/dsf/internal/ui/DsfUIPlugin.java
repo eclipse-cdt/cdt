@@ -56,10 +56,6 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 		fgPlugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
@@ -80,10 +76,6 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 		DsfDebugUITools.enableActivity("org.eclipse.cdt.debug.ui.cdtActivity", true); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		fSourceDocumentProvider.dispose();

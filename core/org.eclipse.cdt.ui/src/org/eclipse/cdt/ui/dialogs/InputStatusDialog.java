@@ -104,9 +104,6 @@ public class InputStatusDialog extends StatusDialog {
 		this.validator = validator;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
@@ -117,11 +114,6 @@ public class InputStatusDialog extends StatusDialog {
 		super.buttonPressed(buttonId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

@@ -40,11 +40,6 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.cfg.IJumpNode#getJumpNode()
-	 */
 	@Override
 	public IConnectorNode getJumpNode() {
 		return jump;

@@ -344,10 +344,6 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 		return new TreePath(elementList.toArray());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
 		if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)
@@ -358,10 +354,6 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
 		if (fWatchExpressionCellModifier == null) {

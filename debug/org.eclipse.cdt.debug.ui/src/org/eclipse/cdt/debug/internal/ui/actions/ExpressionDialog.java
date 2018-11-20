@@ -130,11 +130,6 @@ public class ExpressionDialog extends Dialog {
 		return fExpression;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		storeData();

@@ -32,12 +32,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class CoreFilePrompter implements IStatusHandler {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public Object handleStatus(IStatus status, Object params) throws CoreException {
 		final Shell shell = GdbUIPlugin.getShell();

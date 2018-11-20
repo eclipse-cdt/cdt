@@ -86,13 +86,6 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 		comp.save(problem);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(CodanUIMessages.CustomizeProblemDialog_Title);
@@ -122,11 +115,6 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 		return b;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		for (int i = 0; i < problems.length; i++) {

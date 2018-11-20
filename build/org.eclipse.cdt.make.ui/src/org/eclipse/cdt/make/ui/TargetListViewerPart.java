@@ -155,11 +155,6 @@ public class TargetListViewerPart extends StructuredViewerPart {
 		return fSelectedTarget;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.make.internal.ui.part.SharedPart#updateEnabledState()
-	 */
 	@Override
 	protected void updateEnabledState() {
 		super.updateEnabledState();
@@ -167,12 +162,6 @@ public class TargetListViewerPart extends StructuredViewerPart {
 		setButtonEnabled(EDIT_TARGET, fSelectedTarget != null && isEnabled());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.make.internal.ui.part.SharedPart#createControl(org.eclipse.swt.widgets.Composite,
-	 *      int, int)
-	 */
 	@Override
 	public void createControl(Composite parent, int style, int span) {
 		super.createControl(parent, style, span);

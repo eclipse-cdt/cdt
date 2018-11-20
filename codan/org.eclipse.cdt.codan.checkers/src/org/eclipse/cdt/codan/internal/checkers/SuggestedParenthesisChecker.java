@@ -127,13 +127,6 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_NOT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences
-	 * #initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
-	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);

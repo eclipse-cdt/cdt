@@ -646,13 +646,6 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.dsf.debug.service.IRegisters2#removeRegisterGroups(org.eclipse.cdt.dsf.debug.service.IRegisters
-	 * .IRegisterGroupDMContext[], org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void removeRegisterGroups(IRegisterGroupDMContext[] groups, RequestMonitor rm) {
 		removeRegisterGroups(groups, false, rm);
@@ -687,12 +680,6 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.dsf.mi.service.MIRegisters#findRegisterGroup(org.eclipse.cdt.dsf.datamodel.IDMContext,
-	 * java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void findRegisterGroup(final IDMContext ctx, final String name,
 			final DataRequestMonitor<IRegisterGroupDMContext> rm) {

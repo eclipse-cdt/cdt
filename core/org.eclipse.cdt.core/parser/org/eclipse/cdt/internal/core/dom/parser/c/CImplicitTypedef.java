@@ -80,10 +80,6 @@ public class CImplicitTypedef extends CTypedef {
 	//            return false;
 	//    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	//    public Object clone() {
 	//        IType t = null;
 	//        t = (IType) super.clone();

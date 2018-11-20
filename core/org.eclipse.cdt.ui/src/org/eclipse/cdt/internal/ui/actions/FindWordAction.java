@@ -48,10 +48,6 @@ public class FindWordAction extends TextEditorAction {
 		fFindNext = new FindNextAction(bundle, prefix, editor, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();

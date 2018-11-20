@@ -195,11 +195,6 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		fEditable = editable;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
@@ -759,21 +754,11 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		applyPatterns();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 		// ErrorParsTas.performDefaults() will do all the work

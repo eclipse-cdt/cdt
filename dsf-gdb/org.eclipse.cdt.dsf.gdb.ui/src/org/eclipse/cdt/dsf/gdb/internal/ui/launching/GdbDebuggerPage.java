@@ -312,11 +312,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		super.updateLaunchConfigurationDialog();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		if (!isInitializing())
@@ -521,11 +516,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		return button;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fSolibBlock != null) {

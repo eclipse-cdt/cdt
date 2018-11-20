@@ -137,11 +137,6 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		return super.computeSize();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
 	@Override
 	protected void createFieldEditors() {
 

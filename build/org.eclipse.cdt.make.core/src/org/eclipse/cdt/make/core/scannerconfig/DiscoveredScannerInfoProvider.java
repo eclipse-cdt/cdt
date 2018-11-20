@@ -63,11 +63,6 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 		return instance;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		try {
@@ -77,23 +72,11 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 		return super.getScannerInformation(resource);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
 	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		super.subscribe(resource, listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
 	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		super.unsubscribe(resource, listener);

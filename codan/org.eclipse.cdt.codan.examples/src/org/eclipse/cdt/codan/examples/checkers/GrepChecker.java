@@ -95,13 +95,6 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences
-	 * #initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
-	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);

@@ -48,11 +48,6 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 		return C_ADDRESS_BREAKPOINT_MARKER;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
-	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CAddressBreakpoint.0"), //$NON-NLS-1$

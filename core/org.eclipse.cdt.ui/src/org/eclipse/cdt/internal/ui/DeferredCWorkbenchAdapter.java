@@ -29,13 +29,6 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDef
 		fCElement = element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
-	 *           org.eclipse.jface.progress.IElementCollector,
-	 *           org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		Object[] children = getChildren(object);
@@ -46,21 +39,11 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDef
 		collector.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-	 */
 	@Override
 	public boolean isContainer() {
 		return fCElement instanceof IParent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-	 */
 	@Override
 	public ISchedulingRule getRule(final Object object) {
 		return fCElement.getResource();

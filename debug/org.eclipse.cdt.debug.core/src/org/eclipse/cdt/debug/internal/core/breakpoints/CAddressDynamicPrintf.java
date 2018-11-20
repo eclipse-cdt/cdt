@@ -45,11 +45,6 @@ public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAd
 		return C_ADDRESS_DYNAMICPRINTF_MARKER;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
-	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CAddressDynamicPrintf.0"), //$NON-NLS-1$

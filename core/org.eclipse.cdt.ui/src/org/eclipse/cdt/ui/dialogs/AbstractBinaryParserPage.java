@@ -155,19 +155,9 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	@Override
 	abstract public void createControl(Composite parent);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	abstract public void performApply(IProgressMonitor monitor) throws CoreException;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
 	@Override
 	abstract public void performDefaults();
 

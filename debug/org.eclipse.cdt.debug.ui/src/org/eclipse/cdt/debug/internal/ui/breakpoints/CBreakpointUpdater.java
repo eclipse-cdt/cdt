@@ -38,33 +38,15 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 		return fInstance;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#installingBreakpoint(org.eclipse.debug.core.model.IDebugTarget,
-	 *      org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public boolean installingBreakpoint(IDebugTarget target, IBreakpoint breakpoint) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointInstalled(org.eclipse.debug.core.model.IDebugTarget,
-	 *      org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public void breakpointInstalled(final IDebugTarget target, IBreakpoint breakpoint) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IDebugTarget,
-	 *      org.eclipse.debug.core.model.IBreakpoint, java.util.Map)
-	 */
 	@Override
 	public void breakpointChanged(IDebugTarget target, final IBreakpoint breakpoint,
 			@SuppressWarnings("rawtypes") final Map attributes) {
@@ -86,12 +68,6 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IDebugTarget,
-	 *      org.eclipse.debug.core.model.IBreakpoint[])
-	 */
 	@Override
 	public void breakpointsRemoved(IDebugTarget target, final IBreakpoint[] breakpoints) {
 		asyncExec(new Runnable() {

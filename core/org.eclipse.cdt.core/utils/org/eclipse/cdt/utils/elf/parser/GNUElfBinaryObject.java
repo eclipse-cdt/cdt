@@ -167,12 +167,6 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#addSymbols(org.eclipse.cdt.utils.elf.Elf.Symbol[],
-	 *      int, java.util.List)
-	 */
 	@Override
 	protected void addSymbols(Elf.Symbol[] array, int type, List<Symbol> list) {
 		for (org.eclipse.cdt.utils.elf.Elf.Symbol element : array) {

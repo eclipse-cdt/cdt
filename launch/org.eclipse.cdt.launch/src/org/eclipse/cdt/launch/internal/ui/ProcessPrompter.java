@@ -33,12 +33,6 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class ProcessPrompter implements IStatusHandler {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		Shell shell = LaunchUIPlugin.getShell();

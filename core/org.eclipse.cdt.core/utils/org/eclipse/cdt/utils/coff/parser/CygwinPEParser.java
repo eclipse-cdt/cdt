@@ -34,11 +34,6 @@ public class CygwinPEParser extends PEParser {
 		return "Cygwin PE"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.coff.parser.PEParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
 		return new CygwinPEBinaryArchive(this, path);

@@ -40,11 +40,6 @@ public class LlvmBuildEnvironmentVariable implements IBuildEnvironmentVariable {
 		this.operation = operation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getDelimiter()
-	 */
 	/**
 	 * Get a delimiter.
 	 *
@@ -55,12 +50,6 @@ public class LlvmBuildEnvironmentVariable implements IBuildEnvironmentVariable {
 		return ";"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getName()
-	 */
 	/**
 	 * Get name of the llvm environment variable.
 	 *
@@ -71,11 +60,6 @@ public class LlvmBuildEnvironmentVariable implements IBuildEnvironmentVariable {
 		return this.name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getOperation()
-	 */
 	/**
 	 * Get operation of the llvm environment variable.
 	 *
@@ -86,12 +70,6 @@ public class LlvmBuildEnvironmentVariable implements IBuildEnvironmentVariable {
 		return this.operation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getValue()
-	 */
 	/**
 	 * Get value of the llvm environment variable.
 	 *

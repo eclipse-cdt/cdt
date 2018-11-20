@@ -102,7 +102,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// ///   X
 	//  void foo() {}
 	
-	// ///   
+	// ///   ${whitespace_eol}
 	// /// X
 	//  void foo() {}
 	public void testAutoDocCommentContent2() throws CoreException {
@@ -192,7 +192,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	//  C* bar_baz(A a, B b, int c) {}
 	
 	// class A {}; class B {};
-	// /// 
+	// /// ${whitespace_eol}
 	// /// X@param a
 	// /// @param b
 	// /// @param c
@@ -271,7 +271,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// {}
 	
 	// void foo_bar(int x)
-	// /// 
+	// /// ${whitespace_eol}
 	// /// X@param x
 	// {}
 	public void testAutoDocCommentContent9b() throws CoreException {
@@ -282,7 +282,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// {}
 	
 	// void foo_bar(int x)
-	// /// 
+	// /// ${whitespace_eol}
 	// /// X@param x
 	// {}
 	public void testAutoDocCommentContent9c() throws CoreException {

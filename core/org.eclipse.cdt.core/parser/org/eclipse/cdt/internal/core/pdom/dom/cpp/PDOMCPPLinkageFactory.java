@@ -34,5 +34,5 @@ public class PDOMCPPLinkageFactory implements IPDOMLinkageFactory {
 	public PDOMLinkage createLinkage(PDOM pdom) throws CoreException {
 		return new PDOMCPPLinkage(pdom);
 	}
-	
+
 }

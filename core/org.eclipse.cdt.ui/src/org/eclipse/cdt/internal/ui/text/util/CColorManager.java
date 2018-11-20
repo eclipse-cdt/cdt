@@ -14,7 +14,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.util;
- 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,9 +29,9 @@ import org.eclipse.cdt.ui.text.IColorManager;
  * CDT color manager.
  */
 public class CColorManager implements IColorManager {
-	protected Map<String, RGB> fKeyTable= new HashMap<>(10);
-	protected Map<Display, Map<RGB, Color>> fDisplayTable= new HashMap<>(2);
-	
+	protected Map<String, RGB> fKeyTable = new HashMap<>(10);
+	protected Map<Display, Map<RGB, Color>> fDisplayTable = new HashMap<>(2);
+
 	/**
 	 * Flag which tells if the colors are automatically disposed when
 	 * the current display gets disposed.
@@ -58,27 +58,27 @@ public class CColorManager implements IColorManager {
 	 * @since 4.0
 	 */
 	public CColorManager(boolean autoDisposeOnDisplayDispose) {
-		fAutoDisposeOnDisplayDispose= autoDisposeOnDisplayDispose;
+		fAutoDisposeOnDisplayDispose = autoDisposeOnDisplayDispose;
 	}
 
-	protected void dispose(Display display) {		
-		Map<RGB, Color> colorTable= fDisplayTable.get(display);
+	protected void dispose(Display display) {
+		Map<RGB, Color> colorTable = fDisplayTable.get(display);
 		if (colorTable != null) {
-			Iterator<Color> e= colorTable.values().iterator();
+			Iterator<Color> e = colorTable.values().iterator();
 			while (e.hasNext())
 				(e.next()).dispose();
 		}
 	}
-	
+
 	@Override
 	public Color getColor(RGB rgb) {
 		if (rgb == null)
 			return null;
-		
-		final Display display= Display.getCurrent();
-		Map<RGB, Color> colorTable= fDisplayTable.get(display);
+
+		final Display display = Display.getCurrent();
+		Map<RGB, Color> colorTable = fDisplayTable.get(display);
 		if (colorTable == null) {
-			colorTable= new HashMap<>(10);
+			colorTable = new HashMap<>(10);
 			fDisplayTable.put(display, colorTable);
 			if (fAutoDisposeOnDisplayDispose) {
 				display.disposeExec(new Runnable() {
@@ -89,16 +89,16 @@ public class CColorManager implements IColorManager {
 				});
 			}
 		}
-		
-		Color color= colorTable.get(rgb);
+
+		Color color = colorTable.get(rgb);
 		if (color == null) {
-			color= new Color(Display.getCurrent(), rgb);
+			color = new Color(Display.getCurrent(), rgb);
 			colorTable.put(rgb, color);
 		}
-		
+
 		return color;
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (!fAutoDisposeOnDisplayDispose)
@@ -107,20 +107,20 @@ public class CColorManager implements IColorManager {
 
 	@Override
 	public Color getColor(String key) {
-		
+
 		if (key == null)
 			return null;
-			
-		RGB rgb= fKeyTable.get(key);
+
+		RGB rgb = fKeyTable.get(key);
 		return getColor(rgb);
 	}
-	
+
 	@Override
 	public void bindColor(String key, RGB rgb) {
-		Object value= fKeyTable.get(key);
+		Object value = fKeyTable.get(key);
 		if (value != null)
 			throw new UnsupportedOperationException();
-		
+
 		fKeyTable.put(key, rgb);
 	}
 
@@ -129,5 +129,3 @@ public class CColorManager implements IColorManager {
 		fKeyTable.remove(key);
 	}
 }
-
-

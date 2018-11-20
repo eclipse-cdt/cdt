@@ -20,16 +20,16 @@ import junit.framework.TestSuite;
 
 public class DocCommentTestSuite extends TestSuite {
 
-    public static TestSuite suite() {
-        return new DocCommentTestSuite();
-    }
-    
-    public DocCommentTestSuite() {
-        super(DocCommentTestSuite.class.getName());
+	public static TestSuite suite() {
+		return new DocCommentTestSuite();
+	}
+
+	public DocCommentTestSuite() {
+		super(DocCommentTestSuite.class.getName());
 
 		addTest(CommentOwnerManagerTests.suite());
 		addTest(DocCommentHighlightingTest.suite());
 		addTest(DoxygenCCommentAutoEditStrategyTest.suite());
 		addTest(DoxygenCCommentSingleAutoEditStrategyTest.suite());
-    }
+	}
 }

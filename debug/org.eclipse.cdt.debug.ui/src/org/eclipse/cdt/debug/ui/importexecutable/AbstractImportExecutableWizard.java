@@ -69,7 +69,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		}
 		CCorePlugin.getDefault().setProjectDescription(newProject, pd, true, new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * Adds the executables to a new or existing project. The executables are
 	 * added as external links.
@@ -120,7 +120,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	}
 
 	public void createLaunchConfiguration(ICProject targetProject) throws CoreException {
-		
+
 		ILaunchConfigurationWorkingCopy wc = this.getSelectedLaunchConfigurationType().newInstance(null,
 				this.getImportExecutablePage2().getNewConfigurationName());
 
@@ -133,9 +133,11 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				DebugUITools.openLaunchConfigurationDialogOnGroup(CUIPlugin.getActiveWorkbenchShell(), selection, identifier);
+				DebugUITools.openLaunchConfigurationDialogOnGroup(CUIPlugin.getActiveWorkbenchShell(), selection,
+						identifier);
 				return Status.OK_STATUS;
-			}};
+			}
+		};
 		openLaunchConfigJob.schedule();
 
 	}
@@ -175,18 +177,16 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		setWindowTitle(getDefaultWindowTitle());
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	@Override
 	public boolean performFinish() {
 
 		ICProject targetProject = null;
 		try {
 			if (pageTwo.isCreateNewProjectSelected()) {
-				IProject newProject = createCProjectForExecutable(pageTwo
-						.getNewProjectName());
+				IProject newProject = createCProjectForExecutable(pageTwo.getNewProjectName());
 				setupProject(newProject);
-				targetProject = CCorePlugin.getDefault().getCoreModel().create(
-						newProject);
+				targetProject = CCorePlugin.getDefault().getCoreModel().create(newProject);
 			} else {
 				targetProject = pageTwo.getExistingCProject();
 			}
@@ -200,7 +200,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Subclasses should override this method to modify the launch configuration
 	 * created by the wizard. The default implementation sets up the project
@@ -210,10 +210,10 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 */
 	public void setConfigurationDefaults(ILaunchConfigurationWorkingCopy config, ICProject project) {
 
-		config.setMappedResources(new IResource[] {project.getProject()});
+		config.setMappedResources(new IResource[] { project.getProject() });
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getProject().getName());
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, new File(getImportExecutablePage()
-				.getSelectedExecutables()[0]).getName());
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				new File(getImportExecutablePage().getSelectedExecutables()[0]).getName());
 
 	}
 
@@ -230,8 +230,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 *            the type of launch configuration
 	 * @return - if the wizard supports this launch configuration type
 	 */
-	public abstract boolean supportsConfigurationType(
-			ILaunchConfigurationType type);
+	public abstract boolean supportsConfigurationType(ILaunchConfigurationType type);
 
 	/**
 	 * Return true if you want the wizard to ask the user to select
@@ -250,7 +249,8 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 * @return
 	 */
 	public String[] getDefaultBinaryParserIDs() {
-		String defaultBinaryParserId = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
+		String defaultBinaryParserId = CCorePlugin.getDefault().getPluginPreferences()
+				.getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
 		if (defaultBinaryParserId == null || defaultBinaryParserId.length() == 0) {
 			defaultBinaryParserId = CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
 		}
@@ -259,8 +259,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 
 	public String getDefaultProjectName() {
 		String defaultName = ""; //$NON-NLS-1$
-		String[] executables = getImportExecutablePage()
-				.getSelectedExecutables();
+		String[] executables = getImportExecutablePage().getSelectedExecutables();
 		if (executables.length > 0) {
 			String fileName = new File(executables[0]).getName();
 			defaultName = Messages.ImportExecutablePageTwo_DefaultProjectPrefix + fileName;

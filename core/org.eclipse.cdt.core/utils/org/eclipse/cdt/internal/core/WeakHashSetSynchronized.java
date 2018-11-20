@@ -37,10 +37,12 @@ public class WeakHashSetSynchronized<T> extends WeakHashSet<T> {
 	synchronized public T add(T obj) {
 		return super.add(obj);
 	}
+
 	@Override
 	synchronized public T get(T obj) {
 		return super.get(obj);
 	}
+
 	@Override
 	synchronized public T remove(T obj) {
 		return super.remove(obj);

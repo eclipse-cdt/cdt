@@ -23,9 +23,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTConversionName extends ICPPASTName {
-	public static final ASTNodeProperty TYPE_ID=new ASTNodeProperty(
-	"IASTArrayDeclarator.TYPE_ID - IASTTypeId for ICPPASTConversionName"); //$NON-NLS-1$
-	
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty(
+			"IASTArrayDeclarator.TYPE_ID - IASTTypeId for ICPPASTConversionName"); //$NON-NLS-1$
+
 	/**
 	 * Returns the IASTTypeId for the ICPPASTConversionName.
 	 * 
@@ -33,14 +33,14 @@ public interface ICPPASTConversionName extends ICPPASTName {
 	 * 
 	 */
 	public IASTTypeId getTypeId();
-	
+
 	/**
 	 * Sets the IASTTypeId for the ICPPASTConversionName.
 	 * 
 	 * @param typeId
 	 */
 	public void setTypeId(IASTTypeId typeId);
-	
+
 	/**
 	 * @since 5.1
 	 */

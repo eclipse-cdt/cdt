@@ -21,10 +21,10 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProblem {
-    /**
-     * Returns the AST node that this problem was created for
-     */
-    public IASTNode getASTNode();
+	/**
+	 * Returns the AST node that this problem was created for
+	 */
+	public IASTNode getASTNode();
 
 	/**
 	 * Returns the file name this problem occurred in, or {@code null} if it is unknown.
@@ -36,32 +36,32 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 	 */
 	public int getLineNumber();
 
-    /**
-     * Returns bindings that were considered when resolving the node corresponding
-     * to this problem binding, but rejected for some reason.
-     * @return an array of candidate bindings.
-     *
-     * @since 5.1
-     */
+	/**
+	 * Returns bindings that were considered when resolving the node corresponding
+	 * to this problem binding, but rejected for some reason.
+	 * @return an array of candidate bindings.
+	 *
+	 * @since 5.1
+	 */
 	public IBinding[] getCandidateBindings();
 
 	/*
-     * Parser Semantic Problems
-     * All semantic problems take a char[] as an argument.
-     */
-    public final static int SEMANTIC_NAME_NOT_FOUND = BINDING_NOT_FOUND;
-    public static final int SEMANTIC_INVALID_OVERLOAD = BINDING_INVALID_OVERLOAD;
-    public static final int SEMANTIC_INVALID_USING = BINDING_INVALID_USING;
-    public static final int SEMANTIC_AMBIGUOUS_LOOKUP = BINDING_AMBIGUOUS_LOOKUP;
-    public static final int SEMANTIC_INVALID_TYPE = BINDING_INVALID_TYPE;
-    public static final int SEMANTIC_CIRCULAR_INHERITANCE = BINDING_CIRCULAR_INHERITANCE;
-    public static final int SEMANTIC_DEFINITION_NOT_FOUND = BINDING_DEFINITION_NOT_FOUND;
-    public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND;
-    public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = BINDING_LABEL_STATEMENT_NOT_FOUND;
-    public static final int SEMANTIC_BAD_SCOPE = BINDING_BAD_SCOPE;
-    public static final int SEMANTIC_INVALID_REDEFINITION = BINDING_INVALID_REDEFINITION;
-    public static final int SEMANTIC_INVALID_REDECLARATION = BINDING_INVALID_REDECLARATION;
-    public static final int SEMANTIC_MEMBER_DECLARATION_NOT_FOUND = BINDING_MEMBER_DECLARATION_NOT_FOUND;
+	 * Parser Semantic Problems
+	 * All semantic problems take a char[] as an argument.
+	 */
+	public final static int SEMANTIC_NAME_NOT_FOUND = BINDING_NOT_FOUND;
+	public static final int SEMANTIC_INVALID_OVERLOAD = BINDING_INVALID_OVERLOAD;
+	public static final int SEMANTIC_INVALID_USING = BINDING_INVALID_USING;
+	public static final int SEMANTIC_AMBIGUOUS_LOOKUP = BINDING_AMBIGUOUS_LOOKUP;
+	public static final int SEMANTIC_INVALID_TYPE = BINDING_INVALID_TYPE;
+	public static final int SEMANTIC_CIRCULAR_INHERITANCE = BINDING_CIRCULAR_INHERITANCE;
+	public static final int SEMANTIC_DEFINITION_NOT_FOUND = BINDING_DEFINITION_NOT_FOUND;
+	public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND;
+	public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = BINDING_LABEL_STATEMENT_NOT_FOUND;
+	public static final int SEMANTIC_BAD_SCOPE = BINDING_BAD_SCOPE;
+	public static final int SEMANTIC_INVALID_REDEFINITION = BINDING_INVALID_REDEFINITION;
+	public static final int SEMANTIC_INVALID_REDECLARATION = BINDING_INVALID_REDECLARATION;
+	public static final int SEMANTIC_MEMBER_DECLARATION_NOT_FOUND = BINDING_MEMBER_DECLARATION_NOT_FOUND;
 	public static final int SEMANTIC_RECURSION_IN_LOOKUP = BINDING_RECURSION_IN_LOOKUP;
 	/** @since 5.1 */
 	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = BINDING_INVALID_TEMPLATE_ARGUMENTS;

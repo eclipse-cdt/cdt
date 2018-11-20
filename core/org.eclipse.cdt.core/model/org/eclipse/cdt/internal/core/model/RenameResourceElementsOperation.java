@@ -31,7 +31,8 @@ public class RenameResourceElementsOperation extends MoveResourceElementsOperati
 	 * When executed, this operation will rename the specified elements with the given names in the
 	 * corresponding destinations.
 	 */
-	public RenameResourceElementsOperation(ICElement[] elements, ICElement[] destinations, String[] newNames, boolean force) {
+	public RenameResourceElementsOperation(ICElement[] elements, ICElement[] destinations, String[] newNames,
+			boolean force) {
 		//a rename is a move to the same parent with a new name specified
 		//these elements are from different parents
 		super(elements, destinations, force);

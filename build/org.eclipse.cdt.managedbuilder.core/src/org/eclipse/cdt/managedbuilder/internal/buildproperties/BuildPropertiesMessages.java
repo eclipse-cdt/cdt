@@ -19,8 +19,7 @@ import java.util.ResourceBundle;
 public class BuildPropertiesMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertiesMessages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private BuildPropertiesMessages() {
 	}

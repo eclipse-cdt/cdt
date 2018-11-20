@@ -22,10 +22,7 @@ import org.junit.runners.Suite;
  * categories.
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	CDTSharedImagesTests.class,
-	LanguageVerifierTests.class,
-
+@Suite.SuiteClasses({ CDTSharedImagesTests.class, LanguageVerifierTests.class,
 
 })
 public class MiscTestSuite {

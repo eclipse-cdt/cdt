@@ -11,13 +11,13 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
- 
+
 /**
  * An adapter for a "resume at line" operation.
  */
@@ -31,7 +31,7 @@ public interface IResumeAtLineTarget {
 	 * @param target suspended element to perform the "resume at line" action on
 	 * @throws CoreException if unable to perform the action 
 	 */
-	public void resumeAtLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException;
+	public void resumeAtLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
 
 	/**
 	 * Returns whether a resume at line operation can be performed on the given
@@ -42,5 +42,5 @@ public interface IResumeAtLineTarget {
 	 * @param target suspended element to perform the "resume at line" action on
 	 * @throws CoreException if unable to perform the action 
 	 */
-	public boolean canResumeAtLine( IWorkbenchPart part, ISelection selection, ISuspendResume target );
+	public boolean canResumeAtLine(IWorkbenchPart part, ISelection selection, ISuspendResume target);
 }

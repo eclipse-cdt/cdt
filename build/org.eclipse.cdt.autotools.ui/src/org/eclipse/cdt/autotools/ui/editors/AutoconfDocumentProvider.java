@@ -19,16 +19,16 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 public class AutoconfDocumentProvider extends TextFileDocumentProvider {
-	
+
 	public void shutdown() {
 		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
 	}
-	
+
 	@Override
 	public IDocument getDocument(Object element) {
-		FileInfo info= getFileInfo(element);
+		FileInfo info = getFileInfo(element);
 		if (info != null)
 			return info.fTextFileBuffer.getDocument();
 		return getParentProvider().getDocument(element);

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
 /**
  * A function summary provided by an {@link ICHelpProvider}.
  * <p>
@@ -22,7 +21,7 @@ package org.eclipse.cdt.ui;
  * @see ICHelpProvider
  */
 public interface IFunctionSummary {
-	
+
 	/**
 	 * <p>
 	 * Clients may implement this interface.
@@ -37,18 +36,18 @@ public interface IFunctionSummary {
 		 * information.
 		 */
 		public String getName();
-				
+
 		/**
 		 * Get the return type of the function.
 		 * ie "int main(int argc, char **argv)" --> "int"
 		 * @return A string containing the return type of the 
 		 * function.
-		 */		
+		 */
 		public String getReturnType();
-		
+
 		/**
 		 * Get the arguments of the function.
- 		 * ie "int main(int argc, char **argv)" --> "int argc, char **argv"
+		 * ie "int main(int argc, char **argv)" --> "int argc, char **argv"
 		 * @return A string containing the arguments of the 
 		 * function, or null if the function has no arguments.
 		 */
@@ -62,7 +61,7 @@ public interface IFunctionSummary {
 		 */
 		public String getPrototypeString(boolean namefirst);
 	}
-	
+
 	/**
 	 * Gets the name of the function.  This is the simple
 	 * name without any additional return or argument information.
@@ -89,14 +88,14 @@ public interface IFunctionSummary {
 	 * description is available.
 	 */
 	public String getDescription();
-	
+
 	/**
 	 * Gets the prototype description for this function. 
 	 * @return The IFunctionPrototypeSummary describing the 
 	 * prototype for this function 
 	 */
 	public IFunctionPrototypeSummary getPrototype();
-		
+
 	/**
 	 * Get headers required by this function
 	 * @return A list of IRequiredInclude definitions, or null if no
@@ -104,4 +103,3 @@ public interface IFunctionSummary {
 	 */
 	public IRequiredInclude[] getIncludes();
 }
-

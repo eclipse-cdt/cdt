@@ -29,35 +29,34 @@ public class MIThreadListIdsInfo extends MIInfo {
 	}
 
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public String[] getStrThreadIds() {
 		if (strThreadIds == null) {
 			parse();
 			// Make sure the threads are in order for the debug view
 			// We need our own comparator to treat these strings as integers.
-			Arrays.sort(strThreadIds,
-					new Comparator<String>() {
-				        @Override
-						public int compare(String o1, String o2) {
-							int threadInt1;
-							int threadInt2;
-							
-							try {
-								threadInt1 = Integer.parseInt(o1);
-							} catch (NumberFormatException e) {
-								return 1;
-							}
-							
-							try {
-								threadInt2 = Integer.parseInt(o2);
-							} catch (NumberFormatException e) {
-								return -1;
-							}
-							
-							return threadInt1 - threadInt2;
-						}
-					});
+			Arrays.sort(strThreadIds, new Comparator<String>() {
+				@Override
+				public int compare(String o1, String o2) {
+					int threadInt1;
+					int threadInt2;
+
+					try {
+						threadInt1 = Integer.parseInt(o1);
+					} catch (NumberFormatException e) {
+						return 1;
+					}
+
+					try {
+						threadInt2 = Integer.parseInt(o2);
+					} catch (NumberFormatException e) {
+						return -1;
+					}
+
+					return threadInt1 - threadInt2;
+				}
+			});
 		}
 		return strThreadIds;
 	}
@@ -67,13 +66,13 @@ public class MIThreadListIdsInfo extends MIInfo {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("thread-ids")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MITuple) {
-							parseThreadIds((MITuple)val);
+							parseThreadIds((MITuple) val);
 						}
 					}
 				}
@@ -92,7 +91,7 @@ public class MIThreadListIdsInfo extends MIInfo {
 			if (var.equals("thread-id")) { //$NON-NLS-1$
 				MIValue value = results[i].getMIValue();
 				if (value instanceof MIConst) {
-					strThreadIds[i] = ((MIConst)value).getCString().trim();
+					strThreadIds[i] = ((MIConst) value).getCString().trim();
 				}
 			}
 		}

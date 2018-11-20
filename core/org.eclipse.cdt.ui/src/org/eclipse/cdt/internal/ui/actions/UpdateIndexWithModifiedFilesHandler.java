@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-
 /**
  * Handler for {@link org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction}
  *
@@ -23,7 +22,7 @@ package org.eclipse.cdt.internal.ui.actions;
 public class UpdateIndexWithModifiedFilesHandler extends AbstractUpdateIndexHandler {
 
 	private final UpdateIndexWithModifiedFilesAction updateAction = new UpdateIndexWithModifiedFilesAction();
-	
+
 	@Override
 	public AbstractUpdateIndexAction getAction() {
 		return updateAction;

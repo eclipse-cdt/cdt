@@ -43,36 +43,36 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	private final int fParameterID;
 
 	public CPPTemplateParameter(IASTName name) {
-		declarations = new IASTName[] {name};
-		fParameterID= computeParameterID(name);
+		declarations = new IASTName[] { name };
+		fParameterID = computeParameterID(name);
 	}
 
 	private int computeParameterID(IASTName name) {
-		int nesting= 0;
-		ICPPASTTemplateParameter tp= null;
-		ICPPASTTemplateParameter[] tps= null;
-		for (IASTNode node= name.getParent(); node != null; node= node.getParent()) {
+		int nesting = 0;
+		ICPPASTTemplateParameter tp = null;
+		ICPPASTTemplateParameter[] tps = null;
+		for (IASTNode node = name.getParent(); node != null; node = node.getParent()) {
 			if (tp == null && node instanceof ICPPASTTemplateParameter) {
-				tp= (ICPPASTTemplateParameter) node;
+				tp = (ICPPASTTemplateParameter) node;
 			} else if (node instanceof ICPPASTInternalTemplateDeclaration) {
-				final ICPPASTInternalTemplateDeclaration tdecl= (ICPPASTInternalTemplateDeclaration) node;
+				final ICPPASTInternalTemplateDeclaration tdecl = (ICPPASTInternalTemplateDeclaration) node;
 				nesting += tdecl.getNestingLevel();
 				if (tps == null) {
-					tps= tdecl.getTemplateParameters();
+					tps = tdecl.getTemplateParameters();
 				}
 				break;
 			} else if (node instanceof ICPPASTTemplatedTypeTemplateParameter) {
 				nesting++;
 				if (tps == null) {
-					tps= ((ICPPASTTemplatedTypeTemplateParameter) node).getTemplateParameters();
+					tps = ((ICPPASTTemplatedTypeTemplateParameter) node).getTemplateParameters();
 				}
 			}
 		}
-		int pos= 0;
+		int pos = 0;
 		if (tps != null && tp != null) {
 			for (int i = 0; i < tps.length; i++) {
 				if (tps[i] == tp) {
-					pos= i;
+					pos = i;
 					break;
 				}
 			}
@@ -83,14 +83,14 @@ public abstract class CPPTemplateParameter extends PlatformObject
 
 	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen.
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen.
+		}
+		return t;
+	}
 
 	@Override
 	public final String getName() {
@@ -104,7 +104,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 			if (decl == null)
 				break;
 
-			final char[] result= decl.getSimpleID();
+			final char[] result = decl.getSimpleID();
 			if (result.length > 0)
 				return result;
 		}
@@ -126,14 +126,14 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return (short) (fParameterID >> 16);
 	}
 
-	public IASTName getPrimaryDeclaration () {
+	public IASTName getPrimaryDeclaration() {
 		return declarations[0];
 	}
 
 	private ICPPASTTemplateParameter getASTTemplateParameter() {
-		IASTNode node= declarations[0];
+		IASTNode node = declarations[0];
 		while (node != null && !(node instanceof ICPPASTTemplateParameter))
-			node= node.getParent();
+			node = node.getParent();
 		assert node != null;
 		return (ICPPASTTemplateParameter) node;
 	}
@@ -181,17 +181,17 @@ public abstract class CPPTemplateParameter extends PlatformObject
 			return;
 		IASTName name = (IASTName) node;
 		if (declarations == null) {
-	        declarations = new IASTName[] { name };
+			declarations = new IASTName[] { name };
 		} else {
-	        if (declarations.length > 0 && declarations[0] == node)
-	            return;
+			if (declarations.length > 0 && declarations[0] == node)
+				return;
 			// Keep the lowest offset declaration in [0].
 			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
 				declarations = ArrayUtil.append(IASTName.class, declarations, name);
 			}
-	    }
+		}
 	}
 
 	@Override
@@ -209,12 +209,12 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		if (declarations == null || declarations.length == 0)
 			return null;
 
-		IASTNode node= declarations[0];
+		IASTNode node = declarations[0];
 		while (!(node instanceof ICPPASTTemplateParameter)) {
 			if (node == null)
 				return null;
 
-			node= node.getParent();
+			node = node.getParent();
 		}
 
 		return CPPTemplates.getContainingTemplate((ICPPASTTemplateParameter) node);
@@ -223,11 +223,11 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
 		// Check if the binding has been updated.
-		IBinding current= name.getPreBinding();
+		IBinding current = name.getPreBinding();
 		if (current != this)
 			return current;
 
-		ICPPTemplateDefinition template= CPPTemplates.getContainingTemplate(getASTTemplateParameter());
+		ICPPTemplateDefinition template = CPPTemplates.getContainingTemplate(getASTTemplateParameter());
 		if (template instanceof ICPPTemplateParameterOwner) {
 			return ((ICPPTemplateParameterOwner) template).resolveTemplateParameter(this);
 		}
@@ -238,7 +238,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		}
 
 		ICPPTemplateParameter[] params = template.getTemplateParameters();
-		final int pos= getParameterPosition();
+		final int pos = getParameterPosition();
 		if (pos < params.length)
 			return params[pos];
 		return new ProblemBinding(getPrimaryDeclaration(), IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND);

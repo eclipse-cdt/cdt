@@ -44,13 +44,14 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 	public SourceFilesLabelProvider(SourceFilesViewer viewer) {
 		super(new CElementLabelProvider());
 		this.viewer = viewer;
-		
+
 		// brute-force clear the cache when executables change
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(this);
 		viewer.getControl().addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				ExecutablesManager.getExecutablesManager().removeExecutablesChangeListener(SourceFilesLabelProvider.this);
+				ExecutablesManager.getExecutablesManager()
+						.removeExecutablesChangeListener(SourceFilesLabelProvider.this);
 			}
 		});
 	}
@@ -64,13 +65,14 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 		if (element instanceof ITranslationUnit) {
 			tuInfo = SourceFilesViewer.fetchTranslationUnitInfo((Executable) viewer.getInput(), element);
 		}
-		
+
 		int orgColumnIndex = cell.getColumnIndex();
 
 		if (orgColumnIndex == 0) {
 			if (element instanceof String) {
 				cell.setText((String) element);
-				Font italicFont = resourceManager.createFont(FontDescriptor.createFrom(viewer.getTree().getFont()).setStyle(SWT.ITALIC));
+				Font italicFont = resourceManager
+						.createFont(FontDescriptor.createFrom(viewer.getTree().getFont()).setStyle(SWT.ITALIC));
 				cell.setFont(italicFont);
 			} else {
 				cell.setFont(viewer.getTree().getFont());
@@ -109,8 +111,8 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 			cell.setText(null);
 			if (tuInfo != null) {
 				if (tuInfo.exists) {
-					String dateTimeString = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(
-							new Date(tuInfo.lastModified));
+					String dateTimeString = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+							.format(new Date(tuInfo.lastModified));
 					cell.setText(dateTimeString);
 				}
 			}
@@ -146,4 +148,3 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 	}
 
 }
-	

@@ -24,7 +24,7 @@ public class ObjectSet implements IObjectSet {
 	private int fObjectType;
 	private Set<IRealBuildObjectAssociation> fObjectSet;
 
-	public ObjectSet(int objectType, Set<IRealBuildObjectAssociation> objectSet){
+	public ObjectSet(int objectType, Set<IRealBuildObjectAssociation> objectSet) {
 		fObjectType = objectType;
 		fObjectSet = objectSet;
 	}
@@ -41,7 +41,7 @@ public class ObjectSet implements IObjectSet {
 
 	@Override
 	public Collection<IRealBuildObjectAssociation> getRealBuildObjects(Collection<IRealBuildObjectAssociation> set) {
-		if(set == null)
+		if (set == null)
 			set = new HashSet<IRealBuildObjectAssociation>();
 
 		set.addAll(fObjectSet);
@@ -66,13 +66,13 @@ public class ObjectSet implements IObjectSet {
 
 	@SuppressWarnings("nls")
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		buf.append(MatchObjectElement.TypeToStringAssociation.getAssociation(fObjectType).getString());
 		buf.append("[");
 		boolean isFirst = true;
 		for (IRealBuildObjectAssociation obj : fObjectSet) {
-			if(isFirst){
+			if (isFirst) {
 				buf.append(", ");
 				isFirst = false;
 			}

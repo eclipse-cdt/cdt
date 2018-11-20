@@ -26,41 +26,41 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
 
 public abstract class AbstractFileCreationWizard extends NewElementWizard {
-    protected AbstractFileCreationWizardPage fPage;
-    
-    public AbstractFileCreationWizard() {
-        super();
-        setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_FILE);
-        setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle(NewFileWizardMessages.AbstractFileCreationWizard_title); 
-    }
-    
-    @Override
+	protected AbstractFileCreationWizardPage fPage;
+
+	public AbstractFileCreationWizard() {
+		super();
+		setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_FILE);
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
+		setWindowTitle(NewFileWizardMessages.AbstractFileCreationWizard_title);
+	}
+
+	@Override
 	protected boolean canRunForked() {
-    	return true;
-    }
-    
-    @Override
+		return true;
+	}
+
+	@Override
 	protected void finishPage(IProgressMonitor monitor) throws CoreException {
-        fPage.createFile(monitor); // Use the full progress monitor.
-    }
-    
-    @Override
+		fPage.createFile(monitor); // Use the full progress monitor.
+	}
+
+	@Override
 	public boolean performFinish() {
-        boolean result = super.performFinish();
-        if (result) {
-            //TODO need prefs option for opening editor
-            boolean openInEditor = true;
-            
+		boolean result = super.performFinish();
+		if (result) {
+			//TODO need prefs option for opening editor
+			boolean openInEditor = true;
+
 			ITranslationUnit headerTU = fPage.getCreatedFileTU();
 			if (headerTU != null) {
-				IResource resource= headerTU.getResource();
+				IResource resource = headerTU.getResource();
 				selectAndReveal(resource);
 				if (openInEditor) {
 					openResource((IFile) resource);
 				}
 			}
-        }
-        return result;
-    }
+		}
+		return result;
+	}
 }

@@ -53,7 +53,7 @@ public class QtKeywords {
 		if (!(type instanceof ICPPClassType))
 			return false;
 
-		ICPPClassType clsType = (ICPPClassType)type;
+		ICPPClassType clsType = (ICPPClassType) type;
 		return QtKeywords.QOBJECT.equals(clsType.getName());
 	}
 
@@ -64,7 +64,7 @@ public class QtKeywords {
 		if (!(type instanceof ICPPClassType))
 			return false;
 
-		ICPPClassType clsType = (ICPPClassType)type;
+		ICPPClassType clsType = (ICPPClassType) type;
 		return QMETAMETHOD.equals(clsType.getName());
 	}
 
@@ -74,10 +74,7 @@ public class QtKeywords {
 	 */
 	public static boolean is_QObject_connect(IBinding binding) {
 		String[] qualName = getFunctionQualifiedName(binding);
-		return qualName != null
-			&& qualName.length == 2
-			&& QOBJECT.equals(qualName[0])
-			&& CONNECT.equals(qualName[1]);
+		return qualName != null && qualName.length == 2 && QOBJECT.equals(qualName[0]) && CONNECT.equals(qualName[1]);
 	}
 
 	/**
@@ -86,10 +83,8 @@ public class QtKeywords {
 	 */
 	public static boolean is_QObject_disconnect(IBinding binding) {
 		String[] qualName = getFunctionQualifiedName(binding);
-		return qualName != null
-			&& qualName.length == 2
-			&& QOBJECT.equals(qualName[0])
-			&& DISCONNECT.equals(qualName[1]);
+		return qualName != null && qualName.length == 2 && QOBJECT.equals(qualName[0])
+				&& DISCONNECT.equals(qualName[1]);
 	}
 
 	/**
@@ -98,10 +93,8 @@ public class QtKeywords {
 	 */
 	public static boolean is_QmlType(IBinding binding) {
 		String[] qualName = getFunctionQualifiedName(binding);
-		return qualName != null
-			&& qualName.length == 1
-			&& (QML_REGISTER_TYPE.equals(qualName[0])
-			 || QML_REGISTER_UNCREATABLE_TYPE.equals(qualName[0]));
+		return qualName != null && qualName.length == 1
+				&& (QML_REGISTER_TYPE.equals(qualName[0]) || QML_REGISTER_UNCREATABLE_TYPE.equals(qualName[0]));
 	}
 
 	private static String[] getFunctionQualifiedName(IBinding binding) {

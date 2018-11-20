@@ -34,35 +34,38 @@ import org.eclipse.jface.operation.ModalContext;
 public class BusyIndicatorRunnableContext implements IRunnableContext {
 
 	private static class BusyRunnable implements Runnable {
-		
+
 		private static class ThreadContext extends Thread {
 			IRunnableWithProgress fRunnable;
 			Throwable fThrowable;
-			
+
 			public ThreadContext(IRunnableWithProgress runnable) {
 				this(runnable, "BusyCursorRunnableContext-Thread"); //$NON-NLS-1$
-			}			
+			}
+
 			protected ThreadContext(IRunnableWithProgress runnable, String name) {
 				super(name);
-				fRunnable= runnable;
+				fRunnable = runnable;
 			}
+
 			@Override
 			public void run() {
 				try {
 					fRunnable.run(new NullProgressMonitor());
 				} catch (InvocationTargetException e) {
-					fThrowable= e;
+					fThrowable = e;
 				} catch (InterruptedException e) {
-					fThrowable= e;
+					fThrowable = e;
 				} catch (ThreadDeath e) {
-					fThrowable= e;
+					fThrowable = e;
 					throw e;
 				} catch (RuntimeException e) {
-					fThrowable= e;
+					fThrowable = e;
 				} catch (Error e) {
-					fThrowable= e;
+					fThrowable = e;
 				}
 			}
+
 			void sync() {
 				try {
 					join();
@@ -71,37 +74,41 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 				}
 			}
 		}
-		
+
 		public Throwable fThrowable;
 		private boolean fFork;
 		private IRunnableWithProgress fRunnable;
+
 		public BusyRunnable(boolean fork, IRunnableWithProgress runnable) {
-			fFork= fork;
-			fRunnable= runnable;
+			fFork = fork;
+			fRunnable = runnable;
 		}
+
 		@Override
 		public void run() {
 			try {
 				internalRun(fFork, fRunnable);
 			} catch (InvocationTargetException e) {
-				fThrowable= e;
+				fThrowable = e;
 			} catch (InterruptedException e) {
-				fThrowable= e;
+				fThrowable = e;
 			}
 		}
-		private void internalRun(boolean fork, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			Thread thread= Thread.currentThread();
+
+		private void internalRun(boolean fork, final IRunnableWithProgress runnable)
+				throws InvocationTargetException, InterruptedException {
+			Thread thread = Thread.currentThread();
 			// Do not spawn another thread if we are already in a modal context
 			// thread or inside a busy context thread.
 			if (thread instanceof ThreadContext || ModalContext.isModalContextThread(thread))
-				fork= false;
-				
+				fork = false;
+
 			if (fork) {
-				final ThreadContext t= new ThreadContext(runnable);
+				final ThreadContext t = new ThreadContext(runnable);
 				t.start();
 				t.sync();
 				// Check if the separate thread was terminated by an exception
-				Throwable throwable= t.fThrowable;
+				Throwable throwable = t.fThrowable;
 				if (throwable != null) {
 					if (throwable instanceof InvocationTargetException) {
 						throw (InvocationTargetException) throwable;
@@ -118,7 +125,7 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 					runnable.run(new NullProgressMonitor());
 				} catch (OperationCanceledException e) {
 					throw new InterruptedException();
-				}	
+				}
 			}
 		}
 	}
@@ -127,14 +134,15 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 	 * Method declared on IRunnableContext.
 	 */
 	@Override
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		BusyRunnable busyRunnable= new BusyRunnable(fork, runnable);
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException {
+		BusyRunnable busyRunnable = new BusyRunnable(fork, runnable);
 		BusyIndicator.showWhile(null, busyRunnable);
-		Throwable throwable= busyRunnable.fThrowable;
+		Throwable throwable = busyRunnable.fThrowable;
 		if (throwable instanceof InvocationTargetException) {
-			throw (InvocationTargetException)throwable;
+			throw (InvocationTargetException) throwable;
 		} else if (throwable instanceof InterruptedException) {
-			throw (InterruptedException)throwable;
+			throw (InterruptedException) throwable;
 		}
-	}	
+	}
 }

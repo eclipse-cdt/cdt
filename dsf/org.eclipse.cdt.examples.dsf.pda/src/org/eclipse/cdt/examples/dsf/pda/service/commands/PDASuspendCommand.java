@@ -34,12 +34,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDASuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASuspendCommand(PDAThreadDMContext thread) {
-        super(thread, "suspend " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASuspendCommand(PDAThreadDMContext thread) {
+		super(thread, "suspend " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

@@ -17,19 +17,20 @@ package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions;
 import org.eclipse.osgi.util.NLS;
 
 public class MessagesForVMActions extends NLS {
-	
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.messages"; //$NON-NLS-1$
 
-    public static String RetargetDebugContextAction_ErrorDialog_title;
-    public static String RetargetDebugContextAction_ErrorDialog_message;
-    
-    public static String UpdatePoliciesContribution_EmptyPoliciesList_label;
-    public static String UpdateScopesContribution_EmptyScopesList_label;
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.messages"; //$NON-NLS-1$
 
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForVMActions.class);
-    }
+	public static String RetargetDebugContextAction_ErrorDialog_title;
+	public static String RetargetDebugContextAction_ErrorDialog_message;
 
-    private MessagesForVMActions() {}
+	public static String UpdatePoliciesContribution_EmptyPoliciesList_label;
+	public static String UpdateScopesContribution_EmptyScopesList_label;
+
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, MessagesForVMActions.class);
+	}
+
+	private MessagesForVMActions() {
+	}
 }

@@ -41,6 +41,7 @@ public class GrepCheckerExamplePreferenceChangeListener implements INodeChangeLi
 			instance = new GrepCheckerExamplePreferenceChangeListener();
 		return instance;
 	}
+
 	private IProject project;
 
 	private GrepCheckerExamplePreferenceChangeListener(IProject project) {
@@ -69,9 +70,9 @@ public class GrepCheckerExamplePreferenceChangeListener implements INodeChangeLi
 				String val = (String) event.getNewValue();
 				String fors = (" for " + ((project == null) ? "workspace" : project.getName()));
 				if (val != null && !val.startsWith("-")) {
-					trace("grep checker enabled :)"+fors);
+					trace("grep checker enabled :)" + fors);
 				} else {
-					trace("grep checker disabled :("+fors);
+					trace("grep checker disabled :(" + fors);
 				}
 
 			}

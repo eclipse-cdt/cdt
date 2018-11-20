@@ -47,14 +47,13 @@ public class MessageLine extends CLabel {
 	 */
 	public MessageLine(Composite parent, int style) {
 		super(parent, style);
-		fNormalMsgAreaBackground= getBackground();
+		fNormalMsgAreaBackground = getBackground();
 	}
 
-	
 	/**
-     * Display the given error message. A currently displayed message
-     * is saved and will be redisplayed when the error message is cleared.
-     */
+	 * Display the given error message. A currently displayed message
+	 * is saved and will be redisplayed when the error message is cleared.
+	 */
 	public void setErrorMessage(String message) {
 		if (message != null && message.length() > 0) {
 			hasErrorMessage = true;
@@ -64,16 +63,16 @@ public class MessageLine extends CLabel {
 			return;
 		}
 		hasErrorMessage = false;
-		setText(fMessage);	
+		setText(fMessage);
 		setImage(null);
-		setBackground(fNormalMsgAreaBackground);	
+		setBackground(fNormalMsgAreaBackground);
 	}
 
 	public void setMessage(String message) {
 		fMessage = message;
 		setText(message);
 	}
-	
+
 	public boolean hasErrorMessage() {
 		return hasErrorMessage;
 	}

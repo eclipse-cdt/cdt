@@ -54,8 +54,8 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	@Override
-	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
-			ISignificantMacros macroDictionary) throws CoreException {
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, ISignificantMacros macroDictionary)
+			throws CoreException {
 		return getWritableFragment().addFile(linkageID, location, macroDictionary);
 	}
 
@@ -83,7 +83,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 		for (IncludeInformation include : includes) {
 			if (include.fLocation != null) {
-				include.fTargetFile= addFile(linkageID, include.fLocation, include.fSignificantMacros);
+				include.fTargetFile = addFile(linkageID, include.fLocation, include.fSignificantMacros);
 			}
 		}
 		getWritableFragment().addFileContent(file, includes, macros, names, resolver, lock);
@@ -102,26 +102,26 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	@Override
 	public void acquireReadLock() throws InterruptedException {
 		checkThread();
-		assert !fIsWriteLocked: "Read locks are not allowed while write-locked."; //$NON-NLS-1$
+		assert !fIsWriteLocked : "Read locks are not allowed while write-locked."; //$NON-NLS-1$
 		super.acquireReadLock();
 	}
 
 	@Override
 	public void releaseReadLock() {
 		checkThread();
-		assert !fIsWriteLocked: "Read locks are not allowed while write-locked."; //$NON-NLS-1$
+		assert !fIsWriteLocked : "Read locks are not allowed while write-locked."; //$NON-NLS-1$
 		super.releaseReadLock();
 		if (getReadLockCount() == 0)
-			fThread= null;
+			fThread = null;
 	}
 
 	@Override
 	public void acquireWriteLock(IProgressMonitor monitor) throws InterruptedException {
 		checkThread();
-		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
+		assert !fIsWriteLocked : "Multiple write locks is not allowed"; //$NON-NLS-1$
 
 		getWritableFragment().acquireWriteLock(getReadLockCount(), monitor);
-		fIsWriteLocked= true;
+		fIsWriteLocked = true;
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	@Override
 	public void releaseWriteLock(boolean flush) {
 		checkThread();
-		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
+		assert fIsWriteLocked : "No write lock to be released"; //$NON-NLS-1$
 
 		// Bug 297641: Result cache of read only providers needs to be cleared.
 		int establishReadlockCount = getReadLockCount();
@@ -140,17 +140,17 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			clearResultCache();
 		}
 
-		fIsWriteLocked= false;
+		fIsWriteLocked = false;
 		getWritableFragment().releaseWriteLock(establishReadlockCount, flush);
 
 		if (establishReadlockCount == 0) {
-			fThread= null;
+			fThread = null;
 		}
 	}
 
 	private void checkThread() {
 		if (fThread == null) {
-			fThread= Thread.currentThread();
+			fThread = Thread.currentThread();
 		} else if (fThread != Thread.currentThread()) {
 			throw new IllegalArgumentException("A writable index must not be used from multiple threads."); //$NON-NLS-1$
 		}
@@ -158,7 +158,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	@Override
 	public void clearResultCache() {
-		assert fIsWriteLocked: "Need to hold a write lock to clear result caches"; //$NON-NLS-1$
+		assert fIsWriteLocked : "Need to hold a write lock to clear result caches"; //$NON-NLS-1$
 		super.clearResultCache();
 	}
 

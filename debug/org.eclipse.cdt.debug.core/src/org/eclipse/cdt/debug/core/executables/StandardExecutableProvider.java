@@ -44,12 +44,12 @@ import org.eclipse.debug.core.DebugPlugin;
 public class StandardExecutableProvider implements IProjectExecutablesProvider {
 
 	List<String> supportedNatureIds = new ArrayList<String>();
-	
+
 	public StandardExecutableProvider() {
 		supportedNatureIds.add(CProjectNature.C_NATURE_ID);
 		supportedNatureIds.add(CCProjectNature.CC_NATURE_ID);
 	}
-	
+
 	@Override
 	public List<String> getProjectNatures() {
 		return supportedNatureIds;
@@ -58,7 +58,7 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 	@Override
 	public List<Executable> getExecutables(IProject project, IProgressMonitor monitor) {
 		List<Executable> executables = new ArrayList<Executable>();
-		
+
 		ICProject cproject = CModelManager.getDefault().create(project);
 		try {
 			// Start out by getting all binaries in all build configurations. If
@@ -68,18 +68,19 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 			if (allBinaries.length == 0) {
 				return executables; // save ourselves a lot of pointless busy work
 			}
-			
+
 			// Get the output directories of the active build configuration then
 			// go through the list of all binaries and pick only the ones that
 			// are in these output directories
 			List<IBinary> binaries = null;
-			ICProjectDescription projDesc = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICProjectDescription projDesc = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+					false);
 			if (projDesc != null) {
 				ICConfigurationDescription cfg = projDesc.getActiveConfiguration();
 				if (cfg != null) {
 					binaries = new ArrayList<IBinary>(allBinaries.length);
 					ICOutputEntry[] cfgOutDirs = cfg.getBuildSetting().getOutputDirectories();
-					for (IBinary allBinary : allBinaries) { 
+					for (IBinary allBinary : allBinaries) {
 						for (ICOutputEntry outdir : cfgOutDirs) {
 							if (outdir.getFullPath().isPrefixOf(allBinary.getPath())) {
 								binaries.add(allBinary);
@@ -108,22 +109,24 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 					if (exePath == null)
 						exePath = binary.getPath();
 					List<ISourceFileRemapping> srcRemappers = new ArrayList<ISourceFileRemapping>(2);
-					ISourceFileRemappingFactory[] factories = ExecutablesManager.getExecutablesManager().getSourceFileRemappingFactories();
+					ISourceFileRemappingFactory[] factories = ExecutablesManager.getExecutablesManager()
+							.getSourceFileRemappingFactories();
 					for (ISourceFileRemappingFactory factory : factories) {
 						ISourceFileRemapping remapper = factory.createRemapper(binary);
 						if (remapper != null) {
 							srcRemappers.add(remapper);
 						}
 					}
-					executables.add(new Executable(exePath, project, binary.getResource(), srcRemappers.toArray(new ISourceFileRemapping[srcRemappers.size()])));
+					executables.add(new Executable(exePath, project, binary.getResource(),
+							srcRemappers.toArray(new ISourceFileRemapping[srcRemappers.size()])));
 				}
-				
+
 				progress.worked(1);
 			}
 		} catch (CoreException e) {
 			CDebugCorePlugin.log(e);
 		}
-		
+
 		return executables;
 	}
 
@@ -134,10 +137,11 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 			try {
 				exeResource.delete(true, monitor);
 			} catch (CoreException e) {
-				DebugPlugin.log( e );
+				DebugPlugin.log(e);
 			}
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.WARNING, CDebugCorePlugin.PLUGIN_ID, "Can't remove " + executable.getName() + ": it is built by project \"" + executable.getProject().getName() + "\"");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+		return new Status(IStatus.WARNING, CDebugCorePlugin.PLUGIN_ID, "Can't remove " + executable.getName() //$NON-NLS-1$
+				+ ": it is built by project \"" + executable.getProject().getName() + "\""); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

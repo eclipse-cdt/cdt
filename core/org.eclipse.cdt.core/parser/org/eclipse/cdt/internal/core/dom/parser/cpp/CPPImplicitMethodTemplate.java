@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
  */
 public class CPPImplicitMethodTemplate extends CPPImplicitMethod implements ICPPFunctionTemplate {
 	private ICPPTemplateParameter[] fTemplateParameters;
-	
-	public CPPImplicitMethodTemplate(ICPPTemplateParameter[] templateParameters, ICPPClassScope scope, 
-			char[] name, ICPPFunctionType type, ICPPParameter[] params, boolean isConstexpr) {
+
+	public CPPImplicitMethodTemplate(ICPPTemplateParameter[] templateParameters, ICPPClassScope scope, char[] name,
+			ICPPFunctionType type, ICPPParameter[] params, boolean isConstexpr) {
 		super(scope, name, type, params, isConstexpr);
 		fTemplateParameters = templateParameters;
 		for (ICPPTemplateParameter parameter : templateParameters) {

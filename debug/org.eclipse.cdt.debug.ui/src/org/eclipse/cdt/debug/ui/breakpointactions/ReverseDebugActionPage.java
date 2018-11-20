@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Composite;
 /**
  *@since 7.3
  */
-public class ReverseDebugActionPage extends PlatformObject implements IBreakpointActionPage{
-	
+public class ReverseDebugActionPage extends PlatformObject implements IBreakpointActionPage {
+
 	private ReverseDebugActionComposite reverseDebugActionComposite;
 	private ReverseDebugAction reverseDebugAction;
 
@@ -35,8 +35,7 @@ public class ReverseDebugActionPage extends PlatformObject implements IBreakpoin
 	}
 
 	@Override
-	public Composite createComposite(IBreakpointAction action,
-			Composite composite, int style) {
+	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		reverseDebugAction = (ReverseDebugAction) action;
 		reverseDebugActionComposite = new ReverseDebugActionComposite(composite, style, this);
 		return reverseDebugActionComposite;

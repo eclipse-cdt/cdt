@@ -49,20 +49,12 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 	}
 
 	// Setting entries 1
-	final ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[]{
-			new CMacroEntry("a", "b", 0),
-			new CMacroEntry("c", "d", 0),
-			new CIncludePathEntry("a/b/c", 0),
-			new CIncludePathEntry("d/e/f", 0),
-	};
+	final ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[] { new CMacroEntry("a", "b", 0),
+			new CMacroEntry("c", "d", 0), new CIncludePathEntry("a/b/c", 0), new CIncludePathEntry("d/e/f", 0), };
 
 	// Setting entries 2
-	final ICLanguageSettingEntry entries2[] = new ICLanguageSettingEntry[]{
-			new CMacroEntry("a2", "b2", 0),
-			new CMacroEntry("c2", "d2", 0),
-			new CIncludePathEntry("a/b/c/2", 0),
-			new CIncludePathEntry("d/e/f/2", 0),
-	};
+	final ICLanguageSettingEntry entries2[] = new ICLanguageSettingEntry[] { new CMacroEntry("a2", "b2", 0),
+			new CMacroEntry("c2", "d2", 0), new CIncludePathEntry("a/b/c/2", 0), new CIncludePathEntry("d/e/f/2", 0), };
 
 	/**
 	 * This tests for simple reference propagation.
@@ -149,13 +141,17 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			coreModel.setProjectDescription(libProj, desLib);
 
 			// Main Project references lib project
-			cfgMain.setReferenceInfo(new HashMap<String, String>() {{ put(libProj.getName(), ""); }});
+			cfgMain.setReferenceInfo(new HashMap<String, String>() {
+				{
+					put(libProj.getName(), "");
+				}
+			});
 			coreModel.setProjectDescription(mainProj, desMain);
 
 			// Referenced settings have been picked up
 			for (ICLanguageSettingEntry e : entries) {
-				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 			}
 		}
 
@@ -183,8 +179,8 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 
 		checkEquivContents(cfgLib.getExternalSettings()[0].getEntries(), entries);
 		for (ICLanguageSettingEntry e : entries) {
-			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 	}
 
@@ -208,13 +204,17 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			coreModel.setProjectDescription(libProj, desLib);
 
 			// Main Project references lib project
-			cfgMain.setReferenceInfo(new HashMap<String, String>() {{ put(libProj.getName(), ""); }});
+			cfgMain.setReferenceInfo(new HashMap<String, String>() {
+				{
+					put(libProj.getName(), "");
+				}
+			});
 			coreModel.setProjectDescription(mainProj, desMain);
 
 			// Referenced settings have been picked up
 			for (ICLanguageSettingEntry e : entries) {
-				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 			}
 		}
 
@@ -229,16 +229,17 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			// Check the exported settings is correct
 			checkEquivContents(entries2, cfgLib.getExternalSettings()[0].getEntries());
 			// Fetch the configuration a-fresh to pick up the settings
-			ICConfigurationDescription cfgMain = coreModel.getProjectDescription(mainProj, false).getActiveConfiguration();
+			ICConfigurationDescription cfgMain = coreModel.getProjectDescription(mainProj, false)
+					.getActiveConfiguration();
 			assertTrue(cfgMain.getReferenceInfo().containsKey(libProj.getName()));
 
 			// Referenced settings have changed from entries -> entries2
 			for (ICLanguageSettingEntry e : entries)
-				assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 			for (ICLanguageSettingEntry e : entries2)
-				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 		}
 	}
 
@@ -263,13 +264,17 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			coreModel.setProjectDescription(libProj, desLib);
 
 			// Main Project references lib project
-			cfgMain.setReferenceInfo(new HashMap<String, String>() {{ put(libProj.getName(), cfgLib.getId()); }});
+			cfgMain.setReferenceInfo(new HashMap<String, String>() {
+				{
+					put(libProj.getName(), cfgLib.getId());
+				}
+			});
 			coreModel.setProjectDescription(mainProj, desMain);
 
 			// Referenced settings have been picked up
 			for (ICLanguageSettingEntry e : entries) {
-				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 			}
 		}
 
@@ -284,16 +289,17 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			// Check the exported settings is correct
 			checkEquivContents(entries2, cfgLib.getExternalSettings()[0].getEntries());
 			// Fetch the configuration a-fresh to pick up the settings
-			ICConfigurationDescription cfgMain = coreModel.getProjectDescription(mainProj, false).getActiveConfiguration();
+			ICConfigurationDescription cfgMain = coreModel.getProjectDescription(mainProj, false)
+					.getActiveConfiguration();
 			assertTrue(cfgMain.getReferenceInfo().get(libProj.getName()).equals(cfgLib.getId()));
 
 			// Referenced settings have changed from entries -> entries2
 			for (ICLanguageSettingEntry e : entries)
-				assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 			for (ICLanguageSettingEntry e : entries2)
-				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 		}
 	}
 
@@ -321,14 +327,18 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			coreModel.setProjectDescription(libProj, desLib);
 
 			// Main Project references lib project
-			cfgMain.setReferenceInfo(new HashMap<String, String>() {{ put(libProj.getName(), cfgLib.getId()); }});
+			cfgMain.setReferenceInfo(new HashMap<String, String>() {
+				{
+					put(libProj.getName(), cfgLib.getId());
+				}
+			});
 			coreModel.setProjectDescription(mainProj, desMain);
 			checkEquivContents(entries, cfgLib.getExternalSettings()[0].getEntries());
 
 			// Referenced settings have been picked up
 			for (ICLanguageSettingEntry e : entries) {
-				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+						.getSettingEntriesList(e.getKind()).contains(e));
 			}
 
 			// Backup the .cproject
@@ -341,8 +351,8 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			checkEquivContents(entries2, cfgLib.getExternalSettings()[0].getEntries());
 			// Referenced settings have been picked up
 			for (ICLanguageSettingEntry e : entries2) {
-				assertTrue(coreModel.getProjectDescription(mainProj).getActiveConfiguration().getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+				assertTrue(coreModel.getProjectDescription(mainProj).getActiveConfiguration().getRootFolderDescription()
+						.getLanguageSettingForFile("a.c").getSettingEntriesList(e.getKind()).contains(e));
 			}
 		}
 
@@ -356,12 +366,12 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 		checkEquivContents(entries, cfgLib.getExternalSettings()[0].getEntries());
 		// Referencing project contains entries and not entries2
 		for (ICLanguageSettingEntry e : entries) {
-			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 		for (ICLanguageSettingEntry e : entries2) {
-			assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 	}
 
@@ -393,8 +403,16 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 			cfgMain.createExternalSetting(null, null, null, entries2);
 
 			// Main Project references lib project
-			cfgMain.setReferenceInfo(new HashMap<String, String>() {{ put(libProj.getName(), cfgLib.getId()); }});
-			cfgLib.setReferenceInfo(new HashMap<String, String>() {{ put(mainProj.getName(), cfgMain.getId()); }});
+			cfgMain.setReferenceInfo(new HashMap<String, String>() {
+				{
+					put(libProj.getName(), cfgLib.getId());
+				}
+			});
+			cfgLib.setReferenceInfo(new HashMap<String, String>() {
+				{
+					put(mainProj.getName(), cfgMain.getId());
+				}
+			});
 			coreModel.setProjectDescription(libProj, desLib);
 			coreModel.setProjectDescription(mainProj, desMain);
 
@@ -422,16 +440,16 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 
 		// Tests the exports are now the right way round
 		for (ICLanguageSettingEntry e : entries) {
-			assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
-			assertTrue(cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 		for (ICLanguageSettingEntry e : entries2) {
-			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
-			assertTrue(!cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(!cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 
 		// Now replace the .cproject with .cproject_back. The exported settings should be picked up in the referenced config
@@ -451,22 +469,21 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 		checkEquivContents(entries2, cfgMain.getExternalSettings()[0].getEntries());
 		// Referencing project contains entries and not entries2
 		for (ICLanguageSettingEntry e : entries) {
-			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
-			assertTrue(!cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(!cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 		for (ICLanguageSettingEntry e : entries2) {
-			assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c").
-				getSettingEntriesList(e.getKind()).contains(e));
-			assertTrue(cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c").
-					getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(!cfgMain.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
+			assertTrue(cfgLib.getRootFolderDescription().getLanguageSettingForFile("a.c")
+					.getSettingEntriesList(e.getKind()).contains(e));
 		}
 	}
 
-
 	private void checkEquivContents(Object[] expected, Object[] actual) {
-		if(expected == null){
+		if (expected == null) {
 			assertTrue(actual == null);
 			return;
 		}

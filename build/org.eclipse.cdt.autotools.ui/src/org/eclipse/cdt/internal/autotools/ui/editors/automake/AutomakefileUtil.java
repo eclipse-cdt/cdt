@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class AutomakefileUtil {
 
 	// Look for Automake conditionals which optionally
@@ -22,7 +21,7 @@ public class AutomakefileUtil {
 	public static boolean isAutomakeCommand(String line) {
 		return line.matches("^@[a-z_A-Z0-9]+@\\t.*$"); //$NON-NLS-1$
 	}
-	
+
 	public static boolean isIfBlock(String line) {
 		return line.startsWith("if"); //$NON-NLS-1$
 	}
@@ -30,7 +29,7 @@ public class AutomakefileUtil {
 	public static boolean isElseBlock(String line) {
 		return line.startsWith("else"); //$NON-NLS-1$
 	}
-	
+
 	public static boolean isElseIfBlock(String line) {
 		return line.startsWith("else if"); //$NON-NLS-1$
 	}
@@ -38,7 +37,7 @@ public class AutomakefileUtil {
 	public static boolean isEndifBlock(String line) {
 		return line.startsWith("endif"); //$NON-NLS-1$
 	}
-	
+
 	public static boolean isConfigMacro(String line) {
 		return line.matches("\\s*@[a-z_A-Z0-9]+@"); //$NON-NLS-1$
 	}

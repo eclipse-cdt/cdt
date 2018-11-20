@@ -28,29 +28,29 @@ public class MIVarListChildrenInfo extends MIInfo {
 	MIVar[] children;
 	int numchild;
 	private boolean hasMore = false;
-	
+
 	public MIVarListChildrenInfo(MIOutput record) {
 		super(record);
-        List<MIVar> aList = new ArrayList<MIVar>();
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    MIValue value = results[i].getMIValue();
+		List<MIVar> aList = new ArrayList<MIVar>();
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					MIValue value = results[i].getMIValue();
 
-                    if (var.equals("numchild")) { //$NON-NLS-1$
-                        if (value instanceof MIConst) {
-                            String str = ((MIConst)value).getString();
-                            try {
-                                numchild = Integer.parseInt(str.trim());
-                            } catch (NumberFormatException e) {
-                            }
-                        }
-                    } else if (var.equals("children")) { //$NON-NLS-1$
-                        parseChildren(value, aList);
+					if (var.equals("numchild")) { //$NON-NLS-1$
+						if (value instanceof MIConst) {
+							String str = ((MIConst) value).getString();
+							try {
+								numchild = Integer.parseInt(str.trim());
+							} catch (NumberFormatException e) {
+							}
+						}
+					} else if (var.equals("children")) { //$NON-NLS-1$
+						parseChildren(value, aList);
 					} else if (var.equals("has_more")) { //$NON-NLS-1$
 						if (value instanceof MIConst) {
 							String str = ((MIConst) value).getString();
@@ -59,10 +59,10 @@ public class MIVarListChildrenInfo extends MIInfo {
 							}
 						}
 					}
-                }
-            }
-        }
-        children = aList.toArray(new MIVar[aList.size()]);
+				}
+			}
+		}
+		children = aList.toArray(new MIVar[aList.size()]);
 	}
 
 	public MIVar[] getMIVars() {
@@ -77,7 +77,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 	public boolean hasMore() {
 		return hasMore;
 	}
-	
+
 	/*
 	 * Some gdb MacOSX do not return a MITuple so we have
 	 * to check for different format.
@@ -86,9 +86,9 @@ public class MIVarListChildrenInfo extends MIInfo {
 	private void parseChildren(MIValue val, List<MIVar> aList) {
 		MIResult[] results = null;
 		if (val instanceof MITuple) {
-			results = ((MITuple)val).getMIResults();
+			results = ((MITuple) val).getMIResults();
 		} else if (val instanceof MIList) {
-			results = ((MIList)val).getMIResults();
+			results = ((MIList) val).getMIResults();
 		}
 		if (results != null) {
 			for (int i = 0; i < results.length; i++) {
@@ -96,7 +96,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 				if (var.equals("child")) { //$NON-NLS-1$
 					MIValue value = results[i].getMIValue();
 					if (value instanceof MITuple) {
-						aList.add(new MIVar((MITuple)value));
+						aList.add(new MIVar((MITuple) value));
 					}
 				}
 			}

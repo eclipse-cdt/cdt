@@ -25,8 +25,8 @@ import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
  * @since 5.7
  */
 public interface ICPPASTAttributeSpecifier extends IASTAttributeSpecifier {
-	public static InstanceOfPredicate<IASTAttributeSpecifier> TYPE_FILTER =
-			new InstanceOfPredicate<>(ICPPASTAttributeSpecifier.class);
+	public static InstanceOfPredicate<IASTAttributeSpecifier> TYPE_FILTER = new InstanceOfPredicate<>(
+			ICPPASTAttributeSpecifier.class);
 
 	@Override
 	public ICPPASTAttributeSpecifier copy();

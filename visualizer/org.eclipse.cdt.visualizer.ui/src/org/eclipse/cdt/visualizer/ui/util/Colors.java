@@ -17,7 +17,6 @@ package org.eclipse.cdt.visualizer.ui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
-
 // ---------------------------------------------------------------------------
 // Colors
 // ---------------------------------------------------------------------------
@@ -34,7 +33,7 @@ import org.eclipse.swt.graphics.Color;
 public class Colors {
 
 	// --- static members ---
-	
+
 	/** UI Resource manager colors are drawn from */
 	protected static UIResourceManager s_resources = null;
 
@@ -67,50 +66,51 @@ public class Colors {
 	public static Color VERY_DARK_GRAY = null;
 	public static Color WIDGET_UNEDITABLE_BACKGROUND = null;
 	public static Color WIDGET_NORMAL_BACKGROUND = null;
-	
+
 	public static void initialize(UIResourceManager resources) {
-		
+
 		// set resource manager for future use
 		s_resources = resources;
-		
+
 		// Color objects for all the standard "int" colors in the SWT class:
-		WHITE             = getColor(SWT.COLOR_WHITE);
-		BLACK             = getColor(SWT.COLOR_BLACK);
-		RED               = getColor(SWT.COLOR_RED);
-		DARK_RED          = getColor(SWT.COLOR_DARK_RED);
-		GREEN             = getColor(SWT.COLOR_GREEN);
-		DARK_GREEN        = getColor(SWT.COLOR_DARK_GREEN);
-		YELLOW            = getColor(SWT.COLOR_YELLOW);
-		DARK_YELLOW       = getColor(SWT.COLOR_DARK_YELLOW);
-		BLUE              = getColor(SWT.COLOR_BLUE);
-		DARK_BLUE         = getColor(SWT.COLOR_DARK_BLUE);
-		MAGENTA           = getColor(SWT.COLOR_MAGENTA);
-		DARK_MAGENTA      = getColor(SWT.COLOR_DARK_MAGENTA);
-		CYAN              = getColor(SWT.COLOR_CYAN);
-		DARK_CYAN         = getColor(SWT.COLOR_DARK_CYAN);
-		GRAY              = getColor(SWT.COLOR_GRAY);
-		DARK_GRAY         = getColor(SWT.COLOR_DARK_GRAY);
+		WHITE = getColor(SWT.COLOR_WHITE);
+		BLACK = getColor(SWT.COLOR_BLACK);
+		RED = getColor(SWT.COLOR_RED);
+		DARK_RED = getColor(SWT.COLOR_DARK_RED);
+		GREEN = getColor(SWT.COLOR_GREEN);
+		DARK_GREEN = getColor(SWT.COLOR_DARK_GREEN);
+		YELLOW = getColor(SWT.COLOR_YELLOW);
+		DARK_YELLOW = getColor(SWT.COLOR_DARK_YELLOW);
+		BLUE = getColor(SWT.COLOR_BLUE);
+		DARK_BLUE = getColor(SWT.COLOR_DARK_BLUE);
+		MAGENTA = getColor(SWT.COLOR_MAGENTA);
+		DARK_MAGENTA = getColor(SWT.COLOR_DARK_MAGENTA);
+		CYAN = getColor(SWT.COLOR_CYAN);
+		DARK_CYAN = getColor(SWT.COLOR_DARK_CYAN);
+		GRAY = getColor(SWT.COLOR_GRAY);
+		DARK_GRAY = getColor(SWT.COLOR_DARK_GRAY);
 
 		// Other "custom" Color objects:
-		ORANGE            = getColor(255, 150,  90);
-		MEDIUM_GREEN      = getColor(  0, 192,   0);
-		DARK_ORANGE       = getColor(215, 128,  81);
-		SEMI_DARK_YELLOW  = getColor(192, 192,  0);
-		DARK_MUTED_YELLOW = getColor( 90,  90,  50);
-		DARK_MUTED_GREEN  = getColor( 18,  92,  18);
-		DARKER_RED        = getColor(174,  25,  13);
-		VERY_DARK_GRAY    = getColor( 60,  60,  60);
-		
+		ORANGE = getColor(255, 150, 90);
+		MEDIUM_GREEN = getColor(0, 192, 0);
+		DARK_ORANGE = getColor(215, 128, 81);
+		SEMI_DARK_YELLOW = getColor(192, 192, 0);
+		DARK_MUTED_YELLOW = getColor(90, 90, 50);
+		DARK_MUTED_GREEN = getColor(18, 92, 18);
+		DARKER_RED = getColor(174, 25, 13);
+		VERY_DARK_GRAY = getColor(60, 60, 60);
+
 		WIDGET_NORMAL_BACKGROUND = getColor(SWT.COLOR_WHITE);
-		WIDGET_UNEDITABLE_BACKGROUND = getColor(220,220,220);
+		WIDGET_UNEDITABLE_BACKGROUND = getColor(220, 220, 220);
 	}
-	
+
 	// --- constructors/destructors ---
 
 	/** Constructor
 	 *  Private, since this is basically a bunch of constants.
 	 */
-	private Colors() {}
+	private Colors() {
+	}
 
 	/**
 	 *  Gets color for a given SWT color constant.
@@ -119,7 +119,7 @@ public class Colors {
 	public static final Color getColor(int colorID) {
 		return (s_resources == null) ? null : s_resources.getColor(colorID);
 	}
-	
+
 	/**
 	 *  Gets color for given RGB values (0-255).
 	 */

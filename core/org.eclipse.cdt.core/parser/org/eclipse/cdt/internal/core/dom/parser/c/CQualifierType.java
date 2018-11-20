@@ -47,22 +47,25 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 
 	@Override
 	public boolean isSameType(IType obj) {
-	    if (obj == this)
-	        return true;
-	    if (obj instanceof ITypedef)
-	        return obj.isSameType(this);
+		if (obj == this)
+			return true;
+		if (obj instanceof ITypedef)
+			return obj.isSameType(this);
 
-	    if (obj instanceof ICQualifierType) {
-	        ICQualifierType qt = (ICQualifierType) obj;
-            if (isConst() != qt.isConst()) return false;
-			if (isRestrict() != qt.isRestrict()) return false;
-			if (isVolatile() != qt.isVolatile()) return false;
+		if (obj instanceof ICQualifierType) {
+			ICQualifierType qt = (ICQualifierType) obj;
+			if (isConst() != qt.isConst())
+				return false;
+			if (isRestrict() != qt.isRestrict())
+				return false;
+			if (isVolatile() != qt.isVolatile())
+				return false;
 
 			if (type == null)
 				return false;
 			return type.isSameType(qt.getType());
-        }
-    	return false;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -96,32 +99,35 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 
 	@Override
 	public void setType(IType t) {
-	    type = t;
+		type = t;
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return t;
+	}
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.CVQUALIFIER_TYPE;
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		short firstBytes = ITypeMarshalBuffer.CVQUALIFIER_TYPE;
+		if (isConst())
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile())
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict())
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType nested= buffer.unmarshalType();
+		IType nested = buffer.unmarshalType();
 		return new CQualifierType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
 				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, (firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
 	}

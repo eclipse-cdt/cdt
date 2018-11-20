@@ -43,7 +43,8 @@ public class ExecRangeBasedFor implements ICPPExecution {
 	private final ICPPFunction end;
 	private final ICPPExecution bodyExec;
 
-	public ExecRangeBasedFor(ExecSimpleDeclaration declarationExec, ICPPEvaluation initClauseEval, ICPPFunction begin, ICPPFunction end, ICPPExecution bodyExec) {
+	public ExecRangeBasedFor(ExecSimpleDeclaration declarationExec, ICPPEvaluation initClauseEval, ICPPFunction begin,
+			ICPPFunction end, ICPPExecution bodyExec) {
 		this.declarationExec = declarationExec;
 		this.initClauseEval = initClauseEval;
 		this.begin = begin;
@@ -51,12 +52,14 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		this.bodyExec = bodyExec;
 	}
 
-	private ICPPExecution loopOverArray(IVariable rangeVar, ICPPEvaluation valueRange, ActivationRecord record, ConstexprEvaluationContext context) {
+	private ICPPExecution loopOverArray(IVariable rangeVar, ICPPEvaluation valueRange, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		ICPPEvaluation[] range = valueRange.getValue().getAllSubValues();
 		for (int i = 0; i < range.length; i++) {
 			ICPPEvaluation value = new EvalFixed(range[i].getType(), range[i].getValueCategory(), range[i].getValue());
 			if (rangeVar.getType() instanceof ICPPReferenceType) {
-				value = new EvalReference(record, new EvalCompositeAccess(valueRange, i), value.getTemplateDefinition());
+				value = new EvalReference(record, new EvalCompositeAccess(valueRange, i),
+						value.getTemplateDefinition());
 			}
 			record.update(rangeVar, value);
 
@@ -72,12 +75,13 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		return null;
 	}
 
-	private ICPPExecution loopOverObject(IVariable rangeVar, ICPPEvaluation rangeEval, boolean rangeIsConst, ICPPClassType classType, ActivationRecord record, ConstexprEvaluationContext context) {
+	private ICPPExecution loopOverObject(IVariable rangeVar, ICPPEvaluation rangeEval, boolean rangeIsConst,
+			ICPPClassType classType, ActivationRecord record, ConstexprEvaluationContext context) {
 		if (begin != null && end != null) {
 			ICPPEvaluation beginEval = callFunction(classType, begin, rangeEval, record, context);
 			ICPPEvaluation endEval = callFunction(classType, end, rangeEval, record, context);
 			boolean isRef = rangeVar.getType() instanceof ICPPReferenceType;
-			
+
 			for (; !isEqual(beginEval, endEval); beginEval = inc(record, beginEval, context)) {
 				record.update(rangeVar, deref(beginEval, isRef, record, context));
 
@@ -96,14 +100,15 @@ public class ExecRangeBasedFor implements ICPPExecution {
 	}
 
 	private static boolean isEqual(ICPPEvaluation a, ICPPEvaluation b) {
-		Number result = new EvalBinary(IASTBinaryExpression.op_equals, a, b, a.getTemplateDefinition()).getValue().numberValue();
+		Number result = new EvalBinary(IASTBinaryExpression.op_equals, a, b, a.getTemplateDefinition()).getValue()
+				.numberValue();
 		return result != null && result.longValue() != 0;
 	}
 
-	private static ICPPEvaluation deref(ICPPEvaluation ptr, boolean isRef, ActivationRecord record, 
+	private static ICPPEvaluation deref(ICPPEvaluation ptr, boolean isRef, ActivationRecord record,
 			ConstexprEvaluationContext context) {
-		ICPPEvaluation derefEval = new EvalUnary(ICPPASTUnaryExpression.op_star, ptr, null, 
-				ptr.getTemplateDefinition()).computeForFunctionCall(record, context);
+		ICPPEvaluation derefEval = new EvalUnary(ICPPASTUnaryExpression.op_star, ptr, null, ptr.getTemplateDefinition())
+				.computeForFunctionCall(record, context);
 		if (isRef) {
 			return derefEval;
 		} else {
@@ -111,24 +116,23 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		}
 	}
 
-	private static ICPPEvaluation inc(ActivationRecord record, ICPPEvaluation ptr,
-			ConstexprEvaluationContext context) {
+	private static ICPPEvaluation inc(ActivationRecord record, ICPPEvaluation ptr, ConstexprEvaluationContext context) {
 		return new EvalUnary(IASTUnaryExpression.op_prefixIncr, ptr, null, ptr.getTemplateDefinition())
 				.computeForFunctionCall(record, context);
 	}
 
-	private static ICPPEvaluation callFunction(ICPPClassType classType, ICPPFunction func, 
-			ICPPEvaluation rangeEval, ActivationRecord record, ConstexprEvaluationContext context) {
+	private static ICPPEvaluation callFunction(ICPPClassType classType, ICPPFunction func, ICPPEvaluation rangeEval,
+			ActivationRecord record, ConstexprEvaluationContext context) {
 		EvalFunctionCall call = null;
 		IBinding templateDefinition = rangeEval.getTemplateDefinition();
 		if (func instanceof ICPPMethod) {
-			EvalMemberAccess memberAccess = new EvalMemberAccess(classType, ValueCategory.LVALUE, func, 
-					rangeEval, false, templateDefinition);
-			ICPPEvaluation[] args = new ICPPEvaluation[]{ memberAccess };
+			EvalMemberAccess memberAccess = new EvalMemberAccess(classType, ValueCategory.LVALUE, func, rangeEval,
+					false, templateDefinition);
+			ICPPEvaluation[] args = new ICPPEvaluation[] { memberAccess };
 			call = new EvalFunctionCall(args, rangeEval, templateDefinition);
 		} else {
 			EvalBinding op = new EvalBinding(func, func.getType(), templateDefinition);
-			ICPPEvaluation[] args = new ICPPEvaluation[]{ op, rangeEval};
+			ICPPEvaluation[] args = new ICPPEvaluation[] { op, rangeEval };
 			call = new EvalFunctionCall(args, null, templateDefinition);
 		}
 		return call.computeForFunctionCall(record, context);
@@ -160,7 +164,8 @@ public class ExecRangeBasedFor implements ICPPExecution {
 
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
-		ExecSimpleDeclaration newDeclarationExec = (ExecSimpleDeclaration) declarationExec.instantiate(context, maxDepth);
+		ExecSimpleDeclaration newDeclarationExec = (ExecSimpleDeclaration) declarationExec.instantiate(context,
+				maxDepth);
 		ICPPEvaluation newInitClauseEval = initClauseEval.instantiate(context, maxDepth);
 		// TODO: This isn't the correct way to instantiate the 'begin' and 'end' functions, because
 		//       if the range type is dependent, ADL may find different functions to call after instantiation.
@@ -185,11 +190,8 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		}
 		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
 
-		if (newDeclarationExec == declarationExec &&
-			newInitClauseEval == initClauseEval &&
-			newBegin == begin &&
-			newEnd == end &&
-			newBodyExec == bodyExec) {
+		if (newDeclarationExec == declarationExec && newInitClauseEval == initClauseEval && newBegin == begin
+				&& newEnd == end && newBodyExec == bodyExec) {
 			return this;
 		}
 		return new ExecRangeBasedFor(newDeclarationExec, newInitClauseEval, newBegin, newEnd, newBodyExec);

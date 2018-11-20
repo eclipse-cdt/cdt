@@ -23,41 +23,41 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  */
 public class ServicesStartupSequence extends Sequence {
 
-    final private DsfSession fSession;
-    
-    // The reference to the services are saved to use in the last step.
-    private TimerService fTimerService = null;
-    private AlarmService fAlarmService = null;
-    
+	final private DsfSession fSession;
 
-    public ServicesStartupSequence(DsfSession session) {
-        super(session.getExecutor());
-        fSession = session;
-    }
+	// The reference to the services are saved to use in the last step.
+	private TimerService fTimerService = null;
+	private AlarmService fAlarmService = null;
 
-    Step[] fSteps = new Step[] {
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                fTimerService = new TimerService(fSession);
-                fTimerService.initialize(requestMonitor);
-            }},
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                fAlarmService = new AlarmService(fSession);
-                fAlarmService.initialize(requestMonitor);
-            }},
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Create the first timer and trigger.
-                fTimerService.startTimer();
-                fAlarmService.createTrigger(5);
-                requestMonitor.done();
-            }}
-    };
-    
-    @Override
-    public Step[] getSteps() { return fSteps; }
+	public ServicesStartupSequence(DsfSession session) {
+		super(session.getExecutor());
+		fSession = session;
+	}
+
+	Step[] fSteps = new Step[] { new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fTimerService = new TimerService(fSession);
+			fTimerService.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fAlarmService = new AlarmService(fSession);
+			fAlarmService.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Create the first timer and trigger.
+			fTimerService.startTimer();
+			fAlarmService.createTrigger(5);
+			requestMonitor.done();
+		}
+	} };
+
+	@Override
+	public Step[] getSteps() {
+		return fSteps;
+	}
 }

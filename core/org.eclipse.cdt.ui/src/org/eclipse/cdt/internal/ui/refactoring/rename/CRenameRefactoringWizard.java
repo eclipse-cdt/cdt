@@ -10,7 +10,7 @@
  * 
  * Contributors: 
  * Markus Schorn - initial API and implementation 
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
@@ -20,15 +20,15 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
  */
 public class CRenameRefactoringWizard extends RefactoringWizard {
 
-    public CRenameRefactoringWizard(CRenameRefactoring r) {
-        super(r, DIALOG_BASED_USER_INTERFACE);
-    }
+	public CRenameRefactoringWizard(CRenameRefactoring r) {
+		super(r, DIALOG_BASED_USER_INTERFACE);
+	}
 
-    // overrider
-    @Override
+	// overrider
+	@Override
 	protected void addUserInputPages() {
-        setDefaultPageTitle(getRefactoring().getName());
-        CRenameRefactoringInputPage page= new CRenameRefactoringInputPage();
-        addPage(page);
-    }
+		setDefaultPageTitle(getRefactoring().getName());
+		CRenameRefactoringInputPage page = new CRenameRefactoringInputPage();
+		addPage(page);
+	}
 }

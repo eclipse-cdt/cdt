@@ -31,7 +31,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 	IMakeBuilderInfo fBuildInfo;
 	boolean useBuildInfo = false;
 	Preferences fPrefs;
-	
+
 	public ErrorParserBlock(Preferences preferences) {
 		super();
 		fPrefs = preferences;
@@ -44,7 +44,8 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 			Composite composite = ControlFactory.createComposite(parent, 1);
 			setControl(composite);
 			ControlFactory.createEmptySpace(composite);
-			ControlFactory.createLabel(composite, MakeUIMessages.getResourceString("ErrorParserBlock.label.missingBuilderInformation")); //$NON-NLS-1$
+			ControlFactory.createLabel(composite,
+					MakeUIMessages.getResourceString("ErrorParserBlock.label.missingBuilderInformation")); //$NON-NLS-1$
 			return;
 		}
 		super.createControl(parent);
@@ -77,19 +78,18 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		}
 	}
 
-	
 	@Override
 	protected void saveErrorParsers(String[] parserIDs) throws CoreException {
 		fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, MakeBuilder.BUILDER_ID, false);
 		fBuildInfo.setErrorParsers(parserIDs);
 	}
-	
+
 	@Override
 	protected String[] getErrorParserIDs(boolean defaults) {
 		fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, MakeBuilder.BUILDER_ID, defaults);
 		return fBuildInfo.getErrorParsers();
 	}
-	
+
 	@Override
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
@@ -98,7 +98,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 				fBuildInfo = MakeCorePlugin.createBuildInfo(getContainer().getProject(), MakeBuilder.BUILDER_ID);
 			} catch (CoreException e) {
 			}
-			useBuildInfo = true; 
+			useBuildInfo = true;
 		}
 	}
 

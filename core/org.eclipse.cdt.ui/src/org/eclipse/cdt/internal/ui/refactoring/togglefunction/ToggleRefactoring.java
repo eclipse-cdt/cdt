@@ -41,7 +41,7 @@ public class ToggleRefactoring extends CRefactoring {
 	private ITextSelection selection;
 	private IToggleRefactoringStrategy strategy;
 	private ToggleRefactoringContext context;
-	
+
 	public ToggleRefactoring(ICElement element, ITextSelection selection, ICProject project) {
 		super(element, selection, project);
 		if (selection == null || tu.getResource() == null || project == null)
@@ -68,7 +68,7 @@ public class ToggleRefactoring extends CRefactoring {
 		return initStatus;
 	}
 
-	private void prepareIndexer(IProgressMonitor pm) throws CoreException  {
+	private void prepareIndexer(IProgressMonitor pm) throws CoreException {
 		IIndexManager im = CCorePlugin.getIndexManager();
 		while (!im.isProjectIndexed(project)) {
 			im.joinIndexer(500, pm);
@@ -80,15 +80,14 @@ public class ToggleRefactoring extends CRefactoring {
 	}
 
 	@Override
-	protected void collectModifications(IProgressMonitor pm, ModificationCollector modifications)
-			throws CoreException {
+	protected void collectModifications(IProgressMonitor pm, ModificationCollector modifications) throws CoreException {
 		pm.subTask(Messages.ToggleRefactoring_CalculateModifications);
 		strategy.run(modifications);
 	}
 
 	@Override
 	protected RefactoringDescriptor getRefactoringDescriptor() {
-		return null;  // Refactoring history is not supported.
+		return null; // Refactoring history is not supported.
 	}
 
 	public ToggleRefactoringContext getContext() {

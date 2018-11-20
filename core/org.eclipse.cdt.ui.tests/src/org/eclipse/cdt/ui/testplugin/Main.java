@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-
 // Copied from startup.jar. planned to be removed soon
 
 /**

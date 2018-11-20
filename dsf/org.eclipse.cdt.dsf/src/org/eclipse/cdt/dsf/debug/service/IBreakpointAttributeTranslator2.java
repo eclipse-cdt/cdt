@@ -42,27 +42,27 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface IBreakpointAttributeTranslator2 {
 
-    /**
-     * Initializes the translator.  This method is called by the breakpoint 
-     * mediator service, when the mediator service is initialized. 
-     */
-    @ConfinedToDsfExecutor("")
-	public void initialize(BreakpointsMediator2 mediator);
-    
-    /**
-     * Disposes the translator.  Also called by the mediator upon service 
-     * shutdown.
-     */
+	/**
+	 * Initializes the translator.  This method is called by the breakpoint 
+	 * mediator service, when the mediator service is initialized. 
+	 */
 	@ConfinedToDsfExecutor("")
-    public void dispose();
-    
-    /**
-     * Returns whether the given IDE breakpoint is supported by this debugger.
-     */
-    @ThreadSafeAndProhibitedFromDsfExecutor("")
-    public boolean supportsBreakpoint(IBreakpoint bp);
+	public void initialize(BreakpointsMediator2 mediator);
 
-    /**
+	/**
+	 * Disposes the translator.  Also called by the mediator upon service 
+	 * shutdown.
+	 */
+	@ConfinedToDsfExecutor("")
+	public void dispose();
+
+	/**
+	 * Returns whether the given IDE breakpoint is supported by this debugger.
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("")
+	public boolean supportsBreakpoint(IBreakpoint bp);
+
+	/**
 	 * Resolve the breakpoint in given context. A platform BP may be mapped to
 	 * one or more target BPs, e.g. a breakpoint in an in-line function may be
 	 * mapped to several target BPs, or a thread-specific BP may be mapped to
@@ -86,9 +86,9 @@ public interface IBreakpointAttributeTranslator2 {
 	 *            corresponding to one target breakpoint.
 	 * @throws CoreException
 	 */
-    @ConfinedToDsfExecutor("")
-    public void resolveBreakpoint(IBreakpointsTargetDMContext context, IBreakpoint breakpoint, 
-    		Map<String, Object> bpAttributes, DataRequestMonitor<List<Map<String, Object>>> drm);
+	@ConfinedToDsfExecutor("")
+	public void resolveBreakpoint(IBreakpointsTargetDMContext context, IBreakpoint breakpoint,
+			Map<String, Object> bpAttributes, DataRequestMonitor<List<Map<String, Object>>> drm);
 
 	/**
 	 * Get all platform defined attributes for a breakpoint plus all attributes
@@ -109,8 +109,9 @@ public interface IBreakpointAttributeTranslator2 {
 	 * @return list of target (debugger implementation) recognizable attributes.
 	 * @throws CoreException
 	 */
-    @ThreadSafeAndProhibitedFromDsfExecutor("")
-    public Map<String, Object> getAllBreakpointAttributes(IBreakpoint platformBP, boolean bpManagerEnabled) throws CoreException;
+	@ThreadSafeAndProhibitedFromDsfExecutor("")
+	public Map<String, Object> getAllBreakpointAttributes(IBreakpoint platformBP, boolean bpManagerEnabled)
+			throws CoreException;
 
 	/**
 	 * Convert platform breakpoint attributes to target attributes. This usually
@@ -124,20 +125,22 @@ public interface IBreakpointAttributeTranslator2 {
 	 * @param platformBPAttr
 	 * @return
 	 */
-    @ThreadSafe
-    public Map<String, Object> convertAttributes(Map<String, Object> platformBPAttr);
-        
-    /**
-     * Update platform about breakpoint status change, e.g. breakpoint installed on target successfully or breakpoint
-     * removed from target successfully.
-     * <p>
-     * Note this method is not and must not be called in DSF dispatch thread.
-     * 
-     * @param bpsInfo
-     * @param eventType
-     */
-    @ThreadSafeAndProhibitedFromDsfExecutor("")
-    public void updateBreakpointsStatus(Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> bpsInfo, BreakpointEventType eventType);
+	@ThreadSafe
+	public Map<String, Object> convertAttributes(Map<String, Object> platformBPAttr);
+
+	/**
+	 * Update platform about breakpoint status change, e.g. breakpoint installed on target successfully or breakpoint
+	 * removed from target successfully.
+	 * <p>
+	 * Note this method is not and must not be called in DSF dispatch thread.
+	 * 
+	 * @param bpsInfo
+	 * @param eventType
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("")
+	public void updateBreakpointsStatus(
+			Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> bpsInfo,
+			BreakpointEventType eventType);
 
 	/**
 	 * This is enhanced version of
@@ -152,6 +155,7 @@ public interface IBreakpointAttributeTranslator2 {
 	 * @param attributes target-recognizable attributes.
 	 * @return false as long as one of the attributes cannot be updated by client, otherwise true.
 	 */
-    @ConfinedToDsfExecutor("")
-	public boolean canUpdateAttributes(IBreakpoint bp, IBreakpointsTargetDMContext context, Map<String, Object> attributes);
+	@ConfinedToDsfExecutor("")
+	public boolean canUpdateAttributes(IBreakpoint bp, IBreakpointsTargetDMContext context,
+			Map<String, Object> attributes);
 }

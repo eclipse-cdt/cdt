@@ -61,18 +61,18 @@ public class CustomCodeFormatterBlock extends Observable {
 		final IScopeContext scope;
 		final IEclipsePreferences defaults;
 		if (project != null) {
-			scope= access.getProjectScope(project);
-			defaults= access.getInstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+			scope = access.getProjectScope(project);
+			defaults = access.getInstanceScope().getNode(CCorePlugin.PLUGIN_ID);
 		} else {
-			scope= access.getInstanceScope();
-			defaults= access.getDefaultScope().getNode(CCorePlugin.PLUGIN_ID);
+			scope = access.getInstanceScope();
+			defaults = access.getDefaultScope().getNode(CCorePlugin.PLUGIN_ID);
 		}
-		fPrefs= scope.getNode(CCorePlugin.PLUGIN_ID);
-		fDefaultFormatterId= defaults.get(CCorePreferenceConstants.CODE_FORMATTER, null);
+		fPrefs = scope.getNode(CCorePlugin.PLUGIN_ID);
+		fDefaultFormatterId = defaults.get(CCorePreferenceConstants.CODE_FORMATTER, null);
 		if (fDefaultFormatterId == null) {
 			// Backward compatibility: use UI prefs
-			IEclipsePreferences instance= access.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID);
-			fDefaultFormatterId= instance.get(CCorePreferenceConstants.CODE_FORMATTER, null);
+			IEclipsePreferences instance = access.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID);
+			fDefaultFormatterId = instance.get(CCorePreferenceConstants.CODE_FORMATTER, null);
 			if (fDefaultFormatterId != null) {
 				instance.remove(CCorePreferenceConstants.CODE_FORMATTER);
 				if (project != null) {
@@ -134,7 +134,8 @@ public class CustomCodeFormatterBlock extends Observable {
 		if (idMap.size() == 1) {
 			return parent; // No selector is needed since there is only one formatter.
 		}
-		Composite composite = ControlFactory.createGroup(parent, FormatterMessages.CustomCodeFormatterBlock_formatter_name, 1);
+		Composite composite = ControlFactory.createGroup(parent,
+				FormatterMessages.CustomCodeFormatterBlock_formatter_name, 1);
 		((GridData) composite.getLayoutData()).horizontalSpan = 5;
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
@@ -152,18 +153,18 @@ public class CustomCodeFormatterBlock extends Observable {
 			fFormatterCombo.add(item);
 		}
 
-		final String noteTitle= FormatterMessages.CustomCodeFormatterBlock_formatter_note;
-		final String noteMessage= FormatterMessages.CustomCodeFormatterBlock_contributed_formatter_warning;
+		final String noteTitle = FormatterMessages.CustomCodeFormatterBlock_formatter_note;
+		final String noteMessage = FormatterMessages.CustomCodeFormatterBlock_contributed_formatter_warning;
 		ControlFactory.createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
-		
+
 		initDefault();
-		
+
 		return composite;
 	}
 
 	private void handleFormatterChanged() {
 		setChanged();
-		String formatterId= getFormatterId();
+		String formatterId = getFormatterId();
 		notifyObservers(formatterId);
 	}
 
@@ -171,7 +172,7 @@ public class CustomCodeFormatterBlock extends Observable {
 		if (fFormatterCombo == null) {
 			return;
 		}
-		String formatterID= fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+		String formatterID = fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
 		fFormatterCombo.setText(getFormatterById(formatterID));
 	}
 
@@ -192,16 +193,17 @@ public class CustomCodeFormatterBlock extends Observable {
 	private void initializeFormatters() {
 		idMap.clear();
 		idMap.put(DEFAULT, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER);
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.FORMATTER_EXTPOINT_ID);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				CCorePlugin.FORMATTER_EXTPOINT_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
 			for (IExtension ext : exts) {
-		 		IConfigurationElement[] elements = ext.getConfigurationElements();
-		 		for (int j = 0; j < elements.length; ++j) {
-		 			String name = elements[j].getAttribute(ATTR_NAME);
-		 			String id= elements[j].getAttribute(ATTR_ID);
-		 			idMap.put(name, id);
-		 		}
+				IConfigurationElement[] elements = ext.getConfigurationElements();
+				for (int j = 0; j < elements.length; ++j) {
+					String name = elements[j].getAttribute(ATTR_NAME);
+					String id = elements[j].getAttribute(ATTR_ID);
+					idMap.put(name, id);
+				}
 			}
 		}
 	}

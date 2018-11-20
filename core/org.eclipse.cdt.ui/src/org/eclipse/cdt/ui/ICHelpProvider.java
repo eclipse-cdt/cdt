@@ -36,7 +36,7 @@ public interface ICHelpProvider {
 	 * @return The <code>ICHelpBook[]</code> array of available help books
 	 */
 	ICHelpBook[] getCHelpBooks();
-	
+
 	/**
 	 * get the matching function of a given name
 	 * 
@@ -45,7 +45,7 @@ public interface ICHelpProvider {
 	 * @return the IFunctionSummary interface
 	 */
 	IFunctionSummary getFunctionInfo(ICHelpInvocationContext context, ICHelpBook[] helpBooks, String name);
-	
+
 	/**
 	 * Get array of matching functions starting with this prefix
 	 * 

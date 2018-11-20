@@ -28,33 +28,31 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 
 	private int fLastRegionOffset;
-	private ITextEditor fEditor;	
+	private ITextEditor fEditor;
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
 	private AutomakefileContentOutlinePage fOutliner;
 	private IReconcilingParticipant fMakefileReconcilingParticipant;
 	private AutomakeErrorHandler fErrorHandler;
 	private IEditorInput input;
-	
+
 	public AutomakefileReconcilingStrategy(AutomakeEditor editor) {
-		fOutliner= editor.getAutomakeOutlinePage();
+		fOutliner = editor.getAutomakeOutlinePage();
 		fLastRegionOffset = Integer.MAX_VALUE;
-		fEditor= editor;
+		fEditor = editor;
 		input = fEditor.getEditorInput();
-		fManager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
-		fDocumentProvider= AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
-		fErrorHandler= new AutomakeErrorHandler(input);
-		fMakefileReconcilingParticipant= (IReconcilingParticipant)fEditor;
+		fManager = AutomakeEditorFactory.getDefault().getWorkingCopyManager();
+		fDocumentProvider = AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
+		fErrorHandler = new AutomakeErrorHandler(input);
+		fMakefileReconcilingParticipant = (IReconcilingParticipant) fEditor;
 	}
-	
+
 	@Override
 	public void setDocument(IDocument document) {
-	}	
-
+	}
 
 	@Override
 	public void reconcile(IRegion region) {
@@ -62,7 +60,7 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 		// on a file when it gets changed. This is because this gets called
 		// multiple times with different regions of the file, we do a 
 		// complete parse on the first region.
-		if(region.getOffset() <= fLastRegionOffset) {
+		if (region.getOffset() <= fLastRegionOffset) {
 			reconcile();
 		}
 		fLastRegionOffset = region.getOffset();
@@ -74,7 +72,7 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 		// the contentoutline viewer.
 		//reconcile();
 	}
-	
+
 	private void reconcile() {
 		try {
 			IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
@@ -85,7 +83,7 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 					makefile.parse(makefile.getFileURI(), reader);
 				} catch (IOException e) {
 				}
-				
+
 				fOutliner.update();
 				fErrorHandler.update(makefile);
 			}
@@ -98,6 +96,6 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 				//
 			}
 		}
- 	}	
+	}
 
 }

@@ -30,15 +30,14 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 	private boolean isVariableLength;
 
 	private IType type;
-	
-	
+
 	public C99ArrayType() {
 	}
-	
+
 	public C99ArrayType(IType type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public boolean isConst() {
 		return isConst;
@@ -94,7 +93,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 	public IType getType() {
 		return type;
 	}
-	
+
 	@Override
 	public void setType(IType type) {
 		this.type = type;
@@ -107,29 +106,26 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		if (t instanceof ITypedef)
 			return t.isSameType(this);
 		if (t instanceof ICArrayType) {
-			ICArrayType at = (ICArrayType)t;
-			if (at.isConst() == isConst &&
-					at.isRestrict() == isRestrict &&
-					at.isStatic() == isStatic &&
-					at.isVolatile() == isVolatile &&
-					at.isVariableLength() == isVariableLength) {
+			ICArrayType at = (ICArrayType) t;
+			if (at.isConst() == isConst && at.isRestrict() == isRestrict && at.isStatic() == isStatic
+					&& at.isVolatile() == isVolatile && at.isVariableLength() == isVariableLength) {
 				return at.isSameType(type);
 			}
 		}
 		return false;
 	}
-	
-    @Override
+
+	@Override
 	public IValue getSize() {
 		return null;
 	}
 
-    @Override
-    public boolean hasSize() {
-    	return false;
-    }
+	@Override
+	public boolean hasSize() {
+		return false;
+	}
 
-    @Override
+	@Override
 	public C99ArrayType clone() {
 		C99ArrayType clone = null;
 		try {

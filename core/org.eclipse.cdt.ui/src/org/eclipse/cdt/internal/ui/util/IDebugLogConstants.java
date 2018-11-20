@@ -15,11 +15,10 @@ package org.eclipse.cdt.internal.ui.util;
 
 public interface IDebugLogConstants {
 	public class DebugLogConstant {
-		private DebugLogConstant( int value )
-		{
+		private DebugLogConstant(int value) {
 		}
 	}
-	
-	public static final DebugLogConstant CONTENTASSIST = new DebugLogConstant ( 1 );
-	
+
+	public static final DebugLogConstant CONTENTASSIST = new DebugLogConstant(1);
+
 }

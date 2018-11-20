@@ -20,7 +20,8 @@ public class QMethodName extends AbstractQObjectMemberName implements IQtASTName
 	private final String qtEncSignatures;
 	private final Long revision;
 
-	public QMethodName(QObjectName qobjName, IASTName cppName, IQMethod.Kind kind, String qtEncSignatures, Long revision) {
+	public QMethodName(QObjectName qobjName, IASTName cppName, IQMethod.Kind kind, String qtEncSignatures,
+			Long revision) {
 		super(qobjName, cppName, cppName.getLastName().toString(), cppName.getImageLocation());
 		this.kind = kind;
 		this.qtEncSignatures = qtEncSignatures;

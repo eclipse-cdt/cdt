@@ -83,7 +83,7 @@ public interface IASTLiteralExpression extends IASTExpression {
 	 */
 	@Override
 	public String toString();
-	
+
 	/**
 	 * Sets the kind of the literal expression.
 	 */
@@ -94,13 +94,13 @@ public interface IASTLiteralExpression extends IASTExpression {
 	 * @since 5.1
 	 */
 	public void setValue(char[] value);
-		
+
 	/**
 	 * @since 5.1
 	 */
 	@Override
 	public IASTLiteralExpression copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

@@ -59,13 +59,14 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	private String fExclusionPattern;
 	private List<String> fExistingPatterns;
 
-	public ExclusionPatternEntryDialog(Shell parent, String patternToEdit, List<String> existingPatterns, CPElement entryToEdit) {
+	public ExclusionPatternEntryDialog(Shell parent, String patternToEdit, List<String> existingPatterns,
+			CPElement entryToEdit) {
 		super(parent);
 		fExistingPatterns = existingPatterns;
 		if (patternToEdit == null) {
-			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_add_title); 
+			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_add_title);
 		} else {
-			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_edit_title); 
+			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_edit_title);
 			fExistingPatterns.remove(patternToEdit);
 		}
 
@@ -77,13 +78,13 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 
 		fExclusionPatternStatus = new StatusInfo();
 
-		String label = NLS.bind(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_label, 
+		String label = NLS.bind(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_label,
 				entryToEdit.getPath().makeRelative().toString());
 
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
 		fExclusionPatternDialog = new StringButtonDialogField(adapter);
 		fExclusionPatternDialog.setLabelText(label);
-		fExclusionPatternDialog.setButtonLabel(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_button); 
+		fExclusionPatternDialog.setButtonLabel(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_button);
 		fExclusionPatternDialog.setDialogFieldListener(adapter);
 		fExclusionPatternDialog.enableButton(fCurrSourceFolder != null);
 
@@ -110,7 +111,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		inner.setLayout(layout);
 
 		Label description = new Label(inner, SWT.WRAP);
-		description.setText(CPathEntryMessages.ExclusionPatternEntryDialog_description); 
+		description.setText(CPathEntryMessages.ExclusionPatternEntryDialog_description);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.widthHint = convertWidthInCharsToPixels(80);
@@ -161,16 +162,16 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	protected void checkIfPatternValid() {
 		String pattern = fExclusionPatternDialog.getText().trim();
 		if (pattern.length() == 0) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_empty); 
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_empty);
 			return;
 		}
 		IPath path = new Path(pattern);
 		if (path.isAbsolute() || path.getDevice() != null) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_notrelative); 
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_notrelative);
 			return;
 		}
 		if (fExistingPatterns.contains(pattern)) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_exists); 
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_exists);
 			return;
 		}
 
@@ -195,7 +196,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	// ---------- util method ------------
 
 	private IPath chooseExclusionPattern() {
-		Class<?>[] acceptedClasses = new Class<?>[] { IFolder.class, IFile.class};
+		Class<?>[] acceptedClasses = new Class<?>[] { IFolder.class, IFile.class };
 		ISelectionStatusValidator validator = new TypedElementSelectionValidator(acceptedClasses, false);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 
@@ -219,9 +220,9 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		}
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
-		dialog.setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_title); 
+		dialog.setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_title);
 		dialog.setValidator(validator);
-		dialog.setMessage(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_description); 
+		dialog.setMessage(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_description);
 		dialog.addFilter(filter);
 		dialog.setInput(fCurrSourceFolder);
 		dialog.setInitialSelection(initialElement);
@@ -229,7 +230,8 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();
-			IPath path = res.getFullPath().removeFirstSegments(fCurrSourceFolder.getFullPath().segmentCount()).makeRelative();
+			IPath path = res.getFullPath().removeFirstSegments(fCurrSourceFolder.getFullPath().segmentCount())
+					.makeRelative();
 			if (res instanceof IContainer) {
 				return path.addTrailingSeparator();
 			}

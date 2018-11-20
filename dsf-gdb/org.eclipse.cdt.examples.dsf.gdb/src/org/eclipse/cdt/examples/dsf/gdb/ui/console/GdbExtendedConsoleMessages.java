@@ -16,16 +16,16 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GdbExtendedConsoleMessages extends NLS {
-    public static String Request_Thread_Info;
-    public static String Request_Thread_Info_Tip;
-    public static String Set_Special_Background;
-    public static String Set_Special_Background_Tip;
-    
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(GdbExtendedConsoleMessages.class.getName(), GdbExtendedConsoleMessages.class);
-    }
+	public static String Request_Thread_Info;
+	public static String Request_Thread_Info_Tip;
+	public static String Set_Special_Background;
+	public static String Set_Special_Background_Tip;
 
-    private GdbExtendedConsoleMessages() {
-    }
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(GdbExtendedConsoleMessages.class.getName(), GdbExtendedConsoleMessages.class);
+	}
+
+	private GdbExtendedConsoleMessages() {
+	}
 }

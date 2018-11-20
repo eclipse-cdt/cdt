@@ -59,7 +59,8 @@ public class SetEnvironmentVariable extends ProcessRunner {
 	private static final String VARIABLES_VALUE_VARNAME = "value"; //$NON-NLS-1$
 
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 
 		IProject project = null;
 		Map<String, String> envVars = new LinkedHashMap<String, String>();
@@ -68,17 +69,17 @@ public class SetEnvironmentVariable extends ProcessRunner {
 			String argName = arg.getName();
 			if (PROJECTNAME_VARNAME.equals(argName))
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(arg.getSimpleValue());
-			else if(VARIABLES_VARNAME.equals(argName)) {
+			else if (VARIABLES_VARNAME.equals(argName)) {
 
-				for(ProcessArgument[] envVarArgs : arg.getComplexArrayValue()) {
+				for (ProcessArgument[] envVarArgs : arg.getComplexArrayValue()) {
 					String name = null;
 					String value = null;
 
-					for(ProcessArgument varArg : envVarArgs) {
+					for (ProcessArgument varArg : envVarArgs) {
 						String varArgName = varArg.getName();
 						if (VARIABLES_NAME_VARNAME.equals(varArgName))
 							name = varArg.getSimpleValue();
-						else if(VARIABLES_VALUE_VARNAME.equals(varArgName))
+						else if (VARIABLES_VALUE_VARNAME.equals(varArgName))
 							value = varArg.getSimpleValue();
 					}
 
@@ -100,7 +101,7 @@ public class SetEnvironmentVariable extends ProcessRunner {
 		ICConfigurationDescription[] configDescs = des.getConfigurations();
 		IContributedEnvironment ice = CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment();
 
-		for(Map.Entry<String, String> envVar : envVars.entrySet()) {
+		for (Map.Entry<String, String> envVar : envVars.entrySet()) {
 			String name = envVar.getKey();
 			String value = envVar.getValue();
 
@@ -110,7 +111,7 @@ public class SetEnvironmentVariable extends ProcessRunner {
 
 		try {
 			mngr.setProjectDescription(project, des);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 	}

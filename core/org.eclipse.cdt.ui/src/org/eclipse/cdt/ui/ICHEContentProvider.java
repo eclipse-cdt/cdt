@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
 import org.eclipse.jface.viewers.IOpenListener;
+
 /**
  * The Call Hierarchy Extension Content Provider Interface
  * @since 6.4

@@ -31,14 +31,14 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPCo
 
 	/** Offset of the constructor chain execution for constexpr constructors. */
 	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethodTemplate.RECORD_SIZE; // Database.EXECUTION_SIZE
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPConstructorTemplate record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
-	
-	public PDOMCPPConstructorTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method) 
+
+	public PDOMCPPConstructorTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method)
 			throws CoreException, DOMException {
 		super(linkage, parent, method);
 		linkage.new ConfigureConstructorTemplate(method, this);
@@ -65,13 +65,13 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPCo
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())

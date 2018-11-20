@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.osgi.framework.Version;
@@ -22,7 +21,7 @@ public class BuildObject implements IBuildObject {
 
 	protected String id;
 	protected String name;
-	private String baseId=null;
+	private String baseId = null;
 
 	protected Version version = null;
 	protected String managedBuildRevision = null;
@@ -68,7 +67,7 @@ public class BuildObject implements IBuildObject {
 	 */
 	@Override
 	public Version getVersion() {
-			return version;
+		return version;
 	}
 
 	/**
@@ -85,31 +84,30 @@ public class BuildObject implements IBuildObject {
 	 */
 	@Override
 	public String getBaseId() {
-		if (baseId==null)
+		if (baseId == null)
 			baseId = ManagedBuildManager.calculateBaseId(id);
 		return baseId;
 	}
 
-
 	public Version getVersionFromId() {
-		String versionNumber = ManagedBuildManager.getVersionFromIdAndVersion( getId());
+		String versionNumber = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 
-		if( versionNumber == null) {
+		if (versionNumber == null) {
 			// It means, Tool Integrator either not provided version information in 'id' or  provided in wrong format,
 			// So get the default version based on 'managedBuildRevision' attribute.
 
-			if ( getManagedBuildRevision() != null) {
-				Version tmpManagedBuildRevision = new Version( getManagedBuildRevision() );
-				if (tmpManagedBuildRevision.equals(new Version("1.2.0")) )	//$NON-NLS-1$
-					versionNumber = "0.0.1";	//$NON-NLS-1$
-				else if (tmpManagedBuildRevision.equals(new Version("2.0.0")) )	//$NON-NLS-1$
-					versionNumber = "0.0.2";	//$NON-NLS-1$
-				else if (tmpManagedBuildRevision.equals(new Version("2.1.0")) )	//$NON-NLS-1$
-					versionNumber = "0.0.3";	//$NON-NLS-1$
+			if (getManagedBuildRevision() != null) {
+				Version tmpManagedBuildRevision = new Version(getManagedBuildRevision());
+				if (tmpManagedBuildRevision.equals(new Version("1.2.0"))) //$NON-NLS-1$
+					versionNumber = "0.0.1"; //$NON-NLS-1$
+				else if (tmpManagedBuildRevision.equals(new Version("2.0.0"))) //$NON-NLS-1$
+					versionNumber = "0.0.2"; //$NON-NLS-1$
+				else if (tmpManagedBuildRevision.equals(new Version("2.1.0"))) //$NON-NLS-1$
+					versionNumber = "0.0.3"; //$NON-NLS-1$
 				else
-					versionNumber = "0.0.4";	//$NON-NLS-1$
+					versionNumber = "0.0.4"; //$NON-NLS-1$
 			} else {
-				versionNumber = "0.0.0";	//$NON-NLS-1$
+				versionNumber = "0.0.0"; //$NON-NLS-1$
 			}
 		}
 		return new Version(versionNumber);
@@ -122,7 +120,7 @@ public class BuildObject implements IBuildObject {
 	/**
 	 * updates revision for this build object and all its children
 	 */
-	public void updateManagedBuildRevision(String revision){
+	public void updateManagedBuildRevision(String revision) {
 		setManagedBuildRevision(revision);
 		setVersion(getVersionFromId());
 	}

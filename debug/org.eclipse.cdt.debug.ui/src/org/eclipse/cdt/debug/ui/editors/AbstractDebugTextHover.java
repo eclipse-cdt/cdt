@@ -86,14 +86,17 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	 */
 	private static class ExpressionChecker extends ASTVisitor {
 		private boolean fValid;
+
 		private ExpressionChecker() {
 			shouldVisitExpressions = true;
 		}
+
 		private boolean check(IASTNode node) {
 			fValid = true;
 			node.accept(this);
 			return fValid;
 		}
+
 		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof IASTFunctionCallExpression) {
@@ -146,7 +149,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	 * @return <code>true</code> if this hover can evaluate an expression
 	 */
 	protected abstract boolean canEvaluate();
-	
+
 	/**
 	 * Compute a value for given expression.
 	 * 
@@ -154,7 +157,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	 * @return a result string or <code>null</code> if the expression could not be evaluated
 	 */
 	protected abstract String evaluateExpression(String expression);
-	
+
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (canEvaluate()) {
@@ -176,7 +179,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		if (viewer != null)
@@ -241,7 +244,8 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 			return null;
 		}
 		final Position expressionPosition = new Position(0);
-		SharedASTJob job = new SharedASTJob(CDebugUIMessages.getString("AbstractDebugTextHover.jobName"), (ITranslationUnit) cElement) {  //$NON-NLS-1$
+		SharedASTJob job = new SharedASTJob(CDebugUIMessages.getString("AbstractDebugTextHover.jobName"), //$NON-NLS-1$
+				(ITranslationUnit) cElement) {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				if (ast == null) {
@@ -249,31 +253,32 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 				}
 				int offset = hoverRegion.getOffset();
 				int length = hoverRegion.getLength();
-				IASTName name= ast.getNodeSelector(null).findEnclosingName(offset, length);
+				IASTName name = ast.getNodeSelector(null).findEnclosingName(offset, length);
 				if (name != null) {
-				    IASTImageLocation imageLoc = name.getImageLocation();
-				    if (imageLoc == null) {
-				        return Status.CANCEL_STATUS;
-				    }
-				    int kind = imageLoc.getLocationKind();
-				    switch (kind) {
-                    case IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION:
-                        computeMacroArgumentExtent(name, expressionPosition);
-                        break;
-                    default:
-                        if (name.getParent() instanceof IASTPreprocessorMacroExpansion) {
-                            // special case: macro expansion as expression
-                            IASTNode node = ast.getNodeSelector(null).findEnclosingNodeInExpansion(imageLoc.getNodeOffset(), imageLoc.getNodeLength());
-                            if (node instanceof IASTExpression) {
-                                IASTFileLocation exprLoc = node.getFileLocation();
-                                if (exprLoc.getNodeOffset() == imageLoc.getNodeOffset()) {
-                                    computeExpressionExtent(node, expressionPosition);
-                                }
-                            }
-                        } else {
-                            computeExpressionExtent(name, expressionPosition);
-                        }
-				    }
+					IASTImageLocation imageLoc = name.getImageLocation();
+					if (imageLoc == null) {
+						return Status.CANCEL_STATUS;
+					}
+					int kind = imageLoc.getLocationKind();
+					switch (kind) {
+					case IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION:
+						computeMacroArgumentExtent(name, expressionPosition);
+						break;
+					default:
+						if (name.getParent() instanceof IASTPreprocessorMacroExpansion) {
+							// special case: macro expansion as expression
+							IASTNode node = ast.getNodeSelector(null)
+									.findEnclosingNodeInExpansion(imageLoc.getNodeOffset(), imageLoc.getNodeLength());
+							if (node instanceof IASTExpression) {
+								IASTFileLocation exprLoc = node.getFileLocation();
+								if (exprLoc.getNodeOffset() == imageLoc.getNodeOffset()) {
+									computeExpressionExtent(node, expressionPosition);
+								}
+							}
+						} else {
+							computeExpressionExtent(name, expressionPosition);
+						}
+					}
 				} else {
 					// not a name, but might still be an expression (e.g. this or a selected expression)
 					IASTNode node = ast.getNodeSelector(null).findEnclosingNode(offset, length);
@@ -288,45 +293,47 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 				}
 				return Status.OK_STATUS;
 			}
-			
-            private void computeMacroArgumentExtent(IASTName name, Position pos) {
-                IASTImageLocation imageLoc = name.getImageLocation();
-                int startOffset = imageLoc.getNodeOffset();
-                int endOffset = startOffset + imageLoc.getNodeLength();
-                // do some black magic to consider field reference expressions
-                IASTNode expr = name.getParent();
-                int macroOffset = name.getFileLocation().getNodeOffset();
-                if (expr instanceof IASTFieldReference) {
-                    IASTExpression ownerExpr= ((IASTFieldReference) expr).getFieldOwner();
-                    while (ownerExpr instanceof IASTFieldReference || ownerExpr instanceof IASTArraySubscriptExpression) {
-                        if (ownerExpr instanceof IASTArraySubscriptExpression) {
-                            ownerExpr = ((IASTArraySubscriptExpression) ownerExpr).getArrayExpression();
-                        } else {
-                            ownerExpr= ((IASTFieldReference) ownerExpr).getFieldOwner();
-                        }
-                    }
-                    if (ownerExpr instanceof IASTIdExpression) {
-                        IASTName ownerName = ((IASTIdExpression) ownerExpr).getName();
-                        IASTImageLocation ownerImageLoc = ownerName.getImageLocation();
-                        final int nameOffset= ownerImageLoc.getNodeOffset();
-                        // offset should be inside macro expansion
-                        if (nameOffset < startOffset && nameOffset > macroOffset) {
-                            startOffset = nameOffset;
-                        }
-                    }
-                }
-                ExpressionChecker checker = new ExpressionChecker();
-                if (checker.check(expr)) {
-                    pos.offset = startOffset;
-                    pos.length = endOffset - startOffset;
-                }
-            }
+
+			private void computeMacroArgumentExtent(IASTName name, Position pos) {
+				IASTImageLocation imageLoc = name.getImageLocation();
+				int startOffset = imageLoc.getNodeOffset();
+				int endOffset = startOffset + imageLoc.getNodeLength();
+				// do some black magic to consider field reference expressions
+				IASTNode expr = name.getParent();
+				int macroOffset = name.getFileLocation().getNodeOffset();
+				if (expr instanceof IASTFieldReference) {
+					IASTExpression ownerExpr = ((IASTFieldReference) expr).getFieldOwner();
+					while (ownerExpr instanceof IASTFieldReference
+							|| ownerExpr instanceof IASTArraySubscriptExpression) {
+						if (ownerExpr instanceof IASTArraySubscriptExpression) {
+							ownerExpr = ((IASTArraySubscriptExpression) ownerExpr).getArrayExpression();
+						} else {
+							ownerExpr = ((IASTFieldReference) ownerExpr).getFieldOwner();
+						}
+					}
+					if (ownerExpr instanceof IASTIdExpression) {
+						IASTName ownerName = ((IASTIdExpression) ownerExpr).getName();
+						IASTImageLocation ownerImageLoc = ownerName.getImageLocation();
+						final int nameOffset = ownerImageLoc.getNodeOffset();
+						// offset should be inside macro expansion
+						if (nameOffset < startOffset && nameOffset > macroOffset) {
+							startOffset = nameOffset;
+						}
+					}
+				}
+				ExpressionChecker checker = new ExpressionChecker();
+				if (checker.check(expr)) {
+					pos.offset = startOffset;
+					pos.length = endOffset - startOffset;
+				}
+			}
+
 			private void computeExpressionExtent(IASTNode node0, Position pos) {
 				IASTNode node = node0;
 				while (node != null && !(node instanceof IASTExpression) && !(node instanceof IASTDeclaration)) {
 					node = node.getParent();
 				}
-                IASTNodeLocation loc = null;
+				IASTNodeLocation loc = null;
 				if (node instanceof IASTExpression && !(node instanceof IASTIdExpression)) {
 					ExpressionChecker checker = new ExpressionChecker();
 					if (checker.check(node)) {
@@ -336,17 +343,17 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 					// fallback: use simple name
 					loc = ((IASTName) node0).getImageLocation();
 					if (loc == null) {
-					    IASTNodeLocation[] locations = node0.getNodeLocations();
-					    // avoid macro expansions
-					    if (locations.length == 1 && !(locations[0] instanceof IASTMacroExpansionLocation)) {
-					        loc = locations[0];
-					    }
+						IASTNodeLocation[] locations = node0.getNodeLocations();
+						// avoid macro expansions
+						if (locations.length == 1 && !(locations[0] instanceof IASTMacroExpansionLocation)) {
+							loc = locations[0];
+						}
 					}
 				}
-                if (loc != null) {
-                    pos.offset = loc.getNodeOffset();
-                    pos.length = loc.getNodeLength();
-                }
+				if (loc != null) {
+					pos.offset = loc.getNodeOffset();
+					pos.length = loc.getNodeLength();
+				}
 			}
 
 			private boolean insideInactiveCode(IASTTranslationUnit ast, int offset) {
@@ -372,7 +379,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 						return false;
 					}
 					if (statement instanceof IASTPreprocessorIfStatement) {
-						IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
+						IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement) statement;
 						inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 						if (!ifStmt.taken()) {
 							if (!inInactiveCode) {
@@ -381,7 +388,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 							}
 						}
 					} else if (statement instanceof IASTPreprocessorIfdefStatement) {
-						IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement)statement;
+						IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement) statement;
 						inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 						if (!ifdefStmt.taken()) {
 							if (!inInactiveCode) {
@@ -390,7 +397,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 							}
 						}
 					} else if (statement instanceof IASTPreprocessorIfndefStatement) {
-						IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement)statement;
+						IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement) statement;
 						inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 						if (!ifndefStmt.taken()) {
 							if (!inInactiveCode) {
@@ -399,7 +406,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 							}
 						}
 					} else if (statement instanceof IASTPreprocessorElseStatement) {
-						IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
+						IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement) statement;
 						if (!elseStmt.taken() && !inInactiveCode) {
 							inactiveCodeStart = nodeEnd;
 							inInactiveCode = true;
@@ -411,7 +418,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 							inInactiveCode = false;
 						}
 					} else if (statement instanceof IASTPreprocessorElifStatement) {
-						IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
+						IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 						if (!elifStmt.taken() && !inInactiveCode) {
 							inactiveCodeStart = nodeEnd;
 							inInactiveCode = true;
@@ -432,12 +439,13 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 								}
 							}
 							inInactiveCode = wasInInactiveCode;
+						} catch (EmptyStackException e) {
 						}
-				 		catch (EmptyStackException e) {}
 					}
 				}
 				return false;
 			}
+
 			private boolean insideComment(IASTTranslationUnit ast, int offset) {
 				IASTComment[] comments = ast.getComments();
 				for (IASTComment comment : comments) {
@@ -446,7 +454,8 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 					}
 					IASTNodeLocation location = comment.getFileLocation();
 					if (location != null) {
-						if (location.getNodeOffset() <= offset && offset < location.getNodeOffset() + location.getNodeLength()) {
+						if (location.getNodeOffset() <= offset
+								&& offset < location.getNodeOffset() + location.getNodeLength()) {
 							return true;
 						}
 					}
@@ -471,10 +480,10 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 			try {
 				// Get expression text removing comments, obsolete whitespace, etc.
 				StringBuilder result = new StringBuilder();
-				ITypedRegion[] partitions = TextUtilities.computePartitioning(document, ICPartitions.C_PARTITIONING, 
+				ITypedRegion[] partitions = TextUtilities.computePartitioning(document, ICPartitions.C_PARTITIONING,
 						expressionPosition.offset, expressionPosition.length, false);
 				for (ITypedRegion partition : partitions) {
-					if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType()) 
+					if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())
 							|| ICPartitions.C_CHARACTER.equals(partition.getType())
 							|| ICPartitions.C_STRING.equals(partition.getType())) {
 						result.append(document.get(partition.getOffset(), partition.getLength()));
@@ -490,7 +499,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 		// return empty string to indicate invalid expression
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the debug context the expression should be evaluated against.
 	 * The default implementation returns {@link DebugUITools#getDebugContext()}.
@@ -505,7 +514,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	protected final IEditorPart getEditor() {
 		return fEditor;
 	}
-	
+
 	/**
 	 * Append HTML for the given variable to the given buffer
 	 */

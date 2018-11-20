@@ -100,12 +100,13 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				ICPPClassType backup= getBackupDefinition(host);
+				ICPPClassType backup = getBackupDefinition(host);
 				if (backup != null)
 					return backup.getFriends();
-				IASTNode[] declarations= host.getDeclarations();
+				IASTNode[] declarations = host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length != 0) ? declarations[0] : null;
-				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
+				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND,
+						host.getNameCharArray()) };
 			}
 		}
 		ObjectSet<IBinding> resultSet = new ObjectSet<>(2);
@@ -116,7 +117,8 @@ public class ClassTypeHelper {
 			}
 
 			if (decl instanceof IASTSimpleDeclaration) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
+				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl)
+						.getDeclSpecifier();
 				if (declSpec.isFriend()) {
 					IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 					if (dtors.length == 0) {
@@ -127,17 +129,19 @@ public class ClassTypeHelper {
 						}
 					} else {
 						for (IASTDeclarator dtor : dtors) {
-							if (dtor == null) break;
-							dtor= ASTQueries.findInnermostDeclarator(dtor);
+							if (dtor == null)
+								break;
+							dtor = ASTQueries.findInnermostDeclarator(dtor);
 							resultSet.put(dtor.getName().resolveBinding());
 						}
 					}
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) decl).getDeclSpecifier();
+				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) decl)
+						.getDeclSpecifier();
 				if (declSpec.isFriend()) {
 					IASTDeclarator dtor = ((IASTFunctionDefinition) decl).getDeclarator();
-					dtor= ASTQueries.findInnermostDeclarator(dtor);
+					dtor = ASTQueries.findInnermostDeclarator(dtor);
 					resultSet.put(dtor.getName().resolveBinding());
 				}
 			}
@@ -170,10 +174,9 @@ public class ClassTypeHelper {
 			type = ((ICPPFunction) binding).getType();
 			char[] name = binding.getNameCharArray();
 			for (IBinding friend : classType.getFriends()) {
-				if (friend instanceof ICPPFunction &&
-						CharArrayUtils.equals(name, friend.getNameCharArray()) &&
-						SemanticUtil.haveSameOwner(binding, friend) &&
-						type.isSameType(((ICPPFunction) friend).getType())) {
+				if (friend instanceof ICPPFunction && CharArrayUtils.equals(name, friend.getNameCharArray())
+						&& SemanticUtil.haveSameOwner(binding, friend)
+						&& type.isSameType(((ICPPFunction) friend).getType())) {
 					return true;
 				}
 			}
@@ -198,7 +201,7 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				ICPPClassType backup= getBackupDefinition(host);
+				ICPPClassType backup = getBackupDefinition(host);
 				if (backup != null)
 					return backup.getBases();
 
@@ -210,7 +213,7 @@ public class ClassTypeHelper {
 		if (baseSpecifiers.length == 0)
 			return ICPPBase.EMPTY_BASE_ARRAY;
 
-        ICPPBase[] bases = new ICPPBase[baseSpecifiers.length];
+		ICPPBase[] bases = new ICPPBase[baseSpecifiers.length];
 		for (int i = 0; i < baseSpecifiers.length; i++) {
 			bases[i] = new CPPBaseClause(baseSpecifiers[i]);
 		}
@@ -222,7 +225,7 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				ICPPClassType backup= getBackupDefinition(host);
+				ICPPClassType backup = getBackupDefinition(host);
 				if (backup != null)
 					return backup.getDeclaredFields();
 
@@ -266,7 +269,7 @@ public class ClassTypeHelper {
 	 * @return An array of base classes in arbitrary order.
 	 */
 	public static ICPPClassType[] getAllBases(ICPPClassType classType) {
-		Set<ICPPClassType> result= new HashSet<>();
+		Set<ICPPClassType> result = new HashSet<>();
 		result.add(classType);
 		getAllBases(classType, result);
 		result.remove(classType);
@@ -274,9 +277,9 @@ public class ClassTypeHelper {
 	}
 
 	private static void getAllBases(ICPPClassType classType, Set<ICPPClassType> result) {
-		ICPPBase[] bases= classType.getBases();
+		ICPPBase[] bases = classType.getBases();
 		for (ICPPBase base : bases) {
-			IBinding b= base.getBaseClass();
+			IBinding b = base.getBaseClass();
 			if (b instanceof ICPPClassType) {
 				final ICPPClassType baseClass = (ICPPClassType) b;
 				if (result.add(baseClass)) {
@@ -327,9 +330,9 @@ public class ClassTypeHelper {
 	 * @return {@code true} if {@code subclass} is a subclass of {@code superclass}.
 	 */
 	public static boolean isSubclass(ICPPClassType subclass, ICPPClassType superclass) {
-		ICPPBase[] bases= subclass.getBases();
+		ICPPBase[] bases = subclass.getBases();
 		for (ICPPBase base : bases) {
-			IBinding b= base.getBaseClass();
+			IBinding b = base.getBaseClass();
 			if (b instanceof ICPPClassType) {
 				ICPPClassType baseClass = (ICPPClassType) b;
 				if (baseClass.isSameType(superclass)) {
@@ -344,8 +347,8 @@ public class ClassTypeHelper {
 	}
 
 	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) {
-		ICPPMethod[] methods= ct.getDeclaredMethods();
-		ICPPClassType[] bases= getAllBases(ct);
+		ICPPMethod[] methods = ct.getDeclaredMethods();
+		ICPPClassType[] bases = getAllBases(ct);
 		for (ICPPClassType base : bases) {
 			methods = ArrayUtil.addAll(ICPPMethod.class, methods, base.getDeclaredMethods());
 		}
@@ -355,7 +358,7 @@ public class ClassTypeHelper {
 	public static ICPPMethod[] getMethods(ICPPClassType ct) {
 		ObjectSet<ICPPMethod> set = getOwnMethods(ct);
 
-		ICPPClassType[] bases= getAllBases(ct);
+		ICPPClassType[] bases = getAllBases(ct);
 		for (ICPPClassType base : bases) {
 			set.addAll(base.getDeclaredMethods());
 			set.addAll(getImplicitMethods(base));
@@ -368,7 +371,7 @@ public class ClassTypeHelper {
 	 * include methods declared in base classes.
 	 */
 	public static ObjectSet<ICPPMethod> getOwnMethods(ICPPClassType classType) {
-		ObjectSet<ICPPMethod> set= new ObjectSet<>(4);
+		ObjectSet<ICPPMethod> set = new ObjectSet<>(4);
 		set.addAll(classType.getDeclaredMethods());
 		set.addAll(getImplicitMethods(classType));
 		return set;
@@ -389,7 +392,7 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				ICPPClassType backup= getBackupDefinition(host);
+				ICPPClassType backup = getBackupDefinition(host);
 				if (backup != null)
 					return backup.getDeclaredMethods();
 
@@ -470,7 +473,7 @@ public class ClassTypeHelper {
 		}
 		ICPPConstructor[] inheritedConstructors = getInheritedConstructors(
 				(ICPPClassScope) classType.getCompositeScope(), classType.getBases(), paramTypes);
-    	return ArrayUtil.addAll(declaredAndImplicitConstructors, inheritedConstructors);
+		return ArrayUtil.addAll(declaredAndImplicitConstructors, inheritedConstructors);
 	}
 
 	/**
@@ -489,14 +492,14 @@ public class ClassTypeHelper {
 			if (!base.isInheritedConstructorsSource())
 				continue;
 			IBinding baseType = base.getBaseClass();
-        	if (!(baseType instanceof ICPPClassType))
-        		continue;
-    		ICPPClassType baseClass = (ICPPClassType) baseType;
+			if (!(baseType instanceof ICPPClassType))
+				continue;
+			ICPPClassType baseClass = (ICPPClassType) baseType;
 			ICPPConstructor[] ctors = baseClass.getConstructors();
-    		for (ICPPConstructor ctor : ctors) {
-    			if (canBeInherited(ctor, baseClass, existingConstructorParamTypes))
-        			inheritedConstructors = appendAt(inheritedConstructors, n++, ctor);
-    		}
+			for (ICPPConstructor ctor : ctors) {
+				if (canBeInherited(ctor, baseClass, existingConstructorParamTypes))
+					inheritedConstructors = appendAt(inheritedConstructors, n++, ctor);
+			}
 		}
 		return trim(inheritedConstructors, n);
 	}
@@ -512,7 +515,7 @@ public class ClassTypeHelper {
 		// copy/move constructor or assignment operator of the derived class, as described below.
 		for (int k = Math.max(ctor.getRequiredArgumentCount(), 1); k <= params.length; k++) {
 			if (k == 1 && isReferenceToClass(params[0].getType(), baseClass)) {
-				continue;  // Skip the copy constructor.
+				continue; // Skip the copy constructor.
 			}
 			if (findMatchingSignature(params, k, existingConstructorParamTypes) < 0) {
 				return true;
@@ -522,9 +525,9 @@ public class ClassTypeHelper {
 	}
 
 	private static boolean isReferenceToClass(IType type, IType classType) {
-		type= SemanticUtil.getNestedType(type, TDEF);
+		type = SemanticUtil.getNestedType(type, TDEF);
 		if (type instanceof ICPPReferenceType && !((ICPPReferenceType) type).isRValueReference()) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 			return classType.isSameType(type);
 		}
 		return false;
@@ -552,7 +555,7 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				ICPPClassType backup= getBackupDefinition(host);
+				ICPPClassType backup = getBackupDefinition(host);
 				if (backup != null)
 					return backup.getNestedClasses();
 
@@ -572,8 +575,8 @@ public class ClassTypeHelper {
 				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
-				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier &&
-						((IASTSimpleDeclaration) decl).getDeclarators().length == 0) {
+				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
+						&& ((IASTSimpleDeclaration) decl).getDeclarators().length == 0) {
 					binding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
 				}
 				if (binding instanceof ICPPClassType)
@@ -582,12 +585,12 @@ public class ClassTypeHelper {
 		}
 		return ArrayUtil.trim(result, resultSize);
 	}
-	
+
 	public static ICPPUsingDeclaration[] getUsingDeclarations(ICPPInternalClassTypeMixinHost host) {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				ICPPClassType backup= getBackupDefinition(host);
+				ICPPClassType backup = getBackupDefinition(host);
 				if (backup != null)
 					return backup.getUsingDeclarations();
 
@@ -627,9 +630,10 @@ public class ClassTypeHelper {
 				if (field == null) {
 					field = (IField) binding;
 				} else {
-					IASTNode[] decls= ASTInternal.getDeclarationsOfBinding(ct);
-					IASTNode node= (decls != null && decls.length > 0) ? decls[0] : null;
-					return new CPPField.CPPFieldProblem(ct, node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray());
+					IASTNode[] decls = ASTInternal.getDeclarationsOfBinding(ct);
+					IASTNode node = (decls != null && decls.length > 0) ? decls[0] : null;
+					return new CPPField.CPPFieldProblem(ct, node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+							name.toCharArray());
 				}
 			}
 		}
@@ -646,13 +650,14 @@ public class ClassTypeHelper {
 		if (m.isVirtual())
 			return true;
 
-		final char[] mname= m.getNameCharArray();
-		final ICPPClassType mcl= m.getClassOwner();
+		final char[] mname = m.getNameCharArray();
+		final ICPPClassType mcl = m.getClassOwner();
 		if (mcl != null) {
-			final ICPPFunctionType mft= m.getType();
-			ICPPMethod[] allMethods= ClassTypeHelper.getMethods(mcl);
+			final ICPPFunctionType mft = m.getType();
+			ICPPMethod[] allMethods = ClassTypeHelper.getMethods(mcl);
 			for (ICPPMethod method : allMethods) {
-				if (CharArrayUtils.equals(mname, method.getNameCharArray()) && functionTypesAllowOverride(mft, method.getType())) {
+				if (CharArrayUtils.equals(mname, method.getNameCharArray())
+						&& functionTypesAllowOverride(mft, method.getType())) {
 					if (method.isVirtual()) {
 						return true;
 					}
@@ -666,26 +671,26 @@ public class ClassTypeHelper {
 	 * Checks if the function types are consistent enough to be considered overrides.
 	 */
 	private static boolean functionTypesAllowOverride(ICPPFunctionType a, ICPPFunctionType b) {
-        if (a.isConst() != b.isConst() || a.isVolatile() != b.isVolatile() || a.takesVarArgs() != b.takesVarArgs()) {
-            return false;
-        }
+		if (a.isConst() != b.isConst() || a.isVolatile() != b.isVolatile() || a.takesVarArgs() != b.takesVarArgs()) {
+			return false;
+		}
 
-        IType[] paramsA = a.getParameterTypes();
-        IType[] paramsB = b.getParameterTypes();
+		IType[] paramsA = a.getParameterTypes();
+		IType[] paramsB = b.getParameterTypes();
 
-        if (paramsA.length == 1 && paramsB.length == 0) {
+		if (paramsA.length == 1 && paramsB.length == 0) {
 			if (!SemanticUtil.isVoidType(paramsA[0]))
 				return false;
 		} else if (paramsB.length == 1 && paramsA.length == 0) {
 			if (!SemanticUtil.isVoidType(paramsB[0]))
 				return false;
 		} else if (paramsA.length != paramsB.length) {
-		    return false;
+			return false;
 		} else {
 			for (int i = 0; i < paramsA.length; i++) {
-		        if (paramsA[i] == null || ! paramsA[i].isSameType(paramsB[i]))
-		            return false;
-		    }
+				if (paramsA[i] == null || !paramsA[i].isSameType(paramsB[i]))
+					return false;
+			}
 		}
 		return true;
 	}
@@ -701,12 +706,12 @@ public class ClassTypeHelper {
 		if (!functionTypesAllowOverride(source.getType(), target.getType()))
 			return false;
 
-		final ICPPClassType sourceClass= source.getClassOwner();
-		final ICPPClassType targetClass= target.getClassOwner();
+		final ICPPClassType sourceClass = source.getClassOwner();
+		final ICPPClassType targetClass = target.getClassOwner();
 		if (sourceClass == null || targetClass == null)
 			return false;
 
-		ICPPClassType[] bases= getAllBases(sourceClass);
+		ICPPClassType[] bases = getAllBases(sourceClass);
 		for (ICPPClassType base : bases) {
 			if (base.isSameType(targetClass))
 				return true;
@@ -722,22 +727,22 @@ public class ClassTypeHelper {
 		if (method instanceof ICPPConstructor)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
-		final char[] mname= method.getNameCharArray();
-		final ICPPClassType mcl= method.getClassOwner();
+		final char[] mname = method.getNameCharArray();
+		final ICPPClassType mcl = method.getClassOwner();
 		if (mcl == null)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
-		final ArrayList<ICPPMethod> result= new ArrayList<>();
-		final HashMap<ICPPClassType, Boolean> virtualInClass= new HashMap<>();
-		final ICPPFunctionType methodType= method.getType();
+		final ArrayList<ICPPMethod> result = new ArrayList<>();
+		final HashMap<ICPPClassType, Boolean> virtualInClass = new HashMap<>();
+		final ICPPFunctionType methodType = method.getType();
 
 		virtualInClass.put(mcl, method.isVirtual());
-		ICPPBase[] bases= mcl.getBases();
+		ICPPBase[] bases = mcl.getBases();
 		for (ICPPBase base : bases) {
-			IBinding b= base.getBaseClass();
+			IBinding b = base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				findOverridden((ICPPClassType) b, mname, methodType, virtualInClass,
-						result, CPPSemantics.MAX_INHERITANCE_DEPTH);
+				findOverridden((ICPPClassType) b, mname, methodType, virtualInClass, result,
+						CPPSemantics.MAX_INHERITANCE_DEPTH);
 			}
 		}
 
@@ -753,39 +758,37 @@ public class ClassTypeHelper {
 	 *
 	 * @return whether {@code classType} contains an overridden method.
 	 */
-	private static boolean findOverridden(ICPPClassType classType, char[] methodName,
-			ICPPFunctionType methodType, Map<ICPPClassType, Boolean> virtualInClass,
-			List<ICPPMethod> result, int maxdepth) {
+	private static boolean findOverridden(ICPPClassType classType, char[] methodName, ICPPFunctionType methodType,
+			Map<ICPPClassType, Boolean> virtualInClass, List<ICPPMethod> result, int maxdepth) {
 		// Prevent recursion due to a hierarchy of unbounded depth, e.g. A<I> deriving from A<I - 1>.
 		if (maxdepth <= 0)
 			return false;
 
-		Boolean visitedBefore= virtualInClass.get(classType);
+		Boolean visitedBefore = virtualInClass.get(classType);
 		if (visitedBefore != null)
 			return visitedBefore;
 
-		ICPPMethod[] methods= classType.getDeclaredMethods();
-		ICPPMethod candidate= null;
-		boolean hasOverridden= false;
+		ICPPMethod[] methods = classType.getDeclaredMethods();
+		ICPPMethod candidate = null;
+		boolean hasOverridden = false;
 		for (ICPPMethod method : methods) {
 			if (methodName[0] == '~' && method.isDestructor()
-				|| (CharArrayUtils.equals(methodName, method.getNameCharArray())
-					&& functionTypesAllowOverride(methodType, method.getType()))) {
-				candidate= method;
-				hasOverridden= method.isVirtual();
+					|| (CharArrayUtils.equals(methodName, method.getNameCharArray())
+							&& functionTypesAllowOverride(methodType, method.getType()))) {
+				candidate = method;
+				hasOverridden = method.isVirtual();
 				break;
 			}
 		}
 
 		// Prevent recursion due to a class inheriting (directly or indirectly) from itself.
 		virtualInClass.put(classType, hasOverridden);
-		ICPPBase[] bases= classType.getBases();
+		ICPPBase[] bases = classType.getBases();
 		for (ICPPBase base : bases) {
-			IBinding b= base.getBaseClass();
+			IBinding b = base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				if (findOverridden((ICPPClassType) b, methodName, methodType, virtualInClass,
-						result, maxdepth - 1)) {
-					hasOverridden= true;
+				if (findOverridden((ICPPClassType) b, methodName, methodType, virtualInClass, result, maxdepth - 1)) {
+					hasOverridden = true;
 				}
 			}
 		}
@@ -801,16 +804,15 @@ public class ClassTypeHelper {
 	/**
 	 * Returns all methods found in the index, that override the given {@code method}.
 	 */
-	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) 
-			throws CoreException {
+	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) throws CoreException {
 		if (!isVirtual(method))
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
-		final ICPPClassType mcl= method.getClassOwner();
+		final ICPPClassType mcl = method.getClassOwner();
 		if (mcl == null)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
-		ICPPClassType[] subclasses= getSubClasses(index, mcl);
+		ICPPClassType[] subclasses = getSubClasses(index, mcl);
 		return findOverriders(subclasses, method);
 	}
 
@@ -818,14 +820,14 @@ public class ClassTypeHelper {
 	 * Returns all methods belonging to the given set of classes that override the given {@code method}.
 	 */
 	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method) {
-		final char[] mname= method.getNameCharArray();
-		final ICPPFunctionType mft= method.getType();
-		final ArrayList<ICPPMethod> result= new ArrayList<>();
+		final char[] mname = method.getNameCharArray();
+		final ICPPFunctionType mft = method.getType();
+		final ArrayList<ICPPMethod> result = new ArrayList<>();
 		for (ICPPClassType subClass : subclasses) {
-			ICPPMethod[] methods= subClass.getDeclaredMethods();
+			ICPPMethod[] methods = subClass.getDeclaredMethods();
 			for (ICPPMethod candidate : methods) {
-				if (CharArrayUtils.equals(mname, candidate.getNameCharArray()) &&
-						functionTypesAllowOverride(mft, candidate.getType())) {
+				if (CharArrayUtils.equals(mname, candidate.getNameCharArray())
+						&& functionTypesAllowOverride(mft, candidate.getType())) {
 					result.add(candidate);
 				}
 			}
@@ -834,15 +836,15 @@ public class ClassTypeHelper {
 	}
 
 	private static ICPPClassType[] getSubClasses(IIndex index, ICPPClassType mcl) throws CoreException {
-		Deque<ICPPBinding> result= new ArrayDeque<>();
-		HashSet<String> handled= new HashSet<>();
+		Deque<ICPPBinding> result = new ArrayDeque<>();
+		HashSet<String> handled = new HashSet<>();
 		getSubClasses(index, mcl, result, handled);
 		result.removeFirst();
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 
-	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef,
-			Collection<ICPPBinding> result, HashSet<String> handled) throws CoreException {
+	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef, Collection<ICPPBinding> result,
+			HashSet<String> handled) throws CoreException {
 		if (!(classOrTypedef instanceof IType))
 			return;
 
@@ -856,12 +858,12 @@ public class ClassTypeHelper {
 		}
 
 		// TODO(nathanridge): Also find subclasses referenced via decltype-specifiers rather than names.
-		IIndexName[] names= index.findNames(classOrTypedef, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
+		IIndexName[] names = index.findNames(classOrTypedef, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
 		for (IIndexName indexName : names) {
 			if (indexName.isBaseSpecifier()) {
-				IIndexName subClassDef= indexName.getEnclosingDefinition();
+				IIndexName subClassDef = indexName.getEnclosingDefinition();
 				if (subClassDef != null) {
-					IBinding subClass= index.findBinding(subClassDef);
+					IBinding subClass = index.findBinding(subClassDef);
 					if (subClass instanceof ICPPBinding) {
 						getSubClasses(index, (ICPPBinding) subClass, result, handled);
 					}
@@ -871,22 +873,16 @@ public class ClassTypeHelper {
 	}
 
 	public enum MethodKind {
-		DEFAULT_CTOR,
-		COPY_CTOR,
-		MOVE_CTOR,
-		COPY_ASSIGNMENT_OP,
-		MOVE_ASSIGNMENT_OP,
-		DTOR,
-		OTHER
+		DEFAULT_CTOR, COPY_CTOR, MOVE_CTOR, COPY_ASSIGNMENT_OP, MOVE_ASSIGNMENT_OP, DTOR, OTHER
 	}
 
 	public static MethodKind getMethodKind(ICPPClassType classType, ICPPMethod method) {
 		if (method instanceof ICPPConstructor) {
-			final List<IType> params= getTypesOfRequiredParameters(method);
+			final List<IType> params = getTypesOfRequiredParameters(method);
 			if (params.isEmpty())
 				return MethodKind.DEFAULT_CTOR;
 			if (params.size() == 1) {
-				IType t= SemanticUtil.getNestedType(params.get(0), SemanticUtil.TDEF);
+				IType t = SemanticUtil.getNestedType(params.get(0), SemanticUtil.TDEF);
 				if (SemanticUtil.isVoidType(t))
 					return MethodKind.DEFAULT_CTOR;
 
@@ -901,12 +897,13 @@ public class ClassTypeHelper {
 			return MethodKind.DTOR;
 
 		if (CharArrayUtils.equals(method.getNameCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
-			final List<IType> params= getTypesOfRequiredParameters(method);
+			final List<IType> params = getTypesOfRequiredParameters(method);
 			if (params.size() == 1) {
-				IType t= params.get(0);
+				IType t = params.get(0);
 				ICPPReferenceType refToClass = getRefToClass(classType, t);
 				if (refToClass != null)
-					return refToClass.isRValueReference() ? MethodKind.MOVE_ASSIGNMENT_OP : MethodKind.COPY_ASSIGNMENT_OP;
+					return refToClass.isRValueReference() ? MethodKind.MOVE_ASSIGNMENT_OP
+							: MethodKind.COPY_ASSIGNMENT_OP;
 			}
 			return MethodKind.OTHER;
 		}
@@ -933,22 +930,22 @@ public class ClassTypeHelper {
 	 */
 	public static IType[] getInheritedExceptionSpecification(ICPPMethod implicitMethod) {
 		// See 15.4.13
-		ICPPClassType owner= implicitMethod.getClassOwner();
+		ICPPClassType owner = implicitMethod.getClassOwner();
 		if (owner == null || owner.getBases().length == 0)
 			return null;
 
 		// We use a list as types aren't comparable, and can have duplicates (15.4.6)
-		MethodKind kind= getMethodKind(owner, implicitMethod);
+		MethodKind kind = getMethodKind(owner, implicitMethod);
 		if (kind == MethodKind.OTHER)
 			return null;
 
 		List<IType> inheritedTypeids = new ArrayList<>();
-		ICPPClassType[] bases= getAllBases(owner);
+		ICPPClassType[] bases = getAllBases(owner);
 		for (ICPPClassType base : bases) {
 			if (!(base instanceof ICPPDeferredClassInstance)) {
-				ICPPMethod  baseMethod= getMethodInClass(base, kind);
+				ICPPMethod baseMethod = getMethodInClass(base, kind);
 				if (baseMethod != null) {
-					IType[] baseExceptionSpec= baseMethod.getExceptionSpecification();
+					IType[] baseExceptionSpec = baseMethod.getExceptionSpecification();
 					if (baseExceptionSpec == null)
 						return null;
 					for (IType baseTypeId : baseMethod.getExceptionSpecification()) {
@@ -966,17 +963,17 @@ public class ClassTypeHelper {
 	 */
 	private static ICPPReferenceType getRefToClass(ICPPClassType classType, IType type) {
 		while (type instanceof ITypedef) {
-			type= ((ITypedef) type).getType();
+			type = ((ITypedef) type).getType();
 		}
 
 		if (type instanceof ICPPReferenceType) {
 			ICPPReferenceType refType = (ICPPReferenceType) type;
-			type= refType.getType();
+			type = refType.getType();
 			while (type instanceof ITypedef) {
-				type= ((ITypedef) type).getType();
+				type = ((ITypedef) type).getType();
 			}
 			if (type instanceof IQualifierType) {
-				type= ((IQualifierType) type).getType();
+				type = ((IQualifierType) type).getType();
 				if (classType.isSameType(type))
 					return refType;
 			}
@@ -1071,8 +1068,8 @@ public class ClassTypeHelper {
 			IASTNode node = ((ICPPInternalBinding) member).getDefinition();
 			if (node != null) {
 				IASTName ownerName = CPPVisitor.findDeclarationOwnerDefinition(node, false);
-				if (ownerName != null && !ownerName.equals(classDeclSpec.getName()) &&
-						ownerName.getPropertyInParent() == ICPPASTCompositeTypeSpecifier.TYPE_NAME) {
+				if (ownerName != null && !ownerName.equals(classDeclSpec.getName())
+						&& ownerName.getPropertyInParent() == ICPPASTCompositeTypeSpecifier.TYPE_NAME) {
 					classDeclSpec = (ICPPASTCompositeTypeSpecifier) ownerName.getParent();
 					visibility = getVisibility(classDeclSpec, member);
 					if (visibility >= 0)
@@ -1085,8 +1082,8 @@ public class ClassTypeHelper {
 	}
 
 	private static int getVisibility(ICPPASTCompositeTypeSpecifier classDeclSpec, IBinding member) {
-		int visibility = classDeclSpec.getKey() == ICPPASTCompositeTypeSpecifier.k_class ?
-				ICPPClassType.v_private : ICPPClassType.v_public;
+		int visibility = classDeclSpec.getKey() == ICPPASTCompositeTypeSpecifier.k_class ? ICPPClassType.v_private
+				: ICPPClassType.v_public;
 		IASTDeclaration[] hostMembers = classDeclSpec.getMembers();
 		for (IASTDeclaration hostMember : hostMembers) {
 			if (hostMember instanceof ICPPASTVisibilityLabel) {
@@ -1099,8 +1096,8 @@ public class ClassTypeHelper {
 			if (hostMember instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration memberDeclaration = (IASTSimpleDeclaration) hostMember;
 				for (IASTDeclarator memberDeclarator : memberDeclaration.getDeclarators()) {
-					IBinding memberBinding =
-							ASTQueries.findInnermostDeclarator(memberDeclarator).getName().resolveBinding();
+					IBinding memberBinding = ASTQueries.findInnermostDeclarator(memberDeclarator).getName()
+							.resolveBinding();
 					if (member.equals(memberBinding)) {
 						return visibility;
 					}
@@ -1108,15 +1105,13 @@ public class ClassTypeHelper {
 
 				IASTDeclSpecifier declSpec = memberDeclaration.getDeclSpecifier();
 				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-					IBinding memberBinding =
-							((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+					IBinding memberBinding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
 					if (member.equals(memberBinding)) {
 						return visibility;
 					}
 				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
 						&& memberDeclaration.getDeclarators().length == 0) {
-					IBinding memberBinding =
-							((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
+					IBinding memberBinding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
 					if (member.equals(memberBinding)) {
 						return visibility;
 					}

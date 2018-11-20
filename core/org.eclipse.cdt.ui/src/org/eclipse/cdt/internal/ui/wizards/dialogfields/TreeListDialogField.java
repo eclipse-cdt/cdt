@@ -239,7 +239,7 @@ public class TreeListDialogField<T> extends DialogField {
 		gd.horizontalSpan = 1;
 		buttons.setLayoutData(gd);
 
-		return new Control[] { label, list, buttons};
+		return new Control[] { label, list, buttons };
 	}
 
 	/*

@@ -36,8 +36,8 @@ public class CFunctionBreakpoint extends AbstractLineBreakpoint implements ICFun
 	/**
 	 * Constructor for CFunctionBreakpoint.
 	 */
-	public CFunctionBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public CFunctionBreakpoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	/**
@@ -52,6 +52,7 @@ public class CFunctionBreakpoint extends AbstractLineBreakpoint implements ICFun
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		return MessageFormat.format( BreakpointMessages.getString( "CFunctionBreakpoint.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		return MessageFormat.format(BreakpointMessages.getString("CFunctionBreakpoint.0"), //$NON-NLS-1$
+				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 }

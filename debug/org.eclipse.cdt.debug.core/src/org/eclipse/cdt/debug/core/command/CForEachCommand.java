@@ -39,14 +39,15 @@ public abstract class CForEachCommand extends AbstractDebugCommand {
 			monitor.worked(1);
 		}
 	}
-	
+
 	protected abstract void execute(Object target) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#isExecutable(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.commands.IEnabledStateRequest)
 	 */
 	@Override
-	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+			throws CoreException {
 		for (int i = 0; i < targets.length; i++) {
 			if (!isExecutable(targets[i])) {
 				return false;
@@ -55,7 +56,7 @@ public abstract class CForEachCommand extends AbstractDebugCommand {
 		}
 		return true;
 	}
-	
+
 	protected abstract boolean isExecutable(Object target);
 
 }

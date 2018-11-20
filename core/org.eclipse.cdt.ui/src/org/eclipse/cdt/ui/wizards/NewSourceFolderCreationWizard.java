@@ -36,19 +36,19 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		fPage= new NewSourceFolderWizardPage();
+		fPage = new NewSourceFolderWizardPage();
 		addPage(fPage);
 		fPage.init(getSelection());
-	}			
+	}
 
 	@Override
 	protected void finishPage(IProgressMonitor monitor) throws CoreException {
 		fPage.createSourceRoot(monitor); // Use the full progress monitor.
 	}
-	
+
 	@Override
 	public boolean performFinish() {
-		boolean res= super.performFinish();
+		boolean res = super.performFinish();
 		if (res) {
 			selectAndReveal(fPage.getCorrespondingResource());
 		}

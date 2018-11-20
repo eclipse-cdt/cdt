@@ -22,8 +22,8 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  * @since 7.0
  */
 public class ResumeWithoutSignalCommandHandler extends DebugCommandHandler {
-    @Override
-    protected Class<?> getCommandType() {
-        return IResumeWithoutSignalHandler.class;
-    }
+	@Override
+	protected Class<?> getCommandType() {
+		return IResumeWithoutSignalHandler.class;
+	}
 }

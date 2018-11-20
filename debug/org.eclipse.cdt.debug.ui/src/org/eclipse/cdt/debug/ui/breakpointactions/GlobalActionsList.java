@@ -75,7 +75,8 @@ public class GlobalActionsList extends Composite {
 		summaryTableColumn.setWidth(120);
 		summaryTableColumn.setText(Messages.getString("GlobalActionsList.2")); //$NON-NLS-1$
 
-		for (IBreakpointAction element : CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActions()) {
+		for (IBreakpointAction element : CDebugCorePlugin.getDefault().getBreakpointActionManager()
+				.getBreakpointActions()) {
 			final TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(0, element.getName());
 			tableItem.setText(1, element.getTypeName());
@@ -102,7 +103,8 @@ public class GlobalActionsList extends Composite {
 			}
 		});
 		newButton.setText(Messages.getString("GlobalActionsList.4")); //$NON-NLS-1$
-		newButton.setEnabled(CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActionExtensions().length > 0);
+		newButton.setEnabled(
+				CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActionExtensions().length > 0);
 
 		editButton = new Button(this, SWT.NONE);
 		editButton.setText(Messages.getString("GlobalActionsList.5")); //$NON-NLS-1$

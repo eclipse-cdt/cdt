@@ -20,7 +20,7 @@ public class MesonPropertyArgs extends MesonPropertyText {
 	public MesonPropertyArgs(Composite composite, String name, String initialValue, String tooltip) {
 		super(composite, name, initialValue, tooltip);
 	}
-	
+
 	@Override
 	public String getConfiguredString() {
 		// TODO Auto-generated method stub

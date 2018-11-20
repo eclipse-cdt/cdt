@@ -30,12 +30,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
-
 public class CDTLogWriter {
 	protected File logFile = null;
 	protected Writer log = null;
 	protected boolean newSession = true;
-	
+
 	protected static final String SESSION = "*** SESSION";//$NON-NLS-1$
 	protected static final String ENTRY = "ENTRY";//$NON-NLS-1$
 	protected static final String SUBENTRY = "SUBENTRY";//$NON-NLS-1$
@@ -49,18 +48,19 @@ public class CDTLogWriter {
 		String s = System.getProperty("line.separator");//$NON-NLS-1$
 		LINE_SEPARATOR = s == null ? "\n" : s;//$NON-NLS-1$
 	}
+
 	/**
 	 * 
 	 */
 	public CDTLogWriter(File log) {
 		this.logFile = log;
-		if(log.length() > MAXLOG_SIZE){
-		  log.delete();
-		  this.logFile = CCorePlugin.getDefault().getStateLocation().append(".log").toFile(); //$NON-NLS-1$
+		if (log.length() > MAXLOG_SIZE) {
+			log.delete();
+			this.logFile = CCorePlugin.getDefault().getStateLocation().append(".log").toFile(); //$NON-NLS-1$
 		}
 		openLogFile();
 	}
-	
+
 	protected void closeLogFile() throws IOException {
 		try {
 			if (log != null) {
@@ -71,10 +71,11 @@ public class CDTLogWriter {
 			log = null;
 		}
 	}
-	
+
 	protected void openLogFile() {
 		try {
-			log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));//$NON-NLS-1$
+			log = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));//$NON-NLS-1$
 			if (newSession) {
 				writeHeader();
 				newSession = false;
@@ -84,18 +85,19 @@ public class CDTLogWriter {
 			//log = logForStream(System.err);
 		}
 	}
+
 	protected void writeHeader() throws IOException {
 		write(SESSION);
 		writeSpace();
 		String date = getDate();
 		write(date);
 		writeSpace();
-		for (int i=SESSION.length()+date.length(); i<78; i++) {
+		for (int i = SESSION.length() + date.length(); i < 78; i++) {
 			write("-");//$NON-NLS-1$
 		}
 		writeln();
 	}
-	
+
 	protected String getDate() {
 		try {
 			DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
@@ -107,6 +109,7 @@ public class CDTLogWriter {
 		}
 		return Long.toString(System.currentTimeMillis());
 	}
+
 	protected Writer logForStream(OutputStream output) {
 		try {
 			return new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));//$NON-NLS-1$
@@ -114,6 +117,7 @@ public class CDTLogWriter {
 			return new BufferedWriter(new OutputStreamWriter(output));
 		}
 	}
+
 	/**
 	 * Writes the given string to the log, followed by the line terminator string.
 	 */
@@ -121,6 +125,7 @@ public class CDTLogWriter {
 		write(s);
 		writeln();
 	}
+
 	/**
 	 * Shuts down the log.
 	 */
@@ -155,17 +160,18 @@ public class CDTLogWriter {
 			writeln("0");//$NON-NLS-1$
 		throwable.printStackTrace(new PrintWriter(log));
 		if (isCoreException) {
-		 CoreException e = (CoreException) throwable;
-		 write(e.getStatus(), 0);
+			CoreException e = (CoreException) throwable;
+			write(e.getStatus(), 0);
 		}
 	}
 
-	public synchronized void log(IStatus status){
+	public synchronized void log(IStatus status) {
 		try {
 			this.write(status, 0);
 		} catch (IOException e) {
 		}
 	}
+
 	protected void write(IStatus status, int depth) throws IOException {
 		if (depth == 0) {
 			write(ENTRY);
@@ -194,7 +200,7 @@ public class CDTLogWriter {
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				write(children[i], depth+1);
+				write(children[i], depth + 1);
 			}
 		}
 	}
@@ -202,18 +208,21 @@ public class CDTLogWriter {
 	protected void writeln() throws IOException {
 		write(LINE_SEPARATOR);
 	}
+
 	protected void write(String message) throws IOException {
 		if (message != null)
 			log.write(message);
 	}
+
 	protected void writeSpace() throws IOException {
 		write(" ");//$NON-NLS-1$
 	}
-	
-	public synchronized void flushLog(){
+
+	public synchronized void flushLog() {
 		try {
 			log.flush();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 	}
 
 }

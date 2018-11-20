@@ -21,26 +21,27 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
 public final class BaseClassesLabelProvider implements ITableLabelProvider {
-	private static final String YES_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_yes_label; 
-	private static final String NO_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_no_label; 
-	private static final String ACCESS_PUBLIC = NewClassWizardMessages.BaseClassesLabelProvider_access_public_label; 
-	private static final String ACCESS_PROTECTED = NewClassWizardMessages.BaseClassesLabelProvider_access_protected_label; 
-	private static final String ACCESS_PRIVATE = NewClassWizardMessages.BaseClassesLabelProvider_access_private_label; 
+	private static final String YES_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_yes_label;
+	private static final String NO_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_no_label;
+	private static final String ACCESS_PUBLIC = NewClassWizardMessages.BaseClassesLabelProvider_access_public_label;
+	private static final String ACCESS_PROTECTED = NewClassWizardMessages.BaseClassesLabelProvider_access_protected_label;
+	private static final String ACCESS_PRIVATE = NewClassWizardMessages.BaseClassesLabelProvider_access_private_label;
 
-    public static final String getYesNoText(boolean value) {
-       return value ? YES_VALUE : NO_VALUE;
-    }
+	public static final String getYesNoText(boolean value) {
+		return value ? YES_VALUE : NO_VALUE;
+	}
 
-    public static final String getAccessText(ASTAccessVisibility access) {
-        if (access == ASTAccessVisibility.PRIVATE)
-            return ACCESS_PRIVATE;
-        if (access == ASTAccessVisibility.PROTECTED)
-            return ACCESS_PROTECTED;
-        return ACCESS_PUBLIC;
-    }
+	public static final String getAccessText(ASTAccessVisibility access) {
+		if (access == ASTAccessVisibility.PRIVATE)
+			return ACCESS_PRIVATE;
+		if (access == ASTAccessVisibility.PROTECTED)
+			return ACCESS_PROTECTED;
+		return ACCESS_PUBLIC;
+	}
 
-    private static TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);
-    
+	private static TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(
+			TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);
+
 	/*
 	 * @see ITableLabelProvider#getColumnImage(Object, int)
 	 */
@@ -48,8 +49,8 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex != 0)
 			return null;
-		
-	    IBaseClassInfo info = (IBaseClassInfo) element;
+
+		IBaseClassInfo info = (IBaseClassInfo) element;
 		return fTypeInfoLabelProvider.getImage(info.getType());
 	}
 
@@ -58,13 +59,13 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-	    IBaseClassInfo info = (IBaseClassInfo) element;
-		
+		IBaseClassInfo info = (IBaseClassInfo) element;
+
 		switch (columnIndex) {
 		case 0:
-		    return fTypeInfoLabelProvider.getText(info.getType());
+			return fTypeInfoLabelProvider.getText(info.getType());
 		case 1:
-		    return getAccessText(info.getAccess());
+			return getAccessText(info.getAccess());
 		case 2:
 			return getYesNoText(info.isVirtual());
 		default:

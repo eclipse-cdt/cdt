@@ -53,7 +53,6 @@ import org.eclipse.jface.text.source.VerticalRulerEvent;
 
 import org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.AnnotationHoverInput;
 
-
 /**
  * This class was copied from org.eclipse.jdt.internal.ui.text.java.hover.AnnotationExpansionControl
  * 
@@ -115,9 +114,8 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		}
 	}
 
-
-	private final IInformationControlCreator fgCreator= new InformationControlCreator();
-	protected final IVerticalRulerListener fgListener= new VerticalRulerListener();
+	private final IInformationControlCreator fgCreator = new InformationControlCreator();
+	protected final IVerticalRulerListener fgListener = new VerticalRulerListener();
 	protected CompositeRuler fCompositeRuler;
 	protected IDoubleClickListener fDblClickListener;
 	protected IAnnotationAccess fAnnotationAccess;
@@ -129,10 +127,11 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	 * @param access
 	 * @param doubleClickListener
 	 */
-	public AnnotationExpandHover(CompositeRuler ruler, IAnnotationAccess access, IDoubleClickListener doubleClickListener) {
-		fCompositeRuler= ruler;
-		fAnnotationAccess= access;
-		fDblClickListener= doubleClickListener;
+	public AnnotationExpandHover(CompositeRuler ruler, IAnnotationAccess access,
+			IDoubleClickListener doubleClickListener) {
+		fCompositeRuler = ruler;
+		fAnnotationAccess = access;
+		fDblClickListener = doubleClickListener;
 	}
 
 	/*
@@ -145,19 +144,19 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	}
 
 	protected Object getHoverInfoForLine(ISourceViewer viewer, int line) {
-		IAnnotationModel model= viewer.getAnnotationModel();
-		IDocument document= viewer.getDocument();
+		IAnnotationModel model = viewer.getAnnotationModel();
+		IDocument document = viewer.getDocument();
 
 		if (model == null)
 			return null;
 
-		List<Annotation> exact= new ArrayList<>();
-		HashMap<Position, Object> messagesAtPosition= new HashMap<>();
+		List<Annotation> exact = new ArrayList<>();
+		HashMap<Position, Object> messagesAtPosition = new HashMap<>();
 
-		Iterator<Annotation> e= model.getAnnotationIterator();
+		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Annotation annotation= e.next();
-			Position position= model.getPosition(annotation);
+			Annotation annotation = e.next();
+			Position position = model.getPosition(annotation);
 			if (position == null)
 				continue;
 
@@ -177,13 +176,13 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		if (exact.size() > 0)
 			setLastRulerMouseLocation(viewer, line);
 
-		AnnotationHoverInput input= new AnnotationHoverInput();
-		input.fAnnotations= exact.toArray(new Annotation[0]);
-		input.fViewer= viewer;
-		input.fRulerInfo= fCompositeRuler;
-		input.fAnnotationListener= fgListener;
-		input.fDoubleClickListener= fDblClickListener;
-		input.model= model;
+		AnnotationHoverInput input = new AnnotationHoverInput();
+		input.fAnnotations = exact.toArray(new Annotation[0]);
+		input.fViewer = viewer;
+		input.fRulerInfo = fCompositeRuler;
+		input.fAnnotationListener = fgListener;
+		input.fDoubleClickListener = fDblClickListener;
+		input.model = model;
 
 		return input;
 	}
@@ -213,7 +212,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 
 	protected int getOrder(Annotation annotation) {
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			IAnnotationAccessExtension extension = (IAnnotationAccessExtension) fAnnotationAccess;
 			return extension.getLayer(annotation);
 		}
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
@@ -224,18 +223,18 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 			return false;
 
 		if (messagesAtPosition.containsKey(position)) {
-			Object value= messagesAtPosition.get(position);
+			Object value = messagesAtPosition.get(position);
 			if (message.equals(value))
 				return true;
 
 			if (value instanceof List) {
 				@SuppressWarnings("unchecked")
-				List<String> messages= ((List<String>)value);
-				if  (messages.contains(message))
+				List<String> messages = ((List<String>) value);
+				if (messages.contains(message))
 					return true;
 				messages.add(message);
 			} else {
-				ArrayList<Object> messages= new ArrayList<>();
+				ArrayList<Object> messages = new ArrayList<>();
 				messages.add(value);
 				messages.add(message);
 				messagesAtPosition.put(position, messages);
@@ -248,16 +247,16 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	protected void setLastRulerMouseLocation(ISourceViewer viewer, int line) {
 		// set last mouse activity in order to get the correct context menu
 		if (fCompositeRuler != null) {
-			StyledText st= viewer.getTextWidget();
+			StyledText st = viewer.getTextWidget();
 			if (st != null && !st.isDisposed()) {
 				if (viewer instanceof ITextViewerExtension5) {
-					int widgetLine= ((ITextViewerExtension5)viewer).modelLine2WidgetLine(line);
-					Point loc= st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
+					int widgetLine = ((ITextViewerExtension5) viewer).modelLine2WidgetLine(line);
+					Point loc = st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
 					fCompositeRuler.setLocationOfLastMouseButtonActivity(0, loc.y);
 				} else if (viewer instanceof TextViewer) {
 					// TODO remove once TextViewer implements the extension
-					int widgetLine= ((TextViewer)viewer).modelLine2WidgetLine(line);
-					Point loc= st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
+					int widgetLine = ((TextViewer) viewer).modelLine2WidgetLine(line);
+					Point loc = st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
 					fCompositeRuler.setLocationOfLastMouseButtonActivity(0, loc.y);
 				}
 			}
@@ -276,7 +275,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
-				int firstLine= document.getLineOfOffset(position.getOffset());
+				int firstLine = document.getLineOfOffset(position.getOffset());
 				if (line == firstLine)
 					return 1;
 				if (firstLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()))

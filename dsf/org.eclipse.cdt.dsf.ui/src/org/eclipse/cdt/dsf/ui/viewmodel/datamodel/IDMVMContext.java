@@ -22,11 +22,11 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
  * @since 1.0
  */
 public interface IDMVMContext extends IVMContext {
-    
-    public static Object REFRESH_EVENT = new Object();
-    
-    /**
-     * returns the data model context that this view model context wraps.
-     */
-    public IDMContext getDMContext();
+
+	public static Object REFRESH_EVENT = new Object();
+
+	/**
+	 * returns the data model context that this view model context wraps.
+	 */
+	public IDMContext getDMContext();
 }

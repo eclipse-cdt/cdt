@@ -41,7 +41,7 @@ public class Comment extends Directive implements IComment {
 			return cmt.toString().equals(toString());
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return toString().hashCode();

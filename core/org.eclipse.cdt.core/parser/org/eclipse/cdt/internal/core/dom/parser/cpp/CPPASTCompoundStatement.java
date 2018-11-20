@@ -28,12 +28,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCompoundStatem
 /**
  * @author jcamelon
  */
-public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICPPASTCompoundStatement, ICPPExecutionOwner {
-    private IASTStatement[] statements = new IASTStatement[2];
-    private ICPPScope scope;
+public class CPPASTCompoundStatement extends CPPASTAttributeOwner
+		implements ICPPASTCompoundStatement, ICPPExecutionOwner {
+	private IASTStatement[] statements = new IASTStatement[2];
+	private ICPPScope scope;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    @Override
+	@Override
 	public CPPASTCompoundStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -49,28 +50,28 @@ public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICP
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public IASTStatement[] getStatements() {
-    	statements = ArrayUtil.trim(statements);
-        return statements;
-    }
+		statements = ArrayUtil.trim(statements);
+		return statements;
+	}
 
-    @Override
+	@Override
 	public void addStatement(IASTStatement statement) {
-        assertNotFrozen();
-        statements = ArrayUtil.append(statements, statement);
-        if (statement != null) {
+		assertNotFrozen();
+		statements = ArrayUtil.append(statements, statement);
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(NESTED_STATEMENT);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-    	if (scope == null)
-    		scope = new CPPBlockScope(this);
-        return scope;
-    }
+		if (scope == null)
+			scope = new CPPBlockScope(this);
+		return scope;
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -81,52 +82,59 @@ public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICP
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        for (IASTStatement statement : statements) {
-        	if (statement == null)
-        		break;
-            if (!statement.accept(action))
-            	return false;
-        }
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		for (IASTStatement statement : statements) {
+			if (statement == null)
+				break;
+			if (!statement.accept(action))
+				return false;
+		}
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT: return false;
-        		case ASTVisitor.PROCESS_SKIP: return true;
-        		default: break;
-        	}
-        }
-        return true;
-    }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        for (int i = 0; i < statements.length; ++i) {
-            if (statements[i] == child) {
-                other.setParent(statements[i].getParent());
-                other.setPropertyInParent(statements[i].getPropertyInParent());
-                statements[i] = (IASTStatement) other;
-                return;
-            }
-        }
-        super.replace(child, other);
-    }
+		for (int i = 0; i < statements.length; ++i) {
+			if (statements[i] == child) {
+				other.setParent(statements[i].getParent());
+				other.setPropertyInParent(statements[i].getPropertyInParent());
+				statements[i] = (IASTStatement) other;
+				return;
+			}
+		}
+		super.replace(child, other);
+	}
 
-    @Override
+	@Override
 	public ICPPExecution getExecution() {
-    	return new ExecCompoundStatement(this.statements);
+		return new ExecCompoundStatement(this.statements);
 	}
 }

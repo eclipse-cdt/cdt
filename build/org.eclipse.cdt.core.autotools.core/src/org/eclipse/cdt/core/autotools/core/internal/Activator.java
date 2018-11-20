@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Intel Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.autotools.core.internal;
 
@@ -24,7 +24,7 @@ public class Activator implements BundleActivator {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.autotools.core"; //$NON-NLS-1$
-	
+
 	private static BundleContext context;
 
 	public static BundleContext getContext() {
@@ -50,7 +50,7 @@ public class Activator implements BundleActivator {
 	public static IStatus errorStatus(String message, Throwable cause) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, message, cause);
 	}
-	
+
 	public static <T> T getService(Class<T> service) {
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;

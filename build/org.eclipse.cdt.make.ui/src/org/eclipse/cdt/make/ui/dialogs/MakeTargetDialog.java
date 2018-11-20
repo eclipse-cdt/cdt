@@ -107,15 +107,15 @@ public class MakeTargetDialog extends Dialog {
 			fStatusLine.setErrorMessage(null);
 
 			String newTargetName = targetNameText.getText().trim();
-			if (newTargetName.length()==0) {
+			if (newTargetName.length() == 0) {
+				fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
+			} else if (commandText.isEnabled() && commandText.getText().trim().length() == 0) {
 				fStatusLine.setErrorMessage(
-					MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
-			} else if (commandText.isEnabled() && commandText.getText().trim().length()==0) {
-				fStatusLine.setErrorMessage(
-					MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
+						MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
 			} else {
 				try {
-					if (!newTargetName.equals(targetName) && fTargetManager.findTarget(fContainer, newTargetName) != null) {
+					if (!newTargetName.equals(targetName)
+							&& fTargetManager.findTarget(fContainer, newTargetName) != null) {
 						fStatusLine.setErrorMessage(
 								MakeUIPlugin.getResourceString("MakeTargetDialog.message.targetWithNameExists")); //$NON-NLS-1$
 					}
@@ -200,6 +200,7 @@ public class MakeTargetDialog extends Dialog {
 		}
 		return title;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -207,7 +208,7 @@ public class MakeTargetDialog extends Dialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite)super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 		initializeDialogUnits(composite);
 
 		createNameControl(composite);
@@ -227,7 +228,7 @@ public class MakeTargetDialog extends Dialog {
 
 	protected void createNameControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 2);
-		((GridLayout)composite.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) composite.getLayout()).makeColumnsEqualWidth = false;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		composite.setLayoutData(gd);
@@ -284,7 +285,8 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		group.setLayoutData(gd);
-		useBuilderCommandCheckBox = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_BUILDER_SETTINGS));
+		useBuilderCommandCheckBox = ControlFactory.createCheckBox(group,
+				MakeUIPlugin.getResourceString(MAKE_CMD_USE_BUILDER_SETTINGS));
 		useBuilderCommandCheckBox.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -372,7 +374,8 @@ public class MakeTargetDialog extends Dialog {
 			}
 		});
 		/* set sameAsNameCheck if targetName and targetString are equal */
-		sameAsNameCheckBox.setSelection(targetString.equals(targetName) || (targetString.length()==0 && targetName==null));
+		sameAsNameCheckBox
+				.setSelection(targetString.equals(targetName) || (targetString.length() == 0 && targetName == null));
 		sameAsNameSelected();
 	}
 
@@ -500,17 +503,17 @@ public class MakeTargetDialog extends Dialog {
 					String lastTargetName = null;
 					IContainer container = target.getContainer();
 					try {
-						lastTargetName = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-								TargetBuild.LAST_TARGET));
+						lastTargetName = (String) container.getSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET));
 					} catch (CoreException e) {
 					}
 					if (lastTargetName != null && lastTargetName.equals(target.getName())) {
-						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-								TargetBuild.LAST_TARGET), targetName);
+						container.setSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
+								targetName);
 						IPath path = target.getContainer().getProjectRelativePath();
-						container.getProject().setSessionProperty(
-								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-										TargetBuild.LAST_TARGET_CONTAINER), path.toString());
+						container.getProject().setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 					}
 
 					fTargetManager.renameTarget(target, targetName);
@@ -551,9 +554,9 @@ public class MakeTargetDialog extends Dialog {
 				fTargetManager.addTarget(fContainer, target);
 			}
 		} catch (CoreException e) {
-			MakeUIPlugin.errorDialog(
-					getShell(),
-					MakeUIPlugin.getResourceString("MakeTargetDialog.exception.makeTargetError"), MakeUIPlugin.getResourceString("MakeTargetDialog.exception.errorAddingTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			MakeUIPlugin.errorDialog(getShell(),
+					MakeUIPlugin.getResourceString("MakeTargetDialog.exception.makeTargetError"), //$NON-NLS-1$
+					MakeUIPlugin.getResourceString("MakeTargetDialog.exception.errorAddingTarget"), e); //$NON-NLS-1$
 		}
 		super.okPressed();
 	}

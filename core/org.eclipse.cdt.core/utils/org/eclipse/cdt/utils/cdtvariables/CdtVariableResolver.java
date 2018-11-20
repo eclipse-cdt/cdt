@@ -59,13 +59,13 @@ public class CdtVariableResolver {
 	/** @since 5.5 */
 	public static final String VAR_ARCH_TYPE = CdtMacroSupplier.VAR_ARCH_TYPE;
 
-	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	public  static final String VARIABLE_PREFIX = "${";	//$NON-NLS-1$
-	private static final String VARIABLE_PREFIX_MASKED = "$\1";	//$NON-NLS-1$
-	public  static final char VARIABLE_SUFFIX = '}';
+	public static final String VARIABLE_PREFIX = "${"; //$NON-NLS-1$
+	private static final String VARIABLE_PREFIX_MASKED = "$\1"; //$NON-NLS-1$
+	public static final char VARIABLE_SUFFIX = '}';
 	private static final char VARIABLE_SUFFIX_MASKED = '\2';
-	public  static final char VARIABLE_ESCAPE_CHAR = '\\';
+	public static final char VARIABLE_ESCAPE_CHAR = '\\';
 	private static final char VARIABLE_ESCAPE_CHAR_MASKED = '\3';
 
 	// Regular expression fragments
@@ -73,7 +73,7 @@ public class CdtVariableResolver {
 	private static final String RE_VSUFFIX = "\\}"; //$NON-NLS-1$
 	private static final String RE_VNAME = "[^${}]*"; //$NON-NLS-1$
 	private static final String RE_BSLASH = "[\\\\]"; // *one* backslash //$NON-NLS-1$
-	
+
 	/**
 	 * Converts list of strings to one string using given string as delimiter,
 	 * i.e -> "string1:string2:string3"
@@ -83,14 +83,14 @@ public class CdtVariableResolver {
 	 * @return all strings from the list separated with given delimiter.
 	 */
 	static public String convertStringListToString(String value[], String listDelimiter) {
-		
-		if(value == null || value.length == 0)
+
+		if (value == null || value.length == 0)
 			return EMPTY_STRING;
-		
+
 		StringBuilder buffer = new StringBuilder();
-		for(int i = 0; i < value.length; i++){
+		for (int i = 0; i < value.length; i++) {
 			buffer.append(value[i]);
-			if(listDelimiter != null && !EMPTY_STRING.equals(listDelimiter) && i < value.length -1 )
+			if (listDelimiter != null && !EMPTY_STRING.equals(listDelimiter) && i < value.length - 1)
 				buffer.append(listDelimiter);
 		}
 		return buffer.toString();
@@ -108,22 +108,22 @@ public class CdtVariableResolver {
 	 * 
 	 * @throws CdtVariableException if substitutor can't handle the macro and returns null or throws.
 	 */
-	static public String resolveToString(String string, IVariableSubstitutor substitutor)
-			throws CdtVariableException{
-		if (string==null) {
+	static public String resolveToString(String string, IVariableSubstitutor substitutor) throws CdtVariableException {
+		if (string == null) {
 			return EMPTY_STRING;
 		}
 
-		final Pattern pattern = Pattern.compile(".*?("+RE_BSLASH+"*)("+RE_VPREFIX+"("+RE_VNAME+")"+RE_VSUFFIX+").*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		final Pattern pattern = Pattern
+				.compile(".*?(" + RE_BSLASH + "*)(" + RE_VPREFIX + "(" + RE_VNAME + ")" + RE_VSUFFIX + ").*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 		StringBuilder buffer = new StringBuilder(string);
-		int limit=string.length();
-		for (Matcher matcher = pattern.matcher(buffer);matcher.matches();matcher = pattern.matcher(buffer)) {
-			String bSlashes=matcher.group(1);
-			String macro=matcher.group(2);
-			String name=matcher.group(3);
-			String resolved = name.length()>0 ? substitutor.resolveToString(name) : EMPTY_STRING;
-			if (resolved==null) {
+		int limit = string.length();
+		for (Matcher matcher = pattern.matcher(buffer); matcher.matches(); matcher = pattern.matcher(buffer)) {
+			String bSlashes = matcher.group(1);
+			String macro = matcher.group(2);
+			String name = matcher.group(3);
+			String resolved = name.length() > 0 ? substitutor.resolveToString(name) : EMPTY_STRING;
+			if (resolved == null) {
 				throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_UNDEFINED, null, string, name);
 			}
 			if (limit-- < 0) {
@@ -131,25 +131,25 @@ public class CdtVariableResolver {
 				throw new CdtVariableException(ICdtVariableStatus.TYPE_ERROR, name, matcher.group(0), resolved);
 			}
 
-			int nBSlashes=bSlashes.length();
-			if ((nBSlashes & 1)==1) {
+			int nBSlashes = bSlashes.length();
+			if ((nBSlashes & 1) == 1) {
 				// if odd number of backslashes in front of "${...}" do not expand macro
 				resolved = macro;
 			}
 			// Only one expansion is allowed, so hide any text interfering with macro syntax
-			resolved=resolved.replace(VARIABLE_PREFIX, VARIABLE_PREFIX_MASKED);
-			resolved=resolved.replace(VARIABLE_SUFFIX, VARIABLE_SUFFIX_MASKED);
+			resolved = resolved.replace(VARIABLE_PREFIX, VARIABLE_PREFIX_MASKED);
+			resolved = resolved.replace(VARIABLE_SUFFIX, VARIABLE_SUFFIX_MASKED);
 			buffer.replace(matcher.start(2), matcher.end(2), resolved);
 			// collapse and hide backslashes  \\\\${Macro} -> \\MacroValue or \\\\\${Macro} -> \\${Macro} 
 			buffer.replace(matcher.start(1), matcher.end(1),
-				bSlashes.substring(0, nBSlashes/2).replace(VARIABLE_ESCAPE_CHAR, VARIABLE_ESCAPE_CHAR_MASKED));
+					bSlashes.substring(0, nBSlashes / 2).replace(VARIABLE_ESCAPE_CHAR, VARIABLE_ESCAPE_CHAR_MASKED));
 		}
 		String result = buffer.toString();
 
 		// take hidden data back
-		result=result.replace(VARIABLE_PREFIX_MASKED, VARIABLE_PREFIX);
-		result=result.replace(VARIABLE_SUFFIX_MASKED, VARIABLE_SUFFIX);
-		result=result.replace(VARIABLE_ESCAPE_CHAR_MASKED, VARIABLE_ESCAPE_CHAR);
+		result = result.replace(VARIABLE_PREFIX_MASKED, VARIABLE_PREFIX);
+		result = result.replace(VARIABLE_SUFFIX_MASKED, VARIABLE_SUFFIX);
+		result = result.replace(VARIABLE_ESCAPE_CHAR_MASKED, VARIABLE_ESCAPE_CHAR);
 
 		return result;
 	}
@@ -165,8 +165,7 @@ public class CdtVariableResolver {
 	 * @deprecated Use {@link #resolveToString} which would do full nested expansion.
 	 */
 	@Deprecated
-	static public void checkVariables(String string, IVariableSubstitutor substitutor)
-			throws CdtVariableException{
+	static public void checkVariables(String string, IVariableSubstitutor substitutor) throws CdtVariableException {
 		resolveToString(string, substitutor);
 	}
 
@@ -182,33 +181,33 @@ public class CdtVariableResolver {
 	 * @throws CdtVariableException if substitutor throws {@link CdtVariableException}
 	 *         and {@code ignoreErrors}={@code null}.
 	 */
-	static public String[] resolveStringListValues(String values[], IVariableSubstitutor substitutor, boolean ignoreErrors) 
-						throws CdtVariableException {
+	static public String[] resolveStringListValues(String values[], IVariableSubstitutor substitutor,
+			boolean ignoreErrors) throws CdtVariableException {
 		String result[] = null;
-		if(values == null || values.length == 0)
+		if (values == null || values.length == 0)
 			result = values;
-		else if(values.length == 1)
+		else if (values.length == 1)
 			try {
 				result = CdtVariableResolver.resolveToStringList(values[0], substitutor);
 			} catch (CdtVariableException e) {
-				if(!ignoreErrors)
+				if (!ignoreErrors)
 					throw e;
 			}
-		else {	
+		else {
 			List<String> list = new ArrayList<String>();
 			for (String value : values) {
 				String resolved[];
 				try {
 					resolved = CdtVariableResolver.resolveToStringList(value, substitutor);
-					if(resolved != null && resolved.length > 0)
+					if (resolved != null && resolved.length > 0)
 						list.addAll(Arrays.asList(resolved));
 				} catch (CdtVariableException e) {
-					if(!ignoreErrors)
+					if (!ignoreErrors)
 						throw e;
 				}
 			}
 
-			result =  list.toArray(new String[list.size()]);
+			result = list.toArray(new String[list.size()]);
 		}
 		return result;
 	}
@@ -224,23 +223,23 @@ public class CdtVariableResolver {
 	 * @throws CdtVariableException if substitutor can't handle the macro and returns null or throws.
 	 */
 	static public String[] resolveToStringList(String string, IVariableSubstitutor substitutor)
-			throws CdtVariableException{
-		
+			throws CdtVariableException {
+
 		StringBuilder buffer = new StringBuilder(string);
-		final Pattern pattern = Pattern.compile("^"+RE_VPREFIX+"("+RE_VNAME+")"+RE_VSUFFIX+"$"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		final Pattern pattern = Pattern.compile("^" + RE_VPREFIX + "(" + RE_VNAME + ")" + RE_VSUFFIX + "$"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		Matcher matcher = pattern.matcher(buffer);
 		if (matcher.matches()) {
-			String name=matcher.group(1);
+			String name = matcher.group(1);
 			if (name.equals(EMPTY_STRING)) {
 				return new String[0];
 			}
 			String[] result = substitutor.resolveToStringList(name);
-			if (result==null) {
+			if (result == null) {
 				throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_UNDEFINED, null, string, name);
 			}
 			return result;
 		}
-		return new String[] {resolveToString(string, substitutor)};
+		return new String[] { resolveToString(string, substitutor) };
 	}
 
 	/**
@@ -249,8 +248,8 @@ public class CdtVariableResolver {
 	 * @param macroType - type of tested macro.
 	 * @return {@code true} if the given macro is a String-list macro.
 	 */
-	public static boolean isStringListVariable(int macroType){
-		switch(macroType){
+	public static boolean isStringListVariable(int macroType) {
+		switch (macroType) {
 		case ICdtVariable.VALUE_TEXT_LIST:
 		case ICdtVariable.VALUE_PATH_FILE_LIST:
 		case ICdtVariable.VALUE_PATH_DIR_LIST:
@@ -260,7 +259,7 @@ public class CdtVariableResolver {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Checks the macros integrity for the given context. If test fails {@link CdtVariableException}
 	 * is thrown.
@@ -269,15 +268,14 @@ public class CdtVariableResolver {
 	 * @param substitutor - macro resolution provider to retrieve macro values.
 	 * @throws CdtVariableException propagated up if {@code substitutor} throws.
 	 */
-	public static void checkIntegrity(
-			IVariableContextInfo info,
-			IVariableSubstitutor substitutor) throws CdtVariableException{
-		
-		if(info != null){
-			ICdtVariable macros[] = SupplierBasedCdtVariableManager.getVariables(info,true);
-			if(macros != null){
+	public static void checkIntegrity(IVariableContextInfo info, IVariableSubstitutor substitutor)
+			throws CdtVariableException {
+
+		if (info != null) {
+			ICdtVariable macros[] = SupplierBasedCdtVariableManager.getVariables(info, true);
+			if (macros != null) {
 				for (ICdtVariable macro : macros) {
-					if(isStringListVariable(macro.getValueType()))
+					if (isStringListVariable(macro.getValueType()))
 						substitutor.resolveToStringList(macro.getName());
 					else
 						substitutor.resolveToString(macro.getName());
@@ -285,7 +283,7 @@ public class CdtVariableResolver {
 			}
 		}
 	}
-	
+
 	/**
 	 * Constructs a macro reference given the macro name
 	 * e.g. if the "macro1" name is passed, returns "${macro1}"
@@ -293,8 +291,8 @@ public class CdtVariableResolver {
 	 * @param name - macro name.
 	 * @return macro variable in form "${macro}"
 	 */
-	public static String createVariableReference(String name){
+	public static String createVariableReference(String name) {
 		return VARIABLE_PREFIX + name + VARIABLE_SUFFIX;
 	}
-	
+
 }

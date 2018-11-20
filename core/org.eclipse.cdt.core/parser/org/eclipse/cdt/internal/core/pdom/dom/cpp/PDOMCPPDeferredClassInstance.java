@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -31,7 +31,7 @@ public class PDOMCPPDeferredClassInstance extends CPPDeferredClassInstance imple
 
 	public PDOMCPPDeferredClassInstance(IIndexFragment frag, ICPPClassTemplate template, ICPPTemplateArgument[] args) {
 		super(template, args);
-		fFragment= frag;
+		fFragment = frag;
 	}
 
 	@Override
@@ -68,12 +68,12 @@ public class PDOMCPPDeferredClassInstance extends CPPDeferredClassInstance imple
 	public long getBindingID() {
 		return 0;
 	}
-	
+
 	@Override
 	public IIndexFragmentBinding getOwner() {
 		return (IIndexFragmentBinding) super.getOwner();
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {
@@ -82,7 +82,7 @@ public class PDOMCPPDeferredClassInstance extends CPPDeferredClassInstance imple
 			return null;
 		}
 	}
-	
+
 	@Override
 	protected CPPUnknownTypeScope createScope() {
 		return new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));

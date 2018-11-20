@@ -54,8 +54,8 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 	@Override
 	protected Control createContents(Composite parent) {
 		IProject project = getProject();
-		isProjectLevel= project != null;
-		if(isProjectLevel) {
+		isProjectLevel = project != null;
+		if (isProjectLevel) {
 			BuildConsoleManager consoleManager = getConsoleManager();
 			Preferences prefs = consoleManager.getBuildLogPreferences(project);
 
@@ -65,9 +65,11 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 			ControlFactory.createEmptySpace(contents, 3);
 
 			// [v] Enable Logging
-			enableLoggingCheckbox = ControlFactory.createCheckBox(contents, PreferencesMessages.BuildLogPreferencePage_EnableLogging);
+			enableLoggingCheckbox = ControlFactory.createCheckBox(contents,
+					PreferencesMessages.BuildLogPreferencePage_EnableLogging);
 			((GridData) enableLoggingCheckbox.getLayoutData()).horizontalSpan = 2;
-			boolean keepLog = prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
+			boolean keepLog = prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG,
+					BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
 			enableLoggingCheckbox.setSelection(keepLog);
 			enableLoggingCheckbox.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -79,18 +81,21 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 			ControlFactory.createEmptySpace(contents, 3);
 
 			// Log file location: [....................]
-			logLocationLabel = ControlFactory.createLabel(contents, PreferencesMessages.BuildLogPreferencePage_LogLocation);
+			logLocationLabel = ControlFactory.createLabel(contents,
+					PreferencesMessages.BuildLogPreferencePage_LogLocation);
 			((GridData) logLocationLabel.getLayoutData()).grabExcessHorizontalSpace = false;
 
 			logLocationText = ControlFactory.createTextField(contents, SWT.SINGLE | SWT.BORDER);
-			String logLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, consoleManager.getDefaultConsoleLogLocation(project));
+			String logLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION,
+					consoleManager.getDefaultConsoleLogLocation(project));
 			logLocationText.setText(logLocation);
 			logLocationText.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 				}
 			});
-			((GridData)logLocationText.getLayoutData()).widthHint = new PixelConverter(parent).convertWidthInCharsToPixels(40);
+			((GridData) logLocationText.getLayoutData()).widthHint = new PixelConverter(parent)
+					.convertWidthInCharsToPixels(40);
 
 			// [Browse...]
 			browseButton = ControlFactory.createPushButton(contents, PreferencesMessages.BuildLogPreferencePage_Browse);
@@ -118,7 +123,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 
 	@Override
 	protected void performDefaults() {
-		if(isProjectLevel) {
+		if (isProjectLevel) {
 			IProject project = getProject();
 			BuildConsoleManager consoleManager = getConsoleManager();
 			Preferences prefs = consoleManager.getBuildLogPreferences(project);
@@ -129,8 +134,10 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 			} catch (BackingStoreException e) {
 				CUIPlugin.log(e);
 			}
-			logLocationText.setText(prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, consoleManager.getDefaultConsoleLogLocation(project)));
-			enableLoggingCheckbox.setSelection(prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT));
+			logLocationText.setText(prefs.get(BuildConsoleManager.KEY_LOG_LOCATION,
+					consoleManager.getDefaultConsoleLogLocation(project)));
+			enableLoggingCheckbox.setSelection(
+					prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT));
 			updateEnablements();
 		}
 		super.performDefaults();
@@ -138,7 +145,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 
 	@Override
 	public boolean performOk() {
-		if(isProjectLevel) {
+		if (isProjectLevel) {
 			BuildConsoleManager consoleManager = getConsoleManager();
 			Preferences prefs = consoleManager.getBuildLogPreferences(getProject());
 			prefs.put(BuildConsoleManager.KEY_LOG_LOCATION, logLocationText.getText());
@@ -153,19 +160,19 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 	}
 
 	@Override
-	public IProject getProject(){
-		IProject project= null;
+	public IProject getProject() {
+		IProject project = null;
 		IAdaptable elem = getElement();
 		if (elem instanceof IProject) {
-			project= (IProject) elem;
+			project = (IProject) elem;
 		} else if (elem != null) {
-			project= elem.getAdapter(IProject.class);
+			project = elem.getAdapter(IProject.class);
 		}
 		return project;
 	}
 
 	private BuildConsoleManager getConsoleManager() {
-		return (BuildConsoleManager)CUIPlugin.getDefault().getConsoleManager();
+		return (BuildConsoleManager) CUIPlugin.getDefault().getConsoleManager();
 	}
 
 	@Override

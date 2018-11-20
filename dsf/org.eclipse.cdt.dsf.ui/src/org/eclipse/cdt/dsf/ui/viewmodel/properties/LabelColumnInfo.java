@@ -35,118 +35,117 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * @since 1.0
  */
 @ThreadSafe
-public class LabelColumnInfo  {
-    /** 
-     * Calculated list of property names that need to be retrieved to 
-     * generate the label for this column.
-     */
-    private String[] fPropertyNames;
-    
-    /**
-     * Array of label attribute objects.   
-     */
-    private LabelAttribute[] fLabelAttributes;
+public class LabelColumnInfo {
+	/** 
+	 * Calculated list of property names that need to be retrieved to 
+	 * generate the label for this column.
+	 */
+	private String[] fPropertyNames;
 
-    /**
-     * Creates the column info object with given array of attributes.
-     * @param attributeInfos Attributes for the label.
-     */
-    public LabelColumnInfo(LabelAttribute[] attributes)
-    {
-        fLabelAttributes = attributes;
+	/**
+	 * Array of label attribute objects.   
+	 */
+	private LabelAttribute[] fLabelAttributes;
 
-        List<String> names = new LinkedList<String>();
-        for (LabelAttribute attr : attributes) {
-            for (String name : attr.getPropertyNames()) {
-                names.add(name);
-            }
-        }
+	/**
+	 * Creates the column info object with given array of attributes.
+	 * @param attributeInfos Attributes for the label.
+	 */
+	public LabelColumnInfo(LabelAttribute[] attributes) {
+		fLabelAttributes = attributes;
 
-        fPropertyNames = names.toArray(new String[names.size()]);
-    }
-        
-    /**
-     * Returns the property names that need to be retrieved in order
-     * to generate the label for this column.
-     */
-    public String[] getPropertyNames() { return fPropertyNames; }
-    
-    /**
-     * Returns the list of configured label attributes for this column.
-     */
-    public LabelAttribute[] getLabelAttributes() { return fLabelAttributes; }
+		List<String> names = new LinkedList<String>();
+		for (LabelAttribute attr : attributes) {
+			for (String name : attr.getPropertyNames()) {
+				names.add(name);
+			}
+		}
 
-    /**
-     * Returns the list of configured label attributes for this column.
-     * 
-     * @since 2.1
-     */
-    protected void setLabelAttributes(LabelAttribute[] attributes) { 
-    	fLabelAttributes = attributes;
+		fPropertyNames = names.toArray(new String[names.size()]);
+	}
 
-        List<String> names = new LinkedList<String>();
-        for (LabelAttribute attr : attributes) {
-            for (String name : attr.getPropertyNames()) {
-                names.add(name);
-            }
-        }
+	/**
+	 * Returns the property names that need to be retrieved in order
+	 * to generate the label for this column.
+	 */
+	public String[] getPropertyNames() {
+		return fPropertyNames;
+	}
 
-        fPropertyNames = names.toArray(new String[names.size()]);
-    }    
+	/**
+	 * Returns the list of configured label attributes for this column.
+	 */
+	public LabelAttribute[] getLabelAttributes() {
+		return fLabelAttributes;
+	}
 
-    /**
-     * Inserts an attribute in front of all the other existing attributes.
-     * 
-     * @since 2.1
-     */
-    public void insertAttribute(LabelAttribute attribute) {
-    	LabelAttribute[] newAttributeList = new LabelAttribute[fLabelAttributes.length+1];
-    	
-    	for ( int idx = 0 ; idx < fLabelAttributes.length; idx ++ ) {
-    		newAttributeList[ idx + 1 ] = fLabelAttributes[ idx ];
-    	}
-    	
-    	newAttributeList[ 0 ] = attribute;
-    	
-    	setLabelAttributes( newAttributeList );
-    }
-    
-    /**
-     * Updates the label parameters for this column based on the provided
-     * properties.  The label information is written to the givne label
-     * update under the given column index.   
-     * 
-     * @param update Update to write to.
-     * @param columnIndex Column to write label information under.
-     * @param status Result of the properties update
-     * @param properties Map of properties to use to generate the label.
-     * 
-     * @since 2.0
-     */
-    public void updateColumn(ILabelUpdate update, int columnIndex, IStatus status, Map<String,Object> properties) {
-        boolean textSet = false;
-        boolean imageSet = false;
-        boolean fontSet = false;
-        boolean foregroundSet = false;
-        boolean backgroundSet = false;
-        
-        LabelAttribute[] labelAttributes = getLabelAttributes();
-        for (LabelAttribute info : labelAttributes) {
-            
-            if (!(info instanceof LabelText && textSet) &&
-                !(info instanceof LabelImage && imageSet) &&
-                !(info instanceof LabelFont && fontSet) &&
-                !(info instanceof LabelForeground && foregroundSet) &&
-                !(info instanceof LabelBackground && backgroundSet) &&
-                info.isEnabled(status, properties))
-            {
-                info.updateAttribute(update, columnIndex, status, properties);
-                textSet = textSet || info instanceof LabelText;
-                imageSet = imageSet || info instanceof LabelImage;
-                fontSet = fontSet || info instanceof LabelFont;
-                foregroundSet = foregroundSet || info instanceof LabelForeground;
-                backgroundSet = backgroundSet || info instanceof LabelBackground;
-            }
-        }
-    }
+	/**
+	 * Returns the list of configured label attributes for this column.
+	 * 
+	 * @since 2.1
+	 */
+	protected void setLabelAttributes(LabelAttribute[] attributes) {
+		fLabelAttributes = attributes;
+
+		List<String> names = new LinkedList<String>();
+		for (LabelAttribute attr : attributes) {
+			for (String name : attr.getPropertyNames()) {
+				names.add(name);
+			}
+		}
+
+		fPropertyNames = names.toArray(new String[names.size()]);
+	}
+
+	/**
+	 * Inserts an attribute in front of all the other existing attributes.
+	 * 
+	 * @since 2.1
+	 */
+	public void insertAttribute(LabelAttribute attribute) {
+		LabelAttribute[] newAttributeList = new LabelAttribute[fLabelAttributes.length + 1];
+
+		for (int idx = 0; idx < fLabelAttributes.length; idx++) {
+			newAttributeList[idx + 1] = fLabelAttributes[idx];
+		}
+
+		newAttributeList[0] = attribute;
+
+		setLabelAttributes(newAttributeList);
+	}
+
+	/**
+	 * Updates the label parameters for this column based on the provided
+	 * properties.  The label information is written to the givne label
+	 * update under the given column index.   
+	 * 
+	 * @param update Update to write to.
+	 * @param columnIndex Column to write label information under.
+	 * @param status Result of the properties update
+	 * @param properties Map of properties to use to generate the label.
+	 * 
+	 * @since 2.0
+	 */
+	public void updateColumn(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+		boolean textSet = false;
+		boolean imageSet = false;
+		boolean fontSet = false;
+		boolean foregroundSet = false;
+		boolean backgroundSet = false;
+
+		LabelAttribute[] labelAttributes = getLabelAttributes();
+		for (LabelAttribute info : labelAttributes) {
+
+			if (!(info instanceof LabelText && textSet) && !(info instanceof LabelImage && imageSet)
+					&& !(info instanceof LabelFont && fontSet) && !(info instanceof LabelForeground && foregroundSet)
+					&& !(info instanceof LabelBackground && backgroundSet) && info.isEnabled(status, properties)) {
+				info.updateAttribute(update, columnIndex, status, properties);
+				textSet = textSet || info instanceof LabelText;
+				imageSet = imageSet || info instanceof LabelImage;
+				fontSet = fontSet || info instanceof LabelFont;
+				foregroundSet = foregroundSet || info instanceof LabelForeground;
+				backgroundSet = backgroundSet || info instanceof LabelBackground;
+			}
+		}
+	}
 }

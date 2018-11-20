@@ -49,11 +49,11 @@ public class InlineDataRule implements IRule {
 	protected boolean confirmDelimeter(ICharacterScanner scanner, char[] delimeter) {
 		int c = scanner.read();
 		StringBuilder buffer = new StringBuilder();
-		buffer.append((char)c);
+		buffer.append((char) c);
 		for (int i = 1; i < delimeter.length; ++i) {
 			if (c == delimeter[i]) {
 				c = scanner.read();
-				buffer.append((char)c);
+				buffer.append((char) c);
 			} else {
 				for (int j = buffer.length() - 1; j >= 0; j--)
 					scanner.unread();
@@ -63,6 +63,7 @@ public class InlineDataRule implements IRule {
 		scanner.unread();
 		return true;
 	}
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
@@ -81,31 +82,29 @@ public class InlineDataRule implements IRule {
 		char[][] lineDelimeters = scanner.getLegalLineDelimiters();
 		StringBuilder endMarkerBuffer = new StringBuilder();
 		if (c == '-') {
-			fBuffer.append((char)c);
+			fBuffer.append((char) c);
 			c = scanner.read();
 		} else if (c == '\'') {
-			fBuffer.append((char)c);
+			fBuffer.append((char) c);
 			c = scanner.read();
 		}
-		
-		while (c != ICharacterScanner.EOF &&
-				Character.isJavaIdentifierPart((char)c) &&
-				c != '\'') {
-			fBuffer.append((char)c);
-			endMarkerBuffer.append((char)c);
+
+		while (c != ICharacterScanner.EOF && Character.isJavaIdentifierPart((char) c) && c != '\'') {
+			fBuffer.append((char) c);
+			endMarkerBuffer.append((char) c);
 			c = scanner.read();
 		}
-		
+
 		if (c == '\'') {
-			fBuffer.append((char)c);
+			fBuffer.append((char) c);
 			c = scanner.read();
 		}
-		
+
 		if (endMarkerBuffer.length() == 0) {
 			unreadBuffer(scanner);
 			return Token.UNDEFINED;
 		}
-			
+
 		// At this point we read until we find id by itself on its own line
 		boolean eol = false;
 		boolean finished = false;

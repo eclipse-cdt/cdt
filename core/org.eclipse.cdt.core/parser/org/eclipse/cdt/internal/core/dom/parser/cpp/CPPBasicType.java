@@ -41,16 +41,19 @@ import org.eclipse.core.runtime.CoreException;
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
 	public static final CPPBasicType NULL_PTR = new CPPBasicType(Kind.eNullPtr, 0, null);
-    public static final CPPBasicType UNSPECIFIED_TYPE = new CPPBasicType(Kind.eUnspecified, 0);
+	public static final CPPBasicType UNSPECIFIED_TYPE = new CPPBasicType(Kind.eUnspecified, 0);
 	public static final CPPBasicType SHORT = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT);
 	public static final CPPBasicType INT = new CPPBasicType(Kind.eInt, 0);
 	public static final CPPBasicType LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG);
 	public static final CPPBasicType LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG);
 	public static final CPPBasicType INT128 = new CPPBasicType(Kind.eInt128, 0);
-	public static final CPPBasicType UNSIGNED_SHORT = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_SHORT = new CPPBasicType(Kind.eInt,
+			IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED);
 	public static final CPPBasicType UNSIGNED_INT = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED);
-	public static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
-	public static final CPPBasicType UNSIGNED_LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt,
+			IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_LONG_LONG = new CPPBasicType(Kind.eInt,
+			IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
 	public static final CPPBasicType UNSIGNED_INT128 = new CPPBasicType(Kind.eInt128, IBasicType.IS_UNSIGNED);
 	public static final CPPBasicType CHAR = new CPPBasicType(Kind.eChar, 0);
 	public static final CPPBasicType VOID = new CPPBasicType(Kind.eVoid, 0);
@@ -65,20 +68,20 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public CPPBasicType(Kind kind, int qualifiers, IASTExpression expression) {
 		if (kind == Kind.eUnspecified) {
 			if ((qualifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
-				fKind= Kind.eFloat;
+				fKind = Kind.eFloat;
 			} else if ((qualifiers & (IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED | IS_LONG_LONG)) != 0) {
-				fKind= Kind.eInt;
+				fKind = Kind.eInt;
 			} else {
-				fKind= Kind.eUnspecified;
+				fKind = Kind.eUnspecified;
 			}
 		} else {
-			fKind= kind;
+			fKind = kind;
 		}
-		if (expression instanceof IASTLiteralExpression &&
-				((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_string_literal) {
+		if (expression instanceof IASTLiteralExpression
+				&& ((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_string_literal) {
 			qualifiers |= FROM_STRING_LITERAL;
 		}
-		fModifiers= qualifiers;
+		fModifiers = qualifiers;
 		if (expression instanceof ICPPASTInitializerClause) {
 			Number num = ValueFactory.create(expression).numberValue();
 			fAssociatedValue = num != null ? num.longValue() : null;
@@ -94,14 +97,10 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 
 	private static int getModifiers(ICPPASTSimpleDeclSpecifier sds) {
-		return
-			(sds.isLong() ? IBasicType.IS_LONG  : 0) |
-			(sds.isShort() ? IBasicType.IS_SHORT : 0) |
-			(sds.isSigned() ? IBasicType.IS_SIGNED: 0) |
-			(sds.isUnsigned() ? IBasicType.IS_UNSIGNED : 0) |
-			(sds.isLongLong() ? IBasicType.IS_LONG_LONG : 0) |
-			(sds.isComplex() ? IBasicType.IS_COMPLEX : 0) |
-			(sds.isImaginary() ? IBasicType.IS_IMAGINARY : 0);
+		return (sds.isLong() ? IBasicType.IS_LONG : 0) | (sds.isShort() ? IBasicType.IS_SHORT : 0)
+				| (sds.isSigned() ? IBasicType.IS_SIGNED : 0) | (sds.isUnsigned() ? IBasicType.IS_UNSIGNED : 0)
+				| (sds.isLongLong() ? IBasicType.IS_LONG_LONG : 0) | (sds.isComplex() ? IBasicType.IS_COMPLEX : 0)
+				| (sds.isImaginary() ? IBasicType.IS_IMAGINARY : 0);
 	}
 
 	private static Kind getKind(ICPPASTSimpleDeclSpecifier sds) {
@@ -149,8 +148,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		if (object == this)
 			return true;
 
-	    if (object instanceof ITypedef)
-	        return object.isSameType(this);
+		if (object instanceof ITypedef)
+			return object.isSameType(this);
 
 		if (!(object instanceof ICPPBasicType))
 			return false;
@@ -211,13 +210,13 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	@Override
 	public CPPBasicType clone() {
 		CPPBasicType t = null;
-   		try {
-            t = (CPPBasicType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen.
-        }
-        return t;
-    }
+		try {
+			t = (CPPBasicType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen.
+		}
+		return t;
+	}
 
 	/**
 	 * Sets the numerical value this type was created for.
@@ -254,9 +253,9 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		final int kind= getKind().ordinal();
-		final int shiftedKind= kind * ITypeMarshalBuffer.FIRST_FLAG;
-		final int modifiers= getModifiers();
+		final int kind = getKind().ordinal();
+		final int shiftedKind = kind * ITypeMarshalBuffer.FIRST_FLAG;
+		final int modifiers = getModifiers();
 		short firstBytes = (short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind);
 		if (modifiers != 0)
 			firstBytes |= ITypeMarshalBuffer.LAST_FLAG;
@@ -270,12 +269,12 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean haveModifiers= (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
-		final boolean haveAssociatedNumericalValue= (firstBytes & ITypeMarshalBuffer.SECOND_LAST_FLAG) != 0;
- 		int modifiers= 0;
-		int kind= (firstBytes & (ITypeMarshalBuffer.SECOND_LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
+		final boolean haveModifiers = (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
+		final boolean haveAssociatedNumericalValue = (firstBytes & ITypeMarshalBuffer.SECOND_LAST_FLAG) != 0;
+		int modifiers = 0;
+		int kind = (firstBytes & (ITypeMarshalBuffer.SECOND_LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
 		if (haveModifiers)
-			modifiers= buffer.getByte();
+			modifiers = buffer.getByte();
 		CPPBasicType result = new CPPBasicType(Kind.values()[kind], modifiers);
 		if (haveAssociatedNumericalValue)
 			result.setAssociatedNumericalValue(buffer.getLong());
@@ -322,9 +321,9 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		return t_unspecified;
 	}
 
-    /**
-     * @deprecated Types don't have values
-     */
+	/**
+	 * @deprecated Types don't have values
+	 */
 	@Override
 	@Deprecated
 	public IASTExpression getValue() {
@@ -336,8 +335,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		if (fPseudoDestructor == null) {
 			char[] dtorName = ("~" + toString()).toCharArray(); //$NON-NLS-1$
 			IScope globalScope = CPPSemantics.getCurrentLookupPoint().getTranslationUnit().getScope();
-			fPseudoDestructor = new CPPImplicitFunction(dtorName, globalScope, 
-					CPPClassScope.DESTRUCTOR_FUNCTION_TYPE, EMPTY_CPPPARAMETER_ARRAY, true, false);
+			fPseudoDestructor = new CPPImplicitFunction(dtorName, globalScope, CPPClassScope.DESTRUCTOR_FUNCTION_TYPE,
+					EMPTY_CPPPARAMETER_ARRAY, true, false);
 		}
 		return fPseudoDestructor;
 	}

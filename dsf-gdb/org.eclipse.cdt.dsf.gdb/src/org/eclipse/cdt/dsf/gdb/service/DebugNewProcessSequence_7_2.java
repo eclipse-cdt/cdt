@@ -53,13 +53,8 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 	private final boolean fInitialProcess;
 	private final Map<String, Object> fAttributes;
 
-	public DebugNewProcessSequence_7_2(
-			DsfExecutor executor, 
-			boolean isInitial, 
-			IDMContext dmc, 
-			String file, 
-			Map<String, Object> attributes, 
-			DataRequestMonitor<IDMContext> rm) {
+	public DebugNewProcessSequence_7_2(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file,
+			Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		super(executor, isInitial, dmc, file, attributes, rm);
 		fSessionId = dmc.getSessionId();
 		fInitialProcess = isInitial;
@@ -77,7 +72,7 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 			orderList.add(orderList.indexOf("stepInitializeBaseSequence") + 1, "stepInitializeSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$
 			orderList.add(orderList.indexOf("stepInitializeSequence_7_2") + 1, "stepAddInferior"); //$NON-NLS-1$ //$NON-NLS-2$
 			orderList.add(orderList.indexOf("stepSetExecutable") + 1, "stepSetRemoteExecutable"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
@@ -95,18 +90,19 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 		fProcService = tracker.getService(IGDBProcesses.class);
 		fBackend = tracker.getService(IGDBBackend.class);
 		tracker.dispose();
-		
-        if (fGdbControl == null || fProcService == null || fBackend == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
+
+		if (fGdbControl == null || fProcService == null || fBackend == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Cannot obtain service", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
-		
-        fCommandFactory = fGdbControl.getCommandFactory();		
-		
+
+		fCommandFactory = fGdbControl.getCommandFactory();
+
 		rm.done();
 	}
-	
+
 	/**
 	 * Add a new inferior.
 	 */
@@ -118,24 +114,26 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 			// 1- post-mortem and non-attach remote sessions don't support creating a new process
 			// 2- commands that were part of the .gdbinit file will affect the initial process, which is what the user expects,
 			//    but would not affect a new process we created instead.
-			setContainerContext(fProcService.createContainerContextFromGroupId(fGdbControl.getContext(), GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID));
+			setContainerContext(fProcService.createContainerContextFromGroupId(fGdbControl.getContext(),
+					GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID));
 			rm.done();
 			return;
 		}
-		
-		fGdbControl.queueCommand(
-				fGdbControl.getCommandFactory().createMIAddInferior(fGdbControl.getContext()),
+
+		fGdbControl.queueCommand(fGdbControl.getCommandFactory().createMIAddInferior(fGdbControl.getContext()),
 				new ImmediateDataRequestMonitor<MIAddInferiorInfo>(rm) {
 					@Override
 					protected void handleSuccess() {
 						final String groupId = getData().getGroupId();
 						if (groupId == null || groupId.trim().length() == 0) {
-							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Invalid gdb group id.", null)); //$NON-NLS-1$
+							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+									IDsfStatusConstants.REQUEST_FAILED, "Invalid gdb group id.", null)); //$NON-NLS-1$
 							rm.done();
 							return;
 						}
 
-						setContainerContext(fProcService.createContainerContextFromGroupId(fGdbControl.getContext(), groupId));
+						setContainerContext(
+								fProcService.createContainerContextFromGroupId(fGdbControl.getContext(), groupId));
 						rm.done();
 					}
 				});
@@ -148,27 +146,18 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 	@Execute
 	public void stepSetRemoteExecutable(final RequestMonitor rm) {
 		if (fBackend.getSessionType() == SessionType.REMOTE && fBackend.getIsAttachSession()) {
-			String remoteBinary = CDebugUtils.getAttribute(
-					fAttributes, 
-					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, 
-					""); //$NON-NLS-1$
+			String remoteBinary = CDebugUtils.getAttribute(fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, ""); //$NON-NLS-1$
 			if (remoteBinary.length() == 0) {
 				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Binary on host is not specified")); //$NON-NLS-1$
 				rm.done();
 				return;
 			}
 
-			fGdbControl.queueCommand(
-					fCommandFactory.createMIGDBSet(
-							getContainerContext(), 
-							new String[] {
-								"remote", //$NON-NLS-1$
-								"exec-file", //$NON-NLS-1$
-								remoteBinary,
-							}), 
-					new ImmediateDataRequestMonitor<MIInfo>(rm));
-		}
-		else {
+			fGdbControl.queueCommand(fCommandFactory.createMIGDBSet(getContainerContext(), new String[] { "remote", //$NON-NLS-1$
+					"exec-file", //$NON-NLS-1$
+					remoteBinary, }), new ImmediateDataRequestMonitor<MIInfo>(rm));
+		} else {
 			rm.done();
 		}
 	}

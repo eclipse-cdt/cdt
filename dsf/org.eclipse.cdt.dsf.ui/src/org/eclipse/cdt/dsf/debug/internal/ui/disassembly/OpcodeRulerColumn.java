@@ -30,7 +30,7 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.opcode"; //$NON-NLS-1$
 
 	/** Maximum width of column (in characters) */
-	private static final int MAXWIDTH= 20;
+	private static final int MAXWIDTH = 20;
 
 	private int fRadix;
 	private String fRadixPrefix;
@@ -45,7 +45,7 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	}
 
 	public void setRadix(int radix) {
-		fRadix= radix;
+		fRadix = radix;
 		setShowRadixPrefix();
 	}
 
@@ -66,26 +66,26 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	protected String createDisplayString(int line) {
 		int nChars = computeNumberOfCharacters();
 		if (nChars > 0) {
-			DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
+			DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
 			try {
 				int offset = doc.getLineOffset(line);
 				AddressRangePosition pos = doc.getDisassemblyPosition(offset);
 				if (pos instanceof DisassemblyPosition && pos.length > 0 && pos.offset == offset && pos.fValid) {
-					DisassemblyPosition disassPos = (DisassemblyPosition)pos;
+					DisassemblyPosition disassPos = (DisassemblyPosition) pos;
 					if (disassPos.fOpcodes != null) {
 						// Format the output.
 						String str = disassPos.fOpcodes.toString(fRadix);
 						int prefixLength = 0;
-	
+
 						if (fRadixPrefix != null)
 							prefixLength = fRadixPrefix.length();
-	
+
 						StringBuilder buf = new StringBuilder(nChars);
-	
+
 						if (prefixLength != 0)
 							buf.append(fRadixPrefix);
-	
-						for (int i=str.length()+prefixLength; i < nChars; ++i)
+
+						for (int i = str.length() + prefixLength; i < nChars; ++i)
 							buf.append('0');
 						buf.append(str);
 						if (buf.length() > nChars)
@@ -104,13 +104,13 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 
 	@Override
 	protected int computeNumberOfCharacters() {
-		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
 		return Math.min(MAXWIDTH, doc.getMaxOpcodeLength(fRadix));
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		String property	= event.getProperty();
+		String property = event.getProperty();
 		IPreferenceStore store = getPreferenceStore();
 		boolean needRedraw = false;
 		if (DisassemblyPreferenceConstants.CODE_BYTES_COLOR.equals(property)) {

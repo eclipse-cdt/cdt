@@ -62,23 +62,18 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	private final int IDX_EXPORT = 5;
 
 	public CPathContainerEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.ContainerEntryPage_title); 
+		super(CPathEntryMessages.ContainerEntryPage_title);
 		fCPathList = cPathList;
 
-		String[] buttonLabels = new String[]{
-		CPathEntryMessages.ContainerEntryPage_add_button, 
-				/* */null,
-				CPathEntryMessages.ContainerEntryPage_edit_button, 
-				CPathEntryMessages.ContainerEntryPage_remove_button, 
-				null,
-				CPathEntryMessages.ContainerEntryPage_export_button
-		};
+		String[] buttonLabels = new String[] { CPathEntryMessages.ContainerEntryPage_add_button, /* */null,
+				CPathEntryMessages.ContainerEntryPage_edit_button, CPathEntryMessages.ContainerEntryPage_remove_button,
+				null, CPathEntryMessages.ContainerEntryPage_export_button };
 
 		ContainersAdapter adapter = new ContainersAdapter();
 
 		fContainersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fContainersList.setDialogFieldListener(adapter);
-		fContainersList.setLabelText(CPathEntryMessages.ContainerEntryPage_libraries_label); 
+		fContainersList.setLabelText(CPathEntryMessages.ContainerEntryPage_libraries_label);
 
 		fContainersList.enableButton(IDX_REMOVE, false);
 		fContainersList.enableButton(IDX_EDIT, false);
@@ -116,7 +111,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fContainersList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fContainersList }, true);
 		LayoutUtil.setHorizontalGrabbing(fContainersList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -127,15 +122,16 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof CPElementGroup) {
-					return ((CPElementGroup)element).getChildren().length != 0;
+					return ((CPElementGroup) element).getChildren().length != 0;
 				}
 				return true;
 			}
 		});
 
 		setControl(composite);
-		
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_CONTAINERS);
+
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite,
+				ICHelpContextIds.PROJECT_PATHS_CONTAINERS);
 	}
 
 	private class ContainersAdapter implements IDialogFieldListener, ITreeListAdapter<CPElement> {
@@ -166,9 +162,9 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		@Override
 		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
-				return ((CPElement)element).getChildren();
+				return ((CPElement) element).getChildren();
 			} else if (element instanceof CPElementGroup) {
-				return ((CPElementGroup)element).getChildren();
+				return ((CPElementGroup) element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
@@ -176,9 +172,9 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		@Override
 		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
-				return ((CPElementAttribute)element).getParent();
+				return ((CPElementAttribute) element).getParent();
 			} else if (element instanceof CPElementGroup) {
-				return ((CPElementGroup)element).getParent();
+				return ((CPElementGroup) element).getParent();
 			}
 			return null;
 		}
@@ -188,7 +184,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			if (element instanceof CPElementGroup) {
 				return true;
 			} else if (element instanceof CPElement) {
-				return ((CPElement)element).getChildren().length != 0;
+				return ((CPElement) element).getChildren().length != 0;
 			}
 			return false;
 
@@ -205,22 +201,22 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	void containerPageCustomButtonPressed(DialogField field, int index) {
 		CPElement[] containers = null;
 		switch (index) {
-			case IDX_ADD :
-				/* add container */
-				containers = openContainerSelectionDialog(null);
-				break;
-			case IDX_EDIT :
-				/* edit */
-				editEntry();
-				return;
-			case IDX_REMOVE :
-				/* remove */
-				removeEntry();
-				return;
-			case IDX_EXPORT :
-				/* export */
-				exportEntry();
-				return;
+		case IDX_ADD:
+			/* add container */
+			containers = openContainerSelectionDialog(null);
+			break;
+		case IDX_EDIT:
+			/* edit */
+			editEntry();
+			return;
+		case IDX_REMOVE:
+			/* remove */
+			removeEntry();
+			return;
+		case IDX_EXPORT:
+			/* export */
+			exportEntry();
+			return;
 		}
 		if (containers != null) {
 			int nElementsChosen = containers.length;
@@ -269,7 +265,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElement) {
-				CPElement curr = (CPElement)elem;
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
@@ -292,7 +288,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElement) {
-				CPElement curr = (CPElement)elem;
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
@@ -311,7 +307,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElement) {
-				((CPElement)elem).setExported(! ((CPElement)elem).isExported()); // toggle export
+				((CPElement) elem).setExported(!((CPElement) elem).isExported()); // toggle export
 			}
 		}
 		fContainersList.refresh();
@@ -327,32 +323,32 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (fContainersList.getIndexOfElement(elem) != -1) {
-			editElementEntry((CPElement)elem);
+			editElementEntry((CPElement) elem);
 		} else if (elem instanceof CPElementAttribute) {
-			editAttributeEntry((CPElementAttribute)elem);
+			editAttributeEntry((CPElementAttribute) elem);
 		}
 	}
 
 	private void editAttributeEntry(CPElementAttribute elem) {
-//		String key = elem.getKey();
-//		if (key.equals(CPElement.SOURCEATTACHMENT)) {
-//			CPElement selElement = elem.getParent();
-//
-//			IPath containerPath = null;
-//			boolean applyChanges = false;
-//			Object parentContainer = selElement.getParentContainer();
-//			if (parentContainer instanceof CPElement) {
-//				containerPath = ((CPElement)parentContainer).getPath();
-//				applyChanges = true;
-//			}
-//			SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), (ILibraryEntry)selElement.getPathEntry(), containerPath,
-//					fCurrCProject, applyChanges);
-//			if (dialog.open() == Window.OK) {
-//				selElement.setAttribute(CPElement.SOURCEATTACHMENT, dialog.getSourceAttachmentPath());
-//				fContainersList.refresh();
-//				fCPathList.refresh(); // images
-//			}
-//		}
+		//		String key = elem.getKey();
+		//		if (key.equals(CPElement.SOURCEATTACHMENT)) {
+		//			CPElement selElement = elem.getParent();
+		//
+		//			IPath containerPath = null;
+		//			boolean applyChanges = false;
+		//			Object parentContainer = selElement.getParentContainer();
+		//			if (parentContainer instanceof CPElement) {
+		//				containerPath = ((CPElement)parentContainer).getPath();
+		//				applyChanges = true;
+		//			}
+		//			SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), (ILibraryEntry)selElement.getPathEntry(), containerPath,
+		//					fCurrCProject, applyChanges);
+		//			if (dialog.open() == Window.OK) {
+		//				selElement.setAttribute(CPElement.SOURCEATTACHMENT, dialog.getSourceAttachmentPath());
+		//				fContainersList.refresh();
+		//				fCPathList.refresh(); // images
+		//			}
+		//		}
 	}
 
 	private void editElementEntry(CPElement elem) {
@@ -380,8 +376,8 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (elem instanceof CPElement) {
-			CPElement curr = (CPElement)elem;
-			return ! (curr.getResource() instanceof IFolder) && curr.getParentContainer() == null;
+			CPElement curr = (CPElement) elem;
+			return !(curr.getResource() instanceof IFolder) && curr.getParentContainer() == null;
 		}
 		if (elem instanceof CPElementAttribute) {
 			return true;
@@ -425,10 +421,10 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
-			title = CPathEntryMessages.ContainerEntryPage_ContainerDialog_new_title; 
+			title = CPathEntryMessages.ContainerEntryPage_ContainerDialog_new_title;
 		} else {
-			title = CPathEntryMessages.ContainerEntryPage_ContainerDialog_edit_title; 
-			elem = (IContainerEntry)existing.getPathEntry();
+			title = CPathEntryMessages.ContainerEntryPage_ContainerDialog_edit_title;
+			elem = (IContainerEntry) existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, fCurrCProject, getRawClasspath());
 		wizard.setWindowTitle(title);

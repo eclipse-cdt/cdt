@@ -18,11 +18,10 @@ package org.eclipse.cdt.debug.core.model;
  * 
  * @since: Oct 23, 2002
  */
-public interface IDebuggerProcessSupport
-{
+public interface IDebuggerProcessSupport {
 	boolean supportsDebuggerProcess();
-	
+
 	boolean isDebuggerProcessDefault();
-	
-	void setDebuggerProcessDefault( boolean value );
+
+	void setDebuggerProcessDefault(boolean value);
 }

@@ -29,10 +29,10 @@ public class GenericTagSimpleDictionary implements IDocCommentSimpleDictionary {
 	 * @param tagMarkers the characters that may delimit the start of a tag
 	 */
 	public GenericTagSimpleDictionary(GenericDocTag[] tags, char[] tagMarkers) {
-		fTags= new String[tags.length];
+		fTags = new String[tags.length];
 
-		for(int j=0; j<tags.length; j++) {
-			fTags[j]= tags[j].getTagName();
+		for (int j = 0; j < tags.length; j++) {
+			fTags[j] = tags[j].getTagName();
 		}
 	}
 

@@ -51,16 +51,13 @@ public class CdtVariableException extends CoreException {
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
 	 */
-	public CdtVariableException(int code, 
-			String message, 
-			Throwable exception, 
-			String macroName, 
-			String expression, 
+	public CdtVariableException(int code, String message, Throwable exception, String macroName, String expression,
 			String referencedName//,
-			//int contextType,
-			//Object contextData
-			) {
-		super(new CdtVariableStatus(code, message, exception, macroName, expression, referencedName/*, contextType, contextData*/));
+	//int contextType,
+	//Object contextData
+	) {
+		super(new CdtVariableStatus(code, message, exception, macroName, expression,
+				referencedName/*, contextType, contextData*/));
 	}
 
 	/**
@@ -71,36 +68,33 @@ public class CdtVariableException extends CoreException {
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
 	 */
-	public CdtVariableException(int code, 
-			String macroName, 
-			String expression, 
-			String referencedName//,
-			//int contextType,
-			//Object contextData
-			) {
+	public CdtVariableException(int code, String macroName, String expression, String referencedName//,
+	//int contextType,
+	//Object contextData
+	) {
 		super(new CdtVariableStatus(code, macroName, expression, referencedName/*, contextType, contextData*/));
 	}
-	
+
 	/**
 	 * Returns an array of the IBuildMacroStatus statuses this exception holds
 	 * 
 	 * @return IBuildMacroStatus[]
 	 */
-	public ICdtVariableStatus[] getVariableStatuses(){
+	public ICdtVariableStatus[] getVariableStatuses() {
 		IStatus status = getStatus();
-		if(status instanceof ICdtVariableStatus)
-			return new ICdtVariableStatus[]{(ICdtVariableStatus)status};
-		else if(status.isMultiStatus()){
+		if (status instanceof ICdtVariableStatus)
+			return new ICdtVariableStatus[] { (ICdtVariableStatus) status };
+		else if (status.isMultiStatus()) {
 			IStatus children[] = status.getChildren();
 			ICdtVariableStatus result[] = new ICdtVariableStatus[children.length];
 			int num = 0;
 			for (IStatus element : children) {
-				if(element instanceof ICdtVariableStatus)
-					result[num++]=(ICdtVariableStatus)element;
+				if (element instanceof ICdtVariableStatus)
+					result[num++] = (ICdtVariableStatus) element;
 			}
-			if(num != children.length){
+			if (num != children.length) {
 				ICdtVariableStatus tmp[] = new ICdtVariableStatus[num];
-				for(int i = 0; i < num; i++)
+				for (int i = 0; i < num; i++)
 					tmp[i] = result[i];
 				result = tmp;
 			}

@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * Creates a template macro value that can be used as a pseudo-unique resource identifier.
  * It is based on the name of the application and is in the form of four capital letters.
@@ -28,16 +27,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class CreateResourceIdentifier extends ProcessRunner {
 
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String valueName = args[0].getSimpleValue();
 		String appName = args[1].getSimpleValue();
-		
+
 		String value = ""; //$NON-NLS-1$
 		if (appName.length() >= 4) {
 			value = appName.substring(0, 4).toUpperCase();
 		} else {
 			value = appName.toUpperCase();
-			for (int i=0; i<4-appName.length(); i++) {
+			for (int i = 0; i < 4 - appName.length(); i++) {
 				value = value + "X"; //$NON-NLS-1$
 			}
 		}

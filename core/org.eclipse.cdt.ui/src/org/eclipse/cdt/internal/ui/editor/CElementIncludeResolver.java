@@ -48,7 +48,7 @@ public class CElementIncludeResolver {
 	public static List<IPath> resolveInclude(IInclude include) throws CoreException {
 		IResource res = include.getUnderlyingResource();
 		ArrayList<IPath> filesFound = new ArrayList<IPath>(4);
-		String fullFileName= include.getFullFileName();
+		String fullFileName = include.getFullFileName();
 		if (fullFileName != null) {
 			IPath fullPath = new Path(fullFileName);
 			if (fullPath.isAbsolute() && fullPath.toFile().exists()) {
@@ -64,7 +64,7 @@ public class CElementIncludeResolver {
 			IProject proj = res.getProject();
 			String includeName = include.getElementName();
 			// Search in the scannerInfo information
-			IScannerInfoProvider provider =  CCorePlugin.getDefault().getScannerInfoProvider(proj);
+			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(proj);
 			if (provider != null) {
 				IScannerInfo info = provider.getScannerInformation(res);
 				// XXXX this should fall back to project by itself
@@ -73,14 +73,14 @@ public class CElementIncludeResolver {
 				}
 				if (info != null) {
 					IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
-					
+
 					boolean isSystemInclude = include.isStandard();
-					
+
 					if (!isSystemInclude) {
 						// search in current directory
-						IPath location= include.getTranslationUnit().getLocation();
+						IPath location = include.getTranslationUnit().getLocation();
 						if (location != null) {
-							String currentDir= location.removeLastSegments(1).toOSString();
+							String currentDir = location.removeLastSegments(1).toOSString();
 							findFile(new String[] { currentDir }, includeName, filesFound);
 						}
 						if (filesFound.isEmpty()) {
@@ -96,7 +96,7 @@ public class CElementIncludeResolver {
 						findFile(includePaths, includeName, filesFound);
 					}
 				}
-				
+
 				if (filesFound.isEmpty()) {
 					// Fall back and search the project
 					findFile(proj, new Path(includeName), filesFound);
@@ -106,10 +106,9 @@ public class CElementIncludeResolver {
 		return filesFound;
 	}
 
-	private static void findFile(String[] includePaths, String name, ArrayList<IPath> list)
-			throws CoreException {
+	private static void findFile(String[] includePaths, String name, ArrayList<IPath> list) throws CoreException {
 		// in case it is an absolute path
-		IPath includeFile= new Path(name);		
+		IPath includeFile = new Path(name);
 		if (includeFile.isAbsolute()) {
 			includeFile = PathUtil.getCanonicalPathWindows(includeFile);
 			if (includeFile.toFile().exists()) {
@@ -128,7 +127,7 @@ public class CElementIncludeResolver {
 						list.add(p);
 					}
 				}
-			} 
+			}
 		}
 	}
 
@@ -139,7 +138,8 @@ public class CElementIncludeResolver {
 	 * @param list
 	 * @throws CoreException
 	 */
-	private static void findFile(IContainer parent, final IPath name, final ArrayList<IPath> list) throws CoreException {
+	private static void findFile(IContainer parent, final IPath name, final ArrayList<IPath> list)
+			throws CoreException {
 		parent.accept(new IResourceProxyVisitor() {
 
 			@Override
@@ -150,9 +150,9 @@ public class CElementIncludeResolver {
 						int numSegToRemove = rPath.segmentCount() - name.segmentCount();
 						IPath sPath = rPath.removeFirstSegments(numSegToRemove);
 						sPath = sPath.setDevice(name.getDevice());
-						if (Platform.getOS().equals(Platform.OS_WIN32) ?
-								sPath.toOSString().equalsIgnoreCase(name.toOSString()) :
-								sPath.equals(name)) {
+						if (Platform.getOS().equals(Platform.OS_WIN32)
+								? sPath.toOSString().equalsIgnoreCase(name.toOSString())
+								: sPath.equals(name)) {
 							list.add(rPath);
 						}
 						return false;
@@ -175,19 +175,19 @@ public class CElementIncludeResolver {
 			if (files.length > 0) {
 				IPath[] paths = new IPath[files.length];
 				for (int i = 0; i < files.length; i++) {
-					paths[i] = files[i].getFullPath(); 
+					paths[i] = files[i].getFullPath();
 				}
 				return paths;
 			}
 		}
-		
+
 		return new IPath[] { path };
 	}
-	
+
 	private static boolean isInProject(IPath path) {
-		return getWorkspaceRoot().getFileForLocation(path) != null;		
+		return getWorkspaceRoot().getFileForLocation(path) != null;
 	}
-	
+
 	private static IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}

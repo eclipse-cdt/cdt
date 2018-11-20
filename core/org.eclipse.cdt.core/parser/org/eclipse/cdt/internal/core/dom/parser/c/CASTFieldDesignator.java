@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * Implementation of field designator.
  */
 public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator, IASTCompletionContext {
-    private IASTName name;
+	private IASTName name;
 
-    public CASTFieldDesignator() {
+	public CASTFieldDesignator() {
 	}
 
 	public CASTFieldDesignator(IASTName name) {
@@ -48,35 +48,38 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
 
 	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(FIELD_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDesignators) {
+		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		if (name != null && !name.accept(action))
 			return false;
 		if (action.shouldVisitDesignators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {

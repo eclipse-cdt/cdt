@@ -23,10 +23,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
  */
 public class CLIInfoRecord extends MIInterpreterExecConsole<CLIInfoRecordInfo> {
 	private static final String COMMAND = "info record"; //$NON-NLS-1$
-	
+
 	public CLIInfoRecord(ICommandControlDMContext ctx) {
-        super(ctx, COMMAND);
-    }
+		super(ctx, COMMAND);
+	}
 
 	@Override
 	public MIInfo getResult(MIOutput out) {

@@ -12,6 +12,7 @@
  * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -22,31 +23,25 @@ import junit.framework.TestSuite;
  * Bug#50152: Wrong context sent after a "::"
  *
  */
-public class CompletionTest_VariableType_NestedPrefix  extends CompletionProposalsBaseTest{
-	
+public class CompletionTest_VariableType_NestedPrefix extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart38.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {
-			"Foo(void)",
-			"bar(void) : void",
-			"fum(void) : void",
-			"DEF",
-			"x : int"
-	};
+	private final String[] expectedResults = { "Foo(void)", "bar(void) : void", "fum(void) : void", "DEF", "x : int" };
 
 	public CompletionTest_VariableType_NestedPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_VariableType_NestedPrefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_VariableType_NestedPrefix.class.getName());
 		suite.addTest(new CompletionTest_VariableType_NestedPrefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -86,6 +81,7 @@ public class CompletionTest_VariableType_NestedPrefix  extends CompletionProposa
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

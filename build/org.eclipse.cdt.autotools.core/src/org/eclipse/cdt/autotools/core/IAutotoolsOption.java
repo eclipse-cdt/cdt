@@ -12,7 +12,6 @@ package org.eclipse.cdt.autotools.core;
 
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * @since 1.2
  */

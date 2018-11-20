@@ -35,7 +35,7 @@ public interface ICompositesFactory {
 	 * matter which fragment the specified binding comes from.
 	 *
 	 * @param binding a binding that will be used when searching for information to return from
- 	 *     the composite binding methods
+	 *     the composite binding methods
 	 * @return a composite (index context carrying) binding for the specified binding
 	 */
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding binding);

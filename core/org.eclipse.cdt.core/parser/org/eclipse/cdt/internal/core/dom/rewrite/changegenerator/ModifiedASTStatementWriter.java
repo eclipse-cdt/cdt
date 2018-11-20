@@ -24,8 +24,9 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTStatementWriter extends StatementWriter {
 	private final ASTModificationHelper modificationHelper;
-	
-	public ModifiedASTStatementWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+
+	public ModifiedASTStatementWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
@@ -44,7 +45,7 @@ public class ModifiedASTStatementWriter extends StatementWriter {
 
 	@Override
 	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
-		return modificationHelper.createModifiedChildArray(compoundStatement,
-				compoundStatement.getStatements(), IASTStatement.class, commentMap);
+		return modificationHelper.createModifiedChildArray(compoundStatement, compoundStatement.getStatements(),
+				IASTStatement.class, commentMap);
 	}
 }

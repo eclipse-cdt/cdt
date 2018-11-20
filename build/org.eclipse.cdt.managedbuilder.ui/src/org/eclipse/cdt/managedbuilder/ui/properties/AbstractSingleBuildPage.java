@@ -30,20 +30,22 @@ import org.eclipse.core.runtime.IPath;
  * require separate cPropertyTab to display data.
  */
 public abstract class AbstractSingleBuildPage extends AbstractSinglePage {
-	public IConfiguration getConfigurationFromHoldsOptions(IHoldsOptions ho){
-		if(ho instanceof IToolChain)
-			return ((IToolChain)ho).getParent();
-		else if(ho instanceof ITool)
-			return getConfigurationFromTool((ITool)ho);
+	public IConfiguration getConfigurationFromHoldsOptions(IHoldsOptions ho) {
+		if (ho instanceof IToolChain)
+			return ((IToolChain) ho).getParent();
+		else if (ho instanceof ITool)
+			return getConfigurationFromTool((ITool) ho);
 		return null;
 	}
-	public IConfiguration getConfigurationFromTool(ITool tool){
+
+	public IConfiguration getConfigurationFromTool(ITool tool) {
 		return tool.getParentResourceInfo().getParent();
 	}
-	
+
 	public IConfiguration getCfg() {
 		return getCfg(getResDesc().getConfiguration());
 	}
+
 	public IConfiguration getCfg(ICConfigurationDescription cfgd) {
 		return ManagedBuildManager.getConfigurationForDescription(cfgd);
 	}
@@ -56,27 +58,25 @@ public abstract class AbstractSingleBuildPage extends AbstractSinglePage {
 	 */
 	public IResourceInfo getResCfg(ICResourceDescription cfgd) {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd.getConfiguration());
-		
-		if (isForProject()) 
+
+		if (isForProject())
 			return cfg.getRootFolderInfo();
-		
+
 		IPath p = cfgd.getPath();
 		IResourceInfo f = null;
 		f = cfg.getResourceInfo(p, false);
-		
+
 		if (f != null && (!p.equals(f.getPath()))) {
 			String s = p.toString().replace('/', '_').replace('\\', '_');
-			if (isForFile()) 
-				f = cfg.createFileInfo(p, (IFolderInfo)f, null,
-						f.getId()+ s, f.getName() + s);
+			if (isForFile())
+				f = cfg.createFileInfo(p, (IFolderInfo) f, null, f.getId() + s, f.getName() + s);
 			else
-				f = cfg.createFolderInfo(p, (IFolderInfo)f, 
-						f.getId() + s, f.getName() + s);
+				f = cfg.createFolderInfo(p, (IFolderInfo) f, f.getId() + s, f.getName() + s);
 		}
 		if (f == null) {
-			if (isForFile()) 
+			if (isForFile())
 				f = cfg.createFileInfo(p);
-			
+
 			else
 				f = cfg.createFolderInfo(p);
 		}

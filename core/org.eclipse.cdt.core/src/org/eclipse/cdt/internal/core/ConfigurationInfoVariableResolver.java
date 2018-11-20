@@ -34,15 +34,16 @@ public abstract class ConfigurationInfoVariableResolver implements IDynamicVaria
 					variable.getName());
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, message, null));
 		}
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(argument);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(argument);
 		if (!project.exists()) {
-			String message = NLS.bind(CCorePlugin.getResourceString("ConfigurationInfoVariableResolver.wrongProjectName"), //$NON-NLS-1$
+			String message = NLS.bind(
+					CCorePlugin.getResourceString("ConfigurationInfoVariableResolver.wrongProjectName"), //$NON-NLS-1$
 					argument, variable.getName());
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, message, null));
 		}
-    	ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(project);
-    	return fetchConfigurationInfo(projectDescription.getActiveConfiguration());
+		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(project);
+		return fetchConfigurationInfo(projectDescription.getActiveConfiguration());
 	}
-	
+
 	protected abstract String fetchConfigurationInfo(ICConfigurationDescription configuration);
 }

@@ -24,9 +24,10 @@ class CompositeCPPUsingDeclaration extends CompositeCPPBinding implements ICPPUs
 	public CompositeCPPUsingDeclaration(ICompositesFactory cf, ICPPUsingDeclaration using) {
 		super(cf, using);
 	}
-	
+
 	public IBinding[] getMemberBindings() throws DOMException {
-		fail(); return null;
+		fail();
+		return null;
 	}
 
 	@Override

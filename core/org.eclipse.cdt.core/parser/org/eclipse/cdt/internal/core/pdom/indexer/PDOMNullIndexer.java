@@ -25,19 +25,19 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 public class PDOMNullIndexer extends AbstractPDOMIndexer {
 
 	public static final String ID = IPDOMManager.ID_NO_INDEXER;
-		
+
 	public PDOMNullIndexer() {
 		fProperties.clear(); // don't accept any properties
 	}
-	
+
 	@Override
 	public String getID() {
 		return ID;
 	}
 
 	@Override
-	public IPDOMIndexerTask createTask(ITranslationUnit[] added,
-			ITranslationUnit[] changed, ITranslationUnit[] removed) {
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
 		return null;
 	}
 }

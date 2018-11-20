@@ -22,8 +22,8 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  * @since 7.0
  */
 public class ReverseResumeCommandHandler extends DebugCommandHandler {
-    @Override
-    protected Class<?> getCommandType() {
-        return IReverseResumeHandler.class;
-    }
+	@Override
+	protected Class<?> getCommandType() {
+		return IReverseResumeHandler.class;
+	}
 }

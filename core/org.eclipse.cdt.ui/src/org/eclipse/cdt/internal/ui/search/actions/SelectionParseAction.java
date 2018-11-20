@@ -40,29 +40,29 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
  * Created on Jun 2, 2004
  */
 public class SelectionParseAction extends Action {
-        
+
 	protected IWorkbenchSite fSite;
 	protected ICModelBasedEditor fEditor;
 
 	public SelectionParseAction() {
 		super();
 	}
-	
+
 	public SelectionParseAction(ICModelBasedEditor editor) {
 		super();
-		fEditor= editor;
-		fSite= editor.getSite();
+		fEditor = editor;
+		fSite = editor.getSite();
 	}
-	
+
 	public SelectionParseAction(IWorkbenchSite site) {
 		super();
-		fSite= site;
+		fSite = site;
 	}
 
 	public IWorkbenchSite getSite() {
 		return fSite;
 	}
-	
+
 	protected void showStatusLineMessage(final String message) {
 		StatusLineHandler.showStatusLineMessage(fSite, message);
 	}
@@ -70,24 +70,24 @@ public class SelectionParseAction extends Action {
 	protected void clearStatusLine() {
 		StatusLineHandler.clearStatusLine(fSite);
 	}
-    	
+
 	protected ISelection getSelection() {
 		ISelection sel = null;
 		if (fSite != null && fSite.getSelectionProvider() != null) {
 			sel = fSite.getSelectionProvider().getSelection();
 		}
-		
+
 		return sel;
 	}
-	
-    protected ITextSelection getSelectedStringFromEditor() {
-        ISelection selection = getSelection();
-        if (!(selection instanceof ITextSelection)) 
-        	return null;
 
-        return (ITextSelection) selection;
-    }
-    
+	protected ITextSelection getSelectedStringFromEditor() {
+		ISelection selection = getSelection();
+		if (!(selection instanceof ITextSelection))
+			return null;
+
+		return (ITextSelection) selection;
+	}
+
 	protected void open(IPath path, int currentOffset, int currentLength) throws CoreException {
 		clearStatusLine();
 
@@ -112,25 +112,22 @@ public class SelectionParseAction extends Action {
 		}
 	}
 
-    protected void reportSourceFileOpenFailure(IPath path) {
-    	showStatusLineMessage(MessageFormat.format(
-    			CSearchMessages.SelectionParseAction_FileOpenFailure_format, 
-    			new Object[] { path.toOSString() }));
-    }
-    
-    protected void reportSelectionMatchFailure() {
-    	showStatusLineMessage(CSearchMessages.SelectionParseAction_SelectedTextNotSymbol_message); 
-    }
-    
-    protected void reportSymbolLookupFailure(String symbol) {
-    	showStatusLineMessage(MessageFormat.format(
-    			CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format, 
-    			new Object[] { symbol }));
-    }
-    
-    protected void reportIncludeLookupFailure(String filename) {
-    	showStatusLineMessage(MessageFormat.format(
-    			CSearchMessages.SelectionParseAction_IncludeNotFound_format, 
-    			new Object[] { filename }));
-    }
+	protected void reportSourceFileOpenFailure(IPath path) {
+		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_FileOpenFailure_format,
+				new Object[] { path.toOSString() }));
+	}
+
+	protected void reportSelectionMatchFailure() {
+		showStatusLineMessage(CSearchMessages.SelectionParseAction_SelectedTextNotSymbol_message);
+	}
+
+	protected void reportSymbolLookupFailure(String symbol) {
+		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format,
+				new Object[] { symbol }));
+	}
+
+	protected void reportIncludeLookupFailure(String filename) {
+		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_IncludeNotFound_format,
+				new Object[] { filename }));
+	}
 }

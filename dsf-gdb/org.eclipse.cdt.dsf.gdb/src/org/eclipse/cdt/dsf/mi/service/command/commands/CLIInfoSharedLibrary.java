@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
-
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
@@ -28,18 +27,20 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *
  */
 public class CLIInfoSharedLibrary extends CLICommand<CLIInfoSharedLibraryInfo> {
-	
+
 	public CLIInfoSharedLibrary(ISymbolDMContext ctx) {
 		super(ctx, "info sharedlibrary"); //$NON-NLS-1$
 	}
+
 	public CLIInfoSharedLibrary(IModuleDMContext ctx) {
 		super(ctx, "info sharedlibrary"); //$NON-NLS-1$
 	}
+
 	@Override
 	public CLIInfoSharedLibraryInfo getResult(MIOutput output) {
-		return (CLIInfoSharedLibraryInfo)getMIInfo(output);
+		return (CLIInfoSharedLibraryInfo) getMIInfo(output);
 	}
-	
+
 	public MIInfo getMIInfo(MIOutput out) {
 		MIInfo info = null;
 		if (out != null) {

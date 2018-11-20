@@ -16,7 +16,6 @@ package org.eclipse.cdt.testsrunner.model;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProviderInfo;
 import org.eclipse.debug.core.ILaunch;
 
-
 /**
  * Stores the information about tests running.
  * 
@@ -45,7 +44,7 @@ public interface ITestingSession {
 	 * @return total tests count or -1 if unavailable
 	 */
 	public int getTotalCounter();
-	
+
 	/**
 	 * Returns the count tests with the specified status at the moment.
 	 * 
@@ -88,7 +87,7 @@ public interface ITestingSession {
 	 * @return whether the testing session has been finished
 	 */
 	public boolean isFinished();
-	
+
 	/**
 	 * Returns the testing model accessor that is associated with this session.
 	 * 
@@ -102,7 +101,7 @@ public interface ITestingSession {
 	 * @return launch
 	 */
 	public ILaunch getLaunch();
-	
+
 	/**
 	 * Returns the information about the tests runner which was used to launch
 	 * this testing session.
@@ -133,6 +132,5 @@ public interface ITestingSession {
 	 * cannot been terminated.
 	 */
 	public void stop();
-	
+
 }
-	

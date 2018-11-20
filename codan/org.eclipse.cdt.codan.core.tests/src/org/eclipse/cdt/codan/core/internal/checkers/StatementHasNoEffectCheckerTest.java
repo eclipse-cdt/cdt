@@ -154,7 +154,8 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//   FUNC(a); // error by default
 	// }
 	public void testInMacro() throws Exception {
-		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
+		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID,
+				StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.TRUE);
 		checkSampleAbove();
 	}
@@ -176,7 +177,8 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//   FUNC(a); // no error if macro exp turned off
 	// }
 	public void testInMacroParamOff() throws Exception {
-		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
+		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID,
+				StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.FALSE);
 		checkSampleAbove();
 	}

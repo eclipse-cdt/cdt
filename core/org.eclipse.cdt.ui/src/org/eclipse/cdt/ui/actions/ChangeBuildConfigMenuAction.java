@@ -33,8 +33,8 @@ import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 /**
  * Action which changes active build configuration of the current project
  */
-public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase implements
-		IWorkbenchWindowPulldownDelegate2 {
+public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase
+		implements IWorkbenchWindowPulldownDelegate2 {
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
@@ -83,8 +83,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 			cm.manage(obs, true);
 		} else {
 			MessageDialog.openInformation(CUIPlugin.getActiveWorkbenchShell(),
-					ActionMessages.ChangeBuildConfigMenuAction_title,
-					ActionMessages.ChangeBuildConfigMenuAction_text);
+					ActionMessages.ChangeBuildConfigMenuAction_title, ActionMessages.ChangeBuildConfigMenuAction_text);
 		}
 	}
 
@@ -104,7 +103,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 		menu.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuShown(MenuEvent e) {
-				fillMenu((Menu)e.widget);
+				fillMenu((Menu) e.widget);
 			}
 		});
 	}

@@ -30,86 +30,87 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  */
 public interface IGDBHardwareAndOS extends IDsfService {
 
-    /**
-     * The physical target that has CPUs and Cores.
-     */
-    public interface IHardwareTargetDMContext extends IDMContext {}
+	/**
+	 * The physical target that has CPUs and Cores.
+	 */
+	public interface IHardwareTargetDMContext extends IDMContext {
+	}
 
-    /**
-     * A physical container of cores.
-     */
-    public interface ICPUDMContext extends IDMContext {
-    	String getId();
-    }
+	/**
+	 * A physical container of cores.
+	 */
+	public interface ICPUDMContext extends IDMContext {
+		String getId();
+	}
 
-    /**
-     * A logical core.  Without SMT (Simultaneous Multi-Threading),
-     * a logical core is a physical core.  However, with SMT, each
-     * physical core will have two logical cores.  
-     * This context represents each logical core.   
-     */
-    public interface ICoreDMContext extends IDMContext {
-    	String getId();
-    }
-    
-    /**
-     * Model data interface corresponding to ICPUDMContext.
-     */
-    public interface ICPUDMData extends IDMData {
-    	/** Number of cores contained in this CPU */
-    	int getNumCores();
-    }
+	/**
+	 * A logical core.  Without SMT (Simultaneous Multi-Threading),
+	 * a logical core is a physical core.  However, with SMT, each
+	 * physical core will have two logical cores.  
+	 * This context represents each logical core.   
+	 */
+	public interface ICoreDMContext extends IDMContext {
+		String getId();
+	}
 
-    /**
-     * Model data interface corresponding to ICoreDMContext.
-     */
-    public interface ICoreDMData extends IDMData {
-    	/**
-    	 * The physical id of the core.  Multiple cores can have
-    	 * the same physical id in the case of Simultaneous Multi-Threading.
-    	 */
-    	String getPhysicalId();
-    }
+	/**
+	 * Model data interface corresponding to ICPUDMContext.
+	 */
+	public interface ICPUDMData extends IDMData {
+		/** Number of cores contained in this CPU */
+		int getNumCores();
+	}
 
-    //
-    // Events, e.g., a core halting, starting, etc
-    //
-    
-    /**
-     * Returns an array of CPUs, based on the specified context.
-     * 
-     * @param context The context to which this method applies.
-     */
-    public void getCPUs(IHardwareTargetDMContext context, DataRequestMonitor<ICPUDMContext[]> rm);
+	/**
+	 * Model data interface corresponding to ICoreDMContext.
+	 */
+	public interface ICoreDMData extends IDMData {
+		/**
+		 * The physical id of the core.  Multiple cores can have
+		 * the same physical id in the case of Simultaneous Multi-Threading.
+		 */
+		String getPhysicalId();
+	}
 
-    /**
-     * Returns an array of cores, based on the specified context.
-     * 
-     * @param context The context to which this method applies.
-     *                For an IHardwareTargetDMContext, all cores will be returned;
-     *                for an ICPUDMContext, the cores on that CPU will be returned.
-     */
-    public void getCores(IDMContext context, DataRequestMonitor<ICoreDMContext[]> rm);
-    
-    /**
-     * Retrieves data for a given ICPUDMContext or ICoreDMContext context.
-     */
-    public void getExecutionData(IDMContext dmc, DataRequestMonitor<IDMData> rm);
-    
-    /**
-     * Create a CPU context.
-     * 
-     * @param targetDmc The parent context of this context
-     * @param CPUId The id of the CPU
-     */
-    public ICPUDMContext createCPUContext(IHardwareTargetDMContext targetDmc, String CPUId);
+	//
+	// Events, e.g., a core halting, starting, etc
+	//
 
-    /**
-     * Create a core context.
-     * 
-     * @param cpuDmc The parent CPU context of this context
-     * @param coreId The id of the core
-     */
-    public ICoreDMContext createCoreContext(ICPUDMContext cpuDmc, String coreId);
+	/**
+	 * Returns an array of CPUs, based on the specified context.
+	 * 
+	 * @param context The context to which this method applies.
+	 */
+	public void getCPUs(IHardwareTargetDMContext context, DataRequestMonitor<ICPUDMContext[]> rm);
+
+	/**
+	 * Returns an array of cores, based on the specified context.
+	 * 
+	 * @param context The context to which this method applies.
+	 *                For an IHardwareTargetDMContext, all cores will be returned;
+	 *                for an ICPUDMContext, the cores on that CPU will be returned.
+	 */
+	public void getCores(IDMContext context, DataRequestMonitor<ICoreDMContext[]> rm);
+
+	/**
+	 * Retrieves data for a given ICPUDMContext or ICoreDMContext context.
+	 */
+	public void getExecutionData(IDMContext dmc, DataRequestMonitor<IDMData> rm);
+
+	/**
+	 * Create a CPU context.
+	 * 
+	 * @param targetDmc The parent context of this context
+	 * @param CPUId The id of the CPU
+	 */
+	public ICPUDMContext createCPUContext(IHardwareTargetDMContext targetDmc, String CPUId);
+
+	/**
+	 * Create a core context.
+	 * 
+	 * @param cpuDmc The parent CPU context of this context
+	 * @param coreId The id of the core
+	 */
+	public ICoreDMContext createCoreContext(ICPUDMContext cpuDmc, String coreId);
 
 }

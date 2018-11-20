@@ -33,9 +33,9 @@ public interface IRunControl3 extends IRunControl2 {
 	 * @param selectedFunction The target function to step into <br>NOTE: a null value shall disregard linenumber and sourceFile
 	 * @param rm the DataRequestMonitor that will return the result
 	 */
-	void canStepIntoSelection(IExecutionDMContext context, String sourceFile, int lineNumber, 
-			IFunctionDeclaration selectedFunction, DataRequestMonitor<Boolean> rm); 
-	
+	void canStepIntoSelection(IExecutionDMContext context, String sourceFile, int lineNumber,
+			IFunctionDeclaration selectedFunction, DataRequestMonitor<Boolean> rm);
+
 	/**
 	 * Request to run the program forward into the specified function
 	 * if the current stop location is not at the specified lineNumber and
@@ -50,6 +50,6 @@ public interface IRunControl3 extends IRunControl2 {
 	 * @param selectedFunction the target function to step into
 	 * @param rm the DataRequestMonitor that will return the result
 	 */
-	void stepIntoSelection (IExecutionDMContext context, String sourceFile, int lineNumber, 
-			boolean skipBreakpoints, IFunctionDeclaration selectedFunction, RequestMonitor rm); 
+	void stepIntoSelection(IExecutionDMContext context, String sourceFile, int lineNumber, boolean skipBreakpoints,
+			IFunctionDeclaration selectedFunction, RequestMonitor rm);
 }

@@ -44,7 +44,7 @@ public class CheckerEnablementVerifier implements ICheckerEnablementVerifier {
 				if (editor instanceof TextEditor) {
 					TextEditor textEditor = (TextEditor) editor;
 					return !textEditor.isDirty();
-				} 
+				}
 			}
 		}
 		return false;

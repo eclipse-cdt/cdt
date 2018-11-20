@@ -54,47 +54,50 @@ import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
  * Does the setup of the linked mode from a {@link LinkedProposalModel}
  */
 public class LinkedProposalModelPresenter {
-	
+
 	public LinkedProposalModelPresenter() {
 	}
-	
-	public void enterLinkedMode(ITextViewer viewer, IEditorPart editor, LinkedProposalModel linkedProposalModel) throws BadLocationException {
-		IDocument document= viewer.getDocument();
 
-		LinkedModeModel model= new LinkedModeModel();
-		boolean added= false;
+	public void enterLinkedMode(ITextViewer viewer, IEditorPart editor, LinkedProposalModel linkedProposalModel)
+			throws BadLocationException {
+		IDocument document = viewer.getDocument();
 
-		Iterator<LinkedProposalPositionGroup> iterator= linkedProposalModel.getPositionGroupIterator();
+		LinkedModeModel model = new LinkedModeModel();
+		boolean added = false;
+
+		Iterator<LinkedProposalPositionGroup> iterator = linkedProposalModel.getPositionGroupIterator();
 		while (iterator.hasNext()) {
-			LinkedProposalPositionGroup curr= iterator.next();
+			LinkedProposalPositionGroup curr = iterator.next();
 
-			LinkedPositionGroup group= new LinkedPositionGroup();
+			LinkedPositionGroup group = new LinkedPositionGroup();
 
-			LinkedProposalPositionGroup.PositionInformation[] positions= curr.getPositions();
+			LinkedProposalPositionGroup.PositionInformation[] positions = curr.getPositions();
 			if (positions.length > 0) {
-				LinkedProposalPositionGroup.Proposal[] linkedModeProposals= curr.getProposals();
+				LinkedProposalPositionGroup.Proposal[] linkedModeProposals = curr.getProposals();
 				if (linkedModeProposals.length <= 1) {
-					for (int i= 0; i < positions.length; i++) {
-						LinkedProposalPositionGroup.PositionInformation pos= positions[i];
+					for (int i = 0; i < positions.length; i++) {
+						LinkedProposalPositionGroup.PositionInformation pos = positions[i];
 						if (pos.getOffset() != -1) {
-							group.addPosition(new LinkedPosition(document, pos.getOffset(), pos.getLength(), pos.getSequenceRank()));
+							group.addPosition(new LinkedPosition(document, pos.getOffset(), pos.getLength(),
+									pos.getSequenceRank()));
 						}
 					}
 				} else {
-					LinkedPositionProposalImpl[] proposalImpls= new LinkedPositionProposalImpl[linkedModeProposals.length];
-					for (int i= 0; i < linkedModeProposals.length; i++) {
-						proposalImpls[i]= new LinkedPositionProposalImpl(linkedModeProposals[i], model);
+					LinkedPositionProposalImpl[] proposalImpls = new LinkedPositionProposalImpl[linkedModeProposals.length];
+					for (int i = 0; i < linkedModeProposals.length; i++) {
+						proposalImpls[i] = new LinkedPositionProposalImpl(linkedModeProposals[i], model);
 					}
 
-					for (int i= 0; i < positions.length; i++) {
-						LinkedProposalPositionGroup.PositionInformation pos= positions[i];
+					for (int i = 0; i < positions.length; i++) {
+						LinkedProposalPositionGroup.PositionInformation pos = positions[i];
 						if (pos.getOffset() != -1) {
-							group.addPosition(new ProposalPosition(document, pos.getOffset(), pos.getLength(), pos.getSequenceRank(), proposalImpls));
+							group.addPosition(new ProposalPosition(document, pos.getOffset(), pos.getLength(),
+									pos.getSequenceRank(), proposalImpls));
 						}
 					}
 				}
 				model.addGroup(group);
-				added= true;
+				added = true;
 			}
 		}
 
@@ -105,12 +108,12 @@ public class LinkedProposalModelPresenter {
 		}
 
 		if (added) { // only set up UI if there are any positions set
-			LinkedModeUI ui= new EditorLinkedModeUI(model, viewer);
-			LinkedProposalPositionGroup.PositionInformation endPosition= linkedProposalModel.getEndPosition();
+			LinkedModeUI ui = new EditorLinkedModeUI(model, viewer);
+			LinkedProposalPositionGroup.PositionInformation endPosition = linkedProposalModel.getEndPosition();
 			if (endPosition != null && endPosition.getOffset() != -1) {
 				ui.setExitPosition(viewer, endPosition.getOffset() + endPosition.getLength(), 0, Integer.MAX_VALUE);
 			} else {
-				int cursorPosition= viewer.getSelectedRange().x;
+				int cursorPosition = viewer.getSelectedRange().x;
 				if (cursorPosition != 0) {
 					ui.setExitPosition(viewer, cursorPosition, 0, Integer.MAX_VALUE);
 				}
@@ -118,7 +121,7 @@ public class LinkedProposalModelPresenter {
 			ui.setExitPolicy(new LinkedModeExitPolicy());
 			ui.enter();
 
-			IRegion region= ui.getSelectedRegion();
+			IRegion region = ui.getSelectedRegion();
 			viewer.setSelectedRange(region.getOffset(), region.getLength());
 			viewer.revealRange(region.getOffset(), region.getLength());
 		}
@@ -129,8 +132,8 @@ public class LinkedProposalModelPresenter {
 		private final LinkedModeModel fLinkedPositionModel;
 
 		public LinkedPositionProposalImpl(LinkedProposalPositionGroup.Proposal proposal, LinkedModeModel model) {
-			fProposal= proposal;
-			fLinkedPositionModel= model;
+			fProposal = proposal;
+			fLinkedPositionModel = model;
 		}
 
 		/* (non-Javadoc)
@@ -138,19 +141,22 @@ public class LinkedProposalModelPresenter {
 		 */
 		@Override
 		public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
-			IDocument doc= viewer.getDocument();
-			LinkedPosition position= fLinkedPositionModel.findPosition(new LinkedPosition(doc, offset, 0));
+			IDocument doc = viewer.getDocument();
+			LinkedPosition position = fLinkedPositionModel.findPosition(new LinkedPosition(doc, offset, 0));
 			if (position != null) {
 				try {
 					try {
-						TextEdit edit= fProposal.computeEdits(offset, position, trigger, stateMask, fLinkedPositionModel);
+						TextEdit edit = fProposal.computeEdits(offset, position, trigger, stateMask,
+								fLinkedPositionModel);
 						if (edit != null) {
 							edit.apply(position.getDocument(), 0);
 						}
 					} catch (MalformedTreeException e) {
-						throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.ERROR, "Unexpected exception applying edit", e)); //$NON-NLS-1$
+						throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.ERROR,
+								"Unexpected exception applying edit", e)); //$NON-NLS-1$
 					} catch (BadLocationException e) {
-						throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.ERROR, "Unexpected exception applying edit", e)); //$NON-NLS-1$
+						throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.ERROR,
+								"Unexpected exception applying edit", e)); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
 					CUIPlugin.log(e);
@@ -199,13 +205,22 @@ public class LinkedProposalModelPresenter {
 		}
 
 		@Override
-		public Point getSelection(IDocument document) { return null; }
+		public Point getSelection(IDocument document) {
+			return null;
+		}
+
 		@Override
-		public IContextInformation getContextInformation() { return null; }
+		public IContextInformation getContextInformation() {
+			return null;
+		}
+
 		@Override
-		public void selected(ITextViewer viewer, boolean smartToggle) {}
+		public void selected(ITextViewer viewer, boolean smartToggle) {
+		}
+
 		@Override
-		public void unselected(ITextViewer viewer) {}
+		public void unselected(ITextViewer viewer) {
+		}
 
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
@@ -213,20 +228,20 @@ public class LinkedProposalModelPresenter {
 		@Override
 		public boolean validate(IDocument document, int offset, DocumentEvent event) {
 			// ignore event
-			String insert= getDisplayString();
+			String insert = getDisplayString();
 
 			int off;
-			LinkedPosition pos= fLinkedPositionModel.findPosition(new LinkedPosition(document, offset, 0));
+			LinkedPosition pos = fLinkedPositionModel.findPosition(new LinkedPosition(document, offset, 0));
 			if (pos != null) {
-				off= pos.getOffset();
+				off = pos.getOffset();
 			} else {
-				off= Math.max(0, offset - insert.length());
+				off = Math.max(0, offset - insert.length());
 			}
-			int length= offset - off;
+			int length = offset - off;
 
 			if (offset <= document.getLength()) {
 				try {
-					String content= document.get(off, length);
+					String content = document.get(off, length);
 					if (insert.startsWith(content))
 						return true;
 				} catch (BadLocationException e) {
@@ -242,11 +257,11 @@ public class LinkedProposalModelPresenter {
 			return getDisplayString();
 		}
 	}
-	
+
 	private static class LinkedModeExitPolicy implements LinkedModeUI.IExitPolicy {
 		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
-			if (event.character  == '=') {
+			if (event.character == '=') {
 				return new ExitFlags(ILinkedModeListener.EXIT_ALL, true);
 			}
 			return null;

@@ -85,87 +85,86 @@ public class CScope implements ICScope, IASTInternalScope {
 	public static final int NAMESPACE_TYPE_OTHER = 1;
 	public static final int NAMESPACE_TYPE_BOTH = 2;
 
-	private static final IndexFilter[] INDEX_FILTERS = {
-		new IndexFilter() {	// namespace type tag
-			@Override
-			public boolean acceptBinding(IBinding binding) throws CoreException {
-				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
-					(binding instanceof ICompositeType || binding instanceof IEnumeration);
-			}
-			@Override
-			public boolean acceptLinkage(ILinkage linkage) {
-				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
-			}
-		},
-		new IndexFilter() { // namespace type other
-			@Override
-			public boolean acceptBinding(IBinding binding) throws CoreException {
-				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
-					!(binding instanceof ICompositeType || binding instanceof IEnumeration);
-			}
-			@Override
-			public boolean acceptLinkage(ILinkage linkage) {
-				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
-			}
-		},
-		// namespace type both
-		IndexFilter.C_DECLARED_OR_IMPLICIT
-	};
+	private static final IndexFilter[] INDEX_FILTERS = { new IndexFilter() { // namespace type tag
+		@Override
+		public boolean acceptBinding(IBinding binding) throws CoreException {
+			return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding)
+					&& (binding instanceof ICompositeType || binding instanceof IEnumeration);
+		}
 
-    private IASTNode physicalNode;
-    private boolean isCached;
+		@Override
+		public boolean acceptLinkage(ILinkage linkage) {
+			return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
+		}
+	}, new IndexFilter() { // namespace type other
+		@Override
+		public boolean acceptBinding(IBinding binding) throws CoreException {
+			return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding)
+					&& !(binding instanceof ICompositeType || binding instanceof IEnumeration);
+		}
 
-    private final CharArrayObjectMap<?> mapsToNameOrBinding[] = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
+		@Override
+		public boolean acceptLinkage(ILinkage linkage) {
+			return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
+		}
+	},
+			// namespace type both
+			IndexFilter.C_DECLARED_OR_IMPLICIT };
+
+	private IASTNode physicalNode;
+	private boolean isCached;
+
+	private final CharArrayObjectMap<?> mapsToNameOrBinding[] = { CharArrayObjectMap.EMPTY_MAP,
+			CharArrayObjectMap.EMPTY_MAP };
 	private final EScopeKind kind;
 
 	public CScope(IASTNode physical, EScopeKind eKind) {
-        physicalNode = physical;
-        kind= eKind;
-    }
+		physicalNode = physical;
+		kind = eKind;
+	}
 
 	@Override
 	public EScopeKind getKind() {
 		return kind;
 	}
 
-    @Override
+	@Override
 	public IScope getParent() {
-        return CVisitor.getContainingScope(physicalNode);
-    }
+		return CVisitor.getContainingScope(physicalNode);
+	}
 
-    protected static class CollectNamesAction extends ASTVisitor {
-        private final char[] name;
-        private IASTName[] result;
+	protected static class CollectNamesAction extends ASTVisitor {
+		private final char[] name;
+		private IASTName[] result;
 
-        CollectNamesAction(char[] n) {
-            name = n;
-            shouldVisitNames = true;
-        }
+		CollectNamesAction(char[] n) {
+			name = n;
+			shouldVisitNames = true;
+		}
 
-        @Override
+		@Override
 		public int visit(IASTName n) {
-            ASTNodeProperty prop = n.getPropertyInParent();
-            if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
-                prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
-                prop == IASTDeclarator.DECLARATOR_NAME) {
-                if (CharArrayUtils.equals(n.toCharArray(), name))
-                    result = ArrayUtil.append(IASTName.class, result, n);
-            }
+			ASTNodeProperty prop = n.getPropertyInParent();
+			if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME || prop == IASTCompositeTypeSpecifier.TYPE_NAME
+					|| prop == IASTDeclarator.DECLARATOR_NAME) {
+				if (CharArrayUtils.equals(n.toCharArray(), name))
+					result = ArrayUtil.append(IASTName.class, result, n);
+			}
 
-            return PROCESS_CONTINUE;
-        }
+			return PROCESS_CONTINUE;
+		}
 
-        @Override
+		@Override
 		public int visit(IASTStatement statement) {
-            if (statement instanceof IASTDeclarationStatement)
-                return PROCESS_CONTINUE;
-            return PROCESS_SKIP;
-        }
+			if (statement instanceof IASTDeclarationStatement)
+				return PROCESS_CONTINUE;
+			return PROCESS_SKIP;
+		}
 
-        public IASTName[] getNames() {
-            return ArrayUtil.trim(IASTName.class, result);
-        }
-    }
+		public IASTName[] getNames() {
+			return ArrayUtil.trim(IASTName.class, result);
+		}
+	}
 
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
@@ -177,24 +176,24 @@ public class CScope implements ICScope, IASTInternalScope {
 		return CVisitor.findBindings(this, name);
 	}
 
-    public IBinding getBinding(int namespaceType, char[] name) {
-    	Object o= mapsToNameOrBinding[namespaceType].get(name);
-    	if (o instanceof IBinding)
-    		return (IBinding) o;
+	public IBinding getBinding(int namespaceType, char[] name) {
+		Object o = mapsToNameOrBinding[namespaceType].get(name);
+		if (o instanceof IBinding)
+			return (IBinding) o;
 
-    	if (o instanceof IASTName)
-    		return ((IASTName) o).resolveBinding();
+		if (o instanceof IASTName)
+			return ((IASTName) o).resolveBinding();
 
-    	if (o instanceof IASTName[]) {
-    		return ((IASTName[]) o)[0].resolveBinding();
-    	}
-    	return null;
-    }
+		if (o instanceof IASTName[]) {
+			return ((IASTName[]) o)[0].resolveBinding();
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public IASTNode getPhysicalNode() {
-        return physicalNode;
-    }
+		return physicalNode;
+	}
 
 	@Override
 	public void addName(IASTName name, boolean adlOnly) {
@@ -208,10 +207,10 @@ public class CScope implements ICScope, IASTInternalScope {
 		if (map == CharArrayObjectMap.EMPTY_MAP)
 			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<Object>(1);
 
-		Object o= map.get(nchars);
+		Object o = map.get(nchars);
 		if (o instanceof IASTName) {
 			if (o != name) {
-				map.put(nchars, new IASTName[] {(IASTName) o, name});
+				map.put(nchars, new IASTName[] { (IASTName) o, name });
 			}
 		} else if (o instanceof IASTName[]) {
 			final IASTName[] names = (IASTName[]) o;
@@ -221,7 +220,7 @@ public class CScope implements ICScope, IASTInternalScope {
 				if (n == name)
 					return;
 			}
-			final IASTName[] newNames= ArrayUtil.append(IASTName.class, names, name);
+			final IASTName[] newNames = ArrayUtil.append(IASTName.class, names, name);
 			if (newNames != names)
 				map.put(nchars, newNames);
 		} else {
@@ -229,22 +228,20 @@ public class CScope implements ICScope, IASTInternalScope {
 		}
 	}
 
-    private int getNamespaceType(IASTName name) {
-        ASTNodeProperty prop = name.getPropertyInParent();
-        if (prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
-            prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
-            prop == IASTEnumerationSpecifier.ENUMERATION_NAME ||
-            prop == CVisitor.STRING_LOOKUP_TAGS_PROPERTY) {
-            return NAMESPACE_TYPE_TAG;
-        }
+	private int getNamespaceType(IASTName name) {
+		ASTNodeProperty prop = name.getPropertyInParent();
+		if (prop == IASTCompositeTypeSpecifier.TYPE_NAME || prop == IASTElaboratedTypeSpecifier.TYPE_NAME
+				|| prop == IASTEnumerationSpecifier.ENUMERATION_NAME || prop == CVisitor.STRING_LOOKUP_TAGS_PROPERTY) {
+			return NAMESPACE_TYPE_TAG;
+		}
 
-        return NAMESPACE_TYPE_OTHER;
-    }
+		return NAMESPACE_TYPE_OTHER;
+	}
 
-    @Override
+	@Override
 	public final IBinding getBinding(IASTName name, boolean resolve) {
-    	return getBinding(name, resolve, IIndexFileSet.EMPTY);
-    }
+		return getBinding(name, resolve, IIndexFileSet.EMPTY);
+	}
 
 	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
@@ -254,48 +251,49 @@ public class CScope implements ICScope, IASTInternalScope {
 	@Override
 	public final IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		char[] c = name.toCharArray();
-	    if (c.length == 0) {
-	        return null;
-	    }
+		if (c.length == 0) {
+			return null;
+		}
 
-	    populateCache();
+		populateCache();
 		final int type = getNamespaceType(name);
 		Object o = mapsToNameOrBinding[type].get(name.toCharArray());
 
 		if (o instanceof IBinding)
 			return (IBinding) o;
 
-	    if (o instanceof IASTName) {
-	    	IBinding b= extractBinding((IASTName) o, resolve, name);
-	    	if (b != null)
-	    		return b;
-	    } else if (o instanceof IASTName[]) {
-	    	for (IASTName n: ((IASTName[]) o)) {
+		if (o instanceof IASTName) {
+			IBinding b = extractBinding((IASTName) o, resolve, name);
+			if (b != null)
+				return b;
+		} else if (o instanceof IASTName[]) {
+			for (IASTName n : ((IASTName[]) o)) {
 				if (n == null)
 					break;
-				IBinding b= extractBinding(n, resolve, name);
+				IBinding b = extractBinding(n, resolve, name);
 				if (b != null)
 					return b;
 			}
-	    }
+		}
 
-    	IBinding result= null;
-    	if (resolve && physicalNode instanceof IASTTranslationUnit) {
-    		final IASTTranslationUnit tu = (IASTTranslationUnit) physicalNode;
-			IIndex index= tu.getIndex();
-    		if (index != null) {
-    			try {
-    				IBinding[] bindings= index.findBindings(name.toCharArray(), INDEX_FILTERS[type], new NullProgressMonitor());
-    				if (fileSet != null) {
-    					bindings= fileSet.filterFileLocalBindings(bindings);
-    				}
-    				result= processIndexResults(name, bindings);
-    			} catch (CoreException e) {
-    				CCorePlugin.log(e);
-    			}
-    		}
-    	}
-    	return result;
+		IBinding result = null;
+		if (resolve && physicalNode instanceof IASTTranslationUnit) {
+			final IASTTranslationUnit tu = (IASTTranslationUnit) physicalNode;
+			IIndex index = tu.getIndex();
+			if (index != null) {
+				try {
+					IBinding[] bindings = index.findBindings(name.toCharArray(), INDEX_FILTERS[type],
+							new NullProgressMonitor());
+					if (fileSet != null) {
+						bindings = fileSet.filterFileLocalBindings(bindings);
+					}
+					result = processIndexResults(name, bindings);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}
+		return result;
 	}
 
 	private IBinding extractBinding(final IASTName candidate, boolean resolve, IASTName forName) {
@@ -308,30 +306,30 @@ public class CScope implements ICScope, IASTInternalScope {
 		return null;
 	}
 
-    private boolean acceptDeclaredAfter(IASTName name, IASTName candidate) {
-    	// Functions may be declared after the point of use.
-    	if (!(candidate.getParent() instanceof IASTFunctionDeclarator))
-    		return false;
-    	if (getKind() != EScopeKind.eGlobal)
-    		return false;
-    	final ASTNodeProperty propertyInParent = name.getPropertyInParent();
-		if (propertyInParent==IASTNamedTypeSpecifier.NAME ||
-				propertyInParent == IASTElaboratedTypeSpecifier.TYPE_NAME) {
-    		return false;
-    	}
-    	IASTNode parent= name.getParent();
-    	while (parent != null) {
-    		if (parent instanceof IASTSimpleDeclSpecifier) {
-    			if (((IASTSimpleDeclSpecifier) parent).getDeclTypeExpression() != null)
-    				return false;
-    		} else if (parent instanceof IASTTypeIdExpression) {
-    			if (((IASTTypeIdExpression) parent).getOperator() == IASTTypeIdExpression.op_typeof)
-    				return false;
-    		}
-    		parent= parent.getParent();
-    	}
-    	return true;
-    }
+	private boolean acceptDeclaredAfter(IASTName name, IASTName candidate) {
+		// Functions may be declared after the point of use.
+		if (!(candidate.getParent() instanceof IASTFunctionDeclarator))
+			return false;
+		if (getKind() != EScopeKind.eGlobal)
+			return false;
+		final ASTNodeProperty propertyInParent = name.getPropertyInParent();
+		if (propertyInParent == IASTNamedTypeSpecifier.NAME
+				|| propertyInParent == IASTElaboratedTypeSpecifier.TYPE_NAME) {
+			return false;
+		}
+		IASTNode parent = name.getParent();
+		while (parent != null) {
+			if (parent instanceof IASTSimpleDeclSpecifier) {
+				if (((IASTSimpleDeclSpecifier) parent).getDeclTypeExpression() != null)
+					return false;
+			} else if (parent instanceof IASTTypeIdExpression) {
+				if (((IASTTypeIdExpression) parent).getOperator() == IASTTypeIdExpression.op_typeof)
+					return false;
+			}
+			parent = parent.getParent();
+		}
+		return true;
+	}
 
 	/**
 	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
@@ -344,32 +342,33 @@ public class CScope implements ICScope, IASTInternalScope {
 
 	@Override
 	public final IBinding[] getBindings(ScopeLookupData lookup) {
-        char[] c = lookup.getLookupKey();
-        Object[] obj = null;
+		char[] c = lookup.getLookupKey();
+		Object[] obj = null;
 
-        populateCache();
-        for (CharArrayObjectMap<?> map : mapsToNameOrBinding) {
-        	if (lookup.isPrefixLookup()) {
-        		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
-        		char[][] keys = map.keys();
-        		for (char[] key : keys) {
+		populateCache();
+		for (CharArrayObjectMap<?> map : mapsToNameOrBinding) {
+			if (lookup.isPrefixLookup()) {
+				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
+				char[][] keys = map.keys();
+				for (char[] key : keys) {
 					if (matcher.match(key)) {
-        				obj = ArrayUtil.append(obj, map.get(key));
-        			}
-        		}
-        	} else {
-        		obj = ArrayUtil.append(obj, map.get(c));
-        	}
-        }
+						obj = ArrayUtil.append(obj, map.get(key));
+					}
+				}
+			} else {
+				obj = ArrayUtil.append(obj, map.get(c));
+			}
+		}
 
 		if (physicalNode instanceof IASTTranslationUnit) {
 			final IASTTranslationUnit tu = (IASTTranslationUnit) physicalNode;
 			IIndex index = tu.getIndex();
 			if (index != null) {
 				try {
-					IBinding[] bindings = lookup.isPrefixLookup() ?
-							index.findBindingsForContentAssist(lookup.getLookupKey(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
-							index.findBindings(lookup.getLookupKey(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
+					IBinding[] bindings = lookup.isPrefixLookup()
+							? index.findBindingsForContentAssist(lookup.getLookupKey(), true,
+									INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null)
+							: index.findBindings(lookup.getLookupKey(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
 					IIndexFileSet filter = lookup.getIncludedFiles();
 					if (filter != null) {
 						bindings = filter.filterFileLocalBindings(bindings);
@@ -381,16 +380,16 @@ public class CScope implements ICScope, IASTInternalScope {
 				}
 			}
 		}
-       	obj = ArrayUtil.trim(Object.class, obj);
-       	IBinding[] result = null;
+		obj = ArrayUtil.trim(Object.class, obj);
+		IBinding[] result = null;
 
 		for (Object element : obj) {
 			if (element instanceof IBinding) {
 				result = ArrayUtil.append(IBinding.class, result, (IBinding) element);
 			} else {
-				IASTName n= null;
+				IASTName n = null;
 				if (element instanceof IASTName) {
-					n= (IASTName) element;
+					n = (IASTName) element;
 				} else if (element instanceof IASTName[]) {
 					n = ((IASTName[]) element)[0];
 				}
@@ -408,31 +407,31 @@ public class CScope implements ICScope, IASTInternalScope {
 			}
 		}
 
-        return ArrayUtil.trim(IBinding.class, result);
-    }
+		return ArrayUtil.trim(IBinding.class, result);
+	}
 
-    /**
-     * Index results from global scope, differ from ast results from translation unit scope. This routine
-     * is intended to fix results from the index to be consistent with ast scope behavior.
-     * @param name the name as it occurs in the ast
-     * @param bindings the set of candidate bindings
-     * @return the appropriate binding, or null if no binding is appropriate for the ast name
-     */
-    private IBinding processIndexResults(IASTName name, IBinding[] bindings) {
-    	if (bindings.length != 1)
-    		return null;
+	/**
+	 * Index results from global scope, differ from ast results from translation unit scope. This routine
+	 * is intended to fix results from the index to be consistent with ast scope behavior.
+	 * @param name the name as it occurs in the ast
+	 * @param bindings the set of candidate bindings
+	 * @return the appropriate binding, or null if no binding is appropriate for the ast name
+	 */
+	private IBinding processIndexResults(IASTName name, IBinding[] bindings) {
+		if (bindings.length != 1)
+			return null;
 
-    	return bindings[0];
-    }
+		return bindings[0];
+	}
 
-    @Override
+	@Override
 	public void populateCache() {
-    	if (isCached)
-    		return;
+		if (isCached)
+			return;
 
-    	doPopulateCache();
-    	isCached= true;
-    }
+		doPopulateCache();
+		isCached = true;
+	}
 
 	@Override
 	public void removeNestedFromCache(IASTNode container) {
@@ -444,7 +443,7 @@ public class CScope implements ICScope, IASTInternalScope {
 
 	private void removeFromMap(CharArrayObjectMap<?> map, IASTNode container) {
 		for (int i = 0; i < map.size(); i++) {
-			Object o= map.getAt(i);
+			Object o = map.getAt(i);
 			if (o instanceof IASTName) {
 				if (container.contains((IASTNode) o)) {
 					final char[] key = map.keyAt(i);
@@ -459,16 +458,16 @@ public class CScope implements ICScope, IASTInternalScope {
 	}
 
 	private void removeFromSet(IASTName[] set, IASTNode container) {
-		int j= 0;
+		int j = 0;
 		for (int i = 0; i < set.length; i++) {
-			IASTName n= set[i];
+			IASTName n = set[i];
 			if (n == null)
 				break;
 			if (container.contains(n)) {
-				set[i]= null;
+				set[i] = null;
 			} else if (i != j) {
-				set[j++]= n;
-				set[i]= null;
+				set[j++] = n;
+				set[i] = null;
 			}
 		}
 	}
@@ -500,7 +499,7 @@ public class CScope implements ICScope, IASTInternalScope {
 			nodes = dtor.getParameterDeclarations();
 		} else if (scopeNode instanceof IASTForStatement) {
 			final IASTForStatement forStmt = (IASTForStatement) scopeNode;
-			nodes= new IASTNode[] { forStmt.getInitializerStatement() };
+			nodes = new IASTNode[] { forStmt.getInitializerStatement() };
 		}
 
 		if (nodes != null) {
@@ -540,32 +539,32 @@ public class CScope implements ICScope, IASTInternalScope {
 	}
 
 	public void collectNames(IASTNode node) {
-	    if (node instanceof IASTDeclaration) {
-	        collectNames((IASTDeclaration) node);
-	    } else if (node instanceof IASTParameterDeclaration) {
-	        collectNames((IASTParameterDeclaration) node);
-	    } else if (node instanceof IASTDeclarationStatement) {
+		if (node instanceof IASTDeclaration) {
+			collectNames((IASTDeclaration) node);
+		} else if (node instanceof IASTParameterDeclaration) {
+			collectNames((IASTParameterDeclaration) node);
+		} else if (node instanceof IASTDeclarationStatement) {
 			collectNames(((IASTDeclarationStatement) node).getDeclaration());
 		}
 	}
 
 	private void collectNames(IASTParameterDeclaration paramDecl) {
-	    if (paramDecl == null || paramDecl instanceof IASTAmbiguousParameterDeclaration)
-	    	return;
+		if (paramDecl == null || paramDecl instanceof IASTAmbiguousParameterDeclaration)
+			return;
 
 		collectNames(paramDecl.getDeclarator());
 		collectNames(paramDecl.getDeclSpecifier(), false);
 	}
 
 	private void collectNames(IASTDeclarator dtor) {
-		IASTDeclarator innermost= null;
+		IASTDeclarator innermost = null;
 		while (dtor != null) {
 			if (dtor instanceof IASTAmbiguousDeclarator) {
-				innermost= null;
+				innermost = null;
 				break;
 			}
-			innermost= dtor;
-			dtor= dtor.getNestedDeclarator();
+			innermost = dtor;
+			dtor = dtor.getNestedDeclarator();
 		}
 		if (innermost != null)
 			ASTInternal.addName(this, innermost.getName());
@@ -598,7 +597,7 @@ public class CScope implements ICScope, IASTInternalScope {
 			}
 		} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
 			tempName = ((ICASTCompositeTypeSpecifier) declSpec).getName();
-			ASTInternal.addName(this,  tempName);
+			ASTInternal.addName(this, tempName);
 
 			// Also have to check for any nested structs.
 			IASTDeclaration[] nested = ((ICASTCompositeTypeSpecifier) declSpec).getMembers();
@@ -611,17 +610,18 @@ public class CScope implements ICScope, IASTInternalScope {
 				}
 			}
 		} else if (declSpec instanceof ICASTEnumerationSpecifier) {
-		    ICASTEnumerationSpecifier enumeration = (ICASTEnumerationSpecifier) declSpec;
-		    tempName = enumeration.getName();
-		    ASTInternal.addName(this,  tempName);
+			ICASTEnumerationSpecifier enumeration = (ICASTEnumerationSpecifier) declSpec;
+			tempName = enumeration.getName();
+			ASTInternal.addName(this, tempName);
 
-		    // Check enumerators.
-		    IASTEnumerator[] list = ((ICASTEnumerationSpecifier) declSpec).getEnumerators();
-		    for (IASTEnumerator enumerator : list) {
-		        if (enumerator == null) break;
-		        tempName = enumerator.getName();
-		        ASTInternal.addName(this,  tempName);
-		    }
+			// Check enumerators.
+			IASTEnumerator[] list = ((ICASTEnumerationSpecifier) declSpec).getEnumerators();
+			for (IASTEnumerator enumerator : list) {
+				if (enumerator == null)
+					break;
+				tempName = enumerator.getName();
+				ASTInternal.addName(this, tempName);
+			}
 		}
 	}
 
@@ -643,7 +643,7 @@ public class CScope implements ICScope, IASTInternalScope {
 		@SuppressWarnings("unchecked")
 		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) mapsToNameOrBinding[type];
 		if (map == CharArrayObjectMap.EMPTY_MAP)
-			mapsToNameOrBinding[type] = map= new CharArrayObjectMap<Object>(2);
+			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<Object>(2);
 
 		map.put(binding.getNameCharArray(), binding);
 	}
@@ -653,6 +653,6 @@ public class CScope implements ICScope, IASTInternalScope {
 	 * However, we do not clear any names in order not to loose bindings.
 	 */
 	public void markAsUncached() {
-		isCached= false;
+		isCached = false;
 	}
 }

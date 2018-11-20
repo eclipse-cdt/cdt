@@ -43,14 +43,14 @@ public class ProcessPrompter implements IStatusHandler {
 	public static class PrompterInfo {
 		public IProcessExtendedInfo[] processList;
 		public List<String> debuggedProcesses;
-		
+
 		public PrompterInfo(IProcessExtendedInfo[] list, List<String> debuggedProcs) {
 			processList = list;
 			debuggedProcesses = debuggedProcs;
 		}
 	}
-	
-    @Override
+
+	@Override
 	public Object handleStatus(IStatus status, Object info) throws CoreException {
 		Shell shell = GdbUIPlugin.getShell();
 		if (shell == null) {
@@ -61,20 +61,19 @@ public class ProcessPrompter implements IStatusHandler {
 		}
 
 		final PrompterInfo prompterInfo = (PrompterInfo) info;
-		IProcessExtendedInfo[] plist = prompterInfo.processList;		
+		IProcessExtendedInfo[] plist = prompterInfo.processList;
 		if (plist == null) {
-			MessageDialog.openError(
-					shell,
-					LaunchMessages.getString("LocalAttachLaunchDelegate.CDT_Launch_Error"), LaunchMessages.getString("LocalAttachLaunchDelegate.Platform_cannot_list_processes")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(shell, LaunchMessages.getString("LocalAttachLaunchDelegate.CDT_Launch_Error"), //$NON-NLS-1$
+					LaunchMessages.getString("LocalAttachLaunchDelegate.Platform_cannot_list_processes")); //$NON-NLS-1$
 			return null;
 		}
-		
+
 		if (plist.length == 0) {
 			// No list available, just let the user put in a pid directly
-			InputDialog dialog = new InputDialog(shell, 
-                                                 LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process"), //$NON-NLS-1$
-                                                 LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to"), //$NON-NLS-1$
-                                                 null, null);
+			InputDialog dialog = new InputDialog(shell,
+					LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process"), //$NON-NLS-1$
+					LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to"), //$NON-NLS-1$
+					null, null);
 
 			if (dialog.open() == Window.OK) {
 				String pidStr = dialog.getValue();
@@ -87,7 +86,7 @@ public class ProcessPrompter implements IStatusHandler {
 			ILabelProvider provider = new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
+					IProcessExtendedInfo info = (IProcessExtendedInfo) element;
 					// Sometimes, if we are not getting the list of processes from GDB,
 					// we use CCorePlugin.getDefault().getProcessList(); which returns
 					// the process and its arguments.  If the arguments contain a /
@@ -99,44 +98,44 @@ public class ProcessPrompter implements IStatusHandler {
 						// Bug 374823
 						return null;
 					}
-					
+
 					name = name.split("\\s", 2)[0]; //$NON-NLS-1$
-					
+
 					// on windows host, paths of style "sendmail:", "udisk-daemon:" 
 					// would be treated as device id with no path segments 
 					IPath path = new Path(name);
 					StringBuilder text = new StringBuilder();
-					if (path.lastSegment() == null ) {
+					if (path.lastSegment() == null) {
 						text.append(name);
 					} else {
 						text.append(path.lastSegment());
 					}
-					
+
 					String owner = info.getOwner();
 					if (owner != null && !owner.isEmpty()) {
-						text.append(" (").append(owner).append(")");  //$NON-NLS-1$//$NON-NLS-2$
+						text.append(" (").append(owner).append(")"); //$NON-NLS-1$//$NON-NLS-2$
 					}
-					
+
 					text.append(" - ").append(info.getPid()); //$NON-NLS-1$
 
 					String[] cores = info.getCores();
 					if (cores != null && cores.length > 0) {
 						String coreStr;
 						if (cores.length == 1) {
-							coreStr = LaunchUIMessages.getString("ProcessPrompter.Core");   //$NON-NLS-1$
+							coreStr = LaunchUIMessages.getString("ProcessPrompter.Core"); //$NON-NLS-1$
 						} else {
-							coreStr = LaunchUIMessages.getString("ProcessPrompter.Cores");   //$NON-NLS-1$
+							coreStr = LaunchUIMessages.getString("ProcessPrompter.Cores"); //$NON-NLS-1$
 						}
-						text.append(" [").append(coreStr).append(": ");   //$NON-NLS-1$//$NON-NLS-2$
-						
+						text.append(" [").append(coreStr).append(": "); //$NON-NLS-1$//$NON-NLS-2$
+
 						for (String core : cores) {
 							text.append(core).append(", "); //$NON-NLS-1$
 						}
 						// Remove the last comma and space
-						text.replace(text.length()-2, text.length(), "]"); //$NON-NLS-1$
+						text.replace(text.length() - 2, text.length(), "]"); //$NON-NLS-1$
 					}
-					
-					String description =  info.getDescription();
+
+					String description = info.getDescription();
 					if (description != null) {
 						text.append(" : " + description); //$NON-NLS-1$
 					}
@@ -152,8 +151,8 @@ public class ProcessPrompter implements IStatusHandler {
 			ILabelProvider qprovider = new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
-					String description =  info.getDescription();
+					IProcessExtendedInfo info = (IProcessExtendedInfo) element;
+					String description = info.getDescription();
 					if (description != null) {
 						return description;
 					}
@@ -167,23 +166,23 @@ public class ProcessPrompter implements IStatusHandler {
 			};
 
 			// Display the list of processes and have the user choose
-			ProcessPrompterDialog dialog = 
-				new ProcessPrompterDialog(shell, provider, qprovider);
+			ProcessPrompterDialog dialog = new ProcessPrompterDialog(shell, provider, qprovider);
 			dialog.setTitle(LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
-			dialog.setMessage(LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
+			dialog.setMessage(
+					LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
 
 			// Allow for multiple selection
 			dialog.setMultipleSelection(true);
 			dialog.setStatusLineAboveButtons(true);
-			
+
 			dialog.setValidator(new ISelectionStatusValidator() {
 				@Override
 				public IStatus validate(Object[] selection) {
 					for (Object sel : selection) {
-						String pid = Integer.toString(((IProcessExtendedInfo)sel).getPid(), 10);
+						String pid = Integer.toString(((IProcessExtendedInfo) sel).getPid(), 10);
 						if (prompterInfo.debuggedProcesses.contains(pid)) {
-							return new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(),
-									MessageFormat.format(LaunchUIMessages.getString("ProcessPrompter.ErrProcessConected"), pid)); //$NON-NLS-1$
+							return new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(), MessageFormat
+									.format(LaunchUIMessages.getString("ProcessPrompter.ErrProcessConected"), pid)); //$NON-NLS-1$
 						}
 					}
 					return new Status(IStatus.OK, GdbUIPlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$
@@ -194,14 +193,14 @@ public class ProcessPrompter implements IStatusHandler {
 				Object[] results = dialog.getResult();
 				if (results != null) {
 					IProcessExtendedInfo[] processes = new IProcessExtendedInfo[results.length];
-					for (int i=0; i<processes.length; i++) {
-						processes[i] = (IProcessExtendedInfo)results[i];
+					for (int i = 0; i < processes.length; i++) {
+						processes[i] = (IProcessExtendedInfo) results[i];
 					}
 					return processes;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 

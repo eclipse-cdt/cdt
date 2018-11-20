@@ -67,7 +67,7 @@ public class FastCPartitioner extends FastPartitioner {
 		}
 		return super.getPartition(offset, preferOpenPartitions);
 	}
-	
+
 	/**
 	 * @return the DocCommentOwner associated with this partition scanner, or null
 	 * if there is no owner.
@@ -75,7 +75,7 @@ public class FastCPartitioner extends FastPartitioner {
 	 */
 	public IDocCommentOwner getDocCommentOwner() {
 		if (fScanner instanceof FastCPartitionScanner) {
-			return ((FastCPartitionScanner)fScanner).getDocCommentOwner();
+			return ((FastCPartitionScanner) fScanner).getDocCommentOwner();
 		}
 		return null;
 	}

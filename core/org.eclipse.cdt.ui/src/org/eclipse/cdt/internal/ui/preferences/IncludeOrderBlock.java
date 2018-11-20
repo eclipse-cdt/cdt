@@ -44,29 +44,27 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 public class IncludeOrderBlock extends OptionsConfigurationBlock {
 	private static final int IDX_UP = 0;
 	private static final int IDX_DOWN = 1;
-	private static final String[] UP_DOWN_LABELS = {
-		PreferencesMessages.IncludeOrderBlock_up,
-		PreferencesMessages.IncludeOrderBlock_down
-	};
+	private static final String[] UP_DOWN_LABELS = { PreferencesMessages.IncludeOrderBlock_up,
+			PreferencesMessages.IncludeOrderBlock_down };
 
 	private final List<IncludeGroupStyle> styles;
 	private Map<IncludeKind, IncludeGroupStyle> stylesByKind;
 	private GroupListField includeGroupList;
 	private PixelConverter pixelConverter;
 
-	public IncludeOrderBlock(IStatusChangeListener context, IProject project,
-			IWorkbenchPreferenceContainer container, List<IncludeGroupStyle> styles) {
+	public IncludeOrderBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container,
+			List<IncludeGroupStyle> styles) {
 		super(context, project, new Key[0], container);
 		this.styles = styles;
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
-		pixelConverter =  new PixelConverter(parent);
+		pixelConverter = new PixelConverter(parent);
 
 		setShell(parent.getShell());
 
-		Composite composite =  new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 
 		GridLayout layout = new GridLayout(2, false);
@@ -103,8 +101,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 		for (IncludeGroupStyle style : orderedStyles) {
 			style.setOrder(order++);
 			IncludeKind includeKind = style.getIncludeKind();
-			if (style.isKeepTogether() &&
-					(!includeKind.hasChildren() || hasUngroupedChildren(includeKind, stylesByKind))) {
+			if (style.isKeepTogether()
+					&& (!includeKind.hasChildren() || hasUngroupedChildren(includeKind, stylesByKind))) {
 				groupedStyles.add(style);
 			}
 		}
@@ -113,7 +111,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 			IncludeGroupStyle style = groupedStyles.get(i);
 			IncludeKind groupingKind = getGroupingParentKind(style);
 			if (groupingKind != null) {
-				while (++i < groupedStyles.size() && getGroupingParentKind(groupedStyles.get(i)) == groupingKind) {}
+				while (++i < groupedStyles.size() && getGroupingParentKind(groupedStyles.get(i)) == groupingKind) {
+				}
 				for (int j = i + 1; j < groupedStyles.size(); j++) {
 					if (getGroupingParentKind(groupedStyles.get(j)) == groupingKind) {
 						groupedStyles.add(i++, groupedStyles.remove(j));
@@ -165,8 +164,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 		// "Other" include kind is special since it effectively includes all other ungrouped includes.
 		if (includeKind == IncludeKind.OTHER) {
 			for (IncludeKind kind : stylesByKind.keySet()) {
-				if (kind != IncludeKind.OTHER && kind.hasChildren() && !stylesByKind.get(kind).isKeepTogether() &&
-						hasUngroupedChildren(kind, stylesByKind)) {
+				if (kind != IncludeKind.OTHER && kind.hasChildren() && !stylesByKind.get(kind).isKeepTogether()
+						&& hasUngroupedChildren(kind, stylesByKind)) {
 					return true;
 				}
 			}
@@ -268,7 +267,7 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 		}
 
 		private List<IncludeGroupStyle> moveUp(List<IncludeGroupStyle> elements, boolean[] selected) {
-			int nElements= elements.size();
+			int nElements = elements.size();
 			List<IncludeGroupStyle> res = new ArrayList<IncludeGroupStyle>(nElements);
 			List<IncludeGroupStyle> floating = new ArrayList<IncludeGroupStyle>();
 			for (int i = 0; i < nElements; i++) {
@@ -317,9 +316,10 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 			for (int i = 1; i < selected.length; i++) {
 				int j = i - 1;
 				if (selected[i] && !selected[j] && areKeptTogether(elements.get(i), elements.get(j))) {
-					while (++i < selected.length && selected[i]) {}
+					while (++i < selected.length && selected[i]) {
+					}
 					if (!areKeptTogether(elements.get(i - 1), elements.get(j)))
-						return false;  // Cannot break a group.
+						return false; // Cannot break a group.
 				}
 			}
 			return true;

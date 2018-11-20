@@ -52,15 +52,15 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	private final String fileScope;
 	private ModificationScopeStack stack;
 
-	public ChangeGeneratorWriterVisitor(ASTVisitor delegateVisitor,
-			ASTModificationStore modificationStore, String fileScope, NodeCommentMap commentMap, boolean placeConstRight) {
+	public ChangeGeneratorWriterVisitor(ASTVisitor delegateVisitor, ASTModificationStore modificationStore,
+			String fileScope, NodeCommentMap commentMap, boolean placeConstRight) {
 		super(commentMap);
 
 		this.modificationStore = modificationStore;
 		this.fileScope = fileScope;
 		this.stack = new ModificationScopeStack(modificationStore);
 
-		shouldVisitArrayModifiers= delegateVisitor.shouldVisitArrayModifiers;
+		shouldVisitArrayModifiers = delegateVisitor.shouldVisitArrayModifiers;
 		shouldVisitBaseSpecifiers = delegateVisitor.shouldVisitBaseSpecifiers;
 		shouldVisitDeclarations = delegateVisitor.shouldVisitDeclarators;
 		shouldVisitDeclarators = delegateVisitor.shouldVisitDeclarators;
@@ -70,7 +70,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		shouldVisitNames = delegateVisitor.shouldVisitNames;
 		shouldVisitNamespaces = delegateVisitor.shouldVisitNamespaces;
 		shouldVisitParameterDeclarations = delegateVisitor.shouldVisitParameterDeclarations;
-		shouldVisitPointerOperators= delegateVisitor.shouldVisitPointerOperators;
+		shouldVisitPointerOperators = delegateVisitor.shouldVisitPointerOperators;
 		shouldVisitProblems = delegateVisitor.shouldVisitProblems;
 		shouldVisitStatements = delegateVisitor.shouldVisitStatements;
 		shouldVisitTemplateParameters = delegateVisitor.shouldVisitTemplateParameters;
@@ -87,20 +87,19 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		this(modStore, null, nodeMap, placeConstRight);
 	}
 
-	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String fileScope,
-			NodeCommentMap commentMap) {
+	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String fileScope, NodeCommentMap commentMap) {
 		this(modStore, fileScope, commentMap, false);
 	}
 
-	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String fileScope,
-			NodeCommentMap commentMap, boolean placeConstRight) {
+	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String fileScope, NodeCommentMap commentMap,
+			boolean placeConstRight) {
 		super(commentMap);
 		this.modificationStore = modStore;
 		this.fileScope = fileScope;
 		this.shouldVisitTranslationUnit = true;
 		this.stack = new ModificationScopeStack(modificationStore);
 		declaratorWriter = new ModifiedASTDeclaratorWriter(scribe, this, stack, commentMap);
-		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler,	stack, commentMap);
+		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler, stack, commentMap);
 		statementWriter = new ModifiedASTStatementWriter(scribe, this, stack, commentMap);
 		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, stack, commentMap, placeConstRight);
 		declarationWriter = new ModifiedASTDeclarationWriter(scribe, this, stack, commentMap);
@@ -111,8 +110,8 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		IASTDeclarator newDecl = parameterDeclaration.getDeclarator();
 		if (stack.getModifiedNodes().contains(newDecl)) {
 			for (ASTModification currentModification : stack.getModificationsForNode(newDecl)) {
-				if (currentModification.getKind() == ASTModification.ModificationKind.REPLACE &&
-						currentModification.getTargetNode() == parameterDeclaration) {
+				if (currentModification.getKind() == ASTModification.ModificationKind.REPLACE
+						&& currentModification.getTargetNode() == parameterDeclaration) {
 					newDecl = (IASTDeclarator) currentModification.getNewNode();
 				}
 			}
@@ -125,8 +124,8 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		IASTName newName = declarator.getName();
 		if (stack.getModifiedNodes().contains(newName)) {
 			for (ASTModification currentModification : stack.getModificationsForNode(newName)) {
-				if (currentModification.getKind() == ASTModification.ModificationKind.REPLACE &&
-						currentModification.getTargetNode() == newName) {
+				if (currentModification.getKind() == ASTModification.ModificationKind.REPLACE
+						&& currentModification.getTargetNode() == newName) {
 					newName = (IASTName) currentModification.getNewNode();
 				}
 			}
@@ -425,7 +424,8 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		}
 
 		for (IASTNode modifiedNode : modificationStore.getRootModifications().getModifiedNodes()) {
-			for (ASTModification modification : modificationStore.getRootModifications().getModificationsForNode(modifiedNode)) {
+			for (ASTModification modification : modificationStore.getRootModifications()
+					.getModificationsForNode(modifiedNode)) {
 				if (modification.getNewNode() == node) {
 					return getCorrespondingFile(modification.getTargetNode());
 				}

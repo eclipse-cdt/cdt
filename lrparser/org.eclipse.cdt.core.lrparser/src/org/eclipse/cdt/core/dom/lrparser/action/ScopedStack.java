@@ -59,12 +59,10 @@ import java.util.NoSuchElementException;
 public class ScopedStack<T> {
 
 	private LinkedList<T> topScope;
-	
+
 	// A stack of stacks, used to implement scoping
 	private final LinkedList<LinkedList<T>> scopeStack;
-	
-	
-	
+
 	/**
 	 * Creates a new ScopedStack with the first scope already open.
 	 */
@@ -72,16 +70,15 @@ public class ScopedStack<T> {
 		topScope = new LinkedList<T>();
 		scopeStack = new LinkedList<LinkedList<T>>();
 	}
-	
-	
+
 	/**
 	 * Opens a new scope.
 	 */
 	public void openScope() {
-		scopeStack.add(topScope); 
+		scopeStack.add(topScope);
 		topScope = new LinkedList<T>();
 	}
-	
+
 	/**
 	 * Opens a scope then pushes all the items in the given list.
 	 * 
@@ -89,22 +86,22 @@ public class ScopedStack<T> {
 	 */
 	public void openScope(Collection<T> items) {
 		openScope();
-		for(T item : items)
+		for (T item : items)
 			push(item);
 	}
-	
+
 	/**
 	 * Marks the stack then pushes all the items in the given array.
 	 * 
 	 * @throws NullPointerException if items is null
 	 */
-	public void openScope(T[] items) { 
+	public void openScope(T[] items) {
 		// looks the same as above but compiles into different bytecode
 		openScope();
-		for(T item : items)
+		for (T item : items)
 			push(item);
 	}
-	
+
 	/**
 	 * Pops all the items in the topmost scope.
 	 * The outermost scope cannot be closed.
@@ -112,42 +109,42 @@ public class ScopedStack<T> {
 	 * @throws NoSuchElementException If the outermost scope is closed.
 	 */
 	public List<T> closeScope() {
-		if(scopeStack.isEmpty())
+		if (scopeStack.isEmpty())
 			throw new NoSuchElementException("cannot close outermost scope"); //$NON-NLS-1$
-		
+
 		List<T> top = topScope;
 		topScope = scopeStack.removeLast();
 		return top;
 	}
-	
+
 	/**
 	 * Pushes an item onto the topmost scope.
 	 */
 	public void push(T o) {
 		topScope.add(o);
 	}
-	
+
 	/**
 	 * @throws NoSuchElementException if the topmost scope is empty
 	 */
 	public T pop() {
 		return topScope.removeLast();
 	}
-	
+
 	/**
 	 * @throws NoSuchElementException if the topmost scope is empty
 	 */
 	public T peek() {
 		return topScope.getLast();
 	}
-	
+
 	/**
 	 * Returns the entire top scope as a List.
 	 */
 	public List<T> topScope() {
 		return topScope;
 	}
-	
+
 	/**
 	 * Returns the next outermost scope.
 	 * @throws NoSuchElementException if size() < 2
@@ -155,13 +152,11 @@ public class ScopedStack<T> {
 	public List<T> outerScope() {
 		return scopeStack.getLast();
 	}
-	
 
 	public boolean isEmpty() {
 		return topScope.isEmpty() && scopeStack.isEmpty();
 	}
-	
-	
+
 	/**
 	 * Why oh why does java not have reverse iterators?????
 	 */
@@ -169,27 +164,27 @@ public class ScopedStack<T> {
 		final String separator = "----------"; //$NON-NLS-1$
 		System.out.println();
 		System.out.println('-');
-		
+
 		printScope(topScope);
 		System.out.println(separator);
-		
-		for(List<T> list : reverseIterable(scopeStack)) {
+
+		for (List<T> list : reverseIterable(scopeStack)) {
 			printScope(list);
 		}
-		
+
 		System.out.println();
 	}
 
 	private void printScope(List<T> scope) {
-		for(T t : reverseIterable(scope)) {
+		for (T t : reverseIterable(scope)) {
 			System.out.println(t);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(List<T> scope : scopeStack)
+		for (List<T> scope : scopeStack)
 			appendScopeContents(sb, scope);
 		appendScopeContents(sb, topScope);
 		return sb.toString();
@@ -198,14 +193,14 @@ public class ScopedStack<T> {
 	private void appendScopeContents(StringBuilder sb, List<T> scope) {
 		sb.append('[');
 		boolean first = true;
-		for(T t : scope) {
-			if(first) 
+		for (T t : scope) {
+			if (first)
 				first = false;
 			else
 				sb.append(',');
 			sb.append(t);
 		}
 		sb.append(']');
-	}	
-	
+	}
+
 }

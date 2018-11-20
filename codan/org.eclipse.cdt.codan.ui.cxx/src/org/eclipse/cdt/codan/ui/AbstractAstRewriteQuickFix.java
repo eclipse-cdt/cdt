@@ -97,13 +97,12 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(getDocument());
 		IRegion region;
 		try {
-			region = dad.find(pos, name,
-			/* forwardSearch */true, /* caseSensitive */true,
-			/* wholeWord */true, /* regExSearch */false);
+			region = dad.find(pos, name, /* forwardSearch */true, /* caseSensitive */true, /* wholeWord */true,
+					/* regExSearch */false);
 		} catch (BadLocationException e) {
 			return null;
 		}
 		astName = getASTNameFromPositions(ast, region.getOffset(), region.getLength());
 		return astName;
-	}	
+	}
 }

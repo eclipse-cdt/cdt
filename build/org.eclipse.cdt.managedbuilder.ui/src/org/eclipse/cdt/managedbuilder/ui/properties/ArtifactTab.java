@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -57,7 +56,9 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private ITool tTool;
 	private boolean canModify = true;
 
-	private enum FIELD {NAME, EXT, PREF}
+	private enum FIELD {
+		NAME, EXT, PREF
+	}
 
 	private Set<String> set2 = new TreeSet<String>();
 	private Set<String> set3 = new TreeSet<String>();
@@ -74,10 +75,11 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		c1 = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		c1.addSelectionListener(new SelectionAdapter() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			typeChanged();
-		}});
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				typeChanged();
+			}
+		});
 		c1.setOrientation(SWT.LEFT_TO_RIGHT);
 
 		Label l2 = new Label(usercomp, SWT.NONE);
@@ -90,13 +92,14 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 				if (canModify) {
 					String artifactName = t2.getText();
 					// The artifact Name cannot be empty
-					if (! page.isMultiCfg() && (artifactName.trim().length() == 0)) {
+					if (!page.isMultiCfg() && (artifactName.trim().length() == 0)) {
 						artifactName = fCfg.getManagedProject().getDefaultArtifactName();
 						t2.setText(artifactName);
 					}
 					fCfg.setArtifactName(t2.getText());
 				}
-			}} );
+			}
+		});
 
 		Label l3 = new Label(usercomp, SWT.NONE);
 		l3.setLayoutData(new GridData(GridData.BEGINNING));
@@ -107,7 +110,8 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			public void modifyText(ModifyEvent e) {
 				if (canModify)
 					fCfg.setArtifactExtension(t3.getText());
-			}} );
+			}
+		});
 
 		l4 = new Label(usercomp, SWT.NONE);
 		l4.setLayoutData(new GridData(GridData.BEGINNING));
@@ -117,12 +121,13 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify) {
-					if(tTool != null)
+					if (tTool != null)
 						tTool.setOutputPrefixForPrimaryOutput(t4.getText());
 					else if (fCfg instanceof IMultiConfiguration)
-						((IMultiConfiguration)fCfg).setOutputPrefixForPrimaryOutput(t4.getText());
+						((IMultiConfiguration) fCfg).setOutputPrefixForPrimaryOutput(t4.getText());
 				}
-			}} );
+			}
+		});
 
 		updateData(getResDesc());
 	}
@@ -147,23 +152,24 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
-		if (cfgd == null) return;
+		if (cfgd == null)
+			return;
 		fCfg = getCfg();
 		if (page.isMultiCfg()) {
-			values = ((IMultiConfiguration)fCfg).getSupportedValues(PROPERTY);
+			values = ((IMultiConfiguration) fCfg).getSupportedValues(PROPERTY);
 		} else {
 			values = fCfg.getBuildProperties().getSupportedValues(PROPERTY);
 		}
 		c1.removeAll();
 		c1.setData(values);
-		for (int i=0; i<values.length; i++) {
+		for (int i = 0; i < values.length; i++) {
 			c1.add(values[i].getName());
 		}
 		c1.setText(EMPTY_STR);
 		IBuildPropertyValue pv = fCfg.getBuildArtefactType();
 		if (pv != null) {
 			String s = pv.getId();
-			for (int i=0; i<values.length; i++) {
+			for (int i = 0; i < values.length; i++) {
 				if (s.equals(values[i].getId())) {
 					c1.select(i);
 					savedPos = i;
@@ -177,7 +183,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		updateCombo(t4);
 
 		String s = fCfg.getArtifactName();
-		if (! page.isMultiCfg() && (s == null || s.trim().length() == 0)) {
+		if (!page.isMultiCfg() && (s == null || s.trim().length() == 0)) {
 			s = fCfg.getManagedProject().getDefaultArtifactName();
 			getCfg().setArtifactName(s);
 		}
@@ -192,11 +198,11 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 				l4.setVisible(true);
 			if (t4 != null) {
 				t4.setVisible(true);
-				t4.setText(((IMultiConfiguration)fCfg).getToolOutputPrefix());
+				t4.setText(((IMultiConfiguration) fCfg).getToolOutputPrefix());
 			}
 		} else {
 			tTool = fCfg.calculateTargetTool();
-			if(tTool != null){
+			if (tTool != null) {
 				if (l4 != null)
 					l4.setVisible(true);
 				if (t4 != null) {
@@ -217,11 +223,11 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IConfiguration cfg1 = getCfg(src.getConfiguration());
 		IConfiguration cfg2 = getCfg(dst.getConfiguration());
-		
+
 		String artifactName = cfg1.getArtifactName();
-		if (! page.isMultiCfg() && (artifactName == null || artifactName.trim().length() == 0))
+		if (!page.isMultiCfg() && (artifactName == null || artifactName.trim().length() == 0))
 			artifactName = cfg1.getManagedProject().getDefaultArtifactName();
-		
+
 		cfg2.setArtifactName(artifactName);
 		cfg2.setArtifactExtension(cfg1.getArtifactExtension());
 
@@ -255,7 +261,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		if (tTool != null)
 			tTool.setOutputPrefixForPrimaryOutput(null);
 		else if (fCfg instanceof IMultiConfiguration)
-			((IMultiConfiguration)fCfg).setOutputPrefixForPrimaryOutput(null);
+			((IMultiConfiguration) fCfg).setOutputPrefixForPrimaryOutput(null);
 		updateData(getResDesc());
 	}
 
@@ -263,21 +269,22 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	public boolean canBeVisible() {
 		if (page.isForProject()) {
 			if (page.isMultiCfg()) {
-				ICMultiItemsHolder mih = (ICMultiItemsHolder)getCfg();
-				IConfiguration[] cfs = (IConfiguration[])mih.getItems();
-				for (int i=0; i<cfs.length; i++) {
+				ICMultiItemsHolder mih = (ICMultiItemsHolder) getCfg();
+				IConfiguration[] cfs = (IConfiguration[]) mih.getItems();
+				for (int i = 0; i < cfs.length; i++) {
 					if (cfs[i].getBuilder().isManagedBuildOn())
 						return true;
 				}
 				return false;
 			} else
 				return getCfg().getBuilder().isManagedBuildOn();
-		}
-		else
+		} else
 			return false;
 	}
+
 	@Override
-	protected void updateButtons() {} // Do nothing. No buttons to update.
+	protected void updateButtons() {
+	} // Do nothing. No buttons to update.
 
 	private Combo setCombo(FIELD field, Set<String> set) {
 		Combo combo = new Combo(usercomp, SWT.BORDER);
@@ -290,8 +297,8 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 
 	@SuppressWarnings("unchecked")
 	private void updateCombo(Combo combo) {
-		FIELD field = (FIELD)combo.getData(ENUM);
-		Set<String> set   = (Set<String>)combo.getData(SSET);
+		FIELD field = (FIELD) combo.getData(ENUM);
+		Set<String> set = (Set<String>) combo.getData(SSET);
 		if (field == null || set == null)
 			return;
 
@@ -310,7 +317,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 				break;
 			case PREF:
 				ITool t = c.calculateTargetTool();
-				if(t != null)
+				if (t != null)
 					s = t.getOutputPrefix();
 			}
 			if (s != null && s.trim().length() > 0)

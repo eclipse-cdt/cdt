@@ -21,7 +21,7 @@ public class COwnerConfiguration {
 
 	final IConfigurationElement fElement;
 	final String fOwnerID, fName;
-	
+
 	public COwnerConfiguration(IConfigurationElement element) {
 		fElement = element;
 		fOwnerID = fElement.getDeclaringExtension().getUniqueIdentifier();
@@ -33,7 +33,7 @@ public class COwnerConfiguration {
 		fOwnerID = id;
 		fName = name;
 	}
-	
+
 	public String getOwnerID() {
 		return fOwnerID;
 	}
@@ -44,7 +44,7 @@ public class COwnerConfiguration {
 
 	public String getPlatform() {
 		String platform = null;
-		if  (fElement != null) {
+		if (fElement != null) {
 			platform = fElement.getAttribute("platform"); //$NON-NLS-1$
 		}
 		return platform == null ? "*" : platform; //$NON-NLS-1$
@@ -60,5 +60,5 @@ public class COwnerConfiguration {
 	public String getNature() {
 		return fElement != null ? fElement.getAttribute("natureID") : null; //$NON-NLS-1$
 	}
-	
+
 }

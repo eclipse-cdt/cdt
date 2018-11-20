@@ -65,9 +65,9 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	private final boolean fIsAssist;
 
 	public CorrectionCommandHandler(CEditor editor, String id, boolean isAssist) {
-		fEditor= editor;
-		fId= id;
-		fIsAssist= isAssist;
+		fEditor = editor;
+		fId = id;
+		fIsAssist = isAssist;
 	}
 
 	/* (non-Javadoc)
@@ -86,24 +86,26 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	 * @since 5.3
 	 */
 	public boolean doExecute() {
-		ISelection selection= fEditor.getSelectionProvider().getSelection();
-		ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-		IAnnotationModel model= CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+		ISelection selection = fEditor.getSelectionProvider().getSelection();
+		ITranslationUnit tu = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+		IAnnotationModel model = CUIPlugin.getDefault().getDocumentProvider()
+				.getAnnotationModel(fEditor.getEditorInput());
 		if (selection instanceof ITextSelection && tu != null && model != null) {
 			if (!ActionUtil.isEditable(fEditor)) {
 				return false;
 			}
-			ICompletionProposal proposal= findCorrection(fId, fIsAssist, (ITextSelection) selection, tu, model);
+			ICompletionProposal proposal = findCorrection(fId, fIsAssist, (ITextSelection) selection, tu, model);
 			if (proposal != null) {
 				invokeProposal(proposal, ((ITextSelection) selection).getOffset());
 			}
 		}
 		return false;
 	}
-	
-	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection, ITranslationUnit tu, IAnnotationModel model) {
-		CorrectionContext context= new CorrectionContext(tu, selection.getOffset(), selection.getLength());
-		Collection<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>(10);
+
+	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection,
+			ITranslationUnit tu, IAnnotationModel model) {
+		CorrectionContext context = new CorrectionContext(tu, selection.getOffset(), selection.getLength());
+		Collection<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>(10);
 		if (isAssist) {
 			if (id.equals(LinkedNamesAssistProposal.ASSIST_ID)) {
 				return getLocalRenameProposal(context); // shortcut for local rename
@@ -111,15 +113,15 @@ public class CorrectionCommandHandler extends AbstractHandler {
 			CCorrectionProcessor.collectAssists(context, new ProblemLocation[0], proposals);
 		} else {
 			try {
-				boolean goToClosest= selection.getLength() == 0; 
-				Annotation[] annotations= getAnnotations(selection.getOffset(), goToClosest);
+				boolean goToClosest = selection.getLength() == 0;
+				Annotation[] annotations = getAnnotations(selection.getOffset(), goToClosest);
 				CCorrectionProcessor.collectProposals(context, model, annotations, true, false, proposals);
 			} catch (BadLocationException e) {
 				return null;
 			}
 		}
-		for (Iterator<ICCompletionProposal> iter= proposals.iterator(); iter.hasNext();) {
-			Object curr= iter.next();
+		for (Iterator<ICCompletionProposal> iter = proposals.iterator(); iter.hasNext();) {
+			Object curr = iter.next();
 			if (curr instanceof ICommandAccess) {
 				if (id.equals(((ICommandAccess) curr).getCommandId())) {
 					return (ICompletionProposal) curr;
@@ -130,64 +132,65 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	}
 
 	private Annotation[] getAnnotations(int offset, boolean goToClosest) throws BadLocationException {
-		ArrayList<Annotation> resultingAnnotations= new ArrayList<Annotation>();
+		ArrayList<Annotation> resultingAnnotations = new ArrayList<Annotation>();
 		CCorrectionAssistant.collectQuickFixableAnnotations(fEditor, offset, goToClosest, resultingAnnotations);
 		return resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 	}
-	
+
 	private ICompletionProposal getLocalRenameProposal(final IInvocationContext context) {
-		final ICCompletionProposal[] proposals= new ICCompletionProposal[1];
+		final ICCompletionProposal[] proposals = new ICCompletionProposal[1];
 
 		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_ACTIVE_ONLY,
 				new NullProgressMonitor(), new ASTRunnable() {
 
-			@Override
-			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-				IASTNodeSelector selector= astRoot.getNodeSelector(null);
-				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());
+					@Override
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+						IASTNodeSelector selector = astRoot.getNodeSelector(null);
+						IASTName name = selector.findEnclosingName(context.getSelectionOffset(),
+								context.getSelectionLength());
 
-				// Activate the proposal only if a simple name is selected.
-				if (name != null && name == name.getLastName()) {
-					IBinding binding= name.resolveBinding();
-					if (binding != null) {
-						proposals[0]= new LinkedNamesAssistProposal(context.getTranslationUnit());
+						// Activate the proposal only if a simple name is selected.
+						if (name != null && name == name.getLastName()) {
+							IBinding binding = name.resolveBinding();
+							if (binding != null) {
+								proposals[0] = new LinkedNamesAssistProposal(context.getTranslationUnit());
+							}
+						}
+						return Status.OK_STATUS;
 					}
-				}
-				return Status.OK_STATUS;
-			}
-		});
+				});
 		return proposals[0];
 	}
 
 	private IDocument getDocument() {
 		return CUIPlugin.getDefault().getDocumentProvider().getDocument(fEditor.getEditorInput());
 	}
-	
+
 	private void invokeProposal(ICompletionProposal proposal, int offset) {
 		if (proposal instanceof ICompletionProposalExtension2) {
-			ITextViewer viewer= fEditor.getViewer();
+			ITextViewer viewer = fEditor.getViewer();
 			if (viewer != null) {
 				((ICompletionProposalExtension2) proposal).apply(viewer, (char) 0, 0, offset);
 				return;
 			}
 		} else if (proposal instanceof ICompletionProposalExtension) {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 			if (document != null) {
 				((ICompletionProposalExtension) proposal).apply(document, (char) 0, offset);
 				return;
 			}
 		}
-		IDocument document= getDocument();
+		IDocument document = getDocument();
 		if (document != null) {
 			proposal.apply(document);
 		}
 	}
-	
+
 	public static String getShortCutString(String proposalId) {
 		if (proposalId != null) {
-			IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			if (bindingService != null) {
-				TriggerSequence[] activeBindingsFor= bindingService.getActiveBindingsFor(proposalId);
+				TriggerSequence[] activeBindingsFor = bindingService.getActiveBindingsFor(proposalId);
 				if (activeBindingsFor.length > 0) {
 					return activeBindingsFor[0].format();
 				}

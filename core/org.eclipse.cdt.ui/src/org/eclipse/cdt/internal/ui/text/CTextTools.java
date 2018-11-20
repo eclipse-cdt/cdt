@@ -33,7 +33,6 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
-
 /**
  * Tools required to configure a C/C++ source viewer.
  * Scanners must be configured using a {@link CSourceViewerConfiguration}.
@@ -53,7 +52,7 @@ public class CTextTools {
 	 * Creates a new C text tools instance.
 	 */
 	public CTextTools() {
-		fColorManager= new CColorManager(true);
+		fColorManager = new CColorManager(true);
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class CTextTools {
 	public void dispose() {
 		if (fColorManager != null) {
 			fColorManager.dispose();
-			fColorManager= null;
+			fColorManager = null;
 		}
 	}
 
@@ -100,9 +99,9 @@ public class CTextTools {
 	 * @param owner may be null
 	 */
 	public void setupCDocumentPartitioner(IDocument document, String partitioning, IDocCommentOwner owner) {
-		IDocumentPartitioner partitioner= createDocumentPartitioner(owner);
+		IDocumentPartitioner partitioner = createDocumentPartitioner(owner);
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 			extension3.setDocumentPartitioner(partitioning, partitioner);
 		} else {
 			document.setDocumentPartitioner(partitioner);
@@ -118,7 +117,7 @@ public class CTextTools {
 	 * @param locationKind the type of path specified above. May be null.
 	 */
 	public void setupCDocument(IDocument document, IPath location, LocationKind locationKind) {
-		IDocCommentOwner owner= getDocumentationCommentOwner(location, locationKind);
+		IDocCommentOwner owner = getDocumentationCommentOwner(location, locationKind);
 		setupCDocumentPartitioner(document, fDocumentPartitioning, owner);
 	}
 
@@ -146,7 +145,7 @@ public class CTextTools {
 	public void setDocumentPartitioning(String documentPartitioning) {
 		fDocumentPartitioning = documentPartitioning;
 	}
-	
+
 	/**
 	 * @param location
 	 * @param locationKind
@@ -155,8 +154,8 @@ public class CTextTools {
 	 * workspace default is returned.
 	 */
 	private IDocCommentOwner getDocumentationCommentOwner(IPath location, LocationKind locationKind) {
-		if(location!=null && LocationKind.IFILE.equals(locationKind)) {
-			IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(location);
+		if (location != null && LocationKind.IFILE.equals(locationKind)) {
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(location);
 			return DocCommentOwnerManager.getInstance().getCommentOwner(file);
 		}
 		return DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.ui.view.UIUpdater;
 import org.eclipse.jface.action.Action;
@@ -24,7 +23,6 @@ import org.eclipse.jface.action.Action;
 public class ScrollLockAction extends Action {
 
 	private UIUpdater modelSyncronizer;
-
 
 	public ScrollLockAction(UIUpdater modelSyncronizer) {
 		super(ActionsMessages.ScrollLockAction_name);
@@ -41,4 +39,3 @@ public class ScrollLockAction extends Action {
 		modelSyncronizer.setAutoScroll(!isChecked());
 	}
 }
-

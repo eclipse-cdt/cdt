@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 public interface ICBreakpointType {
 	/**
 	 * Breakpoint attribute storing the type of the breakpoint
- 	 * This attribute is a <code>int</code>. Strictly speaking, 
- 	 * types are even values, but the least-significant bit 
- 	 * is used to qualify it as temporary. See {@link #TEMPORARY} 
+	 * This attribute is a <code>int</code>. Strictly speaking, 
+	 * types are even values, but the least-significant bit 
+	 * is used to qualify it as temporary. See {@link #TEMPORARY} 
 	 * 
 	 * @since 5.0
 	 */
@@ -56,7 +56,7 @@ public interface ICBreakpointType {
 	 * hardware).
 	 */
 	final static public int REGULAR = 0x0 << 1;
-	
+
 	/**
 	 * A HARDWARE breakpoint is a line, function or address breakpoint that the
 	 * user wants installed using a hardware breakpoint facility on the target.
@@ -91,7 +91,7 @@ public interface ICBreakpointType {
 	// ALL FUTURE ADDITIONS MUST HAVE EVEN VALUES. The lease-significant
 	// bit is reserved.
 	// ------------------------------------------------------------------------
-	
+
 	/**
 	 * Returns the type of this breakpoint
 	 * 
@@ -104,7 +104,7 @@ public interface ICBreakpointType {
 	 * @since 5.0
 	 */
 	public int getType() throws CoreException;
-	
+
 	/**
 	 * Sets the type of this breakpoint.
 	 * 
@@ -116,5 +116,5 @@ public interface ICBreakpointType {
 	 * 
 	 * @since 5.0
 	 */
-	public void setType( int type ) throws CoreException;
+	public void setType(int type) throws CoreException;
 }

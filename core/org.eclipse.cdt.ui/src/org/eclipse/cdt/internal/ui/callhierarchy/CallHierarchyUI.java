@@ -71,44 +71,45 @@ public class CallHierarchyUI {
 	/**
 	 * List of the Call Hierarchy views in LRU order, where the most recently used view is at index 0.
 	 */
-	private static List<CHViewPart> fLRUCallHierarchyViews= new ArrayList<CHViewPart>();
+	private static List<CHViewPart> fLRUCallHierarchyViews = new ArrayList<CHViewPart>();
 	private static int fViewCount;
 
 	private static final int MAX_HISTORY_SIZE = 10;
-	private static List<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
+	private static List<ICElement> fHistoryEntries = new ArrayList<ICElement>(MAX_HISTORY_SIZE);
 
 	public static void setIsJUnitTest(boolean val) {
-		sIsJUnitTest= val;
+		sIsJUnitTest = val;
 	}
 
 	public static void open(final IWorkbenchWindow window, final ICElement input) {
-        if (input != null) {
-        	final Display display= Display.getCurrent();
+		if (input != null) {
+			final Display display = Display.getCurrent();
 
-        	Job job= new Job(CHMessages.CallHierarchyUI_label) {
-        		@Override
+			Job job = new Job(CHMessages.CallHierarchyUI_label) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-        			final ICElement[] elems= findDefinitions(input);
+					final ICElement[] elems = findDefinitions(input);
 					if (elems != null && elems.length > 0) {
 						display.asyncExec(new Runnable() {
 							@Override
 							public void run() {
 								internalOpen(window, elems);
-							}});
+							}
+						});
 					}
 					return Status.OK_STATUS;
-        		}
-        	};
-        	job.setUser(true);
-        	job.schedule();
-        }
-    }
+				}
+			};
+			job.setUser(true);
+			job.schedule();
+		}
+	}
 
-    private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement input) {
-        IWorkbenchPage page= window.getActivePage();
-        try {
-        	CHViewPart viewPart = findLRUCallHierarchyViewPart(page); //find the first view which is not pinned
-        	String secondaryId = null;
+	private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement input) {
+		IWorkbenchPage page = window.getActivePage();
+		try {
+			CHViewPart viewPart = findLRUCallHierarchyViewPart(page); //find the first view which is not pinned
+			String secondaryId = null;
 			if (viewPart == null) {
 				if (page.findViewReference(CUIPlugin.ID_CALL_HIERARCHY) != null) { //all the current views are pinned, open a new instance
 					secondaryId = String.valueOf(++fViewCount);
@@ -117,16 +118,17 @@ public class CallHierarchyUI {
 				secondaryId = viewPart.getViewSite().getSecondaryId();
 			}
 
-			viewPart = (CHViewPart) page.showView(CUIPlugin.ID_CALL_HIERARCHY, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+			viewPart = (CHViewPart) page.showView(CUIPlugin.ID_CALL_HIERARCHY, secondaryId,
+					IWorkbenchPage.VIEW_ACTIVATE);
 			viewPart.setInput(input);
-            return viewPart;
-        } catch (CoreException e) {
-            ExceptionHandler.handle(e, window.getShell(), CHMessages.OpenCallHierarchyAction_label, null);
-        }
-        return null;
-    }
+			return viewPart;
+		} catch (CoreException e) {
+			ExceptionHandler.handle(e, window.getShell(), CHMessages.OpenCallHierarchyAction_label, null);
+		}
+		return null;
+	}
 
-    private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement[] input) {
+	private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement[] input) {
 		ICElement elem = null;
 		switch (input.length) {
 		case 0:
@@ -138,8 +140,8 @@ public class CallHierarchyUI {
 			if (sIsJUnitTest) {
 				throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
 			}
-			elem = OpenActionUtil.selectCElement(input, window.getShell(),
-					CHMessages.CallHierarchyUI_label, CHMessages.CallHierarchyUI_selectMessage,
+			elem = OpenActionUtil.selectCElement(input, window.getShell(), CHMessages.CallHierarchyUI_label,
+					CHMessages.CallHierarchyUI_selectMessage,
 					CElementLabels.ALL_DEFAULT | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
 			break;
 		}
@@ -149,26 +151,28 @@ public class CallHierarchyUI {
 		return null;
 	}
 
-    public static void open(final ITextEditor editor, final ITextSelection sel) {
+	public static void open(final ITextEditor editor, final ITextSelection sel) {
 		if (editor != null) {
-			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager()
+					.getWorkingCopy(editor.getEditorInput());
 			if (inputCElement != null) {
-				final ICProject project= inputCElement.getCProject();
+				final ICProject project = inputCElement.getCProject();
 				final IEditorInput editorInput = editor.getEditorInput();
-				final Display display= Display.getCurrent();
+				final Display display = Display.getCurrent();
 
-				Job job= new Job(CHMessages.CallHierarchyUI_label) {
+				Job job = new Job(CHMessages.CallHierarchyUI_label) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							StatusLineHandler.clearStatusLine(editor.getSite());
-							final ICElement[] elems= findDefinitions(project, editorInput, sel);
+							final ICElement[] elems = findDefinitions(project, editorInput, sel);
 							if (elems.length > 0) {
 								display.asyncExec(new Runnable() {
 									@Override
 									public void run() {
 										internalOpen(editor.getSite().getWorkbenchWindow(), elems);
-									}});
+									}
+								});
 							} else {
 								StatusLineHandler.showStatusLineMessage(editor.getSite(),
 										CHMessages.CallHierarchyUI_openFailureMessage);
@@ -178,34 +182,36 @@ public class CallHierarchyUI {
 							return e.getStatus();
 						}
 					}
+
 					@Override
 					public boolean belongsTo(Object family) {
-						 return family == CallHierarchyUI.class;
+						return family == CallHierarchyUI.class;
 					}
 				};
 				job.setUser(true);
 				job.schedule();
 			}
 		}
-    }
+	}
 
 	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel)
 			throws CoreException {
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 			index.acquireReadLock();
 			try {
-				IASTName name= IndexUI.getSelectedName(editorInput, sel);
+				IASTName name = IndexUI.getSelectedName(editorInput, sel);
 				if (name != null) {
-					IBinding binding= name.resolveBinding();
+					IBinding binding = name.resolveBinding();
 					if (!CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
-						for (IASTNode parent= name; parent != null; parent= parent.getParent()) {
+						for (IASTNode parent = name; parent != null; parent = parent.getParent()) {
 							if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-								ICPPASTFunctionCallExpression fcall= (ICPPASTFunctionCallExpression) parent.getParent();
+								ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) parent
+										.getParent();
 								if (fcall != null) {
 									IASTImplicitName[] implicit = fcall.getImplicitNames();
 									if (implicit.length > 0)
-										binding= implicit[0].resolveBinding();
+										binding = implicit[0].resolveBinding();
 								}
 								break;
 							}
@@ -213,26 +219,26 @@ public class CallHierarchyUI {
 					}
 					if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 						if (name.isDefinition()) {
-							ICElement elem= IndexUI.getCElementForName(project, index, name);
+							ICElement elem = IndexUI.getCElementForName(project, index, name);
 							if (elem != null) {
 								return new ICElement[] { elem };
 							}
 							return NO_ELEMENTS;
 						}
 
-						ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
+						ICElement[] elems = IndexUI.findAllDefinitions(index, binding);
 						if (elems.length != 0)
 							return elems;
 
 						if (name.isDeclaration()) {
-							ICElementHandle elem= IndexUI.getCElementForName(project, index, name);
+							ICElementHandle elem = IndexUI.getCElementForName(project, index, name);
 							if (elem != null) {
 								return new ICElement[] { elem };
 							}
 							return NO_ELEMENTS;
 						}
 
-						ICElementHandle elem= IndexUI.findAnyDeclaration(index, project, binding);
+						ICElementHandle elem = IndexUI.findAnyDeclaration(index, project, binding);
 						if (elem != null) {
 							return new ICElement[] { elem };
 						}
@@ -254,46 +260,46 @@ public class CallHierarchyUI {
 		return NO_ELEMENTS;
 	}
 
-	private static ICElement[] findSpecializationDeclaration(IBinding binding, ICProject project,
-			IIndex index) throws CoreException {
+	private static ICElement[] findSpecializationDeclaration(IBinding binding, ICProject project, IIndex index)
+			throws CoreException {
 		while (binding instanceof ICPPSpecialization) {
-			IBinding original= ((ICPPSpecialization) binding).getSpecializedBinding();
-			ICElementHandle[] elems= IndexUI.findAllDefinitions(index, original);
+			IBinding original = ((ICPPSpecialization) binding).getSpecializedBinding();
+			ICElementHandle[] elems = IndexUI.findAllDefinitions(index, original);
 			if (elems.length == 0) {
-				ICElementHandle elem= IndexUI.findAnyDeclaration(index, project, original);
+				ICElementHandle elem = IndexUI.findAnyDeclaration(index, project, original);
 				if (elem != null) {
-					elems= new ICElementHandle[] { elem };
+					elems = new ICElementHandle[] { elem };
 				}
 			}
 			if (elems.length > 0) {
 				return elems;
 			}
-			binding= original;
+			binding = original;
 		}
 		return NO_ELEMENTS;
 	}
 
 	public static ICElement[] findDefinitions(ICElement input) {
 		try {
-			final ITranslationUnit tu= CModelUtil.getTranslationUnit(input);
+			final ITranslationUnit tu = CModelUtil.getTranslationUnit(input);
 			if (tu != null) {
-				final ICProject project= tu.getCProject();
+				final ICProject project = tu.getCProject();
 				final IIndex index = CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 
 				index.acquireReadLock();
 				try {
 					if (needToFindDefinition(input)) {
-						IBinding binding= IndexUI.elementToBinding(index, input);
+						IBinding binding = IndexUI.elementToBinding(index, input);
 						if (binding != null) {
-							ICElement[] result= IndexUI.findAllDefinitions(index, binding);
+							ICElement[] result = IndexUI.findAllDefinitions(index, binding);
 							if (result.length > 0) {
 								return result;
 							}
 						}
 					}
-					IIndexName name= IndexUI.elementToName(index, input);
+					IIndexName name = IndexUI.elementToName(index, input);
 					if (name != null) {
-						ICElementHandle handle= IndexUI.getCElementForName(tu, index, name);
+						ICElementHandle handle = IndexUI.getCElementForName(tu, index, name);
 						return new ICElement[] { handle };
 					}
 				} finally {
@@ -320,9 +326,7 @@ public class CallHierarchyUI {
 	}
 
 	public static boolean isRelevantForCallHierarchy(IBinding binding) {
-		if (binding instanceof ICExternalBinding ||
-				binding instanceof IEnumerator ||
-				binding instanceof IFunction)
+		if (binding instanceof ICExternalBinding || binding instanceof IEnumerator || binding instanceof IFunction)
 			return true;
 
 		if (binding instanceof IVariable) {
@@ -360,7 +364,6 @@ public class CallHierarchyUI {
 		return false;
 	}
 
-
 	/**
 	 * Adds the activated view part to the head of the list.
 	 *
@@ -397,21 +400,21 @@ public class CallHierarchyUI {
 	 * @return the Call Hierarchy view part to open or <code>null</code> if none found
 	 */
 	private static CHViewPart findLRUCallHierarchyViewPart(IWorkbenchPage page) {
-		boolean viewFoundInPage= false;
+		boolean viewFoundInPage = false;
 		for (CHViewPart view : fLRUCallHierarchyViews) {
 			if (page.equals(view.getSite().getPage())) {
 				if (!view.isPinned()) {
 					return view;
 				}
-				viewFoundInPage= true;
+				viewFoundInPage = true;
 			}
 		}
 		if (!viewFoundInPage) {
 			// Find unresolved views
-			IViewReference[] viewReferences= page.getViewReferences();
+			IViewReference[] viewReferences = page.getViewReferences();
 			for (IViewReference curr : viewReferences) {
 				if (CUIPlugin.ID_CALL_HIERARCHY.equals(curr.getId()) && page.equals(curr.getPage())) {
-					CHViewPart view= (CHViewPart)curr.getView(true);
+					CHViewPart view = (CHViewPart) curr.getView(true);
 					if (view != null && !view.isPinned()) {
 						return view;
 					}
@@ -431,12 +434,12 @@ public class CallHierarchyUI {
 	}
 
 	static public void updateHistory(ICElement input) {
-    	if (input != null) {
-    		fHistoryEntries.remove(input);
-    		fHistoryEntries.add(0, input);
-    		if (fHistoryEntries.size() > MAX_HISTORY_SIZE) {
-    			fHistoryEntries.remove(MAX_HISTORY_SIZE-1);
-    		}
-    	}
+		if (input != null) {
+			fHistoryEntries.remove(input);
+			fHistoryEntries.add(0, input);
+			if (fHistoryEntries.size() > MAX_HISTORY_SIZE) {
+				fHistoryEntries.remove(MAX_HISTORY_SIZE - 1);
+			}
+		}
 	}
 }

@@ -24,26 +24,26 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * @since 1.0
  */
 public interface IPropertiesUpdate extends IViewerUpdate {
-    /**
-     * Returns the set of element properties that the provider should update.
-     */
-    public Set<String> getProperties();
-    
-    /**
-     * Sets the given property to update.
-     * 
-     * @param property Property ID.
-     * @param value Property value.
-     */
-    public void setProperty(String property, Object value);
-    
-    /**
-     * Sets the given map as the complete property map for this update.
-     * If other properties were already set to this update, the properties
-     * given here will be added.  If properties are added later, the properties 
-     * map given here will not be modified, instead it will be copied.
-     * 
-     * @param properties Full properties map.
-     */
-    public void setAllProperties(Map<String, Object> properties);
+	/**
+	 * Returns the set of element properties that the provider should update.
+	 */
+	public Set<String> getProperties();
+
+	/**
+	 * Sets the given property to update.
+	 * 
+	 * @param property Property ID.
+	 * @param value Property value.
+	 */
+	public void setProperty(String property, Object value);
+
+	/**
+	 * Sets the given map as the complete property map for this update.
+	 * If other properties were already set to this update, the properties
+	 * given here will be added.  If properties are added later, the properties 
+	 * map given here will not be modified, instead it will be copied.
+	 * 
+	 * @param properties Full properties map.
+	 */
+	public void setAllProperties(Map<String, Object> properties);
 }

@@ -35,11 +35,10 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 	private final boolean prefixLookup;
 	private final IContentAssistMatcher contentAssistMatcher;
 	private final boolean caseSensitive;
-	private IProgressMonitor monitor= null;
-	private int monitorCheckCounter= 0;
-	
-	private List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
+	private IProgressMonitor monitor = null;
+	private int monitorCheckCounter = 0;
 
+	private List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
 
 	/**
 	 * Collects all nodes with given name, passing the filter. If prefixLookup is set to
@@ -57,57 +56,56 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 	 * @param caseSensitive
 	 *            Ignored if <code>contentAssistLookup</code> is true.
 	 */
-	public MacroContainerCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup,
-			boolean contentAssistLookup, boolean caseSensitive) {
+	public MacroContainerCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup, boolean contentAssistLookup,
+			boolean caseSensitive) {
 		if (contentAssistLookup) {
-			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name); 
-			this.contentAssistMatcher =  matcher.matchRequiredAfterBinarySearch() ? matcher : null;
+			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name);
+			this.contentAssistMatcher = matcher.matchRequiredAfterBinarySearch() ? matcher : null;
 			this.matchChars = matcher.getPrefixForBinarySearch();
-			this.prefixLookup= true;
-			this.caseSensitive= false;
+			this.prefixLookup = true;
+			this.caseSensitive = false;
 		} else {
 			this.contentAssistMatcher = null;
 			this.matchChars = name;
-			this.prefixLookup= prefixLookup;
-			this.caseSensitive= caseSensitive;
+			this.prefixLookup = prefixLookup;
+			this.caseSensitive = caseSensitive;
 		}
-		this.linkage= linkage;
+		this.linkage = linkage;
 	}
-	
+
 	/**
 	 * Allows to cancel a visit. If set a visit may throw an OperationCancelledException.
 	 * @since 4.0
 	 */
 	public void setMonitor(IProgressMonitor pm) {
-		monitor= pm;
+		monitor = pm;
 	}
-	
+
 	@Override
 	final public int compare(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString rhsName= PDOMNamedNode.getDBName(linkage.getDB(), record);
+		IString rhsName = PDOMNamedNode.getDBName(linkage.getDB(), record);
 		return compare(rhsName);
 	}
 
 	private int compare(IString rhsName) throws CoreException {
 		int cmp;
 		if (prefixLookup) {
-			cmp= rhsName.comparePrefix(matchChars, false);
-			if(caseSensitive) {
-				cmp= cmp==0 ? rhsName.comparePrefix(matchChars, true) : cmp;
+			cmp = rhsName.comparePrefix(matchChars, false);
+			if (caseSensitive) {
+				cmp = cmp == 0 ? rhsName.comparePrefix(matchChars, true) : cmp;
 			}
 		} else {
-			if(caseSensitive) {
-				cmp= rhsName.compareCompatibleWithIgnoreCase(matchChars);
-			}
-			else {
-				cmp= rhsName.compare(matchChars, false);
+			if (caseSensitive) {
+				cmp = rhsName.compareCompatibleWithIgnoreCase(matchChars);
+			} else {
+				cmp = rhsName.compare(matchChars, false);
 			}
 		}
 		return cmp;
 	}
-	
+
 	@Override
 	final public boolean visit(long record) throws CoreException {
 		if (monitor != null)
@@ -121,17 +119,17 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 			if (contentAssistMatcher.match(nodeName)) {
 				macros.add(new PDOMMacroContainer(linkage, record));
 			}
-		} else { 
+		} else {
 			macros.add(new PDOMMacroContainer(linkage, record));
 		}
 
 		return true; // look for more
 	}
-	
+
 	final public List<PDOMMacroContainer> getMacroList() {
 		return macros;
 	}
-	
+
 	private void checkCancelled() {
 		if (++monitorCheckCounter % 0x1000 == 0 && monitor.isCanceled()) {
 			throw new OperationCanceledException();

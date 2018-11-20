@@ -17,7 +17,7 @@ import org.eclipse.cdt.make.core.makefile.gnu.IVariableDefinition;
 
 /**
  */
-public class VariableDefinition extends MacroDefinition implements IVariableDefinition  {
+public class VariableDefinition extends MacroDefinition implements IVariableDefinition {
 
 	/**
 	 * ? is Conditional
@@ -37,7 +37,7 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	}
 
 	public VariableDefinition(Directive parent, String name, StringBuffer value, int type) {
-		this(parent,  "", name, value, type); //$NON-NLS-1$
+		this(parent, "", name, value, type); //$NON-NLS-1$
 	}
 
 	public VariableDefinition(Directive parent, String target, String name, StringBuffer value, int type) {
@@ -91,12 +91,12 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	public boolean isSimplyExpanded() {
 		return type == TYPE_SIMPLE_EXPAND;
 	}
-                                                                                                                             
+
 	@Override
 	public boolean isConditional() {
 		return type == TYPE_CONDITIONAL;
 	}
-                                                                                                                             
+
 	@Override
 	public boolean isAppend() {
 		return type == TYPE_APPEND;

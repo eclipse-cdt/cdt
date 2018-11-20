@@ -26,8 +26,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * 
  * @since 4.0
  */
-public class MIExecArguments extends MICommand<MIInfo>
-{
+public class MIExecArguments extends MICommand<MIInfo> {
 	public MIExecArguments(IMIContainerDMContext ctx, String[] args) {
 		super(ctx, "-exec-arguments", args); //$NON-NLS-1$
 	}

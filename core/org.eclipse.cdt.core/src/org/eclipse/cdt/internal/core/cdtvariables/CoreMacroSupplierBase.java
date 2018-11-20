@@ -21,8 +21,8 @@ public abstract class CoreMacroSupplierBase implements ICdtVariableSupplier {
 
 	@Override
 	public ICdtVariable getVariable(String macroName, IVariableContextInfo context) {
-		if(context instanceof ICoreVariableContextInfo){
-			ICoreVariableContextInfo info = (ICoreVariableContextInfo)context;
+		if (context instanceof ICoreVariableContextInfo) {
+			ICoreVariableContextInfo info = (ICoreVariableContextInfo) context;
 			return getMacro(macroName, info.getContextType(), info.getContextData());
 		}
 		return null;
@@ -32,8 +32,8 @@ public abstract class CoreMacroSupplierBase implements ICdtVariableSupplier {
 
 	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo context) {
-		if(context instanceof ICoreVariableContextInfo){
-			ICoreVariableContextInfo info = (ICoreVariableContextInfo)context;
+		if (context instanceof ICoreVariableContextInfo) {
+			ICoreVariableContextInfo info = (ICoreVariableContextInfo) context;
 			return getMacros(info.getContextType(), info.getContextData());
 		}
 		return null;

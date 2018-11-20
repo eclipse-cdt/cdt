@@ -27,6 +27,7 @@ public class FlexlintHelpLink extends AbstractCodanProblemDetailsProvider {
 		String helpId = parseHelpId(getProblemMessage());
 		return helpId != null;
 	}
+
 	private Pattern messagePattern = Pattern.compile("(Warning|Error|Note|Info) #([0-9]+)"); //$NON-NLS-1$
 
 	private String parseHelpId(String problemMessage) {

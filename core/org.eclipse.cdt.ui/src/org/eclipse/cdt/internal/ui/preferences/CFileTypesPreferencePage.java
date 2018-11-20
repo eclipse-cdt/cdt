@@ -33,7 +33,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	private CFileTypesPreferenceBlock fPrefsBlock;
 
 	public CFileTypesPreferencePage() {
-		setDescription(PreferencesMessages.CFileTypesPreferencePage_description); 
+		setDescription(PreferencesMessages.CFileTypesPreferencePage_description);
 		noDefaultAndApplyButton();
 	}
 
@@ -49,10 +49,10 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 
 		fPrefsBlock = new CFileTypesPreferenceBlock(null);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp( topPane, ICHelpContextIds.FILE_TYPES_PREF_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(topPane, ICHelpContextIds.FILE_TYPES_PREF_PAGE);
 		return fPrefsBlock.createControl(topPane);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
@@ -75,7 +75,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	public boolean performOk() {
 		if (fPrefsBlock.performOk()) {
 		}
-		
+
 		return super.performOk();
 	}
 }

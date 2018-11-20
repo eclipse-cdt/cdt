@@ -50,11 +50,7 @@ public class EnvDialog extends Dialog {
 	public boolean toAll = false;
 	private String title;
 
-	public EnvDialog(Shell parent,
-			IEnvironmentVariable _var,
-			String _title,
-			boolean _newAction,
-			boolean _multiCfg,
+	public EnvDialog(Shell parent, IEnvironmentVariable _var, String _title, boolean _newAction, boolean _multiCfg,
 			ICConfigurationDescription _cfgd) {
 		super(parent);
 		var = _var;
@@ -95,9 +91,12 @@ public class EnvDialog extends Dialog {
 		gd.horizontalSpan = 2;
 		gd.widthHint = 400;
 		text1.setLayoutData(gd);
-		text1.addModifyListener(new ModifyListener () {
+		text1.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e) { setButtons(); }});
+			public void modifyText(ModifyEvent e) {
+				setButtons();
+			}
+		});
 
 		Label l2 = new Label(c, SWT.NONE);
 		l2.setText(Messages.EnvDialog_1);
@@ -107,9 +106,12 @@ public class EnvDialog extends Dialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
 		text2.setLayoutData(gd);
-		text2.addModifyListener(new ModifyListener () {
+		text2.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e) { setButtons(); }});
+			public void modifyText(ModifyEvent e) {
+				setButtons();
+			}
+		});
 
 		final Button b = new Button(c, SWT.PUSH);
 		b.setText(Messages.EnvDialog_2);
@@ -121,7 +123,8 @@ public class EnvDialog extends Dialog {
 					text2.insert(x);
 					setButtons();
 				}
-			}});
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = AbstractCPropertyTab.BUTTON_WIDTH;
 		b.setLayoutData(gd);
@@ -136,7 +139,8 @@ public class EnvDialog extends Dialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					toAll = b_add2all.getSelection();
-				}});
+				}
+			});
 
 		if (multiCfg)
 			b_add2all.setVisible(false);

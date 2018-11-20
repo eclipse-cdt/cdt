@@ -18,7 +18,7 @@ import org.eclipse.cdt.meson.core.IMesonConstants;
 import org.eclipse.jface.wizard.Wizard;
 
 public class RunNinja extends Wizard {
-	
+
 	private RunNinjaPage mainPage;
 	private ICBuildConfiguration config;
 	private String envStr;
@@ -47,13 +47,13 @@ public class RunNinja extends Wizard {
 		config.setProperty(IMesonConstants.NINJA_ARGUMENTS, ninjaArgs);
 		return true;
 	}
-	
+
 	public String getEnvStr() {
 		return envStr;
 	}
-	
+
 	public String getNinjaArgs() {
 		return ninjaArgs;
 	}
-	
+
 }

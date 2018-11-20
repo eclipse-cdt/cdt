@@ -41,7 +41,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class EmptyIndexFragment implements IIndexFragment {
 	@Override
-	public void acquireReadLock() throws InterruptedException {}
+	public void acquireReadLock() throws InterruptedException {
+	}
 
 	@Override
 	public IIndexFragmentBinding adaptBinding(IBinding binding) {
@@ -54,52 +55,48 @@ public class EmptyIndexFragment implements IIndexFragment {
 	}
 
 	@Override
-	public IIndexFragmentBinding[] findBindings(Pattern[] patterns,
-			boolean isFullyQualified, IndexFilter filter,
+	public IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter,
 			IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	@Override
-	public IIndexFragmentBinding[] findBindings(char[][] names,
-			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-
-	@Override
-	public IIndexFragmentBinding[] findBindings(char[] name,
-			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
+	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	@Override
-	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix,
-			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
-			throws CoreException {
+	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	@Override
-	public IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix,
-			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
-	throws CoreException {
+	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	@Override
-	public IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) {
+	public IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	@Override
+	public IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter,
+			IProgressMonitor monitor) {
 		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
 
 	@Override
-	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file)
-			throws CoreException {
+	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
 		return IIndexFragmentInclude.EMPTY_FRAGMENT_INCLUDES_ARRAY;
 	}
 
 	@Override
-	public IIndexFragmentName[] findNames(IBinding binding,	int flags) {
+	public IIndexFragmentName[] findNames(IBinding binding, int flags) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
@@ -120,20 +117,18 @@ public class EmptyIndexFragment implements IIndexFragment {
 
 	@Override
 	@Deprecated
-	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location)
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		return null;
+	}
+
+	@Override
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location, ISignificantMacros sigMacros)
 			throws CoreException {
 		return null;
 	}
 
 	@Override
-	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
-			ISignificantMacros sigMacros) throws CoreException {
-		return null;
-	}
-
-	@Override
-	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location)
-			throws CoreException {
+	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
@@ -154,20 +149,21 @@ public class EmptyIndexFragment implements IIndexFragment {
 
 	@Override
 	public String getProperty(String key) throws CoreException {
-		if(IIndexFragment.PROPERTY_FRAGMENT_ID.equals(key)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_ID.equals(key)) {
 			return "org.eclipse.cdt.internal.core.index.EmptyIndexFragment"; //$NON-NLS-1$
 		}
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(key)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(key)) {
 			return "org.eclipse.cdt.internal.core.index.EmptyIndexFragmentFormat"; //$NON-NLS-1$
 		}
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(key)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(key)) {
 			return "0"; //$NON-NLS-1$
 		}
 		return null;
 	}
 
 	@Override
-	public void releaseReadLock() {}
+	public void releaseReadLock() {
+	}
 
 	@Override
 	public boolean hasWaitingReaders() {
@@ -175,7 +171,8 @@ public class EmptyIndexFragment implements IIndexFragment {
 	}
 
 	@Override
-	public void resetCacheCounters() {}
+	public void resetCacheCounters() {
+	}
 
 	@Override
 	public IIndexFragmentFileSet createFileSet() {

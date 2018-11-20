@@ -29,19 +29,19 @@ public class MIStackListLocalsInfo extends MIInfo {
 
 	public MIStackListLocalsInfo(MIOutput out) {
 		super(out);
-		locals = null ;
+		locals = null;
 		if (isDone()) {
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("locals")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIList) {
-							locals = MIArg.getMIArgs((MIList)value);
+							locals = MIArg.getMIArgs((MIList) value);
 						} else if (value instanceof MITuple) {
-							locals = MIArg.getMIArgs((MITuple)value);
+							locals = MIArg.getMIArgs((MITuple) value);
 						}
 					}
 				}

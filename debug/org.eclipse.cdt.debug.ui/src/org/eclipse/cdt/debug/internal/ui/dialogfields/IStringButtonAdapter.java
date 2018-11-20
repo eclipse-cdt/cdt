@@ -17,7 +17,7 @@ package org.eclipse.cdt.debug.internal.ui.dialogfields;
  * Change listener used by <code>StringButtonDialogField</code>
  */
 public interface IStringButtonAdapter {
-	
+
 	void changeControlPressed(DialogField field);
 
 }

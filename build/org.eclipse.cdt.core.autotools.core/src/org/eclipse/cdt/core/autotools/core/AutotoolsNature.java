@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Intel Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.autotools.core;
 
@@ -34,7 +34,7 @@ public class AutotoolsNature implements IProjectNature {
 		CBuilder.setupBuilder(command);
 		projDesc.setBuildSpec(new ICommand[] { command });
 	}
-	
+
 	@Override
 	public void configure() throws CoreException {
 		IProjectDescription projDesc = project.getDescription();

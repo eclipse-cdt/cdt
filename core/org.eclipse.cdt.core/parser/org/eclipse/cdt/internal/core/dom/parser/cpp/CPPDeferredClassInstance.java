@@ -43,7 +43,8 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a instantiation that cannot be performed because of dependent arguments or an unknown template.
  */
-public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPDeferredClassInstance, ISerializableType {
+public class CPPDeferredClassInstance extends CPPUnknownBinding
+		implements ICPPDeferredClassInstance, ISerializableType {
 	private final ICPPTemplateArgument[] fArguments;
 	private final ICPPClassTemplate fClassTemplate;
 	private final ICPPScope fLookupScope;
@@ -53,9 +54,9 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		// With template template parameters the owner must not be calculated, it'd lead to an infinite loop.
 		// Rather than that we override getOwner().
 		super(template.getNameCharArray());
-		fArguments= arguments;
-		fClassTemplate= template;
-		fLookupScope= lookupScope;
+		fArguments = arguments;
+		fClassTemplate = template;
+		fLookupScope = lookupScope;
 	}
 
 	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) {
@@ -79,8 +80,8 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 
 	@Override
 	public CPPDeferredClassInstance clone() {
-		 return (CPPDeferredClassInstance) super.clone();
-    }
+		return (CPPDeferredClassInstance) super.clone();
+	}
 
 	@Override
 	public boolean isSameType(IType type) {
@@ -102,66 +103,66 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		return false;
 	}
 
-    @Override
+	@Override
 	public int getKey() {
-    	return getClassTemplate().getKey();
-    }
+		return getClassTemplate().getKey();
+	}
 
-    @Override
+	@Override
 	public ICPPBase[] getBases() {
-        return ICPPBase.EMPTY_BASE_ARRAY;
-    }
+		return ICPPBase.EMPTY_BASE_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IField[] getFields() {
-        return IField.EMPTY_FIELD_ARRAY;
-    }
+		return IField.EMPTY_FIELD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IField findField(String name) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public ICPPField[] getDeclaredFields() {
-        return ICPPField.EMPTY_CPPFIELD_ARRAY;
-    }
+		return ICPPField.EMPTY_CPPFIELD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPMethod[] getMethods() {
-        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-    }
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-    }
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-    }
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPConstructor[] getConstructors() {
-        return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-    }
+		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IBinding[] getFriends() {
-        return IBinding.EMPTY_BINDING_ARRAY;
-    }
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
-    @Override
+	@Override
 	public final IScope getCompositeScope() {
-        return asScope();
-    }
+		return asScope();
+	}
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
@@ -223,7 +224,7 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE;
+		short firstBytes = ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE;
 		buffer.putShort(firstBytes);
 		buffer.marshalBinding(fClassTemplate);
 		buffer.putInt(fArguments.length);
@@ -233,12 +234,12 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	}
 
 	public static ICPPDeferredClassInstance unmarshal(IIndexFragment fragment, short firstBytes,
-		ITypeMarshalBuffer buffer) throws CoreException {
-		IBinding template= buffer.unmarshalBinding();
-		int argcount= buffer.getInt();
+			ITypeMarshalBuffer buffer) throws CoreException {
+		IBinding template = buffer.unmarshalBinding();
+		int argcount = buffer.getInt();
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];
 		for (int i = 0; i < argcount; i++) {
-			args[i]= buffer.unmarshalTemplateArgument();
+			args[i] = buffer.unmarshalTemplateArgument();
 		}
 		return new PDOMCPPDeferredClassInstance(fragment, (ICPPClassTemplate) template, args);
 	}

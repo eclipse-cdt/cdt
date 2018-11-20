@@ -23,7 +23,8 @@ public class QMLDocumentSetupParticipant implements IDocumentSetupParticipant, I
 
 	@Override
 	public void setup(IDocument document) {
-		IDocumentPartitioner partitioner = new FastPartitioner(new QMLPartitionScanner(), IQMLPartitions.ALL_QMLPARTITIONS);
+		IDocumentPartitioner partitioner = new FastPartitioner(new QMLPartitionScanner(),
+				IQMLPartitions.ALL_QMLPARTITIONS);
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 ext = (IDocumentExtension3) document;
 			ext.setDocumentPartitioner(IQMLPartitions.QML_PARTITIONING, partitioner);

@@ -121,7 +121,7 @@ public class MakeUIImages {
 	 * Retrieves an overlaid image from the internal repository of images.
 	 * If there is no image one will be created.
 	 *
- 	* The decoration overlay for the base image will use the array of
+	* The decoration overlay for the base image will use the array of
 	 * provided overlays. The indices of the array correspond to the values
 	 * of the 5 overlay constants defined on {@link IDecoration}, i.e.
 	 * {@link IDecoration#TOP_LEFT},
@@ -157,4 +157,3 @@ public class MakeUIImages {
 		return imagesFactory.getImageOverlaid(baseKey, overlayKey, quadrant);
 	}
 }
-

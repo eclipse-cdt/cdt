@@ -36,9 +36,9 @@ import org.eclipse.ui.part.WorkbenchPart;
  */
 public class PinCloneUtils {
 	public static String PIN_CLONE_VIEW_TAG = "PIN_CLONE_VIEW_"; //$NON-NLS-1$
-	
+
 	private static final DefaultPinElementColorDescriptor DEFAULT_PIN_ELEMENT_COLOR_DESCRIPTOR = new DefaultPinElementColorDescriptor();
-	
+
 	/**
 	 * Default pin element color descriptor.
 	 */
@@ -47,12 +47,13 @@ public class PinCloneUtils {
 		public int getOverlayColor() {
 			return GREEN;
 		}
+
 		@Override
 		public ImageDescriptor getToolbarIconDescriptor() {
 			return null;
-		}		
+		}
 	}
-	
+
 	/**
 	 * Returns the default pin element color descriptor.
 	 * 
@@ -61,7 +62,7 @@ public class PinCloneUtils {
 	public static IPinElementColorDescriptor getDefaultPinElementColorDescriptor() {
 		return DEFAULT_PIN_ELEMENT_COLOR_DESCRIPTOR;
 	}
-	
+
 	/**
 	 * Encodes cloned part secondary id.
 	 * 
@@ -71,7 +72,7 @@ public class PinCloneUtils {
 	public static String encodeClonedPartSecondaryId(String secondaryId) {
 		return PIN_CLONE_VIEW_TAG + secondaryId;
 	}
-	
+
 	/**
 	 * Decodes cloned part secondary id.
 	 * 
@@ -83,7 +84,7 @@ public class PinCloneUtils {
 			return ""; //$NON-NLS-1$
 		return secondaryId.replaceFirst(PIN_CLONE_VIEW_TAG, ""); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Determine whether the view part is a cloned part.
 	 * 
@@ -92,9 +93,9 @@ public class PinCloneUtils {
 	 */
 	public static boolean isClonedPart(IViewPart part) {
 		String secondaryId = part.getViewSite().getSecondaryId();
-		return hasCloneTag(secondaryId);		
+		return hasCloneTag(secondaryId);
 	}
-	
+
 	/**
 	 * Determine whether the view reference is a cloned part.
 	 *  
@@ -105,7 +106,7 @@ public class PinCloneUtils {
 		String secondaryId = ref.getSecondaryId();
 		return hasCloneTag(secondaryId);
 	}
-	
+
 	/**
 	 * Returns whether the id has the <code>PIN_CLONE_VIEW_TAG</code>.
 	 * 
@@ -114,8 +115,8 @@ public class PinCloneUtils {
 	 */
 	private static boolean hasCloneTag(String id) {
 		return id != null && id.startsWith(PIN_CLONE_VIEW_TAG);
-	}	    
-	    
+	}
+
 	/**
 	 * Set the part title to include the secondary id as part of the title.
 	 * 
@@ -125,22 +126,22 @@ public class PinCloneUtils {
 		try {
 			if (!isClonedPart(part))
 				return;
-			
+
 			String secondaryId = part.getViewSite().getSecondaryId();
-			secondaryId = decodeClonedPartSecondaryId(secondaryId);			
-			
+			secondaryId = decodeClonedPartSecondaryId(secondaryId);
+
 			// use reflection to set the part name of the new view
 			Method method = WorkbenchPart.class.getDeclaredMethod("setPartName", String.class); //$NON-NLS-1$
-			if (method != null) {				
+			if (method != null) {
 				if (part instanceof WorkbenchPart) {
 					String name = ((WorkbenchPart) part).getPartName();
-				
-					String tag = " <" + secondaryId + ">";   //$NON-NLS-1$//$NON-NLS-2$
+
+					String tag = " <" + secondaryId + ">"; //$NON-NLS-1$//$NON-NLS-2$
 					if (!name.contains(tag)) {
 						name = name + tag;
-						
+
 						method.setAccessible(true);
-						method.invoke(part, name);	
+						method.invoke(part, name);
 					}
 				}
 			}
@@ -148,7 +149,7 @@ public class PinCloneUtils {
 			CDebugUIPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Set the part content description.
 	 * 
@@ -161,12 +162,12 @@ public class PinCloneUtils {
 			if (method != null) {
 				method.setAccessible(true);
 				method.invoke(part, description);
-			}			
+			}
 		} catch (Exception e) {
 			CDebugUIPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Returns whether the debug context selection is pinnable.
 	 * 
@@ -176,34 +177,35 @@ public class PinCloneUtils {
 	 */
 	public static boolean isPinnable(IWorkbenchPart part, ISelection selection) {
 		boolean pinnable = false;
-		
+
 		if (selection instanceof IStructuredSelection) {
-			List <?> list = ((IStructuredSelection) selection).toList();			
+			List<?> list = ((IStructuredSelection) selection).toList();
 			for (Object element : list) {
 				pinnable = false;
-				
+
 				/* IPinProvider */
-				if (element instanceof IAdaptable) {					
-					IPinProvider pinProvider = ((IAdaptable)element).getAdapter(IPinProvider.class);
+				if (element instanceof IAdaptable) {
+					IPinProvider pinProvider = ((IAdaptable) element).getAdapter(IPinProvider.class);
 					if (pinProvider != null) {
-						if (pinProvider.isPinnable(part,  element))
+						if (pinProvider.isPinnable(part, element))
 							pinnable = true;
 					}
-				}	
+				}
 
-// TODO: support for CDI				
-//				/* support CDebugElement */
-//				if (!pinnable && (element instanceof ICDebugElement)) {					
-//					pinnable = true;
-//				}
-			
-				if (!pinnable) break;
+				// TODO: support for CDI				
+				//				/* support CDebugElement */
+				//				if (!pinnable && (element instanceof ICDebugElement)) {					
+				//					pinnable = true;
+				//				}
+
+				if (!pinnable)
+					break;
 			}
 		}
-		
+
 		return pinnable;
 	}
-	
+
 	/**
 	 * Returns the pin element color descriptor for the set of handles. If there are multiple pinned handles,
 	 * then return the default element color descriptor.
@@ -212,36 +214,38 @@ public class PinCloneUtils {
 	 * @param debugContext the debug context to compare with against the handles
 	 * @return the element color descriptor, can be <code>null</code>;
 	 */
-	public static IPinElementColorDescriptor getPinElementColorDescriptor(Set<IPinElementHandle> handles, Object debugContext) {
+	public static IPinElementColorDescriptor getPinElementColorDescriptor(Set<IPinElementHandle> handles,
+			Object debugContext) {
 		int color = IPinElementColorDescriptor.UNDEFINED;
 		IPinElementColorDescriptor colorDesc = null;
-        
-        for (IPinElementHandle handle : handles) {
-        	if (debugContext instanceof IAdaptable) {
 
-        		IPinProvider pinProvider = ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
-        		if (pinProvider != null) {
-        			if (pinProvider.isPinnedTo(debugContext, handle)) {
-            			colorDesc = handle.getPinElementColorDescriptor();
-            			if (colorDesc != null) {
-            				int overlayColor = colorDesc.getOverlayColor();
-            				if (color == IPinElementColorDescriptor.UNDEFINED) color = overlayColor;
-            				if (color != overlayColor) {
-            					colorDesc = null;
-            					break;
-            				}
-            			}
-        			}
-        		}
-        	}
-        }
+		for (IPinElementHandle handle : handles) {
+			if (debugContext instanceof IAdaptable) {
 
-        if (colorDesc == null)
-        	colorDesc = getDefaultPinElementColorDescriptor();
-        
-        return colorDesc;
+				IPinProvider pinProvider = ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
+				if (pinProvider != null) {
+					if (pinProvider.isPinnedTo(debugContext, handle)) {
+						colorDesc = handle.getPinElementColorDescriptor();
+						if (colorDesc != null) {
+							int overlayColor = colorDesc.getOverlayColor();
+							if (color == IPinElementColorDescriptor.UNDEFINED)
+								color = overlayColor;
+							if (color != overlayColor) {
+								colorDesc = null;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (colorDesc == null)
+			colorDesc = getDefaultPinElementColorDescriptor();
+
+		return colorDesc;
 	}
-	
+
 	/**
 	 * Returns whether the debug context is pinned to any one of these handles.
 	 * 
@@ -251,16 +255,16 @@ public class PinCloneUtils {
 	 */
 	public static boolean isPinnedTo(Set<IPinElementHandle> handles, Object debugContext) {
 		for (IPinElementHandle handle : handles) {
-        	if (debugContext instanceof IAdaptable) {
-        		IPinProvider pinProvider = ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
-        		if (pinProvider != null) {
-        			if (pinProvider.isPinnedTo(debugContext, handle)) {
-        				return true;
-        			}        			
-        		}
-        	}
-        }
-		
+			if (debugContext instanceof IAdaptable) {
+				IPinProvider pinProvider = ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
+				if (pinProvider != null) {
+					if (pinProvider.isPinnedTo(debugContext, handle)) {
+						return true;
+					}
+				}
+			}
+		}
+
 		return false;
 	}
 }

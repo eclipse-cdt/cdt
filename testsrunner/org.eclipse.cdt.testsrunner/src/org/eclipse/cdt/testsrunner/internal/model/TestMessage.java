@@ -30,7 +30,6 @@ public class TestMessage implements ITestMessage {
 	/** Test message text */
 	private String text;
 
-	
 	public TestMessage(TestLocation location, Level level, String text) {
 		this.location = location;
 		this.level = level;

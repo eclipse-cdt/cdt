@@ -44,7 +44,8 @@ public class ASTHelper {
 	}
 
 	public static IASTNode getDeclarationForNode(IASTNode node) {
-		while (node != null && !(node instanceof IASTSimpleDeclaration) && !(node instanceof IASTParameterDeclaration)) {
+		while (node != null && !(node instanceof IASTSimpleDeclaration)
+				&& !(node instanceof IASTParameterDeclaration)) {
 			node = node.getParent();
 		}
 		return node;
@@ -79,8 +80,8 @@ public class ASTHelper {
 		return null;
 	}
 
-	public static boolean samePointers(IASTPointerOperator[] pointerOperators1,
-			IASTPointerOperator[] pointerOperators2, TrailNodeEqualityChecker checker) {
+	public static boolean samePointers(IASTPointerOperator[] pointerOperators1, IASTPointerOperator[] pointerOperators2,
+			TrailNodeEqualityChecker checker) {
 		if (pointerOperators2.length == pointerOperators1.length) {
 			for (int i = 0; i < pointerOperators2.length; i++) {
 				IASTPointerOperator operator1 = pointerOperators1[i];
@@ -120,28 +121,29 @@ public class ASTHelper {
 		baseNode.accept(visitor);
 		return specifiers;
 	}
-	
-	public static Collection<IASTPreprocessorStatement> getAllInFilePreprocessorStatements(
-			IASTTranslationUnit unit, String aktFileName) {
+
+	public static Collection<IASTPreprocessorStatement> getAllInFilePreprocessorStatements(IASTTranslationUnit unit,
+			String aktFileName) {
 		Collection<IASTPreprocessorStatement> statements = new ArrayList<IASTPreprocessorStatement>();
 		for (IASTPreprocessorStatement aktStatement : unit.getAllPreprocessorStatements()) {
-			if (aktStatement.getFileLocation() != null && aktStatement.getFileLocation().getFileName().equals(aktFileName)) {
+			if (aktStatement.getFileLocation() != null
+					&& aktStatement.getFileLocation().getFileName().equals(aktFileName)) {
 				statements.add(aktStatement);
 			}
 		}
 		return statements;
 	}
-	
+
 	public static Collection<IASTDeclaration> getAllInFileDeclarations(IASTTranslationUnit unit, String aktFileName) {
 		Collection<IASTDeclaration> decls = new ArrayList<IASTDeclaration>();
-		for (IASTDeclaration aktDecl: unit.getDeclarations()) {
+		for (IASTDeclaration aktDecl : unit.getDeclarations()) {
 			if (aktDecl.getFileLocation() != null && aktDecl.getFileLocation().getFileName().equals(aktFileName)) {
 				decls.add(aktDecl);
 			}
 		}
 		return decls;
 	}
-	
+
 	public static ICPPASTUsingDirective getActiveUsingDirecitveForNode(IASTNode node, IASTTranslationUnit unit) {
 		ICPPASTUsingDirective activeDirective = null;
 		for (IASTDeclaration aktDeclaration : getAllInFileDeclarations(unit, node.getFileLocation().getFileName())) {
@@ -151,7 +153,7 @@ public class ASTHelper {
 			if (aktDeclaration instanceof ICPPASTUsingDirective) {
 				activeDirective = (ICPPASTUsingDirective) aktDeclaration;
 			}
-		} 
+		}
 		return activeDirective;
 	}
 
@@ -174,7 +176,7 @@ public class ASTHelper {
 		}
 		return null;
 	}
-	
+
 	public static Collection<IASTFunctionDeclarator> getFunctionDeclaratorsForClass(IASTCompositeTypeSpecifier klass) {
 		Collection<IASTFunctionDeclarator> declarators = new ArrayList<IASTFunctionDeclarator>();
 		for (IASTDeclaration aktDeclaration : klass.getMembers()) {

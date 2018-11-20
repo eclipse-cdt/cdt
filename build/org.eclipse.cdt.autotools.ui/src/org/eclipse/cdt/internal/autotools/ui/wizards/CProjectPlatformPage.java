@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-
 /**
  * Class that implements the project type and configuration selection page in the new 
  * project wizard for managed builder projects.
@@ -61,13 +60,13 @@ public class CProjectPlatformPage extends WizardPage {
 	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
 	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
 	private static final String FORCEDCONFIG_TIP = TIP + ".forcedconfigs"; //$NON-NLS-1$
-	
+
 	// support for exporting data to custom wizard pages
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.platformPage"; //$NON-NLS-1$
 	public static final String PROJECT_TYPE = "projectType"; //$NON-NLS-1$
 	public static final String TOOLCHAIN = "toolchain"; //$NON-NLS-1$
 	public static final String NATURE = "nature"; //$NON-NLS-1$
-	
+
 	protected Text platformSelection;
 	private List<Object> selectedConfigurations;
 	protected IProjectType projectType;
@@ -84,7 +83,8 @@ public class CProjectPlatformPage extends WizardPage {
 	public CProjectPlatformPage(String pageName) {
 		super(pageName);
 		setPageComplete(false);
-		projectType = ManagedBuildManager.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
+		projectType = ManagedBuildManager
+				.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
 		selectedConfigurations = new ArrayList<>(0);
 		showAllConfigsForced = false;
 	}
@@ -94,7 +94,7 @@ public class CProjectPlatformPage extends WizardPage {
 		return validatePage() && getNextPage() != null;
 	}
 
-	private void createConfigSelectionGroup (Composite parent) {
+	private void createConfigSelectionGroup(Composite parent) {
 		// Create the group composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
@@ -106,8 +106,8 @@ public class CProjectPlatformPage extends WizardPage {
 		configLabel.setFont(composite.getFont());
 		configLabel.setText(AutotoolsWizardMessages.getResourceString(CONFIG_LABEL));
 
-		Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.MULTI
-								| SWT.SINGLE | SWT.H_SCROLL	| SWT.V_SCROLL);
+		Table table = new Table(composite,
+				SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(false);
@@ -124,7 +124,7 @@ public class CProjectPlatformPage extends WizardPage {
 		tableViewer.addSelectionChangedListener(e -> handleConfigurationSelectionChange());
 
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -149,14 +149,13 @@ public class CProjectPlatformPage extends WizardPage {
 		// Select configuration
 		populateConfigurations();
 		setPageComplete(validatePage());
-		
+
 		// Do the nasty
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(composite);
 	}
 
-	
 	private void createTypeSelectGroup(Composite parent) {
 		// Create the group composite
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -170,12 +169,12 @@ public class CProjectPlatformPage extends WizardPage {
 		platformLabel.setText(AutotoolsWizardMessages.getResourceString(TARGET_LABEL));
 
 		platformSelection = new Text(composite, SWT.READ_ONLY);
-//		platformSelection = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);	
+		//		platformSelection = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);	
 		platformSelection.setFont(composite.getFont());
 		platformSelection.setToolTipText(AutotoolsWizardMessages.getResourceString(TARGET_TIP));
 		platformSelection.setText("GNU Autotools"); //$NON-NLS-1$
 		platformSelection.addDisposeListener(e -> platformSelection = null);
-		
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		// Make this the same as NewCProjectWizardPage.SIZING_TEXT_FIELD_WIDTH
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + 50;
@@ -183,9 +182,9 @@ public class CProjectPlatformPage extends WizardPage {
 	}
 
 	public IProject getProject() {
-		return ((NewCProjectWizard)getWizard()).getNewProject();
+		return ((NewCProjectWizard) getWizard()).getNewProject();
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -207,25 +206,25 @@ public class CProjectPlatformPage extends WizardPage {
 		// Get the selections from the table viewer
 		selectedConfigurations.clear();
 		selectedConfigurations.addAll(Arrays.asList(tableViewer.getCheckedElements()));
-		
+
 		// support for publishing the toolchains for the selected configs so that custom wizard
 		// pages will know which toolchains have been selected
-		
+
 		// get the toolchains from the selected configs and put them into a set
 		Set<IToolChain> toolchainSet = new LinkedHashSet<>();
-		for(int k = 0; k < selectedConfigurations.size(); k++)
-		{
+		for (int k = 0; k < selectedConfigurations.size(); k++) {
 			IConfiguration config = (IConfiguration) selectedConfigurations.get(k);
 			IToolChain toolchain = config.getToolChain();
 			toolchainSet.add(toolchain);
 		}
-		
+
 		// publish the set of selected toolchains with the custom page manager
 		MBSCustomPageManager.addPageProperty(PAGE_ID, TOOLCHAIN, toolchainSet);
-		
+
 		// TODO: Don't know where this goes and how to find true nature
-		MBSCustomPageManager.addPageProperty(CProjectPlatformPage.PAGE_ID, CProjectPlatformPage.NATURE, CProjectNature.C_NATURE_ID);
-		
+		MBSCustomPageManager.addPageProperty(CProjectPlatformPage.PAGE_ID, CProjectPlatformPage.NATURE,
+				CProjectNature.C_NATURE_ID);
+
 		setPageComplete(validatePage());
 	}
 
@@ -239,20 +238,19 @@ public class CProjectPlatformPage extends WizardPage {
 		if (projectType == null)
 			return;
 		IConfiguration selected[] = null;
-		
+
 		configurations = filterSupportedConfigurations(projectType.getConfigurations());
 		selected = configurations;
-	
+
 		// Check for buildable configs on this platform
 		if (selected.length == 0) {
 			// Indicate that there are no buildable configurations on this platform for this project
 			// type and that all configurations will be selected
 			setMessage(AutotoolsWizardMessages.getResourceString(FORCEDCONFIG_TIP), WARNING);
-		}
-		else { 
+		} else {
 			setMessage(null, NONE);
 		}
-		
+
 		tableViewer.setInput(configurations);
 		tableViewer.setCheckedElements(selected);
 		handleConfigurationSelectionChange();
@@ -262,29 +260,28 @@ public class CProjectPlatformPage extends WizardPage {
 	 * Returns the array of supported configurations found in the configurations
 	 * passed to this method
 	 */
-	IConfiguration[] filterSupportedConfigurations(IConfiguration cfgs[]){
+	IConfiguration[] filterSupportedConfigurations(IConfiguration cfgs[]) {
 		ArrayList<IConfiguration> supported = new ArrayList<>();
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
 
 		for (int i = 0; i < cfgs.length; i++) {
 			// First, filter on supported state
-			if (cfgs[i].isSupported()) {				
+			if (cfgs[i].isSupported()) {
 				// Now, apply the OS and ARCH filters to determine if the configuration should be shown
 				// Determine if the configuration's tool-chain supports this OS & Architecture.
 				IToolChain tc = cfgs[i].getToolChain();
 				List<String> osList = Arrays.asList(tc.getOSList());
-				if (osList.contains("all") || osList.contains(os)) {	//$NON-NLS-1$
+				if (osList.contains("all") || osList.contains(os)) { //$NON-NLS-1$
 					List<String> archList = Arrays.asList(tc.getArchList());
 					if (archList.contains("all") || archList.contains(arch)) { //$NON-NLS-1$
-						supported.add(cfgs[i]);						
+						supported.add(cfgs[i]);
 					}
-				}		
+				}
 			}
 		}
 		return supported.toArray(new IConfiguration[supported.size()]);
 	}
-	
 
 	/**
 	 * @return
@@ -295,7 +292,7 @@ public class CProjectPlatformPage extends WizardPage {
 			setErrorMessage(null);
 			return true;
 		} else {
-			setErrorMessage(AutotoolsWizardMessages.getResourceString("PlatformBlock.message.error.noconfigs"));	//$NON-NLS-1$
+			setErrorMessage(AutotoolsWizardMessages.getResourceString("PlatformBlock.message.error.noconfigs")); //$NON-NLS-1$
 			return false;
 		}
 	}

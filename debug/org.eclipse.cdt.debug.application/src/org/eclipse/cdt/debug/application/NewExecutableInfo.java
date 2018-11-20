@@ -32,21 +32,21 @@ public class NewExecutableInfo {
 		fBuildLog = buildLog;
 		fArguments = args;
 	}
-	
+
 	/**
 	 * Returns the path of the executable on the host
 	 */
 	public String getHostPath() {
 		return fHostPath;
 	}
-	
+
 	/**
 	 * Sets the path of the executable on the host
 	 */
 	public void setHostPath(String path) {
 		fHostPath = path;
 	}
-	
+
 	/**
 	 * For remote sessions returns the path of the executable 
 	 * on the target. Otherwise returns null.
@@ -61,7 +61,7 @@ public class NewExecutableInfo {
 	public void setTargetPath(String path) {
 		fTargetPath = path;
 	}
-	
+
 	/**
 	 * Get the build log path.
 	 * 
@@ -70,7 +70,7 @@ public class NewExecutableInfo {
 	public String getBuildLog() {
 		return fBuildLog;
 	}
-	
+
 	/**
 	 * Sets the build log path.
 	 * 
@@ -79,14 +79,14 @@ public class NewExecutableInfo {
 	public void setBuildLog(String path) {
 		fBuildLog = path;
 	}
-	
+
 	/**
 	 * Returns the arguments to pass to the executable, or null
 	 */
 	public String getArguments() {
 		return fArguments;
-	}	
-	
+	}
+
 	/**
 	 * Sets the arguments to pass to the executable
 	 */

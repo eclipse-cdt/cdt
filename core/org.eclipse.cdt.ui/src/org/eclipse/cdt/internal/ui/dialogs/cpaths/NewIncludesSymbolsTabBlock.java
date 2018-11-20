@@ -75,37 +75,36 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	protected List<CPElement> getCPaths() {
 		if (fIncludeSymbols != null) {
 			return fIncludeSymbols.getCPaths();
-		} 
+		}
 		return fCPaths;
 	}
 
 	@Override
 	protected int[] getFilteredTypes() {
-		return new int[] {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER};
+		return new int[] { IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER };
 	}
 
 	@Override
 	protected int[] getAppliedFilteredTypes() {
-		return new int[] {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO};
+		return new int[] { IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO };
 	}
-	
+
 	@Override
 	protected void initialize(ICElement element, List<CPElement> cPaths) {
 		fCPaths = cPaths;
 
 		if (element instanceof ICProject) {
-            fIncludeSymbols = new CPathIncludeSymbolEntryPage(this);
-        }
-        else {
-            fIncludeSymbols = new CPathIncludeSymbolEntryPerFilePage(this);
-        }
-        if (fIncludeSymbols != null) {
+			fIncludeSymbols = new CPathIncludeSymbolEntryPage(this);
+		} else {
+			fIncludeSymbols = new CPathIncludeSymbolEntryPerFilePage(this);
+		}
+		if (fIncludeSymbols != null) {
 			fIncludeSymbols.init(element, cPaths);
 		}
 		doStatusLineUpdate();
 		initializeTimeStamps();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,17 +113,17 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	@Override
 	public void statusChanged(IStatus status) {
 		switch (status.getSeverity()) {
-			case IStatus.ERROR :
-				getPathStatus().setError(status.getMessage());
-				break;
-			case IStatus.INFO :
-				getPathStatus().setInfo(status.getMessage());
-				break;
-			case IStatus.WARNING :
-				getPathStatus().setWarning(status.getMessage());
-				break;
-			default:
-				getPathStatus().setOK();
+		case IStatus.ERROR:
+			getPathStatus().setError(status.getMessage());
+			break;
+		case IStatus.INFO:
+			getPathStatus().setInfo(status.getMessage());
+			break;
+		case IStatus.WARNING:
+			getPathStatus().setWarning(status.getMessage());
+			break;
+		default:
+			getPathStatus().setOK();
 		}
 		updateBuildPathStatus();
 		doStatusLineUpdate();

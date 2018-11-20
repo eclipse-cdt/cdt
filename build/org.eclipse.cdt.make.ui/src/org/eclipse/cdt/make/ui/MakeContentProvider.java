@@ -61,8 +61,8 @@ import org.eclipse.swt.widgets.Display;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener,
-		IResourceChangeListener, ICProjectDescriptionListener, IPreferenceChangeListener {
+public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener,
+		ICProjectDescriptionListener, IPreferenceChangeListener {
 	/** Presentation of the content, i.e. for MakeView tree or for BuildTargetDialog table */
 	protected boolean bFlatten;
 
@@ -94,10 +94,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				MakeCorePlugin.log(e);
 			}
 		} else if (obj instanceof IContainer) {
-			IContainer container = (IContainer)obj;
+			IContainer container = (IContainer) obj;
 			ArrayList<Object> children = new ArrayList<Object>();
 
-			boolean isAddingSourceRoots = !bFlatten && (container instanceof IProject) && CCorePlugin.showSourceRootsAtTopOfProject();
+			boolean isAddingSourceRoots = !bFlatten && (container instanceof IProject)
+					&& CCorePlugin.showSourceRootsAtTopOfProject();
 
 			// add source roots if necessary
 			if (isAddingSourceRoots) {
@@ -157,11 +158,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		if (obj instanceof IMakeTarget) {
 			// this is ambiguous as make target can sit in 2 places, in its container
 			// or source folder represented by TargetSourceContainer
-			return ((IMakeTarget)obj).getContainer();
+			return ((IMakeTarget) obj).getContainer();
 		} else if (obj instanceof IContainer) {
-			return ((IContainer)obj).getParent();
+			return ((IContainer) obj).getParent();
 		} else if (obj instanceof TargetSourceContainer) {
-			IContainer container = ((TargetSourceContainer)obj).getContainer();
+			IContainer container = ((TargetSourceContainer) obj).getContainer();
 			// TargetSourceContainer sits at project root
 			return container.getProject();
 		}
@@ -258,14 +259,14 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				// Get first item of the viewer
 				Object firstItem = null;
 				if (viewer instanceof TreeViewer) {
-					if( ((TreeViewer) viewer).getTree().getItemCount() <= 0) {
+					if (((TreeViewer) viewer).getTree().getItemCount() <= 0) {
 						// No items yet, no refresh needed
 						return;
 					} else {
 						firstItem = ((TreeViewer) viewer).getTree().getItem(0).getData();
 					}
 				} else if (viewer instanceof TableViewer) {
-					if( ((TableViewer) viewer).getTable().getItemCount() <= 0) {
+					if (((TableViewer) viewer).getTable().getItemCount() <= 0) {
 						// No items yet, refresh
 						viewer.refresh();
 						return;
@@ -374,12 +375,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		ICDescriptionDelta delta = event.getDefaultSettingCfgDelta();
-		if (delta==null)
+		if (delta == null)
 			return;
 
 		int flags = delta.getChangeFlags();
-		if ( ((flags & ICDescriptionDelta.SOURCE_ADDED) != 0) ||
-			 ((flags & ICDescriptionDelta.SOURCE_REMOVED) != 0) ) {
+		if (((flags & ICDescriptionDelta.SOURCE_ADDED) != 0) || ((flags & ICDescriptionDelta.SOURCE_REMOVED) != 0)) {
 
 			IProject project = null;
 			ICSettingObject setting = delta.getOldSetting();
@@ -415,9 +415,9 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	private static ICSourceEntry[] getSourceEntries(IProject project) {
 		ICProjectDescriptionManager mgr = CCorePlugin.getDefault().getProjectDescriptionManager();
 		ICProjectDescription prjDescription = mgr.getProjectDescription(project, false);
-		if (prjDescription!=null) {
+		if (prjDescription != null) {
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-			if (cfgDescription!=null) {
+			if (cfgDescription != null) {
 				ICSourceEntry[] srcEntries = cfgDescription.getResolvedSourceEntries();
 				return srcEntries;
 			}
@@ -428,7 +428,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * Check if the resource is in the list of source entries.
-
+	
 	 * @param rc - resource to check.
 	 * @return {@code true} if the resource is a source folder, {@code false} otherwise.
 	 *

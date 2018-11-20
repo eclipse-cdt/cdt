@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -28,5 +28,5 @@ public interface IIndexLinkage extends ILinkage {
 	 * Empty IIndexLinkage array constant
 	 * @since 4.0.1
 	 */
-	IIndexLinkage[] EMPTY_INDEX_LINKAGE_ARRAY= {};
+	IIndexLinkage[] EMPTY_INDEX_LINKAGE_ARRAY = {};
 }

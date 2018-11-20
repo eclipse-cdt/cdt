@@ -100,7 +100,7 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * @return {@code IScope} representing function body.
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

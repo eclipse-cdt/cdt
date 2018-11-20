@@ -28,7 +28,7 @@ class ChildCollector extends ASTGenericVisitor {
 
 	public ChildCollector(IASTNode node) {
 		super(true);
-		fNode= node;
+		fNode = node;
 	}
 
 	public IASTNode[] getChildren() {
@@ -44,7 +44,7 @@ class ChildCollector extends ASTGenericVisitor {
 		if (fNodes == null) {
 			if (child == fNode)
 				return PROCESS_CONTINUE;
-			fNodes= new ArrayList<IASTNode>();
+			fNodes = new ArrayList<IASTNode>();
 		}
 		fNodes.add(child);
 		return PROCESS_SKIP;

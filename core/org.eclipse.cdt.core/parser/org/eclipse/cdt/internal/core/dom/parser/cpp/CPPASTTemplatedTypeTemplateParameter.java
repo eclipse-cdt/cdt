@@ -28,17 +28,17 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Template template parameter
  */
-public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
-        ICPPASTTemplatedTypeTemplateParameter, IASTAmbiguityParent {
+public class CPPASTTemplatedTypeTemplateParameter extends ASTNode
+		implements ICPPASTTemplatedTypeTemplateParameter, IASTAmbiguityParent {
 
-    private ICPPASTTemplateParameter [] fNestedParameters = null;
-    private boolean fIsParameterPack;
-    private boolean fUsesKeywordClass;
-    private IASTName fName;
-    private IASTExpression fDefaultValue;
+	private ICPPASTTemplateParameter[] fNestedParameters = null;
+	private boolean fIsParameterPack;
+	private boolean fUsesKeywordClass;
+	private IASTName fName;
+	private IASTExpression fDefaultValue;
 	private CPPTemplateTemplateParameterScope fScope;
 
-    public CPPASTTemplatedTypeTemplateParameter() {
+	public CPPASTTemplatedTypeTemplateParameter() {
 	}
 
 	public CPPASTTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue) {
@@ -86,18 +86,16 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 	public void addTemplateParameter(ICPPASTTemplateParameter param) {
 		assertNotFrozen();
 		if (param != null) {
-			fNestedParameters = ArrayUtil.append(ICPPASTTemplateParameter.class,
-					fNestedParameters, param);
+			fNestedParameters = ArrayUtil.append(ICPPASTTemplateParameter.class, fNestedParameters, param);
 			param.setParent(this);
 			param.setPropertyInParent(PARAMETER);
 		}
 	}
 
-
-    @Override
+	@Override
 	public void setIsParameterPack(boolean val) {
-    	assertNotFrozen();
-    	fIsParameterPack= val;
+		assertNotFrozen();
+		fIsParameterPack = val;
 	}
 
 	@Override
@@ -118,45 +116,48 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 
 	@Override
 	public IASTName getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.fName =name;
-        if (name != null) {
+		assertNotFrozen();
+		this.fName = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(PARAMETER_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getDefaultValue() {
-        return fDefaultValue;
-    }
+		return fDefaultValue;
+	}
 
-    @Override
+	@Override
 	public void setDefaultValue(IASTExpression expression) {
-        assertNotFrozen();
-        this.fDefaultValue = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.fDefaultValue = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(DEFAULT_VALUE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	if (action.shouldVisitTemplateParameters) {
+		if (action.shouldVisitTemplateParameters) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        ICPPASTTemplateParameter [] ps = getTemplateParameters();
+		ICPPASTTemplateParameter[] ps = getTemplateParameters();
 		for (int i = 0; i < ps.length; i++) {
 			if (!ps[i].accept(action))
 				return false;
@@ -170,7 +171,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 			return false;
 
 		return true;
-    }
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -179,20 +180,19 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		return r_unclear;
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == fDefaultValue)
-        {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            fDefaultValue  = (IASTExpression) other;
-        }
-    }
+		if (child == fDefaultValue) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fDefaultValue = (IASTExpression) other;
+		}
+	}
 
 	@Override
 	public ICPPScope asScope() {
 		if (fScope == null) {
-			fScope= new CPPTemplateTemplateParameterScope(this);
+			fScope = new CPPTemplateTemplateParameterScope(this);
 		}
 		return fScope;
 	}

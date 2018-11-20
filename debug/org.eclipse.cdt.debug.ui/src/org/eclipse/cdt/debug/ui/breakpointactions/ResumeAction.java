@@ -45,9 +45,9 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ResumeAction extends AbstractBreakpointAction {
 
 	final static int INCRIMENT_MSEC = 100;
-	
+
 	int pauseTime = 0;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
@@ -55,39 +55,43 @@ public class ResumeAction extends AbstractBreakpointAction {
 	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
-		long endTime = System.currentTimeMillis() + getPauseTime()*1000;
+		long endTime = System.currentTimeMillis() + getPauseTime() * 1000;
 		IResumeActionEnabler enabler = context.getAdapter(IResumeActionEnabler.class);
 
 		if (enabler != null) {
 			try {
-				monitor.beginTask(getName(), getPauseTime()*1000/INCRIMENT_MSEC);
-				
+				monitor.beginTask(getName(), getPauseTime() * 1000 / INCRIMENT_MSEC);
+
 				long currentTime = System.currentTimeMillis();
-            	while (!monitor.isCanceled() && currentTime < endTime ){
-            		monitor.setTaskName(MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { Long.valueOf((endTime - currentTime)/1000) })); //$NON-NLS-1$)
-            		monitor.worked(1);
-            		Thread.sleep(INCRIMENT_MSEC);
-            		currentTime = System.currentTimeMillis();
-                }
-            	
+				while (!monitor.isCanceled() && currentTime < endTime) {
+					monitor.setTaskName(MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), //$NON-NLS-1$
+							new Object[] { Long.valueOf((endTime - currentTime) / 1000) })); //)
+					monitor.worked(1);
+					Thread.sleep(INCRIMENT_MSEC);
+					currentTime = System.currentTimeMillis();
+				}
+
 				if (!monitor.isCanceled()) {
-					monitor.setTaskName( Messages.getString("ResumeAction.SummaryImmediately")); //$NON-NLS-1$)
+					monitor.setTaskName(Messages.getString("ResumeAction.SummaryImmediately")); //$NON-NLS-1$)
 					enabler.resume();
 				}
 				monitor.worked(1);
 			} catch (Exception e) {
-				errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e );
+				errorStatus = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+						ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e);
 			}
 		} else
-			errorStatus = new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),  IInternalCDebugUIConstants.INTERNAL_ERROR, Messages.getString("ResumeAction.error.0"), null ); //$NON-NLS-1$
-		
+			errorStatus = new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
+					IInternalCDebugUIConstants.INTERNAL_ERROR, Messages.getString("ResumeAction.error.0"), null); //$NON-NLS-1$
+
 		if (errorStatus != null) {
-			MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, Messages.getString("ResumeAction.error.1"), null ); //$NON-NLS-1$
-			ms.add( errorStatus);
-			errorStatus = ms;			
+			MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+					ICDebugInternalConstants.STATUS_CODE_ERROR, Messages.getString("ResumeAction.error.1"), null); //$NON-NLS-1$
+			ms.add(errorStatus);
+			errorStatus = ms;
 		} else {
 			errorStatus = monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
-		}	
+		}
 		return errorStatus;
 	}
 
@@ -147,7 +151,8 @@ public class ResumeAction extends AbstractBreakpointAction {
 	public String getSummary() {
 		if (pauseTime == 0)
 			return Messages.getString("ResumeAction.SummaryImmediately"); //$NON-NLS-1$
-		return MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { Integer.valueOf(pauseTime) }); //$NON-NLS-1$
+		return MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), //$NON-NLS-1$
+				new Object[] { Integer.valueOf(pauseTime) });
 	}
 
 	@Override

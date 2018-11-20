@@ -19,18 +19,17 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
-
 /**
  * This is a helper class for the text editor to be able to determine, given a
  * particular offset in a document, various candidates segments for things like
  * context help, proposals and hovering.
  */
 public class CWordFinder {
-	
+
 	private static final char CBRACE_L = '{';
 	private static final char CBRACE_R = '}';
-	private static final char PAREN_R  = ')';
-	
+	private static final char PAREN_R = ')';
+
 	/**
 	 * This method determines for a given offset into a given document what the
 	 * region is which defines the current word. A word is defined as a contiguous
@@ -244,17 +243,17 @@ public class CWordFinder {
 								return false;
 						} while (Character.isWhitespace(c));
 						// Container block seems to be not a function or statement body
-						pos++;             // step back one symbol
-						bracketcount = 0;  // let's search for upper block
+						pos++; // step back one symbol
+						bracketcount = 0; // let's search for upper block
 					}
 				}
 			}
 		} catch (BadLocationException x) {
 			// Ignore
 		}
-		return true;  // return true in case of unknown result or exception 
+		return true; // return true in case of unknown result or exception 
 	}
-	
+
 	/**
 	 * Searches for line feed symbols in string.
 	 * First met '\r' or '\n' is treated as LF symbol
@@ -263,11 +262,11 @@ public class CWordFinder {
 	 * 			string to search in.
 	 * @return  number of LFs met.
 	 */
-	public static int countLFs (String s) {
+	public static int countLFs(String s) {
 		int counter = 0;
 		char lf = 0;
 		char c;
-		for (int i= 0; i < s.length(); i++) {
+		for (int i = 0; i < s.length(); i++) {
 			c = s.charAt(i);
 			if (lf == 0) {
 				if (c == '\n' || c == '\r') {
@@ -288,8 +287,8 @@ public class CWordFinder {
 	 * 			text to check
 	 * @return  true if curled brace found.
 	 */
-	public static boolean hasCBraces (String s) {
-		if (s.indexOf(CBRACE_L) > -1 || s.indexOf(CBRACE_R) > -1) 
+	public static boolean hasCBraces(String s) {
+		if (s.indexOf(CBRACE_L) > -1 || s.indexOf(CBRACE_R) > -1)
 			return true;
 		return false;
 	}

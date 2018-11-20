@@ -34,4 +34,3 @@ public interface IEnvironmentBuildPathsChangeListener {
 	 */
 	void buildPathsChanged(IConfiguration configuration, int buildPathType);
 }
-

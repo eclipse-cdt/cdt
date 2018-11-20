@@ -20,7 +20,6 @@ import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestMessage;
 
-
 /**
  * Test for {@see QtTestsRunner} class
  */
@@ -29,20 +28,17 @@ public class QtTestCase extends BaseTestCase {
 
 	private static final String DEFAULT_LOCATION_FILE = "";
 	private static final int DEFAULT_LOCATION_LINE = 0;
-	
+
 	@Override
 	protected ITestsRunnerProvider createTestsRunner() {
 		return new QtTestsRunnerProvider();
 	}
 
-
 	private void addStandardBenchmarkMessage(int value, String units, int iterations) {
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info, 
-			MessageFormat.format("{0,number,#.####} {1} per iteration (total: {2}, iterations: {3})",
-				((float)value)/iterations, units, value, iterations)
-		);
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info,
+				MessageFormat.format("{0,number,#.####} {1} per iteration (total: {2}, iterations: {3})",
+						((float) value) / iterations, units, value, iterations));
 	}
-	
 
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
@@ -68,7 +64,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -99,7 +94,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -126,8 +120,8 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testDemo");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 6, ITestMessage.Level.FatalError, 
-			"Compared values are not the same\n   Actual (1): 1\n   Expected (2): 2");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 6, ITestMessage.Level.FatalError,
+				"Compared values are not the same\n   Actual (1): 1\n   Expected (2): 2");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("cleanupTestCase");
@@ -136,7 +130,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -158,14 +151,13 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testDemo");
-		mockModelUpdater.addTestMessage("qtestcase.cpp", 1675, ITestMessage.Level.FatalError, 
-			"Caught unhandled exception");
+		mockModelUpdater.addTestMessage("qtestcase.cpp", 1675, ITestMessage.Level.FatalError,
+				"Caught unhandled exception");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		// NOTE: Qt.Test does not run any other test cases after exception throwing in a test case
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
@@ -232,7 +224,8 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testWarning");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Warning, "Test warning!");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Warning,
+				"Test warning!");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testFailure");
@@ -244,12 +237,14 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Skipped);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testExpectedFailWithContinue");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 60, ITestMessage.Level.Error, "Will fix in the next release");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 60, ITestMessage.Level.Error,
+				"Will fix in the next release");
 		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 61, ITestMessage.Level.FatalError, "Failed!");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testExpectedFailWithAbort");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 68, ITestMessage.Level.Error, "Will fix in the next release");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 68, ITestMessage.Level.Error,
+				"Will fix in the next release");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testExpectedFailPassed");
@@ -257,11 +252,13 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testUnknownIncidentType");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 72, ITestMessage.Level.FatalError, "Unknown incident test!");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 72, ITestMessage.Level.FatalError,
+				"Unknown incident test!");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Aborted);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testUnknownMessageType");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 80, ITestMessage.Level.FatalError, "Unknown message type test!");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 80, ITestMessage.Level.FatalError,
+				"Unknown message type test!");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("cleanupTestCase");
@@ -269,7 +266,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
@@ -303,7 +299,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -341,7 +336,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -397,8 +391,7 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-	
-	
+
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -432,13 +425,13 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testDemo(all lower)");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 20, ITestMessage.Level.FatalError, 
-			"Compared values are not the same\n   Actual (string.toUpper()): HELLO\n   Expected (result): HELLO2");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 20, ITestMessage.Level.FatalError,
+				"Compared values are not the same\n   Actual (string.toUpper()): HELLO\n   Expected (result): HELLO2");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testDemo(mixed)");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 20, ITestMessage.Level.FatalError, 
-			"Compared values are not the same\n   Actual (string.toUpper()): HELLO\n   Expected (result): HELLO3");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 20, ITestMessage.Level.FatalError,
+				"Compared values are not the same\n   Actual (string.toUpper()): HELLO\n   Expected (result): HELLO3");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("cleanupTestCase");
@@ -446,8 +439,7 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-	
-	
+
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -491,7 +483,7 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testDemo(mixed)");
 		mockModelUpdater.addTestMessage("", 0, ITestMessage.Level.Warning, "Hello");
-		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 66, ITestMessage.Level.FatalError,  "HELLO3");
+		mockModelUpdater.addTestMessage("qt_test_demo.cpp", 66, ITestMessage.Level.FatalError, "HELLO3");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("cleanupTestCase");
@@ -499,7 +491,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
@@ -544,7 +535,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -574,14 +564,12 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-
 	//
 	public void testNoInput() {
 		// NOTE: The comment above is left blank intentionally
 		expectTestingException();
 	}
-	
-	
+
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -594,7 +582,6 @@ public class QtTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -605,7 +592,6 @@ public class QtTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -621,7 +607,6 @@ public class QtTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("enterTestCase");
 		expectTestingException();
 	}
-
 
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
@@ -641,7 +626,6 @@ public class QtTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>
@@ -658,7 +642,6 @@ public class QtTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-	
 	//<?xml version="1.0" encoding="ISO-8859-1"?>
 	//<TestCase name="MainTS">
 	//<Environment>

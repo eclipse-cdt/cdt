@@ -21,7 +21,10 @@ import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 
 public interface IContainerDescriptor {
 	public IPathEntryContainerPage createPage() throws CoreException;
+
 	public String getName();
+
 	public Image getImage();
+
 	public boolean canEdit(IPathEntry entry);
 }

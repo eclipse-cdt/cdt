@@ -146,8 +146,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				CheckedTreeSelectionDialog dialog = new CheckedTreeSelectionDialog(shell,
-						WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-						new ITreeContentProvider() {
+						WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), new ITreeContentProvider() {
 
 							@Override
 							public void dispose() {
@@ -202,8 +201,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 				dialog.setInput(getResourceRoot(exclusion));
 
 				if (exclusionInstanceResources.values().size() > 0) {
-					dialog.setInitialElementSelections(Arrays.asList(exclusionInstanceResources.values()
-							.toArray()));
+					dialog.setInitialElementSelections(Arrays.asList(exclusionInstanceResources.values().toArray()));
 				}
 				dialog.setMessage(Messages.RefreshPolicyExceptionDialog_SelectResourceDialogMessage);
 				dialog.setTitle(Messages.RefreshPolicyExceptionDialog_SelectResourceDialogTitle);
@@ -220,12 +218,10 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 						Object selected = selection[i];
 						if (selected instanceof IFolder) {
 							IPath path = ((IFolder) selected).getFullPath();
-							IPath relativePath = path
-									.makeRelativeTo(getResourceRoot(exclusion).getFullPath());
+							IPath relativePath = path.makeRelativeTo(getResourceRoot(exclusion).getFullPath());
 
 							exceptionsList.add(relativePath.toString());
-							ExclusionInstance instance = oldExclusionInstanceStrings.get(relativePath
-									.toString());
+							ExclusionInstance instance = oldExclusionInstanceStrings.get(relativePath.toString());
 							if (instance == null) {
 								instance = new ExclusionInstance();
 								instance.setExclusionType(ExclusionType.FOLDER);

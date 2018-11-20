@@ -24,34 +24,34 @@ import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
  */
 public class TestElementVMContext extends AbstractVMContext implements IDMVMContext {
 
-    final private TestElement fElement;
-    
-    public TestElementVMContext(IVMNode node, TestElement element) {
-        super(node);
-        fElement = element;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof TestElementVMContext && ((TestElementVMContext)obj).fElement.equals(fElement);
-    }
+	final private TestElement fElement;
 
-    @Override
-    public int hashCode() {
-        return fElement.hashCode();
-    }
+	public TestElementVMContext(IVMNode node, TestElement element) {
+		super(node);
+		fElement = element;
+	}
 
-    public TestElement getElement() {
-        return fElement;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof TestElementVMContext && ((TestElementVMContext) obj).fElement.equals(fElement);
+	}
 
-    @Override
-    public IDMContext getDMContext() {
-        return getElement();
-    }
-    
-    @Override
-    public String toString() {
-        return getDMContext().toString();
-    }
+	@Override
+	public int hashCode() {
+		return fElement.hashCode();
+	}
+
+	public TestElement getElement() {
+		return fElement;
+	}
+
+	@Override
+	public IDMContext getDMContext() {
+		return getElement();
+	}
+
+	@Override
+	public String toString() {
+		return getDMContext().toString();
+	}
 }

@@ -47,8 +47,7 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((macroFilePath == null) ? 0 : macroFilePath.hashCode());
+		result = prime * result + ((macroFilePath == null) ? 0 : macroFilePath.hashCode());
 		return result;
 	}
 

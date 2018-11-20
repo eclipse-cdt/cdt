@@ -19,7 +19,6 @@ import java.util.Properties;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
  * @author Bogdan Gheorghe
  * @noextend This class is not intended to be subclassed by clients.

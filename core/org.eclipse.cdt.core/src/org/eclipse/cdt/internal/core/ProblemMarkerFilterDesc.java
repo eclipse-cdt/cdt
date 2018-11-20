@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * The purpose of ProblemMarkerFilterDesc is to manage information about 
  * one instance ProblemMarkerFilter extension point.
  */
-class ProblemMarkerFilterDesc  {
+class ProblemMarkerFilterDesc {
 
 	/**
 	 * XML attribute for name of class that implements this extension point

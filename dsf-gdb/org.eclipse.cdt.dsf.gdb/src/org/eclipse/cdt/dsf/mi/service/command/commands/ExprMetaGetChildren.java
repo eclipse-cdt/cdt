@@ -21,11 +21,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildrenInfo;
 public class ExprMetaGetChildren extends ExprMetaCommand<ExprMetaGetChildrenInfo> {
 
 	private int numChildLimit = IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED;
-	
+
 	public ExprMetaGetChildren(IExpressionDMContext ctx) {
 		super(ctx);
 	}
-	
+
 	/**
 	 * @param ctx
 	 * @param numChildLimit
@@ -36,7 +36,7 @@ public class ExprMetaGetChildren extends ExprMetaCommand<ExprMetaGetChildrenInfo
 		super(ctx);
 		this.numChildLimit = numChildLimit;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */

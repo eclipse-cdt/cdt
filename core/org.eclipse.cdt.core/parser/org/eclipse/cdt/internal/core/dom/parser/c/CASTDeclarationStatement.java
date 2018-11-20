@@ -29,11 +29,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * A declaration statement.
  */
-public class CASTDeclarationStatement extends ASTNode
-		implements IASTDeclarationStatement, IASTAmbiguityParent {
-    private IASTDeclaration declaration;
+public class CASTDeclarationStatement extends ASTNode implements IASTDeclarationStatement, IASTAmbiguityParent {
+	private IASTDeclaration declaration;
 
-    public CASTDeclarationStatement() {
+	public CASTDeclarationStatement() {
 	}
 
 	public CASTDeclarationStatement(IASTDeclaration declaration) {
@@ -54,40 +53,47 @@ public class CASTDeclarationStatement extends ASTNode
 
 	@Override
 	public IASTDeclaration getDeclaration() {
-        return declaration;
-    }
+		return declaration;
+	}
 
-    @Override
+	@Override
 	public void setDeclaration(IASTDeclaration declaration) {
-        assertNotFrozen();
-        this.declaration = declaration;
-        if (declaration != null) {
+		assertNotFrozen();
+		this.declaration = declaration;
+		if (declaration != null) {
 			declaration.setParent(this);
 			declaration.setPropertyInParent(DECLARATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (declaration != null && !declaration.accept(action)) return false;
+		if (declaration != null && !declaration.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -107,7 +113,7 @@ public class CASTDeclarationStatement extends ASTNode
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
 		// Declaration statements don't have attributes.
-    	throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

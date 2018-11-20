@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui; 
+package org.eclipse.cdt.debug.internal.ui;
 
 import java.io.File;
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -26,14 +26,14 @@ public class DebugMarkerAnnotationModelFactory extends ResourceMarkerAnnotationM
 	 * @see org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory#createAnnotationModel(org.eclipse.core.runtime.IPath)
 	 */
 	@Override
-	public IAnnotationModel createAnnotationModel( IPath location ) {
-		IFile file = FileBuffers.getWorkspaceFileAtLocation( location );
-		if ( file != null ) {
-			return super.createAnnotationModel( location );
+	public IAnnotationModel createAnnotationModel(IPath location) {
+		IFile file = FileBuffers.getWorkspaceFileAtLocation(location);
+		if (file != null) {
+			return super.createAnnotationModel(location);
 		}
-		File osFile = new File( location.toOSString() );
-		if ( osFile.exists() ) {
-			return new DebugMarkerAnnotationModel( osFile );
+		File osFile = new File(location.toOSString());
+		if (osFile.exists()) {
+			return new DebugMarkerAnnotationModel(osFile);
 		}
 		return null;
 	}

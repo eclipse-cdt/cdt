@@ -51,23 +51,23 @@ import org.eclipse.core.runtime.IPath;
 public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 	private static final int CONTAINER = 0;
 	private static final int FILE = 4;
-	private static final int PARAMETERS= 8;
+	private static final int PARAMETERS = 8;
 	private static final int EXPANSION = 12;
 	private static final int NEXT_IN_FILE = 16;
 	private static final int NEXT_IN_CONTAINER = 20;
 	private static final int PREV_IN_CONTAINER = 24;
 	private static final int NAME_OFFSET = 28;
 	private static final int NAME_LENGTH = 32; // short
-	
-	private static final int RECORD_SIZE = 34;  
-	private static final char[][] UNINITIALIZED= {};
-	private static final char[]   UNINITIALIZED1= {};
+
+	private static final int RECORD_SIZE = 34;
+	private static final char[][] UNINITIALIZED = {};
+	private static final char[] UNINITIALIZED1 = {};
 
 	private final PDOMLinkage fLinkage;
 	private final long fRecord;
 
-	private char[][] fParameterList= UNINITIALIZED;
-	private char[] fExpansion= UNINITIALIZED1;
+	private char[][] fParameterList = UNINITIALIZED;
+	private char[] fExpansion = UNINITIALIZED1;
 	private PDOMMacroContainer fContainer;
 	private PDOMMacroDefinitionName fDefinition;
 
@@ -75,19 +75,19 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 		fLinkage = linkage;
 		fRecord = record;
 	}
-	
+
 	public PDOMMacro(PDOMLinkage linkage, PDOMMacroContainer container, IASTPreprocessorMacroDefinition macro,
 			PDOMFile file) throws CoreException {
 		this(linkage, container, file, macro.getName());
 
 		final IASTName name = macro.getName();
-		final IMacroBinding binding= (IMacroBinding) name.getBinding();
-		final char[][] params= binding.getParameterList();
-		
-		final Database db= linkage.getDB();
-		db.putRecPtr(fRecord + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());		
+		final IMacroBinding binding = (IMacroBinding) name.getBinding();
+		final char[][] params = binding.getParameterList();
+
+		final Database db = linkage.getDB();
+		db.putRecPtr(fRecord + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());
 		if (params != null) {
-			StringBuilder buf= new StringBuilder();
+			StringBuilder buf = new StringBuilder();
 			for (char[] param : params) {
 				buf.append(param);
 				buf.append(',');
@@ -95,7 +95,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 			db.putRecPtr(fRecord + PARAMETERS, db.newString(buf.toString().toCharArray()).getRecord());
 		}
 	}
-	
+
 	public PDOMMacro(PDOMLinkage linkage, PDOMMacroContainer container, IASTPreprocessorUndefStatement undef,
 			PDOMFile file) throws CoreException {
 		this(linkage, container, file, undef.getMacroName());
@@ -103,10 +103,10 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 
 	private PDOMMacro(PDOMLinkage linkage, PDOMMacroContainer container, PDOMFile file, IASTName name)
 			throws CoreException {
-		final Database db= linkage.getDB();
+		final Database db = linkage.getDB();
 		fLinkage = linkage;
 		fRecord = db.malloc(RECORD_SIZE);
-		fContainer= container;
+		fContainer = container;
 
 		final IASTFileLocation fileloc = name.getFileLocation();
 		db.putRecPtr(fRecord + CONTAINER, container.getRecord());
@@ -126,7 +126,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 	public long getRecord() {
 		return fRecord;
 	}
-	
+
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		// Delete from the binding chain
@@ -135,7 +135,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 		if (prevName != null) {
 			prevName.setNextInContainer(nextName);
 		} else {
-			PDOMMacroContainer container= getContainer();
+			PDOMMacroContainer container = getContainer();
 			container.setFirstDefinition(nextName);
 			if (nextName == null && container.isOrphaned()) {
 				container.delete(linkage);
@@ -154,14 +154,14 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 		}
 		linkage.getDB().free(fRecord);
 	}
-	
+
 	public PDOMMacroContainer getContainer() throws CoreException {
 		if (fContainer == null) {
-			fContainer= new PDOMMacroContainer(fLinkage, fLinkage.getDB().getRecPtr(fRecord + CONTAINER));
+			fContainer = new PDOMMacroContainer(fLinkage, fLinkage.getDB().getRecPtr(fRecord + CONTAINER));
 		}
 		return fContainer;
 	}
-		
+
 	private IString getExpansionInDB() throws CoreException {
 		Database db = fLinkage.getDB();
 		long rec = db.getRecPtr(fRecord + EXPANSION);
@@ -178,7 +178,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 		long rec = fLinkage.getDB().getRecPtr(fRecord + NEXT_IN_FILE);
 		return rec != 0 ? new PDOMMacro(fLinkage, rec) : null;
 	}
-	
+
 	public void setNextMacro(PDOMMacro macro) throws CoreException {
 		setNextMacro(macro != null ? macro.getRecord() : 0);
 	}
@@ -186,7 +186,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 	private void setNextMacro(long rec) throws CoreException {
 		fLinkage.getDB().putRecPtr(fRecord + NEXT_IN_FILE, rec);
 	}
-				
+
 	private PDOMMacro getPrevInContainer() throws CoreException {
 		return getMacroField(PREV_IN_CONTAINER);
 	}
@@ -198,7 +198,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 	public PDOMMacro getNextInContainer() throws CoreException {
 		return getMacroField(NEXT_IN_CONTAINER);
 	}
-	
+
 	void setNextInContainer(PDOMMacro macro) throws CoreException {
 		setMacroField(NEXT_IN_CONTAINER, macro);
 	}
@@ -207,30 +207,30 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 		long namerec = macro != null ? macro.getRecord() : 0;
 		fLinkage.getDB().putRecPtr(fRecord + offset, namerec);
 	}
-	
+
 	private PDOMMacro getMacroField(int offset) throws CoreException {
-		long namerec= fLinkage.getDB().getRecPtr(fRecord + offset);
+		long namerec = fLinkage.getDB().getRecPtr(fRecord + offset);
 		return namerec != 0 ? new PDOMMacro(fLinkage, namerec) : null;
 	}
 
 	@Override
 	public char[][] getParameterList() {
 		if (fParameterList == UNINITIALIZED) {
-			fParameterList= null;
+			fParameterList = null;
 			try {
-				IString plist= getParamListInDB();
+				IString plist = getParamListInDB();
 				if (plist != null) {
 					List<char[]> paramList = new ArrayList<>();
-					final char[] cplist= plist.getChars();
+					final char[] cplist = plist.getChars();
 					final int end = cplist.length;
-					int from= 0;
-					int to= CharArrayUtils.indexOf(',', cplist, from, end);
+					int from = 0;
+					int to = CharArrayUtils.indexOf(',', cplist, from, end);
 					while (to > from) {
-						paramList.add(CharArrayUtils.extract(cplist, from, to-from));
-						from= to+1;
-						to= CharArrayUtils.indexOf(',', cplist, from, end);
+						paramList.add(CharArrayUtils.extract(cplist, from, to - from));
+						from = to + 1;
+						to = CharArrayUtils.indexOf(',', cplist, from, end);
 					}
-					fParameterList= paramList.toArray(new char[paramList.size()][]);
+					fParameterList = paramList.toArray(new char[paramList.size()][]);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -251,10 +251,10 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 		if (fExpansion == UNINITIALIZED1) {
 			try {
 				final IString expansionInDB = getExpansionInDB();
-				fExpansion= expansionInDB == null ? null : expansionInDB.getChars();
+				fExpansion = expansionInDB == null ? null : expansionInDB.getChars();
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fExpansion= CharArrayUtils.EMPTY;
+				fExpansion = CharArrayUtils.EMPTY;
 			}
 		}
 		return fExpansion;
@@ -269,12 +269,12 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 			return new char[] { ' ' };
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
-	
+
 	@Override
 	public PDOMFile getFile() throws CoreException {
 		long filerec = fLinkage.getDB().getRecPtr(fRecord + FILE);
@@ -331,21 +331,21 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 
 	@Override
 	public char[] getExpansion() {
-		char[] expansionImage= getExpansionImage();
+		char[] expansionImage = getExpansionImage();
 		return MacroDefinitionParser.getExpansion(new CharArray(expansionImage), 0, expansionImage.length);
 	}
 
 	@Override
 	public char[][] getParameterPlaceholderList() {
-		char[][] params= getParameterList();
+		char[][] params = getParameterList();
 		if (params != null && params.length > 0) {
-			char[] lastParam= params[params.length - 1];
+			char[] lastParam = params[params.length - 1];
 			if (CharArrayUtils.equals(lastParam, 0, Keywords.cpELLIPSIS.length, Keywords.cpELLIPSIS)) {
-				char[][] result= new char[params.length][];
+				char[][] result = new char[params.length][];
 				System.arraycopy(params, 0, result, 0, params.length - 1);
-				result[params.length - 1]= lastParam.length == Keywords.cpELLIPSIS.length ?
-					Keywords.cVA_ARGS : 
-					CharArrayUtils.extract(lastParam, Keywords.cpELLIPSIS.length, lastParam.length - Keywords.cpELLIPSIS.length);
+				result[params.length - 1] = lastParam.length == Keywords.cpELLIPSIS.length ? Keywords.cVA_ARGS
+						: CharArrayUtils.extract(lastParam, Keywords.cpELLIPSIS.length,
+								lastParam.length - Keywords.cpELLIPSIS.length);
 				return result;
 			}
 		}
@@ -356,7 +356,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 	public boolean isFunctionStyle() {
 		return getParameterList() != null;
 	}
-	
+
 	@Override
 	public boolean isDynamic() {
 		return false;
@@ -387,7 +387,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 			return null;
 		}
 		if (fDefinition == null) {
-			fDefinition= new PDOMMacroDefinitionName(this);
+			fDefinition = new PDOMMacroDefinitionName(this);
 		}
 		return fDefinition;
 	}

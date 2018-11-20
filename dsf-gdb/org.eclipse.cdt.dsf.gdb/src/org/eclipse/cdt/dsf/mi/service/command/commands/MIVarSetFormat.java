@@ -34,35 +34,34 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
  *     {binary | decimal | hexadecimal | octal | natural}
  * 
  */
-public class MIVarSetFormat extends MICommand<MIVarSetFormatInfo> 
-{
-    /**
-     * @since 1.1
-     */
-    public MIVarSetFormat(ICommandControlDMContext ctx, String name, String fmt) {
-        super(ctx, "-var-set-format"); //$NON-NLS-1$
-        setParameters(new String[]{name, getFormat(fmt)});
-    }
-    
-    private String getFormat(String fmt){
-        String format = "natural"; //$NON-NLS-1$
-        
-        if (IFormattedValues.HEX_FORMAT.equals(fmt)) {
-            format = "hexadecimal";  //$NON-NLS-1$
-        } else if (IFormattedValues.BINARY_FORMAT.equals(fmt)) {
-            format = "binary";  //$NON-NLS-1$
-        } else if (IFormattedValues.OCTAL_FORMAT.equals(fmt)) {
-            format = "octal";  //$NON-NLS-1$
-        } else if (IFormattedValues.NATURAL_FORMAT.equals(fmt)) {
-            format = "natural";  //$NON-NLS-1$
-        } else if (IFormattedValues.DECIMAL_FORMAT.equals(fmt)) {
-            format = "decimal";  //$NON-NLS-1$
-        }  
-        return format;
-    }
-    
-    @Override
-    public MIVarSetFormatInfo getResult(MIOutput out) {
-        return new MIVarSetFormatInfo(out);
-    }
+public class MIVarSetFormat extends MICommand<MIVarSetFormatInfo> {
+	/**
+	 * @since 1.1
+	 */
+	public MIVarSetFormat(ICommandControlDMContext ctx, String name, String fmt) {
+		super(ctx, "-var-set-format"); //$NON-NLS-1$
+		setParameters(new String[] { name, getFormat(fmt) });
+	}
+
+	private String getFormat(String fmt) {
+		String format = "natural"; //$NON-NLS-1$
+
+		if (IFormattedValues.HEX_FORMAT.equals(fmt)) {
+			format = "hexadecimal"; //$NON-NLS-1$
+		} else if (IFormattedValues.BINARY_FORMAT.equals(fmt)) {
+			format = "binary"; //$NON-NLS-1$
+		} else if (IFormattedValues.OCTAL_FORMAT.equals(fmt)) {
+			format = "octal"; //$NON-NLS-1$
+		} else if (IFormattedValues.NATURAL_FORMAT.equals(fmt)) {
+			format = "natural"; //$NON-NLS-1$
+		} else if (IFormattedValues.DECIMAL_FORMAT.equals(fmt)) {
+			format = "decimal"; //$NON-NLS-1$
+		}
+		return format;
+	}
+
+	@Override
+	public MIVarSetFormatInfo getResult(MIOutput out) {
+		return new MIVarSetFormatInfo(out);
+	}
 }

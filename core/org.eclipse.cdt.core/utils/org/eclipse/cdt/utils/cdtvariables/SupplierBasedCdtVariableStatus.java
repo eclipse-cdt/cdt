@@ -17,31 +17,29 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableStatus;
 
 public class SupplierBasedCdtVariableStatus extends CdtVariableStatus {
 	private IVariableContextInfo fContextInfo;
-	
-	public SupplierBasedCdtVariableStatus(int severity, int code,
-			String message, Throwable exception, String macroName,
+
+	public SupplierBasedCdtVariableStatus(int severity, int code, String message, Throwable exception, String macroName,
 			String expression, String referencedName, IVariableContextInfo info) {
 		super(severity, code, message, exception, macroName, expression, referencedName);
 
 		fContextInfo = info;
 	}
 
-	public SupplierBasedCdtVariableStatus(int code, String macroName,
-			String expression, String referencedName, IVariableContextInfo info) {
+	public SupplierBasedCdtVariableStatus(int code, String macroName, String expression, String referencedName,
+			IVariableContextInfo info) {
 		super(code, macroName, expression, referencedName);
 
 		fContextInfo = info;
 	}
 
-	public SupplierBasedCdtVariableStatus(int code, String message,
-			Throwable exception, String macroName, String expression,
-			String referencedName, IVariableContextInfo info) {
+	public SupplierBasedCdtVariableStatus(int code, String message, Throwable exception, String macroName,
+			String expression, String referencedName, IVariableContextInfo info) {
 		super(code, message, exception, macroName, expression, referencedName);
 
 		fContextInfo = info;
 	}
-	
-	public IVariableContextInfo getVariableContextInfo(){
+
+	public IVariableContextInfo getVariableContextInfo() {
 		return fContextInfo;
 	}
 

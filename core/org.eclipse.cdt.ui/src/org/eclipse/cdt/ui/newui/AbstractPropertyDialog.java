@@ -28,13 +28,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class AbstractPropertyDialog extends Dialog {
-	private final static String WSP_BEG = "${workspace_loc:";  //$NON-NLS-1$
+	private final static String WSP_BEG = "${workspace_loc:"; //$NON-NLS-1$
 	private final static String WSP_END = "}"; //$NON-NLS-1$
 	protected final static String EMPTY_STR = ""; //$NON-NLS-1$
-	
+
 	protected Shell shell;
 	public boolean result = false;
-	
+
 	public Object data = null;
 	public boolean check1 = false;
 	public boolean check2 = false;
@@ -42,50 +42,54 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	public String text1;
 	public String text2;
 	private Shell parent;
-	
+
 	public AbstractPropertyDialog(Shell _parent, String title) {
 		super(_parent, 0);
 		this.getStyle();
-		
+
 		parent = _parent;
 		this.setText(title);
 	}
 
 	abstract public void buttonPressed(SelectionEvent e);
+
 	abstract protected Control createDialogArea(Composite c);
-	
+
 	protected Button setupButton(Composite c, String text) {
 		Button b = new Button(c, SWT.PUSH);
 		b.setText(text);
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.addSelectionListener(new SelectionAdapter() {
-	        @Override
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-	        	buttonPressed(event);
-	    }});
+				buttonPressed(event);
+			}
+		});
 		return b;
 	}
-	
-	public boolean open () {
-	 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
-			shell.setImage(Window.getDefaultImage());
-	 		shell.setText(getText());
-	 		createDialogArea(shell);
-	 		
-	 		// center window
-	 		Rectangle r1 = parent.getBounds();
-	 		Rectangle r2 = shell.getBounds();
-	 		int x = r1.x + (r1.width - r2.width) / 2;
-	 		int y = r1.y + (r1.height - r2.height) / 2;
-	 		shell.setBounds(x, y, r2.width, r2.height);
-	 		
-		 	shell.open();
-		 	Display display = parent.getDisplay();
-		 	while (!shell.isDisposed()) {
-		 		if (!display.readAndDispatch()) display.sleep();
-		 	}
-			return result;
+
+	public boolean open() {
+		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
+		shell.setImage(Window.getDefaultImage());
+		shell.setText(getText());
+		createDialogArea(shell);
+
+		// center window
+		Rectangle r1 = parent.getBounds();
+		Rectangle r2 = shell.getBounds();
+		int x = r1.x + (r1.width - r2.width) / 2;
+		int y = r1.y + (r1.height - r2.height) / 2;
+		shell.setBounds(x, y, r2.width, r2.height);
+
+		shell.open();
+		Display display = parent.getDisplay();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		return result;
 	}
+
 	protected static String strip_wsp(String s) {
 		s = s.trim();
 		if (s.startsWith(WSP_BEG) && s.endsWith(WSP_END)) {

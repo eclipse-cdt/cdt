@@ -36,38 +36,38 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 	}
 
 	private ICProject fCProject;
-	private ITranslationUnit fTU;		
-		
+	private ITranslationUnit fTU;
+
 	public CModelBuilderBugsTest(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
 		assertNotNull(fCProject);
 		CProjectHelper.importSourcesFromPlugin(fCProject, CTestPlugin.getDefault().getBundle(), "/resources/cmodel");
-		fTU= (ITranslationUnit) CProjectHelper.findElement(fCProject, "CModelBuilderTest.cpp");
+		fTU = (ITranslationUnit) CProjectHelper.findElement(fCProject, "CModelBuilderTest.cpp");
 		assertNotNull(fTU);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		  CProjectHelper.delete(fCProject);
-		  super.tearDown();
-	}	
-	
+		CProjectHelper.delete(fCProject);
+		super.tearDown();
+	}
+
 	public void testModelBuilderBug222398() throws Exception {
-		IStructure clazz= (IStructure) fTU.getElement("Test");
+		IStructure clazz = (IStructure) fTU.getElement("Test");
 		assertNotNull(clazz);
-		ICElement[] methods= clazz.getChildren();
+		ICElement[] methods = clazz.getChildren();
 		assertEquals(2, methods.length);
 		assertEquals("inlined", methods[0].getElementName());
 		assertEquals("decl", methods[1].getElementName());
-		
-		INamespace ns= (INamespace) fTU.getElement("nsTest");
-		ICElement[] functions= ns.getChildren();
+
+		INamespace ns = (INamespace) fTU.getElement("nsTest");
+		ICElement[] functions = ns.getChildren();
 		assertEquals(2, functions.length);
 		assertEquals("inlined", functions[0].getElementName());
 		assertEquals("decl", functions[1].getElementName());
@@ -79,9 +79,9 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 	}
 
 	public void testModelBuilderBug274490() throws Exception {
-		IStructure clazz= (IStructure) fTU.getElement("Bug274490");
+		IStructure clazz = (IStructure) fTU.getElement("Bug274490");
 		assertNotNull(clazz);
-		ICElement[] methods= clazz.getChildren();
+		ICElement[] methods = clazz.getChildren();
 		assertEquals(2, methods.length);
 		assertEquals("int", ((IFunctionDeclaration) methods[0]).getReturnType());
 		assertEquals("const char*", ((IFunctionDeclaration) methods[1]).getReturnType());

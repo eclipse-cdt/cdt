@@ -22,8 +22,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTImplicitDestructorNameOwner extends IASTNode {
-	public static final ASTNodeProperty IMPLICIT_DESTRUCTOR_NAME =
-			new ASTNodeProperty("IASTImplicitDestructorNameOwner.IMPLICIT_DESTRUCTOR_NAME"); //$NON-NLS-1$
+	public static final ASTNodeProperty IMPLICIT_DESTRUCTOR_NAME = new ASTNodeProperty(
+			"IASTImplicitDestructorNameOwner.IMPLICIT_DESTRUCTOR_NAME"); //$NON-NLS-1$
 
 	public IASTImplicitDestructorName[] getImplicitDestructorNames();
 }

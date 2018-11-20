@@ -50,7 +50,7 @@ public class DeleteFileChange extends Change {
 
 	@Override
 	public String getName() {
-		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toOSString()); 
+		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toOSString());
 	}
 
 	@Override
@@ -63,42 +63,42 @@ public class DeleteFileChange extends Change {
 		RefactoringStatus status = new RefactoringStatus();
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		if (!file.exists()) {
-			status.addFatalError(NLS.bind(Messages.DeleteFileChange_file_does_not_exist, path.toString())); 
+			status.addFatalError(NLS.bind(Messages.DeleteFileChange_file_does_not_exist, path.toString()));
 		}
 		return status;
 	}
-	
+
 	private String getSource(IFile file) throws CoreException {
-		String encoding= null;
+		String encoding = null;
 		try {
-			encoding= file.getCharset();
+			encoding = file.getCharset();
 		} catch (CoreException e) {
 			// fall through. Take default encoding.
 		}
-		StringBuilder sb= new StringBuilder();
-		BufferedReader br= null;
-		InputStream in= null;
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = null;
+		InputStream in = null;
 		try {
-			in= file.getContents();
-		    if (encoding != null) {
-		        br= new BufferedReader(new InputStreamReader(in, encoding));	
-		    } else {
-		        br= new BufferedReader(new InputStreamReader(in));
-		    }
-			int read= 0;
-			while ((read= br.read()) != -1) {
+			in = file.getContents();
+			if (encoding != null) {
+				br = new BufferedReader(new InputStreamReader(in, encoding));
+			} else {
+				br = new BufferedReader(new InputStreamReader(in));
+			}
+			int read = 0;
+			while ((read = br.read()) != -1) {
 				sb.append((char) read);
 			}
 			br.close();
-		} catch (IOException e){
-			
+		} catch (IOException e) {
+
 		}
 		return sb.toString();
 	}
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		source = getSource(file);
 		Change undo = new CreateFileChange(file.getFullPath(), source, file.getCharset());
 		file.delete(true, true, pm);

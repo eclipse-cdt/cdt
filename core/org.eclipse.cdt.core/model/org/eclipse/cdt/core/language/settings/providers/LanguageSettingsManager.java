@@ -62,7 +62,8 @@ public class LanguageSettingsManager {
 	 *
 	 * @since 5.5
 	 */
-	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
+	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription,
+			IResource rc, String languageId, int kind) {
 		return LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, languageId, kind);
 	}
 
@@ -80,8 +81,10 @@ public class LanguageSettingsManager {
 	 * @return the list of setting entries. Never returns {@code null}
 	 *     although individual providers return {@code null} if no settings defined.
 	 */
-	public static List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider, ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-		return LanguageSettingsProvidersSerializer.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
+	public static List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider,
+			ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+		return LanguageSettingsProvidersSerializer.getSettingEntriesUpResourceTree(provider, cfgDescription, rc,
+				languageId);
 	}
 
 	/**
@@ -139,7 +142,6 @@ public class LanguageSettingsManager {
 		return provider;
 	}
 
-
 	/**
 	 * Set and store in workspace area user defined providers.
 	 *
@@ -165,7 +167,8 @@ public class LanguageSettingsManager {
 	 *
 	 * @return a copy of the provider or null if copying is not possible.
 	 */
-	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
+	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider,
+			boolean deep) {
 		return LanguageSettingsExtensionManager.getProviderCopy(provider, deep);
 	}
 
@@ -218,12 +221,12 @@ public class LanguageSettingsManager {
 	public static List<String> getLanguages(ICResourceDescription rcDescription) {
 		ICLanguageSetting[] languageSettings = null;
 		if (rcDescription instanceof ICFileDescription) {
-			ICLanguageSetting languageSetting = ((ICFileDescription)rcDescription).getLanguageSetting();
+			ICLanguageSetting languageSetting = ((ICFileDescription) rcDescription).getLanguageSetting();
 			if (languageSetting != null) {
-				languageSettings = new ICLanguageSetting[] {languageSetting};
+				languageSettings = new ICLanguageSetting[] { languageSetting };
 			}
 		} else if (rcDescription instanceof ICFolderDescription) {
-			languageSettings = ((ICFolderDescription)rcDescription).getLanguageSettings();
+			languageSettings = ((ICFolderDescription) rcDescription).getLanguageSettings();
 		}
 
 		List<String> languageIds = new ArrayList<String>();
@@ -231,7 +234,7 @@ public class LanguageSettingsManager {
 			for (ICLanguageSetting languageSetting : languageSettings) {
 				if (languageSetting != null) {
 					String languageId = languageSetting.getLanguageId();
-					if (! languageIds.contains(languageId)) {
+					if (!languageIds.contains(languageId)) {
 						languageIds.add(languageId);
 					}
 				}
@@ -340,7 +343,8 @@ public class LanguageSettingsManager {
 	 * @param storeEntriesWithProject - {@code true} if with the project,
 	 *    {@code false} if in workspace area.
 	 */
-	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider, boolean storeEntriesWithProject) {
+	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider,
+			boolean storeEntriesWithProject) {
 		LanguageSettingsProvidersSerializer.setStoringEntriesInProjectArea(provider, storeEntriesWithProject);
 	}
 

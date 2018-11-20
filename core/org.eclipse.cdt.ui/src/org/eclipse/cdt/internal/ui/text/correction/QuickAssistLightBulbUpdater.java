@@ -68,12 +68,13 @@ public class QuickAssistLightBulbUpdater {
 		private static final int LAYER;
 
 		static {
-			Annotation annotation= new Annotation("org.eclipse.jdt.ui.warning", false, null); //$NON-NLS-1$
-			AnnotationPreference preference= EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
+			Annotation annotation = new Annotation("org.eclipse.jdt.ui.warning", false, null); //$NON-NLS-1$
+			AnnotationPreference preference = EditorsUI.getAnnotationPreferenceLookup()
+					.getAnnotationPreference(annotation);
 			if (preference != null)
-				LAYER= preference.getPresentationLayer() - 1;
+				LAYER = preference.getPresentationLayer() - 1;
 			else
-				LAYER= IAnnotationAccessExtension.DEFAULT_LAYER;
+				LAYER = IAnnotationAccessExtension.DEFAULT_LAYER;
 		}
 
 		private Image fImage;
@@ -91,7 +92,7 @@ public class QuickAssistLightBulbUpdater {
 
 		private Image getImage() {
 			if (fImage == null) {
-				fImage= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_QUICK_ASSIST);
+				fImage = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_QUICK_ASSIST);
 			}
 			return fImage;
 		}
@@ -114,11 +115,11 @@ public class QuickAssistLightBulbUpdater {
 	private IPropertyChangeListener fPropertyChangeListener;
 
 	public QuickAssistLightBulbUpdater(ITextEditor part, ITextViewer viewer) {
-		fEditor= part;
-		fViewer= viewer;
-		fAnnotation= new AssistAnnotation();
-		fIsAnnotationShown= false;
-		fPropertyChangeListener= null;
+		fEditor = part;
+		fViewer = viewer;
+		fAnnotation = new AssistAnnotation();
+		fIsAnnotationShown = false;
+		fPropertyChangeListener = null;
 	}
 
 	public boolean isSetInPreferences() {
@@ -126,10 +127,9 @@ public class QuickAssistLightBulbUpdater {
 	}
 
 	private void installSelectionListener() {
-		fListener= new ISelectionListenerWithAST() {
+		fListener = new ISelectionListenerWithAST() {
 			@Override
-			public void selectionChanged(IEditorPart part,
-					ITextSelection selection, IASTTranslationUnit astRoot) {
+			public void selectionChanged(IEditorPart part, ITextSelection selection, IASTTranslationUnit astRoot) {
 				doSelectionChanged(selection.getOffset(), selection.getLength(), astRoot);
 			}
 		};
@@ -139,9 +139,9 @@ public class QuickAssistLightBulbUpdater {
 	private void uninstallSelectionListener() {
 		if (fListener != null) {
 			SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fListener);
-			fListener= null;
+			fListener = null;
 		}
-		IAnnotationModel model= getAnnotationModel();
+		IAnnotationModel model = getAnnotationModel();
 		if (model != null) {
 			removeLightBulb(model);
 		}
@@ -152,7 +152,7 @@ public class QuickAssistLightBulbUpdater {
 			installSelectionListener();
 		}
 		if (fPropertyChangeListener == null) {
-			fPropertyChangeListener= new IPropertyChangeListener() {
+			fPropertyChangeListener = new IPropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					doPropertyChanged(event.getProperty());
@@ -166,26 +166,28 @@ public class QuickAssistLightBulbUpdater {
 		uninstallSelectionListener();
 		if (fPropertyChangeListener != null) {
 			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
-			fPropertyChangeListener= null;
+			fPropertyChangeListener = null;
 		}
 	}
 
 	protected void doPropertyChanged(String property) {
 		if (property.equals(PreferenceConstants.EDITOR_QUICKASSIST_LIGHTBULB)) {
 			if (isSetInPreferences()) {
-				IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+				IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager()
+						.getWorkingCopy(fEditor.getEditorInput());
 				if (workingCopy != null) {
 					installSelectionListener();
-					final Point point= fViewer.getSelectedRange();
-					ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
-						@Override
-						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
-							if (astRoot != null) {
-								doSelectionChanged(point.x, point.y, astRoot);
-							}
-							return Status.OK_STATUS;
-						}
-					});
+					final Point point = fViewer.getSelectedRange();
+					ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null,
+							new ASTRunnable() {
+								@Override
+								public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
+									if (astRoot != null) {
+										doSelectionChanged(point.x, point.y, astRoot);
+									}
+									return Status.OK_STATUS;
+								}
+							});
 				}
 			} else {
 				uninstallSelectionListener();
@@ -194,7 +196,7 @@ public class QuickAssistLightBulbUpdater {
 	}
 
 	private ITranslationUnit getTranslationUnit() {
-		ICElement elem= EditorUtility.getEditorInputCElement(fEditor);
+		ICElement elem = EditorUtility.getEditorInputCElement(fEditor);
 		if (elem instanceof ITranslationUnit) {
 			return (ITranslationUnit) elem;
 		}
@@ -210,15 +212,15 @@ public class QuickAssistLightBulbUpdater {
 	}
 
 	private void doSelectionChanged(int offset, int length, IASTTranslationUnit astRoot) {
-		final IAnnotationModel model= getAnnotationModel();
-		final ITranslationUnit tu= getTranslationUnit();
+		final IAnnotationModel model = getAnnotationModel();
+		final ITranslationUnit tu = getTranslationUnit();
 		if (model == null || tu == null) {
 			return;
 		}
 
-		final CorrectionContext context= new CorrectionContext(tu, offset, length);
+		final CorrectionContext context = new CorrectionContext(tu, offset, length);
 
-		boolean hasQuickFix= hasQuickFixLightBulb(model, context.getSelectionOffset());
+		boolean hasQuickFix = hasQuickFixLightBulb(model, context.getSelectionOffset());
 		if (hasQuickFix) {
 			removeLightBulb(model);
 			return; // there is already a quick fix light bulb at the new location
@@ -231,21 +233,21 @@ public class QuickAssistLightBulbUpdater {
 	 * Needs to be called synchronized
 	 */
 	private void calculateLightBulb(IAnnotationModel model, CorrectionContext context) {
-		boolean needsAnnotation= CCorrectionProcessor.hasAssists(context);
+		boolean needsAnnotation = CCorrectionProcessor.hasAssists(context);
 		if (fIsAnnotationShown) {
 			model.removeAnnotation(fAnnotation);
 		}
 		if (needsAnnotation) {
 			model.addAnnotation(fAnnotation, new Position(context.getSelectionOffset(), context.getSelectionLength()));
 		}
-		fIsAnnotationShown= needsAnnotation;
+		fIsAnnotationShown = needsAnnotation;
 	}
 
 	private void removeLightBulb(IAnnotationModel model) {
 		synchronized (this) {
 			if (fIsAnnotationShown) {
 				model.removeAnnotation(fAnnotation);
-				fIsAnnotationShown= false;
+				fIsAnnotationShown = false;
 			}
 		}
 	}
@@ -255,7 +257,7 @@ public class QuickAssistLightBulbUpdater {
 	 */
 	private boolean hasQuickFixLightBulb(IAnnotationModel model, int offset) {
 		try {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 			if (document == null) {
 				return false;
 			}
@@ -265,18 +267,18 @@ public class QuickAssistLightBulbUpdater {
 			// this goes boink
 
 			// may throw an IndexOutOfBoundsException upon concurrent document modification
-			int currLine= document.getLineOfOffset(offset);
+			int currLine = document.getLineOfOffset(offset);
 
 			// this iterator is not protected, it may throw ConcurrentModificationExceptions
-			Iterator<?> iter= model.getAnnotationIterator();
+			Iterator<?> iter = model.getAnnotationIterator();
 			while (iter.hasNext()) {
-				Annotation annot= (Annotation) iter.next();
+				Annotation annot = (Annotation) iter.next();
 				if (CCorrectionProcessor.isQuickFixableType(annot)) {
 					// may throw an IndexOutOfBoundsException upon concurrent annotation model changes
-					Position pos= model.getPosition(annot);
+					Position pos = model.getPosition(annot);
 					if (pos != null) {
 						// may throw an IndexOutOfBoundsException upon concurrent document modification
-						int startLine= document.getLineOfOffset(pos.getOffset());
+						int startLine = document.getLineOfOffset(pos.getOffset());
 						if (startLine == currLine && CCorrectionProcessor.hasCorrections(annot)) {
 							return true;
 						}

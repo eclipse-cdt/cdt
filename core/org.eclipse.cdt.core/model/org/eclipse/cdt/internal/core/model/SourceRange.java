@@ -41,8 +41,7 @@ class SourceRange implements ISourceRange {
 		this.idLength = idLength;
 	}
 
-	protected SourceRange(int startPos, int length, int idStartPos, int idLength,
-		int startLine, int endLine) {
+	protected SourceRange(int startPos, int length, int idStartPos, int idLength, int startLine, int endLine) {
 		this.startPos = startPos;
 		this.length = length;
 		this.idStartPos = idStartPos;
@@ -50,6 +49,7 @@ class SourceRange implements ISourceRange {
 		this.startLine = startLine;
 		this.endLine = endLine;
 	}
+
 	/**
 	 * @see ISourceRange
 	 */

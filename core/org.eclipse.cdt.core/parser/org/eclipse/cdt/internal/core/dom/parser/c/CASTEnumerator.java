@@ -22,8 +22,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
  */
 public class CASTEnumerator extends ASTEnumerator {
 
-    public CASTEnumerator() {
-    	super();
+	public CASTEnumerator() {
+		super();
 	}
 
 	public CASTEnumerator(IASTName name, IASTExpression value) {

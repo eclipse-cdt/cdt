@@ -28,11 +28,14 @@ public class CqueryLanguageServer implements ICPPLanguageServer {
 		// TODO: Allow user to specify cache directory path
 
 		IPath cacheDirectory = Path.fromOSString(rootPath.getPath()).append(".lsp4e-cpp/cquery_index"); //$NON-NLS-1$
-		JsonObject result = (defaultInitOptions instanceof JsonObject) ? (JsonObject) defaultInitOptions : new JsonObject();
+		JsonObject result = (defaultInitOptions instanceof JsonObject) ? (JsonObject) defaultInitOptions
+				: new JsonObject();
 		result.addProperty("cacheDirectory", cacheDirectory.toString()); //$NON-NLS-1$
-		result.addProperty("emitInactiveRegions", CUIPlugin.getDefault().getPreferenceStore().getBoolean(CEditor.INACTIVE_CODE_ENABLE)); //$NON-NLS-1$
+		result.addProperty("emitInactiveRegions", //$NON-NLS-1$
+				CUIPlugin.getDefault().getPreferenceStore().getBoolean(CEditor.INACTIVE_CODE_ENABLE));
 		JsonObject semanticHighlights = new JsonObject();
-		semanticHighlights.addProperty("enabled", CUIPlugin.getDefault().getPreferenceStore().getBoolean(org.eclipse.cdt.ui.PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED)); //$NON-NLS-1$
+		semanticHighlights.addProperty("enabled", CUIPlugin.getDefault().getPreferenceStore() //$NON-NLS-1$
+				.getBoolean(org.eclipse.cdt.ui.PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
 		result.add("highlight", semanticHighlights); //$NON-NLS-1$
 		return result;
 	}

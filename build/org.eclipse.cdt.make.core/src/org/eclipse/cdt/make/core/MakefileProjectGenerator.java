@@ -49,8 +49,8 @@ public class MakefileProjectGenerator extends FMProjectGenerator {
 
 	@Override
 	protected void initProjectDescription(IProjectDescription description) throws CoreException {
-		description.setNatureIds(new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID,
-				MakeProjectNature.NATURE_ID });
+		description.setNatureIds(
+				new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, MakeProjectNature.NATURE_ID });
 		ICommand command = description.newCommand();
 		CBuilder.setupBuilder(command);
 		description.setBuildSpec(new ICommand[] { command });
@@ -85,8 +85,8 @@ public class MakefileProjectGenerator extends FMProjectGenerator {
 		}
 
 		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath()));
-		CoreModel.getDefault().create(project)
-				.setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]), monitor);
+		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
+				monitor);
 	}
 
 }

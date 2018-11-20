@@ -36,26 +36,29 @@ public class SelectionSearchGroup extends ActionGroup {
 	private DeclarationsSearchGroup fDeclarationsSearchGroup;
 	private ReferencesSearchGroup fRefSearchGroup;
 
-	public SelectionSearchGroup(CEditor editor){
+	public SelectionSearchGroup(CEditor editor) {
 		Assert.isNotNull(editor);
-		fEditor= editor;
+		fEditor = editor;
 
-		fDeclarationsSearchGroup= new DeclarationsSearchGroup(fEditor);
+		fDeclarationsSearchGroup = new DeclarationsSearchGroup(fEditor);
 		fRefSearchGroup = new ReferencesSearchGroup(fEditor);
 	}
+
 	/**
 	 * @param page
 	 */
 	public SelectionSearchGroup(Page page) {
 		this(page.getSite());
 	}
+
 	/**
 	 * @param site
 	 */
 	public SelectionSearchGroup(IWorkbenchSite site) {
-		fDeclarationsSearchGroup= new DeclarationsSearchGroup(site);
+		fDeclarationsSearchGroup = new DeclarationsSearchGroup(site);
 		fRefSearchGroup = new ReferencesSearchGroup(site);
 	}
+
 	/*
 	 * Method declared on ActionGroup.
 	 */
@@ -76,19 +79,19 @@ public class SelectionSearchGroup extends ActionGroup {
 	}
 
 	public static boolean canActionBeAdded(ISelection selection) {
-		if(selection instanceof ITextSelection) {
-			return (((ITextSelection)selection).getLength() > 0);
+		if (selection instanceof ITextSelection) {
+			return (((ITextSelection) selection).getLength() > 0);
 		}
 		return getElement(selection) != null;
 	}
 
 	private static ICElement getElement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List<?> list= ((IStructuredSelection)sel).toList();
+			List<?> list = ((IStructuredSelection) sel).toList();
 			if (list.size() == 1) {
-				Object element= list.get(0);
+				Object element = list.get(0);
 				if (element instanceof ICElement) {
-					return (ICElement)element;
+					return (ICElement) element;
 				}
 			}
 		}
@@ -102,15 +105,15 @@ public class SelectionSearchGroup extends ActionGroup {
 	public void dispose() {
 		if (fDeclarationsSearchGroup != null) {
 			fDeclarationsSearchGroup.dispose();
-			fDeclarationsSearchGroup= null;
+			fDeclarationsSearchGroup = null;
 		}
 
 		if (fRefSearchGroup != null) {
 			fRefSearchGroup.dispose();
-			fRefSearchGroup= null;
+			fRefSearchGroup = null;
 		}
 
-		fEditor= null;
+		fEditor = null;
 
 		super.dispose();
 	}

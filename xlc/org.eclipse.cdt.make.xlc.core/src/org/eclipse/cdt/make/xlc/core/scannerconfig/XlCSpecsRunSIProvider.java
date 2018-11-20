@@ -39,15 +39,9 @@ public class XlCSpecsRunSIProvider extends GCCSpecsRunSIProvider {
 
 		if (rc) {
 			try {
-				this.fCompileCommand = new Path(ManagedBuildManager.getBuildMacroProvider()
-						.resolveValue(
-								this.fCompileCommand.toString(),
-								EMPTY_STRING,
-								null,
-								IBuildMacroProvider.CONTEXT_CONFIGURATION,
-								ManagedBuildManager.getBuildInfo(
-										this.resource.getProject())
-										.getDefaultConfiguration()));
+				this.fCompileCommand = new Path(ManagedBuildManager.getBuildMacroProvider().resolveValue(
+						this.fCompileCommand.toString(), EMPTY_STRING, null, IBuildMacroProvider.CONTEXT_CONFIGURATION,
+						ManagedBuildManager.getBuildInfo(this.resource.getProject()).getDefaultConfiguration()));
 			} catch (BuildMacroException e) {
 				e.printStackTrace();
 				return false;

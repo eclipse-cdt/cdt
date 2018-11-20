@@ -42,7 +42,8 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 
 	protected final SelectionHistory history;
 
-	protected StructureSelectionAction(ResourceBundle bundle, String prefix, ITextEditor editor, SelectionHistory history) {
+	protected StructureSelectionAction(ResourceBundle bundle, String prefix, ITextEditor editor,
+			SelectionHistory history) {
 		super(bundle, prefix, editor);
 		this.history = history;
 	}
@@ -71,7 +72,7 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 	public static final String NEXT = "StructureSelectNext"; //$NON-NLS-1$
 	public static final String PREVIOUS = "StructureSelectPrevious"; //$NON-NLS-1$
 	public static final String HISTORY = "StructureSelectHistory"; //$NON-NLS-1$
-	
+
 	@Override
 	public void run() {
 		IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
@@ -81,26 +82,27 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 		final CEditor cEditor = (CEditor) editorPart;
 
 		ITranslationUnit tu = (ITranslationUnit) CDTUITools.getEditorInputCElement(cEditor.getEditorInput());
-		
+
 		ITextSelection selection;
 		try {
 			selection = (ITextSelection) cEditor.getSelectionProvider().getSelection();
 		} catch (ClassCastException e) {
 			return;
 		}
-		
+
 		final int offset = selection.getOffset();
 		final int length = selection.getLength();
-		
-		ExpandSelectionJob expandSelectionJob = new ExpandSelectionJob("expand selection", tu, cEditor, new SourceRange(offset, length)); //$NON-NLS-1$
-		
+
+		ExpandSelectionJob expandSelectionJob = new ExpandSelectionJob("expand selection", tu, cEditor, //$NON-NLS-1$
+				new SourceRange(offset, length));
+
 		expandSelectionJob.schedule();
 		try {
 			expandSelectionJob.join();
 		} catch (InterruptedException e) {
 			return;
 		}
-		
+
 		if (expandSelectionJob.newSourceRange != null) {
 			history.ignoreSelectionChanges();
 			cEditor.setSelection(expandSelectionJob.newSourceRange, true);

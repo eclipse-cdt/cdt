@@ -33,11 +33,11 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 	 */
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
-		if(context == null){
+		if (context == null) {
 			String value = EnvironmentReader.getEnvVar(name);
-			if(value == null)
+			if (value == null)
 				return null;
-			return new EnvironmentVariable(name,value,IEnvironmentVariable.ENVVAR_REPLACE,null);
+			return new EnvironmentVariable(name, value, IEnvironmentVariable.ENVVAR_REPLACE, null);
 		}
 		return null;
 	}
@@ -47,17 +47,17 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 	 */
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
-		if(context == null){
+		if (context == null) {
 			Properties values = EnvironmentReader.getEnvVars();
-			if(values == null)
+			if (values == null)
 				return null;
 
 			IEnvironmentVariable variables[] = new IEnvironmentVariable[values.size()];
 			Enumeration<?> en = values.propertyNames();
-			for( int i = 0; i < variables.length ; i++){
-				String name = (String)en.nextElement();
+			for (int i = 0; i < variables.length; i++) {
+				String name = (String) en.nextElement();
 				String value = values.getProperty(name);
-				variables[i] = new EnvironmentVariable(name,value,IEnvironmentVariable.ENVVAR_REPLACE,null);
+				variables[i] = new EnvironmentVariable(name, value, IEnvironmentVariable.ENVVAR_REPLACE, null);
 			}
 			return variables;
 		}

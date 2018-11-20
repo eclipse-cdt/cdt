@@ -20,12 +20,11 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
  * by an integer identifier, which is the basis for this context.  The parent of this 
  * context should always be a container context.  
  */
-public interface IMIExecutionDMContext extends IExecutionDMContext 
-{
-    /**
-     * Returns the GDB/MI thread identifier of this context.
-     * @return
-     * @since 5.0
-     */
-    public String getThreadId();
+public interface IMIExecutionDMContext extends IExecutionDMContext {
+	/**
+	 * Returns the GDB/MI thread identifier of this context.
+	 * @return
+	 * @since 5.0
+	 */
+	public String getThreadId();
 }

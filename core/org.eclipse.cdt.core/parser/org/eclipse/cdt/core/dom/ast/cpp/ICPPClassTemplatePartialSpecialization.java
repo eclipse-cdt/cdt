@@ -34,7 +34,7 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 */
 	@Deprecated
 	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = EMPTY_ARRAY;
-	
+
 	/**
 	 * Returns the ICPPTemplateDefinition which this is a specialization of.
 	 */

@@ -23,52 +23,50 @@ import junit.framework.TestCase;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
 
-
 /**
  * Wraps a test case to check for its failure.
  * @author aniefer
  */
 public class FailingTest extends TestCase {
-    private TestCase test = null;
-    private int bugNum = -1;
-    
-    public FailingTest( TestCase test, int bugNumber ){
-        this.test = test;
-        this.bugNum = bugNumber;
-        String name= "Failing " + test.getName();
-        if (bugNum > 0) {
-        	name += " [bug " + bugNum + "]";
-        }
-        setName(name);
-    }
-    
-    public FailingTest( TestCase test ){
-        this(test, -1);
-    }
-    /* (non-Javadoc)
-     * @see junit.framework.Test#run(junit.framework.TestResult)
-     */
-    @Override
-	public void run( TestResult result ) {
-        result.startTest( this );
-        
-        TestResult r = new TestResult();
-        test.run( r );
-        if (r.failureCount() == 1) {
-        	TestFailure failure= r.failures().nextElement();
-        	String msg= failure.exceptionMessage();
-        	if (msg != null && msg.startsWith("Method \"" + test.getName() + "\"")) {
-        		result.addFailure(this, new AssertionFailedError(msg));
-        	}
-        }
-        else if( r.errorCount() == 0 && r.failureCount() == 0 )
-        {
-            String err = "Unexpected success"; //$NON-NLS-1$
-            if( bugNum != -1 )
-                err += ", bug #" + bugNum; //$NON-NLS-1$
-            result.addFailure( this, new AssertionFailedError( err ) );
-        }
-        
-        result.endTest( this );
-    }
+	private TestCase test = null;
+	private int bugNum = -1;
+
+	public FailingTest(TestCase test, int bugNumber) {
+		this.test = test;
+		this.bugNum = bugNumber;
+		String name = "Failing " + test.getName();
+		if (bugNum > 0) {
+			name += " [bug " + bugNum + "]";
+		}
+		setName(name);
+	}
+
+	public FailingTest(TestCase test) {
+		this(test, -1);
+	}
+
+	/* (non-Javadoc)
+	 * @see junit.framework.Test#run(junit.framework.TestResult)
+	 */
+	@Override
+	public void run(TestResult result) {
+		result.startTest(this);
+
+		TestResult r = new TestResult();
+		test.run(r);
+		if (r.failureCount() == 1) {
+			TestFailure failure = r.failures().nextElement();
+			String msg = failure.exceptionMessage();
+			if (msg != null && msg.startsWith("Method \"" + test.getName() + "\"")) {
+				result.addFailure(this, new AssertionFailedError(msg));
+			}
+		} else if (r.errorCount() == 0 && r.failureCount() == 0) {
+			String err = "Unexpected success"; //$NON-NLS-1$
+			if (bugNum != -1)
+				err += ", bug #" + bugNum; //$NON-NLS-1$
+			result.addFailure(this, new AssertionFailedError(err));
+		}
+
+		result.endTest(this);
+	}
 }

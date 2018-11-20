@@ -29,50 +29,48 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MISignalEvent extends MIStoppedEvent {
 
-    final private String sigName;
-    final private String sigMeaning;
+	final private String sigName;
+	final private String sigMeaning;
 
-    protected MISignalEvent(
-        IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, 
-        String sigName, String sigMeaning) 
-    {
-        super(ctx, token, results, frame);
-        this.sigName = sigName;
-        this.sigMeaning = sigMeaning;
-    }
-    
-    public String getName() {
-    	return sigName;
-    }
+	protected MISignalEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String sigName,
+			String sigMeaning) {
+		super(ctx, token, results, frame);
+		this.sigName = sigName;
+		this.sigMeaning = sigMeaning;
+	}
 
-    public String getMeaning() {
-    	return sigMeaning;
-    }
-    
-    /**
-     * @since 1.1
-     */
-    public static MISignalEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
-       String sigName = ""; //$NON-NLS-1$
-       String sigMeaning = ""; //$NON-NLS-1$
+	public String getName() {
+		return sigName;
+	}
 
-       for (int i = 0; i < results.length; i++) {
-           String var = results[i].getVariable();
-           MIValue value = results[i].getMIValue();
-           String str = ""; //$NON-NLS-1$
-           if (value instanceof MIConst) {
-               str = ((MIConst)value).getString();
-           }
+	public String getMeaning() {
+		return sigMeaning;
+	}
 
-           if (var.equals("signal-name")) { //$NON-NLS-1$
-               sigName = str;
-           } else if (var.equals("signal-meaning")) { //$NON-NLS-1$
-               sigMeaning = str;
-           } 
-       }
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-       return new MISignalEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), sigName, sigMeaning);
-    }
+	/**
+	 * @since 1.1
+	 */
+	public static MISignalEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		String sigName = ""; //$NON-NLS-1$
+		String sigMeaning = ""; //$NON-NLS-1$
+
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+			String str = ""; //$NON-NLS-1$
+			if (value instanceof MIConst) {
+				str = ((MIConst) value).getString();
+			}
+
+			if (var.equals("signal-name")) { //$NON-NLS-1$
+				sigName = str;
+			} else if (var.equals("signal-meaning")) { //$NON-NLS-1$
+				sigMeaning = str;
+			}
+		}
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MISignalEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), sigName,
+				sigMeaning);
+	}
 
 }

@@ -111,7 +111,9 @@ public class OptionReference implements IOption {
 		int optValType;
 		try {
 			optValType = option.getValueType();
-		} catch (BuildException e) {return;}
+		} catch (BuildException e) {
+			return;
+		}
 
 		// Hook the reference up
 		owner.addOptionReference(this);
@@ -148,11 +150,11 @@ public class OptionReference implements IOption {
 			for (int i = 0; i < nodes.getLength(); ++i) {
 				Node node = nodes.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Boolean isBuiltIn = Boolean.valueOf(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
+					Boolean isBuiltIn = Boolean.valueOf(((Element) node).getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
-						getBuiltInList().add(((Element)node).getAttribute(LIST_ITEM_VALUE));
+						getBuiltInList().add(((Element) node).getAttribute(LIST_ITEM_VALUE));
 					} else {
-						valueList.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
+						valueList.add(((Element) node).getAttribute(LIST_ITEM_VALUE));
 					}
 				}
 			}
@@ -175,9 +177,9 @@ public class OptionReference implements IOption {
 				return;
 			}
 			if (option instanceof Option) {
-				((Option)option).resolveReferences();
+				((Option) option).resolveReferences();
 			} else if (option instanceof OptionReference) {
-				((OptionReference)option).resolveReferences();
+				((OptionReference) option).resolveReferences();
 			}
 
 			// Note:  The "value" loaded here when the optionReference is read from the manifest file.
@@ -185,7 +187,9 @@ public class OptionReference implements IOption {
 			int optValType;
 			try {
 				optValType = option.getValueType();
-			} catch (BuildException e) {return;}
+			} catch (BuildException e) {
+				return;
+			}
 
 			// value
 			switch (optValType) {
@@ -223,8 +227,7 @@ public class OptionReference implements IOption {
 					Boolean isBuiltIn = Boolean.valueOf(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
 						getBuiltInList().add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
-					}
-					else {
+					} else {
 						valueList.add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
 					}
 				}
@@ -251,12 +254,12 @@ public class OptionReference implements IOption {
 		// value
 		switch (optValType) {
 		case BOOLEAN:
-			element.setAttribute(DEFAULT_VALUE, ((Boolean)value).toString());
+			element.setAttribute(DEFAULT_VALUE, ((Boolean) value).toString());
 			break;
 		case STRING:
 		case TREE:
 		case ENUMERATED:
-			element.setAttribute(DEFAULT_VALUE, (String)value);
+			element.setAttribute(DEFAULT_VALUE, (String) value);
 			break;
 		case STRING_LIST:
 		case INCLUDE_PATH:
@@ -274,7 +277,7 @@ public class OptionReference implements IOption {
 		case UNDEF_LIBRARY_FILES:
 		case UNDEF_MACRO_FILES:
 			@SuppressWarnings("unchecked")
-			ArrayList<String> stringList = (ArrayList<String>)value;
+			ArrayList<String> stringList = (ArrayList<String>) value;
 			for (String val : stringList) {
 				Element valueElement = doc.createElement(LIST_VALUE);
 				valueElement.setAttribute(LIST_ITEM_VALUE, val);
@@ -340,10 +343,9 @@ public class OptionReference implements IOption {
 			return option.getDefinedSymbols();
 		} else if (getValueType() == PREPROCESSOR_SYMBOLS) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -357,7 +359,8 @@ public class OptionReference implements IOption {
 			try {
 				String command = option.getEnumCommand(id);
 				return command;
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -371,7 +374,8 @@ public class OptionReference implements IOption {
 			try {
 				String command = option.getCommand(id);
 				return command;
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -385,7 +389,8 @@ public class OptionReference implements IOption {
 			try {
 				String name = option.getEnumName(id);
 				return name;
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -399,7 +404,8 @@ public class OptionReference implements IOption {
 			try {
 				String name = option.getName(id);
 				return name;
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -413,7 +419,8 @@ public class OptionReference implements IOption {
 			try {
 				String id = option.getEnumeratedId(name);
 				return id;
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -427,7 +434,8 @@ public class OptionReference implements IOption {
 			try {
 				String id = option.getId(name);
 				return id;
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -450,10 +458,9 @@ public class OptionReference implements IOption {
 			return option.getIncludePaths();
 		} else if (getValueType() == INCLUDE_PATH) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -464,10 +471,9 @@ public class OptionReference implements IOption {
 			return option.getLibraries();
 		} else if (getValueType() == LIBRARIES) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -478,10 +484,9 @@ public class OptionReference implements IOption {
 			return option.getLibraryFiles();
 		} else if (getValueType() == LIBRARY_FILES) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -492,10 +497,9 @@ public class OptionReference implements IOption {
 			return option.getLibraryPaths();
 		} else if (getValueType() == LIBRARY_PATHS) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -508,10 +512,9 @@ public class OptionReference implements IOption {
 
 	@Override
 	public boolean getBooleanValue() throws BuildException {
-		if (value == null){
+		if (value == null) {
 			return option.getBooleanValue();
-		}
-		else if (getValueType() == BOOLEAN) {
+		} else if (getValueType() == BOOLEAN) {
 			Boolean bool = (Boolean) value;
 			return bool.booleanValue();
 		} else {
@@ -591,10 +594,9 @@ public class OptionReference implements IOption {
 			return option.getStringListValue();
 		} else if (getValueType() == STRING_LIST) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -604,9 +606,8 @@ public class OptionReference implements IOption {
 		if (value == null) {
 			return option.getStringValue();
 		} else if (getValueType() == STRING) {
-			return (String)value;
-		}
-		else {
+			return (String) value;
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -636,10 +637,9 @@ public class OptionReference implements IOption {
 			return option.getDefinedSymbols();
 		} else if (getValueType() == OBJECTS) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> list = (ArrayList<String>)value;
+			ArrayList<String> list = (ArrayList<String>) value;
 			return list.toArray(new String[list.size()]);
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -649,7 +649,9 @@ public class OptionReference implements IOption {
 		int optValType;
 		try {
 			optValType = option.getValueType();
-		} catch (BuildException e) {return -1;}
+		} catch (BuildException e) {
+			return -1;
+		}
 
 		return optValType;
 	}
@@ -669,7 +671,7 @@ public class OptionReference implements IOption {
 			return true;
 		} else if (option instanceof OptionReference) {
 			// check the reference we are overriding
-			return ((OptionReference)option).references(target);
+			return ((OptionReference) option).references(target);
 		} else {
 			// the real reference
 			return option.equals(target);
@@ -685,8 +687,7 @@ public class OptionReference implements IOption {
 	public void setValue(boolean value) throws BuildException {
 		if (getValueType() == BOOLEAN) {
 			this.value = value;
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -707,27 +708,16 @@ public class OptionReference implements IOption {
 	 * @param value An array of strings to place in the option reference.
 	 */
 	@Override
-	public void setValue(String [] value) throws BuildException {
-		if (getValueType() == STRING_LIST
-				|| getValueType() == INCLUDE_PATH
-				|| getValueType() == PREPROCESSOR_SYMBOLS
-				|| getValueType() == LIBRARIES
-				|| getValueType() == OBJECTS
-				|| getValueType() == INCLUDE_FILES
-				|| getValueType() == LIBRARY_PATHS
-				|| getValueType() == LIBRARY_FILES
-				|| getValueType() == MACRO_FILES
-				|| getValueType() == UNDEF_INCLUDE_PATH
-				|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
-				|| getValueType() == UNDEF_INCLUDE_FILES
-				|| getValueType() == UNDEF_LIBRARY_PATHS
-				|| getValueType() == UNDEF_LIBRARY_FILES
-				|| getValueType() == UNDEF_MACRO_FILES
-				) {
+	public void setValue(String[] value) throws BuildException {
+		if (getValueType() == STRING_LIST || getValueType() == INCLUDE_PATH || getValueType() == PREPROCESSOR_SYMBOLS
+				|| getValueType() == LIBRARIES || getValueType() == OBJECTS || getValueType() == INCLUDE_FILES
+				|| getValueType() == LIBRARY_PATHS || getValueType() == LIBRARY_FILES || getValueType() == MACRO_FILES
+				|| getValueType() == UNDEF_INCLUDE_PATH || getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
+				|| getValueType() == UNDEF_INCLUDE_FILES || getValueType() == UNDEF_LIBRARY_PATHS
+				|| getValueType() == UNDEF_LIBRARY_FILES || getValueType() == UNDEF_MACRO_FILES) {
 			// Just replace what the option reference is holding onto
 			this.value = new ArrayList<String>(Arrays.asList(value));
-		}
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
@@ -736,7 +726,7 @@ public class OptionReference implements IOption {
 	public String toString() {
 		String answer = ""; //$NON-NLS-1$
 		if (option != null) {
-			answer += "Reference to " + option.getName();	//$NON-NLS-1$
+			answer += "Reference to " + option.getName(); //$NON-NLS-1$
 		}
 
 		if (answer.length() > 0) {
@@ -897,7 +887,7 @@ public class OptionReference implements IOption {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<String> v = (ArrayList<String>)getValue();
+		ArrayList<String> v = (ArrayList<String>) getValue();
 		if (v == null) {
 			return new String[0];
 		}
@@ -907,7 +897,7 @@ public class OptionReference implements IOption {
 
 	@Override
 	public int getBasicValueType() throws BuildException {
-		switch(getValueType()){
+		switch (getValueType()) {
 		case IOption.BOOLEAN:
 			return IOption.BOOLEAN;
 		case IOption.STRING:
@@ -922,11 +912,10 @@ public class OptionReference implements IOption {
 	}
 
 	@Override
-	public OptionStringValue[] getBasicStringListValueElements()
-			throws BuildException {
+	public OptionStringValue[] getBasicStringListValueElements() throws BuildException {
 		String[] str = getBasicStringListValue();
 		OptionStringValue[] ve = new OptionStringValue[str.length];
-		for(int i = 0; i < str.length; i++){
+		for (int i = 0; i < str.length; i++) {
 			ve[i] = new OptionStringValue(str[i]);
 		}
 		return ve;

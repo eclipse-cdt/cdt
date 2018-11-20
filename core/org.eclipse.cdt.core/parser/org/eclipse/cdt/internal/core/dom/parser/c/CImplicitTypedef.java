@@ -26,74 +26,74 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @author dsteffle
  */
 public class CImplicitTypedef extends CTypedef {
-    private IType type=null;
-    private char[] name=null;
-    private IScope scope=null;
+	private IType type = null;
+	private char[] name = null;
+	private IScope scope = null;
 
-    public CImplicitTypedef(IType type, char[] name, IScope scope) {
-        super(null);
-        this.type = type;
-        this.name = name;
-        this.scope = scope;
-    }
+	public CImplicitTypedef(IType type, char[] name, IScope scope) {
+		super(null);
+		this.type = type;
+		this.name = name;
+		this.scope = scope;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return String.valueOf(name);
-    }
+		return String.valueOf(name);
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return scope;
-    }
+		return scope;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
-//    public boolean isSameType(IType t) {
-//        if (t == this)
-//            return true;
-//        if (t instanceof ITypedef)
-//            try {
-//                IType temp = getType();
-//                if (temp != null)
-//                    return temp.isSameType(((ITypedef) t).getType());
-//                return false;
-//            } catch (DOMException e) {
-//                return false;
-//            }
-//
-//            IType temp;
-//            temp = getType();
-//            if (temp != null)
-//                return temp.isSameType(t);
-//            return false;
-//    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+	 */
+	//    public boolean isSameType(IType t) {
+	//        if (t == this)
+	//            return true;
+	//        if (t instanceof ITypedef)
+	//            try {
+	//                IType temp = getType();
+	//                if (temp != null)
+	//                    return temp.isSameType(((ITypedef) t).getType());
+	//                return false;
+	//            } catch (DOMException e) {
+	//                return false;
+	//            }
+	//
+	//            IType temp;
+	//            temp = getType();
+	//            if (temp != null)
+	//                return temp.isSameType(t);
+	//            return false;
+	//    }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-//    public Object clone() {
-//        IType t = null;
-//        t = (IType) super.clone();
-//        return t;
-//    }
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	//    public Object clone() {
+	//        IType t = null;
+	//        t = (IType) super.clone();
+	//        return t;
+	//    }
 
-    @Override
+	@Override
 	public IASTNode getPhysicalNode() {
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	public IASTNode[] getDeclarations() {

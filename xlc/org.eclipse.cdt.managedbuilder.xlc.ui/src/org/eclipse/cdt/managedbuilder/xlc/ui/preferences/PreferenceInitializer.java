@@ -31,7 +31,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = XLCUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PreferenceConstants.P_XL_COMPILER_ROOT, "/usr/vacpp/bin");  //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.P_XL_COMPILER_ROOT, "/usr/vacpp/bin"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.P_XL_COMPILER_VERSION_8);
 	}
 

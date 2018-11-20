@@ -26,32 +26,29 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  */
 public class CRenameMacroProcessor extends CRenameGlobalProcessor {
 
-    public CRenameMacroProcessor(CRenameProcessor processor, String name) {
-        super(processor, name);
-        setAvailableOptions(
-        		CRefactory.OPTION_IN_CODE_REFERENCES |
-                CRefactory.OPTION_IN_COMMENT |
-                CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
-                CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
-    }
+	public CRenameMacroProcessor(CRenameProcessor processor, String name) {
+		super(processor, name);
+		setAvailableOptions(CRefactory.OPTION_IN_CODE_REFERENCES | CRefactory.OPTION_IN_COMMENT
+				| CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE | CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
+	}
 
-    @Override
+	@Override
 	protected int getAcceptedLocations(int selectedOptions) {
-        return selectedOptions | CRefactory.OPTION_IN_MACRO_DEFINITION;
-    }
+		return selectedOptions | CRefactory.OPTION_IN_MACRO_DEFINITION;
+	}
 
 	@Override
 	protected void analyzeTextMatches(IBinding[] renameBindings, Collection<CRefactoringMatch> matches,
 			IProgressMonitor monitor, RefactoringStatus status) {
-        for (CRefactoringMatch m : matches) {
-            if ((m.getLocation() & CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE) != 0 ||
-            		// Occurrences in code are reliable only when exhaustive file search is not used.
-            		// TODO(sprigogin): Use index matches to endorse matches obtained from the file search. 
-            		(getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) == 0 &&
-            		(m.getLocation() & CRefactory.OPTION_IN_CODE_REFERENCES) != 0) {
-                m.setASTInformation(CRefactoringMatch.AST_REFERENCE);
-            }
-        }
-        super.analyzeTextMatches(renameBindings, matches, monitor, status);
-    }
+		for (CRefactoringMatch m : matches) {
+			if ((m.getLocation() & CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE) != 0 ||
+			// Occurrences in code are reliable only when exhaustive file search is not used.
+			// TODO(sprigogin): Use index matches to endorse matches obtained from the file search. 
+					(getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) == 0
+							&& (m.getLocation() & CRefactory.OPTION_IN_CODE_REFERENCES) != 0) {
+				m.setASTInformation(CRefactoringMatch.AST_REFERENCE);
+			}
+		}
+		super.analyzeTextMatches(renameBindings, matches, monitor, status);
+	}
 }

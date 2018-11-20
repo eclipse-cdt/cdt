@@ -47,8 +47,8 @@ public class ProposalFilterPreferencesUtil {
 	public static String[] getProposalFilterNames() {
 		ArrayList<String> names = new ArrayList<String>();
 		try {
-			IExtensionPoint point = Platform.getExtensionRegistry()
-					.getExtensionPoint(CUIPlugin.PLUGIN_ID, "ProposalFilter"); //$NON-NLS-1$
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+					"ProposalFilter"); //$NON-NLS-1$
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				for (IExtension extension : extensions) {
@@ -99,23 +99,20 @@ public class ProposalFilterPreferencesUtil {
 	 */
 	public static IConfigurationElement getElementForName(String filterName) {
 		IConfigurationElement element = null;
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(CUIPlugin.PLUGIN_ID, "ProposalFilter"); //$NON-NLS-1$
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+				"ProposalFilter"); //$NON-NLS-1$
 		if (point != null) {
 			try {
 				IExtension[] extensions = point.getExtensions();
 				if (extensions.length >= 1) {
 					for (IExtension extension : extensions) {
-						IConfigurationElement[] elements = extension
-								.getConfigurationElements();
+						IConfigurationElement[] elements = extension.getConfigurationElements();
 
 						for (int j = 0; j < elements.length; ++j) {
 							IConfigurationElement testElement = elements[j];
 							if ("ProposalFilter".equals(testElement.getName())) { //$NON-NLS-1$
-								String testName = testElement
-										.getAttribute("name"); //$NON-NLS-1$
-								if ((null != testName)
-										&& (filterName.equals(testName))) {
+								String testName = testElement.getAttribute("name"); //$NON-NLS-1$
+								if ((null != testName) && (filterName.equals(testName))) {
 									element = testElement;
 									break;
 								}
@@ -175,8 +172,7 @@ public class ProposalFilterPreferencesUtil {
 			if (endFirstEntry > 0) { // First entry must contain at least one character
 				String selectedString = text.substring(0, endFirstEntry);
 				int selectedIndex = Integer.parseInt(selectedString);
-				String[] entryList = text.substring(endFirstEntry + 1,
-						text.length()).split(";"); //$NON-NLS-1$
+				String[] entryList = text.substring(endFirstEntry + 1, text.length()).split(";"); //$NON-NLS-1$
 				combo.setItems(entryList);
 				combo.select(selectedIndex);
 			}
@@ -205,11 +201,9 @@ public class ProposalFilterPreferencesUtil {
 		try {
 			int endFirstEntry = comboPreference.indexOf(";"); //$NON-NLS-1$
 			if (endFirstEntry > 0) { // First entry must contain at least one character
-				String selectedString = comboPreference.substring(0,
-						endFirstEntry);
+				String selectedString = comboPreference.substring(0, endFirstEntry);
 				state.selectedIndex = Integer.parseInt(selectedString);
-				state.items = comboPreference.substring(endFirstEntry + 1,
-						comboPreference.length()).split(";"); //$NON-NLS-1$
+				state.items = comboPreference.substring(endFirstEntry + 1, comboPreference.length()).split(";"); //$NON-NLS-1$
 			}
 		} catch (NumberFormatException e) {
 			// If this fails we return an empty ComboState
@@ -226,10 +220,8 @@ public class ProposalFilterPreferencesUtil {
 	public static IConfigurationElement getPreferredFilterElement() {
 		IConfigurationElement preferredElement = null;
 		try {
-			IPreferenceStore store = CUIPlugin.getDefault()
-					.getPreferenceStore();
-			String filterComboStateString = store
-					.getString(ContentAssistPreference.PROPOSALS_FILTER);
+			IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+			String filterComboStateString = store.getString(ContentAssistPreference.PROPOSALS_FILTER);
 			ComboState state = getComboState(filterComboStateString);
 			preferredElement = getElementForName(state.items[state.selectedIndex]);
 		} catch (Exception e) {

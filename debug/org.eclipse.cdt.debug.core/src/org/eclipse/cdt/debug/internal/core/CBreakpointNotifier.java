@@ -24,7 +24,7 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 	private static CBreakpointNotifier fInstance;
 
 	public static CBreakpointNotifier getInstance() {
-		if ( fInstance == null ) {
+		if (fInstance == null) {
 			fInstance = new CBreakpointNotifier();
 		}
 		return fInstance;
@@ -37,11 +37,11 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
-	public boolean installingBreakpoint( IDebugTarget target, IBreakpoint breakpoint ) {
+	public boolean installingBreakpoint(IDebugTarget target, IBreakpoint breakpoint) {
 		boolean result = true;
 		Object[] listeners = CDebugCorePlugin.getDefault().getCBreakpointListeners();
-		for( int i = 0; i < listeners.length; ++i ) {
-			if ( !((ICBreakpointListener)listeners[i]).installingBreakpoint( target, breakpoint ) )
+		for (int i = 0; i < listeners.length; ++i) {
+			if (!((ICBreakpointListener) listeners[i]).installingBreakpoint(target, breakpoint))
 				result = false;
 		}
 		return result;
@@ -54,10 +54,10 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
-	public void breakpointInstalled( IDebugTarget target, IBreakpoint breakpoint ) {
+	public void breakpointInstalled(IDebugTarget target, IBreakpoint breakpoint) {
 		Object[] listeners = CDebugCorePlugin.getDefault().getCBreakpointListeners();
-		for( int i = 0; i < listeners.length; ++i )
-			((ICBreakpointListener)listeners[i]).breakpointInstalled( target, breakpoint );
+		for (int i = 0; i < listeners.length; ++i)
+			((ICBreakpointListener) listeners[i]).breakpointInstalled(target, breakpoint);
 	}
 
 	/*
@@ -67,10 +67,10 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
-	public void breakpointChanged( IDebugTarget target, IBreakpoint breakpoint, Map attributes ) {
+	public void breakpointChanged(IDebugTarget target, IBreakpoint breakpoint, Map attributes) {
 		Object[] listeners = CDebugCorePlugin.getDefault().getCBreakpointListeners();
-		for( int i = 0; i < listeners.length; ++i )
-			((ICBreakpointListener)listeners[i]).breakpointChanged( target, breakpoint, attributes );
+		for (int i = 0; i < listeners.length; ++i)
+			((ICBreakpointListener) listeners[i]).breakpointChanged(target, breakpoint, attributes);
 	}
 
 	/*
@@ -80,9 +80,9 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	@Override
-	public void breakpointsRemoved( IDebugTarget target, IBreakpoint[] breakpoints ) {
+	public void breakpointsRemoved(IDebugTarget target, IBreakpoint[] breakpoints) {
 		Object[] listeners = CDebugCorePlugin.getDefault().getCBreakpointListeners();
-		for( int i = 0; i < listeners.length; ++i )
-			((ICBreakpointListener)listeners[i]).breakpointsRemoved( target, breakpoints );
+		for (int i = 0; i < listeners.length; ++i)
+			((ICBreakpointListener) listeners[i]).breakpointsRemoved(target, breakpoints);
 	}
 }

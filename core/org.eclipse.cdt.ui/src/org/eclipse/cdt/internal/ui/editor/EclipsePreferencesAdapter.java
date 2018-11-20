@@ -57,10 +57,11 @@ class EclipsePreferencesAdapter implements IPreferenceStore {
 	}
 
 	/** Listeners on on this adapter */
-	private ListenerList<IPropertyChangeListener> fListeners= new ListenerList<IPropertyChangeListener>(ListenerList.IDENTITY);
+	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<IPropertyChangeListener>(
+			ListenerList.IDENTITY);
 
 	/** Listener on the node */
-	private IEclipsePreferences.IPreferenceChangeListener fListener= new PreferenceChangeListener();
+	private IEclipsePreferences.IPreferenceChangeListener fListener = new PreferenceChangeListener();
 
 	/** wrapped node */
 	private final IScopeContext fContext;
@@ -73,8 +74,8 @@ class EclipsePreferencesAdapter implements IPreferenceStore {
 	 * @param qualifier the qualifier
 	 */
 	public EclipsePreferencesAdapter(IScopeContext context, String qualifier) {
-		fContext= context;
-		fQualifier= qualifier;
+		fContext = context;
+		fQualifier = qualifier;
 	}
 
 	private IEclipsePreferences getNode() {
@@ -115,9 +116,9 @@ class EclipsePreferencesAdapter implements IPreferenceStore {
 	 */
 	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
-		PropertyChangeEvent event= new PropertyChangeEvent(this, name, oldValue, newValue);
-		Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
+		PropertyChangeEvent event = new PropertyChangeEvent(this, name, oldValue, newValue);
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++)
 			((IPropertyChangeListener) listeners[i]).propertyChange(event);
 	}
 

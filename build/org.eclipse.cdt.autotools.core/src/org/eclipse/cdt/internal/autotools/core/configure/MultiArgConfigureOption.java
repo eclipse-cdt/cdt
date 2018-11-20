@@ -16,34 +16,32 @@ package org.eclipse.cdt.internal.autotools.core.configure;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MultiArgConfigureOption extends AbstractConfigurationOption {
 
 	private String value;
 	private List<String> userArgs;
 	private boolean isDirty;
-	
+
 	public MultiArgConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
 		this.value = ""; //$NON-NLS-1$
 	}
-	
+
 	public MultiArgConfigureOption(String name, String msgName, AutotoolsConfiguration cfg) {
 		super(name, msgName, cfg);
 		this.value = ""; //$NON-NLS-1$
 	}
-	
-	private MultiArgConfigureOption(String name, AutotoolsConfiguration cfg,
-			String value) {
+
+	private MultiArgConfigureOption(String name, AutotoolsConfiguration cfg, String value) {
 		super(name, cfg);
 		this.value = value;
 	}
-	
+
 	@Override
 	public String getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(String newValue) {
 		if (!newValue.equals(value)) {
@@ -57,17 +55,17 @@ public class MultiArgConfigureOption extends AbstractConfigurationOption {
 	public boolean isParmSet() {
 		return value.length() > 0;
 	}
-	
+
 	@Override
 	public boolean isMultiArg() {
 		return true;
 	}
-	
+
 	@Override
 	public String getParameter() {
 		return value;
 	}
-	
+
 	@Override
 	public List<String> getParameters() {
 		// May be multiple user-specified options in which case we

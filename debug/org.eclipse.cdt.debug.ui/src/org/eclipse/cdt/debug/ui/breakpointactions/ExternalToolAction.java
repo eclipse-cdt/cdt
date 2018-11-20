@@ -51,27 +51,27 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 
 	private String externalToolName = ""; //$NON-NLS-1$
 
-    @Override
-    public IStatus execute(final IBreakpoint breakpoint, final IAdaptable context, final IProgressMonitor monitor) {
-        Job uiJob = new WorkbenchJob("ExternalToolAction") { //$NON-NLS-1$
-            {
-                setPriority(INTERACTIVE);
-            }
-            
-            @Override
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                return executeInUIThread(breakpoint, context, monitor);
-            }
-        };
-        uiJob.schedule();
-        try {
-            uiJob.join();
-        } catch (InterruptedException e) {
-            return Status.CANCEL_STATUS;
-        }
-        return uiJob.getResult();
-    }	
-	
+	@Override
+	public IStatus execute(final IBreakpoint breakpoint, final IAdaptable context, final IProgressMonitor monitor) {
+		Job uiJob = new WorkbenchJob("ExternalToolAction") { //$NON-NLS-1$
+			{
+				setPriority(INTERACTIVE);
+			}
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				return executeInUIThread(breakpoint, context, monitor);
+			}
+		};
+		uiJob.schedule();
+		try {
+			uiJob.join();
+		} catch (InterruptedException e) {
+			return Status.CANCEL_STATUS;
+		}
+		return uiJob.getResult();
+	}
+
 	private IStatus executeInUIThread(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
 		ILaunchManager lcm = DebugPlugin.getDefault().getLaunchManager();
@@ -86,19 +86,24 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 				}
 			}
 			if (!launched) {
-				String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.0"), new Object[] { externalToolName }); //$NON-NLS-1$
-				errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null); 
+				String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.0"), //$NON-NLS-1$
+						new Object[] { externalToolName });
+				errorStatus = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+						ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
 			}
-			
+
 		} catch (CoreException e) {
 			errorStatus = e.getStatus();
 		} catch (Exception e) {
-			errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e );
+			errorStatus = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+					ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e);
 		}
-		
+
 		if (errorStatus != null) {
-			String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.1"), new Object[] { externalToolName }); //$NON-NLS-1$
-			MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null ); 
+			String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.1"), //$NON-NLS-1$
+					new Object[] { externalToolName });
+			MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+					ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
 			ms.add(errorStatus);
 			return ms;
 		}
@@ -161,7 +166,8 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 
 	@Override
 	public String getSummary() {
-		return MessageFormat.format(Messages.getString("ExternalToolAction.Summary"), new Object[] { externalToolName }); //$NON-NLS-1$
+		return MessageFormat.format(Messages.getString("ExternalToolAction.Summary"), //$NON-NLS-1$
+				new Object[] { externalToolName });
 	}
 
 	@Override

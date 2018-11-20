@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -24,40 +23,28 @@ import junit.framework.TestSuite;
  * Bug#
  *
  */
-public class CompletionTest_FunctionReference_Prefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_FunctionReference_Prefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart36.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "x";
-	private final String[] expectedResults = {
-			"xLocal : int",
-			"xAClassField : float",
-			"xVariable : int",
-			"xAClassMethod(int x) : void",
-			"xFunction(void) : bool",
-			"xOtherFunction(void) : void",
-			"xNamespace",
-			"xOtherClass",
-			"xFirstEnum",
-			"xSecondEnum",
-			"xThirdEnum",
-			"xEnumeration",
-			"XMacro(x, y)",
-			"XStruct"
-	};
-	
+	private final String[] expectedResults = { "xLocal : int", "xAClassField : float", "xVariable : int",
+			"xAClassMethod(int x) : void", "xFunction(void) : bool", "xOtherFunction(void) : void", "xNamespace",
+			"xOtherClass", "xFirstEnum", "xSecondEnum", "xThirdEnum", "xEnumeration", "XMacro(x, y)", "XStruct" };
+
 	public CompletionTest_FunctionReference_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
 		//setExpectFailure(109724);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_FunctionReference_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_FunctionReference_Prefix.class.getName());
 		suite.addTest(new CompletionTest_FunctionReference_Prefix("testCompletionProposals"));
 		return suite;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -97,6 +84,7 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */
@@ -113,10 +101,6 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 		return headerFileName;
 	}
 
-	
-	
-	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest#getFunctionOrConstructorName()
 	 */

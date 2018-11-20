@@ -30,32 +30,32 @@ import org.eclipse.swt.graphics.FontData;
  * @since 1.0
  */
 public class LabelFont extends LabelAttribute {
-    private static final FontData DEFAULT_FONT = JFaceResources.getDefaultFontDescriptor().getFontData()[0];
-    
-    /** 
-     * The font data of this attribute.
-     */
-    private FontData fFontData;
+	private static final FontData DEFAULT_FONT = JFaceResources.getDefaultFontDescriptor().getFontData()[0];
 
-    public LabelFont() {
-        this(DEFAULT_FONT);
-    }
+	/** 
+	 * The font data of this attribute.
+	 */
+	private FontData fFontData;
 
-    public LabelFont(FontData fontData) {
-        fFontData = fontData;
-    }
+	public LabelFont() {
+		this(DEFAULT_FONT);
+	}
 
-    public FontData getFontData() {
-        return fFontData;
-    }
+	public LabelFont(FontData fontData) {
+		fFontData = fontData;
+	}
 
-    public void setFontData(FontData fontData) {
-        fFontData = fontData;
-    }
+	public FontData getFontData() {
+		return fFontData;
+	}
 
-    @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
-        update.setFontData(getFontData(), columnIndex);
-    }
+	public void setFontData(FontData fontData) {
+		fFontData = fontData;
+	}
+
+	@Override
+	public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+		update.setFontData(getFontData(), columnIndex);
+	}
 
 }

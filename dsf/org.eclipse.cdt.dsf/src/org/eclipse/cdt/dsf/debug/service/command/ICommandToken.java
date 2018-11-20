@@ -21,8 +21,8 @@ package org.eclipse.cdt.dsf.debug.service.command;
  * @since 1.0
  */
 public interface ICommandToken {
-    /**
-     * Returns the command that this was created for.
-     */
-    public ICommand<? extends ICommandResult> getCommand();
+	/**
+	 * Returns the command that this was created for.
+	 */
+	public ICommand<? extends ICommandResult> getCommand();
 }

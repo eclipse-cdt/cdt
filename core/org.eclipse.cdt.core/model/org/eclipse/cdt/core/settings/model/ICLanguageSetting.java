@@ -17,29 +17,29 @@ import java.util.List;
 
 public interface ICLanguageSetting extends ICSettingObject {
 	String[] getSourceContentTypeIds();
-	
+
 	String[] getSourceExtensions();
 
-//	IContentType getHeaderContentType();
+	//	IContentType getHeaderContentType();
 
-//	String[] getHeaderExtensions();
+	//	String[] getHeaderExtensions();
 
 	/**
 	 * @return language id. Note that that id can be {@code null}.
 	 */
 	String getLanguageId();
-	
-//	ICLanguageSettingEntry[] getSettingEntries();
-	
-//	void removeEntry(ICLanguageSettingEntry entry);
-	
-//	void addEntry(ICLanguageSettingEntry entry, int position);
+
+	//	ICLanguageSettingEntry[] getSettingEntries();
+
+	//	void removeEntry(ICLanguageSettingEntry entry);
+
+	//	void addEntry(ICLanguageSettingEntry entry, int position);
 
 	ICLanguageSettingEntry[] getSettingEntries(int kind);
 
 	List<ICLanguageSettingEntry> getSettingEntriesList(int kind);
 
-//	ICLanguageSettingEntry[] getResolvedSettingEntries();
+	//	ICLanguageSettingEntry[] getResolvedSettingEntries();
 
 	ICLanguageSettingEntry[] getResolvedSettingEntries(int kind);
 
@@ -47,14 +47,14 @@ public interface ICLanguageSetting extends ICSettingObject {
 
 	void setSettingEntries(int kind, List<ICLanguageSettingEntry> entriesList);
 
-//	void changeEntries(ICLanguageSettingEntryInfo[] added, ICLanguageSettingEntry[] removed);
+	//	void changeEntries(ICLanguageSettingEntryInfo[] added, ICLanguageSettingEntry[] removed);
 
 	int getSupportedEntryKinds();
 
 	boolean supportsEntryKind(int kind);
-	
+
 	void setLanguageId(String id);
-	
+
 	void setSourceContentTypeIds(String ids[]);
 
 	void setSourceExtensions(String exts[]);

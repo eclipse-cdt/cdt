@@ -52,7 +52,7 @@ public interface ICPPASTWhileStatement extends IASTWhileStatement {
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

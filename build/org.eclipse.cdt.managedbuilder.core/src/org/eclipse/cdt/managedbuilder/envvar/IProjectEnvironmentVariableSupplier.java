@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
  * 
  * @since 3.0
  */
-public interface IProjectEnvironmentVariableSupplier{
+public interface IProjectEnvironmentVariableSupplier {
 	/**
 	 *
 	 * @param variableName the variable name
@@ -40,8 +40,7 @@ public interface IProjectEnvironmentVariableSupplier{
 	 * @return the reference to the IBuildEnvironmentVariable interface representing 
 	 * the variable of a given name
 	 */
-	IBuildEnvironmentVariable getVariable(String variableName, 
-			IManagedProject project,
+	IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider);
 
 	/**
@@ -59,7 +58,5 @@ public interface IProjectEnvironmentVariableSupplier{
 	 * about the environment variables defined for the higher levels.
 	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
 	 */
-	IBuildEnvironmentVariable[] getVariables (IManagedProject project,
-			IEnvironmentVariableProvider provider);
+	IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider);
 }
-

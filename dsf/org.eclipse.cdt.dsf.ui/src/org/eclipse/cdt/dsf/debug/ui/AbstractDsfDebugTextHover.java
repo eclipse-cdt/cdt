@@ -49,82 +49,85 @@ import org.eclipse.ui.editors.text.EditorsUI;
  */
 abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover implements ITextHoverExtension2 {
 
-    /**
-     * Returns the debug model ID that this debug text hover is to be used for.
-     */
-    abstract protected String getModelId();
-    
-    /**
-     * Returns the type of format that should be used for the hover.
-     */
-    protected String getHoverFormat() {
-    	return  IFormattedValues.NATURAL_FORMAT;
-    }
-    
+	/**
+	 * Returns the debug model ID that this debug text hover is to be used for.
+	 */
+	abstract protected String getModelId();
+
+	/**
+	 * Returns the type of format that should be used for the hover.
+	 */
+	protected String getHoverFormat() {
+		return IFormattedValues.NATURAL_FORMAT;
+	}
+
 	private class GetExpressionValueQuery extends Query<FormattedValueDMData> {
-    	private final IFrameDMContext frame;
-    	private final String expression;
+		private final IFrameDMContext frame;
+		private final String expression;
 		private DsfServicesTracker dsfServicesTracker;
 
-        public GetExpressionValueQuery(IFrameDMContext frame, String expression, DsfServicesTracker dsfServicesTracker) {
-            this.frame = frame;
+		public GetExpressionValueQuery(IFrameDMContext frame, String expression,
+				DsfServicesTracker dsfServicesTracker) {
+			this.frame = frame;
 			this.expression = expression;
 			this.dsfServicesTracker = dsfServicesTracker;
-        }
+		}
 
-        @Override
-        protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
-            DsfSession session = DsfSession.getSession(frame.getSessionId());
+		@Override
+		protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
+			DsfSession session = DsfSession.getSession(frame.getSessionId());
 			IExpressions expressions = dsfServicesTracker.getService(IExpressions.class);
 			if (expressions == null) {
-			    rm.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.REQUEST_FAILED, "No expression service", null)); //$NON-NLS-1$
-			    rm.done();
-			    return;
+				rm.setStatus(
+						DsfUIPlugin.newErrorStatus(IDsfStatusConstants.REQUEST_FAILED, "No expression service", null)); //$NON-NLS-1$
+				rm.done();
+				return;
 			}
-    		IExpressionDMContext expressionDMC = expressions.createExpression(frame, expression);
-    		FormattedValueDMContext formattedValueContext = expressions.getFormattedValueContext(expressionDMC, getHoverFormat());
-        	expressions.getFormattedExpressionValue(formattedValueContext,
-        			new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    rm.setData(getData());
-                    rm.done();
-                }
-                
-                @Override
-        		protected void handleFailure() {
-        			rm.done();
-        		}
-            });
-        }
-    }
+			IExpressionDMContext expressionDMC = expressions.createExpression(frame, expression);
+			FormattedValueDMContext formattedValueContext = expressions.getFormattedValueContext(expressionDMC,
+					getHoverFormat());
+			expressions.getFormattedExpressionValue(formattedValueContext,
+					new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(getData());
+							rm.done();
+						}
+
+						@Override
+						protected void handleFailure() {
+							rm.done();
+						}
+					});
+		}
+	}
 
 	protected IFrameDMContext getFrame() {
-	    IAdaptable adaptable = getSelectionAdaptable();
-	    if (adaptable != null) {
-	        return adaptable.getAdapter(IFrameDMContext.class);
+		IAdaptable adaptable = getSelectionAdaptable();
+		if (adaptable != null) {
+			return adaptable.getAdapter(IFrameDMContext.class);
 		}
 		return null;
 	}
 
 	@Override
 	protected boolean canEvaluate() {
-	    if (getFrame() == null) {
-	        return false;
-	    }
-	    
+		if (getFrame() == null) {
+			return false;
+		}
+
 		IAdaptable adaptable = getSelectionAdaptable();
 		if (adaptable != null) {
-		    IDebugModelProvider modelProvider = adaptable.getAdapter(IDebugModelProvider.class);
-		    if (modelProvider != null) {
-		        String[] models = modelProvider.getModelIdentifiers();
-		        String myModel = getModelId();
-		        for (int i = 0; i < models.length; i++) {
-		            if (models[i].equals(myModel)) {
-		                return true;
-		            }
-		        }
-		    }
+			IDebugModelProvider modelProvider = adaptable.getAdapter(IDebugModelProvider.class);
+			if (modelProvider != null) {
+				String[] models = modelProvider.getModelIdentifiers();
+				String myModel = getModelId();
+				for (int i = 0; i < models.length; i++) {
+					if (models[i].equals(myModel)) {
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -142,58 +145,59 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 			GetExpressionValueQuery query = new GetExpressionValueQuery(frame, expression, dsfServicesTracker);
 			DsfSession session = DsfSession.getSession(sessionId);
 			if (session != null) {
-		        session.getExecutor().execute(query);
-		        try {
-		        	FormattedValueDMData data = query.get();
-		        	if (data != null)
-		        		return data.getFormattedValue();
-		        } catch (Exception e) {
-		        }
+				session.getExecutor().execute(query);
+				try {
+					FormattedValueDMData data = query.get();
+					if (data != null)
+						return data.getFormattedValue();
+				} catch (Exception e) {
+				}
 			}
 		} finally {
 			dsfServicesTracker.dispose();
 		}
-        return null;
+		return null;
 	}
 
-    /**
-     * Returns whether the "advanced" expression information control should be used.
-     * The default implementation returns <code>false</code>.
-     */
-    protected boolean useExpressionExplorer() {
-    	return false;
-    }
-    
-    /**
-     * Create an information control creator for the "advanced" hover.
-     * <p>
-     * Clients can call this method to create an information control creator
-     * with custom options.
-     * </p>
-     * @param showDetailPane  whether the detail pane should be visible
-     * @param defaultExpansionLevel  automatically expand the expression to this level
-     * @return the information control creator
-     */
-    protected final IInformationControlCreator createExpressionInformationControlCreator(boolean showDetailPane, int defaultExpansionLevel) {
-        return new ExpressionInformationControlCreator(showDetailPane, defaultExpansionLevel);
-    }
+	/**
+	 * Returns whether the "advanced" expression information control should be used.
+	 * The default implementation returns <code>false</code>.
+	 */
+	protected boolean useExpressionExplorer() {
+		return false;
+	}
 
-    /**
-     * Create an information control creator for the "advanced" hover.
-     * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()} 
-     * returns <code>true</code>.
-     * <p>
-     * The default implementation returns an information control creator with
-     * details pane enabled and default expansion level = 1.
-     * Clients may override this method to return an instance with different options.
-     * </p>
-     * @return the information control creator
-     * @see {@link #createExpressionInformationControlCreator(boolean, int)}
-     */
-    protected IInformationControlCreator createExpressionInformationControlCreator() {
-        return createExpressionInformationControlCreator(true, 1);
-    }
-    
+	/**
+	 * Create an information control creator for the "advanced" hover.
+	 * <p>
+	 * Clients can call this method to create an information control creator
+	 * with custom options.
+	 * </p>
+	 * @param showDetailPane  whether the detail pane should be visible
+	 * @param defaultExpansionLevel  automatically expand the expression to this level
+	 * @return the information control creator
+	 */
+	protected final IInformationControlCreator createExpressionInformationControlCreator(boolean showDetailPane,
+			int defaultExpansionLevel) {
+		return new ExpressionInformationControlCreator(showDetailPane, defaultExpansionLevel);
+	}
+
+	/**
+	 * Create an information control creator for the "advanced" hover.
+	 * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()} 
+	 * returns <code>true</code>.
+	 * <p>
+	 * The default implementation returns an information control creator with
+	 * details pane enabled and default expansion level = 1.
+	 * Clients may override this method to return an instance with different options.
+	 * </p>
+	 * @return the information control creator
+	 * @see {@link #createExpressionInformationControlCreator(boolean, int)}
+	 */
+	protected IInformationControlCreator createExpressionInformationControlCreator() {
+		return createExpressionInformationControlCreator(true, 1);
+	}
+
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (useExpressionExplorer()) {
@@ -213,15 +217,15 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	 */
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-    	final String simpleInfo = getHoverInfo(textViewer, hoverRegion);
+		final String simpleInfo = getHoverInfo(textViewer, hoverRegion);
 		if (!useExpressionExplorer() || simpleInfo == null) {
-    		return simpleInfo;
-    	}
+			return simpleInfo;
+		}
 		// improved version using ExpressionInformationControlCreator
-    	// see also getHoverControlCreator()
-    	final String text;
-		text= getExpressionText(textViewer, hoverRegion);
-    	if (text != null && !text.isEmpty()) {
+		// see also getHoverControlCreator()
+		final String text;
+		text = getExpressionText(textViewer, hoverRegion);
+		if (text != null && !text.isEmpty()) {
 			final IFrameDMContext frameDmc = getFrame();
 			if (frameDmc != null) {
 				final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());
@@ -229,7 +233,8 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 					Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
 						@Override
 						public IExpressionDMContext call() throws Exception {
-							DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), frameDmc.getSessionId());
+							DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+									frameDmc.getSessionId());
 							try {
 								IExpressions expressions = tracker.getService(IExpressions.class);
 								if (expressions != null) {
@@ -248,8 +253,8 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 					}
 				}
 			}
-    	}
-    	return null;
+		}
+		return null;
 	}
 
 }

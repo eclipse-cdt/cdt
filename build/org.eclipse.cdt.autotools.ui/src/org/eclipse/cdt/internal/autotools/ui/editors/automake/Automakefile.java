@@ -37,7 +37,7 @@ public class Automakefile extends GNUAutomakefile {
 		}
 		return null;
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			String filename = "Makefile.am"; //$NON-NLS-1$
@@ -56,5 +56,5 @@ public class Automakefile extends GNUAutomakefile {
 			System.out.println(e);
 		}
 	}
-	
+
 }

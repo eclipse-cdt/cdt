@@ -17,18 +17,17 @@ package org.eclipse.cdt.core;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 /**
  * Output stream which storing the console output
  * 
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConsoleOutputStream extends OutputStream {
-	
+
 	protected StringBuffer fBuffer;
-		
+
 	public ConsoleOutputStream() {
-		fBuffer= new StringBuffer();
+		fBuffer = new StringBuffer();
 	}
 
 	public synchronized String readBuffer() {
@@ -44,16 +43,16 @@ public class ConsoleOutputStream extends OutputStream {
 		fBuffer.append(new String(ascii));
 	}
 
-    @Override
+	@Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
-        fBuffer.append(new String(b, off, len));
-    }
-    
-    /**
+		fBuffer.append(new String(b, off, len));
+	}
+
+	/**
 	 * @since 6.0
 	 */
-    public synchronized void write(String msg) throws IOException {
-    	fBuffer.append(msg);
-    }
+	public synchronized void write(String msg) throws IOException {
+		fBuffer.append(msg);
+	}
 
 }

@@ -32,8 +32,8 @@ public class PDOMASTProcessorManager {
 	private static final List<PDOMASTProcessorDesc> processors = new ArrayList<PDOMASTProcessorDesc>();
 	static {
 		// Load the extensions
-		IConfigurationElement[] elements
-			= Platform.getExtensionRegistry().getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
 		for (IConfigurationElement element : elements)
 			processors.add(new PDOMASTProcessorDesc(element));
 	}

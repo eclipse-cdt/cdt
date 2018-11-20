@@ -24,16 +24,15 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * PDOM implementation of ICPPDeferredVariableInstance.
  */
-public class PDOMCPPDeferredVariableInstance extends CPPDeferredVariableInstance 
-		implements IIndexFragmentBinding {
+public class PDOMCPPDeferredVariableInstance extends CPPDeferredVariableInstance implements IIndexFragmentBinding {
 	private final IIndexFragment fFragment;
-	
+
 	public PDOMCPPDeferredVariableInstance(IIndexFragment fragment, ICPPVariableTemplate template,
 			ICPPTemplateArgument[] arguments) {
 		super(template, arguments);
 		fFragment = fragment;
 	}
-	
+
 	@Override
 	public boolean isFileLocal() throws CoreException {
 		return false;

@@ -14,7 +14,7 @@
 package org.eclipse.cdt.meson.core;
 
 public interface IMesonConstants {
-	
+
 	String MESON_ARGUMENTS = "meson.arguments"; //$NON-NLS-1$
 	String MESON_ENV = "meson.environment"; //$NON-NLS-1$
 	String MESON_PROJECT_OPTIONS = "meson.project.options"; //$NON-NLS-1$

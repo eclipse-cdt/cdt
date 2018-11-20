@@ -26,11 +26,13 @@ public interface IDisassemblyRetrieval {
 
 	interface AddressRequest extends IRequest {
 		BigInteger getAddress();
+
 		void setAddress(BigInteger address);
 	}
 
 	interface DisassemblyRequest extends IRequest {
 		IDisassemblyBlock getDisassemblyBlock();
+
 		void setDisassemblyBlock(IDisassemblyBlock disassemblyBlock);
 	}
 
@@ -52,4 +54,3 @@ public interface IDisassemblyRetrieval {
 			boolean mixed, DisassemblyRequest disassemblyRequest);
 
 }
-

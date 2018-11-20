@@ -25,18 +25,18 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 /**
  * Information provider for macro exploration.
  *
  * @since 5.0
  */
-public class CMacroExpansionInformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
+public class CMacroExpansionInformationProvider
+		implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
 
 	private final ITextEditor fEditor;
 
 	public CMacroExpansionInformationProvider(ITextEditor editor) {
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	/*
@@ -52,7 +52,7 @@ public class CMacroExpansionInformationProvider implements IInformationProvider,
 	 */
 	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
-		Point selection= textViewer.getSelectedRange();
+		Point selection = textViewer.getSelectedRange();
 		return new Region(selection.x, selection.y);
 	}
 

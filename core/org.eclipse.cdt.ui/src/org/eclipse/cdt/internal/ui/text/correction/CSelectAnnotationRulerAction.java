@@ -46,144 +46,146 @@ import org.eclipse.cdt.internal.ui.editor.OverrideIndicatorManager;
  */
 public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 
-    private ITextEditor fTextEditor;
-    private Position fPosition;
-    private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
-    private IPreferenceStore fStore;
-    private ResourceBundle fBundle;
-    // Annotations at the ruler's current line of activity, keyed by their presentation layer,
-    // in decreasing order (i.e. top to bottom).
-    private static Comparator<Integer> decreasingOrder = new Comparator<Integer>(){
+	private ITextEditor fTextEditor;
+	private Position fPosition;
+	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
+	private IPreferenceStore fStore;
+	private ResourceBundle fBundle;
+	// Annotations at the ruler's current line of activity, keyed by their presentation layer,
+	// in decreasing order (i.e. top to bottom).
+	private static Comparator<Integer> decreasingOrder = new Comparator<Integer>() {
 		@Override
 		public int compare(Integer a, Integer b) {
 			return b - a;
-		}};
-    private TreeMap<Integer, Annotation> fAnnotations = new TreeMap<>(decreasingOrder);
-    // For each layer, whether the annotation at that layer has a correction.
-    private TreeMap<Integer, Boolean> fHasCorrection = new TreeMap<>(decreasingOrder);
+		}
+	};
+	private TreeMap<Integer, Annotation> fAnnotations = new TreeMap<>(decreasingOrder);
+	// For each layer, whether the annotation at that layer has a correction.
+	private TreeMap<Integer, Boolean> fHasCorrection = new TreeMap<>(decreasingOrder);
 
-    public CSelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
-        super(bundle, prefix, editor, ruler);
-        fBundle= bundle;
-        fTextEditor= editor;
+	public CSelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor,
+			IVerticalRulerInfo ruler) {
+		super(bundle, prefix, editor, ruler);
+		fBundle = bundle;
+		fTextEditor = editor;
 
-        fAnnotationPreferenceLookup= EditorsUI.getAnnotationPreferenceLookup();
-        fStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
-    }
+		fAnnotationPreferenceLookup = EditorsUI.getAnnotationPreferenceLookup();
+		fStore = CUIPlugin.getDefault().getCombinedPreferenceStore();
+	}
 
-    @Override
+	@Override
 	public void run() {
-        // is there an equivalent preference for the C Editor?
-        // if (fStore.getBoolean(PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER))
-        //     return;
-        
-        runWithEvent(null);
-    }
-    
-    /*
-     * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
-     */
-    @Override
+		// is there an equivalent preference for the C Editor?
+		// if (fStore.getBoolean(PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER))
+		//     return;
+
+		runWithEvent(null);
+	}
+
+	/*
+	 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
+	 */
+	@Override
 	public void runWithEvent(Event event) {
-    	// Give each annotation at the current line, from top to bottom, a chance to handle
-    	// the action. If there are no takers, fall back to the super class implementation.
-    	for (Integer layer : fAnnotations.keySet()) {
-    		Annotation annotation = fAnnotations.get(layer);
+		// Give each annotation at the current line, from top to bottom, a chance to handle
+		// the action. If there are no takers, fall back to the super class implementation.
+		for (Integer layer : fAnnotations.keySet()) {
+			Annotation annotation = fAnnotations.get(layer);
 			if (annotation instanceof OverrideIndicatorManager.OverrideIndicator) {
-				((OverrideIndicatorManager.OverrideIndicator)annotation).open();
+				((OverrideIndicatorManager.OverrideIndicator) annotation).open();
 				return;
 			}
-	    	
-	        if (fHasCorrection.get(layer)) {
-	            ITextOperationTarget operation= fTextEditor.getAdapter(ITextOperationTarget.class);
-	            final int opCode= ISourceViewer.QUICK_ASSIST;
-	            if (operation != null && operation.canDoOperation(opCode)) {
-	                fTextEditor.selectAndReveal(fPosition.getOffset(), fPosition.getLength());
-	                operation.doOperation(opCode);
-	            }
-	            return;
-	        }
-    	}
 
-        super.run();
-    }
+			if (fHasCorrection.get(layer)) {
+				ITextOperationTarget operation = fTextEditor.getAdapter(ITextOperationTarget.class);
+				final int opCode = ISourceViewer.QUICK_ASSIST;
+				if (operation != null && operation.canDoOperation(opCode)) {
+					fTextEditor.selectAndReveal(fPosition.getOffset(), fPosition.getLength());
+					operation.doOperation(opCode);
+				}
+				return;
+			}
+		}
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.SelectMarkerRulerAction#update()
-     */
-    @Override
+		super.run();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.SelectMarkerRulerAction#update()
+	 */
+	@Override
 	public void update() {
-        findCAnnotation();
-        setEnabled(true); 
+		findCAnnotation();
+		setEnabled(true);
 
-    	for (Integer layer : fAnnotations.keySet()) {
-    		Annotation annotation = fAnnotations.get(layer);
+		for (Integer layer : fAnnotations.keySet()) {
+			Annotation annotation = fAnnotations.get(layer);
 			if (annotation instanceof OverrideIndicatorManager.OverrideIndicator) {
 				initialize(fBundle, "CSelectAnnotationRulerAction.OpenSuperImplementation."); //$NON-NLS-1$
 				return;
 			}
-	        if (fHasCorrection.get(layer)) {
-	            initialize(fBundle, "CSelectAnnotationRulerAction.QuickFix."); //$NON-NLS-1$
-	            return;
-	        }
-    	}
+			if (fHasCorrection.get(layer)) {
+				initialize(fBundle, "CSelectAnnotationRulerAction.QuickFix."); //$NON-NLS-1$
+				return;
+			}
+		}
 
-        initialize(fBundle, "CSelectAnnotationRulerAction.GotoAnnotation."); //$NON-NLS-1$;
-        super.update();
-    }
+		initialize(fBundle, "CSelectAnnotationRulerAction.GotoAnnotation."); //$NON-NLS-1$;
+		super.update();
+	}
 
-    private void findCAnnotation() {
-        fPosition= null;
-        fAnnotations.clear();
-        fHasCorrection.clear();
+	private void findCAnnotation() {
+		fPosition = null;
+		fAnnotations.clear();
+		fHasCorrection.clear();
 
-        AbstractMarkerAnnotationModel model= getAnnotationModel();
-        IAnnotationAccessExtension annotationAccess= getAnnotationAccessExtension();
+		AbstractMarkerAnnotationModel model = getAnnotationModel();
+		IAnnotationAccessExtension annotationAccess = getAnnotationAccessExtension();
 
-        IDocument document= getDocument();
-        if (model == null)
-            return ;
+		IDocument document = getDocument();
+		if (model == null)
+			return;
 
-        Iterator<?> iter= model.getAnnotationIterator();
+		Iterator<?> iter = model.getAnnotationIterator();
 
-        while (iter.hasNext()) {
-            Annotation annotation= (Annotation) iter.next();
-            if (annotation.isMarkedDeleted())
-                continue;
+		while (iter.hasNext()) {
+			Annotation annotation = (Annotation) iter.next();
+			if (annotation.isMarkedDeleted())
+				continue;
 
-            int layer = IAnnotationAccessExtension.DEFAULT_LAYER;
-            if (annotationAccess != null) {
-                layer= annotationAccess.getLayer(annotation);
-            }
+			int layer = IAnnotationAccessExtension.DEFAULT_LAYER;
+			if (annotationAccess != null) {
+				layer = annotationAccess.getLayer(annotation);
+			}
 
-            Position position= model.getPosition(annotation);
-            if (!includesRulerLine(position, document))
-                continue;
-            
-            boolean isReadOnly = fTextEditor instanceof ITextEditorExtension && ((ITextEditorExtension)fTextEditor).isEditorInputReadOnly();
+			Position position = model.getPosition(annotation);
+			if (!includesRulerLine(position, document))
+				continue;
 
-            if (!isReadOnly && CCorrectionProcessor.hasCorrections(annotation)) {
-                
-                fPosition= position;
-                fAnnotations.put(layer, annotation);
-                fHasCorrection.put(layer, true);
-                continue;
-            }
-			AnnotationPreference preference= fAnnotationPreferenceLookup.getAnnotationPreference(annotation);
+			boolean isReadOnly = fTextEditor instanceof ITextEditorExtension
+					&& ((ITextEditorExtension) fTextEditor).isEditorInputReadOnly();
+
+			if (!isReadOnly && CCorrectionProcessor.hasCorrections(annotation)) {
+
+				fPosition = position;
+				fAnnotations.put(layer, annotation);
+				fHasCorrection.put(layer, true);
+				continue;
+			}
+			AnnotationPreference preference = fAnnotationPreferenceLookup.getAnnotationPreference(annotation);
 			if (preference == null)
-			    continue;
+				continue;
 
-			String key= preference.getVerticalRulerPreferenceKey();
+			String key = preference.getVerticalRulerPreferenceKey();
 			if (key == null)
-			    continue;
+				continue;
 
 			if (fStore.getBoolean(key)) {
-			    fPosition= position;
-			    fAnnotations.put(layer, annotation);
-			    fHasCorrection.put(layer, false);
+				fPosition = position;
+				fAnnotations.put(layer, annotation);
+				fHasCorrection.put(layer, false);
 			}
-        }
-    }
+		}
+	}
 }
-

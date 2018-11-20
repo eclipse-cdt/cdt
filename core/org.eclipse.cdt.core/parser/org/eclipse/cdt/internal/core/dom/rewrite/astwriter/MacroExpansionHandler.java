@@ -62,7 +62,7 @@ public class MacroExpansionHandler {
 		if (nodeLocations != null && nodeLocations.length > 1) {
 			for (IASTNodeLocation loc : nodeLocations) {
 				if (loc instanceof IASTMacroExpansionLocation) {
-					if (!hasChildEnclosingMacroLocation(node, (IASTMacroExpansionLocation)loc)) {
+					if (!hasChildEnclosingMacroLocation(node, (IASTMacroExpansionLocation) loc)) {
 						return true;
 					}
 				}
@@ -88,7 +88,8 @@ public class MacroExpansionHandler {
 				IASTMacroExpansionLocation childMacroExpansionLocation = (IASTMacroExpansionLocation) childLocations[0];
 				return macroContainsOnlyPartsOfChild(loc, childMacroExpansionLocation);
 			} else if (childLocations[childLocations.length - 1] instanceof IASTMacroExpansionLocation) {
-				IASTMacroExpansionLocation childMacroExpansionLocation = (IASTMacroExpansionLocation) childLocations[childLocations.length - 1];
+				IASTMacroExpansionLocation childMacroExpansionLocation = (IASTMacroExpansionLocation) childLocations[childLocations.length
+						- 1];
 				return macroContainsOnlyPartsOfChild(loc, childMacroExpansionLocation);
 			}
 			return true;
@@ -96,8 +97,10 @@ public class MacroExpansionHandler {
 		return false;
 	}
 
-	private boolean macroContainsOnlyPartsOfChild(IASTMacroExpansionLocation macroLocation, IASTMacroExpansionLocation childMacroLocation) {
-		return 	childMacroLocation.getExpansion().getMacroDefinition().equals(macroLocation.getExpansion().getMacroDefinition()) 
+	private boolean macroContainsOnlyPartsOfChild(IASTMacroExpansionLocation macroLocation,
+			IASTMacroExpansionLocation childMacroLocation) {
+		return childMacroLocation.getExpansion().getMacroDefinition()
+				.equals(macroLocation.getExpansion().getMacroDefinition())
 				&& childMacroLocation.getNodeOffset() == macroLocation.getNodeOffset()
 				&& childMacroLocation.getNodeLength() == macroLocation.getNodeLength();
 	}
@@ -113,7 +116,7 @@ public class MacroExpansionHandler {
 
 	protected boolean macroExpansionAlreadyPrinted(IASTNode node) {
 		IASTNodeLocation[] locs = node.getNodeLocations();
-		if (locs.length ==1) {
+		if (locs.length == 1) {
 			if (locs[0] instanceof IASTMacroExpansionLocation) {
 				IASTMacroExpansionLocation macroNode = (IASTMacroExpansionLocation) locs[0];
 				if (macroNode.asFileLocation().getNodeOffset() == lastMacroExpOffset) {
@@ -189,8 +192,8 @@ public class MacroExpansionHandler {
 				macroExpansion = new TreeMap<String, List<IIndexName>>();
 				IASTPreprocessorMacroDefinition[] md = ast.getMacroDefinitions();
 
-				TreeSet<String>paths = new TreeSet<String>();
-				for (IASTPreprocessorIncludeStatement is :ast.getIncludeDirectives()) {
+				TreeSet<String> paths = new TreeSet<String>();
+				for (IASTPreprocessorIncludeStatement is : ast.getIncludeDirectives()) {
 					if (!is.isSystemInclude()) {
 						paths.add(is.getContainingFilename());
 					}
@@ -201,8 +204,7 @@ public class MacroExpansionHandler {
 					if (iastPreprocessorMacroDefinition.getExpansion().length() == 0) {
 						try {
 							IIndexMacro[] macroBinding = index.findMacros(
-									iastPreprocessorMacroDefinition.getName().toCharArray(),
-									IndexFilter.ALL, null);
+									iastPreprocessorMacroDefinition.getName().toCharArray(), IndexFilter.ALL, null);
 							if (macroBinding.length > 0) {
 								IIndexName[] refs = index.findReferences(macroBinding[0]);
 								for (IIndexName iIndexName : refs) {

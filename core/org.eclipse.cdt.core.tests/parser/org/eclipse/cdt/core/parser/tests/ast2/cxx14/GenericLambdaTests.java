@@ -25,7 +25,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 		helper.assertVariableType("three", CommonCPPTypes.int_);
 		helper.assertVariableType("hello", CommonCPPTypes.pointerToConstChar);
 	}
-	
+
 	//	// Adapted from the example in [expr.prim.lambda] p7 in the standard.
 	//	auto Identity = [](auto a){ return a; };
 	//	void f1(int(*)(int));
@@ -52,7 +52,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 		assertSame(h1, hCall);
 		helper.assertNonProblem("j([]", "j");
 	}
-	
+
 	//	template <typename... T>
 	//	struct tuple {};
 	//
@@ -75,7 +75,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 	public void testVariadicAutoParameter() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	// Adapted from the example in [expr.prim.lambda] p6 in the standard.
 	//	namespace std {
 	//		struct ostream {

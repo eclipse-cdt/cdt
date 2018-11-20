@@ -27,12 +27,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAExitCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAExitCommand(PDAVirtualMachineDMContext context) {
-        super(context, "exit");
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAExitCommand(PDAVirtualMachineDMContext context) {
+		super(context, "exit");
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

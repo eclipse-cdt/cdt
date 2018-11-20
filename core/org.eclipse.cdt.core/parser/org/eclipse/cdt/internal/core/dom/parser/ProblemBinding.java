@@ -46,72 +46,72 @@ import com.ibm.icu.text.MessageFormat;
  * Implementation of problem bindings
  */
 public class ProblemBinding extends PlatformObject implements IProblemBinding, IASTInternalScope {
-	public static ProblemBinding NOT_INITIALIZED= new ProblemBinding(null, 0);
+	public static ProblemBinding NOT_INITIALIZED = new ProblemBinding(null, 0);
 
-    protected final int id;
-    protected char[] arg;
-    protected IASTNode node;
+	protected final int id;
+	protected char[] arg;
+	protected IASTNode node;
 	private IBinding[] candidateBindings;
 
-    public ProblemBinding(IASTName name, int id) {
-    	this(name, id, null, null);
-    }
+	public ProblemBinding(IASTName name, int id) {
+		this(name, id, null, null);
+	}
 
-    public ProblemBinding(IASTName name, int id, IBinding[] candidateBindings) {
-    	this(name, id, null, candidateBindings);
-    }
+	public ProblemBinding(IASTName name, int id, IBinding[] candidateBindings) {
+		this(name, id, null, candidateBindings);
+	}
 
-    /**
-     * @param name the name that could not be resolved, may be {@code null}
-     * @param point the point in code where the problem was encountered
-     * @param id the ID of the problem, see {@link IProblemBinding}
-     */
-    public ProblemBinding(IASTName name, IASTNode point, int id) {
-    	this(name, point, id, null);
-    }
+	/**
+	 * @param name the name that could not be resolved, may be {@code null}
+	 * @param point the point in code where the problem was encountered
+	 * @param id the ID of the problem, see {@link IProblemBinding}
+	 */
+	public ProblemBinding(IASTName name, IASTNode point, int id) {
+		this(name, point, id, null);
+	}
 
-    /**
-     * @param name the name that could not be resolved, may be {@code null}
-     * @param point the point in code where the problem was encountered
-     * @param id the ID of the problem, see {@link IProblemBinding}
-     * @param candidateBindings candidate bindings that were rejected due to ambiguity or for other
-     *     reasons, may be {@code null}
-     */
-    public ProblemBinding(IASTName name, IASTNode point, int id, IBinding[] candidateBindings) {
-        this.id = id;
-        if (name != null && name.getTranslationUnit() != null) {
-        	this.node = name;
-        } else {
-        	this.node = point;
-        	if (name != null) {
-        		this.arg = name.getSimpleID();
-        	} else if (candidateBindings != null && candidateBindings.length != 0) {
-        		this.arg = candidateBindings[0].getNameCharArray();
-        	}
-        }
+	/**
+	 * @param name the name that could not be resolved, may be {@code null}
+	 * @param point the point in code where the problem was encountered
+	 * @param id the ID of the problem, see {@link IProblemBinding}
+	 * @param candidateBindings candidate bindings that were rejected due to ambiguity or for other
+	 *     reasons, may be {@code null}
+	 */
+	public ProblemBinding(IASTName name, IASTNode point, int id, IBinding[] candidateBindings) {
+		this.id = id;
+		if (name != null && name.getTranslationUnit() != null) {
+			this.node = name;
+		} else {
+			this.node = point;
+			if (name != null) {
+				this.arg = name.getSimpleID();
+			} else if (candidateBindings != null && candidateBindings.length != 0) {
+				this.arg = candidateBindings[0].getNameCharArray();
+			}
+		}
 		this.candidateBindings = candidateBindings;
-    }
+	}
 
-    public ProblemBinding(IASTNode node, int id, char[] arg) {
-    	this(node, id, arg, null);
-    }
+	public ProblemBinding(IASTNode node, int id, char[] arg) {
+		this(node, id, arg, null);
+	}
 
-    public ProblemBinding(IASTNode node, int id, char[] arg, IBinding[] candidateBindings) {
-        this.id = id;
-        this.arg = arg;
-        this.node = node;
+	public ProblemBinding(IASTNode node, int id, char[] arg, IBinding[] candidateBindings) {
+		this.id = id;
+		this.arg = arg;
+		this.node = node;
 		this.candidateBindings = candidateBindings;
-    }
+	}
 
-    @Override
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}
 
-    @Override
+	@Override
 	public IASTNode getASTNode() {
-        return node;
-    }
+		return node;
+	}
 
 	@Override
 	public IBinding[] getCandidateBindings() {
@@ -119,99 +119,99 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public void setCandidateBindings(IBinding[] foundBindings) {
-		candidateBindings= foundBindings;
+		candidateBindings = foundBindings;
 	}
 
-    @Override
+	@Override
 	public int getID() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getMessage() {
-        String msg = ParserMessages.getProblemPattern(this);
-        if (msg == null)
-        	return ""; //$NON-NLS-1$
+		String msg = ParserMessages.getProblemPattern(this);
+		if (msg == null)
+			return ""; //$NON-NLS-1$
 
-        if (arg == null) {
-        	if (node instanceof IASTName) {
-            	arg= ((IASTName) node).toCharArray();
-        	} else if (candidateBindings != null && candidateBindings.length != 0) {
-        		arg = candidateBindings[0].getNameCharArray();
-        	}
-        }
+		if (arg == null) {
+			if (node instanceof IASTName) {
+				arg = ((IASTName) node).toCharArray();
+			} else if (candidateBindings != null && candidateBindings.length != 0) {
+				arg = candidateBindings[0].getNameCharArray();
+			}
+		}
 
-        if (arg != null) {
-            msg = MessageFormat.format(msg, new Object[] { new String(arg) });
-        }
+		if (arg != null) {
+			msg = MessageFormat.format(msg, new Object[] { new String(arg) });
+		}
 
 		return msg;
-    }
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
-    }
+		return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
-    }
+		return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() throws DOMException {
-        throw new DOMException(this);
-    }
+		throw new DOMException(this);
+	}
 
-    @Override
+	@Override
 	public IASTNode getPhysicalNode() {
-        return getASTNode();
-    }
+		return getASTNode();
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-    	// Don't clone problems.
-        return this;
-    }
+		// Don't clone problems.
+		return this;
+	}
 
-    @Override
+	@Override
 	public IScope getParent() throws DOMException {
-        throw new DOMException(this);
-    }
+		throw new DOMException(this);
+	}
 
-    @Override
+	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
-        return IBinding.EMPTY_BINDING_ARRAY;
-    }
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IBinding[] find(String name) {
-        return IBinding.EMPTY_BINDING_ARRAY;
-    }
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
 	@Override
 	public IName getScopeName() {
 		return null;
 	}
 
-    @Override
+	@Override
 	public void addName(IASTName name, boolean adlOnly) {
-    }
+	}
 
-    @Override
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve) {
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
-        return IBinding.EMPTY_BINDING_ARRAY;
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-    @Override
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
-        return null;
-    }
+		return null;
+	}
 
 	@Deprecated
 	@Override
@@ -219,15 +219,15 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 
-    @Override
+	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-        return IBinding.EMPTY_BINDING_ARRAY;
-    }
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType type) {
-        return type == this;
-    }
+		return type == this;
+	}
 
 	@Override
 	public String getFileName() {
@@ -264,7 +264,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	@Override
 	public IBinding getOwner() {
 		if (node instanceof IASTName) {
-			IASTTranslationUnit tu= node.getTranslationUnit();
+			IASTTranslationUnit tu = node.getTranslationUnit();
 			if (tu instanceof ICPPASTTranslationUnit) {
 				return CPPVisitor.findNameOwner((IASTName) node, true);
 			}
@@ -274,8 +274,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	public void setASTNode(IASTName name) {
 		if (name != null) {
-			this.node= name;
-			this.arg= null;
+			this.node = name;
+			this.arg = null;
 		}
 	}
 
@@ -288,76 +288,76 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	// Dummy methods for derived classes.
-    public IType getType() {
-    	return new ProblemType(getID());
-    }
+	public IType getType() {
+		return new ProblemType(getID());
+	}
 
-    public boolean isStatic() {
-    	return false;
-    }
+	public boolean isStatic() {
+		return false;
+	}
 
-    public String[] getQualifiedName() throws DOMException {
-        throw new DOMException(this);
-    }
+	public String[] getQualifiedName() throws DOMException {
+		throw new DOMException(this);
+	}
 
-    public char[][] getQualifiedNameCharArray() throws DOMException {
-        throw new DOMException(this);
-    }
+	public char[][] getQualifiedNameCharArray() throws DOMException {
+		throw new DOMException(this);
+	}
 
-    public boolean isGloballyQualified() throws DOMException {
-        throw new DOMException(this);
-    }
+	public boolean isGloballyQualified() throws DOMException {
+		throw new DOMException(this);
+	}
 
-    public boolean isMutable() {
-    	return false;
-    }
+	public boolean isMutable() {
+		return false;
+	}
 
-    public boolean isConstexpr() {
-    	return false;
-    }
+	public boolean isConstexpr() {
+		return false;
+	}
 
-    public boolean isExtern() {
-    	return false;
-    }
+	public boolean isExtern() {
+		return false;
+	}
 
-    public boolean isExternC() {
-    	return false;
-    }
+	public boolean isExternC() {
+		return false;
+	}
 
-    public boolean isAuto() {
-    	return false;
-    }
+	public boolean isAuto() {
+		return false;
+	}
 
-    public boolean isRegister() {
-    	return false;
-    }
+	public boolean isRegister() {
+		return false;
+	}
 
-    public IValue getInitialValue() {
+	public IValue getInitialValue() {
 		return null;
 	}
 
-    public ICPPEvaluation getInitializerEvaluation() {
-    	return EvalFixed.INCOMPLETE;
+	public ICPPEvaluation getInitializerEvaluation() {
+		return EvalFixed.INCOMPLETE;
 	}
 
-    public boolean isAnonymous() {
+	public boolean isAnonymous() {
 		return false;
 	}
 
-    public boolean isDeleted() {
+	public boolean isDeleted() {
 		return false;
 	}
 
-    public boolean isInline() {
-    	return false;
-    }
+	public boolean isInline() {
+		return false;
+	}
 
-    public boolean takesVarArgs() {
-    	return false;
-    }
+	public boolean takesVarArgs() {
+		return false;
+	}
 
-    public IType[] getExceptionSpecification() {
-        return null;
+	public IType[] getExceptionSpecification() {
+		return null;
 	}
 
 	public boolean hasParameterPack() {
@@ -377,11 +377,11 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public boolean isExplicit() {
-        return false;
-    }
+		return false;
+	}
 
 	public boolean hasDefaultValue() {
-        return false;
+		return false;
 	}
 
 	public IValue getDefaultValue() {

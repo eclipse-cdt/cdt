@@ -49,34 +49,35 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
 public interface INodeFactory {
 	/** @since 5.10 */
 	public IASTAlignmentSpecifier newAlignmentSpecifier(IASTExpression expression);
-	
+
 	/** @since 5.10 */
 	public IASTAlignmentSpecifier newAlignmentSpecifier(IASTTypeId typeId);
-	
+
 	public IASTArrayDeclarator newArrayDeclarator(IASTName name);
-	
+
 	public IASTArrayModifier newArrayModifier(IASTExpression expr);
-	
+
 	public IASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript);
 
 	public IASTASMDeclaration newASMDeclaration(String assembly);
-	
+
 	/** @since 5.4 */
 	public IASTAttribute newAttribute(char[] name, IASTToken argumentClause);
 
 	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);
-	
+
 	public IASTBreakStatement newBreakStatement();
-	
+
 	public IASTCaseStatement newCaseStatement(IASTExpression expr);
 
 	public IASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand);
 
 	public IASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
-	
+
 	public IASTCompoundStatement newCompoundStatement();
-	
-	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative);
+
+	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive,
+			IASTExpression negative);
 
 	public IASTContinueStatement newContinueStatement();
 
@@ -87,18 +88,18 @@ public interface INodeFactory {
 	public IASTDefaultStatement newDefaultStatement();
 
 	public IASTDoStatement newDoStatement(IASTStatement body, IASTExpression condition);
-	
+
 	public IASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 
 	public IASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
-	
+
 	public IASTEnumerator newEnumerator(IASTName name, IASTExpression value);
-	
+
 	/**
 	 * @since 5.2
 	 */
 	public IASTEqualsInitializer newEqualsInitializer(IASTInitializerClause initClause);
-	
+
 	public IASTExpressionList newExpressionList();
 
 	public IASTExpressionStatement newExpressionStatement(IASTExpression expression);
@@ -113,7 +114,8 @@ public interface INodeFactory {
 	/**
 	 * @since 5.2
 	 */
-	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments);
+	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr,
+			IASTInitializerClause[] arguments);
 
 	public IASTStandardFunctionDeclarator newFunctionDeclarator(IASTName name);
 
@@ -130,7 +132,8 @@ public interface INodeFactory {
 	 */
 	public IMSASTDeclspecList newMSDeclspecList();
 
-	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
+	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(
+			IASTCompoundStatement compoundStatement);
 
 	public IASTGotoStatement newGotoStatement(IASTName name);
 
@@ -142,7 +145,7 @@ public interface INodeFactory {
 	public IASTIdExpression newIdExpression(IASTName name);
 
 	public IASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
-	
+
 	/**
 	 * @since 6.3
 	 * @noreference This method is not intended to be referenced by clients.
@@ -150,21 +153,21 @@ public interface INodeFactory {
 	public IASTInactiveCompletionName newInactiveCompletionName(char[] name, IASTTranslationUnit ast);
 
 	public IASTInitializerList newInitializerList();
-	
+
 	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement);
-	
+
 	public IASTLiteralExpression newLiteralExpression(int kind, String rep);
-	
+
 	/**
 	 * Creates a "dummy" name using an empty char array.
 	 */
 	public IASTName newName();
-	
+
 	public IASTName newName(char[] name);
 
 	/** @since 5.11 */
 	public IASTName newName(String name);
-	
+
 	public IASTNullStatement newNullStatement();
 
 	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
@@ -174,17 +177,17 @@ public interface INodeFactory {
 	public IASTProblem newProblem(int id, char[] arg, boolean error);
 
 	public IASTProblemDeclaration newProblemDeclaration(IASTProblem problem);
-	
+
 	public IASTProblemExpression newProblemExpression(IASTProblem problem);
-	
+
 	public IASTProblemStatement newProblemStatement(IASTProblem problem);
-	
+
 	public IASTReturnStatement newReturnStatement(IASTExpression retValue);
-	
+
 	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier);
-	
+
 	public IASTSimpleDeclSpecifier newSimpleDeclSpecifier();
-	
+
 	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body);
 
 	/** @since 5.4 */
@@ -200,19 +203,20 @@ public interface INodeFactory {
 	 * @since 5.2
 	 */
 	public IASTTranslationUnit newTranslationUnit(IScanner scanner);
-	
+
 	public IASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name);
-	
+
 	public IASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator);
-	
+
 	public IASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId);
-	
-	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
+
+	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId,
+			IASTInitializer initializer);
 
 	public IASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand);
 
-	public IASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);   
-	
+	public IASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
+
 	/**
 	 * Adjusts the end-offset of a node to be the same as the end-offset of a given node.
 	 * <par> May throw an exception when either one of the nodes provided was not created by this factory.
@@ -248,14 +252,14 @@ public interface INodeFactory {
 	 * @since 5.2
 	 */
 	public void setOffsets(IASTNode node, int offset, int endOffset);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #newFunctionCallExpression(IASTExpression, IASTInitializerClause[])}
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #newEqualsInitializer(IASTInitializerClause)}.
 	 * @noreference This method is not intended to be referenced by clients.

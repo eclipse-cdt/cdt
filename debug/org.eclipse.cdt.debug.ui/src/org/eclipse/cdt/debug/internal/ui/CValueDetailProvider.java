@@ -28,26 +28,25 @@ public class CValueDetailProvider {
 	private static CValueDetailProvider fInstance = null;
 
 	public static CValueDetailProvider getDefault() {
-		if ( fInstance == null ) {
+		if (fInstance == null) {
 			fInstance = new CValueDetailProvider();
 		}
 		return fInstance;
 	}
 
-	public void computeDetail( final IValue value, final IValueDetailListener listener ) {
-		if ( value instanceof ICValue ) {
+	public void computeDetail(final IValue value, final IValueDetailListener listener) {
+		if (value instanceof ICValue) {
 			final ICStackFrame frame = CDebugUIUtils.getCurrentStackFrame();
-			if ( frame != null ) {
-				DebugPlugin.getDefault().asyncExec( new Runnable() {
-	
+			if (frame != null) {
+				DebugPlugin.getDefault().asyncExec(new Runnable() {
+
 					@Override
 					public void run() {
-						listener.detailComputed( value, ((ICValue)value).evaluateAsExpression( frame ) );
+						listener.detailComputed(value, ((ICValue) value).evaluateAsExpression(frame));
 					}
-				} );
-			}
-			else { // no valid stack frame, clear detail pane
-			    listener.detailComputed( value, "" ); //$NON-NLS-1$
+				});
+			} else { // no valid stack frame, clear detail pane
+				listener.detailComputed(value, ""); //$NON-NLS-1$
 			}
 		}
 	}

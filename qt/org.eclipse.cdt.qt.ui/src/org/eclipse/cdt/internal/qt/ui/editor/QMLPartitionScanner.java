@@ -35,12 +35,11 @@ public class QMLPartitionScanner extends RuleBasedPartitionScanner implements IQ
 	public QMLPartitionScanner() {
 		super();
 
-		IToken multiLineComment= new Token(QML_MULTI_LINE_COMMENT);
-		IToken singleLineComment= new Token(QML_SINGLE_LINE_COMMENT);
-		IToken string= new Token(QML_STRING);
+		IToken multiLineComment = new Token(QML_MULTI_LINE_COMMENT);
+		IToken singleLineComment = new Token(QML_SINGLE_LINE_COMMENT);
+		IToken string = new Token(QML_STRING);
 
-		setPredicateRules(new IPredicateRule[] {
-				new MultiLineRule("/*", "*/", multiLineComment, (char) 0, true), //$NON-NLS-1$ //$NON-NLS-2$
+		setPredicateRules(new IPredicateRule[] { new MultiLineRule("/*", "*/", multiLineComment, (char) 0, true), //$NON-NLS-1$ //$NON-NLS-2$
 				new EndOfLineRule("//", singleLineComment), //$NON-NLS-1$
 				new SingleLineRule("\"", "\"", string, '\\', true) //$NON-NLS-2$ //$NON-NLS-1$
 		});

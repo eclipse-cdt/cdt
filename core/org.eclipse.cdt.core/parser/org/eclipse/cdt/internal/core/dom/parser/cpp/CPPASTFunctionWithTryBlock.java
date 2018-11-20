@@ -27,14 +27,14 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * @see ICPPASTFunctionWithTryBlock
  */
 public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition implements ICPPASTFunctionWithTryBlock {
-    private ICPPASTCatchHandler[] catchHandlers;
-    private int catchHandlersPos= -1;
+	private ICPPASTCatchHandler[] catchHandlers;
+	private int catchHandlersPos = -1;
 
-    public CPPASTFunctionWithTryBlock() {
+	public CPPASTFunctionWithTryBlock() {
 	}
 
-	public CPPASTFunctionWithTryBlock(IASTDeclSpecifier declSpecifier,
-			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
+	public CPPASTFunctionWithTryBlock(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
+			IASTStatement bodyStatement) {
 		super(declSpecifier, declarator, bodyStatement);
 	}
 
@@ -66,28 +66,29 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 
 	@Override
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
-        assertNotFrozen();
-    	if (statement != null) {
-    		catchHandlers = ArrayUtil.appendAt(ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement);
-    		statement.setParent(this);
+		assertNotFrozen();
+		if (statement != null) {
+			catchHandlers = ArrayUtil.appendAt(ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement);
+			statement.setParent(this);
 			statement.setPropertyInParent(CATCH_HANDLER);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public ICPPASTCatchHandler[] getCatchHandlers() {
-        if (catchHandlers == null) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        catchHandlers = ArrayUtil.trimAt(ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos);
-        return catchHandlers;
-    }
+		if (catchHandlers == null)
+			return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
+		catchHandlers = ArrayUtil.trimAt(ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos);
+		return catchHandlers;
+	}
 
-    @Override
+	@Override
 	protected boolean acceptCatchHandlers(ASTVisitor action) {
-    	final ICPPASTCatchHandler[] handlers = getCatchHandlers();
-        for (int i= 0; i < handlers.length; i++) {
-            if (!handlers[i].accept(action))
-            	return false;
-        }
-        return true;
-    }
+		final ICPPASTCatchHandler[] handlers = getCatchHandlers();
+		for (int i = 0; i < handlers.length; i++) {
+			if (!handlers[i].accept(action))
+				return false;
+		}
+		return true;
+	}
 }

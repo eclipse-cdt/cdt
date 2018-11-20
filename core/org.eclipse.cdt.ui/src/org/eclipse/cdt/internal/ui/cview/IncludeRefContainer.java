@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -81,7 +80,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	 */
 	@Override
 	public String getLabel(Object o) {
-		return CViewMessages.IncludeRefContainer_Includes;  
+		return CViewMessages.IncludeRefContainer_Includes;
 	}
 
 	/* (non-Javadoc)
@@ -102,7 +101,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IncludeRefContainer) {
-			IncludeRefContainer other = (IncludeRefContainer)obj;
+			IncludeRefContainer other = (IncludeRefContainer) obj;
 			return fCProject.equals(other.getCProject());
 		}
 		return super.equals(obj);

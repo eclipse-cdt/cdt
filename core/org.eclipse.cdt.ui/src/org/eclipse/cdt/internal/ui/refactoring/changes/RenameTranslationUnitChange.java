@@ -40,7 +40,7 @@ public final class RenameTranslationUnitChange extends AbstractCElementRenameCha
 
 	@Override
 	protected IPath createNewPath() {
-		IPath path= getResourcePath();
+		IPath path = getResourcePath();
 		return path.removeLastSegments(1).append(getNewName());
 	}
 
@@ -51,15 +51,14 @@ public final class RenameTranslationUnitChange extends AbstractCElementRenameCha
 
 	@Override
 	protected void doRename(IProgressMonitor pm) throws CoreException {
-		ITranslationUnit tu= (ITranslationUnit) getModifiedElement();
+		ITranslationUnit tu = (ITranslationUnit) getModifiedElement();
 		if (tu != null)
 			tu.rename(getNewName(), false, pm);
 	}
 
 	@Override
 	public String getName() {
-		return NLS.bind(Messages.RenameTranslationUnitChange_name,
-				BasicElementLabels.getCElementName(getOldName()),
+		return NLS.bind(Messages.RenameTranslationUnitChange_name, BasicElementLabels.getCElementName(getOldName()),
 				BasicElementLabels.getCElementName(getNewName()));
 	}
 }

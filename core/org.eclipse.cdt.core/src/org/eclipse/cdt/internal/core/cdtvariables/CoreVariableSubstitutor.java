@@ -27,17 +27,14 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
  */
 public class CoreVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor {
 
-	
-	public CoreVariableSubstitutor(IVariableContextInfo contextInfo,
-			String inexistentMacroValue, String listDelimiter,
+	public CoreVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter,
 			Map<?, ?> delimiterMap, String incorrectlyReferencedMacroValue) {
-		super(contextInfo, inexistentMacroValue, listDelimiter, delimiterMap,
-				incorrectlyReferencedMacroValue);
+		super(contextInfo, inexistentMacroValue, listDelimiter, delimiterMap, incorrectlyReferencedMacroValue);
 		// TODO Auto-generated constructor stub
 	}
 
-	public CoreVariableSubstitutor(IVariableContextInfo contextInfo,
-			String inexistentMacroValue, String listDelimiter) {
+	public CoreVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,
+			String listDelimiter) {
 		super(contextInfo, inexistentMacroValue, listDelimiter);
 		// TODO Auto-generated constructor stub
 	}
@@ -45,11 +42,11 @@ public class CoreVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#setMacroContextInfo(int, java.lang.Object)
 	 */
-	public void setMacroContextInfo(int contextType, Object contextData) throws CdtVariableException{
-		setMacroContextInfo(getMacroContextInfo(contextType,contextData));
+	public void setMacroContextInfo(int contextType, Object contextData) throws CdtVariableException {
+		setMacroContextInfo(getMacroContextInfo(contextType, contextData));
 	}
-	
-	protected IVariableContextInfo getMacroContextInfo(int contextType, Object contextData){
+
+	protected IVariableContextInfo getMacroContextInfo(int contextType, Object contextData) {
 		return new DefaultVariableContextInfo(contextType, contextData);
 	}
 

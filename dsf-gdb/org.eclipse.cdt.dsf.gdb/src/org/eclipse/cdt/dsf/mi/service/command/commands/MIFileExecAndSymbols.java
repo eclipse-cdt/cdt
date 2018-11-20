@@ -27,15 +27,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * command with no arguments, gdb will produce error messages. Otherwise, no
  * output is produced, except a completion notification.
  */
-public class MIFileExecAndSymbols extends MICommand<MIInfo>
-{
-    /** @since 4.0 */
-    public MIFileExecAndSymbols(IMIContainerDMContext dmc) {
-    	this(dmc, null);
-    }
+public class MIFileExecAndSymbols extends MICommand<MIInfo> {
+	/** @since 4.0 */
+	public MIFileExecAndSymbols(IMIContainerDMContext dmc) {
+		this(dmc, null);
+	}
 
-    /** @since 4.0 */
-    public MIFileExecAndSymbols(IMIContainerDMContext dmc, String file) {
-        super(dmc, "-file-exec-and-symbols", null, file == null ? null : new String[] {file}); //$NON-NLS-1$
-    }
+	/** @since 4.0 */
+	public MIFileExecAndSymbols(IMIContainerDMContext dmc, String file) {
+		super(dmc, "-file-exec-and-symbols", null, file == null ? null : new String[] { file }); //$NON-NLS-1$
+	}
 }

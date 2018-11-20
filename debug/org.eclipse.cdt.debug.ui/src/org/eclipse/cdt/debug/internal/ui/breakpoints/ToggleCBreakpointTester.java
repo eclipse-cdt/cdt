@@ -41,7 +41,7 @@ public class ToggleCBreakpointTester extends PropertyTester {
 		if ("isCEditorSupportsCBreakpoint".equals(property) && (receiver instanceof CEditor)) { //$NON-NLS-1$
 			if (!CDebugUtils.isCustomToggleBreakpointFactory())
 				return true;
-			
+
 			CEditor editor = (CEditor) receiver;
 			ICElement cElement = editor.getInputCElement();
 			if (cElement != null) {
@@ -53,20 +53,20 @@ public class ToggleCBreakpointTester extends PropertyTester {
 					IResource resource = cElement.getResource();
 					if (resource == null || !resource.exists())
 						return true;
-					
+
 					if (CDebugUtils.isStandardCBreakpointFactory(cproject.getProject()))
 						return true;
-					
+
 				} else {
 					return true; // can't figure the associated project, enable it by default.
 				}
 			}
-			
-		// test for AsmEditor
+
+			// test for AsmEditor
 		} else if ("isAsmEditorSupportsCBreakpoint".equals(property) && (receiver instanceof AsmTextEditor)) { //$NON-NLS-1$
 			if (!CDebugUtils.isCustomToggleBreakpointFactory())
 				return true;
-			
+
 			AsmTextEditor editor = (AsmTextEditor) receiver;
 			ICElement cElement = editor.getInputCElement();
 			if (cElement != null) {
@@ -76,51 +76,49 @@ public class ToggleCBreakpointTester extends PropertyTester {
 				IResource resource = cElement.getResource();
 				if (resource == null || !resource.exists())
 					return true;
-				
+
 				ICProject cproject = cElement.getCProject();
 				if (cproject != null) {
 					if (CDebugUtils.isStandardCBreakpointFactory(cproject.getProject()))
 						return true;
-					
+
 				} else {
 					return true; // can't figure the associated project, enable it by default.
 				}
 			}
-			
-		// test for IVariableDeclaration, IFunctionDeclaration, IMethodDeclaration
+
+			// test for IVariableDeclaration, IFunctionDeclaration, IMethodDeclaration
 		} else if ("isCDeclarationSupportsCBreakpoint".equals(property) && (receiver instanceof List<?>)) { //$NON-NLS-1$
 			List<?> list = (List<?>) receiver;
 			if (list.size() == 1) {
 				Object element = list.get(0);
-				if ((element instanceof IDeclaration) && 
-					(element instanceof IVariableDeclaration || 
-					 element instanceof IFunctionDeclaration || 
-					 element instanceof IMethodDeclaration)) {
+				if ((element instanceof IDeclaration) && (element instanceof IVariableDeclaration
+						|| element instanceof IFunctionDeclaration || element instanceof IMethodDeclaration)) {
 
 					if (!CDebugUtils.isCustomToggleBreakpointFactory())
 						return true;
-					
+
 					IDeclaration cElement = (IDeclaration) element;
-					
+
 					// Handles the case for external file, check to see whether the file exist.
 					// This is to workaround the EditorUtility wrongly assign the project for
 					// external file.
 					IResource resource = cElement.getResource();
 					if (resource == null || !resource.exists())
 						return true;
-					
+
 					ICProject cproject = cElement.getCProject();
 					if (cproject != null) {
 						if (CDebugUtils.isStandardCBreakpointFactory(cproject.getProject()))
 							return true;
-						
+
 					} else {
 						return true; // can't figure the associated project, enable it by default.
 					}
 				}
 			}
 		}
-		
+
 		return false;
 	}
 }

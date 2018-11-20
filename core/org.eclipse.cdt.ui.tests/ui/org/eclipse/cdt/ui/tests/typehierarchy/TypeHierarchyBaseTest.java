@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
 import org.eclipse.core.resources.IFile;
@@ -56,11 +56,11 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject("__thTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCCProject("__thTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		closeAllEditors();
@@ -69,17 +69,17 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	protected IProject getProject() {
 		return fCProject.getProject();
 	}
-	
+
 	protected CEditor openEditor(IFile file) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = (CEditor) IDE.openEditor(page, file);
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
 		return editor;
-	}	
+	}
 
 	protected void openTypeHierarchy(CEditor editor) {
 		ISelectionProvider selectionProvider = editor.getSelectionProvider();
@@ -90,11 +90,11 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected void openTypeHierarchy(CEditor editor, int mode) {
 		TypeHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
 		runEventQueue(0);
-		THViewPart th= null;
+		THViewPart th = null;
 		IWorkbenchPage page = editor.getSite().getPage();
 		for (int i = 0; i < 400; i++) {
-			th= (THViewPart)page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
-			if (th != null) 
+			th = (THViewPart) page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
+			if (th != null)
 				break;
 			runEventQueue(10);
 		}
@@ -110,10 +110,10 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected TreeViewer getHierarchyViewer() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
-		THViewPart th= null;
-		for (int i= 0; i < 50; i++) {
-			th= (THViewPart)page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
-			if (th != null) 
+		THViewPart th = null;
+		for (int i = 0; i < 50; i++) {
+			th = (THViewPart) page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
+			if (th != null)
 				break;
 			runEventQueue(10);
 		}
@@ -123,12 +123,12 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 
 	protected Tree getQuickTypeHierarchyViewer(CEditor editor) {
 		runEventQueue(0);
-		THViewPart th= null;
-		for (int i= 0; i < 50; i++) {
-			Control focus= editor.getSite().getShell().getDisplay().getFocusControl();
+		THViewPart th = null;
+		for (int i = 0; i < 50; i++) {
+			Control focus = editor.getSite().getShell().getDisplay().getFocusControl();
 			if (focus instanceof Text) {
-				Composite parent= focus.getParent();
-				Control[] children= parent.getChildren();
+				Composite parent = focus.getParent();
+				Control[] children = parent.getChildren();
 				for (Control child : children) {
 					if (child instanceof Tree) {
 						return (Tree) child;
@@ -143,25 +143,25 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected TableViewer getMethodViewer() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
-		THViewPart th= null;
-		for (int i= 0; i < 50; i++) {
-			th= (THViewPart)page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
-			if (th != null) 
+		THViewPart th = null;
+		for (int i = 0; i < 50; i++) {
+			th = (THViewPart) page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
+			if (th != null)
 				break;
 			runEventQueue(10);
 		}
 		assertNotNull(th);
 		return th.getMemberViewer();
 	}
-		
+
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
-		TreeItem item= null;
+		TreeItem item = null;
 		try {
-			for (int i= 0; i < 200; i++) {
-				item= root.getItem(i1);
+			for (int i = 0; i < 200; i++) {
+				item = root.getItem(i1);
 				try {
 					if (item.getText().isEmpty()) {
-						TreeItem parent= item.getParentItem();
+						TreeItem parent = item.getParentItem();
 						if (!parent.getExpanded()) {
 							expandTreeItem(parent);
 						}
@@ -173,8 +173,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 				}
 				runEventQueue(10);
 			}
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			assertNull("Tree node " + label + " does not exist!", label);
 			return null;
 		}
@@ -182,10 +181,10 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		assertEquals(label, item.getText());
 		return item;
 	}
-	
+
 	protected void checkMethodTable(String[] items) {
-		Table table= getMethodViewer().getTable();
-		TableItem[] titems= table.getItems();
+		Table table = getMethodViewer().getTable();
+		TableItem[] titems = table.getItems();
 		for (int i = 0; i < Math.min(titems.length, items.length); i++) {
 			assertEquals("wrong item in method table in column " + i, items[i], titems[i].getText());
 		}

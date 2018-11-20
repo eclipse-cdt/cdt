@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
@@ -27,7 +27,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
  */
 public class ASTNodeFactoryFactory {
 
-	ASTNodeFactoryFactory() {}
+	ASTNodeFactoryFactory() {
+	}
 
 	public static ICNodeFactory getDefaultCNodeFactory() {
 		return CNodeFactory.getDefault();

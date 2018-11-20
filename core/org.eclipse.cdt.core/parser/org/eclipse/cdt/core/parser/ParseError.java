@@ -20,19 +20,18 @@ package org.eclipse.cdt.core.parser;
  */
 public class ParseError extends Error {
 
-	private static final long serialVersionUID= -3626877473345356953L;
-	
+	private static final long serialVersionUID = -3626877473345356953L;
+
 	private final ParseErrorKind errorKind;
 
-	public enum ParseErrorKind
-	{
+	public enum ParseErrorKind {
 		// the method called is not implemented in this particular implementation
 		METHOD_NOT_IMPLEMENTED,
-		
+
 		// offset specified is within a section of code #if'd out by the preprocessor 
 		// semantic context cannot be provided in this case
 		OFFSETDUPLE_UNREACHABLE,
-		
+
 		// offset range specified is not a valid identifier or qualified name
 		// semantic context cannot be provided in this case
 		OFFSET_RANGE_NOT_NAME,
@@ -50,13 +49,11 @@ public class ParseError extends Error {
 		TOO_MANY_TOKENS
 	}
 
-	public ParseErrorKind getErrorKind()
-	{
+	public ParseErrorKind getErrorKind() {
 		return errorKind;
 	}
-	
-	public ParseError( ParseErrorKind kind )
-	{
+
+	public ParseError(ParseErrorKind kind) {
 		errorKind = kind;
 	}
 

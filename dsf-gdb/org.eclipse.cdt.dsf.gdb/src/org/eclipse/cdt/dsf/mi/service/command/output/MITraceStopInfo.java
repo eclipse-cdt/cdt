@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * -trace-stop result.
  * 

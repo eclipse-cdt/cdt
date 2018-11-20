@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Nathan Ridge - initial implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.editor;
 
 import org.eclipse.core.resources.IFile;
@@ -32,8 +32,7 @@ import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
  */
 public class SourceHeaderPartnerFinderTest extends BaseUITestCase {
 
-
-	protected static IProgressMonitor NPM= new NullProgressMonitor();
+	protected static IProgressMonitor NPM = new NullProgressMonitor();
 
 	private ICProject fCProject;
 
@@ -44,10 +43,10 @@ public class SourceHeaderPartnerFinderTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", 
+		fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_FAST_INDEXER);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject != null) {
@@ -55,7 +54,7 @@ public class SourceHeaderPartnerFinderTest extends BaseUITestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	public void testFilesWithSameNameInSubdirectory_421544() throws Exception {
 		IProject project = fCProject.getProject();
 		IFile originFile = createFile(project, "code.cc", "");

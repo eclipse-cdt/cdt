@@ -38,23 +38,22 @@ import org.eclipse.core.runtime.IExecutableExtension;
  */
 public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, IExecutableExtension {
 
-	private static final String[] DIRECTIVE_KEYWORDS= {
-		".set", ".section", //$NON-NLS-1$ //$NON-NLS-2$
-		".global", ".globl", ".extern", ".type", ".file", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		".if", ".ifdef", ".ifndef", ".else", ".endif", ".include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		".macro", ".endm", //$NON-NLS-1$ //$NON-NLS-2$
-		".func", ".endfunc",  //$NON-NLS-1$//$NON-NLS-2$
-		".text", ".data", ".rodata", ".common", ".debug", ".ctor", ".dtor", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
-		".ascii", ".asciz", ".byte", ".long", ".size", ".align", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		".short", ".word", ".float", ".single", ".double" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String[] DIRECTIVE_KEYWORDS = { ".set", ".section", //$NON-NLS-1$ //$NON-NLS-2$
+			".global", ".globl", ".extern", ".type", ".file", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			".if", ".ifdef", ".ifndef", ".else", ".endif", ".include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			".macro", ".endm", //$NON-NLS-1$ //$NON-NLS-2$
+			".func", ".endfunc", //$NON-NLS-1$//$NON-NLS-2$
+			".text", ".data", ".rodata", ".common", ".debug", ".ctor", ".dtor", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			".ascii", ".asciz", ".byte", ".long", ".size", ".align", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			".short", ".word", ".float", ".single", ".double" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	};
 
-	private static final String DEFAULT_ID= "org.eclipse.cdt.core.assembly"; //$NON-NLS-1$
+	private static final String DEFAULT_ID = "org.eclipse.cdt.core.assembly"; //$NON-NLS-1$
 
-	public static final AssemblyLanguage DEFAULT_INSTANCE= new AssemblyLanguage();
+	public static final AssemblyLanguage DEFAULT_INSTANCE = new AssemblyLanguage();
 
-	private String fId= DEFAULT_ID;
-	private char[] fLineCommentCharacters= {};
+	private String fId = DEFAULT_ID;
+	private char[] fLineCommentCharacters = {};
 
 	/**
 	 * @return the default language instance
@@ -65,16 +64,16 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 
 	@Override
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
-		IContributedModelBuilder modelBuilder= null;
-		IContributedModelBuilder.Factory modelBuilderFactory= getAdapter(IContributedModelBuilder.Factory.class);
+		IContributedModelBuilder modelBuilder = null;
+		IContributedModelBuilder.Factory modelBuilderFactory = getAdapter(IContributedModelBuilder.Factory.class);
 		if (modelBuilderFactory != null) {
-			modelBuilder= modelBuilderFactory.create(tu);
+			modelBuilder = modelBuilderFactory.create(tu);
 		}
 		if (modelBuilder == null) {
 			// use default
-			AsmModelBuilder defaultModelBuilder= new AsmModelBuilder(tu);
+			AsmModelBuilder defaultModelBuilder = new AsmModelBuilder(tu);
 			defaultModelBuilder.setLineSeparatorCharacter(getLineSeparatorCharacter());
-			modelBuilder= defaultModelBuilder;
+			modelBuilder = defaultModelBuilder;
 		}
 		return modelBuilder;
 	}
@@ -89,9 +88,9 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 
 	@Deprecated
 	@Override
-	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
-			IParserLogService log, int offset) throws CoreException {
+	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader, IScannerInfo scanInfo,
+			org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index, IParserLogService log, int offset)
+			throws CoreException {
 		return null;
 	}
 
@@ -106,7 +105,7 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 	}
 
 	// IAsmLanguage
-	
+
 	@Override
 	public char[] getLineCommentCharacters() {
 		return fLineCommentCharacters;
@@ -124,17 +123,18 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 
 	@Override
 	public String[] getPreprocessorKeywords() {
-		Set<String> ppDirectives= ParserFactory.getKeywordSet(KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C);
-		String[] result= ppDirectives.toArray(new String[ppDirectives.size()]);
+		Set<String> ppDirectives = ParserFactory.getKeywordSet(KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C);
+		String[] result = ppDirectives.toArray(new String[ppDirectives.size()]);
 		return result;
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		if (data instanceof String) {
-			fLineCommentCharacters= ((String)data).toCharArray();
+			fLineCommentCharacters = ((String) data).toCharArray();
 		}
-		fId= CCorePlugin.PLUGIN_ID + '.' + config.getAttribute("id"); //$NON-NLS-1$
+		fId = CCorePlugin.PLUGIN_ID + '.' + config.getAttribute("id"); //$NON-NLS-1$
 	}
 
 	@Override

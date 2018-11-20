@@ -55,15 +55,16 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
-			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_0") + 1, "stepInitializeFinalLaunchSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$
+			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_0") + 1, //$NON-NLS-1$
+					"stepInitializeFinalLaunchSequence_7_2"); //$NON-NLS-1$
 			orderList.add(orderList.indexOf("stepSetBreakpointPending") + 1, "stepDetachOnFork"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
 		return null;
 	}
-	
+
 	/** 
 	 * Initialize the members of the FinalLaunchSequence_7_2 class.
 	 * This step is mandatory for the rest of the sequence to complete.
@@ -73,27 +74,28 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
 		fGdbControl = tracker.getService(IGDBControl.class);
 		tracker.dispose();
-		
-        if (fGdbControl == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
+
+		if (fGdbControl == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Cannot obtain service", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
-		
+
 		rm.done();
 	}
-	
+
 	/**
 	 * Tell GDB whether to automatically attach to a forked process or not.
 	 */
 	@Execute
 	public void stepDetachOnFork(final RequestMonitor rm) {
-		boolean debugOnFork = CDebugUtils.getAttribute(getAttributes(), 
-				                                       IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
-				                                       IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
+		boolean debugOnFork = CDebugUtils.getAttribute(getAttributes(),
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
 
 		fGdbControl.queueCommand(
-				fGdbControl.getCommandFactory().createMIGDBSetDetachOnFork(fGdbControl.getContext(), !debugOnFork), 
+				fGdbControl.getCommandFactory().createMIGDBSetDetachOnFork(fGdbControl.getContext(), !debugOnFork),
 				new ImmediateDataRequestMonitor<MIInfo>(rm));
 	}
 }

@@ -31,17 +31,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
  */
 //DsfMIVarShowAttributesInfo
 
-public class MIVarShowAttributes extends MICommand<MIVarShowAttributesInfo> 
-{
+public class MIVarShowAttributes extends MICommand<MIVarShowAttributesInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarShowAttributes(ICommandControlDMContext ctx, String name) {
-		super(ctx, "-var-show-attributes", new String[]{name}); //$NON-NLS-1$
+		super(ctx, "-var-show-attributes", new String[] { name }); //$NON-NLS-1$
 	}
-	
-    @Override
-    public MIVarShowAttributesInfo getResult(MIOutput out) {
-        return new MIVarShowAttributesInfo(out);
-    }
+
+	@Override
+	public MIVarShowAttributesInfo getResult(MIOutput out) {
+		return new MIVarShowAttributesInfo(out);
+	}
 }

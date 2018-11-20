@@ -21,15 +21,15 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 
 public class CoreMacrosSupplier extends BuildCdtVariablesSupplierBase {
 	private ICConfigurationDescription fCfgDes;
-	private ICdtVariableManager fMngr; 
-	CoreMacrosSupplier(ICConfigurationDescription cfgDes){
+	private ICdtVariableManager fMngr;
+
+	CoreMacrosSupplier(ICConfigurationDescription cfgDes) {
 		fCfgDes = cfgDes;
 		fMngr = CCorePlugin.getDefault().getCdtVariableManager();
 	}
 
 	@Override
-	public IBuildMacro getMacro(String macroName, int contextType,
-			Object contextData) {
+	public IBuildMacro getMacro(String macroName, int contextType, Object contextData) {
 		return BuildMacroProvider.wrap(getVariable(macroName, null));
 	}
 

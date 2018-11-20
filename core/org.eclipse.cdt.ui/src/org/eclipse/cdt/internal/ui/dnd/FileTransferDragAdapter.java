@@ -102,14 +102,13 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		@Override
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
-				monitor.beginTask(CUIMessages.FileTransferDragAdapter_refreshing, roots.size()); 
-				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, CUIMessages.FileTransferDragAdapter_problem, null); 
+				monitor.beginTask(CUIMessages.FileTransferDragAdapter_refreshing, roots.size());
+				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK,
+						CUIMessages.FileTransferDragAdapter_problem, null);
 
 				for (IResource resource : roots) {
 					try {
-						resource.refreshLocal(
-							IResource.DEPTH_ONE,
-							new SubProgressMonitor(monitor, 1));
+						resource.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
 					} catch (CoreException e) {
 						status.add(e.getStatus());
 					}
@@ -154,28 +153,25 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		if (!resources.isEmpty()) {
 			int count = resources.size();
 			List<String> locations = new ArrayList<String>(count);
-			
+
 			for (IResource resource : resources) {
 				IPath location = resource.getLocation();
-				
+
 				if (location != null) {
 					locations.add(location.toOSString());
 				}
 			}
-			
+
 			String[] result = new String[locations.size()];
-			
+
 			locations.toArray(result);
-			
+
 			return result;
 		}
 		return null;
 	}
 
-	private static void runOperation(
-		IRunnableWithProgress operation,
-		boolean fork,
-		boolean cancelable) {
+	private static void runOperation(IRunnableWithProgress operation, boolean fork, boolean cancelable) {
 		try {
 			IWorkbench workbench = CUIPlugin.getDefault().getWorkbench();
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
@@ -185,8 +181,8 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled by user.
 		} catch (InvocationTargetException e) {
-			String message = CUIMessages.FileTransferDragAdapter_problem; 
-			String title = CUIMessages.FileTransferDragAdapter_problemTitle; 
+			String message = CUIMessages.FileTransferDragAdapter_problem;
+			String title = CUIMessages.FileTransferDragAdapter_problemTitle;
 
 			ExceptionHandler.handle(e, title, message);
 		}

@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,12 +53,7 @@ class SpawnerInputStream extends InputStream {
 		}
 		if (buf == null) {
 			throw new NullPointerException();
-		} else if (
-			(off < 0)
-				|| (off > buf.length)
-				|| (len < 0)
-				|| ((off + len) > buf.length)
-				|| ((off + len) < 0)) {
+		} else if ((off < 0) || (off > buf.length) || (len < 0) || ((off + len) > buf.length) || ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return 0;
@@ -97,8 +91,7 @@ class SpawnerInputStream extends InputStream {
 		}
 		try {
 			return available0(fd);
-		}
-		catch (UnsatisfiedLinkError e) {
+		} catch (UnsatisfiedLinkError e) {
 			// for those platforms that do not implement available0
 			return super.available();
 		}
@@ -108,14 +101,15 @@ class SpawnerInputStream extends InputStream {
 	protected void finalize() throws IOException {
 		close();
 	}
-	
+
 	private native int read0(int fileDesc, byte[] buf, int len) throws IOException;
+
 	private native int close0(int fileDesc) throws IOException;
+
 	private native int available0(int fileDesc) throws IOException;
 
 	static {
 		System.loadLibrary("spawner"); //$NON-NLS-1$
 	}
-
 
 }

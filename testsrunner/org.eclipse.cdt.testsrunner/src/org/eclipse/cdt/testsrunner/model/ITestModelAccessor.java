@@ -28,14 +28,14 @@ public interface ITestModelAccessor {
 	 * @return whether the item is running now
 	 */
 	public boolean isCurrentlyRunning(ITestItem item);
-	
+
 	/**
 	 * Provides access to the root test suite.
 	 *
 	 * @return root test suite
 	 */
 	public ITestSuite getRootSuite();
-	
+
 	/**
 	 * Adds the given listener to this registered listeners collection.
 	 * Has no effect if an identical listener is already registered.
@@ -51,5 +51,5 @@ public interface ITestModelAccessor {
 	 * @param listener the listener to remove
 	 */
 	public void removeChangesListener(ITestingSessionListener listener);
-	
+
 }

@@ -119,8 +119,7 @@ public class QmlASTNodeHandler implements InvocationHandler {
 			}
 		}
 		return (IQmlASTNode) Proxy.newProxyInstance(QmlASTNodeHandler.class.getClassLoader(),
-				new Class<?>[] { astClass },
-				new QmlASTNodeHandler(node));
+				new Class<?>[] { astClass }, new QmlASTNodeHandler(node));
 	}
 
 	private final QMLAnalyzer analyzer;
@@ -140,13 +139,11 @@ public class QmlASTNodeHandler implements InvocationHandler {
 			// Invoke the default implementation of the method if possible
 			if (method.isDefault()) {
 				final Class<?> declaringClass = method.getDeclaringClass();
-				Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class,
-						int.class);
+				Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class
+						.getDeclaredConstructor(Class.class, int.class);
 				constructor.setAccessible(true);
 				methodResults.put(mName, constructor.newInstance(declaringClass, MethodHandles.Lookup.PRIVATE)
-						.unreflectSpecial(method, declaringClass)
-						.bindTo(proxy)
-						.invokeWithArguments(args));
+						.unreflectSpecial(method, declaringClass).bindTo(proxy).invokeWithArguments(args));
 			} else {
 				// Use the return type of the method as well as its contents of the node to get the Object to return
 				String pName = getPropertyName(mName);

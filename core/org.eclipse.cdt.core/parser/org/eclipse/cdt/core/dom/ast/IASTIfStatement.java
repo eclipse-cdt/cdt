@@ -32,14 +32,16 @@ public interface IASTIfStatement extends IASTStatement {
 	 * {@code IASTIfStatement} and its nested {@code IASTStatement}
 	 * (then).
 	 */
-	public static final ASTNodeProperty THEN = new ASTNodeProperty("IASTIfStatement.THEN - IASTStatement (then) for IASTIfStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty THEN = new ASTNodeProperty(
+			"IASTIfStatement.THEN - IASTStatement (then) for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
 	 * {@code ELSE} represents the relationship between an
 	 * {@code IASTIfStatement} and its nested {@code IASTStatement}
 	 * (else).
 	 */
-	public static final ASTNodeProperty ELSE = new ASTNodeProperty("IASTIfStatement.ELSE - IASTStatement (else) for IASTIfStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty ELSE = new ASTNodeProperty(
+			"IASTIfStatement.ELSE - IASTStatement (else) for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
 	 * Returns the condition in the if statement.

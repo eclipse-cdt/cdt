@@ -21,19 +21,19 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPVariable extends IVariable, ICPPBinding {
-    /**
-     * Checks whether this variable has the mutable storage class specifier.
-     */
-    public boolean isMutable();
+	/**
+	 * Checks whether this variable has the mutable storage class specifier.
+	 */
+	public boolean isMutable();
 
-    /**
-     * Checks whether this variable is declared as constexpr.
-     * @since 6.2
-     */
+	/**
+	 * Checks whether this variable is declared as constexpr.
+	 * @since 6.2
+	 */
 	public boolean isConstexpr();
 
-    /**
-     * Checks whether this variable is declared as extern "C".
-     */
-    public boolean isExternC();
+	/**
+	 * Checks whether this variable is declared as extern "C".
+	 */
+	public boolean isExternC();
 }

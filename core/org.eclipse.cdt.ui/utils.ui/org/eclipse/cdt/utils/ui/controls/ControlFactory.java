@@ -58,9 +58,9 @@ public class ControlFactory {
 
 	public static Control setParentColors(Control control) {
 		Composite parent = control.getParent();
-	    control.setBackground(parent.getBackground());
-	    control.setForeground(parent.getForeground());
-	    return control;
+		control.setBackground(parent.getBackground());
+		control.setForeground(parent.getForeground());
+		return control;
 	}
 
 	/**
@@ -107,57 +107,52 @@ public class ControlFactory {
 		return separator;
 	}
 
-    /**
-     * Creates a composite with a highlighted Note entry and a message text.
-     * This is designed to take up the full width of the page.
-     *
-     * @param font the font to use
-     * @param composite the parent composite
-     * @param title the title of the note
-     * @param message the message for the note
-     * @return the composite for the note
-     */
-    public static Composite createNoteComposite(Font font, Composite composite,
-            String title, String message) {
-        Composite messageComposite = new Composite(composite, SWT.NONE);
-        GridLayout messageLayout = new GridLayout();
-        messageLayout.numColumns = 2;
-        messageLayout.marginWidth = 0;
-        messageLayout.marginHeight = 0;
-        messageComposite.setLayout(messageLayout);
-        messageComposite.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_FILL));
-        messageComposite.setFont(font);
+	/**
+	 * Creates a composite with a highlighted Note entry and a message text.
+	 * This is designed to take up the full width of the page.
+	 *
+	 * @param font the font to use
+	 * @param composite the parent composite
+	 * @param title the title of the note
+	 * @param message the message for the note
+	 * @return the composite for the note
+	 */
+	public static Composite createNoteComposite(Font font, Composite composite, String title, String message) {
+		Composite messageComposite = new Composite(composite, SWT.NONE);
+		GridLayout messageLayout = new GridLayout();
+		messageLayout.numColumns = 2;
+		messageLayout.marginWidth = 0;
+		messageLayout.marginHeight = 0;
+		messageComposite.setLayout(messageLayout);
+		messageComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		messageComposite.setFont(font);
 
-        final Label noteLabel = new Label(messageComposite, SWT.BOLD);
-        noteLabel.setText(title);
-        noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DEFAULT_FONT));
-        noteLabel
-                .setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		final Label noteLabel = new Label(messageComposite, SWT.BOLD);
+		noteLabel.setText(title);
+		noteLabel.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+		noteLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-        final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
-            @Override
+		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-                if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
-                    noteLabel.setFont(JFaceResources
-                            .getFont(JFaceResources.BANNER_FONT));
-                }
-            }
-        };
-        JFaceResources.getFontRegistry().addListener(fontListener);
-        noteLabel.addDisposeListener(new DisposeListener() {
-            @Override
+				if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+					noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
+				}
+			}
+		};
+		JFaceResources.getFontRegistry().addListener(fontListener);
+		noteLabel.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
-                JFaceResources.getFontRegistry().removeListener(fontListener);
-            }
-        });
+				JFaceResources.getFontRegistry().removeListener(fontListener);
+			}
+		});
 
-        Label messageLabel = new Label(messageComposite, SWT.WRAP);
-        messageLabel.setText(message);
-        messageLabel.setFont(font);
-        return messageComposite;
-    }
+		Label messageLabel = new Label(messageComposite, SWT.WRAP);
+		messageLabel.setText(message);
+		messageLabel.setFont(font);
+		return messageComposite;
+	}
 
 	/**
 	 * Creates a separator.
@@ -190,14 +185,14 @@ public class ControlFactory {
 	 * @param parent The parent composite
 	 */
 	public static Control createEmptySpace(Composite parent, int span) {
-		Label label= new Label(parent, SWT.LEFT);
-		GridData gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.grabExcessHorizontalSpace= false;
-		gd.horizontalSpan= span;
-		gd.horizontalIndent= 0;
-		gd.widthHint= 0;
-		gd.heightHint= 0;
+		Label label = new Label(parent, SWT.LEFT);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
+		gd.grabExcessHorizontalSpace = false;
+		gd.horizontalSpan = span;
+		gd.horizontalIndent = 0;
+		gd.widthHint = 0;
+		gd.heightHint = 0;
 		label.setLayoutData(gd);
 		return label;
 	}
@@ -212,8 +207,7 @@ public class ControlFactory {
 	 * @param style - control style
 	 * @return the new label
 	 */
-	public static Label createLabel(Composite parent, String text, int widthHint, int heightHint,
-			int style) {
+	public static Label createLabel(Composite parent, String text, int widthHint, int heightHint, int style) {
 		Label label = new Label(parent, style);
 		label.setFont(parent.getFont());
 		label.setText(text);
@@ -237,10 +231,10 @@ public class ControlFactory {
 		return createLabel(parent, text, SWT.DEFAULT, SWT.DEFAULT, SWT.LEFT);
 	}
 
-    /**
+	/**
 	 * Utility method that creates a label instance
 	 * and sets the default layout data and sets the
-     * font attributes to be SWT.BOLD.
+	 * font attributes to be SWT.BOLD.
 	 *
 	 * @param parent  the parent for the new label
 	 * @param text  the text for the new label
@@ -248,10 +242,10 @@ public class ControlFactory {
 	 */
 	public static Label createBoldLabel(Composite parent, String text) {
 		Label label = createLabel(parent, text);
-        FontData[] fd = label.getFont().getFontData();
-        fd[0].setStyle(SWT.BOLD);
-        Font font = new Font(Display.getCurrent(), fd[0]);
-        label.setFont(font);
+		FontData[] fd = label.getFont().getFontData();
+		fd[0].setStyle(SWT.BOLD);
+		Font font = new Font(Display.getCurrent(), fd[0]);
+		label.setFont(font);
 		return label;
 	}
 
@@ -283,8 +277,8 @@ public class ControlFactory {
 		button.setText(label);
 		GridData data = new GridData();
 		button.setLayoutData(data);
-	    button.setBackground(group.getBackground());
-	    button.setForeground(group.getForeground());
+		button.setBackground(group.getBackground());
+		button.setForeground(group.getForeground());
 		return button;
 	}
 
@@ -302,8 +296,8 @@ public class ControlFactory {
 		button.setText(label);
 		GridData data = new GridData();
 		button.setLayoutData(data);
-	    button.setBackground(group.getBackground());
-	    button.setForeground(group.getForeground());
+		button.setBackground(group.getBackground());
+		button.setForeground(group.getForeground());
 		return button;
 	}
 
@@ -316,8 +310,7 @@ public class ControlFactory {
 	 * @param value  the string to identify radiobutton
 	 * @return the new checkbox
 	 */
-	public static Button createRadioButton(Composite group, String label, String value,
-			SelectionListener listener) {
+	public static Button createRadioButton(Composite group, String label, String value, SelectionListener listener) {
 		Button button = new Button(group, SWT.RADIO | SWT.LEFT);
 		button.setFont(group.getFont());
 		button.setText(label);
@@ -343,7 +336,7 @@ public class ControlFactory {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
 		button.setText(label);
-//		button.addSelectionListener(this);
+		//		button.addSelectionListener(this);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		button.setLayoutData(data);
@@ -380,7 +373,7 @@ public class ControlFactory {
 	 * @param nColumns - number of layout columns
 	 * @return the new group box
 	 */
-    public static Group createGroup(Composite parent, String label, int nColumns) {
+	public static Group createGroup(Composite parent, String label, int nColumns) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setFont(parent.getFont());
 		group.setText(label);
@@ -389,8 +382,8 @@ public class ControlFactory {
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        return group;
-    }
+		return group;
+	}
 
 	/**
 	 * Create a List box
@@ -400,7 +393,7 @@ public class ControlFactory {
 	 * @param selData - the item that shall be selected
 	 * @return the new list box
 	 */
-    public static List createList(Composite parent, String strdata, String selData) {
+	public static List createList(Composite parent, String strdata, String selData) {
 		List list = new List(parent, SWT.SINGLE);
 		list.setFont(parent.getFont());
 		GridData data = new GridData();
@@ -408,27 +401,26 @@ public class ControlFactory {
 		StringTokenizer st = new StringTokenizer(strdata, ","); //$NON-NLS-1$
 		while (st.hasMoreTokens())
 			list.add(st.nextToken());
-	    if (selData == null) {
-	    	if (list.getItemCount() > 0)
+		if (selData == null) {
+			if (list.getItemCount() > 0)
 				list.select(0);
-	    } else {
+		} else {
 			selectList(list, selData);
-	    }
+		}
 		return list;
 	}
 
-	public static void selectList(List list, String selData)	{
+	public static void selectList(List list, String selData) {
 		int n_sel = list.indexOf(selData);
 		if (0 > n_sel)
 			n_sel = 0;
-	    list.select(n_sel);
+		list.select(n_sel);
 	}
 
 	/**
 	 *	Create this group's list viewer.
 	 */
-	public static TableViewer createTableViewer(Composite parent, String[] opt_list,
-	    int width, int height, int style) {
+	public static TableViewer createTableViewer(Composite parent, String[] opt_list, int width, int height, int style) {
 		TableViewer listViewer = new TableViewer(parent, SWT.BORDER | style);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.widthHint = width;
@@ -436,37 +428,37 @@ public class ControlFactory {
 		listViewer.getTable().setLayoutData(data);
 		if (null != opt_list)
 			listViewer.add(opt_list);
-        return listViewer;
+		return listViewer;
 	}
 
 	/**
 	 *	Create this group's list viewer.
 	 */
-	public static TableViewer createTableViewer(Composite parent,
-	    int width, int height, int style, String[] columns, int[] colWidths) {
+	public static TableViewer createTableViewer(Composite parent, int width, int height, int style, String[] columns,
+			int[] colWidths) {
 		TableViewer listViewer = createTableViewer(parent, null, width, height, style);
 
-		Table table= listViewer.getTable();
+		Table table = listViewer.getTable();
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		TableLayout tableLayout= new TableLayout();
-/*
-		TableColumn column= table.getColumn(0);
-		column.setText(columns[0]);
-		tableLayout.addColumnData(new ColumnWeightData(colWidths[0], false));
-*/
+		TableLayout tableLayout = new TableLayout();
+		/*
+				TableColumn column= table.getColumn(0);
+				column.setText(columns[0]);
+				tableLayout.addColumnData(new ColumnWeightData(colWidths[0], false));
+		*/
 		TableColumn column;
 		for (int i = 0; i < columns.length; ++i) {
-			column= new TableColumn(table, SWT.NULL);
+			column = new TableColumn(table, SWT.NULL);
 			column.setText(columns[i]);
 			tableLayout.addColumnData(new ColumnWeightData(colWidths[i], true));
 		}
 
 		table.setLayout(tableLayout);
 
-        return listViewer;
+		return listViewer;
 	}
 
 	public static void deactivateCellEditor(TableViewer viewer) {
@@ -474,7 +466,7 @@ public class ControlFactory {
 			return;
 		CellEditor[] es = viewer.getCellEditors();
 		TableItem[] items = viewer.getTable().getSelection();
-		if (items.length >= 0)  {
+		if (items.length >= 0) {
 			for (int i = 0; i < es.length; ++i) {
 				CellEditor e = es[i];
 				if (e.isActivated()) {
@@ -482,7 +474,7 @@ public class ControlFactory {
 						Object[] properties = viewer.getColumnProperties();
 						Object value = e.getValue();
 						viewer.cancelEditing();
-						viewer.getCellModifier().modify(items[0],(String)properties[i], value);
+						viewer.getCellModifier().modify(items[0], (String) properties[i], value);
 					} else
 						viewer.cancelEditing();
 					break;
@@ -494,49 +486,48 @@ public class ControlFactory {
 	/**
 	 *	Create this group's list viewer.
 	 */
-	public static CheckboxTableViewer createListViewer(Composite parent, String[] opt_list,
-	    int width, int height, int style) {
+	public static CheckboxTableViewer createListViewer(Composite parent, String[] opt_list, int width, int height,
+			int style) {
 
-	    Table table = new Table(parent, SWT.BORDER | SWT.CHECK);
+		Table table = new Table(parent, SWT.BORDER | SWT.CHECK);
 		table.setFont(parent.getFont());
-	    CheckboxTableViewer listViewer = new CheckboxTableViewer(table);
+		CheckboxTableViewer listViewer = new CheckboxTableViewer(table);
 		GridData data = new GridData(style);
 		data.widthHint = width;
 		data.heightHint = height;
 		listViewer.getTable().setLayoutData(data);
 		if (null != opt_list)
 			listViewer.add(opt_list);
-//		listViewer.setLabelProvider(listLabelProvider);
-//		listViewer.addCheckStateListener(this);
-        return listViewer;
+		//		listViewer.setLabelProvider(listLabelProvider);
+		//		listViewer.addCheckStateListener(this);
+		return listViewer;
 	}
 
-	public static CheckboxTableViewer createListViewer(Composite parent,
-	    int width, int height, int style, String[] columns, int[] colWidths) {
-	    CheckboxTableViewer listViewer = createListViewer(parent, null,
-	    	width, height, style);
+	public static CheckboxTableViewer createListViewer(Composite parent, int width, int height, int style,
+			String[] columns, int[] colWidths) {
+		CheckboxTableViewer listViewer = createListViewer(parent, null, width, height, style);
 
-		Table table= listViewer.getTable();
+		Table table = listViewer.getTable();
 		table.setFont(parent.getFont());
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		TableLayout tableLayout= new TableLayout();
+		TableLayout tableLayout = new TableLayout();
 		table.setLayout(tableLayout);
 
-		TableColumn column= table.getColumn(0);
+		TableColumn column = table.getColumn(0);
 		column.setText(columns[0]);
 		tableLayout.addColumnData(new ColumnWeightData(colWidths[0], false));
 
 		for (int i = 1; i < columns.length; ++i) {
-			column= new TableColumn(table, SWT.NULL);
+			column = new TableColumn(table, SWT.NULL);
 			column.setText(columns[i]);
 			tableLayout.addColumnData(new ColumnWeightData(colWidths[i], false));
 
 		}
 
-        return listViewer;
+		return listViewer;
 	}
 
 	/**
@@ -548,8 +539,7 @@ public class ControlFactory {
 	 * @return the new combo
 	 */
 	public static CCombo createSelectCCombo(Composite parent, String strdata, String selData) {
-		return createSelectCCombo(parent, strdata, selData,
-			SWT.READ_ONLY | SWT.BORDER);
+		return createSelectCCombo(parent, strdata, selData, SWT.READ_ONLY | SWT.BORDER);
 	}
 
 	public static CCombo createSelectCCombo(Composite parent, String strdata, String selData, int style) {
@@ -560,12 +550,12 @@ public class ControlFactory {
 		StringTokenizer st = new StringTokenizer(strdata, ","); //$NON-NLS-1$
 		while (st.hasMoreTokens())
 			combo.add(st.nextToken());
-	    if (selData == null || selData.length() == 0) {
-	    	if (combo.getItemCount() > 0)
+		if (selData == null || selData.length() == 0) {
+			if (combo.getItemCount() > 0)
 				combo.select(0);
-	    } else {
+		} else {
 			selectCCombo(combo, selData);
-	    }
+		}
 		return combo;
 	}
 
@@ -581,8 +571,7 @@ public class ControlFactory {
 		return createSelectCCombo(parent, strdata, selData, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 	}
 
-	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData,
-			int style) {
+	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData, int style) {
 		CCombo combo = new CCombo(parent, style);
 		combo.setFont(parent.getFont());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -590,18 +579,18 @@ public class ControlFactory {
 		for (int i = 0; i < strdata.length; ++i) {
 			combo.add(strdata[i]);
 		}
-	    if (selData == null)
+		if (selData == null)
 			combo.select(0);
-	    else
+		else
 			selectCCombo(combo, selData);
 		return combo;
 	}
 
-	public static void selectCCombo(CCombo combo, String selData)	{
+	public static void selectCCombo(CCombo combo, String selData) {
 		int n_sel = combo.indexOf(selData);
 		if (0 > n_sel)
 			n_sel = 0;
-	    combo.select(n_sel);
+		combo.select(n_sel);
 	}
 
 	/**
@@ -613,8 +602,7 @@ public class ControlFactory {
 	 * @return the new combo
 	 */
 	public static Combo createSelectCombo(Composite parent, String strdata, String selData) {
-		return createSelectCombo(parent, strdata, selData,
-			SWT.READ_ONLY | SWT.BORDER);
+		return createSelectCombo(parent, strdata, selData, SWT.READ_ONLY | SWT.BORDER);
 	}
 
 	public static Combo createSelectCombo(Composite parent, String strdata, String selData, int style) {
@@ -625,12 +613,12 @@ public class ControlFactory {
 		StringTokenizer st = new StringTokenizer(strdata, ","); //$NON-NLS-1$
 		while (st.hasMoreTokens())
 			combo.add(st.nextToken());
-	    if (selData == null || selData.length() == 0) {
-	    	if (combo.getItemCount() > 0)
+		if (selData == null || selData.length() == 0) {
+			if (combo.getItemCount() > 0)
 				combo.select(0);
-	    } else {
+		} else {
 			selectCombo(combo, selData);
-	    }
+		}
 		return combo;
 	}
 
@@ -654,14 +642,14 @@ public class ControlFactory {
 		for (int i = 0; i < strdata.length; ++i) {
 			combo.add(strdata[i]);
 		}
-	    if (selData == null)
+		if (selData == null)
 			combo.select(0);
-	    else
+		else
 			selectCombo(combo, selData);
 		return combo;
 	}
 
-	public static void selectCombo(Combo combo, String selData)	{
+	public static void selectCombo(Combo combo, String selData) {
 		int n_sel = combo.indexOf(selData);
 		if (0 > n_sel) {
 			if ((combo.getStyle() & SWT.READ_ONLY) == 0) {
@@ -670,42 +658,42 @@ public class ControlFactory {
 			}
 			n_sel = 0;
 		}
-	    combo.select(n_sel);
+		combo.select(n_sel);
 	}
 
-    /**
+	/**
 	 * Create a dialog shell, child to the top level workbench shell.
 	 *
 	 * @return The new Shell usable for a dialog.
 	 */
-    public static Shell createDialogShell() {
-        Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        return new Shell(parent, SWT.DIALOG_TRIM);
-    }
+	public static Shell createDialogShell() {
+		Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		return new Shell(parent, SWT.DIALOG_TRIM);
+	}
 
 	public static Composite insertSpace(Composite parent, int nSpan, int height) {
 		Composite space = ControlFactory.createCompositeSeparator(parent, parent.getBackground(),
-			 (SWT.DEFAULT != height ? height : 5));
+				(SWT.DEFAULT != height ? height : 5));
 		((GridData) space.getLayoutData()).horizontalSpan = nSpan;
 		return space;
 	}
 
-    public static MessageBox createDialog(String title, String message, int style) {
-        MessageBox box = new MessageBox(createDialogShell(), style | SWT.APPLICATION_MODAL);
-        box.setText(title);
-        box.setMessage(message);
-        return box;
-    }
+	public static MessageBox createDialog(String title, String message, int style) {
+		MessageBox box = new MessageBox(createDialogShell(), style | SWT.APPLICATION_MODAL);
+		box.setText(title);
+		box.setMessage(message);
+		return box;
+	}
 
-    public static MessageBox createYesNoDialog(String title, String message) {
-        return createDialog(title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
-    }
+	public static MessageBox createYesNoDialog(String title, String message) {
+		return createDialog(title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
+	}
 
-    public static MessageBox createOkDialog(String title, String message) {
-        return createDialog(title, message, SWT.OK | SWT.ICON_INFORMATION);
-    }
+	public static MessageBox createOkDialog(String title, String message) {
+		return createDialog(title, message, SWT.OK | SWT.ICON_INFORMATION);
+	}
 
-    public static MessageBox createOkCancelDialog(String title, String message) {
-        return createDialog(title, message, SWT.OK | SWT.CANCEL | SWT.ICON_INFORMATION);
-    }
+	public static MessageBox createOkCancelDialog(String title, String message) {
+		return createDialog(title, message, SWT.OK | SWT.CANCEL | SWT.ICON_INFORMATION);
+	}
 }

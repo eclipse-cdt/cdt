@@ -26,7 +26,6 @@ public class TestLocation implements ITestLocation {
 	/** Stores the line number on which testing object is located. */
 	private int line;
 
-	
 	public TestLocation(String file, int line) {
 		this.file = file;
 		this.line = line;

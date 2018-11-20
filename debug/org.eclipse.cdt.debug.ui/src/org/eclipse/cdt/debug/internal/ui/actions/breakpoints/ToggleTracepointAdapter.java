@@ -33,74 +33,74 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ToggleTracepointAdapter extends AbstractToggleBreakpointAdapter {
 
 	@Override
-	protected ICLineBreakpoint findLineBreakpoint( String sourceHandle, IResource resource, int lineNumber ) throws CoreException {
-		return CDIDebugModel.lineBreakpointExists( sourceHandle, resource, lineNumber );
+	protected ICLineBreakpoint findLineBreakpoint(String sourceHandle, IResource resource, int lineNumber)
+			throws CoreException {
+		return CDIDebugModel.lineBreakpointExists(sourceHandle, resource, lineNumber);
 	}
 
-    @Override
-    protected void createLineBreakpoint(boolean interactive, IWorkbenchPart part, String sourceHandle, 
-        IResource resource, int lineNumber) throws CoreException 
-    {
-        if (interactive) {
-            ICLineBreakpoint lineBp = CDIDebugModel.createBlankLineTracepoint();
-            Map<String, Object> attributes = new HashMap<String, Object>();
-            CDIDebugModel.setLineBreakpointAttributes(
-                attributes, sourceHandle, getBreakpointType(), lineNumber, true, 0, "" ); //$NON-NLS-1$
-            openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
-        } else {
-            CDIDebugModel.createLineTracepoint( sourceHandle, resource, getBreakpointType(), lineNumber, true, 0, "", true );//$NON-NLS-1$
-        }
-    }
-
 	@Override
-	protected ICFunctionBreakpoint findFunctionBreakpoint( String sourceHandle, IResource resource, String functionName ) throws CoreException {
-		return CDIDebugModel.functionBreakpointExists( sourceHandle, resource, functionName );
+	protected void createLineBreakpoint(boolean interactive, IWorkbenchPart part, String sourceHandle,
+			IResource resource, int lineNumber) throws CoreException {
+		if (interactive) {
+			ICLineBreakpoint lineBp = CDIDebugModel.createBlankLineTracepoint();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true,
+					0, ""); //$NON-NLS-1$
+			openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
+		} else {
+			CDIDebugModel.createLineTracepoint(sourceHandle, resource, getBreakpointType(), lineNumber, true, 0, "", //$NON-NLS-1$
+					true);
+		}
 	}
 
-    @Override
-    protected void createFunctionBreakpoint(boolean interactive, IWorkbenchPart part, String sourceHandle, 
-        IResource resource, String functionName, int charStart, int charEnd, int lineNumber ) throws CoreException 
-    {
-        if (interactive) {
-            ICFunctionBreakpoint bp = CDIDebugModel.createBlankFunctionTracepoint();
-            Map<String, Object> attributes = new HashMap<String, Object>();
-            CDIDebugModel.setFunctionBreakpointAttributes( attributes, sourceHandle, getBreakpointType(), functionName, 
-                charStart, charEnd, lineNumber, true, 0, "" ); //$NON-NLS-1$
-            openBreakpointPropertiesDialog(bp, part, resource, attributes);
-        } else {        
-            CDIDebugModel.createFunctionTracepoint(sourceHandle, resource, getBreakpointType(), functionName, charStart,
-                charEnd, lineNumber, true, 0, "", true); //$NON-NLS-1$
-        }            
-    }
+	@Override
+	protected ICFunctionBreakpoint findFunctionBreakpoint(String sourceHandle, IResource resource, String functionName)
+			throws CoreException {
+		return CDIDebugModel.functionBreakpointExists(sourceHandle, resource, functionName);
+	}
 
 	@Override
-	protected ICWatchpoint findWatchpoint( String sourceHandle, IResource resource, String expression ) throws CoreException {
+	protected void createFunctionBreakpoint(boolean interactive, IWorkbenchPart part, String sourceHandle,
+			IResource resource, String functionName, int charStart, int charEnd, int lineNumber) throws CoreException {
+		if (interactive) {
+			ICFunctionBreakpoint bp = CDIDebugModel.createBlankFunctionTracepoint();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			CDIDebugModel.setFunctionBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), functionName,
+					charStart, charEnd, lineNumber, true, 0, ""); //$NON-NLS-1$
+			openBreakpointPropertiesDialog(bp, part, resource, attributes);
+		} else {
+			CDIDebugModel.createFunctionTracepoint(sourceHandle, resource, getBreakpointType(), functionName, charStart,
+					charEnd, lineNumber, true, 0, "", true); //$NON-NLS-1$
+		}
+	}
+
+	@Override
+	protected ICWatchpoint findWatchpoint(String sourceHandle, IResource resource, String expression)
+			throws CoreException {
 		return null;
 	}
 
 	@Override
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
-	    return false;
+		return false;
 	}
-	
-    protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
-        int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range) throws CoreException 
-    {
-    }
 
-    @Override
-    public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
-        return false;
-    }
-    
-    @Override
-    protected void createEventBreakpoint(boolean interactive, IWorkbenchPart part, IResource resource, String type,
-        String arg) throws CoreException {
-        
-    }
-    
+	protected void createWatchpoint(boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource,
+			int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range)
+			throws CoreException {
+	}
 
-    
+	@Override
+	public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+		return false;
+	}
+
+	@Override
+	protected void createEventBreakpoint(boolean interactive, IWorkbenchPart part, IResource resource, String type,
+			String arg) throws CoreException {
+
+	}
+
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
 	}

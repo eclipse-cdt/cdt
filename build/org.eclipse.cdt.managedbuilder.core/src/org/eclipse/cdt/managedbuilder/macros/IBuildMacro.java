@@ -15,27 +15,25 @@ package org.eclipse.cdt.managedbuilder.macros;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
-
 /**
  * This interface represents the given build macro
  * Clients may implement or extend this interface.
  *
  * @since 3.0
  */
-public interface IBuildMacro extends ICdtVariable{
+public interface IBuildMacro extends ICdtVariable {
 	int getMacroValueType();
 
-    /**
-     * @throws BuildMacroException if macro holds StringList-type value
-     */
-    @Override
+	/**
+	 * @throws BuildMacroException if macro holds StringList-type value
+	 */
+	@Override
 	String getStringValue() throws BuildMacroException;
 
-    /**
-     * @throws BuildMacroException if macro holds single String-type value
-     */
-    @Override
+	/**
+	 * @throws BuildMacroException if macro holds single String-type value
+	 */
+	@Override
 	String[] getStringListValue() throws BuildMacroException;
 
 }
-

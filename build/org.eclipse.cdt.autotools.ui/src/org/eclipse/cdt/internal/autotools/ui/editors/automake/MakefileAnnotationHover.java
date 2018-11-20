@@ -37,7 +37,6 @@ import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 
-
 /**
  * MakefileAnnotationHover
  *  
@@ -46,22 +45,22 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 
 	@SuppressWarnings("unused")
 	private IEditorPart fEditor;
-                                                                                                                             
+
 	/**
 	 *  
 	 */
 	public MakefileAnnotationHover(IEditorPart editor) {
-                fEditor = editor;
+		fEditor = editor;
 	}
 
 	/**
 	 * Returns the distance to the ruler line.
 	 */
 	protected int compareRulerLine(Position position, IDocument document, int line) {
-		
+
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
-				int markerLine= document.getLineOfOffset(position.getOffset());
+				int markerLine = document.getLineOfOffset(position.getOffset());
 				if (line == markerLine)
 					return 1;
 				if (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()))
@@ -69,10 +68,10 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return 0;
 	}
-	
+
 	/**
 	 * Selects a set of markers from the two lists. By default, it just returns
 	 * the set of exact matches.
@@ -85,16 +84,16 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 	 * Returns one marker which includes the ruler's line of activity.
 	 */
 	protected List<Annotation> getAnnotationsForLine(ISourceViewer viewer, int line) {
-		
-		IDocument document= viewer.getDocument();
-		IAnnotationModel model= viewer.getAnnotationModel();
-		
+
+		IDocument document = viewer.getDocument();
+		IAnnotationModel model = viewer.getAnnotationModel();
+
 		if (model == null)
 			return null;
-			
-		List<Annotation> exact= new ArrayList<>();
-		List<Annotation> including= new ArrayList<>();
-		
+
+		List<Annotation> exact = new ArrayList<>();
+		List<Annotation> including = new ArrayList<>();
+
 		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation a = e.next();
@@ -107,7 +106,7 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 				break;
 			}
 		}
-		
+
 		return select(exact, including);
 	}
 
@@ -115,35 +114,35 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		List<Annotation> annotations = getAnnotationsForLine(sourceViewer, lineNumber);
 		if (annotations != null && annotations.size() > 0) {
-			
+
 			if (annotations.size() == 1) {
-				
+
 				// optimization
 				Annotation annotation = annotations.get(0);
-				String message= annotation.getText();
+				String message = annotation.getText();
 				if (message != null && message.trim().length() > 0)
 					return formatSingleMessage(message);
-					
+
 			} else {
-					
-				List<String> messages= new ArrayList<>();
-				
-				Iterator<Annotation> e= annotations.iterator();
+
+				List<String> messages = new ArrayList<>();
+
+				Iterator<Annotation> e = annotations.iterator();
 				while (e.hasNext()) {
 					Annotation annotation = e.next();
-					String message= annotation.getText();
+					String message = annotation.getText();
 					if (message != null && message.trim().length() > 0)
 						messages.add(message.trim());
 				}
-				
+
 				if (messages.size() == 1)
 					return formatSingleMessage(messages.get(0));
-					
+
 				if (messages.size() > 1)
 					return formatMultipleMessages(messages);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -151,36 +150,36 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 	 * Formats a message as HTML text.
 	 */
 	private String formatSingleMessage(String message) {
-		StringBuilder buffer= new StringBuilder();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(message));
 		HTMLPrinter.addPageEpilog(buffer);
 		return buffer.toString();
 	}
-	
+
 	/*
 	 * Formats several message as HTML text.
 	 */
 	private String formatMultipleMessages(List<String> messages) {
-		StringBuilder buffer= new StringBuilder();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
-		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(AutoconfEditorMessages.getString("AutoconfAnnotationHover.multipleMarkers"))); //$NON-NLS-1$
-		
+		HTMLPrinter.addParagraph(buffer, HTMLPrinter
+				.convertToHTMLContent(AutoconfEditorMessages.getString("AutoconfAnnotationHover.multipleMarkers"))); //$NON-NLS-1$
+
 		HTMLPrinter.startBulletList(buffer);
-		Iterator<String> e= messages.iterator();
+		Iterator<String> e = messages.iterator();
 		while (e.hasNext())
 			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent(e.next()));
-		HTMLPrinter.endBulletList(buffer);	
-		
+		HTMLPrinter.endBulletList(buffer);
+
 		HTMLPrinter.addPageEpilog(buffer);
 		return buffer.toString();
 	}
-	
+
 	// IAnnotationHoverExtension members
 	// We need to use the extension to get a Hover Control Creator which
 	// handles html.
-	
-	
+
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
@@ -190,17 +189,17 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 			}
 		};
 	}
-	
+
 	@Override
 	public boolean canHandleMouseCursor() {
 		return false;
 	}
-	
+
 	@Override
 	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
 		return new LineRange(lineNumber, 1);
 	}
-	
+
 	@Override
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 		return getHoverInfo(sourceViewer, lineRange.getStartLine());

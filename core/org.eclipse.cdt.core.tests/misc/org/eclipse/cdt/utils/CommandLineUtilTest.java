@@ -19,27 +19,28 @@ import junit.framework.TestSuite;
 
 public class CommandLineUtilTest extends TestCase {
 
-    public static Test suite() {
-        return new TestSuite(CommandLineUtilTest.class);
-    }
-	
-    private String[] parse(String line) {
+	public static Test suite() {
+		return new TestSuite(CommandLineUtilTest.class);
+	}
+
+	private String[] parse(String line) {
 		return CommandLineUtil.argumentsToArrayUnixStyle(line);
 	}
-    private String[] parseWin(String line) {
+
+	private String[] parseWin(String line) {
 		return CommandLineUtil.argumentsToArrayWindowsStyle(line);
 	}
-    private String[] parseU(String line) {
+
+	private String[] parseU(String line) {
 		return CommandLineUtil.argumentsToArray(line);
 	}
-    
+
 	public void testArgumentsToArraySimple() {
 		String[] args = parse("A=B C");
 		assertEquals(2, args.length);
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
 	}
-
 
 	public void testArgumentsToArraySpaces() {
 		// [A=B    C]
@@ -163,60 +164,65 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse(null);
 		assertEquals(0, args.length);
 	}
+
 	public void testArgumentsToArrayEmpty() {
 		// []
 		String[] args = parse("");
 		assertEquals(0, args.length);
 	}
+
 	public void testArgumentsToArrayEmptySpaces() {
 		// [   ]
 		String[] args = parse("   ");
 		assertEquals(0, args.length);
 	}
+
 	public void testArgumentsToArrayTabs() {
 		// [a	b]
 		String[] args = parse("a \tb");
 		assertEquals(2, args.length);
 		assertEquals("a", args[0]);
 	}
+
 	public void testArgumentsToArrayNL() {
 		// ["a\nb"]
 		String[] args = parse("\"a\\nb\"");
 		assertEquals(1, args.length);
 		assertEquals("a\nb", args[0]);
 	}
-	
+
 	public void testArgumentsToArraySimpleWin() {
 		String[] args = parseWin("A=B C");
 		assertEquals(2, args.length);
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
 	}
-	
+
 	public void testArgumentsToArrayWindowsFiles() {
 		String[] args = parseWin("my\\file\\path");
 		assertEquals(1, args.length);
 		assertEquals("my\\file\\path", args[0]);
 	}
-	
+
 	public void testArgumentsToArrayWindowsSpaces() {
 		String[] args = parseWin("\"my\\file\\path space\"");
 		assertEquals(1, args.length);
 		assertEquals("my\\file\\path space", args[0]);
 	}
-	
+
 	public void testArgumentsToArrayWindowsEmpty() {
 		String[] args = parseWin("\"\"");
 		assertEquals(1, args.length);
 		assertEquals("", args[0]);
 	}
+
 	public void testArgumentsToArrayWindowsQuotes() {
 		String[] args = parseWin("\\\"a b\\\"");
 		assertEquals(2, args.length);
 		assertEquals("\"a", args[0]);
 		assertEquals("b\"", args[1]);
 	}
-	
+
 	public void testArgumentsToArraySimpleUniversal() {
 		String[] args = parseU("A=B C   D");
 		assertEquals(3, args.length);

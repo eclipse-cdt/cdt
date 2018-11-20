@@ -46,7 +46,7 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 
-        PreferenceConstants.initializeDefaultValues(store);
+		PreferenceConstants.initializeDefaultValues(store);
 		CPluginPreferencePage.initDefaults(store);
 		BuildConsolePreferencePage.initDefaults(store, true);
 		CView.initDefaults(store);
@@ -61,9 +61,9 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// All of those settings are now in the workbench "All TextEditor" preference Page.
 		// Later we should remove this calls, after CDT-3.0
 		EditorsUI.useAnnotationsPreferencePage(store);
-        EditorsUI.useQuickDiffPreferencePage(store);
+		EditorsUI.useQuickDiffPreferencePage(store);
 		useTextEditorPreferencePage(store);
-		
+
 		store.setDefault(CDTPrefUtil.KEY_OTHERS, true);
 	}
 
@@ -101,97 +101,54 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	}
 
 	static void setThemeBasedPreferences(IPreferenceStore store, boolean fireEvent) {
-		ColorRegistry registry= null;
+		ColorRegistry registry = null;
 		if (PlatformUI.isWorkbenchRunning())
-			registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
+			registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
 
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_MULTI_LINE_COMMENT_COLOR, new RGB(63, 127, 95)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR, new RGB(63, 127, 95)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_TASK_TAG_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_TASK_TAG_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_TASK_TAG_COLOR, new RGB(127, 159, 191)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_KEYWORD_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_KEYWORD_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_KEYWORD_COLOR, new RGB(127, 0, 85)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_BUILTIN_TYPE_COLOR, new RGB(127, 0, 85)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_STRING_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_STRING_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_STRING_COLOR, new RGB(42, 0, 255)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_DEFAULT_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_DEFAULT_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_DEFAULT_COLOR, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_OPERATOR_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_OPERATOR_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_OPERATOR_COLOR, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_BRACES_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_BRACES_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_BRACES_COLOR, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_C_NUMBER_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_C_NUMBER_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_C_NUMBER_COLOR, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_PP_DIRECTIVE_COLOR, new RGB(127, 0, 85)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_PP_HEADER_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_PP_HEADER_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_PP_HEADER_COLOR, new RGB(42, 0, 255)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_PP_DEFAULT_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_PP_DEFAULT_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_PP_DEFAULT_COLOR, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_ASM_LABEL_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_ASM_LABEL_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_ASM_LABEL_COLOR, new RGB(127, 0, 85)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR,
+		setDefault(store, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR,
 				findRGB(registry, ICThemeConstants.EDITOR_ASM_DIRECTIVE_COLOR, new RGB(127, 0, 85)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND,
+		setDefault(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND,
 				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(255, 255, 255)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND,
+		setDefault(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND,
 				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND,
-				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_BACKGROUND, new RGB(255, 255, 255)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND,
+		setDefault(store, PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND,
+				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_BACKGROUND, new RGB(255, 255, 255)),
+				fireEvent);
+		setDefault(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND,
 				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_FOREGROUND, new RGB(0, 0, 0)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR,
+		setDefault(store, PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR,
 				findRGB(registry, ICThemeConstants.DOXYGEN_MULTI_LINE_COLOR, new RGB(63, 95, 191)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR,
+		setDefault(store, PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR,
 				findRGB(registry, ICThemeConstants.DOXYGEN_SINGLE_LINE_COLOR, new RGB(63, 95, 191)), fireEvent);
-		setDefault(
-				store,
-				PreferenceConstants.DOXYGEN_TAG_COLOR,
+		setDefault(store, PreferenceConstants.DOXYGEN_TAG_COLOR,
 				findRGB(registry, ICThemeConstants.DOXYGEN_TAG_COLOR, new RGB(127, 159, 191)), fireEvent);
 	}
 
@@ -211,9 +168,9 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 			return;
 		}
 
-		RGB oldValue= null;
+		RGB oldValue = null;
 		if (store.isDefault(key))
-			oldValue= PreferenceConverter.getDefaultColor(store, key);
+			oldValue = PreferenceConverter.getDefaultColor(store, key);
 
 		PreferenceConverter.setDefault(store, key, newValue);
 
@@ -234,7 +191,7 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		if (registry == null)
 			return defaultRGB;
 
-		RGB rgb= registry.getRGB(key);
+		RGB rgb = registry.getRGB(key);
 		if (rgb != null)
 			return rgb;
 

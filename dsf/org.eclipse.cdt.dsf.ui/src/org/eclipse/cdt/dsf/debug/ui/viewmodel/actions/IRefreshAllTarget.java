@@ -23,12 +23,12 @@ import org.eclipse.jface.viewers.ISelection;
  * @since 1.1
  */
 public interface IRefreshAllTarget {
-    
-    /**
-     * Refreshes the debugger data of the given debug context.  
-     * @param debugContext The active window debug context.
-     * 
-     * @throws CoreException 
-     */
-    public void refresh(ISelection debugContext) throws CoreException;
+
+	/**
+	 * Refreshes the debugger data of the given debug context.  
+	 * @param debugContext The active window debug context.
+	 * 
+	 * @throws CoreException 
+	 */
+	public void refresh(ISelection debugContext) throws CoreException;
 }

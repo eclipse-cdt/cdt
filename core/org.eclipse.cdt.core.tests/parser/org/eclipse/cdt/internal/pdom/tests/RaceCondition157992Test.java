@@ -27,34 +27,33 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-
 /**
  * Test case for a race condition from Bugzilla#157992
  */
 public class RaceCondition157992Test extends PDOMTestBase {
-	
+
 	public static Test suite() {
 		return suite(RaceCondition157992Test.class);
 	}
-	
+
 	public void testRepeatedly() throws Exception {
 		int successes = 0, noTrials = 100;
-		
-		for(int i=0; i<noTrials; i++) {
+
+		for (int i = 0; i < noTrials; i++) {
 			ICProject project = createProject("classTests");
-			PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
-			pdom.acquireReadLock();	
+			PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
+			pdom.acquireReadLock();
 
 			IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), true, IndexFilter.ALL, new NullProgressMonitor());
-			if(Bs.length==1)
+			if (Bs.length == 1)
 				successes++;
 
 			pdom.releaseReadLock();
 		}
-		
-		String msg = "Same indexer on same project produces different results."
-			+ "Failure rate of "+(noTrials-successes)+" failures in "+noTrials+" tests";
-		assertTrue("Non-race-condition failure", successes!=0);
+
+		String msg = "Same indexer on same project produces different results." + "Failure rate of "
+				+ (noTrials - successes) + " failures in " + noTrials + " tests";
+		assertTrue("Non-race-condition failure", successes != 0);
 		assertTrue(msg, successes == noTrials);
 	}
 }

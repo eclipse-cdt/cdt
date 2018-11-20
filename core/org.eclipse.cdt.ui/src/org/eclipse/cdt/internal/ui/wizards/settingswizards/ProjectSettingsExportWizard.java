@@ -22,17 +22,15 @@ import org.eclipse.ui.IWorkbench;
  */
 public class ProjectSettingsExportWizard extends ProjectSettingsWizard implements IExportWizard {
 
-
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		super.init(workbench, selection);
-		setWindowTitle(Messages.ProjectSettingsWizardPage_Export_title); 
+		setWindowTitle(Messages.ProjectSettingsWizardPage_Export_title);
 	}
 
 	@Override
 	public ProjectSettingsWizardPage getPage() {
 		return ProjectSettingsWizardPage.createExportWizardPage();
 	}
-	
 
 }

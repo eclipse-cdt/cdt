@@ -34,42 +34,41 @@ public abstract class StatusLineHandler {
 	public static void showStatusLineMessage(final IWorkbenchSite site, final String message) {
 		// run the code to update the status line on the Display thread
 		// this way any other thread can invoke operationNotAvailable(String)
-		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
+		CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
 			@Override
 			public void run() {
 				IStatusLineManager statusManager = null;
-				 if (site instanceof IViewSite){
-				 	statusManager = ((IViewSite) site).getActionBars().getStatusLineManager();
-				 }
-				 else if (site instanceof IEditorSite){
-				 	statusManager = ((IEditorSite) site).getActionBars().getStatusLineManager();
-				 }	
-				 if( statusManager != null )
-				 	statusManager.setErrorMessage(message);
+				if (site instanceof IViewSite) {
+					statusManager = ((IViewSite) site).getActionBars().getStatusLineManager();
+				} else if (site instanceof IEditorSite) {
+					statusManager = ((IEditorSite) site).getActionBars().getStatusLineManager();
+				}
+				if (statusManager != null)
+					statusManager.setErrorMessage(message);
 			}
 		});
 	}
+
 	public static void clearStatusLine(final IWorkbenchSite site) {
 		// run the code to update the status line on the Display thread
 		// this way any other thread can invoke clearStatusLine()
-		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
+		CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
 			@Override
 			public void run() {
 				IStatusLineManager statusManager = null;
-				 if (site instanceof IViewSite){
-				 	statusManager = ((IViewSite) site).getActionBars().getStatusLineManager();
-				 }
-				 else if (site instanceof IEditorSite){
-				 	statusManager = ((IEditorSite) site).getActionBars().getStatusLineManager();
-				 }	
-				 if( statusManager != null )
-				 	statusManager.setErrorMessage( "" ); //$NON-NLS-1$
+				if (site instanceof IViewSite) {
+					statusManager = ((IViewSite) site).getActionBars().getStatusLineManager();
+				} else if (site instanceof IEditorSite) {
+					statusManager = ((IEditorSite) site).getActionBars().getStatusLineManager();
+				}
+				if (statusManager != null)
+					statusManager.setErrorMessage(""); //$NON-NLS-1$
 			}
 		});
 	}

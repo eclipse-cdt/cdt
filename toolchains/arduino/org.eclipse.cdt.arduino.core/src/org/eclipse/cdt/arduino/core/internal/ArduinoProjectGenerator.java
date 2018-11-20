@@ -30,11 +30,11 @@ public class ArduinoProjectGenerator extends FMProjectGenerator {
 	public ArduinoProjectGenerator(String manifestFile) {
 		super(manifestFile);
 	}
-	
+
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
-		description
-				.setNatureIds(new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, ArduinoProjectNature.ID });
+		description.setNatureIds(
+				new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, ArduinoProjectNature.ID });
 		ICommand command = description.newCommand();
 		CBuilder.setupBuilder(command);
 		description.setBuildSpec(new ICommand[] { command });
@@ -44,14 +44,13 @@ public class ArduinoProjectGenerator extends FMProjectGenerator {
 	public Bundle getSourceBundle() {
 		return Activator.getPlugin().getBundle();
 	}
-	
+
 	@Override
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
 		super.generate(model, monitor);
 		IProject project = getProject();
-		CoreModel.getDefault().create(project).setRawPathEntries(new IPathEntry[] {
-				CoreModel.newSourceEntry(project.getFullPath())
-		}, monitor);
+		CoreModel.getDefault().create(project)
+				.setRawPathEntries(new IPathEntry[] { CoreModel.newSourceEntry(project.getFullPath()) }, monitor);
 	}
 
 }

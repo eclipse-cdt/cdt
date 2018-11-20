@@ -26,7 +26,7 @@ public interface IGDBFocusSynchronizer extends IDsfService {
 	 * Returns an array of contexts, representing the current synchronized focus
 	 */
 	IDMContext[] getFocus();
-	
+
 	/**  
 	 * Sets the service's current focus and propagate it to the GDB corresponding to this 
 	 * service's instance, when appropriate.
@@ -36,21 +36,22 @@ public interface IGDBFocusSynchronizer extends IDsfService {
 	 * @param rm the request monitor
 	 */
 	void setFocus(IDMContext[] focus, RequestMonitor rm);
-	
+
 	/** 
 	 * The service sends this event to indicate that GDB has changed its focus, as a 
 	 * result of an event not triggered by CDT. For example a console command typed by 
 	 * the user. 
 	 * Note: the full focus might not be reflected in the included context. The service
 	 * can be queried to get the complete picture.
-     */
-    interface IGDBFocusChangedEvent extends IDMEvent<IDMContext> {}
-    
-    /**
-     * This tells the synchronizer that the session, corresponding to this service's 
-     * instance, has been selected. This can be called, for example, when a specific 
-     * debugger console has become active, so that the synchronizer will reflect this
-     * in the Debug View selection.
-     */
-    void sessionSelected();
+	 */
+	interface IGDBFocusChangedEvent extends IDMEvent<IDMContext> {
+	}
+
+	/**
+	 * This tells the synchronizer that the session, corresponding to this service's 
+	 * instance, has been selected. This can be called, for example, when a specific 
+	 * debugger console has become active, so that the synchronizer will reflect this
+	 * in the Debug View selection.
+	 */
+	void sessionSelected();
 }

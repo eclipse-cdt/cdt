@@ -31,9 +31,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-public class BuildPropertyManager implements IBuildPropertyManager{
+public class BuildPropertyManager implements IBuildPropertyManager {
 	private static final String PROPERTIES_EXT_POINT_ID = "org.eclipse.cdt.managedbuilder.core.buildProperties"; //$NON-NLS-1$
-	static final String PROPERTY_VALUE_SEPARATOR = "=";   //$NON-NLS-1$
+	static final String PROPERTY_VALUE_SEPARATOR = "="; //$NON-NLS-1$
 	static final String PROPERTIES_SEPARATOR = ","; //$NON-NLS-1$
 	static final String ELEMENT_PROPERTY_TYPE = "propertyType"; //$NON-NLS-1$
 	static final String ELEMENT_PROPERTY_VALUE = "propertyValue"; //$NON-NLS-1$
@@ -46,37 +46,36 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 	private List<IConfigurationElement> fTypeCfgElements;
 	private List<IConfigurationElement> fValueCfgElements;
 
-	private BuildPropertyManager(){
+	private BuildPropertyManager() {
 		loadExtensions();
 	}
 
-	public static BuildPropertyManager getInstance(){
-		if(fInstance == null)
+	public static BuildPropertyManager getInstance() {
+		if (fInstance == null)
 			fInstance = new BuildPropertyManager();
 		return fInstance;
 	}
 
-	public BuildProperties loadPropertiesFromString(String properties){
+	public BuildProperties loadPropertiesFromString(String properties) {
 		return new BuildProperties(properties);
 	}
 
-	public String savePropertiesToString(BuildProperties properties){
+	public String savePropertiesToString(BuildProperties properties) {
 		return properties.toString();
 	}
 
 	private Map<String, IBuildPropertyType> fPropertyTypeMap = new HashMap<String, IBuildPropertyType>();
 
 	@Override
-	public IBuildPropertyType getPropertyType(String id){
+	public IBuildPropertyType getPropertyType(String id) {
 		return fPropertyTypeMap.get(id);
 	}
 
-	public IBuildPropertyType createPropertyType(String id, String name) throws CoreException{
+	public IBuildPropertyType createPropertyType(String id, String name) throws CoreException {
 		IBuildPropertyType type = getPropertyType(id);
-		if(type != null){
-			if(!name.equals(type.getName()))
-				throw new CoreException(new Status(IStatus.ERROR,
-						ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (type != null) {
+			if (!name.equals(type.getName()))
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 						BuildPropertiesMessages.getString("BuildPropertyManager.8"))); //$NON-NLS-1$
 		} else {
 			type = new BuildPropertyType(id, name);
@@ -85,80 +84,76 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		return type;
 	}
 
-	public IBuildPropertyValue createPropertyValue(String typeId, String id, String name) throws CoreException{
+	public IBuildPropertyValue createPropertyValue(String typeId, String id, String name) throws CoreException {
 		IBuildPropertyType type = getPropertyType(typeId);
-		if(type == null)
-			throw new CoreException(new Status(
-					IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (type == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.9"))); //$NON-NLS-1$
 
 		return createPropertyValue(type, id, name);
 	}
 
-	public IBuildPropertyValue createPropertyValue(IBuildPropertyType type, String id, String name) throws CoreException{
-		BuildPropertyValue value = (BuildPropertyValue)type.getSupportedValue(id);
-		if(value != null){
-			if(!name.equals(value.getName()))
-				throw new CoreException(new Status(IStatus.ERROR,
-						ManagedBuilderCorePlugin.getUniqueIdentifier(),
+	public IBuildPropertyValue createPropertyValue(IBuildPropertyType type, String id, String name)
+			throws CoreException {
+		BuildPropertyValue value = (BuildPropertyValue) type.getSupportedValue(id);
+		if (value != null) {
+			if (!name.equals(value.getName()))
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 						BuildPropertiesMessages.getString("BuildPropertyManager.10"))); //$NON-NLS-1$
 		} else {
 			value = new BuildPropertyValue(id, name);
-			((BuildPropertyType)type).addSupportedValue(value);
+			((BuildPropertyType) type).addSupportedValue(value);
 		}
 
 		return value;
 	}
 
 	@Override
-	public IBuildPropertyType[] getPropertyTypes(){
+	public IBuildPropertyType[] getPropertyTypes() {
 		return fPropertyTypeMap.values().toArray(new BuildPropertyType[fPropertyTypeMap.size()]);
 	}
 
 	public IBuildProperty createProperty(String id, String value) throws CoreException {
 		IBuildPropertyType type = getPropertyType(id);
-		if(type == null)
-			throw new CoreException(new Status(
-					IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (type == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.11"))); //$NON-NLS-1$
 
 		BuildProperty property = new BuildProperty(type, value);
 		return property;
 	}
 
-	private boolean addConfigElement(IConfigurationElement el){
-		if(ELEMENT_PROPERTY_TYPE.equals(el.getName())){
+	private boolean addConfigElement(IConfigurationElement el) {
+		if (ELEMENT_PROPERTY_TYPE.equals(el.getName())) {
 			getTypeElList(true).add(el);
 			return true;
-		} else if(ELEMENT_PROPERTY_VALUE.equals(el.getName())){
+		} else if (ELEMENT_PROPERTY_VALUE.equals(el.getName())) {
 			getValueElList(true).add(el);
 			return true;
 		}
 		return false;
 	}
 
-	private List<IConfigurationElement> getTypeElList(boolean create){
-		if(fTypeCfgElements == null && create)
+	private List<IConfigurationElement> getTypeElList(boolean create) {
+		if (fTypeCfgElements == null && create)
 			fTypeCfgElements = new ArrayList<IConfigurationElement>();
 		return fTypeCfgElements;
 	}
 
-	private List<IConfigurationElement> getValueElList(boolean create){
-		if(fValueCfgElements == null && create)
+	private List<IConfigurationElement> getValueElList(boolean create) {
+		if (fValueCfgElements == null && create)
 			fValueCfgElements = new ArrayList<IConfigurationElement>();
 		return fValueCfgElements;
 	}
 
-	private void loadExtensions(){
+	private void loadExtensions() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PROPERTIES_EXT_POINT_ID);
-		if( extensionPoint != null) {
+		if (extensionPoint != null) {
 			IExtension[] extensions = extensionPoint.getExtensions();
 			for (int i = 0; i < extensions.length; ++i) {
 				IExtension extension = extensions[i];
 				IConfigurationElement els[] = extension.getConfigurationElements();
-				for(int k = 0; k < els.length; k++){
+				for (int k = 0; k < els.length; k++) {
 					addConfigElement(els[k]);
 				}
 			}
@@ -167,10 +162,9 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		}
 	}
 
-
-	private void resolveConfigElements(){
+	private void resolveConfigElements() {
 		List<IConfigurationElement> typeEls = getTypeElList(false);
-		if(typeEls != null){
+		if (typeEls != null) {
 			for (IConfigurationElement el : typeEls) {
 				try {
 					createPropertyType(el);
@@ -180,7 +174,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		}
 
 		List<IConfigurationElement> valEls = getValueElList(false);
-		if(valEls != null){
+		if (valEls != null) {
 			for (IConfigurationElement el : valEls) {
 				try {
 					createPropertyValue(el);
@@ -191,38 +185,32 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 
 	}
 
-	private IBuildPropertyType createPropertyType(IConfigurationElement el) throws CoreException{
+	private IBuildPropertyType createPropertyType(IConfigurationElement el) throws CoreException {
 		String id = el.getAttribute(ATTRIBUTE_ID);
-		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (id == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.12"))); //$NON-NLS-1$
 		String name = el.getAttribute(ATTRIBUTE_NAME);
-		if(name == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (name == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.13"))); //$NON-NLS-1$
 
 		return createPropertyType(id, name);
 	}
 
-	private IBuildPropertyValue createPropertyValue(IConfigurationElement el) throws CoreException{
+	private IBuildPropertyValue createPropertyValue(IConfigurationElement el) throws CoreException {
 		String id = el.getAttribute(ATTRIBUTE_ID);
-		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (id == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.14"))); //$NON-NLS-1$
 		String name = el.getAttribute(ATTRIBUTE_NAME);
-		if(name == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (name == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.15"))); //$NON-NLS-1$
 		String property = el.getAttribute(ATTRIBUTE_PROPERTY);
-		if(property == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (property == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.16"))); //$NON-NLS-1$
-
 
 		return createPropertyValue(property, id, name);
 	}

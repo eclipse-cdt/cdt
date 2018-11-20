@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.FileDialog;
  *
  */
 public class ImportExecutableWizard extends AbstractImportExecutableWizard {
-	
+
 	@Override
 	public String getPageOneTitle() {
 		return Messages.ImportExecutableWizard_pageOneTitle;

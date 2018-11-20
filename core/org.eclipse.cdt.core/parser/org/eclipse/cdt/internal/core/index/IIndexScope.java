@@ -35,7 +35,7 @@ public interface IIndexScope extends IScope {
 	 */
 	@Override
 	IIndexScope getParent();
-	
+
 	/**
 	 * Returns the name of this scope.
 	 */

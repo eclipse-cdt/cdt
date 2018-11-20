@@ -22,12 +22,13 @@ package org.eclipse.cdt.internal.formatter;
  */
 public class AbortFormatting extends RuntimeException {
 
-	private static final long serialVersionUID= -5796507276311428526L;
+	private static final long serialVersionUID = -5796507276311428526L;
 	Throwable nestedException;
-	
+
 	public AbortFormatting(String message) {
 		super(message);
 	}
+
 	public AbortFormatting(Throwable cause) {
 		super(cause);
 	}

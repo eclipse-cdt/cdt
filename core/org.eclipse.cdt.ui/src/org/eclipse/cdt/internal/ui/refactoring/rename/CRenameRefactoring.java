@@ -11,7 +11,7 @@
  * Contributors: 
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google) 
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.core.runtime.CoreException;
@@ -27,25 +27,25 @@ public class CRenameRefactoring extends ProcessorBasedRefactoring {
 	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring"; //$NON-NLS-1$
 	private Change fChange;
 
-    public CRenameRefactoring(CRenameProcessor processor) {
-        super(processor);
-    }
+	public CRenameRefactoring(CRenameProcessor processor) {
+		super(processor);
+	}
 
 	@Override
 	public CRenameProcessor getProcessor() {
 		return (CRenameProcessor) super.getProcessor();
 	}
 
-    @Override
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-        fChange = super.createChange(pm);
-        return fChange;
-    }
+		fChange = super.createChange(pm);
+		return fChange;
+	}
 
-    /**
-     * Returns the change if it has been created, or {@code null} otherwise.
-     */
+	/**
+	 * Returns the change if it has been created, or {@code null} otherwise.
+	 */
 	Change getChange() {
-        return fChange;
-    }
+		return fChange;
+	}
 }

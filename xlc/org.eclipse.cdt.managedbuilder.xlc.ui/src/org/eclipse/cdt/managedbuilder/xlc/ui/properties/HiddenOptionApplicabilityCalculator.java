@@ -23,16 +23,14 @@ import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 	This class decides whether the make shared object
 	option is visible,enabled or used in command line or not */
 
-public class HiddenOptionApplicabilityCalculator implements
-		IOptionApplicability {
+public class HiddenOptionApplicabilityCalculator implements IOptionApplicability {
 
 	/**
 	 * This function decides if the option for which this class
 	 * is option applicability calculator is enabled or not.
 	 */
 	@Override
-	public boolean isOptionEnabled(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return false;
 	}
 
@@ -43,8 +41,7 @@ public class HiddenOptionApplicabilityCalculator implements
 	 */
 
 	@Override
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
@@ -54,8 +51,7 @@ public class HiddenOptionApplicabilityCalculator implements
 	 */
 
 	@Override
-	public boolean isOptionVisible(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 
 		return false;
 	}

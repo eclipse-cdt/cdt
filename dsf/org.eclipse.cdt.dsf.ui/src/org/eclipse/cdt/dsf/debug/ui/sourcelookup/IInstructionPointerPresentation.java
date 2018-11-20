@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.sourcelookup;
 
-
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.graphics.Image;
@@ -59,14 +58,14 @@ public interface IInstructionPointerPresentation {
 	/**
 	 * Returns an annotation used for the specified stack frame in the specified
 	 * editor, or <code>null</code> if a default annotation should be used.
-     * 
+	 * 
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return annotation or <code>null</code>
 	 */
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IFrameDMContext frame);
-	
+
 	/**
 	 * Returns an identifier of a <code>org.eclipse.ui.editors.annotationTypes</code> extension used for
 	 * the specified stack frame in the specified editor, or <code>null</code> if a default annotation
@@ -76,9 +75,9 @@ public interface IInstructionPointerPresentation {
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return annotation type identifier or <code>null</code>
-	 */	
+	 */
 	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IFrameDMContext frame);
-	
+
 	/**
 	 * Returns the instruction pointer image used for the specified stack frame in the specified
 	 * editor, or <code>null</code> if a default image should be used.
@@ -90,9 +89,9 @@ public interface IInstructionPointerPresentation {
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return image or <code>null</code>
-	 */		
+	 */
 	public Image getInstructionPointerImage(IEditorPart editorPart, IFrameDMContext frame);
-	
+
 	/**
 	 * Returns the text to associate with the instruction pointer annotation used for the
 	 * specified stack frame in the specified editor, or <code>null</code> if a default
@@ -105,6 +104,6 @@ public interface IInstructionPointerPresentation {
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return message or <code>null</code>
-	 */			
+	 */
 	public String getInstructionPointerText(IEditorPart editorPart, IFrameDMContext frame);
 }

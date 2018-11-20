@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * CDT console which redirects output to system console ({@code System.out}, {@code System.err}).
  * Used by headless builder.
@@ -40,7 +39,7 @@ public class SystemBuildConsole implements IConsole {
 				System.out.write(c);
 			}
 		};
-		err =  new ConsoleOutputStream() {
+		err = new ConsoleOutputStream() {
 			@Override
 			public synchronized void write(byte[] b, int off, int len) throws java.io.IOException {
 				System.err.write(b, off, len);

@@ -49,7 +49,7 @@ public interface ILibraryEntry extends IPathEntry {
 	 *    not applicable
 	 */
 	IPath getSourceAttachmentRootPath();
- 
+
 	/**
 	 * Returns the path to map the source paths with to the source achive or folder
 	 * An empty path indicates that the is a one-to-one mapping of source paths to the

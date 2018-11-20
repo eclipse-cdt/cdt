@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
-
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
@@ -40,77 +39,60 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		ICdtVariableManager fMngr;
 		private ICConfigurationDescription fCfgDes;
 
-		public ContributorMacroContextInfo(ICdtVariableManager mngr, ICConfigurationDescription cfgDes,
-				int type, Object data) {
+		public ContributorMacroContextInfo(ICdtVariableManager mngr, ICConfigurationDescription cfgDes, int type,
+				Object data) {
 			super(type, data);
 			fMngr = mngr;
 			fCfgDes = cfgDes;
 		}
 
-
 		@Override
 		protected ICdtVariableSupplier[] getSuppliers(int type, Object data) {
-			switch(type){
+			switch (type) {
 			case IBuildMacroProvider.CONTEXT_CONFIGURATION:
-				return new ICdtVariableSupplier[]{
-					new ExternalExtensionMacroSupplier(fMngr, fCfgDes),
-					MbsMacroSupplier.getInstance()
-				};
+				return new ICdtVariableSupplier[] { new ExternalExtensionMacroSupplier(fMngr, fCfgDes),
+						MbsMacroSupplier.getInstance() };
 			case IBuildMacroProvider.CONTEXT_PROJECT:
-				return new ICdtVariableSupplier[]{
-						new ExternalExtensionMacroSupplier(fMngr, fCfgDes),
-						MbsMacroSupplier.getInstance()
-					};
+				return new ICdtVariableSupplier[] { new ExternalExtensionMacroSupplier(fMngr, fCfgDes),
+						MbsMacroSupplier.getInstance() };
 			case IBuildMacroProvider.CONTEXT_WORKSPACE:
-				return new ICdtVariableSupplier[]{
-						MbsMacroSupplier.getInstance()
-					};
+				return new ICdtVariableSupplier[] { MbsMacroSupplier.getInstance() };
 			}
 			return null;
 		}
 
-
 		@Override
 		public IVariableContextInfo getNext() {
-			switch(getContextType()){
-			case IBuildMacroProvider.CONTEXT_CONFIGURATION:{
-					Object data = getContextData();
-					IConfiguration configuration = null;
-					if(data instanceof IBuilder)
-						configuration = ((IBuilder)data).getParent().getParent();
-					else if(data instanceof IConfiguration)
-						configuration  = (IConfiguration)data;
+			switch (getContextType()) {
+			case IBuildMacroProvider.CONTEXT_CONFIGURATION: {
+				Object data = getContextData();
+				IConfiguration configuration = null;
+				if (data instanceof IBuilder)
+					configuration = ((IBuilder) data).getParent().getParent();
+				else if (data instanceof IConfiguration)
+					configuration = (IConfiguration) data;
 
-					if(configuration != null){
-						IManagedProject managedProject = configuration.getManagedProject();
-							if(managedProject != null)
-								return new ContributorMacroContextInfo(
-										fMngr,
-										fCfgDes,
-										IBuildMacroProvider.CONTEXT_PROJECT,
-										managedProject);
-					}
+				if (configuration != null) {
+					IManagedProject managedProject = configuration.getManagedProject();
+					if (managedProject != null)
+						return new ContributorMacroContextInfo(fMngr, fCfgDes, IBuildMacroProvider.CONTEXT_PROJECT,
+								managedProject);
 				}
+			}
 				break;
-			case IBuildMacroProvider.CONTEXT_PROJECT:{
-					Object data = getContextData();
-					if(data instanceof IManagedProject){
-						IWorkspace wsp = ResourcesPlugin.getWorkspace();
-						if(wsp != null)
-							return new ContributorMacroContextInfo(
-									fMngr,
-									fCfgDes,
-									IBuildMacroProvider.CONTEXT_WORKSPACE,
-									wsp);
-					}
+			case IBuildMacroProvider.CONTEXT_PROJECT: {
+				Object data = getContextData();
+				if (data instanceof IManagedProject) {
+					IWorkspace wsp = ResourcesPlugin.getWorkspace();
+					if (wsp != null)
+						return new ContributorMacroContextInfo(fMngr, fCfgDes, IBuildMacroProvider.CONTEXT_WORKSPACE,
+								wsp);
 				}
+			}
 				break;
 			case IBuildMacroProvider.CONTEXT_WORKSPACE:
-				if(getContextData() instanceof IWorkspace){
-					return new ContributorMacroContextInfo(
-							fMngr,
-							fCfgDes,
-							IBuildMacroProvider.CONTEXT_INSTALLATIONS,
+				if (getContextData() instanceof IWorkspace) {
+					return new ContributorMacroContextInfo(fMngr, fCfgDes, IBuildMacroProvider.CONTEXT_INSTALLATIONS,
 							null);
 				}
 				break;
@@ -119,28 +101,25 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		}
 	}
 
-	BuildVariablesContributor(BuildConfigurationData data){
+	BuildVariablesContributor(BuildConfigurationData data) {
 		fCfgData = data;
 	}
 
 	@Override
 	public ICdtVariable getVariable(String name, ICdtVariableManager provider) {
 		ContributorMacroContextInfo info = createContextInfo(provider);
-		if(info != null)
+		if (info != null)
 			return SupplierBasedCdtVariableManager.getVariable(name, info, true);
 		return null;
 	}
 
-	private ContributorMacroContextInfo createContextInfo(ICdtVariableManager mngr){
+	private ContributorMacroContextInfo createContextInfo(ICdtVariableManager mngr) {
 		IConfiguration cfg = fCfgData.getConfiguration();
-		if(((Configuration)cfg).isPreference())
+		if (((Configuration) cfg).isPreference())
 			return null;
 		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
-		if(cfgDes != null){
-			return new ContributorMacroContextInfo(mngr,
-					cfgDes,
-					BuildMacroProvider.CONTEXT_CONFIGURATION,
-					cfg);
+		if (cfgDes != null) {
+			return new ContributorMacroContextInfo(mngr, cfgDes, BuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
 		}
 		return null;
 	}
@@ -148,7 +127,7 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 	@Override
 	public ICdtVariable[] getVariables(ICdtVariableManager provider) {
 		ContributorMacroContextInfo info = createContextInfo(provider);
-		if(info != null)
+		if (info != null)
 			return SupplierBasedCdtVariableManager.getVariables(info, true);
 		return null;
 	}

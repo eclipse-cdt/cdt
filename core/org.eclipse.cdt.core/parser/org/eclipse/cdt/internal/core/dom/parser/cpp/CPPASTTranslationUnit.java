@@ -52,8 +52,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
  * C++-specific implementation of a translation-unit.
  */
 public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPASTTranslationUnit, IASTAmbiguityParent {
-    private CPPNamespaceScope fScope;
-    private ICPPNamespace fBinding;
+	private CPPNamespaceScope fScope;
+	private ICPPNamespace fBinding;
 	private final CPPScopeMapper fScopeMapper;
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
 
@@ -67,7 +67,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	private final Map<TypeInstantiationRequest, IType> fInstantiationCache = new HashMap<>();
 
 	public CPPASTTranslationUnit() {
-		fScopeMapper= new CPPScopeMapper(this);
+		fScopeMapper = new CPPScopeMapper(this);
 	}
 
 	@Override
@@ -81,107 +81,112 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public CPPNamespaceScope getScope() {
-        if (fScope == null) {
-            fScope = new CPPNamespaceScope(this);
+		if (fScope == null) {
+			fScope = new CPPNamespaceScope(this);
 			addBuiltinOperators(fScope);
-        }
-        return fScope;
-    }
+		}
+		return fScope;
+	}
 
 	private void addBuiltinOperators(CPPScope theScope) {
-        // void
-        IType cpp_void = new CPPBasicType(Kind.eVoid, 0);
-        // void*
-        IType cpp_void_p = new CPPPointerType(new CPPQualifierType(new CPPBasicType(Kind.eVoid, 0), false, false), new CPPASTPointer());
-        // size_t // assumed: unsigned long int
-        IType cpp_size_t = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG & IBasicType.IS_UNSIGNED);
+		// void
+		IType cpp_void = new CPPBasicType(Kind.eVoid, 0);
+		// void*
+		IType cpp_void_p = new CPPPointerType(new CPPQualifierType(new CPPBasicType(Kind.eVoid, 0), false, false),
+				new CPPASTPointer());
+		// size_t // assumed: unsigned long int
+		IType cpp_size_t = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG & IBasicType.IS_UNSIGNED);
 
 		// void* operator new(std::size_t);
-        IBinding temp = null;
-        IType[] newParms = new IType[1];
-        newParms[0] = cpp_size_t;
-        ICPPFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms);
-        ICPPParameter[] newTheParms = new ICPPParameter[1];
-        newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
-        temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false, false);
-        theScope.addBinding(temp);
+		IBinding temp = null;
+		IType[] newParms = new IType[1];
+		newParms[0] = cpp_size_t;
+		ICPPFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms);
+		ICPPParameter[] newTheParms = new ICPPParameter[1];
+		newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
+		temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms,
+				false, false);
+		theScope.addBinding(temp);
 
 		// void* operator new[](std::size_t);
 		temp = null;
-        temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false, false);
-        theScope.addBinding(temp);
+		temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType,
+				newTheParms, false, false);
+		theScope.addBinding(temp);
 
 		// void operator delete(void*);
-        temp = null;
-        IType[] deleteParms = new IType[1];
-        deleteParms[0] = cpp_void_p;
-        ICPPFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
-        ICPPParameter[] deleteTheParms = new ICPPParameter[1];
-        deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
-        temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope,
-        		deleteFunctionType, deleteTheParms, false, false);
-        theScope.addBinding(temp);
+		temp = null;
+		IType[] deleteParms = new IType[1];
+		deleteParms[0] = cpp_void_p;
+		ICPPFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
+		ICPPParameter[] deleteTheParms = new ICPPParameter[1];
+		deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
+		temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope, deleteFunctionType,
+				deleteTheParms, false, false);
+		theScope.addBinding(temp);
 
 		// void operator delete[](void*);
 		temp = null;
-        temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope,
-        		deleteFunctionType, deleteTheParms, false, false);
-        theScope.addBinding(temp);
+		temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope, deleteFunctionType,
+				deleteTheParms, false, false);
+		theScope.addBinding(temp);
 	}
 
-    @Override
+	@Override
 	public IASTName[] getDeclarationsInAST(IBinding binding) {
-        if (binding instanceof IMacroBinding) {
-        	return getMacroDefinitionsInAST((IMacroBinding) binding);
-        }
-        return CPPVisitor.getDeclarations(this, binding);
-    }
+		if (binding instanceof IMacroBinding) {
+			return getMacroDefinitionsInAST((IMacroBinding) binding);
+		}
+		return CPPVisitor.getDeclarations(this, binding);
+	}
 
-    @Override
-    public IASTName[] getDefinitionsInAST(IBinding binding) {
-    	return getDefinitionsInAST(binding, false);
-    }
-    
-    @Override
+	@Override
+	public IASTName[] getDefinitionsInAST(IBinding binding) {
+		return getDefinitionsInAST(binding, false);
+	}
+
+	@Override
 	public IASTName[] getDefinitionsInAST(IBinding binding, boolean permissive) {
-        if (binding instanceof IMacroBinding) {
-        	return getMacroDefinitionsInAST((IMacroBinding) binding);
-        }
-    	IASTName[] names = CPPVisitor.getDeclarations(this, binding, permissive);
-        for (int i = 0; i < names.length; i++) {
-            if (!names[i].isDefinition())
-                names[i] = null;
-        }
-    	// nulls can be anywhere, don't use trim()
-        return ArrayUtil.removeNulls(IASTName.class, names);
-    }
+		if (binding instanceof IMacroBinding) {
+			return getMacroDefinitionsInAST((IMacroBinding) binding);
+		}
+		IASTName[] names = CPPVisitor.getDeclarations(this, binding, permissive);
+		for (int i = 0; i < names.length; i++) {
+			if (!names[i].isDefinition())
+				names[i] = null;
+		}
+		// nulls can be anywhere, don't use trim()
+		return ArrayUtil.removeNulls(IASTName.class, names);
+	}
 
-    @Override
+	@Override
 	public IASTName[] getReferences(IBinding binding) {
-        if (binding instanceof IMacroBinding) {
-            return getMacroReferencesInAST((IMacroBinding) binding);
-        }
-        return CPPVisitor.getReferences(this, binding);
-    }
+		if (binding instanceof IMacroBinding) {
+			return getMacroReferencesInAST((IMacroBinding) binding);
+		}
+		return CPPVisitor.getReferences(this, binding);
+	}
 
-    @Override
+	@Override
 	public ICPPNamespace getGlobalNamespace() {
-        if (fBinding == null)
-            fBinding = new CPPNamespace(this);
-        return fBinding;
-    }
+		if (fBinding == null)
+			fBinding = new CPPNamespace(this);
+		return fBinding;
+	}
 
-    @Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding resolveBinding() {
-        return getGlobalNamespace();
-    }
+		return getGlobalNamespace();
+	}
 
-    @Override @Deprecated
-    public ParserLanguage getParserLanguage() {
-        return ParserLanguage.CPP;
-    }
+	@Override
+	@Deprecated
+	public ParserLanguage getParserLanguage() {
+		return ParserLanguage.CPP;
+	}
 
 	@Override
 	public ILinkage getLinkage() {
@@ -224,6 +229,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		public ProblemBindingClearer() {
 			shouldVisitNames = true;
 		}
+
 		@Override
 		public int visit(IASTName name) {
 			if (name.getBinding() instanceof IProblemBinding) {
@@ -232,7 +238,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 			return PROCESS_CONTINUE;
 		}
 	}
-	
+
 	@Override
 	public void resolveAmbiguities() {
 		fAmbiguityResolver = new CPPASTAmbiguityResolver();
@@ -259,7 +265,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
 	}
-	
+
 	public Map<TypeInstantiationRequest, IType> getInstantiationCache() {
 		return fInstantiationCache;
 	}

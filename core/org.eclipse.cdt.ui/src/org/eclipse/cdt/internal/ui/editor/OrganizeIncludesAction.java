@@ -69,8 +69,8 @@ public class OrganizeIncludesAction extends TextEditorAction {
 			return;
 		}
 
-		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(
-				CEditorMessages.OrganizeIncludes_label, editor.getSite().getShell());
+		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(CEditorMessages.OrganizeIncludes_label,
+				editor.getSite().getShell());
 		final MultiTextEdit[] holder = new MultiTextEdit[1];
 		// We can't use SharedASTJob because IncludeOrganizer needs to disable promiscuous
 		// binding resolution, and you can't mix promiscuous and non-promiscuous binding
@@ -79,14 +79,14 @@ public class OrganizeIncludesAction extends TextEditorAction {
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				try {
-					IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
+					IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
 							IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 					try {
 						index.acquireReadLock();
 						IASTTranslationUnit ast = tu.getAST(index, ASTCache.PARSE_MODE);
 						if (ast == null) {
-							return CUIPlugin.createErrorStatus(
-									NLS.bind(CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toOSString()));
+							return CUIPlugin.createErrorStatus(NLS.bind(
+									CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toOSString()));
 						}
 						IncludeOrganizer organizer = new IncludeOrganizer(tu, index, headerChooser);
 						holder[0] = organizer.organizeIncludes(ast);
@@ -108,7 +108,7 @@ public class OrganizeIncludesAction extends TextEditorAction {
 				// Apply the text edit.
 				IEditorInput editorInput = editor.getEditorInput();
 				IDocument document = editor.getDocumentProvider().getDocument(editorInput);
-				IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+				IDocumentUndoManager manager = DocumentUndoManagerRegistry.getDocumentUndoManager(document);
 				manager.beginCompoundChange();
 				try {
 					edit.apply(document);
@@ -120,8 +120,7 @@ public class OrganizeIncludesAction extends TextEditorAction {
 				manager.endCompoundChange();
 			}
 		} else if (status.matches(IStatus.ERROR)) {
-			ErrorDialog.openError(editor.getEditorSite().getShell(),
-					CEditorMessages.OrganizeIncludes_error_title,
+			ErrorDialog.openError(editor.getEditorSite().getShell(), CEditorMessages.OrganizeIncludes_error_title,
 					CEditorMessages.OrganizeIncludes_insertion_failed, status);
 		}
 	}

@@ -21,16 +21,15 @@ import org.eclipse.swt.graphics.GC;
 public class MulticoreVisualizerStatusBar extends MulticoreVisualizerGraphicObject {
 
 	// --- members ---
-	
+
 	/** message to display in status bar */
-	protected String m_statusMessage = null;	
-	
+	protected String m_statusMessage = null;
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public MulticoreVisualizerStatusBar() {
 	}
-	
 
 	/** Dispose method */
 	@Override
@@ -39,22 +38,21 @@ public class MulticoreVisualizerStatusBar extends MulticoreVisualizerGraphicObje
 		m_statusMessage = null;
 	}
 
-	
 	// --- accessors ---
-	
-	public void setMessage (String message) {
+
+	public void setMessage(String message) {
 		m_statusMessage = message;
 	}
 
 	// --- paint methods ---
-	
+
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {
-		
+
 		if (m_statusMessage == null)
 			return;
-		
+
 		// Display message text
 		gc.setForeground(IMulticoreVisualizerConstants.COLOR_STATUS_BAR_TEXT);
 		int tx = m_bounds.x;

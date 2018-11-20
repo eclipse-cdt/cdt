@@ -26,8 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * unknown. A compiler would resolve it during instantiation.
  */
 public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
-	private static final ICPPFunctionType FUNCTION_TYPE=
-			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
+	private static final ICPPFunctionType FUNCTION_TYPE = new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION,
+			IType.EMPTY_TYPE_ARRAY);
 
 	public CPPUnknownMethod(IType owner, char[] name) {
 		super(owner, name);
@@ -72,7 +72,7 @@ public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
 	public ICPPFunctionType getDeclaredType() {
 		return FUNCTION_TYPE;
 	}
-	
+
 	@Override
 	public ICPPFunctionType getType() {
 		// TODO(nathanridge): We'd like to return a TypeOfUnknownMember here,
@@ -126,6 +126,7 @@ public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
 	public int getVisibility() {
 		return v_public;
 	}
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		IType owner = getOwnerType();

@@ -35,72 +35,71 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  */
 public class ToggleCBreakpointsTargetFactory implements IToggleBreakpointsTargetFactory {
-    
-    public static String TOGGLE_C_BREAKPOINT_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier() + ".toggleCBreakpointTarget"; //$NON-NLS-1$
-    
-    private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
-    static {
-        TOGGLE_TARGET_IDS.add(TOGGLE_C_BREAKPOINT_TARGET_ID);
-    }
-    
-    private ToggleBreakpointAdapter fCToggleBreakpointTarget = new ToggleBreakpointAdapter();
-    
-    @Override
+
+	public static String TOGGLE_C_BREAKPOINT_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier()
+			+ ".toggleCBreakpointTarget"; //$NON-NLS-1$
+
+	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
+	static {
+		TOGGLE_TARGET_IDS.add(TOGGLE_C_BREAKPOINT_TARGET_ID);
+	}
+
+	private ToggleBreakpointAdapter fCToggleBreakpointTarget = new ToggleBreakpointAdapter();
+
+	@Override
 	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
-        if (TOGGLE_C_BREAKPOINT_TARGET_ID.equals(targetID)) {
-            return fCToggleBreakpointTarget;
-        }
-        return null;
-    }
-    
-    @Override
+		if (TOGGLE_C_BREAKPOINT_TARGET_ID.equals(targetID)) {
+			return fCToggleBreakpointTarget;
+		}
+		return null;
+	}
+
+	@Override
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
-        // Return the debug context as a default if the currently selected context
-        // is a CDT element.  Otherwise return null.
-        Object element = getDebugContext(part).getFirstElement();
-        if (element instanceof IAdaptable) {
-            IDebugModelProvider modelProvider = 
-                ((IAdaptable)element).getAdapter(IDebugModelProvider.class);
-            if (modelProvider != null) {
-                String[] models = modelProvider.getModelIdentifiers();
-                for (String model : models) {
-                    if (CDIDebugModel.getPluginIdentifier().equals(model) ||
-                        ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) 
-                    {
-                        return TOGGLE_C_BREAKPOINT_TARGET_ID;
-                    }
-                }
-            } else if (element instanceof IDebugElement) {
-                if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement)element).getModelIdentifier()) ) {
-                    return TOGGLE_C_BREAKPOINT_TARGET_ID;
-                }
-            }
-        }
-        return null;
-    }
-    
-    @Override
+		// Return the debug context as a default if the currently selected context
+		// is a CDT element.  Otherwise return null.
+		Object element = getDebugContext(part).getFirstElement();
+		if (element instanceof IAdaptable) {
+			IDebugModelProvider modelProvider = ((IAdaptable) element).getAdapter(IDebugModelProvider.class);
+			if (modelProvider != null) {
+				String[] models = modelProvider.getModelIdentifiers();
+				for (String model : models) {
+					if (CDIDebugModel.getPluginIdentifier().equals(model)
+							|| ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) {
+						return TOGGLE_C_BREAKPOINT_TARGET_ID;
+					}
+				}
+			} else if (element instanceof IDebugElement) {
+				if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement) element).getModelIdentifier())) {
+					return TOGGLE_C_BREAKPOINT_TARGET_ID;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public String getToggleTargetDescription(String targetID) {
-        return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CBreakpointDescription"); //$NON-NLS-1$
-    }
-    
-    @Override
+		return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CBreakpointDescription"); //$NON-NLS-1$
+	}
+
+	@Override
 	public String getToggleTargetName(String targetID) {
-        return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CBreakpointName"); //$NON-NLS-1$
-    }
-    
-    @Override
-    public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
-        return TOGGLE_TARGET_IDS;
-    }
-    
-    private IStructuredSelection getDebugContext(IWorkbenchPart part) {
-        ISelection selection = DebugUITools.getDebugContextManager().
-            getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
-        if (selection instanceof IStructuredSelection) {
-            return (IStructuredSelection)selection;
-        } 
-        return StructuredSelection.EMPTY;
-    }
+		return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CBreakpointName"); //$NON-NLS-1$
+	}
+
+	@Override
+	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
+		return TOGGLE_TARGET_IDS;
+	}
+
+	private IStructuredSelection getDebugContext(IWorkbenchPart part) {
+		ISelection selection = DebugUITools.getDebugContextManager()
+				.getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
+		if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection) selection;
+		}
+		return StructuredSelection.EMPTY;
+	}
 
 }

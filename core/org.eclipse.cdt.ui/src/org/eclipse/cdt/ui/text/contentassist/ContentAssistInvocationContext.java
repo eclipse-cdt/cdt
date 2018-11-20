@@ -76,22 +76,22 @@ public class ContentAssistInvocationContext {
 	 */
 	public ContentAssistInvocationContext(ITextViewer viewer, int offset) {
 		Assert.isNotNull(viewer);
-		fViewer= viewer;
-		fDocument= null;
-		fOffset= offset;
+		fViewer = viewer;
+		fDocument = null;
+		fOffset = offset;
 		numberOfUndisposedContexts.incrementAndGet();
 	}
-	
+
 	/**
 	 * Creates a new context with no viewer or invocation offset set.
 	 */
 	protected ContentAssistInvocationContext() {
-		fDocument= null;
-		fViewer= null;
-		fOffset= -1;
+		fDocument = null;
+		fViewer = null;
+		fOffset = -1;
 		numberOfUndisposedContexts.incrementAndGet();
 	}
-	
+
 	/**
 	 * Creates a new context for the given document and offset.
 	 * 
@@ -101,12 +101,12 @@ public class ContentAssistInvocationContext {
 	public ContentAssistInvocationContext(IDocument document, int offset) {
 		Assert.isNotNull(document);
 		Assert.isTrue(offset >= 0);
-		fViewer= null;
-		fDocument= document;
-		fOffset= offset;
+		fViewer = null;
+		fDocument = document;
+		fOffset = offset;
 		numberOfUndisposedContexts.incrementAndGet();
 	}
-	
+
 	/**
 	 * Returns the invocation offset.
 	 * 
@@ -116,7 +116,7 @@ public class ContentAssistInvocationContext {
 		assertNotDisposed();
 		return fOffset;
 	}
-	
+
 	/**
 	 * Returns the viewer, <code>null</code> if not available.
 	 * 
@@ -126,7 +126,7 @@ public class ContentAssistInvocationContext {
 		assertNotDisposed();
 		return fViewer;
 	}
-	
+
 	/**
 	 * Returns the document that content assist is invoked on, or <code>null</code> if not known.
 	 * 
@@ -141,7 +141,7 @@ public class ContentAssistInvocationContext {
 		}
 		return fDocument;
 	}
-	
+
 	/**
 	 * Computes the identifier (as specified by {@link Character#isJavaIdentifierPart(char)}) that
 	 * immediately precedes the invocation offset.
@@ -153,22 +153,22 @@ public class ContentAssistInvocationContext {
 	public CharSequence computeIdentifierPrefix() throws BadLocationException {
 		assertNotDisposed();
 		if (fPrefix == null) {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 			if (document == null)
 				return null;
-			int end= getInvocationOffset();
-			int start= end;
+			int end = getInvocationOffset();
+			int start = end;
 			while (--start >= 0) {
 				if (!Character.isJavaIdentifierPart(document.getChar(start)))
 					break;
 			}
 			start++;
-			fPrefix= document.get(start, end - start);
+			fPrefix = document.get(start, end - start);
 		}
-		
+
 		return fPrefix;
 	}
-	
+
 	/**
 	 * Must be called upon completion of the content assist. Used to free any resources
 	 * used by the context.
@@ -225,10 +225,12 @@ public class ContentAssistInvocationContext {
 			return false;
 		if (!getClass().equals(obj.getClass()))
 			return false;
-		ContentAssistInvocationContext other= (ContentAssistInvocationContext) obj;
-		return (fViewer == null && other.fViewer == null || fViewer != null && fViewer.equals(other.fViewer)) && fOffset == other.fOffset && (fDocument == null && other.fDocument == null || fDocument != null && fDocument.equals(other.fDocument));
+		ContentAssistInvocationContext other = (ContentAssistInvocationContext) obj;
+		return (fViewer == null && other.fViewer == null || fViewer != null && fViewer.equals(other.fViewer))
+				&& fOffset == other.fOffset && (fDocument == null && other.fDocument == null
+						|| fDocument != null && fDocument.equals(other.fDocument));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return 23459213 << 5 | (fViewer == null ? 0 : fViewer.hashCode() << 3) | fOffset;

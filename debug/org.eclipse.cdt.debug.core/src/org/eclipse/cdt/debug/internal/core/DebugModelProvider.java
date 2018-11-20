@@ -24,27 +24,27 @@ import org.eclipse.debug.core.model.IDebugModelProvider;
  */
 public class DebugModelProvider implements IDebugModelProvider, IAdapterFactory {
 
-    private final static Class<?>[] ADAPTER_LIST = new Class[] { IDebugModelProvider.class };
-    private final static String GDB_MODEL_ID = "org.eclipse.cdt.gdb"; //$NON-NLS-1$
-    private final static String[] MODEL_IDS = new String[] { CDIDebugModel.getPluginIdentifier(), GDB_MODEL_ID }; 
-    
-    @Override
-    public String[] getModelIdentifiers() {
-        return MODEL_IDS;
-    }
-    
-    @SuppressWarnings("unchecked")
+	private final static Class<?>[] ADAPTER_LIST = new Class[] { IDebugModelProvider.class };
+	private final static String GDB_MODEL_ID = "org.eclipse.cdt.gdb"; //$NON-NLS-1$
+	private final static String[] MODEL_IDS = new String[] { CDIDebugModel.getPluginIdentifier(), GDB_MODEL_ID };
+
 	@Override
-    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-        if ( adaptableObject instanceof ICDebugElement && IDebugModelProvider.class.equals(adapterType) ) {
-            return (T) this;
-        }
-        return null;
-    }
-    
-    @Override
-    public Class<?>[] getAdapterList() {
-        return ADAPTER_LIST;
-    }
-    
+	public String[] getModelIdentifiers() {
+		return MODEL_IDS;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adaptableObject instanceof ICDebugElement && IDebugModelProvider.class.equals(adapterType)) {
+			return (T) this;
+		}
+		return null;
+	}
+
+	@Override
+	public Class<?>[] getAdapterList() {
+		return ADAPTER_LIST;
+	}
+
 }

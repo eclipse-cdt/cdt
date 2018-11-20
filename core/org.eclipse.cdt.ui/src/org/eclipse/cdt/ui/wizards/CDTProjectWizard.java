@@ -20,9 +20,9 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 public class CDTProjectWizard extends CDTCommonProjectWizard {
 
 	public CDTProjectWizard() {
-		super(Messages.NewModelProjectWizard_0, Messages.NewModelProjectWizard_1); 
+		super(Messages.NewModelProjectWizard_0, Messages.NewModelProjectWizard_1);
 	}
-	
+
 	@Override
 	public String[] getNatures() {
 		return new String[0];

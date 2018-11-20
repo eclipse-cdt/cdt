@@ -30,132 +30,123 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  */
 public class TypeUtil {
 
-    public static boolean isDeclaringType(ICElement elem) {
-        int type = elem.getElementType();
-        return (type == ICElement.C_CLASS
-            || type == ICElement.C_STRUCT
-            || type == ICElement.C_ENUMERATION
-            || type == ICElement.C_UNION
-            || type == ICElement.C_TYPEDEF
-            || type == ICElement.C_NAMESPACE);
-    }
+	public static boolean isDeclaringType(ICElement elem) {
+		int type = elem.getElementType();
+		return (type == ICElement.C_CLASS || type == ICElement.C_STRUCT || type == ICElement.C_ENUMERATION
+				|| type == ICElement.C_UNION || type == ICElement.C_TYPEDEF || type == ICElement.C_NAMESPACE);
+	}
 
-    public static boolean isMemberType(ICElement elem) {
-        int type = elem.getElementType();
-        if (type == ICElement.C_CLASS
-            || type == ICElement.C_STRUCT
-            || type == ICElement.C_ENUMERATION
-            || type == ICElement.C_UNION
-            || type == ICElement.C_TYPEDEF
-            || type == ICElement.C_NAMESPACE)
-        	return true;
-        return elem instanceof IMember;
-    }
+	public static boolean isMemberType(ICElement elem) {
+		int type = elem.getElementType();
+		if (type == ICElement.C_CLASS || type == ICElement.C_STRUCT || type == ICElement.C_ENUMERATION
+				|| type == ICElement.C_UNION || type == ICElement.C_TYPEDEF || type == ICElement.C_NAMESPACE)
+			return true;
+		return elem instanceof IMember;
+	}
 
-    /**
-     * Returns the type in which this member is declared, or <code>null</code>
-     * if this member is not declared in a type (for example, a top-level type).
-     * This is a handle-only method.
-     * 
-     * @return the type in which this member is declared, or <code>null</code>
-     * if this member is not declared in a type (for example, a top-level type)
-     */
-    public static ICElement getDeclaringType(ICElement elem) {
-        if (!isMemberType(elem))
-            return null;
-        ICElement parent = elem.getParent();
-        while (parent != null && !(parent instanceof ITranslationUnit)) {
-            if (isDeclaringType(parent))
-                return parent;
-            parent = parent.getParent();
-        }
-        return null;
-    }
-    
-    public static ICElement getDeclaringClass(ICElement type) {
-    	ICElement parentElement = type.getParent();
-    	if (parentElement != null && isClassOrStruct(parentElement)) {
-    	    return parentElement;
-    	}
+	/**
+	 * Returns the type in which this member is declared, or <code>null</code>
+	 * if this member is not declared in a type (for example, a top-level type).
+	 * This is a handle-only method.
+	 * 
+	 * @return the type in which this member is declared, or <code>null</code>
+	 * if this member is not declared in a type (for example, a top-level type)
+	 */
+	public static ICElement getDeclaringType(ICElement elem) {
+		if (!isMemberType(elem))
+			return null;
+		ICElement parent = elem.getParent();
+		while (parent != null && !(parent instanceof ITranslationUnit)) {
+			if (isDeclaringType(parent))
+				return parent;
+			parent = parent.getParent();
+		}
+		return null;
+	}
 
-    	if (isClassOrStruct(type)) {
-        	while (parentElement != null) {
-        	    if (isClassOrStruct(parentElement)) {
-        			return parentElement;
-        		} else if (parentElement instanceof IMember) {
-       				parentElement = parentElement.getParent();
-       			} else {
-       				return null;
-        		}
-        	}
-        }
+	public static ICElement getDeclaringClass(ICElement type) {
+		ICElement parentElement = type.getParent();
+		if (parentElement != null && isClassOrStruct(parentElement)) {
+			return parentElement;
+		}
 
-    	return null;
-    }
-    
-    public static boolean isClassOrStruct(ICElement type) {
-        int kind = type.getElementType();
+		if (isClassOrStruct(type)) {
+			while (parentElement != null) {
+				if (isClassOrStruct(parentElement)) {
+					return parentElement;
+				} else if (parentElement instanceof IMember) {
+					parentElement = parentElement.getParent();
+				} else {
+					return null;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public static boolean isClassOrStruct(ICElement type) {
+		int kind = type.getElementType();
 		// case ICElement.C_TEMPLATE_CLASS:
 		// case ICElement.C_TEMPLATE_STRUCT:
-        return (kind == ICElement.C_CLASS || kind == ICElement.C_STRUCT);
-    }
-
-    public static boolean isClass(ICElement type) {
-        return (type.getElementType() == ICElement.C_CLASS);
-    }
-
-    public static boolean isNamespace(ICElement type) {
-        return (type.getElementType() == ICElement.C_NAMESPACE);
-    }
-
-    /**
-     * Returns the top-level types declared in the given translation unit
-     * in the order in which they appear in the source.
-     *
-     * @param tu the translation unit
-     * @return the top-level types declared in the given translation unit
-     * @throws CModelException if this element does not exist or if an
-     *		exception occurs while accessing its corresponding resource
-     */
-    public static ICElement[] getTypes(ITranslationUnit tu) throws CModelException {
-        List<ICElement> typeList = new ArrayList<ICElement>();
-        ICElement[] children = tu.getChildren();
-        for (int i = 0; i < children.length; ++i) {
-            if (isDeclaringType(children[i]))
-                typeList.add(children[i]);
-        }
-        return typeList.toArray(new ICElement[typeList.size()]);
+		return (kind == ICElement.C_CLASS || kind == ICElement.C_STRUCT);
 	}
-    
-    /**
-     * Returns all types declared in the given translation unit in the order
-     * in which they appear in the source. 
-     * This includes all top-level types and nested member types.
-     * It does NOT include local types (types defined in methods).
-     *
-     * @return the array of top-level and member types defined in the given translation unit, in declaration order.
-     * @throws CModelException if this element does not exist or if an
-     *		exception occurs while accessing its corresponding resource
-     */
-    public static ICElement[] getAllTypes(ITranslationUnit tu) throws CModelException {
-    	ICElement[] types = getTypes(tu);
-    	ArrayList<ICElement> allTypes = new ArrayList<ICElement>(types.length);
-    	ArrayList<ICElement> typesToTraverse = new ArrayList<ICElement>(types.length);
-    	for (ICElement type : types) {
-    		typesToTraverse.add(type);
-    	}
-    	while (!typesToTraverse.isEmpty()) {
-    		ICElement type = typesToTraverse.get(0);
-    		typesToTraverse.remove(type);
-    		allTypes.add(type);
-    		types = getTypes(type);
-    		for (ICElement type2 : types) {
-    			typesToTraverse.add(type2);
-    		}
-    	} 
-        return allTypes.toArray(new ICElement[allTypes.size()]);
+
+	public static boolean isClass(ICElement type) {
+		return (type.getElementType() == ICElement.C_CLASS);
 	}
-    
+
+	public static boolean isNamespace(ICElement type) {
+		return (type.getElementType() == ICElement.C_NAMESPACE);
+	}
+
+	/**
+	 * Returns the top-level types declared in the given translation unit
+	 * in the order in which they appear in the source.
+	 *
+	 * @param tu the translation unit
+	 * @return the top-level types declared in the given translation unit
+	 * @throws CModelException if this element does not exist or if an
+	 *		exception occurs while accessing its corresponding resource
+	 */
+	public static ICElement[] getTypes(ITranslationUnit tu) throws CModelException {
+		List<ICElement> typeList = new ArrayList<ICElement>();
+		ICElement[] children = tu.getChildren();
+		for (int i = 0; i < children.length; ++i) {
+			if (isDeclaringType(children[i]))
+				typeList.add(children[i]);
+		}
+		return typeList.toArray(new ICElement[typeList.size()]);
+	}
+
+	/**
+	 * Returns all types declared in the given translation unit in the order
+	 * in which they appear in the source. 
+	 * This includes all top-level types and nested member types.
+	 * It does NOT include local types (types defined in methods).
+	 *
+	 * @return the array of top-level and member types defined in the given translation unit, in declaration order.
+	 * @throws CModelException if this element does not exist or if an
+	 *		exception occurs while accessing its corresponding resource
+	 */
+	public static ICElement[] getAllTypes(ITranslationUnit tu) throws CModelException {
+		ICElement[] types = getTypes(tu);
+		ArrayList<ICElement> allTypes = new ArrayList<ICElement>(types.length);
+		ArrayList<ICElement> typesToTraverse = new ArrayList<ICElement>(types.length);
+		for (ICElement type : types) {
+			typesToTraverse.add(type);
+		}
+		while (!typesToTraverse.isEmpty()) {
+			ICElement type = typesToTraverse.get(0);
+			typesToTraverse.remove(type);
+			allTypes.add(type);
+			types = getTypes(type);
+			for (ICElement type2 : types) {
+				typesToTraverse.add(type2);
+			}
+		}
+		return allTypes.toArray(new ICElement[allTypes.size()]);
+	}
 
 	/**
 	 * Returns the immediate member types declared by the given element.
@@ -166,66 +157,65 @@ public class TypeUtil {
 	 *		exception occurs while accessing its corresponding resource.
 	 * @return the immediate member types declared by this type
 	 */
-    public static ICElement[] getTypes(ICElement elem) throws CModelException {
-        List<ICElement> typeList = new ArrayList<ICElement>();
-        if (isDeclaringType(elem) && elem instanceof IParent) {
-            ICElement[] children = ((IParent)elem).getChildren();
-            for (int i = 0; i < children.length; ++i) {
-                if (isDeclaringType(children[i]))
-                    typeList.add(children[i]);
-            }
-        }
-        return typeList.toArray(new ICElement[typeList.size()]);
+	public static ICElement[] getTypes(ICElement elem) throws CModelException {
+		List<ICElement> typeList = new ArrayList<ICElement>();
+		if (isDeclaringType(elem) && elem instanceof IParent) {
+			ICElement[] children = ((IParent) elem).getChildren();
+			for (int i = 0; i < children.length; ++i) {
+				if (isDeclaringType(children[i]))
+					typeList.add(children[i]);
+			}
+		}
+		return typeList.toArray(new ICElement[typeList.size()]);
 	}
-    
-    public static ITranslationUnit getTranslationUnit(ICElement elem) {
-        while (elem != null) {
-            if (elem instanceof ITranslationUnit)
-                return (ITranslationUnit)elem;
-            elem = elem.getParent();
-        }
-        return null;
-    }
-	
-//  TODO move method to CModelUtil
-    public static IQualifiedTypeName getFullyQualifiedName(ICElement type) {
+
+	public static ITranslationUnit getTranslationUnit(ICElement elem) {
+		while (elem != null) {
+			if (elem instanceof ITranslationUnit)
+				return (ITranslationUnit) elem;
+			elem = elem.getParent();
+		}
+		return null;
+	}
+
+	//  TODO move method to CModelUtil
+	public static IQualifiedTypeName getFullyQualifiedName(ICElement type) {
 		String name = type.getElementName();
 		IQualifiedTypeName qualifiedName = new QualifiedTypeName(name);
 		ICElement parent = type.getParent();
 		while (parent != null && (isNamespace(parent) || isClass(parent))) {
 			qualifiedName = new QualifiedTypeName(parent.getElementName()).append(qualifiedName);
-		    parent = parent.getParent();
+			parent = parent.getParent();
 		}
-	    return qualifiedName;
-	}
-    
-    public static IMethodDeclaration[] getMethods(ICElement elem) {
-	    if (elem instanceof IStructure) {
-	        try {
-	            List<?> list = ((IParent)elem).getChildrenOfType(ICElement.C_METHOD_DECLARATION);
-	            if (list != null && !list.isEmpty()) {
-	                return list.toArray(new IMethodDeclaration[list.size()]);
-	            }
-	        } catch (CModelException e) {
-	        }
-	    }
-	    return null;
+		return qualifiedName;
 	}
 
-    public static ICElement[] getFields(ICElement elem) {
-	    if (elem instanceof IStructure) {
-	        try {
-	            List<?> list = ((IParent)elem).getChildrenOfType(ICElement.C_FIELD);
-	            if (list != null && !list.isEmpty()) {
-	                return list.toArray(new ICElement[list.size()]);
-	            }
-	        } catch (CModelException e) {
-	        }
-	    }
-	    return null;
+	public static IMethodDeclaration[] getMethods(ICElement elem) {
+		if (elem instanceof IStructure) {
+			try {
+				List<?> list = ((IParent) elem).getChildrenOfType(ICElement.C_METHOD_DECLARATION);
+				if (list != null && !list.isEmpty()) {
+					return list.toArray(new IMethodDeclaration[list.size()]);
+				}
+			} catch (CModelException e) {
+			}
+		}
+		return null;
 	}
-    
-    
+
+	public static ICElement[] getFields(ICElement elem) {
+		if (elem instanceof IStructure) {
+			try {
+				List<?> list = ((IParent) elem).getChildrenOfType(ICElement.C_FIELD);
+				if (list != null && !list.isEmpty()) {
+					return list.toArray(new ICElement[list.size()]);
+				}
+			} catch (CModelException e) {
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Finds a method by name.
 	 * This searches for a method with a name and signature. Parameter types are only
@@ -237,16 +227,17 @@ public class TypeUtil {
 	 * @param methods The methods to search in
 	 * @return The found method or <code>null</code>, if nothing found
 	 */
-//  TODO move methods to CModelUtil
-	public static IMethodDeclaration findMethod(String name, String[] paramTypes, boolean isConstructor, boolean isDestructor, IMethodDeclaration[] methods) throws CModelException {
-		for (int i= methods.length - 1; i >= 0; i--) {
+	//  TODO move methods to CModelUtil
+	public static IMethodDeclaration findMethod(String name, String[] paramTypes, boolean isConstructor,
+			boolean isDestructor, IMethodDeclaration[] methods) throws CModelException {
+		for (int i = methods.length - 1; i >= 0; i--) {
 			if (isSameMethodSignature(name, paramTypes, isConstructor, isDestructor, methods[i])) {
 				return methods[i];
 			}
 		}
 		return null;
 	}
-   
+
 	/**
 	 * Tests if a method equals to the given signature.
 	 * Parameter types are only compared by the simple name, no resolving for
@@ -257,16 +248,17 @@ public class TypeUtil {
 	 * @param isConstructor Specifies if the method is a constructor
 	 * @return Returns <code>true</code> if the method has the given name and parameter types and constructor state.
 	 */
-//TODO move methods to CModelUtil
-	public static boolean isSameMethodSignature(String name, String[] paramTypes, boolean isConstructor, boolean isDestructor, IMethodDeclaration curr) throws CModelException {
+	//TODO move methods to CModelUtil
+	public static boolean isSameMethodSignature(String name, String[] paramTypes, boolean isConstructor,
+			boolean isDestructor, IMethodDeclaration curr) throws CModelException {
 		if (isConstructor || isDestructor || name.equals(curr.getElementName())) {
 			if ((isConstructor == curr.isConstructor()) && (isDestructor == curr.isDestructor())) {
-				String[] currParamTypes= curr.getParameterTypes();
+				String[] currParamTypes = curr.getParameterTypes();
 				if (paramTypes.length == currParamTypes.length) {
-					for (int i= 0; i < paramTypes.length; i++) {
+					for (int i = 0; i < paramTypes.length; i++) {
 						// TODO should compare signatures
-						String t1= paramTypes[i];
-						String t2= currParamTypes[i];
+						String t1 = paramTypes[i];
+						String t2 = currParamTypes[i];
 						if (!t1.equals(t2)) {
 							return false;
 						}
@@ -277,7 +269,7 @@ public class TypeUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Finds a method in a type.
 	 * This searches for a method with the same name and signature. Parameter types are only
@@ -288,8 +280,9 @@ public class TypeUtil {
 	 * @param isConstructor If the method is a constructor
 	 * @return The first found method or <code>null</code>, if nothing found
 	 */
-//	TODO move methods to CModelUtil
-	public static IMethodDeclaration findMethod(String name, String[] paramTypes, boolean isConstructor, boolean isDestructor, ICElement type) throws CModelException {
+	//	TODO move methods to CModelUtil
+	public static IMethodDeclaration findMethod(String name, String[] paramTypes, boolean isConstructor,
+			boolean isDestructor, ICElement type) throws CModelException {
 		return findMethod(name, paramTypes, isConstructor, isDestructor, getMethods(type));
 	}
 

@@ -162,10 +162,8 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		getLaunchModePreference(problem).enableInLaunchModes(
-				CheckerLaunchMode.RUN_ON_DEMAND,
-				CheckerLaunchMode.RUN_ON_FILE_OPEN,
-				CheckerLaunchMode.RUN_ON_FILE_SAVE);
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_ON_DEMAND,
+				CheckerLaunchMode.RUN_ON_FILE_OPEN, CheckerLaunchMode.RUN_ON_FILE_SAVE);
 		addPreference(problem, settings.getPath());
 		addPreference(problem, settings.getArgs());
 	}
@@ -176,8 +174,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	}
 
 	@Override
-	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key,
-			Object defaultValue) {
+	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		map.setChildValue(key, defaultValue);
 	}
@@ -196,8 +193,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 
 	@Deprecated
 	@Override
-	public void addMarker(IResource file, int lineNumber, String description, int severity,
-			String variableName) {
+	public void addMarker(IResource file, int lineNumber, String description, int severity, String variableName) {
 		addMarker(new ProblemMarkerInfo(file, lineNumber, description, severity, variableName));
 	}
 
@@ -208,7 +204,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 
 	protected IProblemLocation createProblemLocation(ProblemMarkerInfo info) {
 		IProblemLocationFactory factory = CodanRuntime.getInstance().getProblemLocationFactory();
-		return factory.createProblemLocation(
-				(IFile) info.file, info.startChar, info.endChar, info.lineNumber);
+		return factory.createProblemLocation((IFile) info.file, info.startChar, info.endChar, info.lineNumber);
 	}
 }

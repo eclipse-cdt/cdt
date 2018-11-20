@@ -27,7 +27,6 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  */
 public interface IMemoryBlockAddressInfoRetrieval {
 
-    
 	/**
 	 * An indication of the type of change which may render the current memory address information out of date
 	 */

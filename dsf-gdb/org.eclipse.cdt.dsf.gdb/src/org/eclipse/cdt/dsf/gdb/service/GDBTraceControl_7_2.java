@@ -90,8 +90,8 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		 */
 		@Override
 		public boolean equals(Object obj) {
-			return baseEquals(obj) && (fReference == null ? ((MITraceRecordDMContext) obj).fReference == null : 
-									  (fReference.equals(((MITraceRecordDMContext) obj).fReference)));
+			return baseEquals(obj) && (fReference == null ? ((MITraceRecordDMContext) obj).fReference == null
+					: (fReference.equals(((MITraceRecordDMContext) obj).fReference)));
 		}
 
 		/* (non-Javadoc)
@@ -107,7 +107,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		 */
 		@Override
 		public String toString() {
-			return baseToString() + ".reference(" + fReference + ")";  //$NON-NLS-1$//$NON-NLS-2$
+			return baseToString() + ".reference(" + fReference + ")"; //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
@@ -115,7 +115,8 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	 * Trace record context used to indicate that there is no current trace record selected.
 	 */
 	@Immutable
-	protected static final class InvalidTraceRecordDMContext extends AbstractDMContext implements ITraceRecordDMContext {
+	protected static final class InvalidTraceRecordDMContext extends AbstractDMContext
+			implements ITraceRecordDMContext {
 
 		/**
 		 * @param session    the DsfSession for this service
@@ -153,7 +154,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		 */
 		@Override
 		public String toString() {
-			return baseToString() + ".noTraceRecord";  //$NON-NLS-1$
+			return baseToString() + ".noTraceRecord"; //$NON-NLS-1$
 		}
 	}
 
@@ -161,13 +162,13 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		private String fName;
 		private String fValue;
 		private String fInitialValue;
-		
+
 		public TraceVariableDMData(String name, String initial, String value) {
 			fName = name;
 			fInitialValue = initial;
 			fValue = value;
 		}
-		
+
 		@Override
 		public String getName() {
 			return fName;
@@ -183,13 +184,13 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			return fInitialValue;
 		}
 	}
-	
+
 	private class TraceRecordDMData implements ITraceRecordDMData {
 		private String fContent;
 		private String fTracepointNum;
 		private String fTimestamp;
 		private String fFrameNumber;
-		
+
 		public TraceRecordDMData(String content, String tracepointNum, String frameNumber, String timestamp) {
 			fContent = content;
 			fTracepointNum = tracepointNum;
@@ -206,7 +207,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		public String getTracepointNumber() {
 			return fTracepointNum;
 		}
-		
+
 		@Override
 		public String getRecordId() {
 			return fFrameNumber;
@@ -217,51 +218,56 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			return fTimestamp;
 		}
 	}
-	
+
 	private class TraceStatusDMData implements ITraceStatusDMData2 {
 		private MITraceStatusInfo fInfo;
 
 		public TraceStatusDMData(MITraceStatusInfo info) {
 			fInfo = info;
 		}
-		
+
 		/**
 		 * Create a status when tracing is not supported
 		 */
 		public TraceStatusDMData() {
 			this(null);
 		}
-		
+
 		@Override
 		public int getFreeBufferSize() {
-			if (fInfo == null) return 0;
+			if (fInfo == null)
+				return 0;
 			return fInfo.getFreeBufferSize();
 		}
-		
+
 		@Override
 		public int getNumberOfCreatedFrames() {
-			if (fInfo == null) return 0;
+			if (fInfo == null)
+				return 0;
 			return fInfo.getNumberOfCreatedFrames();
 		}
 
 		@Override
 		public int getNumberOfCollectedFrame() {
-			if (fInfo == null) return 0;
+			if (fInfo == null)
+				return 0;
 			return fInfo.getNumberOfCollectedFrame();
 		}
-		
+
 		@Override
 		public int getTotalBufferSize() {
-			if (fInfo == null) return 0;
+			if (fInfo == null)
+				return 0;
 			return fInfo.getTotalBufferSize();
 		}
-		
+
 		@Override
 		public boolean isTracingActive() {
-			if (fInfo == null) return false;
+			if (fInfo == null)
+				return false;
 			return fInfo.isTracingActive();
 		}
-		
+
 		@Override
 		public boolean isTracingSupported() {
 			return fInfo != null;
@@ -269,28 +275,32 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
 		@Override
 		public boolean isCircularBuffer() {
-			if (fInfo == null) return false;
+			if (fInfo == null)
+				return false;
 			return fInfo.isCircularBuffer();
 		}
-		
+
 		@Override
 		public boolean isTracingFromFile() {
-			if (fInfo == null) return false;
+			if (fInfo == null)
+				return false;
 			return fInfo.isTracingFromFile();
 		}
 
 		@Override
 		public boolean isDisconnectedTracingEnabled() {
-			if (fInfo == null) return false;
+			if (fInfo == null)
+				return false;
 			return fInfo.isDisconnectedTracingEnabled();
 		}
-		
+
 		@Override
 		public STOP_REASON_ENUM getStopReason() {
-			if (fInfo == null) return null;
+			if (fInfo == null)
+				return null;
 			return fInfo.getStopReason();
 		}
-		
+
 		@Override
 		public Integer getStoppingTracepoint() {
 			if (fInfo.getStopReason() == null) {
@@ -298,31 +308,35 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			}
 			return fInfo.getStopTracepoint();
 		}
-		
+
 		@Override
 		public String getUserName() {
-			if (fInfo == null) return ""; //$NON-NLS-1$
+			if (fInfo == null)
+				return ""; //$NON-NLS-1$
 			return fInfo.getUserName() == null ? "" : fInfo.getUserName(); //$NON-NLS-1$
 		}
 
 		@Override
 		public String getNotes() {
-			if (fInfo == null) return ""; //$NON-NLS-1$
+			if (fInfo == null)
+				return ""; //$NON-NLS-1$
 			return fInfo.getNotes() == null ? "" : fInfo.getNotes(); //$NON-NLS-1$
 		}
 
 		@Override
 		public String getStartTime() {
-			if (fInfo == null) return ""; //$NON-NLS-1$
+			if (fInfo == null)
+				return ""; //$NON-NLS-1$
 			return fInfo.getStartTime() == null ? "" : fInfo.getStartTime(); //$NON-NLS-1$
 		}
 
 		@Override
 		public String getStopTime() {
-			if (fInfo == null) return ""; //$NON-NLS-1$
+			if (fInfo == null)
+				return ""; //$NON-NLS-1$
 			return fInfo.getStopTime() == null ? "" : fInfo.getStopTime(); //$NON-NLS-1$
 		}
-		
+
 		@Override
 		public String getStopErrorDescription() {
 			if (getStopReason() != STOP_REASON_ENUM.ERROR) {
@@ -343,7 +357,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		public String getCurrentTraceFrameId() {
 			// Not currently provided by -trace-status
 			if (fCurrentRecordDmc instanceof MITraceRecordDMContext) {
-				return ((MITraceRecordDMContext)fCurrentRecordDmc).getRecordId();
+				return ((MITraceRecordDMContext) fCurrentRecordDmc).getRecordId();
 			}
 			return null;
 		}
@@ -357,56 +371,56 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			return null;
 		}
 	}
-	
-	private static class TracingSupportedChangeEvent extends AbstractDMEvent<ITraceTargetDMContext>
-	implements ITracingSupportedChangeDMEvent {
-		private final boolean fTracingSupported;
-		
-        public TracingSupportedChangeEvent(ITraceTargetDMContext context, boolean supported) {
-        	super(context);
-        	fTracingSupported = supported;
-        }
 
-    	@Override
+	private static class TracingSupportedChangeEvent extends AbstractDMEvent<ITraceTargetDMContext>
+			implements ITracingSupportedChangeDMEvent {
+		private final boolean fTracingSupported;
+
+		public TracingSupportedChangeEvent(ITraceTargetDMContext context, boolean supported) {
+			super(context);
+			fTracingSupported = supported;
+		}
+
+		@Override
 		public boolean isTracingSupported() {
 			return fTracingSupported;
 		}
 	}
 
 	private static class TracingStartedEvent extends AbstractDMEvent<ITraceTargetDMContext>
-	implements ITracingStartedDMEvent {
-        public TracingStartedEvent(ITraceTargetDMContext context) {
-        	super(context);
-        }
+			implements ITracingStartedDMEvent {
+		public TracingStartedEvent(ITraceTargetDMContext context) {
+			super(context);
+		}
 	}
-	
+
 	private static class TracingStoppedEvent extends AbstractDMEvent<ITraceTargetDMContext>
-	implements ITracingStoppedDMEvent {
+			implements ITracingStoppedDMEvent {
 		public TracingStoppedEvent(ITraceTargetDMContext context) {
 			super(context);
 		}
 	}
-	
-	public static class TraceRecordSelectedChangedEvent extends AbstractDMEvent<ITraceRecordDMContext>
-	implements ITraceRecordSelectedChangedDMEvent {
-		final boolean fVisualModeEnabled;
-		
-        public TraceRecordSelectedChangedEvent(ITraceRecordDMContext context) {
-        	super(context);
-        	fVisualModeEnabled = !(context instanceof InvalidTraceRecordDMContext);
-        }
 
-    	@Override
+	public static class TraceRecordSelectedChangedEvent extends AbstractDMEvent<ITraceRecordDMContext>
+			implements ITraceRecordSelectedChangedDMEvent {
+		final boolean fVisualModeEnabled;
+
+		public TraceRecordSelectedChangedEvent(ITraceRecordDMContext context) {
+			super(context);
+			fVisualModeEnabled = !(context instanceof InvalidTraceRecordDMContext);
+		}
+
+		@Override
 		public boolean isVisualizationModeEnabled() {
 			return fVisualModeEnabled;
 		}
-	}	
+	}
 
-    private CommandCache fTraceStatusCache;
+	private CommandCache fTraceStatusCache;
 	private ICommandControlService fConnection;
 	private CommandFactory fCommandFactory;
 	private IGDBBackend fBackend;
-	
+
 	private ITraceRecordDMContext fCurrentRecordDmc;
 	private int fTracepointIndexForTraceRecord;
 
@@ -434,7 +448,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			}
 		});
 	}
-	
+
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
@@ -445,17 +459,15 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
 		// Register this service.
-		register(new String[] {IGDBTraceControl.class.getName(),
-				               IGDBTraceControl2.class.getName()},
-				 new Hashtable<String, String>());
-		
+		register(new String[] { IGDBTraceControl.class.getName(), IGDBTraceControl2.class.getName() },
+				new Hashtable<String, String>());
 
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
-        fTraceStatusCache = new CommandCache(getSession(), fConnection);
-        fTraceStatusCache.setContextAvailable(fConnection.getContext(), true);
-        
-        fBackend = getServicesTracker().getService(IGDBBackend.class);
-        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+		fTraceStatusCache = new CommandCache(getSession(), fConnection);
+		fTraceStatusCache.setContextAvailable(fConnection.getContext(), true);
+
+		fBackend = getServicesTracker().getService(IGDBBackend.class);
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		requestMonitor.done();
 	}
@@ -472,7 +484,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		unregister();
 		super.shutdown(requestMonitor);
 	}
-	
+
 	/**
 	 * @return The bundle context of the plug-in to which this service belongs.
 	 */
@@ -485,683 +497,680 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	protected boolean isTracingCurrentlySupported() {
 		return fIsTracingCurrentlySupported;
 	}
-	
+
 	/** @since 4.4 */
 	protected CommandCache getTraceStatusCache() {
 		return fTraceStatusCache;
 	}
-	
+
 	@Override
-    public void canStartTracing(ITraceTargetDMContext context, final DataRequestMonitor<Boolean> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
-    	
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
-    	
-    	if (fBackend.getSessionType() == SessionType.CORE) {
-    		rm.setData(false);
-    		rm.done();
-    		return;
-    	}
-    	
-    	if (fCurrentRecordDmc != null) {
-    		// We are visualizing data, no more tracing possible.
-    		rm.setData(false);
-    		rm.done();
-    		return;    		
-    	}
+	public void canStartTracing(ITraceTargetDMContext context, final DataRequestMonitor<Boolean> rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
- 		rm.setData(true);
- 		rm.done();
-    }
-    
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
+		if (fCurrentRecordDmc != null) {
+			// We are visualizing data, no more tracing possible.
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
+		rm.setData(true);
+		rm.done();
+	}
+
 	@Override
-    public void startTracing(final ITraceTargetDMContext context, final RequestMonitor rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void startTracing(final ITraceTargetDMContext context, final RequestMonitor rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	canStartTracing(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
-    		@Override
-    		protected void handleSuccess() {
-    			if (!getData()) {
-    	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot start tracing", null)); //$NON-NLS-1$
-    	            rm.done();
-    	            return;
-    			}
-    			
-    	        fConnection.queueCommand(
-    	        		fCommandFactory.createMITraceStart(context),
-    	        		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-    	        			@Override
-    	        			protected void handleSuccess() {
-    	            			fTraceStatusCache.reset(context);
+		canStartTracing(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData()) {
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot start tracing", //$NON-NLS-1$
+							null));
+					rm.done();
+					return;
+				}
 
-    	        				fIsTracingActive = true;
-    	        		        getSession().dispatchEvent(new TracingStartedEvent(context), getProperties());
-    	        				rm.done();
-    	        			}
-                            @Override
-                            protected void handleError() {
-                                // Send an event to cause a refresh of the button states
-                                IDMEvent<ITraceTargetDMContext> event;
-                                if (fIsTracingActive) {
-                                    event = new TracingStartedEvent(context);
-                                } else {
-                                    event = new TracingStoppedEvent(context);
-                                }
-                                getSession().dispatchEvent(event, getProperties());
-                                rm.done();
-                            }
-    	        		});
-    		}
-    	});
-    }
-    
+				fConnection.queueCommand(fCommandFactory.createMITraceStart(context),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								fTraceStatusCache.reset(context);
+
+								fIsTracingActive = true;
+								getSession().dispatchEvent(new TracingStartedEvent(context), getProperties());
+								rm.done();
+							}
+
+							@Override
+							protected void handleError() {
+								// Send an event to cause a refresh of the button states
+								IDMEvent<ITraceTargetDMContext> event;
+								if (fIsTracingActive) {
+									event = new TracingStartedEvent(context);
+								} else {
+									event = new TracingStoppedEvent(context);
+								}
+								getSession().dispatchEvent(event, getProperties());
+								rm.done();
+							}
+						});
+			}
+		});
+	}
+
 	@Override
-    public void canStopTracing(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
-    	
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void canStopTracing(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fBackend.getSessionType() == SessionType.CORE) {
-    		rm.setData(false);
-    		rm.done();
-    		return;
-    	}
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fCurrentRecordDmc != null) {
-    		// We are visualizing data, no more tracing possible.
-    		rm.setData(false);
-    		rm.done();
-    		return;    		
-    	}
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
 
-       	isTracing(context, rm);
-    }
-    
+		if (fCurrentRecordDmc != null) {
+			// We are visualizing data, no more tracing possible.
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
+		isTracing(context, rm);
+	}
+
 	@Override
-    public void stopTracing(final ITraceTargetDMContext context, final RequestMonitor rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void stopTracing(final ITraceTargetDMContext context, final RequestMonitor rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	canStopTracing(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
-    		@Override
-    		protected void handleSuccess() {
-    			if (!getData()) {
-    	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot stop tracing", null)); //$NON-NLS-1$
-    	            rm.done();
-    	            return;
-    			}
-    			
-    	        fConnection.queueCommand(
-    	        		fCommandFactory.createMITraceStop(context),
-    	        		new DataRequestMonitor<MITraceStopInfo>(getExecutor(), rm) {
-    	        			@Override
-    	        			protected void handleSuccess() {
-    	            			fTraceStatusCache.reset(context);
+		canStopTracing(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData()) {
+					rm.setStatus(
+							new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot stop tracing", null)); //$NON-NLS-1$
+					rm.done();
+					return;
+				}
 
-    	            			MITraceStopInfo info = getData();
+				fConnection.queueCommand(fCommandFactory.createMITraceStop(context),
+						new DataRequestMonitor<MITraceStopInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								fTraceStatusCache.reset(context);
 
-            					// Update the tracing state in case it was stopped by the backend
-            					if (fIsTracingActive != info.isTracingActive()) {
-            						fIsTracingActive = info.isTracingActive();
-            						if (!fIsTracingActive) {
-            	        		        getSession().dispatchEvent(new TracingStoppedEvent(context), getProperties());
-            						}
-            					}
-            					
-            					fTraceRecordsStored = info.getNumberOfCollectedFrame();
-    	        				rm.done();
-    	        			}
-    	        		});
-    		}
-    	});    	
-    }
-    
+								MITraceStopInfo info = getData();
+
+								// Update the tracing state in case it was stopped by the backend
+								if (fIsTracingActive != info.isTracingActive()) {
+									fIsTracingActive = info.isTracingActive();
+									if (!fIsTracingActive) {
+										getSession().dispatchEvent(new TracingStoppedEvent(context), getProperties());
+									}
+								}
+
+								fTraceRecordsStored = info.getNumberOfCollectedFrame();
+								rm.done();
+							}
+						});
+			}
+		});
+	}
+
 	@Override
-    public void isTracing(ITraceTargetDMContext context, final DataRequestMonitor<Boolean> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void isTracing(ITraceTargetDMContext context, final DataRequestMonitor<Boolean> rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fBackend.getSessionType() == SessionType.CORE) {
-    		rm.setData(false);
-    		rm.done();
-    		return;
-    	}
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
 
-    	// Although tracing can be automatically stopped on the target, we
-    	// don't go to the backend for this call, or we would make too many calls
-    	// Instead, we can use our buffered state; we simply won't know about an
-    	// automatic stop until a forced refresh.  (Note that the MI notification
-    	// about automatic stops, is not available until GDB 7.2 is released)
-    	rm.setData(fIsTracingActive);
-    	rm.done();
-    }
-    
+		// Although tracing can be automatically stopped on the target, we
+		// don't go to the backend for this call, or we would make too many calls
+		// Instead, we can use our buffered state; we simply won't know about an
+		// automatic stop until a forced refresh.  (Note that the MI notification
+		// about automatic stops, is not available until GDB 7.2 is released)
+		rm.setData(fIsTracingActive);
+		rm.done();
+	}
+
 	@Override
 	public void canSaveTraceData(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
-    	
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fBackend.getSessionType() == SessionType.CORE) {
-    		rm.setData(false);
-    		rm.done();
-    		return;
-    	}
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
 
 		rm.setData(fTraceRecordsStored > 0);
 		rm.done();
 	}
 
 	@Override
-	public void saveTraceData(final ITraceTargetDMContext context, final String file, 
-			                  final boolean remoteSave, final RequestMonitor rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void saveTraceData(final ITraceTargetDMContext context, final String file, final boolean remoteSave,
+			final RequestMonitor rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	canSaveTraceData(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
-    		@Override
-    		protected void handleSuccess() {
-    			if (!getData()) {
-    	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot save trace data", null)); //$NON-NLS-1$
-    	            rm.done();
-    	            return;
-    			}
+		canSaveTraceData(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData()) {
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot save trace data", //$NON-NLS-1$
+							null));
+					rm.done();
+					return;
+				}
 
-    			fConnection.queueCommand(
-    					fCommandFactory.createMITraceSave(context, file, remoteSave),
-    					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-       		}
-    	});
+				fConnection.queueCommand(fCommandFactory.createMITraceSave(context, file, remoteSave),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			}
+		});
 	}
 
 	@Override
 	public void canLoadTraceData(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	// If this service has been instantiated, it means we support loading trace data.
-    	// Unlike the other operations, loading trace data does not require any GDB special state
-    	// (like being connected to a target)
+		// If this service has been instantiated, it means we support loading trace data.
+		// Unlike the other operations, loading trace data does not require any GDB special state
+		// (like being connected to a target)
 		rm.setData(true);
 		rm.done();
 	}
 
 	@Override
 	public void loadTraceData(final ITraceTargetDMContext context, final String file, final RequestMonitor rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	canLoadTraceData(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
-    		@Override
-    		protected void handleSuccess() {
-    			if (!getData()) {
-    	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot load trace data", null)); //$NON-NLS-1$
-    	            rm.done();
-    	            return;
-    			}
+		canLoadTraceData(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData()) {
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot load trace data", //$NON-NLS-1$
+							null));
+					rm.done();
+					return;
+				}
 
-    			fConnection.queueCommand(
-    					fCommandFactory.createMITargetSelectTFile(context, file), 
-    					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-    						@Override
-    						protected void handleSuccess() {
-    							fTraceStatusCache.reset(context);
+				fConnection.queueCommand(fCommandFactory.createMITargetSelectTFile(context, file),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								fTraceStatusCache.reset(context);
 
-    							fIsTracingCurrentlySupported = true;
-    							// Workaround for GDB pre-release where we don't get the details
-    							// of the frame when we load a trace file.
-    							// To get around this, we can force a select of record 0
-    							final ITraceRecordDMContext initialRecord = createTraceRecordContext(context, "0"); //$NON-NLS-1$
-    							selectTraceRecord(initialRecord, new ImmediateRequestMonitor(rm) {
-    							    @Override
-    							    protected void handleSuccess() {
-    							        // This event will indicate to the other services that we are visualizing trace data.
-    							        getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(initialRecord), getProperties());
-    							        rm.done();
-    							    }
-    							});
-    						}
-    					});
-    		}
-    	});
+								fIsTracingCurrentlySupported = true;
+								// Workaround for GDB pre-release where we don't get the details
+								// of the frame when we load a trace file.
+								// To get around this, we can force a select of record 0
+								final ITraceRecordDMContext initialRecord = createTraceRecordContext(context, "0"); //$NON-NLS-1$
+								selectTraceRecord(initialRecord, new ImmediateRequestMonitor(rm) {
+									@Override
+									protected void handleSuccess() {
+										// This event will indicate to the other services that we are visualizing trace data.
+										getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(initialRecord),
+												getProperties());
+										rm.done();
+									}
+								});
+							}
+						});
+			}
+		});
 	}
-	
+
 	@Override
-    public void getTraceStatus(final ITraceTargetDMContext context, final DataRequestMonitor<ITraceStatusDMData> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void getTraceStatus(final ITraceTargetDMContext context, final DataRequestMonitor<ITraceStatusDMData> rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fIsTracingFeatureAvailable == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+		if (fIsTracingFeatureAvailable == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	// Start an automatic one-time flushing of the TraceStatusCache.
-    	// This avoids sending -trace-status multiples time in a very short
-    	// amount of time.  We still have to clear the cache very quickly
-    	// because -trace-status can change very fast as it reports
-    	// the number of frames collected.  Having a small interval of
-    	// stale data is currently not a big deal, and not user-visible.
-    	// Bug 353034
-    	getExecutor().schedule(new Runnable() {
-			@Override public void run() { fTraceStatusCache.reset(context); }
+		// Start an automatic one-time flushing of the TraceStatusCache.
+		// This avoids sending -trace-status multiples time in a very short
+		// amount of time.  We still have to clear the cache very quickly
+		// because -trace-status can change very fast as it reports
+		// the number of frames collected.  Having a small interval of
+		// stale data is currently not a big deal, and not user-visible.
+		// Bug 353034
+		getExecutor().schedule(new Runnable() {
+			@Override
+			public void run() {
+				fTraceStatusCache.reset(context);
+			}
 		}, 300, TimeUnit.MILLISECONDS);
-    	
-    	fTraceStatusCache.execute(
-        		fCommandFactory.createMITraceStatus(context),
-        		new DataRequestMonitor<MITraceStatusInfo>(getExecutor(), rm) {
-        			@Override
-        			protected void handleError() {
-        				// The MI command
-        				fIsTracingFeatureAvailable = false;
-        				super.handleError();
-        			}
-        			@Override
-        			protected void handleSuccess() {
-        				MITraceStatusInfo info = getData();
-        				
-        				if (fIsTracingCurrentlySupported != info.isTracingSupported()) {
-        					fIsTracingCurrentlySupported = info.isTracingSupported();
-	        		        getSession().dispatchEvent(new TracingSupportedChangeEvent(context, fIsTracingCurrentlySupported), getProperties());
-        				}
-        				
-        				if (fIsTracingCurrentlySupported) {
-        					// Update the tracing state in case it was stopped by the backend
-        					if (fIsTracingActive != info.isTracingActive()) {
-        						fIsTracingActive = info.isTracingActive();
-        						if (fIsTracingActive) {
-        	        		        getSession().dispatchEvent(new TracingStartedEvent(context), getProperties());
-        						} else {
-        	        		        getSession().dispatchEvent(new TracingStoppedEvent(context), getProperties());
-        						}
-        					}
-        					
-        					fTraceRecordsStored = info.getNumberOfCollectedFrame();
-        					
-        					rm.setData(new TraceStatusDMData(info));
-        				} else {
-        					fTraceRecordsStored = 0;
-        					fIsTracingActive = false;
-        					rm.setData(new TraceStatusDMData());        					
-        				}
-        				rm.done();
-        			}
-        		});
-    }
-    
-	@Override
-	public void createTraceVariable(ITraceTargetDMContext context,
-									String varName, 
-									String varValue,
-									RequestMonitor rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
 
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+		fTraceStatusCache.execute(fCommandFactory.createMITraceStatus(context),
+				new DataRequestMonitor<MITraceStatusInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleError() {
+						// The MI command
+						fIsTracingFeatureAvailable = false;
+						super.handleError();
+					}
+
+					@Override
+					protected void handleSuccess() {
+						MITraceStatusInfo info = getData();
+
+						if (fIsTracingCurrentlySupported != info.isTracingSupported()) {
+							fIsTracingCurrentlySupported = info.isTracingSupported();
+							getSession().dispatchEvent(
+									new TracingSupportedChangeEvent(context, fIsTracingCurrentlySupported),
+									getProperties());
+						}
+
+						if (fIsTracingCurrentlySupported) {
+							// Update the tracing state in case it was stopped by the backend
+							if (fIsTracingActive != info.isTracingActive()) {
+								fIsTracingActive = info.isTracingActive();
+								if (fIsTracingActive) {
+									getSession().dispatchEvent(new TracingStartedEvent(context), getProperties());
+								} else {
+									getSession().dispatchEvent(new TracingStoppedEvent(context), getProperties());
+								}
+							}
+
+							fTraceRecordsStored = info.getNumberOfCollectedFrame();
+
+							rm.setData(new TraceStatusDMData(info));
+						} else {
+							fTraceRecordsStored = 0;
+							fIsTracingActive = false;
+							rm.setData(new TraceStatusDMData());
+						}
+						rm.done();
+					}
+				});
+	}
+
+	@Override
+	public void createTraceVariable(ITraceTargetDMContext context, String varName, String varValue, RequestMonitor rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
 		if (varValue == null) {
-			fConnection.queueCommand(
-					fCommandFactory.createMITraceDefineVariable(context, varName),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));			
+			fConnection.queueCommand(fCommandFactory.createMITraceDefineVariable(context, varName),
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 		} else {
-			fConnection.queueCommand(
-					fCommandFactory.createMITraceDefineVariable(context, varName, varValue),
+			fConnection.queueCommand(fCommandFactory.createMITraceDefineVariable(context, varName, varValue),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 		}
 	}
-	
 
 	@Override
-    public void getTraceVariables(ITraceTargetDMContext context, final DataRequestMonitor<ITraceVariableDMData[]> rm) {
-    	if (context == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public void getTraceVariables(ITraceTargetDMContext context, final DataRequestMonitor<ITraceVariableDMData[]> rm) {
+		if (context == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	// It may be possible to cache this call, if we can figure out that all the cases
-    	// where to data can change, to clear the cache in those cases
-		fConnection.queueCommand(
-				fCommandFactory.createMITraceListVariables(context),
+		// It may be possible to cache this call, if we can figure out that all the cases
+		// where to data can change, to clear the cache in those cases
+		fConnection.queueCommand(fCommandFactory.createMITraceListVariables(context),
 				new DataRequestMonitor<MITraceListVariablesInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
 						MITraceVariableInfo[] vars = getData().getTraceVariables();
 						TraceVariableDMData[] varDataArray = new TraceVariableDMData[vars.length];
 						for (int i = 0; i < vars.length; i++) {
-							varDataArray[i] = new TraceVariableDMData(vars[i].getName(),
-									                                  vars[i].getInitialValue(),
-									                                  vars[i].getCurrentValue());
+							varDataArray[i] = new TraceVariableDMData(vars[i].getName(), vars[i].getInitialValue(),
+									vars[i].getCurrentValue());
 						}
-						
+
 						rm.setData(varDataArray);
 						rm.done();
 					}
 				});
 	}
-    
-    /**
-     * Create a trace record context
-     * @since 4.0
-     */
-	@Override
-    public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, String recordId) {
-    	return new MITraceRecordDMContext(getSession(), ctx, recordId);
-    }
 
+	/**
+	 * Create a trace record context
+	 * @since 4.0
+	 */
 	@Override
-    public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx) {
-    	ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
-    	if (ctx instanceof InvalidTraceRecordDMContext) {
-    		// No specified context, so we return the context for the first
-    		return createTraceRecordContext(targetDmc, "0"); //$NON-NLS-1$
-    	}
-    	if (ctx instanceof MITraceRecordDMContext) {
-        	String recordId = ((MITraceRecordDMContext)ctx).getRecordId();
-        	int recordIndex = Integer.parseInt(recordId);
-        	recordIndex++;
-        	if (recordIndex == fTraceRecordsStored) {
-        		// Loop back to the front
-        		recordIndex = 0;
-        	}
-    		return new MITraceRecordDMContext(getSession(),
-    				                          targetDmc,
-    				                          Integer.toString(recordIndex));
-    	}
-    	return null;
-    }
+	public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, String recordId) {
+		return new MITraceRecordDMContext(getSession(), ctx, recordId);
+	}
 
 	@Override
-    public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx) {
-    	if (ctx instanceof MITraceRecordDMContext) {
-        	ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
-        	String recordId = ((MITraceRecordDMContext)ctx).getRecordId();
-        	int recordIndex = Integer.parseInt(recordId);
-        	if (recordIndex == 0) {
-        		// Loop back to the end
-        		recordIndex = fTraceRecordsStored; // The last index of a trace record (zero-based)
-        	}
-        	recordIndex--;
-    		return new MITraceRecordDMContext(getSession(),
-    				                          targetDmc,
-    				                          Integer.toString(recordIndex));
-    	}
-    	return null;
-    }
-
-
-	@Override
-    public void getCurrentTraceRecordContext(ITraceTargetDMContext context, DataRequestMonitor<ITraceRecordDMContext> drm) {
-    	if (fCurrentRecordDmc == null) {
-    		drm.setData(new InvalidTraceRecordDMContext(getSession(), context));
-    	} else {
-    		drm.setData(fCurrentRecordDmc);
-    	}
-    	drm.done();
-    }
+	public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx) {
+		ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
+		if (ctx instanceof InvalidTraceRecordDMContext) {
+			// No specified context, so we return the context for the first
+			return createTraceRecordContext(targetDmc, "0"); //$NON-NLS-1$
+		}
+		if (ctx instanceof MITraceRecordDMContext) {
+			String recordId = ((MITraceRecordDMContext) ctx).getRecordId();
+			int recordIndex = Integer.parseInt(recordId);
+			recordIndex++;
+			if (recordIndex == fTraceRecordsStored) {
+				// Loop back to the front
+				recordIndex = 0;
+			}
+			return new MITraceRecordDMContext(getSession(), targetDmc, Integer.toString(recordIndex));
+		}
+		return null;
+	}
 
 	@Override
-    public void selectTraceRecord(final ITraceRecordDMContext context, final RequestMonitor rm) {
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-    	}
+	public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx) {
+		if (ctx instanceof MITraceRecordDMContext) {
+			ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
+			String recordId = ((MITraceRecordDMContext) ctx).getRecordId();
+			int recordIndex = Integer.parseInt(recordId);
+			if (recordIndex == 0) {
+				// Loop back to the end
+				recordIndex = fTraceRecordsStored; // The last index of a trace record (zero-based)
+			}
+			recordIndex--;
+			return new MITraceRecordDMContext(getSession(), targetDmc, Integer.toString(recordIndex));
+		}
+		return null;
+	}
 
-    	if (context instanceof MITraceRecordDMContext) {
-    		ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(context, ITraceTargetDMContext.class);
-        	String recordId = ((MITraceRecordDMContext)context).getRecordId();
-        	final int reference = Integer.parseInt(recordId);
+	@Override
+	public void getCurrentTraceRecordContext(ITraceTargetDMContext context,
+			DataRequestMonitor<ITraceRecordDMContext> drm) {
+		if (fCurrentRecordDmc == null) {
+			drm.setData(new InvalidTraceRecordDMContext(getSession(), context));
+		} else {
+			drm.setData(fCurrentRecordDmc);
+		}
+		drm.done();
+	}
 
-    		if (reference < 0) {
-    			// This was the old way to indicate that we want to exit visualization mode.
-    			// We continue supporting it for backward compatibility
-    			stopTraceVisualization(targetDmc, rm);
-        		return;
-    		}
-    		
-    		fConnection.queueCommand(
-    				fCommandFactory.createMITraceFindFrameNumber(targetDmc, reference),
-    				new DataRequestMonitor<MITraceFindInfo>(getExecutor(), rm) {
-    					@Override
-    					protected void handleSuccess() {
-    						if (getData().isFound() == false) {
-    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Could not find trace record", null)); //$NON-NLS-1$
-    							rm.done();
-    							return;
-    						}
+	@Override
+	public void selectTraceRecord(final ITraceRecordDMContext context, final RequestMonitor rm) {
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    						fCurrentRecordDmc = context;
-    						fTracepointIndexForTraceRecord = getData().getTraceRecord().getTracepointId();
+		if (context instanceof MITraceRecordDMContext) {
+			ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(context, ITraceTargetDMContext.class);
+			String recordId = ((MITraceRecordDMContext) context).getRecordId();
+			final int reference = Integer.parseInt(recordId);
 
-    						// We could rely on the TraceRecordSelectedChangedEvent to update all the views, but this
-    						// would require a lot of changes.
-    						// Notice that looking at a new trace record should behave in the same manner
-    						// as when the debugger suspends during normal execution; therefore we can simply 
-    						// trigger an MIStoppedEvent, as if reported by GDB.  Note that we do this already for
-    						// cases where GDB is missing such a event (like older versions of GDB when using a CLI command)
-    						IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
-    						if (procService == null) {
-    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Could not find necessary services", null)); //$NON-NLS-1$
-    							rm.done();
-    							return;
-    						}
-    						
-    						final MIResultRecord rr = getData().getMIOutput().getMIResultRecord();
-    						if (rr == null) {
-    							assert false;
-    							rm.done();
-    							return;
-    						}
-    						
-    						// First find the process we are using.
-    						ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
-    						procService.getProcessesBeingDebugged(
-    								controlDmc,
-    								new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
-    									@Override
-    									protected void handleSuccess() {
-    										assert getData() != null;
-    										assert getData().length == 1;
+			if (reference < 0) {
+				// This was the old way to indicate that we want to exit visualization mode.
+				// We continue supporting it for backward compatibility
+				stopTraceVisualization(targetDmc, rm);
+				return;
+			}
 
-    										if (getData() == null || getData().length < 1) {
-    			    							rm.done();
-    			    							return;
-    										}
-    										
-    										// Choose the first process for now, until gdb can tell
-    										// us which process the trace record is associated with.
-    										// Or maybe GDB already tells us by only reporting a single
-    										// process?
-    										IContainerDMContext processContainerDmc = (IContainerDMContext)(getData()[0]);
-    										
-    										// Now find the proper thread.  We must do this here because in post-mortem debugging
-    										// we cannot rely on MIRunControl using 'thread', as it will fail
-    			    						IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
-    			    						if (procService == null) {
-    			    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Could not find necessary services", null)); //$NON-NLS-1$
-    			    							rm.done();
-    			    							return;
-    			    						}
+			fConnection.queueCommand(fCommandFactory.createMITraceFindFrameNumber(targetDmc, reference),
+					new DataRequestMonitor<MITraceFindInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							if (getData().isFound() == false) {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+										"Could not find trace record", null)); //$NON-NLS-1$
+								rm.done();
+								return;
+							}
 
-    			    						procService.getProcessesBeingDebugged(
-    			    								processContainerDmc,
-    			    								new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
-    			    									@Override
-    			    									protected void handleSuccess() {
-    			    										assert getData() != null;
-    			    										assert getData().length == 1;
+							fCurrentRecordDmc = context;
+							fTracepointIndexForTraceRecord = getData().getTraceRecord().getTracepointId();
 
-    			    										if (getData() == null || getData().length < 1) {
-    			    			    							rm.done();
-    			    			    							return;
-    			    										}
+							// We could rely on the TraceRecordSelectedChangedEvent to update all the views, but this
+							// would require a lot of changes.
+							// Notice that looking at a new trace record should behave in the same manner
+							// as when the debugger suspends during normal execution; therefore we can simply 
+							// trigger an MIStoppedEvent, as if reported by GDB.  Note that we do this already for
+							// cases where GDB is missing such a event (like older versions of GDB when using a CLI command)
+							IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
+							if (procService == null) {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+										"Could not find necessary services", null)); //$NON-NLS-1$
+								rm.done();
+								return;
+							}
 
-    			    										IExecutionDMContext execDmc = (IExecutionDMContext)getData()[0];
-    			    										MIEvent<?> event = MITracepointSelectedEvent.parse(execDmc, rr.getToken(), rr.getMIResults());
-    			    										getSession().dispatchEvent(event, getProperties());
+							final MIResultRecord rr = getData().getMIOutput().getMIResultRecord();
+							if (rr == null) {
+								assert false;
+								rm.done();
+								return;
+							}
 
-    			    										rm.done();
-    			    									}
-    			    								});
-    									}
-    								});
-    					}
-    				});
-    	} else {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid trace record context.", null)); //$NON-NLS-1$
-    		rm.done();
-    	}
-    }
+							// First find the process we are using.
+							ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context,
+									ICommandControlDMContext.class);
+							procService.getProcessesBeingDebugged(controlDmc,
+									new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+										@Override
+										protected void handleSuccess() {
+											assert getData() != null;
+											assert getData().length == 1;
+
+											if (getData() == null || getData().length < 1) {
+												rm.done();
+												return;
+											}
+
+											// Choose the first process for now, until gdb can tell
+											// us which process the trace record is associated with.
+											// Or maybe GDB already tells us by only reporting a single
+											// process?
+											IContainerDMContext processContainerDmc = (IContainerDMContext) (getData()[0]);
+
+											// Now find the proper thread.  We must do this here because in post-mortem debugging
+											// we cannot rely on MIRunControl using 'thread', as it will fail
+											IMIProcesses procService = getServicesTracker()
+													.getService(IMIProcesses.class);
+											if (procService == null) {
+												rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+														INTERNAL_ERROR, "Could not find necessary services", null)); //$NON-NLS-1$
+												rm.done();
+												return;
+											}
+
+											procService.getProcessesBeingDebugged(processContainerDmc,
+													new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+														@Override
+														protected void handleSuccess() {
+															assert getData() != null;
+															assert getData().length == 1;
+
+															if (getData() == null || getData().length < 1) {
+																rm.done();
+																return;
+															}
+
+															IExecutionDMContext execDmc = (IExecutionDMContext) getData()[0];
+															MIEvent<?> event = MITracepointSelectedEvent.parse(execDmc,
+																	rr.getToken(), rr.getMIResults());
+															getSession().dispatchEvent(event, getProperties());
+
+															rm.done();
+														}
+													});
+										}
+									});
+						}
+					});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid trace record context.", //$NON-NLS-1$
+					null));
+			rm.done();
+		}
+	}
 
 	/** @since 4.4 */
 	@Override
 	public void stopTraceVisualization(final ITraceTargetDMContext context, final RequestMonitor rm) {
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-    		rm.done();
-    		return;
-    	}
+		if (fIsTracingCurrentlySupported == false) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	if (fBackend.getSessionType() == SessionType.CORE) {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot stop visualizing for a post mortem session", null)); //$NON-NLS-1$
-    		rm.done();
-    		return;
-    	}
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+					"Cannot stop visualizing for a post mortem session", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
 
-    	fConnection.queueCommand(
-    			fCommandFactory.createMITraceFindNone(context),
-    			new DataRequestMonitor<MITraceFindInfo>(getExecutor(), rm) {
-    				@Override
-    				protected void handleSuccess() {
-    					assert getData().isFound() == false;
-    					fCurrentRecordDmc = null;
-    					// This event will indicate to the other services that we are no longer visualizing trace data.
-    					ITraceRecordDMContext invalidDmc = new InvalidTraceRecordDMContext(getSession(), context);
-    					getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(invalidDmc), getProperties());
+		fConnection.queueCommand(fCommandFactory.createMITraceFindNone(context),
+				new DataRequestMonitor<MITraceFindInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						assert getData().isFound() == false;
+						fCurrentRecordDmc = null;
+						// This event will indicate to the other services that we are no longer visualizing trace data.
+						ITraceRecordDMContext invalidDmc = new InvalidTraceRecordDMContext(getSession(), context);
+						getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(invalidDmc), getProperties());
 
-    					rm.done();
-    					return;
-    				}
-    			});
-    }
-    
+						rm.done();
+						return;
+					}
+				});
+	}
+
 	@Override
-	public void getTraceRecordData(final ITraceRecordDMContext context, final DataRequestMonitor<ITraceRecordDMData> rm) {
-    	if (context instanceof MITraceRecordDMContext) {
-    		
-    		RequestMonitor tdumpRm = new ImmediateRequestMonitor(rm) {
+	public void getTraceRecordData(final ITraceRecordDMContext context,
+			final DataRequestMonitor<ITraceRecordDMData> rm) {
+		if (context instanceof MITraceRecordDMContext) {
+
+			RequestMonitor tdumpRm = new ImmediateRequestMonitor(rm) {
 				@Override
 				protected void handleSuccess() {
-					fConnection.queueCommand(
-							fCommandFactory.createCLITraceDump(context),
+					fConnection.queueCommand(fCommandFactory.createCLITraceDump(context),
 							new DataRequestMonitor<CLITraceDumpInfo>(getExecutor(), rm) {
 								@Override
 								protected void handleSuccess() {
 
-									TraceRecordDMData data = new TraceRecordDMData(
-											getData().getContent(),
-											getData().getTracepointNumber(),
-											getData().getFrameNumber(),
-											getData().getTimestamp()
-									);
+									TraceRecordDMData data = new TraceRecordDMData(getData().getContent(),
+											getData().getTracepointNumber(), getData().getFrameNumber(),
+											getData().getTimestamp());
 									rm.setData(data);
 									rm.done();
 								}
 							});
 				}
 			};
-			
-    		// If we are pointing to the right context, we can do the tdump right away,
-    		// if not, we should first select the record.
-    		// This is because 'tdump' does not take any parameters to specify
-    		// which record we want to dump.
-    		if (fCurrentRecordDmc.equals(context)) {
-    			tdumpRm.done();
-    		} else {
-    			selectTraceRecord(context, tdumpRm); 
-    		}
-    	} else {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid trace record context.", null)); //$NON-NLS-1$
-    		rm.done();
-    	}
+
+			// If we are pointing to the right context, we can do the tdump right away,
+			// if not, we should first select the record.
+			// This is because 'tdump' does not take any parameters to specify
+			// which record we want to dump.
+			if (fCurrentRecordDmc.equals(context)) {
+				tdumpRm.done();
+			} else {
+				selectTraceRecord(context, tdumpRm);
+			}
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid trace record context.", //$NON-NLS-1$
+					null));
+			rm.done();
+		}
 	}
-	
+
 	/** @since 4.4 */
 	@Override
-	public void setCircularTraceBuffer(final ITraceTargetDMContext context, boolean useCircularBuffer, final RequestMonitor rm) {
-    	if (context == null) {
-            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
-            return;
-    	}
+	public void setCircularTraceBuffer(final ITraceTargetDMContext context, boolean useCircularBuffer,
+			final RequestMonitor rm) {
+		if (context == null) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+			return;
+		}
 
-    	if (fIsTracingCurrentlySupported == false) {
-    		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
-            return;
-    	}
+		if (fIsTracingCurrentlySupported == false) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+			return;
+		}
 
-		fConnection.queueCommand(
-				fCommandFactory.createMIGDBSetCircularTraceBuffer(context, useCircularBuffer),
+		fConnection.queueCommand(fCommandFactory.createMIGDBSetCircularTraceBuffer(context, useCircularBuffer),
 				new ImmediateDataRequestMonitor<MIInfo>(rm) {
 					@Override
 					protected void handleSuccess() {
@@ -1173,26 +1182,26 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
 	/** @since 4.4 */
 	@Override
-	public void setDisconnectedTracing(final ITraceTargetDMContext context, boolean disconnectedTracing,final  RequestMonitor rm) {
+	public void setDisconnectedTracing(final ITraceTargetDMContext context, boolean disconnectedTracing,
+			final RequestMonitor rm) {
 		if (context == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		if (fIsTracingCurrentlySupported == false) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
 			return;
 		}
-		
-		fConnection.queueCommand(
-				fCommandFactory.createMIGDBSetDisconnectedTracing(context, disconnectedTracing),
+
+		fConnection.queueCommand(fCommandFactory.createMIGDBSetDisconnectedTracing(context, disconnectedTracing),
 				new ImmediateDataRequestMonitor<MIInfo>(rm) {
 					@Override
 					protected void handleSuccess() {
 						fTraceStatusCache.reset(context);
 						rm.done();
 					}
-				});		
+				});
 	}
 
 	/** @since 4.4 */
@@ -1211,6 +1220,6 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
 	@Override
 	public void flushCache(IDMContext context) {
-        fTraceStatusCache.reset(context);
+		fTraceStatusCache.reset(context);
 	}
 }

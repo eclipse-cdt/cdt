@@ -63,11 +63,11 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  * Based on lookup3.c by Bob Jenkins from {@link "http://burtleburtle.net/bob/c/lookup3.c"}
  */
 public final class StreamHasher {
-	private static final long SEED = 3141592653589793238L;  // PI
+	private static final long SEED = 3141592653589793238L; // PI
 	private static final long EMPTY_STRING_HASH = new StreamHasher().computeHashInternal();
 
-	long hashedOffset;  // Current position in the stream of characters.
-	int state;  // Current position in the stream of characters modulo 6, or -1 after computeHash is called.
+	long hashedOffset; // Current position in the stream of characters.
+	int state; // Current position in the stream of characters modulo 6, or -1 after computeHash is called.
 	int a;
 	int b;
 	int c;
@@ -134,7 +134,7 @@ public final class StreamHasher {
 			c += previousCharacter;
 			break;
 		}
-		state = -1;  // Protect against subsequent calls.
+		state = -1; // Protect against subsequent calls.
 		finalMix();
 		return (c & 0xFFFFFFFFL) | ((long) b << 32);
 	}
@@ -157,8 +157,8 @@ public final class StreamHasher {
 	 *
 	 * This is reversible, so any information in a, b, c before mix() is
 	 * still in a, b, c after mix().
-     *
-     * If four pairs of a, b, c inputs are run through mix(), or through
+	 *
+	 * If four pairs of a, b, c inputs are run through mix(), or through
 	 * mix() in reverse, there are at least 32 bits of the output that
 	 * are sometimes the same for one pair and different for another pair.
 	 * This was tested for:
@@ -171,7 +171,7 @@ public final class StreamHasher {
 	 *   difference.
 	 * * the base values were pseudo-random, all zero but one bit set, or
 	 *   all zero plus a counter that starts at zero.
-     *
+	 *
 	 * Some k values for my "a -= c; a ^= Integer.rotateLeft(c, k); c += b;"
 	 * arrangement that satisfy this are
 	 *     4  6  8 16 19  4
@@ -181,12 +181,12 @@ public final class StreamHasher {
 	 * for "differ" defined as + with a one-bit base and a two-bit delta.
 	 * I used http://burtleburtle.net/bob/hash/avalanche.html to choose
 	 * the operations, constants, and arrangements of the variables.
-     *
+	 *
 	 * This does not achieve avalanche.  There are input bits of a, b, c
 	 * that fail to affect some output bits of a, b, c, especially of a.
 	 * The most thoroughly mixed value is c, but it doesn't really even
 	 * achieve avalanche in c.
-     *
+	 *
 	 * This allows some parallelism.  Read-after-writes are good at doubling
 	 * the number of bits affected, so the goal of mixing pulls in the opposite
 	 * direction as the goal of parallelism.  I did what I could.  Rotates
@@ -195,17 +195,29 @@ public final class StreamHasher {
 	 * rotates.
 	 */
 	private void mix() {
-		a -= c;  a ^= Integer.rotateLeft(c, 4);  c += b;
-		b -= a;  b ^= Integer.rotateLeft(a, 6);  a += c;
-		c -= b;  c ^= Integer.rotateLeft(b, 8);  b += a;
-		a -= c;  a ^= Integer.rotateLeft(c, 16); c += b;
-		b -= a;  b ^= Integer.rotateLeft(a, 19); a += c;
-		c -= b;  c ^= Integer.rotateLeft(b, 4);  b += a;
+		a -= c;
+		a ^= Integer.rotateLeft(c, 4);
+		c += b;
+		b -= a;
+		b ^= Integer.rotateLeft(a, 6);
+		a += c;
+		c -= b;
+		c ^= Integer.rotateLeft(b, 8);
+		b += a;
+		a -= c;
+		a ^= Integer.rotateLeft(c, 16);
+		c += b;
+		b -= a;
+		b ^= Integer.rotateLeft(a, 19);
+		a += c;
+		c -= b;
+		c ^= Integer.rotateLeft(b, 4);
+		b += a;
 	}
 
 	/**
 	 * Final mixing of 3 32-bit values a, b, c into c
-     *
+	 *
 	 * Pairs of a, b, c values differing in only a few bits will usually
 	 * produce values of c that look totally different.  This was tested for
 	 * * pairs that differed by one bit, by two bits, in any combination
@@ -227,12 +239,19 @@ public final class StreamHasher {
 	 *  11  8 15 26 3 22 24
 	 */
 	private void finalMix() {
-		c ^= b; c -= Integer.rotateLeft(b, 14);
-		a ^= c; a -= Integer.rotateLeft(c, 11);
-		b ^= a; b -= Integer.rotateLeft(a, 25);
-		c ^= b; c -= Integer.rotateLeft(b, 16);
-		a ^= c; a -= Integer.rotateLeft(c, 4);
-		b ^= a; b -= Integer.rotateLeft(a, 14);
-		c ^= b; c -= Integer.rotateLeft(b, 24);
+		c ^= b;
+		c -= Integer.rotateLeft(b, 14);
+		a ^= c;
+		a -= Integer.rotateLeft(c, 11);
+		b ^= a;
+		b -= Integer.rotateLeft(a, 25);
+		c ^= b;
+		c -= Integer.rotateLeft(b, 16);
+		a ^= c;
+		a -= Integer.rotateLeft(c, 4);
+		b ^= a;
+		b -= Integer.rotateLeft(a, 14);
+		c ^= b;
+		c -= Integer.rotateLeft(b, 24);
 	}
 }

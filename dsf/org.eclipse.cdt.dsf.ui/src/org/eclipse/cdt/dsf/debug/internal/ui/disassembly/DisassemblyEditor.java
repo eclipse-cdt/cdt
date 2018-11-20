@@ -70,7 +70,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		inner.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		super.createPartControl(inner);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
 	 */
@@ -105,7 +105,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	 */
 	@Override
 	public IEditorSite getEditorSite() {
-		return (IEditorSite)getSite();
+		return (IEditorSite) getSite();
 	}
 
 	/*

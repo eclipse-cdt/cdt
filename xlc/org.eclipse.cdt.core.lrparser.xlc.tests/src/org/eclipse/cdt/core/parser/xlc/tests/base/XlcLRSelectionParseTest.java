@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 
 public class XlcLRSelectionParseTest extends LRSelectionParseTest {
-	
+
 	public XlcLRSelectionParseTest() {
 	}
 
@@ -32,11 +32,11 @@ public class XlcLRSelectionParseTest extends LRSelectionParseTest {
 	public static TestSuite suite() {
 		return new TestSuite(XlcLRSelectionParseTest.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPFunctionTemplateSpecialization	extends CompositeCPPFunctionSpecialization
+public class CompositeCPPFunctionTemplateSpecialization extends CompositeCPPFunctionSpecialization
 		implements ICPPFunctionTemplate, ICPPInstanceCache {
 
 	public CompositeCPPFunctionTemplateSpecialization(ICompositesFactory cf, ICPPFunction ft) {
@@ -36,12 +36,12 @@ public class CompositeCPPFunctionTemplateSpecialization	extends CompositeCPPFunc
 
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
+		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
+		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);
 	}
 
 	@Override

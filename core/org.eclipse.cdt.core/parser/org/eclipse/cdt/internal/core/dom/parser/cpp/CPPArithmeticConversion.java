@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 
 public class CPPArithmeticConversion extends ArithmeticConversion {
-	private static CPPArithmeticConversion sInstance= new CPPArithmeticConversion();
+	private static CPPArithmeticConversion sInstance = new CPPArithmeticConversion();
 
 	public static IType convertCppOperandTypes(int operator, IType t1, IType t2) {
 		return sInstance.convertOperandTypes(operator, t1, t2);
@@ -29,7 +29,8 @@ public class CPPArithmeticConversion extends ArithmeticConversion {
 		return sInstance.promoteType(t);
 	}
 
-	private CPPArithmeticConversion() {}
+	private CPPArithmeticConversion() {
+	}
 
 	@Override
 	protected IBasicType createBasicType(Kind kind, int modifiers) {

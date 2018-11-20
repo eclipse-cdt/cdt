@@ -23,9 +23,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 
 @Deprecated
-public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpression implements ICPPASTTypenameExpression {
+public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpression
+		implements ICPPASTTypenameExpression {
 
-    public CPPASTTypenameExpression() {
+	public CPPASTTypenameExpression() {
 	}
 
 	public CPPASTTypenameExpression(IASTName name, IASTExpression expr) {
@@ -49,21 +50,21 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-    	CPPASTNamedTypeSpecifier spec= new CPPASTNamedTypeSpecifier(name);
-    	spec.setOffsetAndLength(this);
-    	setDeclSpecifier(spec);
-    }
+		CPPASTNamedTypeSpecifier spec = new CPPASTNamedTypeSpecifier(name);
+		spec.setOffsetAndLength(this);
+		setDeclSpecifier(spec);
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-    	IASTDeclSpecifier spec= getDeclSpecifier();
-    	if (spec instanceof ICPPASTNamedTypeSpecifier) {
-    		return ((ICPPASTNamedTypeSpecifier) spec).getName();
-    	}
-    	return null;
-    }
+		IASTDeclSpecifier spec = getDeclSpecifier();
+		if (spec instanceof ICPPASTNamedTypeSpecifier) {
+			return ((ICPPASTNamedTypeSpecifier) spec).getName();
+		}
+		return null;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -75,11 +76,11 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
 	@Override
 	@Deprecated
 	public void setIsTemplate(boolean val) {
-    }
+	}
 
 	@Override
 	@Deprecated
-    public boolean isTemplate() {
-        return false;
-    }
+	public boolean isTemplate() {
+		return false;
+	}
 }

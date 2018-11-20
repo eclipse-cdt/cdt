@@ -43,9 +43,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public static final byte[] EMPTY = new byte[Database.TYPE_SIZE];
-	public static final byte NULL_TYPE       = 0x00;
-	public static final byte INDIRECT_TYPE   = 0x1F;
-	public static final byte BINDING_TYPE    = 0x1E;
+	public static final byte NULL_TYPE = 0x00;
+	public static final byte INDIRECT_TYPE = 0x1F;
+	public static final byte BINDING_TYPE = 0x1E;
 	public static final byte UNSTORABLE_TYPE = 0x1D;
 
 	public static final IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
@@ -58,15 +58,15 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	 * Constructor for output buffer.
 	 */
 	public TypeMarshalBuffer(PDOMLinkage linkage) {
-		fLinkage= linkage;
+		fLinkage = linkage;
 	}
 
 	/**
 	 * Constructor for input buffer.
 	 */
 	public TypeMarshalBuffer(PDOMLinkage linkage, byte[] data) {
-		fLinkage= linkage;
-		fBuffer= data;
+		fLinkage = linkage;
+		fBuffer = data;
 	}
 
 	public int getPosition() {
@@ -89,7 +89,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (binding == null) {
 			putShort(NULL_TYPE);
 		} else {
-			PDOMNode pb= fLinkage.addTypeBinding(binding);
+			PDOMNode pb = fLinkage.addTypeBinding(binding);
 			if (pb == null && binding instanceof ITypedef) {
 				// Since typedef defined in a local scope cannot be stored in the index,
 				// store the target type instead.
@@ -117,7 +117,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		short firstBytes = getShort();
 		if (firstBytes == BINDING_TYPE) {
 			fPos += 1;
-			long rec= getRecordPointer();
+			long rec = getRecordPointer();
 			return (IBinding) PDOMNode.load(fLinkage.getPDOM(), rec);
 		} else if (firstBytes == NULL_TYPE) {
 			return null;
@@ -125,7 +125,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 
-		fPos = oldPos;  // fLinkage.unmarshalBinding() will read firstBytes again
+		fPos = oldPos; // fLinkage.unmarshalBinding() will read firstBytes again
 		return fLinkage.unmarshalBinding(this);
 	}
 
@@ -138,7 +138,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (type instanceof IBinding) {
 			marshalBinding((IBinding) type);
 		} else {
-			CCorePlugin.log("Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			CCorePlugin.log("Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putShort(UNSTORABLE_TYPE);
 		}
 	}
@@ -149,7 +149,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		short firstBytes = getShort();
 		if (firstBytes == BINDING_TYPE) {
 			fPos += 1;
-			long rec= getRecordPointer();
+			long rec = getRecordPointer();
 			return (IType) PDOMNode.load(fLinkage.getPDOM(), rec);
 		} else if (firstBytes == NULL_TYPE) {
 			return null;
@@ -157,7 +157,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			return UNSTORABLE_TYPE_PROBLEM;
 		}
 
-		fPos = oldPos;  // fLinkage.unmarshalType() will read firstBytes again
+		fPos = oldPos; // fLinkage.unmarshalType() will read firstBytes again
 		return fLinkage.unmarshalType(this);
 	}
 
@@ -169,21 +169,21 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			eval.marshal(this, includeValues);
 		}
 	}
-	
+
 	@Override
 	public void marshalExecution(ICPPExecution exec, boolean includeValue) throws CoreException {
 		if (exec == null) {
 			putShort(NULL_TYPE);
 		} else {
 			exec.marshal(this, includeValue);
-		}	
+		}
 	}
 
 	@Override
 	public ICPPEvaluation unmarshalEvaluation() throws CoreException {
 		return fLinkage.unmarshalEvaluation(this);
 	}
-	
+
 	@Override
 	public ICPPExecution unmarshalExecution() throws CoreException {
 		return fLinkage.unmarshalExecution(this);
@@ -191,7 +191,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public void marshalValue(IValue value) throws CoreException {
-		if(value != null) {
+		if (value != null) {
 			value.marshal(this);
 		} else {
 			putShort(NULL_TYPE);
@@ -200,7 +200,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public IValue unmarshalValue() throws CoreException {
-		short firstBytes= getShort();
+		short firstBytes = getShort();
 		if (firstBytes == TypeMarshalBuffer.NULL_TYPE)
 			return null;
 		switch ((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
@@ -246,7 +246,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			IType type = unmarshalType();
 			IType originalType = unmarshalType();
 			if (originalType == null)
-				originalType= type;
+				originalType = type;
 			return new CPPTemplateTypeArgument(type, originalType);
 		}
 	}
@@ -254,18 +254,18 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	private void request(int i) {
 		if (fBuffer == null) {
 			if (i <= Database.TYPE_SIZE) {
-				fBuffer= new byte[Database.TYPE_SIZE];
+				fBuffer = new byte[Database.TYPE_SIZE];
 			} else {
-				fBuffer= new byte[i];
+				fBuffer = new byte[i];
 			}
 		} else {
 			final int bufLen = fBuffer.length;
 			int needLen = fPos + i;
 			if (needLen > bufLen) {
-				needLen= Math.max(needLen, 2 * bufLen);
-				byte[] newBuffer= new byte[needLen];
+				needLen = Math.max(needLen, 2 * bufLen);
+				byte[] newBuffer = new byte[needLen];
 				System.arraycopy(fBuffer, 0, newBuffer, 0, fPos);
-				fBuffer= newBuffer;
+				fBuffer = newBuffer;
 			}
 		}
 	}
@@ -273,7 +273,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	@Override
 	public void putByte(byte b) {
 		request(1);
-		fBuffer[fPos++]= b;
+		fBuffer[fPos++] = b;
 	}
 
 	@Override
@@ -296,21 +296,27 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public void putFixedInt(int value) {
 		request(4);
 		fPos += 4;
-		int p= fPos;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value);
+		int p = fPos;
+		fBuffer[--p] = (byte) (value);
+		value >>= 8;
+		fBuffer[--p] = (byte) (value);
+		value >>= 8;
+		fBuffer[--p] = (byte) (value);
+		value >>= 8;
+		fBuffer[--p] = (byte) (value);
 	}
 
 	@Override
 	public int getFixedInt() throws CoreException {
 		if (fPos + 4 > fBuffer.length)
 			throw unmarshallingError();
-		int result= 0;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		int result = 0;
+		result |= fBuffer[fPos++] & 0xff;
+		result <<= 8;
+		result |= fBuffer[fPos++] & 0xff;
+		result <<= 8;
+		result |= fBuffer[fPos++] & 0xff;
+		result <<= 8;
 		result |= fBuffer[fPos++] & 0xff;
 		return result;
 	}
@@ -319,7 +325,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public void putShort(short value) {
 		putInt(value);
 	}
-	
+
 	@Override
 	public void putInt(int value) {
 		do {
@@ -349,7 +355,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			unmarshallingError();
 		return (short) result;
 	}
-	
+
 	@Override
 	public int getInt() throws CoreException {
 		int b = getByte();
@@ -379,10 +385,10 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	private long getRecordPointer() throws CoreException {
-		final int pos= fPos;
+		final int pos = fPos;
 		fPos += Database.PTR_SIZE;
 		if (fPos > fBuffer.length) {
-			fPos= fBuffer.length;
+			fPos = fBuffer.length;
 			throw unmarshallingError();
 		}
 		return Database.getRecPtr(fBuffer, pos);
@@ -398,10 +404,10 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public char[] getCharArray() throws CoreException {
-		int len= getInt();
-		char[] chars= new char[len];
+		int len = getInt();
+		char[] chars = new char[len];
 		for (int i = 0; i < chars.length; i++) {
-			chars[i]= (char) getInt();
+			chars[i] = (char) getInt();
 		}
 		return chars;
 	}

@@ -31,7 +31,7 @@ public class EnvironmentReader {
 	private static ArrayList<String> rawVars = null;
 
 	private static synchronized void init() {
-		if (envVars==null) {
+		if (envVars == null) {
 			envVars = new Properties();
 			// on Windows environment variable names are case-insensitive
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -44,7 +44,7 @@ public class EnvironmentReader {
 			for (String var : envMap.keySet()) {
 				String value = envMap.get(var);
 				envVars.setProperty(var, value);
-				if (envVarsNormalized!=envVars) {
+				if (envVarsNormalized != envVars) {
 					envVarsNormalized.setProperty(var.toUpperCase(), value);
 				}
 				rawVars.add(var + "=" + value); //$NON-NLS-1$

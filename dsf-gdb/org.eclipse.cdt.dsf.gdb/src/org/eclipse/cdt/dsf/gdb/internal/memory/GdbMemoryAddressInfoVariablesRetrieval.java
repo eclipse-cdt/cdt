@@ -171,12 +171,12 @@ public class GdbMemoryAddressInfoVariablesRetrieval implements IGdbMemoryAddress
 				for (IVariableDMContext localDMC : localsDMCs) {
 					stackFrameService.getVariableData(localDMC,
 							new DataRequestMonitor<IVariableDMData>(dsfExecutor, crm) {
-						@Override
-						public void handleSuccess() {
-							localsDMData.add(getData());
-							crm.done();
-						}
-					});
+								@Override
+								public void handleSuccess() {
+									localsDMData.add(getData());
+									crm.done();
+								}
+							});
 
 					countRM++;
 				}

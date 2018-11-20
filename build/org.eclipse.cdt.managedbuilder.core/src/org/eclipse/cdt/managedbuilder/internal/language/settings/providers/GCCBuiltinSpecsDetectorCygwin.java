@@ -30,7 +30,7 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpec
  */
 public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 	// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
-	private static final String GCC_TOOLCHAIN_ID_CYGWIN = "cdt.managedbuild.toolchain.gnu.cygwin.base";  //$NON-NLS-1$
+	private static final String GCC_TOOLCHAIN_ID_CYGWIN = "cdt.managedbuild.toolchain.gnu.cygwin.base"; //$NON-NLS-1$
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 	public static final String CONTAINER_ENABLEMENT_PROPERTY = "org.eclipse.cdt.docker.launcher.containerbuild.property.enablement"; //$NON-NLS-1$
 

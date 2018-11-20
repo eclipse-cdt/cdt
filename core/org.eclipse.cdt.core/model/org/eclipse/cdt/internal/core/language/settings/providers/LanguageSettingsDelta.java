@@ -21,7 +21,6 @@ import java.util.TreeSet;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
-
 /**
  * Contains the delta of changes that occurred as a result of modifying
  * language settings entries {@link ICLanguageSettingEntry}. The delta is
@@ -51,7 +50,8 @@ public class LanguageSettingsDelta {
 	 * @param oldState - old language settings storage state.
 	 * @param newState - new language settings storage state.
 	 */
-	public LanguageSettingsDelta(LinkedHashMap<String, LanguageSettingsStorage> oldState, LinkedHashMap<String, LanguageSettingsStorage> newState) {
+	public LanguageSettingsDelta(LinkedHashMap<String, LanguageSettingsStorage> oldState,
+			LinkedHashMap<String, LanguageSettingsStorage> newState) {
 		oldLanguageSettingsState = oldState;
 		newLanguageSettingsState = newState;
 	}
@@ -71,7 +71,8 @@ public class LanguageSettingsDelta {
 
 		for (String lang : oldCombinedStorage.getLanguages()) {
 			for (String path : oldCombinedStorage.getResourcePaths(lang)) {
-				if (oldCombinedStorage.getSettingEntries(path, lang) != newCombinedStorage.getSettingEntries(path, lang)) {
+				if (oldCombinedStorage.getSettingEntries(path, lang) != newCombinedStorage.getSettingEntries(path,
+						lang)) {
 					if (path == null) {
 						// add path of the project
 						path = ""; //$NON-NLS-1$
@@ -83,7 +84,8 @@ public class LanguageSettingsDelta {
 
 		for (String lang : newCombinedStorage.getLanguages()) {
 			for (String path : newCombinedStorage.getResourcePaths(lang)) {
-				if (newCombinedStorage.getSettingEntries(path, lang) != oldCombinedStorage.getSettingEntries(path, lang)) {
+				if (newCombinedStorage.getSettingEntries(path, lang) != oldCombinedStorage.getSettingEntries(path,
+						lang)) {
 					if (path == null) {
 						// add path of the project
 						path = ""; //$NON-NLS-1$

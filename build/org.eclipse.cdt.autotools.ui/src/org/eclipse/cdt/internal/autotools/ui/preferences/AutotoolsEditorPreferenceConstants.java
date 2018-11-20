@@ -35,18 +35,17 @@ public class AutotoolsEditorPreferenceConstants {
 	public static final String CURRENT_LINE_COLOR = "org.eclipse.cdt.autotools.ui.automake.currentLineHightlightColor"; //$NON-NLS-1$
 	public static final String LINE_NUMBER_RULER_COLOR = "org.eclipse.cdt.autotools.ui.automake.lineNumberForegroundColor"; //$NON-NLS-1$
 	public static final String PRINT_MARGIN_COLOR = "org.eclipse.cdt.autotools.ui.automake.printMarginColor"; //$NON-NLS-1$	
-	
+
 	/**
 	 * Preference key suffix for bold text style preference keys.
 	 * 
 	 */
-	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
+	public static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for italic text style preference keys.
 	 */
-	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
-
+	public static final String EDITOR_ITALIC_SUFFIX = "_italic"; //$NON-NLS-1$
 
 	public static final String EDITOR_FOLDING_MACRODEF = "editor_folding_default_macrodef"; //$NON-NLS-1$
 
@@ -59,11 +58,11 @@ public class AutotoolsEditorPreferenceConstants {
 	public static final String EDITOR_FOLDING_LOOP = "editor_folding_default_loop"; //$NON-NLS-1$
 
 	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$
-	
+
 	public static final String AUTOCONF_VERSION = "autoconf_version";
-	
+
 	public static final String AUTOMAKE_VERSION = "automake_version";
-	
+
 	public static void initializeDefaultValues(IPreferenceStore store) {
 
 		store.setDefault(AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
@@ -72,8 +71,10 @@ public class AutotoolsEditorPreferenceConstants {
 		store.setDefault(AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_CASE, true);
 		store.setDefault(AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_CONDITIONAL, true);
 		store.setDefault(AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_LOOP, true);
-		store.setDefault(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION, AutoconfEditorPreferencePage.LATEST_AC_VERSION);
-		store.setDefault(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION, AutoconfEditorPreferencePage.LATEST_AM_VERSION);
+		store.setDefault(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION,
+				AutoconfEditorPreferencePage.LATEST_AC_VERSION);
+		store.setDefault(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION,
+				AutoconfEditorPreferencePage.LATEST_AM_VERSION);
 	}
 
 }

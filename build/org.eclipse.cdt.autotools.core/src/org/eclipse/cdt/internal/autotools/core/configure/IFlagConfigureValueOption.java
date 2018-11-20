@@ -14,7 +14,7 @@
 package org.eclipse.cdt.internal.autotools.core.configure;
 
 public interface IFlagConfigureValueOption {
-	
+
 	String getFlags();
 
 }

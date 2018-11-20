@@ -73,9 +73,9 @@ public class BuildSystemTestHelper {
 
 		IConfiguration cfgs[] = type.getConfigurations();
 
-		for(int i = 0; i < cfgs.length; i++){
+		for (int i = 0; i < cfgs.length; i++) {
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true, false);
+			Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true, false);
 			CConfigurationData data = config.getConfigurationData();
 			Assert.assertNotNull("data is null for created configuration", data);
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
@@ -84,13 +84,11 @@ public class BuildSystemTestHelper {
 		return project;
 	}
 
-	static public IProject createProject(String name) throws CoreException{
-		return createProject(name, (IPath)null);
+	static public IProject createProject(String name) throws CoreException {
+		return createProject(name, (IPath) null);
 	}
 
-	static public IProject createProject(
-			final String name,
-			final IPath location) throws CoreException{
+	static public IProject createProject(final String name, final IPath location) throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject newProjectHandle = root.getProject(name);
@@ -101,10 +99,11 @@ public class BuildSystemTestHelper {
 			workspaceDesc.setAutoBuilding(false);
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
-			if(location != null)
+			if (location != null)
 				description.setLocation(location);
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new NullProgressMonitor());
+			project = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle,
+					new NullProgressMonitor());
 		} else {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				@Override
@@ -125,7 +124,7 @@ public class BuildSystemTestHelper {
 		return project;
 	}
 
-	static public void checkDiff(Object[] expected, Object[] actual){
+	static public void checkDiff(Object[] expected, Object[] actual) {
 		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(expected));
 		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(actual));
 		LinkedHashSet<? extends Object> set1Copy = new LinkedHashSet<Object>(set1);
@@ -139,20 +138,21 @@ public class BuildSystemTestHelper {
 		Assert.assertTrue("arrays have different contents\n" + diffMsg, set1.size() == 0);
 		Assert.assertTrue("arrays have different contents\n" + diffMsg, set2.size() == 0);
 
-		if(!Arrays.equals(expected, actual)){
-			Assert.fail("different element order, dumping..\n expected entries: " + arrayToString(expected) + "\n actual entries: " + arrayToString(actual) + "\n");
+		if (!Arrays.equals(expected, actual)) {
+			Assert.fail("different element order, dumping..\n expected entries: " + arrayToString(expected)
+					+ "\n actual entries: " + arrayToString(actual) + "\n");
 		}
 	}
 
-	static public String collectionToString(Collection<? extends Object> c){
+	static public String collectionToString(Collection<? extends Object> c) {
 		return arrayToString(c.toArray());
 	}
 
-	static public String arrayToString(Object[] arr){
+	static public String arrayToString(Object[] arr) {
 		StringBuilder buf = new StringBuilder();
 		buf.append('[');
-		for(int i = 0; i < arr.length; i++)	{
-			if(i != 0)
+		for (int i = 0; i < arr.length; i++) {
+			if (i != 0)
 				buf.append(", ");
 
 			buf.append(arr[i].toString());

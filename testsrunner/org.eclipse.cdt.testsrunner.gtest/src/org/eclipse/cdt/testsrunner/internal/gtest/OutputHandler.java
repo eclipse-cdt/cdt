@@ -29,7 +29,6 @@ import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.xml.sax.SAXException;
 
-
 /**
  * <p>
  * Parses the output of Google Testing Framework and notifies the Tests Runner
@@ -49,21 +48,21 @@ import org.xml.sax.SAXException;
  * </p>
  */
 public class OutputHandler {
-	
+
 	/**
 	 * Base class for the FSM internal state.
 	 */
 	class State {
-		
+
 		/** Stores the regular expression by which the state should be entered. */
 		private Pattern enterPattern;
-		
+
 		/** The regular expression matcher. */
 		private Matcher matcher;
-		
+
 		/** Groups count in a regular expression. */
 		private int groupCount;
-		
+
 		/**
 		 * The constructor.
 		 * 
@@ -73,7 +72,7 @@ public class OutputHandler {
 		State(String enterRegex) {
 			this(enterRegex, -1);
 		}
-		
+
 		/**
 		 * The constructor.
 		 * 
@@ -86,7 +85,7 @@ public class OutputHandler {
 			enterPattern = Pattern.compile(enterRegex);
 			this.groupCount = groupCount;
 		}
-		
+
 		/**
 		 * Checks whether the specified string matches the enter pattern
 		 * (regular expression). If it is so the state should be entered.
@@ -100,12 +99,8 @@ public class OutputHandler {
 			matcher = enterPattern.matcher(line);
 			boolean groupsCountOk = groupCount == -1 || matcher.groupCount() == groupCount;
 			if (!groupsCountOk) {
-				generateInternalError(
-					MessageFormat.format(
-						GoogleTestsRunnerMessages.OutputHandler_wrong_groups_count,
-						enterPattern.pattern(), matcher.groupCount(), groupCount 
-					)
-				);
+				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_wrong_groups_count,
+						enterPattern.pattern(), matcher.groupCount(), groupCount));
 			}
 			boolean matches = matcher.matches();
 			if (!matches || !groupsCountOk) {
@@ -114,7 +109,7 @@ public class OutputHandler {
 			}
 			return matches;
 		}
-		
+
 		/**
 		 * Returns the matched group value by index.
 		 * 
@@ -124,14 +119,15 @@ public class OutputHandler {
 		protected String group(int groupNumber) {
 			return matcher.group(groupNumber);
 		}
-		
+
 		/**
 		 * Action that triggers on state enter.
 		 * 
 		 * @param previousState previous state
 		 * @throws TestingException if testing error is detected
 		 */
-		public void onEnter(State previousState) throws TestingException {}
+		public void onEnter(State previousState) throws TestingException {
+		}
 
 		/**
 		 * Action that triggers on state exit.
@@ -139,8 +135,9 @@ public class OutputHandler {
 		 * @param previousState next state
 		 * @throws TestingException if testing error is detected
 		 */
-		public void onExit(State nextState) {}
-		
+		public void onExit(State nextState) {
+		}
+
 		/**
 		 * Common routine that constructs full test suite name by name and type
 		 * parameter.
@@ -153,16 +150,15 @@ public class OutputHandler {
 			return (typeParameter != null) ? MessageFormat.format("{0}({1})", name, typeParameter.trim()) : name; //$NON-NLS-1$
 		}
 	}
-	
-	
+
 	/**
 	 * The state is activated when a new test suite is started.
 	 */
 	class TestSuiteStart extends State {
-		
+
 		/** Stores the matched type parameter. */
 		private String typeParameter;
-		
+
 		TestSuiteStart(String enterRegex, int groupCount) {
 			super(enterRegex, groupCount);
 		}
@@ -176,7 +172,7 @@ public class OutputHandler {
 			typeParameter = group(3);
 			modelUpdater.enterTestSuite(getTestSuiteName(group(1), typeParameter));
 		}
-		
+
 		/**
 		 * Provides access to the matched type parameter.
 		 * 
@@ -186,13 +182,12 @@ public class OutputHandler {
 			return typeParameter;
 		}
 	}
-	
-	
+
 	/**
 	 * The state is activated when a new test case is started.
 	 */
 	class TestCaseStart extends State {
-		
+
 		TestCaseStart(String enterRegex, int groupCount) {
 			super(enterRegex, groupCount);
 		}
@@ -210,36 +205,31 @@ public class OutputHandler {
 			String lastTestSuiteName = modelUpdater.currentTestSuite().getName();
 			String currTestSuiteName = getTestSuiteName(group(1), stateTestSuiteStart.getTypeParameter());
 			if (!lastTestSuiteName.equals(currTestSuiteName)) {
-				generateInternalError(
-					MessageFormat.format(
-						GoogleTestsRunnerMessages.OutputHandler_wrong_suite_name,
-						testCaseName, currTestSuiteName, lastTestSuiteName
-					)
-				);
+				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_wrong_suite_name,
+						testCaseName, currTestSuiteName, lastTestSuiteName));
 			}
 			modelUpdater.enterTestCase(testCaseName);
 		}
 	}
 
-	
 	/**
 	 * The state is activated when an error message's location is started.
 	 */
 	class ErrorMessageLocation extends State {
-		
+
 		/** Stores the message location file name. */
 		private String messageFileName;
 
 		/** Stores the message location line number. */
 		private int messageLineNumber;
-		
+
 		/** Stores the first part of the message. */
 		private String messagePart;
-		
+
 		ErrorMessageLocation(String enterRegex, int groupCount) {
 			super(enterRegex, groupCount);
 		}
-		
+
 		/**
 		 * Extract the data for the message location (file name, line number).
 		 * The data may be provided in a common style ("/path/file:line" with
@@ -283,7 +273,7 @@ public class OutputHandler {
 			// NOTE: For Visual Studio style there is also first part of the message at this line
 			messagePart = group(8);
 		}
-		
+
 		/**
 		 * Provides access to the message location file name.
 		 * 
@@ -292,7 +282,7 @@ public class OutputHandler {
 		public String getMessageFileName() {
 			return messageFileName;
 		}
-		
+
 		/**
 		 * Provides access to the message location line number.
 		 * 
@@ -301,7 +291,7 @@ public class OutputHandler {
 		public int getMessageLineNumber() {
 			return messageLineNumber;
 		}
-		
+
 		/**
 		 * Provides access to the first part of the message.
 		 * 
@@ -311,8 +301,7 @@ public class OutputHandler {
 			return messagePart;
 		}
 	}
-	
-	
+
 	/**
 	 * The state is activated when an error message text is started or continued.
 	 */
@@ -352,23 +341,19 @@ public class OutputHandler {
 		@Override
 		public void onExit(State nextState) {
 			if (this != nextState) {
-				modelUpdater.addTestMessage(
-					stateErrorMessageLocation.getMessageFileName(),
-					stateErrorMessageLocation.getMessageLineNumber(),
-					ITestMessage.Level.Error,
-					messagePart.toString()
-				);
+				modelUpdater.addTestMessage(stateErrorMessageLocation.getMessageFileName(),
+						stateErrorMessageLocation.getMessageLineNumber(), ITestMessage.Level.Error,
+						messagePart.toString());
 				messagePart.setLength(0);
 			}
 		}
 	}
-	
 
 	/**
 	 * The state is activated when a test trace is started or continued.
 	 */
 	class TestTrace extends ErrorMessageLocation {
-		
+
 		TestTrace(String enterRegex, int groupCount) {
 			super(enterRegex, groupCount);
 		}
@@ -380,15 +365,10 @@ public class OutputHandler {
 		@Override
 		public void onEnter(State previousState) throws TestingException {
 			super.onEnter(previousState);
-			modelUpdater.addTestMessage(
-				getMessageFileName(),
-				getMessageLineNumber(),
-				ITestMessage.Level.Info,
-				getMessagePart()
-			);
+			modelUpdater.addTestMessage(getMessageFileName(), getMessageLineNumber(), ITestMessage.Level.Info,
+					getMessagePart());
 		}
 	}
-	
 
 	/**
 	 * The state is activated when a test case is finished.
@@ -398,7 +378,7 @@ public class OutputHandler {
 		TestCaseEnd(String enterRegex, int groupCount) {
 			super(enterRegex, groupCount);
 		}
-		
+
 		/**
 		 * Sets the test case execution time, status and notify Tests Runner
 		 * Core about test case end.
@@ -410,25 +390,18 @@ public class OutputHandler {
 		@Override
 		public void onEnter(State previousState) throws TestingException {
 			String lastTestSuiteName = modelUpdater.currentTestSuite().getName();
-			String explicitTypeParameter = group(5); 
-			String typeParameter = explicitTypeParameter != null ? explicitTypeParameter : stateTestSuiteStart.getTypeParameter(); 
+			String explicitTypeParameter = group(5);
+			String typeParameter = explicitTypeParameter != null ? explicitTypeParameter
+					: stateTestSuiteStart.getTypeParameter();
 			String currTestSuiteName = getTestSuiteName(group(2), typeParameter);
 			if (!lastTestSuiteName.equals(currTestSuiteName)) {
-				generateInternalError(
-					MessageFormat.format(
-						GoogleTestsRunnerMessages.OutputHandler_wrong_suite_name,
-						group(2), currTestSuiteName, lastTestSuiteName
-					)
-				);					
+				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_wrong_suite_name,
+						group(2), currTestSuiteName, lastTestSuiteName));
 			}
 			String lastTestCaseName = modelUpdater.currentTestCase().getName();
 			if (!lastTestCaseName.equals(group(3))) {
-				generateInternalError(
-						MessageFormat.format(
-							GoogleTestsRunnerMessages.OutputHandler_unexpected_case_end,
-							group(3), lastTestCaseName
-						)
-					);					
+				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_unexpected_case_end,
+						group(3), lastTestCaseName));
 			}
 			String testStatusStr = group(1);
 			ITestItem.Status testStatus = ITestItem.Status.Skipped;
@@ -437,24 +410,20 @@ public class OutputHandler {
 			} else if (testStatusStr.equals(testStatusFailed)) {
 				testStatus = ITestItem.Status.Failed;
 			} else {
-				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_unknown_test_status, testStatusStr));
+				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_unknown_test_status,
+						testStatusStr));
 			}
 			String getParamValue = group(7);
 			if (getParamValue != null) {
-				modelUpdater.addTestMessage(
-						DEFAULT_LOCATION_FILE,
-						DEFAULT_LOCATION_LINE,
-						ITestMessage.Level.Info,
-						MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_getparam_message, getParamValue)
-					);
-				
+				modelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info,
+						MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_getparam_message, getParamValue));
+
 			}
 			modelUpdater.setTestingTime(Integer.parseInt(group(8)));
 			modelUpdater.setTestStatus(testStatus);
 			modelUpdater.exitTestCase();
 		}
 	}
-	
 
 	/**
 	 * The state is activated when a test suite is finished.
@@ -464,7 +433,7 @@ public class OutputHandler {
 		TestSuiteEnd(String enterRegex, int groupCount) {
 			super(enterRegex, groupCount);
 		}
-		
+
 		/**
 		 * Notify Tests Runner Core about test suite end.
 		 * 
@@ -476,28 +445,23 @@ public class OutputHandler {
 			String lastTestSuiteName = modelUpdater.currentTestSuite().getName();
 			String currTestSuiteName = getTestSuiteName(group(1), stateTestSuiteStart.getTypeParameter());
 			if (!lastTestSuiteName.equals(currTestSuiteName)) {
-				generateInternalError(
-					MessageFormat.format(
-						GoogleTestsRunnerMessages.OutputHandler_unexpected_suite_end,
-						currTestSuiteName, lastTestSuiteName
-					)
-				);					
+				generateInternalError(MessageFormat.format(GoogleTestsRunnerMessages.OutputHandler_unexpected_suite_end,
+						currTestSuiteName, lastTestSuiteName));
 			}
 			modelUpdater.exitTestSuite();
 		}
 	}
-	
-	
-    /** The default file name for test message location. */
+
+	/** The default file name for test message location. */
 	private static final String DEFAULT_LOCATION_FILE = null;
 
 	/** The default line number for test message location. */
 	private static final int DEFAULT_LOCATION_LINE = 1;
-    
+
 	// Common regular expression parts
 	static private String regexTestSuiteName = "([^, ]+)"; //$NON-NLS-1$
 	static private String regexParameterInstantiation = "(\\s*,\\s+where\\s+TypeParam\\s*=(.+))?"; //$NON-NLS-1$
-	static private String regexTestName = regexTestSuiteName+"\\.([^,]+)"; //$NON-NLS-1$
+	static private String regexTestName = regexTestSuiteName + "\\.([^,]+)"; //$NON-NLS-1$
 	static private String regexTestCount = "\\d+\\s+tests?"; //$NON-NLS-1$
 	static private String regexTestTime = "(\\d+)\\s+ms"; //$NON-NLS-1$
 	/* Matches location in the following formats:
@@ -520,51 +484,56 @@ public class OutputHandler {
 	// Test statuses representation 
 	static private String testStatusOk = "OK"; //$NON-NLS-1$
 	static private String testStatusFailed = "FAILED"; //$NON-NLS-1$
-	
 
 	// All available states in FSM
 	private State stateInitial = new State(""); //$NON-NLS-1$
 	private State stateInitialized = new State(".*Global test environment set-up.*"); //$NON-NLS-1$
-	private TestSuiteStart stateTestSuiteStart = new TestSuiteStart("\\[-*\\]\\s+"+regexTestCount+"\\s+from\\s+"+regexTestSuiteName+regexParameterInstantiation, 3); //$NON-NLS-1$ //$NON-NLS-2$
-	private State stateTestCaseStart = new TestCaseStart("\\[\\s*RUN\\s*\\]\\s+"+regexTestName, 2); //$NON-NLS-1$
-	private ErrorMessageLocation stateErrorMessageLocation = new ErrorMessageLocation(regexLocation+"\\s+(Failure|error: (.*))", 8); //$NON-NLS-1$
+	private TestSuiteStart stateTestSuiteStart = new TestSuiteStart(
+			"\\[-*\\]\\s+" + regexTestCount + "\\s+from\\s+" + regexTestSuiteName + regexParameterInstantiation, 3); //$NON-NLS-1$ //$NON-NLS-2$
+	private State stateTestCaseStart = new TestCaseStart("\\[\\s*RUN\\s*\\]\\s+" + regexTestName, 2); //$NON-NLS-1$
+	private ErrorMessageLocation stateErrorMessageLocation = new ErrorMessageLocation(
+			regexLocation + "\\s+(Failure|error: (.*))", 8); //$NON-NLS-1$
 	private State stateErrorMessage = new ErrorMessage("(.*)", 1); //$NON-NLS-1$
 	private State stateTestTraceStart = new State(".*Google Test trace.*"); //$NON-NLS-1$
 	// NOTE: Use 8 groups instead of 7 cause we need to be consistent with ErrorMessageLocation (as we subclass it)
-	private State stateTestTrace = new TestTrace(regexLocation+"\\s+((.*))", 8); //$NON-NLS-1$
-	private State stateTestCaseEnd = new TestCaseEnd("\\[\\s*("+testStatusOk+"|"+testStatusFailed+")\\s*\\]\\s+"+regexTestName+regexParameterInstantiation+"(\\s*,\\s+where\\s+GetParam\\s*\\(\\s*\\)\\s*=\\s*(.+))?\\s+\\("+regexTestTime+"\\)", 8); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	private State stateTestSuiteEnd = new TestSuiteEnd("\\[-*\\]\\s+"+regexTestCount+"\\s+from\\s+"+regexTestSuiteName+"\\s+\\("+regexTestTime+"\\s+total\\)", 2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private State stateTestTrace = new TestTrace(regexLocation + "\\s+((.*))", 8); //$NON-NLS-1$
+	private State stateTestCaseEnd = new TestCaseEnd("\\[\\s*(" + testStatusOk + "|" + testStatusFailed + ")\\s*\\]\\s+" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			+ regexTestName + regexParameterInstantiation
+			+ "(\\s*,\\s+where\\s+GetParam\\s*\\(\\s*\\)\\s*=\\s*(.+))?\\s+\\(" + regexTestTime + "\\)", 8); //$NON-NLS-1$ //$NON-NLS-2$
+	private State stateTestSuiteEnd = new TestSuiteEnd("\\[-*\\]\\s+" + regexTestCount + "\\s+from\\s+" //$NON-NLS-1$//$NON-NLS-2$
+			+ regexTestSuiteName + "\\s+\\(" + regexTestTime + "\\s+total\\)", 2); //$NON-NLS-1$ //$NON-NLS-2$
 	private State stateFinal = new State(".*Global test environment tear-down.*"); //$NON-NLS-1$
 	// NOTE: This state is a special workaround for empty test modules (they haven't got global test environment set-up/tear-down). They should be always passed.
 	private State stateEmptyTestModuleFinal = new State(".*\\[\\s*PASSED\\s*\\]\\s+0\\s+tests.*"); //$NON-NLS-1$
-	
+
 	// Transitions table
-	private Map<State, State[] > transitions = new HashMap<State, State[]>();
+	private Map<State, State[]> transitions = new HashMap<State, State[]>();
 	{
 		// NOTE: Next states order is important!
-		transitions.put( from(stateInitial),              to(stateInitialized, stateEmptyTestModuleFinal) );
-		transitions.put( from(stateInitialized),          to(stateTestSuiteStart) );
-		transitions.put( from(stateTestSuiteStart),       to(stateTestCaseStart) );
-		transitions.put( from(stateTestCaseStart),        to(stateTestCaseEnd, stateErrorMessageLocation) );
-		transitions.put( from(stateErrorMessageLocation), to(stateTestTraceStart, stateTestCaseEnd, stateErrorMessageLocation, stateErrorMessage) );
-		transitions.put( from(stateErrorMessage),         to(stateTestTraceStart, stateTestCaseEnd, stateErrorMessageLocation, stateErrorMessage) );
-		transitions.put( from(stateTestTraceStart),       to(stateTestTrace) );
-		transitions.put( from(stateTestTrace),            to(stateTestCaseEnd, stateErrorMessageLocation, stateTestTrace) );
-		transitions.put( from(stateTestCaseEnd),          to(stateTestCaseStart, stateTestSuiteEnd) );
-		transitions.put( from(stateTestSuiteEnd),         to(stateTestSuiteStart, stateFinal) );
+		transitions.put(from(stateInitial), to(stateInitialized, stateEmptyTestModuleFinal));
+		transitions.put(from(stateInitialized), to(stateTestSuiteStart));
+		transitions.put(from(stateTestSuiteStart), to(stateTestCaseStart));
+		transitions.put(from(stateTestCaseStart), to(stateTestCaseEnd, stateErrorMessageLocation));
+		transitions.put(from(stateErrorMessageLocation),
+				to(stateTestTraceStart, stateTestCaseEnd, stateErrorMessageLocation, stateErrorMessage));
+		transitions.put(from(stateErrorMessage),
+				to(stateTestTraceStart, stateTestCaseEnd, stateErrorMessageLocation, stateErrorMessage));
+		transitions.put(from(stateTestTraceStart), to(stateTestTrace));
+		transitions.put(from(stateTestTrace), to(stateTestCaseEnd, stateErrorMessageLocation, stateTestTrace));
+		transitions.put(from(stateTestCaseEnd), to(stateTestCaseStart, stateTestSuiteEnd));
+		transitions.put(from(stateTestSuiteEnd), to(stateTestSuiteStart, stateFinal));
 	}
 
 	/** Current FSM state. */
 	private State currentState;
-	
+
 	/** The interface to notify the Tests Runner Core */
 	private ITestModelUpdater modelUpdater;
 
-	
 	OutputHandler(ITestModelUpdater modelUpdater) {
 		this.modelUpdater = modelUpdater;
 	}
-	
+
 	/**
 	 * Runs the parsing process. Initializes the FSM, selects new states with
 	 * transitions table and checks whether the parsing completes successfully.
@@ -577,42 +546,42 @@ public class OutputHandler {
 		// Initialize input stream reader
 		InputStreamReader streamReader = new InputStreamReader(inputStream);
 		BufferedReader reader = new BufferedReader(streamReader);
-        String line;
-        boolean finalizedProperly = false;
+		String line;
+		boolean finalizedProperly = false;
 
-        // Initialize internal state
+		// Initialize internal state
 		currentState = stateInitial;
-        while ( ( line = reader.readLine() ) != null ) {
-        	// Search for the next possible state
-        	State[] possibleNextStates = transitions.get(currentState);
-        	if (possibleNextStates == null) {
-        		// Final state, stop running
-        		finalizedProperly = true;
-        		break;
-        	}
-        	for (State nextState : possibleNextStates) {
-        		if (nextState.match(line)) {
-        			// Next state found - send notifications to the states 
-        			currentState.onExit(nextState);
-        			State previousState = currentState;
-        			currentState = nextState;
-        			nextState.onEnter(previousState);
-        			break;
-        		}
-        	}
-        	// NOTE: We cannot be sure that we cover all the output of gtest with our regular expressions
-        	//       (e.g. some framework notes or warnings may be uncovered etc.), so we just skip unmatched 
-        	//       lines without an error
-        }
-        // Check whether the last line leads to the final state
-        if (transitions.get(currentState) == null) {
-    		finalizedProperly = true;
-        }
-        if (!finalizedProperly) {
-        	generateInternalError(GoogleTestsRunnerMessages.OutputHandler_unexpected_output);
-        }
+		while ((line = reader.readLine()) != null) {
+			// Search for the next possible state
+			State[] possibleNextStates = transitions.get(currentState);
+			if (possibleNextStates == null) {
+				// Final state, stop running
+				finalizedProperly = true;
+				break;
+			}
+			for (State nextState : possibleNextStates) {
+				if (nextState.match(line)) {
+					// Next state found - send notifications to the states 
+					currentState.onExit(nextState);
+					State previousState = currentState;
+					currentState = nextState;
+					nextState.onEnter(previousState);
+					break;
+				}
+			}
+			// NOTE: We cannot be sure that we cover all the output of gtest with our regular expressions
+			//       (e.g. some framework notes or warnings may be uncovered etc.), so we just skip unmatched 
+			//       lines without an error
+		}
+		// Check whether the last line leads to the final state
+		if (transitions.get(currentState) == null) {
+			finalizedProperly = true;
+		}
+		if (!finalizedProperly) {
+			generateInternalError(GoogleTestsRunnerMessages.OutputHandler_unexpected_output);
+		}
 	}
-	
+
 	/**
 	 * Throws the testing exception with unknown internal error prefix and the specified description.
 	 * 
@@ -620,7 +589,8 @@ public class OutputHandler {
 	 * @throws SAXException the exception that will be thrown
 	 */
 	private void generateInternalError(String additionalInfo) throws TestingException {
-		TestingException e = new TestingException(GoogleTestsRunnerMessages.OutputHandler_unknown_error_prefix+additionalInfo);
+		TestingException e = new TestingException(
+				GoogleTestsRunnerMessages.OutputHandler_unknown_error_prefix + additionalInfo);
 		GoogleTestsRunnerPlugin.log(e);
 		throw e;
 	}
@@ -634,7 +604,7 @@ public class OutputHandler {
 	private State from(State fromState) {
 		return fromState;
 	}
-	
+
 	/**
 	 * Helper functions to make code more readable.
 	 * 
@@ -644,5 +614,5 @@ public class OutputHandler {
 	private State[] to(State... toStates) {
 		return toStates;
 	}
-	
+
 }

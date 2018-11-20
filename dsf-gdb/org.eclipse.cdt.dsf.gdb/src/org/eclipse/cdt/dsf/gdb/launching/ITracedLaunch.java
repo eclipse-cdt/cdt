@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
-
 /**
  * This interface is used to indicate that a launch should have
  * a TracingConsole.

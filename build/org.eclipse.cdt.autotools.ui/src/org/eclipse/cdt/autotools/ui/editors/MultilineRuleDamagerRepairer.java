@@ -20,8 +20,7 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 
 public class MultilineRuleDamagerRepairer extends DefaultDamagerRepairer {
-	
-	
+
 	/**
 	 * Creates a damager/repairer that uses the given scanner. The scanner may not be <code>null</code>
 	 * and is assumed to return only token that carry text attributes.
@@ -41,5 +40,5 @@ public class MultilineRuleDamagerRepairer extends DefaultDamagerRepairer {
 		// rule.  It is easiest to just reparse the whole partition.
 		return partition;
 	}
-	
+
 }

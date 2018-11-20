@@ -50,7 +50,7 @@ public interface IWorkingCopyManager {
 	 *     translation unit
 	 */
 	void connect(IEditorInput input) throws CoreException;
-	
+
 	/**
 	 * Disconnects the given editor input from this manager. After calling
 	 * this method, a working copy for the translation unit encoded
@@ -61,7 +61,7 @@ public interface IWorkingCopyManager {
 	 * @param input the editor input
 	 */
 	void disconnect(IEditorInput input);
-	
+
 	/**
 	 * Returns the working copy remembered for the translation unit encoded in
 	 * the given editor input.
@@ -72,7 +72,7 @@ public interface IWorkingCopyManager {
 	 *     copy for this translation unit
 	 */
 	IWorkingCopy getWorkingCopy(IEditorInput input);
-	
+
 	/**
 	 * Shuts down this working copy manager. All working copies still remembered
 	 * by this manager is destroyed.
@@ -88,8 +88,8 @@ public interface IWorkingCopyManager {
 	 * @param monitor a monitor to report progress 
 	 * @since 5.2
 	 */
-	IWorkingCopy getSharedWorkingCopy(ITranslationUnit tu, IProblemRequestor requestor,
-			IProgressMonitor monitor) throws CModelException;
+	IWorkingCopy getSharedWorkingCopy(ITranslationUnit tu, IProblemRequestor requestor, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Returns all shared working copies, currently available.

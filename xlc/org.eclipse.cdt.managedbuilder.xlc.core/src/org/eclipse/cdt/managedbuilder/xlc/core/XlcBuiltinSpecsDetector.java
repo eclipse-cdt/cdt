@@ -26,15 +26,17 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuilt
 /**
  * Language settings provider to detect built-in compiler settings for IBM XLC compiler.
  */
-public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
+public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector
+		implements ILanguageSettingsEditableProvider {
 	// must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
-	private static final String XLC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.xlc.exe.debug";  //$NON-NLS-1$
+	private static final String XLC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.xlc.exe.debug"; //$NON-NLS-1$
 
-	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
+	private static final Pattern OPTIONS_PATTERN = Pattern
+			.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
 	private static final int OPTION_GROUP = 0;
 
 	/*	Sample output:
-
+	
 		> xlC -E -V -P -w ~/tmp/spec.C
 		export XL_CONFIG=/etc/vac.cfg:xlC
 		/usr/vac/exe/xlCcpp /home/me/tmp/spec.C - -qc++=/usr/vacpp/include -D_AIX -D_AIX32 -D_AIX41 -D_AIX43 -D_AIX50 -D_AIX51 -D_AIX52 -D_IBMR2 -D_POWER -E -P -w -qlanglvl=ansi -qansialias
@@ -44,14 +46,19 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	 */
 	@SuppressWarnings("nls")
 	private static final AbstractOptionParser[] optionParsers = {
-			new IncludePathOptionParser("-I\\s*([\"'])(.*)\\1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
+			new IncludePathOptionParser("-I\\s*([\"'])(.*)\\1", "$2",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
 			new IncludePathOptionParser("-I\\s*([^\\s\"']*)", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new IncludePathOptionParser("-qc\\+\\+=\\s*([^\\s\"']*)", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("-D\\s*([\"'])([^=]*)(=(.*))?\\1", "$2", "$4", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("-D\\s*([^\\s=\"']*)=(\\\\([\"']))(.*?)\\2", "$1", "$3$4$3", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("-D\\s*([^\\s=\"']*)=([\"'])(.*?)\\2", "$1", "$3", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("-D\\s*([^\\s=\"']*)(=([^\\s\"']*))?", "$1", "$3", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-	};
+			new IncludePathOptionParser("-qc\\+\\+=\\s*([^\\s\"']*)", "$1",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+			new MacroOptionParser("-D\\s*([\"'])([^=]*)(=(.*))?\\1", "$2", "$4",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+			new MacroOptionParser("-D\\s*([^\\s=\"']*)=(\\\\([\"']))(.*?)\\2", "$1", "$3$4$3",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+			new MacroOptionParser("-D\\s*([^\\s=\"']*)=([\"'])(.*?)\\2", "$1", "$3",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+			new MacroOptionParser("-D\\s*([^\\s=\"']*)(=([^\\s\"']*))?", "$1", "$3",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), };
 
 	@Override
 	public String getToolchainId() {
@@ -69,7 +76,7 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		Matcher optionMatcher = OPTIONS_PATTERN.matcher(line);
 		while (optionMatcher.find()) {
 			String option = optionMatcher.group(OPTION_GROUP);
-			if (option!=null) {
+			if (option != null) {
 				options.add(option);
 			}
 		}

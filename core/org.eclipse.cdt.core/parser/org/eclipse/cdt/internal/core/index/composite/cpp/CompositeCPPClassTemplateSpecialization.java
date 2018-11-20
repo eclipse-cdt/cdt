@@ -26,8 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassTemplateSpecialization extends
-CompositeCPPClassSpecialization implements ICPPClassTemplate, ICPPInstanceCache{
+public class CompositeCPPClassTemplateSpecialization extends CompositeCPPClassSpecialization
+		implements ICPPClassTemplate, ICPPInstanceCache {
 
 	public CompositeCPPClassTemplateSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
@@ -35,9 +35,10 @@ CompositeCPPClassSpecialization implements ICPPClassTemplate, ICPPInstanceCache{
 
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		ICPPClassTemplatePartialSpecialization[] result= ((ICPPClassTemplate) rbinding).getPartialSpecializations();
-		for (int i= 0; i < result.length; i++) {
-			result[i]= (ICPPClassTemplatePartialSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+		ICPPClassTemplatePartialSpecialization[] result = ((ICPPClassTemplate) rbinding).getPartialSpecializations();
+		for (int i = 0; i < result.length; i++) {
+			result[i] = (ICPPClassTemplatePartialSpecialization) cf
+					.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
@@ -49,27 +50,26 @@ CompositeCPPClassSpecialization implements ICPPClassTemplate, ICPPInstanceCache{
 
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
+		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
+		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);
 	}
 
 	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}
-	
-	
+
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
-		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
+		CompositeInstanceCache cache = CompositeInstanceCache.getCache(cf, rbinding);
 		synchronized (cache) {
-			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
+			ICPPDeferredClassInstance dci = cache.getDeferredInstance();
 			if (dci == null) {
-				dci= CPPTemplates.createDeferredInstance(this);
+				dci = CPPTemplates.createDeferredInstance(this);
 				cache.putDeferredInstance(dci);
 			}
 			return dci;

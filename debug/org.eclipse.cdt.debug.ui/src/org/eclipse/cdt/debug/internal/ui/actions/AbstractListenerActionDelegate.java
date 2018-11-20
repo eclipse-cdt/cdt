@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
- 
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -23,7 +23,8 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventSetListener, IActionDelegate2 {
+public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate
+		implements IDebugEventSetListener, IActionDelegate2 {
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
@@ -34,7 +35,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
-	
+
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
@@ -43,11 +44,11 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		if (getWindow() == null || getAction() == null) {
 			return;
 		}
-		Shell shell= getWindow().getShell();
+		Shell shell = getWindow().getShell();
 		if (shell == null || shell.isDisposed()) {
 			return;
 		}
-		Runnable r= new Runnable() {
+		Runnable r = new Runnable() {
 			@Override
 			public void run() {
 				for (int i = 0; i < events.length; i++) {
@@ -57,37 +58,37 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 				}
 			}
 		};
-		
+
 		shell.getDisplay().asyncExec(r);
 	}
-	
+
 	/**
 	 * Default implementation to update on specific debug events.
 	 * Subclasses should override to handle events differently.
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {
 		switch (event.getKind()) {
-			case DebugEvent.TERMINATE :
+		case DebugEvent.TERMINATE:
+			update(getAction(), getSelection());
+			break;
+		case DebugEvent.RESUME:
+			if (!event.isEvaluation() || !((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
 				update(getAction(), getSelection());
-				break;
-			case DebugEvent.RESUME :
-				if (!event.isEvaluation() || !((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-					update(getAction(), getSelection());
-				}
-				break;
-			case DebugEvent.SUSPEND :
-				// Update on suspend events (even for evaluations), in case the user changed
-				// the selection during an implicit evaluation.
-				update(getAction(), getSelection());
-				break;
+			}
+			break;
+		case DebugEvent.SUSPEND:
+			// Update on suspend events (even for evaluations), in case the user changed
+			// the selection during an implicit evaluation.
+			update(getAction(), getSelection());
+			break;
 		}
-	}		
+	}
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	@Override
-	public void init(IWorkbenchWindow window){
+	public void init(IWorkbenchWindow window) {
 		super.init(window);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}

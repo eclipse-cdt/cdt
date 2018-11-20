@@ -21,13 +21,11 @@ public interface IUPCASTTypeIdSizeofExpression extends IASTTypeIdExpression {
 
 	public final int upc_blocksizeof = 2;
 
-	public final int upc_elemsizeof  = 3;
-
+	public final int upc_elemsizeof = 3;
 
 	public int getUPCSizeofOperator();
 
 	public void setUPCSizeofOperator(int upcSizeofOperator);
-
 
 	@Override
 	public IUPCASTTypeIdSizeofExpression copy();

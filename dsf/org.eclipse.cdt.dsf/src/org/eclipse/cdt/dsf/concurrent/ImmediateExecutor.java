@@ -30,39 +30,40 @@ import org.eclipse.core.runtime.Platform;
  * @since 1.0
  */
 public class ImmediateExecutor implements Executor {
-    
-    /**
-     * Debug flag used for tracking runnables that were never executed, 
-     * or executed multiple times.
-     */
-    protected static boolean DEBUG_EXECUTOR = false;
-    static {
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && Boolean.parseBoolean(
-            Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
-    }  
 
-    private static ImmediateExecutor fInstance = new ImmediateExecutor();
-    
-    /**
-     * The default constructor is hidden. {@link #getInstance()} should be 
-     * used instead.
-     */
-    private ImmediateExecutor() {}
-    
-    /**
-     * Returns the singleton instance of ImmediateExecutor.
-     */
-    public static Executor getInstance() {
-        return fInstance;
-    }
-    
-    @Override
-    public void execute(Runnable command) {
-        // Check if executable wasn't executed already.
-        if (DEBUG_EXECUTOR && command instanceof DsfExecutable) {
-            assert !((DsfExecutable)command).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
-            ((DsfExecutable)command).setSubmitted();
-        }
-        command.run();
-    }
+	/**
+	 * Debug flag used for tracking runnables that were never executed, 
+	 * or executed multiple times.
+	 */
+	protected static boolean DEBUG_EXECUTOR = false;
+	static {
+		DEBUG_EXECUTOR = DsfPlugin.DEBUG
+				&& Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
+	}
+
+	private static ImmediateExecutor fInstance = new ImmediateExecutor();
+
+	/**
+	 * The default constructor is hidden. {@link #getInstance()} should be 
+	 * used instead.
+	 */
+	private ImmediateExecutor() {
+	}
+
+	/**
+	 * Returns the singleton instance of ImmediateExecutor.
+	 */
+	public static Executor getInstance() {
+		return fInstance;
+	}
+
+	@Override
+	public void execute(Runnable command) {
+		// Check if executable wasn't executed already.
+		if (DEBUG_EXECUTOR && command instanceof DsfExecutable) {
+			assert !((DsfExecutable) command).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
+			((DsfExecutable) command).setSubmitted();
+		}
+		command.run();
+	}
 }

@@ -27,7 +27,7 @@ import org.eclipse.core.resources.IProject;
  * @see IContentAssistHelpInvocationContext
  */
 public interface ICHelpInvocationContext {
-	
+
 	/**
 	 * @return the project
 	 */

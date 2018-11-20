@@ -148,8 +148,8 @@ public class CContainer extends Openable implements ICContainer {
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
-			throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
@@ -202,43 +202,43 @@ public class CContainer extends Openable implements ICContainer {
 		ICElement celement = null;
 		ISourceRoot sroot = getSourceRoot();
 		switch (res.getType()) {
-			case IResource.FILE: {
-				IFile file = (IFile) res;
-				boolean checkBinary = true;
-				if (sroot != null && sroot.isOnSourceEntry(res)) {
-					// Check for Valid C Element only.
-					String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
-					if (id != null) {
-						celement = new TranslationUnit(this, file, id);
-						checkBinary = false;
-					} else {
-						checkBinary = true;
-					}
+		case IResource.FILE: {
+			IFile file = (IFile) res;
+			boolean checkBinary = true;
+			if (sroot != null && sroot.isOnSourceEntry(res)) {
+				// Check for Valid C Element only.
+				String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+				if (id != null) {
+					celement = new TranslationUnit(this, file, id);
+					checkBinary = false;
+				} else {
+					checkBinary = true;
 				}
-				if (checkBinary && cproject.isOnOutputEntry(file)) {
-					IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
-					if (bin != null) {
-						if (bin.getType() == IBinaryFile.ARCHIVE) {
-							celement = new Archive(this, file, (IBinaryArchive) bin);
-							ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
-							vlib.addChild(celement);
-						} else {
-							final Binary binElement= new Binary(this, file, (IBinaryObject) bin);
-							celement= binElement;
-							if (binElement.showInBinaryContainer()) {
-								BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
-								vbin.addChild(celement);
-							}
+			}
+			if (checkBinary && cproject.isOnOutputEntry(file)) {
+				IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
+				if (bin != null) {
+					if (bin.getType() == IBinaryFile.ARCHIVE) {
+						celement = new Archive(this, file, (IBinaryArchive) bin);
+						ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
+						vlib.addChild(celement);
+					} else {
+						final Binary binElement = new Binary(this, file, (IBinaryObject) bin);
+						celement = binElement;
+						if (binElement.showInBinaryContainer()) {
+							BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
+							vbin.addChild(celement);
 						}
 					}
 				}
-				break;
 			}
-			case IResource.FOLDER:
-				if (sroot != null && sroot.isOnSourceEntry(res) || (sroot == null && cproject.isOnOutputEntry(res))) {
-					celement = new CContainer(this, res);
-				}
-				break;
+			break;
+		}
+		case IResource.FOLDER:
+			if (sroot != null && sroot.isOnSourceEntry(res) || (sroot == null && cproject.isOnOutputEntry(res))) {
+				celement = new CContainer(this, res);
+			}
+			break;
 		}
 		return celement;
 	}

@@ -38,8 +38,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		return suite(PDOMTagIndexTests.class);
 	}
 
-	private static class MockIndexLocationConverter implements
-			IIndexLocationConverter {
+	private static class MockIndexLocationConverter implements IIndexLocationConverter {
 		@Override
 		public IIndexFileLocation fromInternalFormat(String raw) {
 			return null;
@@ -55,8 +54,8 @@ public class PDOMTagIndexTests extends BaseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		pdomFile = File.createTempFile(getClass().getSimpleName() + '.'
-				+ Double.toString(Math.random()).substring(2), null);
+		pdomFile = File.createTempFile(getClass().getSimpleName() + '.' + Double.toString(Math.random()).substring(2),
+				null);
 		pdom = new WritablePDOM(pdomFile, new MockIndexLocationConverter(),
 				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		pdom.acquireWriteLock(null);
@@ -107,8 +106,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		int tag_count = 0;
 		for (ITag tag : tags1) {
 			++tag_count;
-			assertTrue(tag.getTaggerId().equals(tagger_a)
-					|| tag.getTaggerId().equals(tagger_b));
+			assertTrue(tag.getTaggerId().equals(tagger_a) || tag.getTaggerId().equals(tagger_b));
 			assertEquals(1, tag.getDataLen());
 		}
 		assertEquals(2, tag_count);
@@ -129,8 +127,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		// replacement should delete tags for taggers that are no longer present
 		// and shorter tags
 		// should be modified in place
-		PDOMTagIndex.setTags(pdom, rec,
-				Arrays.<ITag> asList(new Tag(tagger_a, 1)));
+		PDOMTagIndex.setTags(pdom, rec, Arrays.<ITag>asList(new Tag(tagger_a, 1)));
 		assertNull(PDOMTagIndex.getTag(pdom, rec, tagger_b));
 		ITag shorter_ = PDOMTagIndex.getTag(pdom, rec, tagger_a);
 		assertNotNull(shorter_);
@@ -139,8 +136,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		assertEquals(taga_pdom.getRecord(), shorter_pdom.getRecord());
 
 		// longer tags should create a new record
-		PDOMTagIndex.setTags(pdom, rec,
-				Arrays.<ITag> asList(new Tag(tagger_a, 4)));
+		PDOMTagIndex.setTags(pdom, rec, Arrays.<ITag>asList(new Tag(tagger_a, 4)));
 		ITag longer_ = PDOMTagIndex.getTag(pdom, rec, tagger_a);
 		assertNotNull(longer_);
 		assertTrue(longer_ instanceof PDOMTag);

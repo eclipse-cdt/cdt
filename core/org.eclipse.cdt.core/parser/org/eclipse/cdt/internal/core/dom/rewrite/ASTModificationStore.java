@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import java.util.HashMap;
@@ -21,10 +21,10 @@ import java.util.HashMap;
  * @since 5.0
  */
 public class ASTModificationStore {
-	private HashMap<ASTModification,ASTModificationMap> fNestedModMaps;
-	
+	private HashMap<ASTModification, ASTModificationMap> fNestedModMaps;
+
 	public ASTModificationStore() {
-		fNestedModMaps= new HashMap<ASTModification, ASTModificationMap>();
+		fNestedModMaps = new HashMap<ASTModification, ASTModificationMap>();
 	}
 
 	/**
@@ -38,14 +38,14 @@ public class ASTModificationStore {
 	}
 
 	private ASTModificationMap createNestedModificationMap(ASTModification parentMod) {
-		ASTModificationMap modMap= fNestedModMaps.get(parentMod);
+		ASTModificationMap modMap = fNestedModMaps.get(parentMod);
 		if (modMap == null) {
-			modMap= new ASTModificationMap();
+			modMap = new ASTModificationMap();
 			fNestedModMaps.put(parentMod, modMap);
 		}
 		return modMap;
 	}
-	
+
 	/**
 	 * Returns the modifications that are performed directly on the AST, or <code>null</code> if there
 	 * are no modifications.
@@ -54,7 +54,7 @@ public class ASTModificationStore {
 	public ASTModificationMap getRootModifications() {
 		return fNestedModMaps.get(null);
 	}
-	
+
 	/**
 	 * Returns the modifications that are performed on the node that has been introduced by the
 	 * given modification. If there are no nested modifications, <code>null</code> is returned.

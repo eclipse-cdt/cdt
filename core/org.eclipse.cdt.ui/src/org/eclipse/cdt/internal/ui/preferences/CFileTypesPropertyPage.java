@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
@@ -62,7 +61,8 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			super(input);
 		}
 
-		private IContentTypeManager.ContentTypeChangeEvent newContentTypeChangeEvent(IContentType source, IScopeContext context) {
+		private IContentTypeManager.ContentTypeChangeEvent newContentTypeChangeEvent(IContentType source,
+				IScopeContext context) {
 			return new IContentTypeManager.ContentTypeChangeEvent(source, context);
 		}
 
@@ -99,18 +99,18 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			// accumulate the events
 			list.add(newContentTypeChangeEvent(contentType, context));
 		}
-		
+
 	}
 
 	protected Button fUseWorkspace;
 	protected Button fUseProject;
 	protected FixCFileTypesPreferenceBlock fPrefsBlock;
-	
-	public CFileTypesPropertyPage(){
+
+	public CFileTypesPropertyPage() {
 		super();
 		noDefaultAndApplyButton();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -122,14 +122,14 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		topPane.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Workspace radio buttons
-		
+
 		Composite radioPane = new Composite(topPane, SWT.NONE);
 
 		radioPane.setLayout(new GridLayout());
 		radioPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fUseWorkspace = new Button(radioPane, SWT.RADIO);
-		fUseWorkspace.setText(PreferencesMessages.CFileTypesPropertyPage_useWorkspaceSettings); 
+		fUseWorkspace.setText(PreferencesMessages.CFileTypesPropertyPage_useWorkspaceSettings);
 		fUseWorkspace.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
@@ -140,11 +140,11 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			}
 		});
 
-		final IProject project = getProject(); 
+		final IProject project = getProject();
 		boolean custom = CCorePlugin.usesProjectSpecificContentTypes(project);
 
 		fUseProject = new Button(radioPane, SWT.RADIO);
-		fUseProject.setText(PreferencesMessages.CFileTypesPropertyPage_useProjectSettings); 
+		fUseProject.setText(PreferencesMessages.CFileTypesPropertyPage_useProjectSettings);
 		fUseProject.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
@@ -154,7 +154,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		
+
 		Composite blockPane = new Composite(topPane, SWT.NONE);
 
 		blockPane.setLayout(new GridLayout());
@@ -167,15 +167,15 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		}
 
 		fPrefsBlock.createControl(blockPane);
-	
+
 		fUseWorkspace.setSelection(!custom);
 		fUseProject.setSelection(custom);
 		fPrefsBlock.setEnabled(custom);
-	
-		PlatformUI.getWorkbench().getHelpSystem().setHelp( topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE );
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE);
 		return topPane;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -193,7 +193,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	 */
 	@Override
 	public boolean performOk() {
-		boolean useProjectContentTypes= fUseProject.getSelection();
+		boolean useProjectContentTypes = fUseProject.getSelection();
 		IProject project = getProject();
 		if (CCorePlugin.usesProjectSpecificContentTypes(project) != useProjectContentTypes) {
 			CCorePlugin.setUseProjectSpecificContentTypes(project, useProjectContentTypes);
@@ -204,23 +204,23 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		}
 		return super.performOk();
 	}
-	
-	private IProject getProject(){
-		Object		element	= getElement();
-		IProject 	project	= null;
-		
+
+	private IProject getProject() {
+		Object element = getElement();
+		IProject project = null;
+
 		if (element instanceof IProject) {
 			project = (IProject) element;
 		} else if (element instanceof IAdaptable) {
-			project= ((IAdaptable)element).getAdapter(IProject.class);
+			project = ((IAdaptable) element).getAdapter(IProject.class);
 		}
 		return project;
 	}
 
 	public IContentType[] getRegistedContentTypes() {
-		String [] ids = CoreModel.getRegistedContentTypeIds();
+		String[] ids = CoreModel.getRegistedContentTypeIds();
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType [] ctypes = new IContentType[ids.length];
+		IContentType[] ctypes = new IContentType[ids.length];
 		for (int i = 0; i < ids.length; i++) {
 			ctypes[i] = manager.getContentType(ids[i]);
 		}
@@ -240,7 +240,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			try {
 				IContentTypeSettings projectSettings = ctype.getSettings(projectScope);
 				String[] projectSpecs = projectSettings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				if (projectSpecs!= null && projectSpecs.length > 0) {
+				if (projectSpecs != null && projectSpecs.length > 0) {
 					list.add(ctype);
 				} else {
 					projectSpecs = projectSettings.getFileSpecs(IContentType.FILE_NAME_SPEC);
@@ -255,10 +255,11 @@ public class CFileTypesPropertyPage extends PropertyPage {
 
 		// fire the events
 		if (list.size() > 0) {
-			IContentTypeManager.ContentTypeChangeEvent[] events =  new IContentTypeManager.ContentTypeChangeEvent[list.size()];
+			IContentTypeManager.ContentTypeChangeEvent[] events = new IContentTypeManager.ContentTypeChangeEvent[list
+					.size()];
 			for (int i = 0; i < list.size(); ++i) {
 				IContentType source = list.get(i);
-				events[i] =  new IContentTypeManager.ContentTypeChangeEvent(source, projectScope);
+				events[i] = new IContentTypeManager.ContentTypeChangeEvent(source, projectScope);
 			}
 			CModelManager.getDefault().contentTypeChanged(events);
 		}

@@ -30,12 +30,12 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
  */
 public class PDASourceViewerConfiguration extends TextSourceViewerConfiguration {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-     */
-    public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-        return new TextHover();
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		return new TextHover();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
@@ -43,25 +43,24 @@ public class PDASourceViewerConfiguration extends TextSourceViewerConfiguration 
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new AnnotationHover();
 	}
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-        PresentationReconciler reconciler = new PresentationReconciler();
-        reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-        DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new PDAScanner());
-        reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        return reconciler;
-    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-        return new PDAContentAssistant();
-    }
-    
-    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+		PresentationReconciler reconciler = new PresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new PDAScanner());
+		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		return reconciler;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		return new PDAContentAssistant();
+	}
+
 }

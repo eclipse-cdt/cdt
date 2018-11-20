@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-
 public interface ICProjectDescriptionListener {
 	void handleEvent(CProjectDescriptionEvent event);
 }

@@ -37,13 +37,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * 
  * @since 7.0
  */
-public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
+public class ProgramRelativePathSourceContainer extends AbstractSourceContainer {
 	/**
 	 * Unique identifier for the relative path source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.programRelativePath</code>).
 	 */
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.programRelativePath"; //$NON-NLS-1$
-	
+
 	/**
 	 * The program's path.
 	 */
@@ -54,7 +54,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	 */
 	public ProgramRelativePathSourceContainer() {
 	}
-	
+
 	/**
 	 * Special constructor used when trying to locate a source file without a
 	 * launch or launch configuration context, but when a Binary context is
@@ -76,7 +76,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 			fProgramPath = program.getPath();
 		}
 	}
-	
+
 	/**
 	 * If [sourceName] is a relative path, and applying it to the location of
 	 * the program (executable) produces an absolute path that points to an
@@ -90,13 +90,13 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 		if (sourceName == null) {
 			return new Object[0];
 		}
-		
+
 		// check if source path is a relative path
 		IPath sourcePath = new Path(sourceName);
 		if (sourcePath.isAbsolute()) {
 			return new Object[0];
 		}
-		
+
 		// get program (executable) absolute path
 		IPath programPath = getProgramLocation();
 		if (programPath == Path.EMPTY) {
@@ -104,7 +104,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 		}
 
 		// remove the name of the program from the program path
-		programPath = programPath.removeLastSegments(1); 
+		programPath = programPath.removeLastSegments(1);
 		// append the relative source path to the absolute location of the program
 		sourcePath = programPath.append(sourcePath);
 
@@ -145,25 +145,28 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 			if (configuration == null) {
 				return fProgramPath; // return empty path
 			}
-			
+
 			// Get current project. Unlike CDI, DSF supports debugging
 			// executables that are not in an Eclipse project, so this may be
 			// null or empty for a DSF session. See bugzilla 304433 and 344408.
 			ICProject project = null;
-			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+					(String) null);
 			if (projectName != null && projectName.length() != 0) {
 				project = CoreModel.getDefault().getCModel().getCProject(projectName);
 				if (project == null || !project.exists()) {
 					return fProgramPath; // return empty path
 				}
 			}
-	
+
 			// get program name
-			String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+			String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+					(String) null);
 			if (programName == null) {
 				return fProgramPath; // return empty path
 			}
-        	programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+			programName = VariablesPlugin.getDefault().getStringVariableManager()
+					.performStringSubstitution(programName);
 
 			// get executable file
 			IFile exeFile = null;

@@ -12,6 +12,7 @@
  * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -21,27 +22,27 @@ import junit.framework.TestSuite;
  * Testing Single name reference, Macro lookups 
  *
  */
-public class CompletionTest_SingleName_Prefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_SingleName_Prefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart8.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "AM";
 	private final String[] expectedResults = {
 			// missing results
-			"AMacro(x)"
-	};
-	
+			"AMacro(x)" };
+
 	public CompletionTest_SingleName_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171708
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_SingleName_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_SingleName_Prefix.class.getName());
 		suite.addTest(new CompletionTest_SingleName_Prefix("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -81,6 +82,7 @@ public class CompletionTest_SingleName_Prefix  extends CompletionProposalsBaseTe
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

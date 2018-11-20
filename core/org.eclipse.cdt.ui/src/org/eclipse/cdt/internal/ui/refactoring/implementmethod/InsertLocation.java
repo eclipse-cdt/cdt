@@ -53,7 +53,7 @@ public class InsertLocation {
 	public ITranslationUnit getTranslationUnit() {
 		return tu;
 	}
-	
+
 	public IFile getFile() {
 		return tu != null ? (IFile) tu.getResource() : null;
 	}

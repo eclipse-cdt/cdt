@@ -28,31 +28,31 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public interface ICBreakpointContext extends IDebugContextProvider {
 
-    /**
-     * Returns the breakpoint object that this context represents.
-     * <p>  
-     * Note: The returned breakpoint may not yet have an associated marker.  
-     * This is for the case where the property dialog is opened for a breakpoint
-     * that is yet to be created.
-     * 
-     * @return Breakpoint object.
-     */
-    public ICBreakpoint getBreakpoint();
-    
-    /**
-     * Resource object that the breakpoint marker is on.  In case where
-     * the breakpoint marker is not yet created, clients can access the intended 
-     * breakpoint resource object through this method.
-     * 
-     * @return The breakpoint's resource object.
-     */
-    public IResource getResource();
-    
-    /**
-     * Returns the preference store to be used by property pages.  This 
-     * preference overrides values in the breakpoint marker.   
-     * @return Preference store for the property pages.
-     */
-    public IPreferenceStore getPreferenceStore();
-     
+	/**
+	 * Returns the breakpoint object that this context represents.
+	 * <p>  
+	 * Note: The returned breakpoint may not yet have an associated marker.  
+	 * This is for the case where the property dialog is opened for a breakpoint
+	 * that is yet to be created.
+	 * 
+	 * @return Breakpoint object.
+	 */
+	public ICBreakpoint getBreakpoint();
+
+	/**
+	 * Resource object that the breakpoint marker is on.  In case where
+	 * the breakpoint marker is not yet created, clients can access the intended 
+	 * breakpoint resource object through this method.
+	 * 
+	 * @return The breakpoint's resource object.
+	 */
+	public IResource getResource();
+
+	/**
+	 * Returns the preference store to be used by property pages.  This 
+	 * preference overrides values in the breakpoint marker.   
+	 * @return Preference store for the property pages.
+	 */
+	public IPreferenceStore getPreferenceStore();
+
 }

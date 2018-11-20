@@ -34,7 +34,12 @@ public class ExpSymbolTab extends AbstractExportTab {
 	}
 
 	@Override
-	public int getKind() { return ICSettingEntry.MACRO; }
+	public int getKind() {
+		return ICSettingEntry.MACRO;
+	}
+
 	@Override
-	public boolean hasValues() { return true; }
+	public boolean hasValues() {
+		return true;
+	}
 }

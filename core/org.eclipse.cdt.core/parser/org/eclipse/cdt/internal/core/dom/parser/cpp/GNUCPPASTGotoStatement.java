@@ -46,8 +46,7 @@ public class GNUCPPASTGotoStatement extends CPPASTAttributeOwner implements IGNU
 
 	@Override
 	public GNUCPPASTGotoStatement copy(CopyStyle style) {
-		GNUCPPASTGotoStatement copy = new GNUCPPASTGotoStatement(expression == null ? null
-				: expression.copy(style));
+		GNUCPPASTGotoStatement copy = new GNUCPPASTGotoStatement(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
 

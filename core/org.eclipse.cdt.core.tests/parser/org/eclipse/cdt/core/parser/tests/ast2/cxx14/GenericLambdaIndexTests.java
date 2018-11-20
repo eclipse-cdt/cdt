@@ -20,9 +20,9 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	public GenericLambdaIndexTests() {
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
-	
+
 	//	auto Identity = [](auto a){ return a; };
-	
+
 	//	auto three = Identity(3);
 	//	auto hello = Identity("hello");
 	public void testBasicCall() throws Exception {
@@ -30,10 +30,10 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 		helper.assertVariableType("three", CommonCPPTypes.int_);
 		helper.assertVariableType("hello", CommonCPPTypes.pointerToConstChar);
 	}
-	
+
 	//	// Adapted from the example in [expr.prim.lambda] p7 in the standard.
 	//	auto Identity = [](auto a){ return a; };
-	
+
 	//	void f1(int(*)(int));
 	//	void f2(char(*)(int));
 	//	void g(int(*)(int));
@@ -55,7 +55,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 		IFunction hCall = helper.assertNonProblem("h(Id", "h");
 		assertSame(h1, hCall);
 	}
-	
+
 	//	template <typename... T>
 	//	struct tuple {};
 	//
@@ -70,7 +70,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	//	Cat bar(tuple<int, char, float>);
 	//
 	//	void waldo(Cat);
-	
+
 	//	int main() {
 	//	    waldo(foo(L(42, 'x')));
 	//	    waldo(bar(L(42, 'x', 42.0f)));
@@ -78,7 +78,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	public void testVariadicAutoParameter() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	// Adapted from the example in [expr.prim.lambda] p6 in the standard.
 	//	namespace std {
 	//		struct ostream {
@@ -100,7 +100,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	//		});
 	//	auto q = p(1, 'a', 3.14);
 	//	void waldo(const std::ostream&);
-	
+
 	//	int main() {
 	//		waldo(q());
 	//	}

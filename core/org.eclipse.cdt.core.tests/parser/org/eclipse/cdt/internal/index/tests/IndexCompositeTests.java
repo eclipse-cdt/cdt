@@ -55,7 +55,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	private static final int REFD = IIndexManager.ADD_DEPENDENT;
 	private static final int BOTH = REFS | REFD;
 
-	private static final IndexFilter FILTER= new IndexFilter() {
+	private static final IndexFilter FILTER = new IndexFilter() {
 		@Override
 		public boolean acceptBinding(IBinding binding) throws CoreException {
 			if (binding instanceof ICPPMethod) {
@@ -68,8 +68,8 @@ public class IndexCompositeTests extends BaseTestCase {
 	IIndex index;
 
 	protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
-		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(),
+				getName(), blocks);
 	}
 
 	protected ICProject createAndAddProject(ProjectBuilder builder) throws Exception {
@@ -96,15 +96,23 @@ public class IndexCompositeTests extends BaseTestCase {
 			ICProject cprojA = createAndAddProject(pb);
 			projects.add(cprojA);
 
-			setIndex(cprojB, NONE);	assertBCount(1, 1);
-			setIndex(cprojB, REFS);	assertBCount(1, 1);
-			setIndex(cprojB, REFD);	assertBCount(2, 2);
-			setIndex(cprojB, BOTH);	assertBCount(2, 2);
+			setIndex(cprojB, NONE);
+			assertBCount(1, 1);
+			setIndex(cprojB, REFS);
+			assertBCount(1, 1);
+			setIndex(cprojB, REFD);
+			assertBCount(2, 2);
+			setIndex(cprojB, BOTH);
+			assertBCount(2, 2);
 
-			setIndex(cprojA, NONE);	assertBCount(1, 1);
-			setIndex(cprojA, REFS);	assertBCount(2, 2);
-			setIndex(cprojA, REFD);	assertBCount(1, 1);
-			setIndex(cprojA, BOTH);	assertBCount(2, 2);
+			setIndex(cprojA, NONE);
+			assertBCount(1, 1);
+			setIndex(cprojA, REFS);
+			assertBCount(2, 2);
+			setIndex(cprojA, REFD);
+			assertBCount(1, 1);
+			setIndex(cprojA, BOTH);
+			assertBCount(2, 2);
 		} finally {
 			for (ICProject project : projects) {
 				project.getProject().delete(true, true, new NullProgressMonitor());
@@ -155,15 +163,16 @@ public class IndexCompositeTests extends BaseTestCase {
 			 * projA: 3, 3, 0, 2 + projB + projC
 			 */
 
-			final int gC= 6, aC= gC + 2;
-			final int gB= 6, aB= gB + 1;
-			final int gA= 3, aA= gA + 3;
+			final int gC = 6, aC = gC + 2;
+			final int gB = 6, aB = gB + 1;
+			final int gA = 3, aA = gA + 3;
 
-			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
-			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
+			final int gBC = gB + gC - 1, aBC = aB + aC - 1;
+			final int gABC = gA + gBC - 1, aABC = aA + aBC - 1;
 
 			setIndex(cprojC, NONE);
-			assertBCount(gC, aC); assertNamespaceXMemberCount(1);
+			assertBCount(gC, aC);
+			assertNamespaceXMemberCount(1);
 			assertFieldCount("C1", 1);
 
 			setIndex(cprojC, REFS);
@@ -265,22 +274,22 @@ public class IndexCompositeTests extends BaseTestCase {
 			projects.add(cprojC);
 
 			/*  A   C    |
-		     *   \ /     | Depends On / References
-		     *    B      V
-		     *
+			 *   \ /     | Depends On / References
+			 *    B      V
+			 *
 			 * Defines Global, Defines Namespace, Ext. References Global, Ext. References Namespace
 			 * projC: 7, 2, 1, 1
 			 * projB: 4, 1, 0, 0
 			 * projA: 4, 1, 1, 1
 			 */
 
-			final int gC= 7, aC= gC + 2;
-			final int gB= 4, aB= gB + 1;
-			final int gA= 4, aA= gA + 1;
+			final int gC = 7, aC = gC + 2;
+			final int gB = 4, aB = gB + 1;
+			final int gA = 4, aA = gA + 1;
 
-			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
-			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
-			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
+			final int gBC = gB + gC - 1, aBC = aB + aC - 1;
+			final int gAB = gA + gB - 1, aAB = aA + aB - 1;
+			final int gABC = gA + gBC - 1, aABC = aA + aBC - 1;
 
 			setIndex(cprojC, NONE);
 			assertBCount(gBC, aBC);
@@ -363,22 +372,22 @@ public class IndexCompositeTests extends BaseTestCase {
 			projects.add(cprojB);
 
 			/*    B     |
-		     *   / \    | Depends On / References
-		     *  A   C   V
-		     *
+			 *   / \    | Depends On / References
+			 *  A   C   V
+			 *
 			 *  Defines Global, Defines Namespace, References Global, References Namespace
 			 * projC: 6, 1, 0, 0
 			 * projB: 4, 2, 2, 1
 			 * projA: 3, 1, 0, 0
 			 */
 
-			final int gC= 6, aC= gC + 1;
-			final int gB= 4, aB= gB + 2;
-			final int gA= 3, aA= gA + 1;
+			final int gC = 6, aC = gC + 1;
+			final int gB = 4, aB = gB + 2;
+			final int gA = 3, aA = gA + 1;
 
-			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
-			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
-			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
+			final int gBC = gB + gC - 1, aBC = aB + aC - 1;
+			final int gAB = gA + gB - 1, aAB = aA + aB - 1;
+			final int gABC = gA + gBC - 1, aABC = aA + aBC - 1;
 
 			setIndex(cprojC, NONE);
 			assertBCount(gC, aC);

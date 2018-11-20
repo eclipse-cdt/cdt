@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 
 public interface IConfigureOption {
-	
+
 	int CATEGORY = IAutotoolsOption.CATEGORY;
 	int BIN = IAutotoolsOption.BIN;
 	int STRING = IAutotoolsOption.STRING;

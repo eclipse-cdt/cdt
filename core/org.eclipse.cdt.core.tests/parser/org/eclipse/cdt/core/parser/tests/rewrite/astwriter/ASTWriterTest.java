@@ -48,9 +48,9 @@ import org.eclipse.core.resources.IFile;
  */
 public class ASTWriterTest extends RewriteBaseTest {
 	private static final IParserLogService NULL_LOG = new NullLogService();
-	
-	private	IFile file;
-	
+
+	private IFile file;
+
 	public ASTWriterTest(String name, ASTWriterTestSourceFile file) {
 		super(name);
 		fileMap.put(file.getName(), file);
@@ -65,13 +65,13 @@ public class ASTWriterTest extends RewriteBaseTest {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void runTest() throws Throwable {
 		file = project.getFile("ASTWritterTest.h"); //$NON-NLS-1$
 		compareFiles(fileMap);
 	}
-	
+
 	@Override
 	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
@@ -81,48 +81,48 @@ public class ASTWriterTest extends RewriteBaseTest {
 					TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
 		}
 	}
-	
+
 	public String generateSource(TestSourceFile testFile) throws Exception {
 		IASTTranslationUnit unit = getParser(testFile).parse();
-		NodeCommentMap commentMap = ASTCommenter.getCommentedNodeMap(unit);		
+		NodeCommentMap commentMap = ASTCommenter.getCommentedNodeMap(unit);
 		ASTModificationMap map = new ASTModificationMap();
 		map.getModificationsForNode(unit.getDeclarations()[0]);
 		ASTWriter writer = new ASTWriter();
 		return writer.write(unit, commentMap);
 	}
-	
+
 	protected ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
-        FileContent codeReader = FileContent.create(file);
+		FileContent codeReader = FileContent.create(file);
 
-        ScannerInfo scannerInfo = new ScannerInfo();
-        ParserLanguage language = getLanguage(testFile);
-    	boolean useGNUExtensions = getGNUExtension(testFile);
-                
-        IScanner scanner = AST2TestBase.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
-        
-        ISourceCodeParser parser = null;
-        if (language == ParserLanguage.CPP) {
-            ICPPParserExtensionConfiguration config = null;
-            if (useGNUExtensions) {
-            	config = new GPPParserExtensionConfiguration();
-            } else {
-            	config = new ANSICPPParserExtensionConfiguration();
-            }
-            parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
-        } else {
-            ICParserExtensionConfiguration config = null;
+		ScannerInfo scannerInfo = new ScannerInfo();
+		ParserLanguage language = getLanguage(testFile);
+		boolean useGNUExtensions = getGNUExtension(testFile);
 
-            if (useGNUExtensions) {
-            	config = new GCCParserExtensionConfiguration();	
-            } else {
-            	config = new ANSICParserExtensionConfiguration();
-            }
-            
-            parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
-        }
-        return parser;
+		IScanner scanner = AST2TestBase.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+		ISourceCodeParser parser = null;
+		if (language == ParserLanguage.CPP) {
+			ICPPParserExtensionConfiguration config = null;
+			if (useGNUExtensions) {
+				config = new GPPParserExtensionConfiguration();
+			} else {
+				config = new ANSICPPParserExtensionConfiguration();
+			}
+			parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+		} else {
+			ICParserExtensionConfiguration config = null;
+
+			if (useGNUExtensions) {
+				config = new GCCParserExtensionConfiguration();
+			} else {
+				config = new ANSICParserExtensionConfiguration();
+			}
+
+			parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+		}
+		return parser;
 	}
-	
+
 	private boolean getGNUExtension(TestSourceFile file) {
 		if (file instanceof ASTWriterTestSourceFile)
 			return ((ASTWriterTestSourceFile) file).isUseGNUExtensions();

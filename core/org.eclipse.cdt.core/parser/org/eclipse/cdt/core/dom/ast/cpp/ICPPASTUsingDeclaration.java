@@ -27,12 +27,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner,
-		IASTImplicitNameOwner {
+public interface ICPPASTUsingDeclaration
+		extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner, IASTImplicitNameOwner {
 	/**
 	 * <code>NAME</code> is the qualified name brought into scope.
 	 */
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("ICPPASTUsingDeclaration.NAME - Qualified Name brought into scope"); //$NON-NLS-1$
+	public static final ASTNodeProperty NAME = new ASTNodeProperty(
+			"ICPPASTUsingDeclaration.NAME - Qualified Name brought into scope"); //$NON-NLS-1$
 
 	/**
 	 * Was the typename keyword used?

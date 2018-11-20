@@ -16,14 +16,14 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 import org.eclipse.osgi.util.NLS;
 
 class MessagesForProperties extends NLS {
-    public static String DefaultLabelMessage_label;
-    public static String PropertiesUpdateStatus_message;
-    
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(MessagesForProperties.class.getName(), MessagesForProperties.class);
-    }
+	public static String DefaultLabelMessage_label;
+	public static String PropertiesUpdateStatus_message;
 
-    private MessagesForProperties() {
-    }
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(MessagesForProperties.class.getName(), MessagesForProperties.class);
+	}
+
+	private MessagesForProperties() {
+	}
 }

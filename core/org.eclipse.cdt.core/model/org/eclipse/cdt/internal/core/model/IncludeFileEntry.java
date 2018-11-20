@@ -30,9 +30,9 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 	public IncludeFileEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath includeFilePath,
 			IPath[] exclusionPatterns, boolean isExported) {
 		super(IPathEntry.CDT_INCLUDE_FILE, basePath, baseRef, resourcePath, exclusionPatterns, isExported);
-		this.includeFilePath = (includeFilePath == null) ? Path.EMPTY : PathUtil.getCanonicalPathWindows(includeFilePath);
+		this.includeFilePath = (includeFilePath == null) ? Path.EMPTY
+				: PathUtil.getCanonicalPathWindows(includeFilePath);
 	}
-
 
 	/**
 	 * Returns the include path
@@ -48,11 +48,9 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((includeFilePath == null) ? 0 : includeFilePath.hashCode());
+		result = prime * result + ((includeFilePath == null) ? 0 : includeFilePath.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {

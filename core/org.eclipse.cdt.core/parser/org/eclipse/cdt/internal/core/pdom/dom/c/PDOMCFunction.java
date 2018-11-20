@@ -41,22 +41,22 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
 	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE;
-	
+
 	/**
 	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
 	public static final int FIRST_PARAM = NUM_PARAMS + 4;
-	
+
 	/**
 	 * Offset for the type of this function (relative to the beginning of the record).
 	 */
 	private static final int FUNCTION_TYPE = FIRST_PARAM + Database.PTR_SIZE;
-	
+
 	/**
 	 * Offset of annotation information (relative to the beginning of the record).
 	 */
 	private static final int ANNOTATIONS = FUNCTION_TYPE + Database.TYPE_SIZE; // byte
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
@@ -69,7 +69,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public PDOMCFunction(PDOMLinkage linkage, PDOMNode parent, IFunction function) throws CoreException {
 		super(linkage, parent, function.getNameCharArray());
-		
+
 		IFunctionType type = function.getType();
 		setType(getLinkage(), type);
 		IParameter[] parameters = function.getParameters();
@@ -83,11 +83,11 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		if (!(newBinding instanceof IFunction))
 			return;
 
-		IFunction func= (IFunction) newBinding;
+		IFunction func = (IFunction) newBinding;
 		IFunctionType newType = func.getType();
 		setType(linkage, newType);
 
-		PDOMCParameter oldParams= getFirstParameter(null);
+		PDOMCParameter oldParams = getFirstParameter(null);
 		IParameter[] newParams = func.getParameters();
 		setParameters(newParams);
 		if (oldParams != null) {
@@ -103,21 +103,21 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	private void setParameters(IParameter[] params) throws CoreException {
 		final PDOMLinkage linkage = getLinkage();
-		final Database db= getDB();
+		final Database db = getDB();
 		db.putInt(record + NUM_PARAMS, params.length);
 		db.putRecPtr(record + FIRST_PARAM, 0);
-		PDOMCParameter next= null;
-		for (int i= params.length; --i >= 0;) {
-			next= new PDOMCParameter(linkage, this, params[i], next);
+		PDOMCParameter next = null;
+		for (int i = params.length; --i >= 0;) {
+			next = new PDOMCParameter(linkage, this, params[i], next);
 		}
 		db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 	}
-	
+
 	public PDOMCParameter getFirstParameter(IType t) throws CoreException {
 		long rec = getDB().getRecPtr(record + FIRST_PARAM);
 		return rec != 0 ? new PDOMCParameter(getLinkage(), rec, t) : null;
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -151,20 +151,20 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	@Override
 	public IParameter[] getParameters() {
 		try {
-			PDOMLinkage linkage= getLinkage();
-			Database db= getDB();
+			PDOMLinkage linkage = getLinkage();
+			Database db = getDB();
 			IFunctionType ft = getType();
-			IType[] ptypes= ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
-			
+			IType[] ptypes = ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
+
 			int n = db.getInt(record + NUM_PARAMS);
 			IParameter[] result = new IParameter[n];
-			
+
 			long next = db.getRecPtr(record + FIRST_PARAM);
- 			for (int i = 0; i < n && next != 0; i++) {
- 				IType type= i < ptypes.length ? ptypes[i] : null;
+			for (int i = 0; i < n && next != 0; i++) {
+				IType type = i < ptypes.length ? ptypes[i] : null;
 				final PDOMCParameter par = new PDOMCParameter(linkage, next, type);
-				next= par.getNextPtr();
-				result[i]= par;
+				next = par.getNextPtr();
+				result[i] = par;
 			}
 			return result;
 		} catch (CoreException e) {
@@ -172,7 +172,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			return IParameter.EMPTY_PARAMETER_ARRAY;
 		}
 	}
-	
+
 	@Override
 	public boolean isAuto() {
 		// ISO/IEC 9899:TC1 6.9.1.4

@@ -125,8 +125,7 @@ public abstract class AbstractTest {
 		SWTBotShell shell = bot.shell("Preferences");
 		shell.activate();
 		bot.text().setText("Workspace");
-		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), "General",
-				"Workspace"));
+		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), "General", "Workspace"));
 		SWTBotCheckBox buildAuto = bot.checkBox("Build automatically");
 		if (buildAuto != null && buildAuto.isChecked()) {
 			buildAuto.click();
@@ -135,10 +134,8 @@ public abstract class AbstractTest {
 		// Ensure that the C/C++ perspective is chosen automatically
 		// and doesn't require user intervention
 		bot.text().setText("Perspectives");
-		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), "General",
-				"Perspectives"));
-		clickRadioButtonInGroup("Always open",
-				"Open the associated perspective when creating a new project");
+		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), "General", "Perspectives"));
+		clickRadioButtonInGroup("Always open", "Open the associated perspective when creating a new project");
 		bot.button("OK").click();
 
 		AbstractTest.projectName = projectName;
@@ -146,18 +143,15 @@ public abstract class AbstractTest {
 		shell = bot.shell("New Project");
 		shell.activate();
 		bot.text().setText("C Project");
-		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), "C/C++",
-				"C Project"));
+		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), "C/C++", "C Project"));
 		bot.button("Next >").click();
 
 		bot.textWithLabel("Project name:").setText(projectName);
-		bot.tree().expandNode("GNU Autotools")
-		.select("Hello World ANSI C Autotools Project");
+		bot.tree().expandNode("GNU Autotools").select("Hello World ANSI C Autotools Project");
 		bot.button("Finish").click();
 		bot.waitUntil(Conditions.shellCloses(shell));
 
-		IProjectNature nature = checkProject().getNature(
-				"org.eclipse.cdt.autotools.core.autotoolsNatureV2");
+		IProjectNature nature = checkProject().getNature("org.eclipse.cdt.autotools.core.autotoolsNatureV2");
 		assertNotNull(nature);
 
 		projectExplorer = bot.viewByTitle("Project Explorer");
@@ -186,8 +180,7 @@ public abstract class AbstractTest {
 		 * @param node
 		 *			The text of the node to select.
 		 */
-		public NodeAvailableAndSelect(SWTBotTree tree, String parent,
-				String node) {
+		public NodeAvailableAndSelect(SWTBotTree tree, String parent, String node) {
 			this.tree = tree;
 			this.node = node;
 			this.parent = parent;
@@ -215,10 +208,8 @@ public abstract class AbstractTest {
 	 */
 	public static void enterProjectFolder() {
 		projectExplorer.setFocus();
-		projectExplorer.bot().tree().select(projectName).contextMenu("Go Into")
-		.click();
-		bot.waitUntil(waitForWidget(WidgetMatcherFactory.withText(projectName),
-				projectExplorer.getWidget()));
+		projectExplorer.bot().tree().select(projectName).contextMenu("Go Into").click();
+		bot.waitUntil(waitForWidget(WidgetMatcherFactory.withText(projectName), projectExplorer.getWidget()));
 	}
 
 	/**
@@ -233,8 +224,7 @@ public abstract class AbstractTest {
 			// If the "Forward" button is not found, already at the top level.
 			return;
 		}
-		SWTBotToolbarButton backButton = projectExplorer
-				.toolbarPushButton("Back to Workspace");
+		SWTBotToolbarButton backButton = projectExplorer.toolbarPushButton("Back to Workspace");
 		if (backButton.isEnabled()) {
 			backButton.click();
 			bot.waitUntil(widgetIsEnabled(forwardButton));
@@ -247,8 +237,7 @@ public abstract class AbstractTest {
 	 * other radio button in the group that is already selected. Workaround for
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=344484
 	 */
-	public static void clickRadioButtonInGroup(String mnemonicText,
-			final String inGroup) {
+	public static void clickRadioButtonInGroup(String mnemonicText, final String inGroup) {
 		UIThreadRunnable.syncExec(() -> {
 			@SuppressWarnings("unchecked")
 			Matcher<Button> matcher = allOf(inGroup(inGroup), widgetOfType(Button.class),
@@ -270,13 +259,11 @@ public abstract class AbstractTest {
 		bot.radioInGroup(mnemonicText, inGroup).click();
 	}
 
-	public static void clickContextMenu(AbstractSWTBot<? extends Control> bot,
-			String... texts) {
+	public static void clickContextMenu(AbstractSWTBot<? extends Control> bot, String... texts) {
 		new SWTBotMenu(ContextMenuHelper.contextMenu(bot, texts)).click();
 	}
 
-	public static void clickVolatileContextMenu(
-			AbstractSWTBot<? extends Control> bot, String... texts) {
+	public static void clickVolatileContextMenu(AbstractSWTBot<? extends Control> bot, String... texts) {
 		int tries = 0;
 		final int maxTries = 2;
 		while (true) {
@@ -292,8 +279,7 @@ public abstract class AbstractTest {
 	}
 
 	public static void clickProjectContextMenu(String... texts) {
-		clickVolatileContextMenu(bot.viewByTitle("Project Explorer").bot()
-				.tree().select(projectName), texts);
+		clickVolatileContextMenu(bot.viewByTitle("Project Explorer").bot().tree().select(projectName), texts);
 	}
 
 	/**
@@ -314,15 +300,12 @@ public abstract class AbstractTest {
 		menu.click();
 	}
 
-	public static SWTBotShell openProperties(String parentCategory,
-			String category) {
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Properties");
+	public static SWTBotShell openProperties(String parentCategory, String category) {
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Properties");
 		SWTBotShell shell = bot.shell("Properties for " + projectName);
 		shell.activate();
 		bot.text().setText(category);
-		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), parentCategory,
-				category));
+		bot.waitUntil(new NodeAvailableAndSelect(bot.tree(), parentCategory, category));
 		shell.activate();
 		return shell;
 	}
@@ -340,10 +323,8 @@ public abstract class AbstractTest {
 	public static SWTBotView viewConsole(String consoleType) {
 		SWTBotView view = bot.viewByPartName("Console");
 		view.setFocus();
-		SWTBotToolbarDropDownButton b = view
-				.toolbarDropDownButton("Display Selected Console");
-		org.hamcrest.Matcher<MenuItem> withRegex = withRegex(".*" + consoleType
-				+ ".*");
+		SWTBotToolbarDropDownButton b = view.toolbarDropDownButton("Display Selected Console");
+		org.hamcrest.Matcher<MenuItem> withRegex = withRegex(".*" + consoleType + ".*");
 		focusMainShell();
 		b.menuItem(withRegex).click();
 		try {
@@ -379,8 +360,7 @@ public abstract class AbstractTest {
 		for (final SWTBotShell shell : shells) {
 			if (!shell.equals(mainShell)) {
 				String shellTitle = shell.getText();
-				if (shellTitle.length() > 0
-						&& !shellTitle.startsWith("Quick Access")) {
+				if (shellTitle.length() > 0 && !shellTitle.startsWith("Quick Access")) {
 					UIThreadRunnable.syncExec(() -> {
 						if (shell.widget.getParent() != null && !shell.isOpen()) {
 							shell.close();

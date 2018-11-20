@@ -26,8 +26,7 @@ import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
  * The implementation of the IFileContextBuildMacroValues interface
  * @since 3.0
  */
-public class FileContextBuildMacroValues implements
-		IFileContextBuildMacroValues, Cloneable {
+public class FileContextBuildMacroValues implements IFileContextBuildMacroValues, Cloneable {
 
 	private IBuilder fBuilder;
 	private IFileContextBuildMacroValues fSupperClassValues;
@@ -36,40 +35,40 @@ public class FileContextBuildMacroValues implements
 	private HashMap<String, String> fAllValues = new HashMap<String, String>();
 	private boolean fInitialized;
 
-	public FileContextBuildMacroValues(IBuilder builder, IManagedConfigElement element){
+	public FileContextBuildMacroValues(IBuilder builder, IManagedConfigElement element) {
 		fBuilder = builder;
 		load(element);
 	}
 
-	private void load(IManagedConfigElement element){
+	private void load(IManagedConfigElement element) {
 		String names[] = MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE);
 		fValues.clear();
-		for(int i = 0; i < names.length; i++){
+		for (int i = 0; i < names.length; i++) {
 			String value = element.getAttribute(PREFIX + names[i] + SUFFIX);
-			if(value != null)
-				fValues.put(names[i],value);
+			if (value != null)
+				fValues.put(names[i], value);
 		}
 	}
 
-	private void load(){
-		if(!fInitialized){
+	private void load() {
+		if (!fInitialized) {
 			fAllValues.clear();
 			IFileContextBuildMacroValues supperValues = getSupperClassValues();
-			if(supperValues != null) {
+			if (supperValues != null) {
 				String names[] = MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE);
-				for(int i = 0; i < names.length; i++){
+				for (int i = 0; i < names.length; i++) {
 					String value = fValues.get(names[i]);
-					if(value == null)
+					if (value == null)
 						value = supperValues.getMacroValue(names[i]);
-					if(value != null && value.length() > 0)
-						fAllValues.put(names[i],value);
+					if (value != null && value.length() > 0)
+						fAllValues.put(names[i], value);
 				}
 			} else {
 				Set<Entry<String, String>> entrySet = fValues.entrySet();
 				for (Entry<String, String> entry : entrySet) {
 					String value = entry.getValue();
-					if(value != null && value.length() > 0)
-						fAllValues.put(entry.getKey(),value);
+					if (value != null && value.length() > 0)
+						fAllValues.put(entry.getKey(), value);
 				}
 			}
 			fInitialized = true;
@@ -96,16 +95,16 @@ public class FileContextBuildMacroValues implements
 		return fAllValues.get(macroName);
 	}
 
-	public IFileContextBuildMacroValues getSupperClassValues(){
-		if(fBuilder != null){
+	public IFileContextBuildMacroValues getSupperClassValues() {
+		if (fBuilder != null) {
 			IBuilder supperClass = fBuilder.getSuperClass();
-			if(supperClass != null)
+			if (supperClass != null)
 				fSupperClassValues = supperClass.getFileContextBuildMacroValues();
 		}
 		return fSupperClassValues;
 	}
 
-	public void setBuilder(IBuilder builder){
+	public void setBuilder(IBuilder builder) {
 		fBuilder = builder;
 		fInitialized = false;
 	}
@@ -115,13 +114,13 @@ public class FileContextBuildMacroValues implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone(){
+	public Object clone() {
 		FileContextBuildMacroValues cloned = null;
-		try{
-			cloned = (FileContextBuildMacroValues)super.clone();
-			cloned.fValues = (HashMap<String, String>)fValues.clone();
-			cloned.fAllValues = (HashMap<String, String>)fAllValues.clone();
-		} catch (CloneNotSupportedException e){
+		try {
+			cloned = (FileContextBuildMacroValues) super.clone();
+			cloned.fValues = (HashMap<String, String>) fValues.clone();
+			cloned.fAllValues = (HashMap<String, String>) fAllValues.clone();
+		} catch (CloneNotSupportedException e) {
 		}
 
 		return cloned;

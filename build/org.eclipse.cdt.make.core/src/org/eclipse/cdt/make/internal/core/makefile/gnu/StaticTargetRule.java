@@ -20,7 +20,6 @@ import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 
-
 /**
  *   Here is the syntax of a static pattern rule:
  *
@@ -33,7 +32,8 @@ public class StaticTargetRule extends InferenceRule implements IInferenceRule {
 	String targetPattern;
 	String[] prereqPatterns;
 
-	public StaticTargetRule(Directive parent, Target target, String target_pattern, String[] prereq_patterns, Command[] commands) {
+	public StaticTargetRule(Directive parent, Target target, String target_pattern, String[] prereq_patterns,
+			Command[] commands) {
 		super(parent, target, commands);
 		targetPattern = target_pattern;
 		prereqPatterns = prereq_patterns;

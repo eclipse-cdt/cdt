@@ -26,6 +26,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  */
 public class MIGDBSetHostCharset extends MIGDBSet {
 	public MIGDBSetHostCharset(ICommandControlDMContext ctx, String hostCharset) {
-		super(ctx, new String[] {"host-charset", hostCharset}); //$NON-NLS-1$
+		super(ctx, new String[] { "host-charset", hostCharset }); //$NON-NLS-1$
 	}
 }

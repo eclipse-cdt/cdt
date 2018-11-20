@@ -26,9 +26,9 @@ public interface ICPPInternalFunction extends ICPPInternalBinding, ICPPComputabl
 	 */
 	public IBinding resolveParameter(CPPParameter parameter);
 
-    /**
-     * Returns whether there is a static declaration for this function.
-     * @param resolveAll checks for names that are not yet resolved to this binding.
-     */
-    public boolean isStatic(boolean resolveAll);
+	/**
+	 * Returns whether there is a static declaration for this function.
+	 * @param resolveAll checks for names that are not yet resolved to this binding.
+	 */
+	public boolean isStatic(boolean resolveAll);
 }

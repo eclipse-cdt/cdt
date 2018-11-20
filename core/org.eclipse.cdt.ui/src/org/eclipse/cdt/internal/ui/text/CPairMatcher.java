@@ -33,9 +33,9 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 public class CPairMatcher extends DefaultCharacterPairMatcher {
 
 	private static final int ANGLE_BRACKETS_SEARCH_BOUND = 200;
-	
-	private boolean fMatchAngularBrackets= true;
-	private int fAnchor= -1;
+
+	private boolean fMatchAngularBrackets = true;
+	private int fAnchor = -1;
 
 	public CPairMatcher(char[] pairs) {
 		super(pairs, ICPartitions.C_PARTITIONING);
@@ -50,7 +50,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 			return null;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.DefaultCharacterPairMatcher#getAnchor()
 	 */
@@ -64,30 +64,31 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 
 	/*
 	 * Performs the actual work of matching for #match(IDocument, int).
-	 */ 
+	 */
 	private IRegion performMatch(IDocument document, int offset) throws BadLocationException {
-		if (offset < 0 || document == null) return null;
-		final char prevChar= document.getChar(Math.max(offset - 1, 0));
+		if (offset < 0 || document == null)
+			return null;
+		final char prevChar = document.getChar(Math.max(offset - 1, 0));
 		if ((prevChar == '<' || prevChar == '>') && !fMatchAngularBrackets)
 			return null;
 		final IRegion region;
 		if (prevChar == '<') {
-			region= findClosingAngleBracket(document, offset - 1);
-			fAnchor= ICharacterPairMatcher.LEFT;
+			region = findClosingAngleBracket(document, offset - 1);
+			fAnchor = ICharacterPairMatcher.LEFT;
 		} else if (prevChar == '>') {
-			region= findOpeningAngleBracket(document, offset - 1);
-			fAnchor= ICharacterPairMatcher.RIGHT;
+			region = findOpeningAngleBracket(document, offset - 1);
+			fAnchor = ICharacterPairMatcher.RIGHT;
 		} else {
-			region= super.match(document, offset);
-			fAnchor= -1;
+			region = super.match(document, offset);
+			fAnchor = -1;
 		}
 		if (region != null) {
 			if (prevChar == '>') {
-				final int peer= region.getOffset();
+				final int peer = region.getOffset();
 				if (isLessThanOperator(document, peer))
 					return null;
 			} else if (prevChar == '<') {
-				final int peer= region.getOffset() + region.getLength() - 1;
+				final int peer = region.getOffset() + region.getLength() - 1;
 				if (isGreaterThanOperator(document, peer))
 					return null;
 			}
@@ -104,11 +105,12 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * @throws BadLocationException 
 	 */
 	private IRegion findOpeningAngleBracket(IDocument document, int offset) throws BadLocationException {
-		if (offset < 0) return null;
-		final String contentType= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
-		CHeuristicScanner scanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
+		if (offset < 0)
+			return null;
+		final String contentType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
+		CHeuristicScanner scanner = new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
 		if (isTemplateParameterCloseBracket(offset, document, scanner)) {
-			int pos= scanner.findOpeningPeer(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND), '<', '>');
+			int pos = scanner.findOpeningPeer(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND), '<', '>');
 			if (pos != CHeuristicScanner.NOT_FOUND) {
 				return new Region(pos, offset - pos + 1);
 			}
@@ -125,11 +127,13 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * @throws BadLocationException 
 	 */
 	private IRegion findClosingAngleBracket(IDocument document, int offset) throws BadLocationException {
-		if (offset < 0) return null;
-		final String contentType= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
-		CHeuristicScanner scanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
+		if (offset < 0)
+			return null;
+		final String contentType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
+		CHeuristicScanner scanner = new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
 		if (isTemplateParameterOpenBracket(offset, document, scanner)) {
-			int pos= scanner.findClosingPeer(offset + 1, Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND), '<', '>');
+			int pos = scanner.findClosingPeer(offset + 1,
+					Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND), '<', '>');
 			if (pos != CHeuristicScanner.NOT_FOUND) {
 				return new Region(offset, pos - offset + 1);
 			}
@@ -149,9 +153,10 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * @throws BadLocationException
 	 */
 	private boolean isLessThanOperator(IDocument document, int offset) throws BadLocationException {
-		if (offset < 0) return false;
-		final String contentType= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
-		CHeuristicScanner scanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
+		if (offset < 0)
+			return false;
+		final String contentType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
+		CHeuristicScanner scanner = new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
 		return !isTemplateParameterOpenBracket(offset, document, scanner);
 	}
 
@@ -167,9 +172,10 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * @throws BadLocationException
 	 */
 	private boolean isGreaterThanOperator(IDocument document, int offset) throws BadLocationException {
-		if (offset < 0) return false;
-		final String contentType= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
-		CHeuristicScanner scanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
+		if (offset < 0)
+			return false;
+		final String contentType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, offset, false);
+		CHeuristicScanner scanner = new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, contentType);
 		return !isTemplateParameterCloseBracket(offset, document, scanner);
 	}
 
@@ -184,10 +190,11 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 *         <code>false</code> otherwise
 	 */
 	private boolean isTemplateParameterOpenBracket(int offset, IDocument document, CHeuristicScanner scanner) {
-		int nextToken = scanner.nextToken(offset + 1, Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND));
+		int nextToken = scanner.nextToken(offset + 1,
+				Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND));
 		if (nextToken == Symbols.TokenSHIFTLEFT || nextToken == Symbols.TokenLESSTHAN)
 			return false;
-		int prevToken= scanner.previousToken(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
+		int prevToken = scanner.previousToken(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
 		if (prevToken == Symbols.TokenIDENT || prevToken == Symbols.TokenTEMPLATE) {
 			return true;
 		}
@@ -208,15 +215,16 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	private boolean isTemplateParameterCloseBracket(int offset, IDocument document, CHeuristicScanner scanner) {
 		if (offset >= document.getLength() - 1)
 			return true;
-		int thisToken= scanner.previousToken(offset, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
+		int thisToken = scanner.previousToken(offset, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
 		if (thisToken == Symbols.TokenSHIFTRIGHT)
 			return true;
 		if (thisToken != Symbols.TokenGREATERTHAN)
 			return false;
-		int prevToken= scanner.previousToken(scanner.getPosition(), Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
+		int prevToken = scanner.previousToken(scanner.getPosition(), Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
 		if (prevToken == Symbols.TokenGREATERTHAN)
 			return true;
-		int nextToken= scanner.nextToken(offset + 1, Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND));
+		int nextToken = scanner.nextToken(offset + 1,
+				Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND));
 
 		switch (nextToken) {
 		case Symbols.TokenGREATERTHAN:
@@ -235,7 +243,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * @param language
 	 */
 	public void configure(ILanguage language) {
-		fMatchAngularBrackets= language != null && language.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
+		fMatchAngularBrackets = language != null && language.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 	}
 
 }

@@ -43,9 +43,10 @@ public class TemplateEngineUI {
 	}
 
 	public Template[] getTemplates(String projectType, String toolChain, String usageFilter) {
-		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos(projectType, toolChain, usageFilter);
+		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos(projectType, toolChain,
+				usageFilter);
 		List<Template> templatesList = new ArrayList<Template>();
-		for (int i=0; i<templateInfoArray.length; i++) {
+		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
 				templatesList.add(new Template(info));
@@ -70,7 +71,7 @@ public class TemplateEngineUI {
 	public Template[] getTemplates() {
 		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos();
 		List<Template> templatesList = new ArrayList<Template>();
-		for (int i=0; i<templateInfoArray.length; i++) {
+		for (int i = 0; i < templateInfoArray.length; i++) {
 			try {
 				templatesList.add(new Template(templateInfoArray[i]));
 			} catch (TemplateInitializationException tie) {
@@ -83,7 +84,7 @@ public class TemplateEngineUI {
 	public Template getTemplateById(String templateId) {
 		Template[] templates = getTemplates();
 
-		for(int i=0; i<templates.length; i++) {
+		for (int i = 0; i < templates.length; i++) {
 			Template template = templates[i];
 			if (template.getTemplateId().equalsIgnoreCase(templateId)) {
 				return template;

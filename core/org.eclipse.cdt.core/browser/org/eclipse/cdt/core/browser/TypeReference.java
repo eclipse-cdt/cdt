@@ -38,8 +38,8 @@ public class TypeReference implements ITypeReference {
 	private IWorkingCopy fWorkingCopy;
 	private int fOffset;
 	private int fLength;
-    public boolean offsetIsLineNumber = false;
-	
+	public boolean offsetIsLineNumber = false;
+
 	public TypeReference(IPath path, IProject project, int offset, int length) {
 		fPath = path;
 		fProject = project;
@@ -89,7 +89,7 @@ public class TypeReference implements ITypeReference {
 			return fPath;
 		}
 	}
-	
+
 	@Override
 	public IPath getLocation() {
 		if (fWorkingCopy != null) {
@@ -108,7 +108,7 @@ public class TypeReference implements ITypeReference {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IResource getResource() {
 		return fResource;
@@ -118,7 +118,7 @@ public class TypeReference implements ITypeReference {
 	public IWorkingCopy getWorkingCopy() {
 		return fWorkingCopy;
 	}
-	
+
 	@Override
 	public IProject getProject() {
 		if (fProject != null) {
@@ -136,7 +136,7 @@ public class TypeReference implements ITypeReference {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public ITranslationUnit getTranslationUnit() {
 		ITranslationUnit unit = null;
@@ -153,16 +153,16 @@ public class TypeReference implements ITypeReference {
 				unit = (ITranslationUnit) elem;
 			else {
 				try {
-					unit= CoreModelUtil.findTranslationUnitForLocation(path, findCProject(getProject()));
+					unit = CoreModelUtil.findTranslationUnitForLocation(path, findCProject(getProject()));
 				} catch (CModelException e) {
 					CCorePlugin.log(e);
 				}
 			}
 		}
-		
+
 		return unit;
 	}
-	
+
 	private ICProject findCProject(IProject project) {
 		if (project == null) {
 			return null;
@@ -186,51 +186,50 @@ public class TypeReference implements ITypeReference {
 		ITranslationUnit unit = getTranslationUnit();
 		if (unit != null) {
 			try {
-                if( offsetIsLineNumber )
-                {
-                    ICElement [] result = new ICElement[1];
-                    result[0] = unit.getElementAtLine(fOffset);
-                    return result;
-                }
-                return unit.getElementsAtOffset(fOffset);
+				if (offsetIsLineNumber) {
+					ICElement[] result = new ICElement[1];
+					result[0] = unit.getElementAtLine(fOffset);
+					return result;
+				}
+				return unit.getElementsAtOffset(fOffset);
 			} catch (CModelException e) {
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getOffset() {
 		return fOffset;
 	}
-	
+
 	@Override
 	public int getLength() {
 		return fLength;
 	}
-	
+
 	@Override
 	public IPath getRelativeIncludePath(IProject project) {
 		IPath path = getLocation();
 		if (path != null) {
-		    IPath relativePath = PathUtil.makeRelativePathToProjectIncludes(path, project);
-		    if (relativePath != null)
-		        return relativePath;
+			IPath relativePath = PathUtil.makeRelativePathToProjectIncludes(path, project);
+			if (relativePath != null)
+				return relativePath;
 		}
 		return path;
 	}
-	
+
 	@Override
 	public IPath getRelativePath(IPath relativeToPath) {
 		IPath path = getPath();
 		if (path != null) {
-		    IPath relativePath = PathUtil.makeRelativePath(path, relativeToPath);
-		    if (relativePath != null)
-		        return relativePath;
+			IPath relativePath = PathUtil.makeRelativePath(path, relativeToPath);
+			if (relativePath != null)
+				return relativePath;
 		}
 		return path;
 	}
-	
+
 	@Override
 	public String toString() {
 		IPath path = getLocation();
@@ -238,7 +237,7 @@ public class TypeReference implements ITypeReference {
 			if (fLength == 0 && fOffset == 0) {
 				return path.toString();
 			}
-			return path.toString() + ":" + fOffset + "-" + (fOffset + fLength);  //$NON-NLS-1$//$NON-NLS-2$
+			return path.toString() + ":" + fOffset + "-" + (fOffset + fLength); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -256,12 +255,12 @@ public class TypeReference implements ITypeReference {
 		if (!(obj instanceof ITypeReference)) {
 			return false;
 		}
-		ITypeReference ref = (ITypeReference)obj;
+		ITypeReference ref = (ITypeReference) obj;
 		return toString().equals(ref.toString());
 	}
 
-    @Override
+	@Override
 	public boolean isLineNumber() {
-        return offsetIsLineNumber;
-    }
+		return offsetIsLineNumber;
+	}
 }

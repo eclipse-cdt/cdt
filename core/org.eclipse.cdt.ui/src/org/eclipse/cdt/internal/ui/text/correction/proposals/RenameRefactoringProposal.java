@@ -44,13 +44,13 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 
 	public RenameRefactoringProposal(CEditor editor) {
 		fEditor = editor;
-		fLabel= CorrectionMessages.RenameRefactoringProposal_name;
-		fRelevance= 8;
+		fLabel = CorrectionMessages.RenameRefactoringProposal_name;
+		fRelevance = 8;
 	}
 
 	@Override
 	public void apply(IDocument document) {
-		CRenameAction action= new CRenameAction();
+		CRenameAction action = new CRenameAction();
 		action.setEditor(fEditor);
 		action.run();
 	}
@@ -67,7 +67,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 
 	@Override
 	public String getDisplayString() {
-		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
+		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
 			return Messages.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
 					new String[] { fLabel, shortCutString });
@@ -77,11 +77,11 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 
 	@Override
 	public StyledString getStyledDisplayString() {
-		StyledString str= new StyledString(fLabel);
+		StyledString str = new StyledString(fLabel);
 
-		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
+		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			String decorated= Messages.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
+			String decorated = Messages.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
 					new String[] { fLabel, shortCutString });
 			return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, str);
 		}
@@ -114,6 +114,6 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	}
 
 	public void setRelevance(int relevance) {
-		fRelevance= relevance;
+		fRelevance = relevance;
 	}
 }

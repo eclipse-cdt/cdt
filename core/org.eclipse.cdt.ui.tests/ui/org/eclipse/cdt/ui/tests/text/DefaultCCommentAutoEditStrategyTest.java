@@ -61,7 +61,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fOptions= CCorePlugin.getOptions();
+		fOptions = CCorePlugin.getOptions();
 	}
 
 	/*
@@ -79,15 +79,16 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		textTools.setupCDocument(doc);
 		AutoEditTester tester = new AutoEditTester(doc, ICPartitions.C_PARTITIONING);
 
-
-		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
+		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE,
+				new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
 		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new DefaultMultilineCommentAutoEditStrategy());
-		tester.setAutoEditStrategy(ICPartitions.C_PREPROCESSOR, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
+		tester.setAutoEditStrategy(ICPartitions.C_PREPROCESSOR,
+				new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
 		return tester;
 	}
 
 	public void testIsMultilineNew() throws BadLocationException {
-		DefaultMultilineCommentAutoEditStrategy ds= new DefaultMultilineCommentAutoEditStrategy();
+		DefaultMultilineCommentAutoEditStrategy ds = new DefaultMultilineCommentAutoEditStrategy();
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
@@ -142,7 +143,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//    */
 	public void testInsertNewLine2() {
 		assertNewLineBehaviour();
-	}	
+	}
 
 	// class A {};  /*X
 
@@ -178,8 +179,6 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		assertNewLineBehaviour();
 	}
 
-	
-	
 	// class A {
 	// /*X
 	//  * 
@@ -311,7 +310,6 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		assertNewLineBehaviour();
 	}
 
-
 	// /*
 	//  *
 	//  *X
@@ -370,7 +368,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void _testInsertNewLine19() {
 		assertNewLineBehaviour();
 	}
-	
+
 	//        /*
 	//        /*X
 	//         *
@@ -385,7 +383,6 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		assertNewLineBehaviour();
 	}
 
-
 	//
 	//  X
 	//
@@ -393,7 +390,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration1() {
 		assertDeclarationFollowingX("void foo() {}");
 	}
-	
+
 	//  X
 	//
 	//  void foo() {}
@@ -401,7 +398,6 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration1b() {
 		assertDeclarationFollowingX("void foo() {}");
 	}
-
 
 	//
 	//  X
@@ -419,7 +415,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration3() {
 		assertDeclarationFollowingX("void foo() {}");
 	}
-	
+
 	//  class C {
 	//  void foo() {X}
 	//  void bar(int x);
@@ -435,7 +431,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration4a() {
 		assertDeclarationFollowingX("void bar(int x);");
 	}
-	
+
 	//  class C {
 	//  void foo()X{}
 	//  void bar(int x);
@@ -443,7 +439,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void _testFollowingDeclaration4b() { // TODO - this is likely invalid anyhow
 		assertDeclarationFollowingX("void foo(){}"); // (X is just the cursor position)
 	}
-	
+
 	//  class C {
 	//  void foo()
 	//  X
@@ -455,7 +451,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void _testFollowingDeclaration4c() { // TODO - this is likely invalid anyhow
 		assertDeclarationFollowingX("void foo()\n  {\n     int x;\n  }\n"); // (X is just the cursor position)
 	}
-	
+
 	//  namespace n1 { X
 	//		namespace n2 {
 	//  		void foo() {}
@@ -467,9 +463,10 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//		}
 	//  }
 	public void _testFollowingDeclaration5() {
-		assertDeclarationFollowingX("namespace n2 {\n  		void foo() {}\n  		void bar(int x) {}\n          class C {\n              int y;\n              void baz(int x) {}\n          };\n		}");
+		assertDeclarationFollowingX(
+				"namespace n2 {\n  		void foo() {}\n  		void bar(int x) {}\n          class C {\n              int y;\n              void baz(int x) {}\n          };\n		}");
 	}
-	
+
 	//  namespace n1 {
 	//		namespace n2 {X
 	//  		void foo() {}
@@ -483,7 +480,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration6() {
 		assertDeclarationFollowingX("void foo() {}");
 	}
-	
+
 	//  namespace n1 {
 	//		namespace n2 {
 	//  		void foo() {}X
@@ -497,7 +494,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration7() {
 		assertDeclarationFollowingX("void bar(int x) {}");
 	}
-	
+
 	//  namespace n1 {
 	//		namespace n2 {
 	//  		void foo() {}
@@ -511,7 +508,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration8() {
 		assertDeclarationFollowingX("int y;");
 	}
-	
+
 	//  namespace n1 {
 	//		namespace n2 {
 	//  		void foo() {}
@@ -525,7 +522,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration9() {
 		assertDeclarationFollowingX("void baz(int x) {}");
 	}
-	
+
 	//	#define STATIC static
 	//
 	//	class D {
@@ -545,7 +542,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration10() {
 		assertDeclarationFollowingX("MM {}");
 	}
-	
+
 	//  #define NAME foo
 	//  #define MM(V) void V(int y)
 	//  X
@@ -553,7 +550,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration11() {
 		assertDeclarationFollowingX("MM(NAME) {}");
 	}
-	
+
 	//  #define MAKEFUNC(V) void V()
 	//  #define B(V) V
 	//  #define C(V) foo ## x
@@ -562,63 +559,63 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	public void testFollowingDeclaration12() {
 		assertDeclarationFollowingX("MAKEFUNC(B(C(y))) {}");
 	}
-	
+
 	/**
 	 * @param rs - the raw signature of the declaration that should be returned
 	 * or <code>null</code> if no declaration should be returned.
 	 */
 	protected void assertDeclarationFollowingX(String rs) {
 		try {
-			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), "bin");
+			ICProject cproject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), "bin");
 			try {
-				String init= getTestContents1()[0].toString(); 
-				int caretInit= init.indexOf('X');
-				init= init.replaceFirst("X", "");
-				IFile file= TestSourceReader.createFile(cproject.getProject(), "this.cpp", init);
-				IASTTranslationUnit ast= TestSourceReader.createIndexBasedAST(null, cproject, file);
+				String init = getTestContents1()[0].toString();
+				int caretInit = init.indexOf('X');
+				init = init.replaceFirst("X", "");
+				IFile file = TestSourceReader.createFile(cproject.getProject(), "this.cpp", init);
+				IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(null, cproject, file);
 				assertNotNull(ast);
-				IASTDeclaration decl= DefaultMultilineCommentAutoEditStrategy.findFollowingDeclaration(ast, caretInit);
-				if(rs!=null) {
+				IASTDeclaration decl = DefaultMultilineCommentAutoEditStrategy.findFollowingDeclaration(ast, caretInit);
+				if (rs != null) {
 					assertNotNull(decl);
 					assertEquals(rs, decl.getRawSignature());
 				} else {
 					assertNull(decl);
 				}
 			} finally {
-				if(cproject!=null) {
+				if (cproject != null) {
 					cproject.getProject().delete(true, npm());
 				}
 			}
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			fail(ce.getMessage());
 		}
 	}
 
 	protected void assertNewLineBehaviour() {
-		DefaultMultilineCommentAutoEditStrategy ds= new DefaultMultilineCommentAutoEditStrategy();
+		DefaultMultilineCommentAutoEditStrategy ds = new DefaultMultilineCommentAutoEditStrategy();
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
 
-		CharSequence[] raw= getTestContents();
-		String init= raw[0].toString(), expected= raw[1].toString();
+		CharSequence[] raw = getTestContents();
+		String init = raw[0].toString(), expected = raw[1].toString();
 
-		int caretInit= init.indexOf('X');
-		init= init.replaceFirst("X", "");
+		int caretInit = init.indexOf('X');
+		init = init.replaceFirst("X", "");
 
-		int caretExpected= expected.indexOf('X');
-		expected= expected.replaceFirst("X", "");
+		int caretExpected = expected.indexOf('X');
+		expected = expected.replaceFirst("X", "");
 
 		doc.set(init);
-		int caretActual= -1;
+		int caretActual = -1;
 		try {
-			TestDocumentCommand dc= new TestDocumentCommand(caretInit, 0, "\n");
+			TestDocumentCommand dc = new TestDocumentCommand(caretInit, 0, "\n");
 			ds.customizeDocumentCommand(doc, dc);
-			caretActual= dc.exec(doc);
-		} catch(BadLocationException ble) {
+			caretActual = dc.exec(doc);
+		} catch (BadLocationException ble) {
 			fail(ble.getMessage());
 		}
-		String actual= doc.get();
+		String actual = doc.get();
 		assertEquals(expected, actual);
 		assertEquals(caretExpected, caretActual);
 	}

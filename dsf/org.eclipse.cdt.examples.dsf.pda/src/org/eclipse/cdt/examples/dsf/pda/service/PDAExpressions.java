@@ -46,524 +46,508 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class PDAExpressions extends AbstractDsfService implements ICachingService, IExpressions {
-	
+
 	private static final String FORMAT_MY_FORMAT = "My format";
-	
-    @Immutable
-    private static class ExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
 
-        final private String fExpression;
-        
-        ExpressionDMContext(String sessionId, IFrameDMContext frameDmc, String expressin) {
-            super(sessionId, new IDMContext[] { frameDmc });
-            fExpression = expressin;
-        }
+	@Immutable
+	private static class ExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
 
-        @Override
-	public String getExpression() { 
-            return fExpression;
-        }
-        
-        @Override
-        public boolean equals(Object other) {
-            return super.baseEquals(other) && ((ExpressionDMContext)other).fExpression.equals(fExpression);
-        }
-        
-        @Override
-        public int hashCode() {
-            return super.baseHashCode() + fExpression.hashCode();
-        }
-        
-        @Override
-        public String toString() { 
-            return baseToString() + ".expression(" + fExpression + ")";  
-        }
-    }
+		final private String fExpression;
 
-    /**
-     * PDA expressions are simply variables.  Only the variable name 
-     * is relevant for its data.
-     */
-    @Immutable
-    private static class ExpressionDMData implements IExpressionDMData {
+		ExpressionDMContext(String sessionId, IFrameDMContext frameDmc, String expressin) {
+			super(sessionId, new IDMContext[] { frameDmc });
+			fExpression = expressin;
+		}
 
-        final private String fExpression;
-        
-        public ExpressionDMData(String expression) {
-            fExpression = expression;
-        }
-        
-        @Override
-	public BasicType getBasicType() {
-            return BasicType.basic;
-        }
+		@Override
+		public String getExpression() {
+			return fExpression;
+		}
 
-        @Override
-	public String getEncoding() {
-            return null;
-        }
+		@Override
+		public boolean equals(Object other) {
+			return super.baseEquals(other) && ((ExpressionDMContext) other).fExpression.equals(fExpression);
+		}
 
-        @Override
-	public Map<String, Integer> getEnumerations() {
-            return null;
-        }
+		@Override
+		public int hashCode() {
+			return super.baseHashCode() + fExpression.hashCode();
+		}
 
-        @Override
-	public String getName() {
-            return fExpression;
-        }
+		@Override
+		public String toString() {
+			return baseToString() + ".expression(" + fExpression + ")";
+		}
+	}
 
-        @Override
-	public IRegisterDMContext getRegister() {
-            return null;
-        }
+	/**
+	 * PDA expressions are simply variables.  Only the variable name 
+	 * is relevant for its data.
+	 */
+	@Immutable
+	private static class ExpressionDMData implements IExpressionDMData {
 
-        @Override
-	public String getTypeId() {
-            return null;
-        }
+		final private String fExpression;
 
-        @Override
-	public String getTypeName() {
-            return null;
-        }
+		public ExpressionDMData(String expression) {
+			fExpression = expression;
+		}
 
-    }
+		@Override
+		public BasicType getBasicType() {
+			return BasicType.basic;
+		}
 
-    // @see #createExpression()
-    @Immutable
-    private static class InvalidExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
-        final private String fExpression;
-    
-        public InvalidExpressionDMContext(String sessionId, IDMContext parent, String expr) {
-            super(sessionId, new IDMContext[] { parent });
-            fExpression = expr;
-        }
-    
-        @Override
-        public boolean equals(Object other) {
-        	if (other == null)
-        		return false;
-        	
-            return super.baseEquals(other) && 
-                fExpression == null 
-                    ? ((InvalidExpressionDMContext) other).getExpression() == null 
-                    : fExpression.equals(((InvalidExpressionDMContext) other).getExpression());
-        }
-    
-        @Override
-        public int hashCode() {
-            return fExpression == null ? super.baseHashCode() : super.baseHashCode() ^ fExpression.hashCode();
-        }
-    
-        @Override
-        public String toString() {
-            return baseToString() + ".invalid_expr[" + fExpression + "]"; 
-        }
-    
-        @Override
-	public String getExpression() {
-            return fExpression;
-        }
-    }
-    
-    @Immutable
-    private static class ExpressionChangedDMEvent extends AbstractDMEvent<IExpressionDMContext> 
-        implements IExpressionChangedDMEvent 
-    {
-        ExpressionChangedDMEvent(IExpressionDMContext expression) {
-            super(expression);
-        }
-    }
+		@Override
+		public String getEncoding() {
+			return null;
+		}
 
-    
-    private PDACommandControl fCommandControl;
-    private PDAStack fStack;
+		@Override
+		public Map<String, Integer> getEnumerations() {
+			return null;
+		}
 
-    private CommandCache fCommandCache;
+		@Override
+		public String getName() {
+			return fExpression;
+		}
 
-    public PDAExpressions(DsfSession session) {
-        super(session);
-    }
+		@Override
+		public IRegisterDMContext getRegister() {
+			return null;
+		}
 
-    @Override
-    protected BundleContext getBundleContext() {
-        return PDAPlugin.getBundleContext();
-    }
+		@Override
+		public String getTypeId() {
+			return null;
+		}
 
-    @Override
-    public void initialize(final RequestMonitor rm) {
-        super.initialize(
-            new RequestMonitor(getExecutor(), rm) { 
-                @Override
-                protected void handleSuccess() {
-                    doInitialize(rm);
-                }});
-    }
+		@Override
+		public String getTypeName() {
+			return null;
+		}
 
-    private void doInitialize(final RequestMonitor rm) {
-        fCommandControl = getServicesTracker().getService(PDACommandControl.class);
-        fStack = getServicesTracker().getService(PDAStack.class);
-        fCommandCache = new CommandCache(getSession(), fCommandControl);
-        fCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+	}
 
-        getSession().addServiceEventListener(this, null);
-        
-        register(new String[]{IExpressions.class.getName(), PDAExpressions.class.getName()}, new Hashtable<String,String>());
-        
-        rm.done();
-    }
+	// @see #createExpression()
+	@Immutable
+	private static class InvalidExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
+		final private String fExpression;
 
-    @Override
-    public void shutdown(final RequestMonitor rm) {
-        getSession().removeServiceEventListener(this);
-        fCommandCache.reset();
-        super.shutdown(rm);
-    }
+		public InvalidExpressionDMContext(String sessionId, IDMContext parent, String expr) {
+			super(sessionId, new IDMContext[] { parent });
+			fExpression = expr;
+		}
 
-    @Override
-    public void canWriteExpression(IExpressionDMContext expressionContext, DataRequestMonitor<Boolean> rm) {
-        rm.setData(true);
-        rm.done();
-    }
+		@Override
+		public boolean equals(Object other) {
+			if (other == null)
+				return false;
 
-    @Override
-    public IExpressionDMContext createExpression(IDMContext ctx, String expression) {
-        // Create an expression based on the given context and string expression.  
-        PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(ctx, PDAThreadDMContext.class);
-        if (threadCtx != null) {
-            // The PDA debugger can only evaluate variables as expressions and only
-            // in context of a frame, so if a frame is not given, create a top-level frame.
-            IFrameDMContext frameCtx = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
-            if (frameCtx == null) {
-                frameCtx = fStack.getFrameDMContext(threadCtx, 0);
-            }
-            
-            return new ExpressionDMContext(getSession().getId(), frameCtx, expression);
-        } 
-            
-        // If the thread cannot be found in context, return an "invalid" 
-        // expression context, because a null return value is not allowed.
-        // Evaluating an invalid expression context will always yield an 
-        // error.
-        return new InvalidExpressionDMContext(getSession().getId(), ctx, expression);
-    }
+			return super.baseEquals(other) && fExpression == null
+					? ((InvalidExpressionDMContext) other).getExpression() == null
+					: fExpression.equals(((InvalidExpressionDMContext) other).getExpression());
+		}
 
-    @Override
-    public void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm) {
-        PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Not supported");
-    }
+		@Override
+		public int hashCode() {
+			return fExpression == null ? super.baseHashCode() : super.baseHashCode() ^ fExpression.hashCode();
+		}
 
-    @Override
-    public void getExpressionAddressData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMAddress> rm) {
-        PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Not supported");
-    }
+		@Override
+		public String toString() {
+			return baseToString() + ".invalid_expr[" + fExpression + "]";
+		}
 
-    @Override
-    public void getExpressionData(final IExpressionDMContext exprCtx, final DataRequestMonitor<IExpressionDMData> rm) {
-        // Since expression data doesn't contain any more information than the 
-        // context, it doesn't require any debugger commmands.
-        if (exprCtx instanceof ExpressionDMContext) {
-            rm.setData(new ExpressionDMData(exprCtx.getExpression()));
-            rm.done();
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid expression context " + exprCtx);
-        }
-    }
+		@Override
+		public String getExpression() {
+			return fExpression;
+		}
+	}
 
-    @Override
-    public void getSubExpressionCount(final IExpressionDMContext exprCtx, final DataRequestMonitor<Integer> rm) {
-        if (exprCtx instanceof ExpressionDMContext) {
-            final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
-            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
-            
-            // First retrieve the stack depth, needed to properly calculate
-            // the frame index that is used by the PDAVarCommand. 
-            fStack.getStackDepth(
-                frameCtx, 0,
-                new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        // Calculate the frame index.
-                        int frameId = getData() - frameCtx.getLevel() - 1;
-                        
-                        // Send the command to evaluate the variable.
-                        fCommandCache.execute(
-                            new PDAChildrenCommand(threadCtx, frameId, exprCtx.getExpression()), 
-                            new DataRequestMonitor<PDAListResult>(getExecutor(), rm) {
-                                @Override
-                                protected void handleSuccess() {
-                                    rm.setData(getData().fValues.length);
-                                    rm.done();
-                                }
-                            });        
-                    }
-                });
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid context");
-        }
-    }
+	@Immutable
+	private static class ExpressionChangedDMEvent extends AbstractDMEvent<IExpressionDMContext>
+			implements IExpressionChangedDMEvent {
+		ExpressionChangedDMEvent(IExpressionDMContext expression) {
+			super(expression);
+		}
+	}
 
-    @Override
-    public void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<IExpressionDMContext[]> rm) {
-        getSubExpressions(exprCtx, -1, -1, rm);
-    }
+	private PDACommandControl fCommandControl;
+	private PDAStack fStack;
 
-    @Override
-    public void getSubExpressions(final IExpressionDMContext exprCtx, final int startIndexArg, final int lengthArg,
-        final DataRequestMonitor<IExpressionDMContext[]> rm) 
-    {
-        if (exprCtx instanceof ExpressionDMContext) {
-            final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
-            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
-            
-            // First retrieve the stack depth, needed to properly calculate
-            // the frame index that is used by the PDAVarCommand. 
-            fStack.getStackDepth(
-                frameCtx, 0,
-                new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        // Calculate the frame index.
-                        int frameId = getData() - frameCtx.getLevel() - 1;
-                        
-                        // Send the command to evaluate the variable.
-                        fCommandCache.execute(
-                            new PDAChildrenCommand(threadCtx, frameId, exprCtx.getExpression()), 
-                            new DataRequestMonitor<PDAListResult>(getExecutor(), rm) {
-                                @Override
-                                protected void handleSuccess() {
-                                    int start = startIndexArg > 0 ? startIndexArg : 0;
-                                    int end = lengthArg > 0 ? (start + lengthArg) : getData().fValues.length;
-                                    IExpressionDMContext[] contexts = new IExpressionDMContext[end - start];                                     
-                                    for (int i = start; i < end && i < getData().fValues.length; i++) {
-                                        contexts[i - start] = new ExpressionDMContext(
-                                            getSession().getId(), frameCtx, getData().fValues[i]);
-                                    }
-                                    rm.setData(contexts);
-                                    rm.done();
-                                }
-                            });        
-                    }
-                });
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid context");
-        }
-    }
+	private CommandCache fCommandCache;
 
-    @Override
-    public void getAvailableFormats(IFormattedDataDMContext dmc, final DataRequestMonitor<String[]> rm) {
-        getFormattedExpressionValue(
-            new FormattedValueDMContext(this, dmc, NATURAL_FORMAT),
-            new DataRequestMonitor<FormattedValueDMData>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    try {
-                        Integer.parseInt(getData().getFormattedValue());
-                        rm.setData(new String[] { DECIMAL_FORMAT, HEX_FORMAT, OCTAL_FORMAT, BINARY_FORMAT, FORMAT_MY_FORMAT });                        
-                        rm.done();
-                    } catch (NumberFormatException e) {
-                        rm.setData(new String[] { STRING_FORMAT });
-                        rm.done();
-                    }
-                }
-                
-                @Override
-                protected void handleErrorOrWarning() {
-                    rm.setData(new String[] { STRING_FORMAT });
-                    rm.done();
-                }
-            });
-    }
+	public PDAExpressions(DsfSession session) {
+		super(session);
+	}
 
-    @Override
-    public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext exprCtx, String formatId) {
-        // Creates a context that can be used to retrieve a formatted value.
-        return new FormattedValueDMContext(this, exprCtx, formatId);
-    }
+	@Override
+	protected BundleContext getBundleContext() {
+		return PDAPlugin.getBundleContext();
+	}
 
-    @Override
-    public void getFormattedExpressionValue(FormattedValueDMContext formattedCtx, 
-        final DataRequestMonitor<FormattedValueDMData> rm) 
-    {
-        final String formatId = formattedCtx.getFormatID();
-        final ExpressionDMContext exprCtx = DMContexts.getAncestorOfType(formattedCtx, ExpressionDMContext.class);
-        if (exprCtx != null) {
-            final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
-            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
-            
-            // First retrieve the stack depth, needed to properly calculate
-            // the frame index that is used by the PDAVarCommand. 
-            fStack.getStackDepth(
-                frameCtx, 0,
-                new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        // Calculate the frame index.
-                        int frameId = getData() - frameCtx.getLevel() - 1;
-                        
-                        // Send the command to evaluate the variable.
-                        fCommandCache.execute(
-                            new PDAVarCommand(threadCtx, frameId, exprCtx.getExpression()), 
-                            new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
-                                @Override
-                                protected void handleSuccess() {
-                                    if (NATURAL_FORMAT.equals(formatId) || STRING_FORMAT.equals(formatId)) {
-                                        rm.setData(new FormattedValueDMData(getData().fResponseText));
-                                        rm.done();
-                                    } else {                                        
-                                        try {
-                                            int intResult = Integer.parseInt(getData().fResponseText);
-                                            String formattedResult = "";
-                                            if (HEX_FORMAT.equals(formatId)) {
-                                                formattedResult = Integer.toHexString(intResult);
-                                                StringBuilder prefix = new StringBuilder("0x");
-                                                for (int i = 0; i < 8 - formattedResult.length(); i++) {
-                                                    prefix.append('0');
-                                                }
-                                                prefix.append(formattedResult);
-                                                formattedResult = prefix.toString();
-                                            } else if (OCTAL_FORMAT.equals(formatId)) {
-                                                formattedResult = Integer.toOctalString(intResult);
-                                                StringBuilder prefix = new StringBuilder("0c");
-                                                for (int i = 0; i < 16 - formattedResult.length(); i++) {
-                                                    prefix.append('0');
-                                                }
-                                                prefix.append(formattedResult);
-                                                formattedResult = prefix.toString();
-                                            } else if (BINARY_FORMAT.equals(formatId)) {
-                                                formattedResult = Integer.toBinaryString(intResult);
-                                                StringBuilder prefix = new StringBuilder("0b");
-                                                for (int i = 0; i < 32 - formattedResult.length(); i++) {
-                                                    prefix.append('0');
-                                                }
-                                                prefix.append(formattedResult);
-                                                formattedResult = prefix.toString();
-                                            } else if (DECIMAL_FORMAT.equals(formatId)) {
-                                                formattedResult = Integer.toString(intResult);                                                
-                                            } else if (FORMAT_MY_FORMAT.equals(formatId)) {
-                                                formattedResult = "This value is in my format";                                             
-                                            } else {
-                                                PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid format " + formatId);
-                                            }
-                                            rm.setData(new FormattedValueDMData(formattedResult));
-                                            rm.done();
-                                        } catch (NumberFormatException e) {
-                                            PDAPlugin.failRequest(rm, REQUEST_FAILED, "Cannot format value");
-                                        }
-                                    }
-                                }
-                            }); 
-                    }
-                });
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid expression context " + formattedCtx);
-        }
-    }
+	@Override
+	public void initialize(final RequestMonitor rm) {
+		super.initialize(new RequestMonitor(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				doInitialize(rm);
+			}
+		});
+	}
 
-    
-    @Override
-    public void writeExpression(final IExpressionDMContext exprCtx, final String exprValue, String formatId, 
-        final RequestMonitor rm) 
-    {
-        writeExpression(exprCtx, exprValue, formatId, true, rm);
-    }
-    
-    /**
-     * Method to write an expression, with an additional parameter to suppress
-     * issuing of the expression changed event. 
-     * @see IExpressions#writeExpression(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, String, String, RequestMonitor)
-     */
-    public void writeExpression(final IExpressionDMContext exprCtx, String formattedExprValue, String formatId, 
-        final boolean sendEvent, final RequestMonitor rm) 
-    {
-        String value = null;
-        try {
-            if (HEX_FORMAT.equals(formatId)) {
-                if (formattedExprValue.startsWith("0x")) formattedExprValue = formattedExprValue.substring(2); 
-                value = Integer.toString( Integer.parseInt(formattedExprValue, 16) );
-            } else if (DECIMAL_FORMAT.equals(formatId)) {
-                value = Integer.toString( Integer.parseInt(formattedExprValue, 10) );
-            } else if (OCTAL_FORMAT.equals(formatId)) {
-                if (formattedExprValue.startsWith("0c")) formattedExprValue = formattedExprValue.substring(2); 
-                value = Integer.toString( Integer.parseInt(formattedExprValue, 8) );
-            } else if (BINARY_FORMAT.equals(formatId)) {
-                if (formattedExprValue.startsWith("0b")) formattedExprValue = formattedExprValue.substring(2); 
-                value = Integer.toString( Integer.parseInt(formattedExprValue, 2) ); 
-            }
-        } catch (NumberFormatException e) {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Value not formatted properly");
-            return;
-        }
-        
-        final String exprValue = value != null ? value : formattedExprValue;
-        
-        
-        if (exprCtx instanceof ExpressionDMContext) {
-            final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
-            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
-            
-            // Similarly to retrieving the variable, retrieve the 
-            // stack depth first.
-            fStack.getStackDepth(
-                frameCtx, 0,
-                new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        // Calculate the frame index.
-                        int frameId = getData() - frameCtx.getLevel() - 1;
-                        
-                        // Send the "write" command to PDA debugger
-                        fCommandCache.execute(
-                            new PDASetVarCommand( threadCtx, frameId, exprCtx.getExpression(), exprValue), 
-                            new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
-                                @Override
-                                protected void handleSuccess() {
-                                    if (sendEvent) {
-                                        getSession().dispatchEvent(new ExpressionChangedDMEvent(exprCtx), getProperties());
-                                    }
-                                    // An expression changed, clear the cache corresponding to 
-                                    // this event.  Since the var evaluate commands, use the thread
-                                    // context, we have to clear all the cache entries for that thread.
-                                    fCommandCache.reset(DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class));
-                                    rm.done();
-                                }
-                            });
-                    }
-                });
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid expression context " + exprCtx);
-        }
-    }
+	private void doInitialize(final RequestMonitor rm) {
+		fCommandControl = getServicesTracker().getService(PDACommandControl.class);
+		fStack = getServicesTracker().getService(PDAStack.class);
+		fCommandCache = new CommandCache(getSession(), fCommandControl);
+		fCommandCache.setContextAvailable(fCommandControl.getContext(), true);
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(IResumedDMEvent e) {
-        // Mark the cache as not available, so that data retrieval commands 
-        // will fail.  Also reset the cache unless it was a step command.
-        fCommandCache.setContextAvailable(e.getDMContext(), false);
-        if (!e.getReason().equals(StateChangeReason.STEP)) {
-            fCommandCache.reset(e.getDMContext());
-        }
-    }    
+		getSession().addServiceEventListener(this, null);
 
+		register(new String[] { IExpressions.class.getName(), PDAExpressions.class.getName() },
+				new Hashtable<String, String>());
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(ISuspendedDMEvent e) {
-        // Enable sending commands to target and clear the cache.
-        fCommandCache.setContextAvailable(e.getDMContext(), true);
-        fCommandCache.reset(e.getDMContext());
-    }
-    
-    @DsfServiceEventHandler 
-    public void eventDispatched(ExpressionChangedDMEvent e) {
-        // An expression changed, clear the cache corresponding to 
-        // this event.  Since the var evaluate commands, use the thread
-        // context, we have to clear all the cache entries for that thread.
-        fCommandCache.reset(DMContexts.getAncestorOfType(e.getDMContext(), PDAThreadDMContext.class));
-    }    
+		rm.done();
+	}
 
-    @Override
-    public void flushCache(IDMContext context) {
-        fCommandCache.reset(context);
-    }
+	@Override
+	public void shutdown(final RequestMonitor rm) {
+		getSession().removeServiceEventListener(this);
+		fCommandCache.reset();
+		super.shutdown(rm);
+	}
+
+	@Override
+	public void canWriteExpression(IExpressionDMContext expressionContext, DataRequestMonitor<Boolean> rm) {
+		rm.setData(true);
+		rm.done();
+	}
+
+	@Override
+	public IExpressionDMContext createExpression(IDMContext ctx, String expression) {
+		// Create an expression based on the given context and string expression.  
+		PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(ctx, PDAThreadDMContext.class);
+		if (threadCtx != null) {
+			// The PDA debugger can only evaluate variables as expressions and only
+			// in context of a frame, so if a frame is not given, create a top-level frame.
+			IFrameDMContext frameCtx = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
+			if (frameCtx == null) {
+				frameCtx = fStack.getFrameDMContext(threadCtx, 0);
+			}
+
+			return new ExpressionDMContext(getSession().getId(), frameCtx, expression);
+		}
+
+		// If the thread cannot be found in context, return an "invalid" 
+		// expression context, because a null return value is not allowed.
+		// Evaluating an invalid expression context will always yield an 
+		// error.
+		return new InvalidExpressionDMContext(getSession().getId(), ctx, expression);
+	}
+
+	@Override
+	public void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm) {
+		PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Not supported");
+	}
+
+	@Override
+	public void getExpressionAddressData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMAddress> rm) {
+		PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Not supported");
+	}
+
+	@Override
+	public void getExpressionData(final IExpressionDMContext exprCtx, final DataRequestMonitor<IExpressionDMData> rm) {
+		// Since expression data doesn't contain any more information than the 
+		// context, it doesn't require any debugger commmands.
+		if (exprCtx instanceof ExpressionDMContext) {
+			rm.setData(new ExpressionDMData(exprCtx.getExpression()));
+			rm.done();
+		} else {
+			PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid expression context " + exprCtx);
+		}
+	}
+
+	@Override
+	public void getSubExpressionCount(final IExpressionDMContext exprCtx, final DataRequestMonitor<Integer> rm) {
+		if (exprCtx instanceof ExpressionDMContext) {
+			final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
+			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
+
+			// First retrieve the stack depth, needed to properly calculate
+			// the frame index that is used by the PDAVarCommand. 
+			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					// Calculate the frame index.
+					int frameId = getData() - frameCtx.getLevel() - 1;
+
+					// Send the command to evaluate the variable.
+					fCommandCache.execute(new PDAChildrenCommand(threadCtx, frameId, exprCtx.getExpression()),
+							new DataRequestMonitor<PDAListResult>(getExecutor(), rm) {
+								@Override
+								protected void handleSuccess() {
+									rm.setData(getData().fValues.length);
+									rm.done();
+								}
+							});
+				}
+			});
+		} else {
+			PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid context");
+		}
+	}
+
+	@Override
+	public void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<IExpressionDMContext[]> rm) {
+		getSubExpressions(exprCtx, -1, -1, rm);
+	}
+
+	@Override
+	public void getSubExpressions(final IExpressionDMContext exprCtx, final int startIndexArg, final int lengthArg,
+			final DataRequestMonitor<IExpressionDMContext[]> rm) {
+		if (exprCtx instanceof ExpressionDMContext) {
+			final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
+			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
+
+			// First retrieve the stack depth, needed to properly calculate
+			// the frame index that is used by the PDAVarCommand. 
+			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					// Calculate the frame index.
+					int frameId = getData() - frameCtx.getLevel() - 1;
+
+					// Send the command to evaluate the variable.
+					fCommandCache.execute(new PDAChildrenCommand(threadCtx, frameId, exprCtx.getExpression()),
+							new DataRequestMonitor<PDAListResult>(getExecutor(), rm) {
+								@Override
+								protected void handleSuccess() {
+									int start = startIndexArg > 0 ? startIndexArg : 0;
+									int end = lengthArg > 0 ? (start + lengthArg) : getData().fValues.length;
+									IExpressionDMContext[] contexts = new IExpressionDMContext[end - start];
+									for (int i = start; i < end && i < getData().fValues.length; i++) {
+										contexts[i - start] = new ExpressionDMContext(getSession().getId(), frameCtx,
+												getData().fValues[i]);
+									}
+									rm.setData(contexts);
+									rm.done();
+								}
+							});
+				}
+			});
+		} else {
+			PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid context");
+		}
+	}
+
+	@Override
+	public void getAvailableFormats(IFormattedDataDMContext dmc, final DataRequestMonitor<String[]> rm) {
+		getFormattedExpressionValue(new FormattedValueDMContext(this, dmc, NATURAL_FORMAT),
+				new DataRequestMonitor<FormattedValueDMData>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						try {
+							Integer.parseInt(getData().getFormattedValue());
+							rm.setData(new String[] { DECIMAL_FORMAT, HEX_FORMAT, OCTAL_FORMAT, BINARY_FORMAT,
+									FORMAT_MY_FORMAT });
+							rm.done();
+						} catch (NumberFormatException e) {
+							rm.setData(new String[] { STRING_FORMAT });
+							rm.done();
+						}
+					}
+
+					@Override
+					protected void handleErrorOrWarning() {
+						rm.setData(new String[] { STRING_FORMAT });
+						rm.done();
+					}
+				});
+	}
+
+	@Override
+	public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext exprCtx, String formatId) {
+		// Creates a context that can be used to retrieve a formatted value.
+		return new FormattedValueDMContext(this, exprCtx, formatId);
+	}
+
+	@Override
+	public void getFormattedExpressionValue(FormattedValueDMContext formattedCtx,
+			final DataRequestMonitor<FormattedValueDMData> rm) {
+		final String formatId = formattedCtx.getFormatID();
+		final ExpressionDMContext exprCtx = DMContexts.getAncestorOfType(formattedCtx, ExpressionDMContext.class);
+		if (exprCtx != null) {
+			final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
+			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
+
+			// First retrieve the stack depth, needed to properly calculate
+			// the frame index that is used by the PDAVarCommand. 
+			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					// Calculate the frame index.
+					int frameId = getData() - frameCtx.getLevel() - 1;
+
+					// Send the command to evaluate the variable.
+					fCommandCache.execute(new PDAVarCommand(threadCtx, frameId, exprCtx.getExpression()),
+							new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
+								@Override
+								protected void handleSuccess() {
+									if (NATURAL_FORMAT.equals(formatId) || STRING_FORMAT.equals(formatId)) {
+										rm.setData(new FormattedValueDMData(getData().fResponseText));
+										rm.done();
+									} else {
+										try {
+											int intResult = Integer.parseInt(getData().fResponseText);
+											String formattedResult = "";
+											if (HEX_FORMAT.equals(formatId)) {
+												formattedResult = Integer.toHexString(intResult);
+												StringBuilder prefix = new StringBuilder("0x");
+												for (int i = 0; i < 8 - formattedResult.length(); i++) {
+													prefix.append('0');
+												}
+												prefix.append(formattedResult);
+												formattedResult = prefix.toString();
+											} else if (OCTAL_FORMAT.equals(formatId)) {
+												formattedResult = Integer.toOctalString(intResult);
+												StringBuilder prefix = new StringBuilder("0c");
+												for (int i = 0; i < 16 - formattedResult.length(); i++) {
+													prefix.append('0');
+												}
+												prefix.append(formattedResult);
+												formattedResult = prefix.toString();
+											} else if (BINARY_FORMAT.equals(formatId)) {
+												formattedResult = Integer.toBinaryString(intResult);
+												StringBuilder prefix = new StringBuilder("0b");
+												for (int i = 0; i < 32 - formattedResult.length(); i++) {
+													prefix.append('0');
+												}
+												prefix.append(formattedResult);
+												formattedResult = prefix.toString();
+											} else if (DECIMAL_FORMAT.equals(formatId)) {
+												formattedResult = Integer.toString(intResult);
+											} else if (FORMAT_MY_FORMAT.equals(formatId)) {
+												formattedResult = "This value is in my format";
+											} else {
+												PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid format " + formatId);
+											}
+											rm.setData(new FormattedValueDMData(formattedResult));
+											rm.done();
+										} catch (NumberFormatException e) {
+											PDAPlugin.failRequest(rm, REQUEST_FAILED, "Cannot format value");
+										}
+									}
+								}
+							});
+				}
+			});
+		} else {
+			PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid expression context " + formattedCtx);
+		}
+	}
+
+	@Override
+	public void writeExpression(final IExpressionDMContext exprCtx, final String exprValue, String formatId,
+			final RequestMonitor rm) {
+		writeExpression(exprCtx, exprValue, formatId, true, rm);
+	}
+
+	/**
+	 * Method to write an expression, with an additional parameter to suppress
+	 * issuing of the expression changed event. 
+	 * @see IExpressions#writeExpression(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, String, String, RequestMonitor)
+	 */
+	public void writeExpression(final IExpressionDMContext exprCtx, String formattedExprValue, String formatId,
+			final boolean sendEvent, final RequestMonitor rm) {
+		String value = null;
+		try {
+			if (HEX_FORMAT.equals(formatId)) {
+				if (formattedExprValue.startsWith("0x"))
+					formattedExprValue = formattedExprValue.substring(2);
+				value = Integer.toString(Integer.parseInt(formattedExprValue, 16));
+			} else if (DECIMAL_FORMAT.equals(formatId)) {
+				value = Integer.toString(Integer.parseInt(formattedExprValue, 10));
+			} else if (OCTAL_FORMAT.equals(formatId)) {
+				if (formattedExprValue.startsWith("0c"))
+					formattedExprValue = formattedExprValue.substring(2);
+				value = Integer.toString(Integer.parseInt(formattedExprValue, 8));
+			} else if (BINARY_FORMAT.equals(formatId)) {
+				if (formattedExprValue.startsWith("0b"))
+					formattedExprValue = formattedExprValue.substring(2);
+				value = Integer.toString(Integer.parseInt(formattedExprValue, 2));
+			}
+		} catch (NumberFormatException e) {
+			PDAPlugin.failRequest(rm, INVALID_HANDLE, "Value not formatted properly");
+			return;
+		}
+
+		final String exprValue = value != null ? value : formattedExprValue;
+
+		if (exprCtx instanceof ExpressionDMContext) {
+			final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
+			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
+
+			// Similarly to retrieving the variable, retrieve the 
+			// stack depth first.
+			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					// Calculate the frame index.
+					int frameId = getData() - frameCtx.getLevel() - 1;
+
+					// Send the "write" command to PDA debugger
+					fCommandCache.execute(new PDASetVarCommand(threadCtx, frameId, exprCtx.getExpression(), exprValue),
+							new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
+								@Override
+								protected void handleSuccess() {
+									if (sendEvent) {
+										getSession().dispatchEvent(new ExpressionChangedDMEvent(exprCtx),
+												getProperties());
+									}
+									// An expression changed, clear the cache corresponding to 
+									// this event.  Since the var evaluate commands, use the thread
+									// context, we have to clear all the cache entries for that thread.
+									fCommandCache
+											.reset(DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class));
+									rm.done();
+								}
+							});
+				}
+			});
+		} else {
+			PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid expression context " + exprCtx);
+		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(IResumedDMEvent e) {
+		// Mark the cache as not available, so that data retrieval commands 
+		// will fail.  Also reset the cache unless it was a step command.
+		fCommandCache.setContextAvailable(e.getDMContext(), false);
+		if (!e.getReason().equals(StateChangeReason.STEP)) {
+			fCommandCache.reset(e.getDMContext());
+		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(ISuspendedDMEvent e) {
+		// Enable sending commands to target and clear the cache.
+		fCommandCache.setContextAvailable(e.getDMContext(), true);
+		fCommandCache.reset(e.getDMContext());
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(ExpressionChangedDMEvent e) {
+		// An expression changed, clear the cache corresponding to 
+		// this event.  Since the var evaluate commands, use the thread
+		// context, we have to clear all the cache entries for that thread.
+		fCommandCache.reset(DMContexts.getAncestorOfType(e.getDMContext(), PDAThreadDMContext.class));
+	}
+
+	@Override
+	public void flushCache(IDMContext context) {
+		fCommandCache.reset(context);
+	}
 }

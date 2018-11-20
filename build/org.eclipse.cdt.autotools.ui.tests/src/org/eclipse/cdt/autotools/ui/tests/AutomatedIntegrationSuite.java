@@ -25,15 +25,14 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-/*
- *
- * 	TestToolActions.class,
- *  TestEnvironmentVars.class,
- *  TestMakeTargets.class,
- *  SetConfigurationParameter.class,
- */
-	AutoconfTests.class
-})
+		/*
+		 *
+		 * 	TestToolActions.class,
+		 *  TestEnvironmentVars.class,
+		 *  TestMakeTargets.class,
+		 *  SetConfigurationParameter.class,
+		 */
+		AutoconfTests.class })
 
 public class AutomatedIntegrationSuite {
 	// needed for this class to compile
@@ -41,9 +40,7 @@ public class AutomatedIntegrationSuite {
 	public static void beforeClassMethod() {
 		// Verify that the necessary binaries are available, and if they are not,
 		// the tests will be ignored.
-		String[] testBinaryCommands = { "libtool --version",
-				                        "autoconf --version",
-				                        "automake --version" };
+		String[] testBinaryCommands = { "libtool --version", "autoconf --version", "automake --version" };
 		try {
 			for (String cmd : testBinaryCommands) {
 				Process process = ProcessFactory.getFactory().exec(cmd);

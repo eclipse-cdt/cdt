@@ -60,17 +60,18 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
-			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence") + 1, "stepInitializeFinalLaunchSequence_7_0"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence") + 1, //$NON-NLS-1$
+					"stepInitializeFinalLaunchSequence_7_0"); //$NON-NLS-1$
+
 			// Note that stepSetNonStop is defined in the base class for backwards-compatibility
 			orderList.add(orderList.indexOf("stepSourceGDBInitFile") + 1, "stepSetNonStop"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
 		return null;
 	}
-	
+
 	/** 
 	 * Initialize the members of the FinalLaunchSequence_7_0 class.
 	 * This step is mandatory for the rest of the sequence to complete.
@@ -91,7 +92,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 
 		rm.done();
 	}
-	
+
 	/** 
 	 * Rollback method for {@link #stepInitializeFinalLaunchSequence_7_0()}
 	 * @since 4.0 
@@ -100,63 +101,63 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 	public void rollBackInitializeFinalLaunchSequence_7_0(RequestMonitor rm) {
 		rm.done();
 	}
-	
+
 	@Override
 	@Execute
 	public void stepSetCharset(final RequestMonitor rm) {
 		// Enable printing of sevenbit-strings. This is required to avoid charset issues.
 		// See bug 307311 for details.
 		fCommandControl.queueCommand(
-			fCommandFactory.createMIGDBSetPrintSevenbitStrings(fCommandControl.getContext(), true),
-			new ImmediateDataRequestMonitor<MIInfo>(rm) {
-				@Override
-				protected void handleCompleted() {
-					// Set the host charset to UTF-8. This ensures that we can correctly handle different
-					// charsets used by the inferior program.
-					fCommandControl.queueCommand(
-						fCommandFactory.createMIGDBSetHostCharset(fCommandControl.getContext(), "UTF-8"), //$NON-NLS-1$
-						new ImmediateDataRequestMonitor<MIInfo>(rm) {
-							@Override
-							protected void handleCompleted() {
-								// Set the target charset. The target charset is the charset used by the char type of
-								// the inferior program. Note that GDB only accepts upper case charset names.
-								String charset = 
-										Platform.getPreferencesService().getString(CDebugCorePlugin.PLUGIN_ID, 
-												                                   ICDebugConstants.PREF_DEBUG_CHARSET, 
-												                                   Charset.defaultCharset().name(),
-												                                   null);
-								fCommandControl.queueCommand(
-									fCommandFactory.createMIGDBSetTargetCharset(fCommandControl.getContext(), charset.toUpperCase()),
-									new ImmediateDataRequestMonitor<MIInfo>(rm) {
-										@Override
-										protected void handleCompleted() {
-											// Set the target wide charset. The target wide charset is the charset used by the wchar_t
-											// type of the inferior program. Note that GDB only accepts upper case charset names.
-											String defaultWideCharset = "UTF-32"; //$NON-NLS-1$
-											if (Platform.getOS().equals(Platform.OS_WIN32)) {
-												defaultWideCharset = "UTF-16"; //$NON-NLS-1$
-											}
-
-											String wideCharset = 
-													Platform.getPreferencesService().getString(CDebugCorePlugin.PLUGIN_ID, 
-															ICDebugConstants.PREF_DEBUG_WIDE_CHARSET,
-															defaultWideCharset,
-															null);
-											
-											fCommandControl.queueCommand(
-												fCommandFactory.createMIGDBSetTargetWideCharset(fCommandControl.getContext(), wideCharset.toUpperCase()),
+				fCommandFactory.createMIGDBSetPrintSevenbitStrings(fCommandControl.getContext(), true),
+				new ImmediateDataRequestMonitor<MIInfo>(rm) {
+					@Override
+					protected void handleCompleted() {
+						// Set the host charset to UTF-8. This ensures that we can correctly handle different
+						// charsets used by the inferior program.
+						fCommandControl.queueCommand(
+								fCommandFactory.createMIGDBSetHostCharset(fCommandControl.getContext(), "UTF-8"), //$NON-NLS-1$
+								new ImmediateDataRequestMonitor<MIInfo>(rm) {
+									@Override
+									protected void handleCompleted() {
+										// Set the target charset. The target charset is the charset used by the char type of
+										// the inferior program. Note that GDB only accepts upper case charset names.
+										String charset = Platform.getPreferencesService().getString(
+												CDebugCorePlugin.PLUGIN_ID, ICDebugConstants.PREF_DEBUG_CHARSET,
+												Charset.defaultCharset().name(), null);
+										fCommandControl.queueCommand(
+												fCommandFactory.createMIGDBSetTargetCharset(
+														fCommandControl.getContext(), charset.toUpperCase()),
 												new ImmediateDataRequestMonitor<MIInfo>(rm) {
 													@Override
 													protected void handleCompleted() {
-														// Not an essential command, so accept errors
-														rm.done();
+														// Set the target wide charset. The target wide charset is the charset used by the wchar_t
+														// type of the inferior program. Note that GDB only accepts upper case charset names.
+														String defaultWideCharset = "UTF-32"; //$NON-NLS-1$
+														if (Platform.getOS().equals(Platform.OS_WIN32)) {
+															defaultWideCharset = "UTF-16"; //$NON-NLS-1$
+														}
+
+														String wideCharset = Platform.getPreferencesService().getString(
+																CDebugCorePlugin.PLUGIN_ID,
+																ICDebugConstants.PREF_DEBUG_WIDE_CHARSET,
+																defaultWideCharset, null);
+
+														fCommandControl.queueCommand(
+																fCommandFactory.createMIGDBSetTargetWideCharset(
+																		fCommandControl.getContext(),
+																		wideCharset.toUpperCase()),
+																new ImmediateDataRequestMonitor<MIInfo>(rm) {
+																	@Override
+																	protected void handleCompleted() {
+																		// Not an essential command, so accept errors
+																		rm.done();
+																	}
+																});
 													}
-												});							
-										}
-									});							
-							}
-						});
-				}
-			});
+												});
+									}
+								});
+					}
+				});
 	}
 }

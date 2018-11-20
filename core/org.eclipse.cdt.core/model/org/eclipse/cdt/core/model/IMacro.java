@@ -26,12 +26,13 @@ public interface IMacro extends ICElement, ISourceManipulation, ISourceReference
 	 * @return String
 	 */
 	String getIdentifierList();
+
 	/**
 	 * Returns the Token Sequence.
 	 * @return String
 	 */
 	String getTokenSequence();
-	
+
 	/**
 	 * Returns true if this macro is of function style.
 	 * @since 5.3

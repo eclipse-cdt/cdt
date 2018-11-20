@@ -27,8 +27,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  */
 public interface IToolChain2 {
-	
-	public Process startBuildProcess(ICBuildConfiguration config, List<String> command, String buildDirectory, IEnvironmentVariable[] envVars,
-			IConsole console, IProgressMonitor monitor) throws CoreException, IOException;
+
+	public Process startBuildProcess(ICBuildConfiguration config, List<String> command, String buildDirectory,
+			IEnvironmentVariable[] envVars, IConsole console, IProgressMonitor monitor)
+			throws CoreException, IOException;
 
 }

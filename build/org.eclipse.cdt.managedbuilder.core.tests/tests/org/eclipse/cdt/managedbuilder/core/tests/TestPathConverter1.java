@@ -30,8 +30,7 @@ public class TestPathConverter1 implements IOptionPathConverter {
 	@Override
 	public IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool) {
 		Path path = new Path(toolSpecificPath);
-		return path ;
+		return path;
 	}
 
 }
-

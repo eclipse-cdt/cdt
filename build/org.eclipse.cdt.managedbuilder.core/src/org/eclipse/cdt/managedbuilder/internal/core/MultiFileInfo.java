@@ -35,19 +35,18 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 */
 	@Override
 	public CFileData getFileData() {
-		return ((IFileInfo)fRis[curr]).getFileData();
+		return ((IFileInfo) fRis[curr]).getFileData();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#createTool(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public ITool createTool(ITool superClass, String Id, String name,
-			boolean isExtensionElement) {
+	public ITool createTool(ITool superClass, String Id, String name, boolean isExtensionElement) {
 		ITool t = null;
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
-				IFileInfo fi = (IFileInfo)ri;
+				IFileInfo fi = (IFileInfo) ri;
 				t = fi.createTool(superClass, Id, name, isExtensionElement);
 			}
 		}
@@ -59,7 +58,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 */
 	@Override
 	public IResource getOwner() {
-		return ((IFileInfo)fRis[curr]).getOwner();
+		return ((IFileInfo) fRis[curr]).getOwner();
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +66,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 */
 	@Override
 	public int getRcbsApplicability() {
-		return ((IFileInfo)fRis[curr]).getRcbsApplicability();
+		return ((IFileInfo) fRis[curr]).getRcbsApplicability();
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +74,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 */
 	@Override
 	public String getResourcePath() {
-		return ((IFileInfo)fRis[curr]).getResourcePath();
+		return ((IFileInfo) fRis[curr]).getResourcePath();
 	}
 
 	/* (non-Javadoc)
@@ -83,7 +82,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 */
 	@Override
 	public ITool getTool(String id) {
-		return ((IFileInfo)fRis[curr]).getTool(id);
+		return ((IFileInfo) fRis[curr]).getTool(id);
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +90,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 */
 	@Override
 	public ITool[] getToolsToInvoke() {
-		return ((IFileInfo)fRis[curr]).getToolsToInvoke();
+		return ((IFileInfo) fRis[curr]).getToolsToInvoke();
 	}
 
 	/* (non-Javadoc)
@@ -102,7 +101,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 		System.out.println("MultiFileInfo.removeTool() does not work OK !"); //$NON-NLS-1$
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
-				IFileInfo fi = (IFileInfo)ri;
+				IFileInfo fi = (IFileInfo) ri;
 				fi.removeTool(tool);
 			}
 		}
@@ -115,7 +114,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	public void setRcbsApplicability(int value) {
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
-				IFileInfo fi = (IFileInfo)ri;
+				IFileInfo fi = (IFileInfo) ri;
 				fi.setRcbsApplicability(value);
 			}
 		}
@@ -128,7 +127,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	public void setResourcePath(String path) {
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
-				IFileInfo fi = (IFileInfo)ri;
+				IFileInfo fi = (IFileInfo) ri;
 				fi.setResourcePath(path);
 			}
 		}
@@ -142,7 +141,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 		System.out.println("MultiFileInfo.setToolCommand() does not work OK !"); //$NON-NLS-1$
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
-				IFileInfo fi = (IFileInfo)ri;
+				IFileInfo fi = (IFileInfo) ri;
 				fi.setToolCommand(tool, command);
 			}
 		}
@@ -155,7 +154,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	public void setTools(ITool[] tools) {
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
-				IFileInfo fi = (IFileInfo)ri;
+				IFileInfo fi = (IFileInfo) ri;
 				fi.setTools(tools);
 			}
 		}

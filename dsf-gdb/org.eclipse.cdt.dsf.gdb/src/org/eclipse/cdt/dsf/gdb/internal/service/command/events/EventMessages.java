@@ -20,14 +20,14 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class EventMessages extends NLS {
-    public static String Tracepoint;
-    public static String Record;
+	public static String Tracepoint;
+	public static String Record;
 
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(EventMessages.class.getName(), EventMessages.class);
-    }
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(EventMessages.class.getName(), EventMessages.class);
+	}
 
-    private EventMessages() {
-    }
+	private EventMessages() {
+	}
 }

@@ -77,7 +77,7 @@ public class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ILanguageSettingsProvider) {
-			ILanguageSettingsProvider provider = (ILanguageSettingsProvider)element;
+			ILanguageSettingsProvider provider = (ILanguageSettingsProvider) element;
 			String imageKey = getBaseKey(provider);
 			String[] overlayKeys = getOverlayKeys(provider);
 			return CDTSharedImages.getImageOverlaid(imageKey, overlayKeys);

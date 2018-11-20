@@ -20,10 +20,9 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
  * @deprecated
  */
 @Deprecated
-public class GPPASTPointerToMember extends CPPASTPointerToMember implements
-        IGPPASTPointerToMember {
+public class GPPASTPointerToMember extends CPPASTPointerToMember implements IGPPASTPointerToMember {
 
-    public GPPASTPointerToMember() {
+	public GPPASTPointerToMember() {
 		super();
 	}
 
@@ -39,8 +38,7 @@ public class GPPASTPointerToMember extends CPPASTPointerToMember implements
 	@Override
 	public GPPASTPointerToMember copy(CopyStyle style) {
 		IASTName name = getName();
-		GPPASTPointerToMember copy = new GPPASTPointerToMember(name == null ? null
-				: name.copy(style));
+		GPPASTPointerToMember copy = new GPPASTPointerToMember(name == null ? null : name.copy(style));
 		copy.setConst(isConst());
 		copy.setVolatile(isVolatile());
 		copy.setRestrict(isRestrict());

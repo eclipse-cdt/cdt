@@ -66,11 +66,11 @@ public class MakefileMergeViewer extends TextMergeViewer {
 
 		IPreferenceStore store = getPreferenceStore();
 
-		fUseSystemColors= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+		fUseSystemColors = store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
 		if (!fUseSystemColors) {
-			RGB bg= createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+			RGB bg = createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 			setBackgroundColor(bg);
-			RGB fg= createColor(store, ColorManager.MAKE_DEFAULT_COLOR);
+			RGB fg = createColor(store, ColorManager.MAKE_DEFAULT_COLOR);
 			setForegroundColor(fg);
 		}
 
@@ -78,8 +78,8 @@ public class MakefileMergeViewer extends TextMergeViewer {
 
 	protected IPreferenceStore getPreferenceStore() {
 		if (fPreferenceStore == null) {
-			fPreferenceStore= MakeUIPlugin.getDefault().getCombinedPreferenceStore();
-			fPreferenceChangeListener= new IPropertyChangeListener() {
+			fPreferenceStore = MakeUIPlugin.getDefault().getCombinedPreferenceStore();
+			fPreferenceChangeListener = new IPropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					handlePropertyChange(event);
@@ -94,35 +94,36 @@ public class MakefileMergeViewer extends TextMergeViewer {
 	protected void handleDispose(DisposeEvent event) {
 		if (fPreferenceChangeListener != null) {
 			fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
-			fPreferenceChangeListener= null;
+			fPreferenceChangeListener = null;
 		}
 		super.handleDispose(event);
 	}
 
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 
-		String key= event.getProperty();
+		String key = event.getProperty();
 
 		if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
 			if (!fUseSystemColors) {
-				RGB bg= createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+				RGB bg = createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 				setBackgroundColor(bg);
 			}
 
 		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
-			fUseSystemColors= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+			fUseSystemColors = fPreferenceStore
+					.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
 			if (fUseSystemColors) {
 				setBackgroundColor(null);
 				setForegroundColor(null);
 			} else {
-				RGB bg= createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+				RGB bg = createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 				setBackgroundColor(bg);
-				RGB fg= createColor(fPreferenceStore, ColorManager.MAKE_DEFAULT_COLOR);
+				RGB fg = createColor(fPreferenceStore, ColorManager.MAKE_DEFAULT_COLOR);
 				setForegroundColor(fg);
 			}
 		} else if (key.equals(ColorManager.MAKE_DEFAULT_COLOR)) {
 			if (!fUseSystemColors) {
-				RGB fg= createColor(fPreferenceStore, ColorManager.MAKE_DEFAULT_COLOR);
+				RGB fg = createColor(fPreferenceStore, ColorManager.MAKE_DEFAULT_COLOR);
 				setForegroundColor(fg);
 			}
 		}
@@ -147,7 +148,7 @@ public class MakefileMergeViewer extends TextMergeViewer {
 	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
-			((SourceViewer)textViewer).configure(getSourceViewerConfiguration());
+			((SourceViewer) textViewer).configure(getSourceViewerConfiguration());
 		}
 	}
 
@@ -164,7 +165,7 @@ public class MakefileMergeViewer extends TextMergeViewer {
 	 */
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
-			fSourceViewerConfiguration= new MakefileSourceConfiguration(getPreferenceStore(), null);
+			fSourceViewerConfiguration = new MakefileSourceConfiguration(getPreferenceStore(), null);
 		}
 		return fSourceViewerConfiguration;
 	}

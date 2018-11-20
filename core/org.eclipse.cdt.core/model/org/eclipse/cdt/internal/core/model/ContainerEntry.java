@@ -26,7 +26,7 @@ public class ContainerEntry extends PathEntry implements IContainerEntry {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IContainerEntry) {
-			IContainerEntry container = (IContainerEntry)obj;
+			IContainerEntry container = (IContainerEntry) obj;
 			if (!super.equals(container)) {
 				return false;
 			}

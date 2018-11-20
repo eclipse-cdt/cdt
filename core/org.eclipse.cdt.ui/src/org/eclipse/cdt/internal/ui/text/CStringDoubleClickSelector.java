@@ -53,10 +53,9 @@ public class CStringDoubleClickSelector extends CDoubleClickSelector {
 	 * @param partitioning the document partitioning
 	 * @param doubleClickStrategy  the fallback double click strategy
 	 */
-	public CStringDoubleClickSelector(String partitioning,
-			ITextDoubleClickStrategy doubleClickStrategy) {
-		fPartitioning= partitioning;
-		fFallbackStrategy= doubleClickStrategy;
+	public CStringDoubleClickSelector(String partitioning, ITextDoubleClickStrategy doubleClickStrategy) {
+		fPartitioning = partitioning;
+		fFallbackStrategy = doubleClickStrategy;
 	}
 
 	/*
@@ -64,14 +63,14 @@ public class CStringDoubleClickSelector extends CDoubleClickSelector {
 	 */
 	@Override
 	public void doubleClicked(ITextViewer textViewer) {
-		int offset= textViewer.getSelectedRange().x;
+		int offset = textViewer.getSelectedRange().x;
 
 		if (offset < 0)
 			return;
 
-		IDocument document= textViewer.getDocument();
+		IDocument document = textViewer.getDocument();
 
-		IRegion region= matchString(document, offset);
+		IRegion region = matchString(document, offset);
 		if (region != null) {
 			if (region.getLength() >= 2) {
 				textViewer.setSelectedRange(region.getOffset() + 1, region.getLength() - 2);
@@ -79,7 +78,7 @@ public class CStringDoubleClickSelector extends CDoubleClickSelector {
 		} else if (fFallbackStrategy != null) {
 			fFallbackStrategy.doubleClicked(textViewer);
 		} else {
-			region= selectWord(document, offset);
+			region = selectWord(document, offset);
 			if (region != null) {
 				textViewer.setSelectedRange(region.getOffset(), region.getLength());
 			}
@@ -88,19 +87,18 @@ public class CStringDoubleClickSelector extends CDoubleClickSelector {
 
 	private IRegion matchString(IDocument document, int offset) {
 		try {
-			if ((document.getChar(offset) == '"') || (document.getChar(offset) == '\'') ||
-				(document.getChar(offset - 1) == '"') || (document.getChar(offset - 1) == '\''))
-			{
-				ITypedRegion region= TextUtilities.getPartition(document, fPartitioning, offset, true);
+			if ((document.getChar(offset) == '"') || (document.getChar(offset) == '\'')
+					|| (document.getChar(offset - 1) == '"') || (document.getChar(offset - 1) == '\'')) {
+				ITypedRegion region = TextUtilities.getPartition(document, fPartitioning, offset, true);
 				// little hack: in case this strategy is used in preprocessor partitions, the string
 				// partition inside the preprocessor partition must be computed in an extra step
 				if (ICPartitions.C_PREPROCESSOR.equals(region.getType())) {
-					String ppDirective= document.get(region.getOffset(), region.getLength());
-					int hashIdx= ppDirective.indexOf('#');
-					document= new Document(ppDirective.substring(hashIdx+1));
+					String ppDirective = document.get(region.getOffset(), region.getLength());
+					int hashIdx = ppDirective.indexOf('#');
+					document = new Document(ppDirective.substring(hashIdx + 1));
 					new CDocumentSetupParticipant().setup(document);
-					int delta= region.getOffset() + hashIdx + 1;
-					region= TextUtilities.getPartition(document, fPartitioning, offset - delta, true);
+					int delta = region.getOffset() + hashIdx + 1;
+					region = TextUtilities.getPartition(document, fPartitioning, offset - delta, true);
 					return new Region(region.getOffset() + delta, region.getLength());
 				}
 				return region;

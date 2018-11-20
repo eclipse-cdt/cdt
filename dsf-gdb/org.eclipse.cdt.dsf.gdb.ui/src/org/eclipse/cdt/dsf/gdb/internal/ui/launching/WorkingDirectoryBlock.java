@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
-
 /**
  * A control for setting the working directory associated with a launch
  * configuration.
@@ -74,7 +73,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 */
 	private class WidgetListener extends SelectionAdapter implements ModifyListener {
 
-        @Override
+		@Override
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
@@ -101,11 +100,11 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-    @Override
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
-    Group group = new Group(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE);
 		//		WorkbenchHelp.setHelp(group,
 		// IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
 		GridLayout workingDirLayout = new GridLayout();
@@ -116,17 +115,15 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		group.setFont(font);
 		setControl(group);
 
-    group.setText(LaunchUIMessages.getString("WorkingDirectoryBlock.Working_directory")); //$NON-NLS-1$
+		group.setText(LaunchUIMessages.getString("WorkingDirectoryBlock.Working_directory")); //$NON-NLS-1$
 
-    fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
-    fWorkingDirText.getAccessible().addAccessibleListener(
-			new AccessibleAdapter() {                       
-                @Override
-				public void getName(AccessibleEvent e) {
-                        e.result = LaunchUIMessages.getString("WorkingDirectoryBlock.Working_directory"); //$NON-NLS-1$
-                }
-            }
-	);
+		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		fWorkingDirText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = LaunchUIMessages.getString("WorkingDirectoryBlock.Working_directory"); //$NON-NLS-1$
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);
@@ -191,13 +188,13 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * workspace
 	 */
 	protected void handleWorkspaceDirBrowseButtonSelected() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				LaunchUIMessages.getString("WorkingDirectoryBlock.4")); //$NON-NLS-1$
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
+				ResourcesPlugin.getWorkspace().getRoot(), false, LaunchUIMessages.getString("WorkingDirectoryBlock.4")); //$NON-NLS-1$
 
 		IContainer currentContainer = getContainer();
 		if (currentContainer != null) {
 			IPath path = currentContainer.getFullPath();
-			dialog.setInitialSelections(new Object[] { path});
+			dialog.setInitialSelections(new Object[] { path });
 		}
 
 		dialog.showClosedProjects(false);
@@ -310,7 +307,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-    @Override
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		//		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 		// (String)null);
@@ -321,11 +318,12 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-    @Override
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {
-			String wd = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
+			String wd = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
+					(String) null);
 			fWorkingDirText.setText(""); //$NON-NLS-1$
 			if (wd == null) {
 				fUseDefaultWorkingDirButton.setSelection(true);
@@ -335,7 +333,9 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage(LaunchUIMessages.getString("WorkingDirectoryBlock.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
+			setErrorMessage(
+					LaunchUIMessages.getString("WorkingDirectoryBlock.Exception_occurred_reading_configuration___15") //$NON-NLS-1$
+							+ e.getStatus().getMessage());
 			GdbUIPlugin.log(e);
 		}
 	}
@@ -345,7 +345,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-    @Override
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String wd = null;
 		if (!isDefaultWorkingDirectory()) {
@@ -372,7 +372,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
-    @Override
+	@Override
 	public String getName() {
 		return LaunchUIMessages.getString("WorkingDirectoryBlock.Working_Directory_8"); //$NON-NLS-1$
 	}
@@ -400,4 +400,3 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	}
 
 }
-

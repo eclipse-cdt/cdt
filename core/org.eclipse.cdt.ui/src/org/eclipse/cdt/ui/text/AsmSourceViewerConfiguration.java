@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
-
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -99,7 +98,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * The document partitioning.
 	 */
 	private String fDocumentPartitioning;
-	
+
 	/**
 	 * Creates a new assembly source viewer configuration for viewers in the given editor
 	 * using the given preference store, the color manager and the specified document partitioning.
@@ -109,11 +108,12 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @param editor the editor in which the configured viewer(s) will reside, or <code>null</code> if none
 	 * @param partitioning the document partitioning for this configuration, or <code>null</code> for the default partitioning
 	 */
-	public AsmSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor, String partitioning) {
+	public AsmSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore,
+			ITextEditor editor, String partitioning) {
 		super(preferenceStore);
-		fColorManager= colorManager;
-		fTextEditor= editor;
-		fDocumentPartitioning= partitioning;
+		fColorManager = colorManager;
+		fTextEditor = editor;
+		fDocumentPartitioning = partitioning;
 		initializeScanners();
 	}
 
@@ -121,9 +121,9 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
-		fMultilineCommentScanner= new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_MULTI_LINE_COMMENT);
-		fSinglelineCommentScanner= new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_SINGLE_LINE_COMMENT);
-		fStringScanner= new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
+		fMultilineCommentScanner = new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner = new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner = new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	public RuleBasedScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
-	
+
 	/**
 	 * Returns the ASM singleline comment scanner for this configuration.
 	 *
@@ -143,7 +143,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	public RuleBasedScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
-	
+
 	/**
 	 * Returns the ASM string scanner for this configuration.
 	 *
@@ -163,14 +163,14 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		if (fPreprocessorScanner != null) {
 			return fPreprocessorScanner;
 		}
-		AbstractCScanner scanner= null;
+		AbstractCScanner scanner = null;
 		if (language instanceof IAsmLanguage) {
-			scanner= new AsmPreprocessorScanner(getTokenStoreFactory(), (IAsmLanguage)language);
+			scanner = new AsmPreprocessorScanner(getTokenStoreFactory(), (IAsmLanguage) language);
 		}
 		if (scanner == null) {
-			scanner= new AsmPreprocessorScanner(getTokenStoreFactory(), AssemblyLanguage.getDefault());
+			scanner = new AsmPreprocessorScanner(getTokenStoreFactory(), AssemblyLanguage.getDefault());
 		}
-		fPreprocessorScanner= scanner;
+		fPreprocessorScanner = scanner;
 		return fPreprocessorScanner;
 	}
 
@@ -182,9 +182,9 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		if (fCodeScanner != null) {
 			return fCodeScanner;
 		}
-		RuleBasedScanner scanner= null;
+		RuleBasedScanner scanner = null;
 		if (language instanceof IAsmLanguage) {
-			IAsmLanguage asmLang= (IAsmLanguage)language;
+			IAsmLanguage asmLang = (IAsmLanguage) language;
 			scanner = new AsmCodeScanner(getTokenStoreFactory(), asmLang);
 		} else if (language != null) {
 			ILanguageUI languageUI = language.getAdapter(ILanguageUI.class);
@@ -195,7 +195,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			scanner = new AsmCodeScanner(getTokenStoreFactory(), AssemblyLanguage.getDefault());
 		}
 		if (scanner instanceof AbstractCScanner) {
-			fCodeScanner= (AbstractCScanner)scanner;
+			fCodeScanner = (AbstractCScanner) scanner;
 		}
 		return scanner;
 	}
@@ -216,49 +216,45 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-		PresentationReconciler reconciler= new PresentationReconciler();
+		PresentationReconciler reconciler = new PresentationReconciler();
 
-		ILanguage language= getLanguage();
-		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(getCodeScanner(language));
+		ILanguage language = getLanguage();
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getCodeScanner(language));
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
+		dr = new DefaultDamagerRepairer(getMultilineCommentScanner());
 		reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
-		
-		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());		
+
+		dr = new DefaultDamagerRepairer(getSinglelineCommentScanner());
 		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 
-		dr= new DefaultDamagerRepairer(getStringScanner());		
+		dr = new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(dr, ICPartitions.C_STRING);
 		reconciler.setRepairer(dr, ICPartitions.C_STRING);
 
-		dr= new DefaultDamagerRepairer(getStringScanner());		
+		dr = new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
 		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
 
-		dr= new DefaultDamagerRepairer(getPreprocessorScanner(language));		
+		dr = new DefaultDamagerRepairer(getPreprocessorScanner(language));
 		reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
 		reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
 
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		return reconciler;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] { 	
-				IDocument.DEFAULT_CONTENT_TYPE, 
-				ICPartitions.C_MULTI_LINE_COMMENT,
-				ICPartitions.C_SINGLE_LINE_COMMENT,
-				ICPartitions.C_STRING,
-				ICPartitions.C_CHARACTER,
-				ICPartitions.C_PREPROCESSOR};
+		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, ICPartitions.C_MULTI_LINE_COMMENT,
+				ICPartitions.C_SINGLE_LINE_COMMENT, ICPartitions.C_STRING, ICPartitions.C_CHARACTER,
+				ICPartitions.C_PREPROCESSOR };
 	}
 
 	/*
@@ -267,7 +263,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fTextEditor != null) {
-			MonoReconciler reconciler= new MonoReconciler(new AsmReconcilingStrategy(fTextEditor), false);
+			MonoReconciler reconciler = new MonoReconciler(new AsmReconcilingStrategy(fTextEditor), false);
 			reconciler.setIsIncrementalReconciler(false);
 			reconciler.setProgressMonitor(new NullProgressMonitor());
 			reconciler.setDelay(500);
@@ -284,11 +280,10 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @return <code>true</code> if event causes a behavioral change
 	 */
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
-		if (fMultilineCommentScanner.affectsBehavior(event)
-				|| fSinglelineCommentScanner.affectsBehavior(event)
+		if (fMultilineCommentScanner.affectsBehavior(event) || fSinglelineCommentScanner.affectsBehavior(event)
 				|| fStringScanner.affectsBehavior(event)) {
-				return true;
-			}
+			return true;
+		}
 		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event)) {
 			return true;
 		}
@@ -338,7 +333,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		ICElement element = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fTextEditor.getEditorInput());
 		if (element instanceof ITranslationUnit) {
 			try {
-				return ((ITranslationUnit)element).getLanguage();
+				return ((ITranslationUnit) element).getLanguage();
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
@@ -350,7 +345,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			if (file != null) {
 				contentType = CCorePlugin.getContentType(file.getProject(), file.getName());
 			} else if (input instanceof IPathEditorInput) {
-				IPath path = ((IPathEditorInput)input).getPath();
+				IPath path = ((IPathEditorInput) input).getPath();
 				contentType = CCorePlugin.getContentType(path.lastSegment());
 			} else {
 				ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
@@ -371,8 +366,8 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * Reset cached language dependent scanners.
 	 */
 	public void resetScanners() {
-		fCodeScanner= null;
-		fPreprocessorScanner= null;
+		fCodeScanner = null;
+		fPreprocessorScanner = null;
 	}
 
 	private ITokenStoreFactory getTokenStoreFactory() {
@@ -383,10 +378,10 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			}
 		};
 	}
-	
+
 	@Override
 	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
-		Map<String, IAdaptable> targets= super.getHyperlinkDetectorTargets(sourceViewer);
+		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put("org.eclipse.cdt.ui.cCode", fTextEditor); //$NON-NLS-1$
 		return targets;
 	}

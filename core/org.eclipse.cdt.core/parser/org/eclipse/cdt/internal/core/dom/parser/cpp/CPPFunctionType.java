@@ -30,93 +30,91 @@ import org.eclipse.core.runtime.CoreException;
  * For safe usage in index bindings, all fields need to be final.
  */
 public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
-    private final IType[] parameters;
-    private final IType returnType;
-    private final boolean isConst;
-    private final boolean isVolatile;
+	private final IType[] parameters;
+	private final IType returnType;
+	private final boolean isConst;
+	private final boolean isVolatile;
 	private final boolean hasRefQualifier;
 	private final boolean isRValueReference;
-    private final boolean takesVarargs;
+	private final boolean takesVarargs;
 
-    public CPPFunctionType(IType returnType, IType[] types) {
-    	this(returnType, types, false, false, false, false, false);
-    }
+	public CPPFunctionType(IType returnType, IType[] types) {
+		this(returnType, types, false, false, false, false, false);
+	}
 
 	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile,
 			boolean hasRefQualifier, boolean isRValueReference, boolean takesVarargs) {
-        this.returnType = returnType;
-        this.parameters = types;
-        this.isConst = isConst;
-        this.isVolatile= isVolatile;
-        this.hasRefQualifier = hasRefQualifier;
-        this.isRValueReference = isRValueReference;
-        this.takesVarargs= takesVarargs;
-    }
+		this.returnType = returnType;
+		this.parameters = types;
+		this.isConst = isConst;
+		this.isVolatile = isVolatile;
+		this.hasRefQualifier = hasRefQualifier;
+		this.isRValueReference = isRValueReference;
+		this.takesVarargs = takesVarargs;
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType o) {
-        if (o instanceof ITypedef)
-            return o.isSameType(this);
-        if (o instanceof ICPPFunctionType) {
-            ICPPFunctionType ft = (ICPPFunctionType) o;
-            if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile()
-            		|| hasRefQualifier() != ft.hasRefQualifier()
-            		|| isRValueReference() != ft.isRValueReference()
-            		|| takesVarArgs() != ft.takesVarArgs()) {
-                return false;
-            }
+		if (o instanceof ITypedef)
+			return o.isSameType(this);
+		if (o instanceof ICPPFunctionType) {
+			ICPPFunctionType ft = (ICPPFunctionType) o;
+			if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile()
+					|| hasRefQualifier() != ft.hasRefQualifier() || isRValueReference() != ft.isRValueReference()
+					|| takesVarArgs() != ft.takesVarArgs()) {
+				return false;
+			}
 
-            IType[] fps;
-            fps = ft.getParameterTypes();
+			IType[] fps;
+			fps = ft.getParameterTypes();
 			// Constructors & destructors have null return type.
 			if ((returnType == null) ^ (ft.getReturnType() == null))
-			    return false;
+				return false;
 
 			if (returnType != null && !returnType.isSameType(ft.getReturnType()))
-			    return false;
+				return false;
 
 			if (parameters.length == fps.length) {
 				for (int i = 0; i < parameters.length; i++) {
-			        if (parameters[i] == null || !parameters[i].isSameType(fps[i]))
-			            return false;
-			    }
+					if (parameters[i] == null || !parameters[i].isSameType(fps[i]))
+						return false;
+				}
 			} else {
-				if (!SemanticUtil.isEmptyParameterList(parameters)
-						|| !SemanticUtil.isEmptyParameterList(fps)) {
+				if (!SemanticUtil.isEmptyParameterList(parameters) || !SemanticUtil.isEmptyParameterList(fps)) {
 					return false;
 				}
 			}
-            return true;
-        }
-        return false;
-    }
+			return true;
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public IType getReturnType() {
-        return returnType;
-    }
+		return returnType;
+	}
 
-    @Override
+	@Override
 	public IType[] getParameterTypes() {
-        return parameters;
-    }
+		return parameters;
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return t;
+	}
 
-    @Override
+	@Override
 	@Deprecated
-    public IPointerType getThisType() {
-        return null;
-    }
+	public IPointerType getThisType() {
+		return null;
+	}
 
 	@Override
 	public final boolean isConst() {
@@ -150,12 +148,17 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.FUNCTION_TYPE;
-		if (isConst) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (takesVarargs) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isVolatile) firstBytes |= ITypeMarshalBuffer.FLAG3;
-		if (hasRefQualifier) firstBytes |= ITypeMarshalBuffer.FLAG4;
-		if (isRValueReference) firstBytes |= ITypeMarshalBuffer.FLAG5;
+		short firstBytes = ITypeMarshalBuffer.FUNCTION_TYPE;
+		if (isConst)
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (takesVarargs)
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isVolatile)
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
+		if (hasRefQualifier)
+			firstBytes |= ITypeMarshalBuffer.FLAG4;
+		if (isRValueReference)
+			firstBytes |= ITypeMarshalBuffer.FLAG5;
 
 		buffer.putShort(firstBytes);
 		buffer.putInt(parameters.length);
@@ -167,18 +170,17 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		int len= buffer.getInt();
-		IType rt= buffer.unmarshalType();
-		IType[] pars= new IType[len];
+		int len = buffer.getInt();
+		IType rt = buffer.unmarshalType();
+		IType[] pars = new IType[len];
 		for (int i = 0; i < pars.length; i++) {
-			pars[i]= buffer.unmarshalType();
+			pars[i] = buffer.unmarshalType();
 		}
 		boolean isConst = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		boolean takesVarargs = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
 		boolean isVolatile = (firstBytes & ITypeMarshalBuffer.FLAG3) != 0;
 		boolean hasRefQualifier = (firstBytes & ITypeMarshalBuffer.FLAG4) != 0;
 		boolean isRValueReference = (firstBytes & ITypeMarshalBuffer.FLAG5) != 0;
-		return new CPPFunctionType(rt, pars, isConst, isVolatile, hasRefQualifier, isRValueReference,
-				takesVarargs);
+		return new CPPFunctionType(rt, pars, isConst, isVolatile, hasRefQualifier, isRValueReference, takesVarargs);
 	}
 }

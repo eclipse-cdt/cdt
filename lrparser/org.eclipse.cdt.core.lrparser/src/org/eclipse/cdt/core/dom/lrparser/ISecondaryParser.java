@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 public interface ISecondaryParser<N extends IASTNode> extends IParser<N> {
 
-	
 	/**
 	 * Set the list of tokens that will be parsed.
 	 * 

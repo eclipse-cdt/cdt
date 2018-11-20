@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.model.TestingSessionsManager;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
@@ -27,7 +26,6 @@ import org.eclipse.jface.action.Action;
 public class RerunAction extends Action {
 
 	private TestingSessionsManager testingSessionsManager;
-
 
 	public RerunAction(TestingSessionsManager testingSessionsManager) {
 		super(ActionsMessages.RerunAction_text);
@@ -48,6 +46,5 @@ public class RerunAction extends Action {
 			setEnabled(false);
 		}
 	}
-	
-}
 
+}

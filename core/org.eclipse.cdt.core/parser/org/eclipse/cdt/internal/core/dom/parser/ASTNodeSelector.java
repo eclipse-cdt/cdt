@@ -33,16 +33,16 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	private final boolean fIsValid;
 
 	public ASTNodeSelector(ASTTranslationUnit tu, ILocationResolver locationResolver, String filePath) {
-		fTu= tu;
-		fLocationResolver= locationResolver;
-		fFilePath= filePath;
-		fIsValid= verify();
+		fTu = tu;
+		fLocationResolver = locationResolver;
+		fFilePath = filePath;
+		fIsValid = verify();
 	}
 
 	private boolean verify() {
 		if (fLocationResolver != null) {
 			if (fFilePath == null) {
-				fFilePath= fLocationResolver.getTranslationUnitPath();
+				fFilePath = fLocationResolver.getTranslationUnitPath();
 			}
 			return true;
 		}
@@ -63,62 +63,62 @@ public class ASTNodeSelector implements IASTNodeSelector {
 			throw new IllegalArgumentException("Length cannot be less than zero."); //$NON-NLS-1$
 		}
 		int sequenceLength;
-		int altSequenceNumber= -1;
-		int sequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile);
-    	if (sequenceNumber < 0) {
-    		return null;
-    	}
+		int altSequenceNumber = -1;
+		int sequenceNumber = fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile);
+		if (sequenceNumber < 0) {
+			return null;
+		}
 		if (lengthInFile > 0) {
-			sequenceLength= fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
+			sequenceLength = fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
 					offsetInFile + lengthInFile - 1) + 1 - sequenceNumber;
 		} else {
-			sequenceLength= 0;
+			sequenceLength = 0;
 			if (offsetInFile > 0) {
-				altSequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile - 1);
+				altSequenceNumber = fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile - 1);
 				if (altSequenceNumber + 1 == sequenceNumber) {
-					altSequenceNumber= -1;
+					altSequenceNumber = -1;
 				} else {
 					// we are on a context boundary and we need to check the variant to the left and
 					// the one to the right
- 					sequenceLength= 1;
+					sequenceLength = 1;
 				}
 			}
 		}
-		final ASTNodeSpecification<T> nodeSpec=
-				new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile, lengthInFile);
+		final ASTNodeSpecification<T> nodeSpec = new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile,
+				lengthInFile);
 		nodeSpec.setRangeInSequence(sequenceNumber, sequenceLength, false);
 		nodeSpec.setSearchInExpansion(searchInExpansion);
-    	getNode(nodeSpec);
-    	if (altSequenceNumber != -1) {
-    		nodeSpec.setRangeInSequence(altSequenceNumber, sequenceLength, true);
-        	getNode(nodeSpec);
-    	}
-    	return nodeSpec.getBestNode();
+		getNode(nodeSpec);
+		if (altSequenceNumber != -1) {
+			nodeSpec.setRangeInSequence(altSequenceNumber, sequenceLength, true);
+			getNode(nodeSpec);
+		}
+		return nodeSpec.getBestNode();
 	}
 
 	private <T extends IASTNode> T getNode(ASTNodeSpecification<T> nodeSpec) {
 		fLocationResolver.findPreprocessorNode(nodeSpec);
-    	if (!nodeSpec.requiresClass(IASTPreprocessorMacroExpansion.class)) {
-    		// adjust sequence number for search in the expansion of macros
-    		int seqbegin= nodeSpec.getSequenceStart();
-    		int seqend= nodeSpec.getSequenceEnd();
-    		IASTPreprocessorMacroExpansion expansion= nodeSpec.findLeadingMacroExpansion(this);
-    		if (expansion != null) {
-    			IASTFileLocation floc= expansion.getFileLocation();
-    			seqbegin= fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
-    					floc.getNodeOffset() + floc.getNodeLength() - 1) + 1;
-    		}
-    		expansion= nodeSpec.findTrailingMacroExpansion(this);
-    		if (expansion != null) {
-    			IASTFileLocation floc= expansion.getFileLocation();
-    			seqend= fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
-    					floc.getNodeOffset() + floc.getNodeLength());
-    		}
-    		nodeSpec.setRangeInSequence(seqbegin, seqend - seqbegin);
+		if (!nodeSpec.requiresClass(IASTPreprocessorMacroExpansion.class)) {
+			// adjust sequence number for search in the expansion of macros
+			int seqbegin = nodeSpec.getSequenceStart();
+			int seqend = nodeSpec.getSequenceEnd();
+			IASTPreprocessorMacroExpansion expansion = nodeSpec.findLeadingMacroExpansion(this);
+			if (expansion != null) {
+				IASTFileLocation floc = expansion.getFileLocation();
+				seqbegin = fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
+						floc.getNodeOffset() + floc.getNodeLength() - 1) + 1;
+			}
+			expansion = nodeSpec.findTrailingMacroExpansion(this);
+			if (expansion != null) {
+				IASTFileLocation floc = expansion.getFileLocation();
+				seqend = fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
+						floc.getNodeOffset() + floc.getNodeLength());
+			}
+			nodeSpec.setRangeInSequence(seqbegin, seqend - seqbegin);
 
-    		FindNodeForOffsetAction nodeFinder= new FindNodeForOffsetAction(nodeSpec);
-    		fTu.accept(nodeFinder);
-    	}
+			FindNodeForOffsetAction nodeFinder = new FindNodeForOffsetAction(nodeSpec);
+			fTu.accept(nodeFinder);
+		}
 		return nodeSpec.getBestNode();
 	}
 

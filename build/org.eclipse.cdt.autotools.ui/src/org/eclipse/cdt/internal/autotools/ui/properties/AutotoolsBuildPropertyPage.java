@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-
 public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 
 	private String TRUE = "true"; //$NON-NLS-1$
@@ -41,14 +40,14 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 	private String CLEAN_MAKETARGET_TOOLTIP = "CleanMakeTarget.tooltip"; //$NON-NLS-1$
 	private String AUTO_BUILDNAME_LABEL = "AutoBuildName.label"; //$NON-NLS-1$
 	private String AUTO_BUILDNAME_TOOLTIP = "AutoBuildName.tooltip"; //$NON-NLS-1$
-	
+
 	protected Button fCleanDelete;
 	protected Button fCleanMake;
 	protected Button fAutoName;
-	protected Text   fCleanMakeTarget;
+	protected Text fCleanMakeTarget;
 
 	private IProject getProject() {
-		return (IProject)getCfg().getManagedProject().getOwner();
+		return (IProject) getCfg().getManagedProject().getOwner();
 	}
 
 	@Override
@@ -59,50 +58,53 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		Composite composite= usercomp;
+		Composite composite = usercomp;
 		// assume parent page uses griddata
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL | GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(
+				GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL | GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gd);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		//PixelConverter pc= new PixelConverter(composite);
 		//layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
-		
+
 		Group g = new Group(composite, SWT.SHADOW_ETCHED_IN);
 		g.setText(AutotoolsPropertyMessages.getString("CleanBehavior.title"));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd = new GridData(
+				GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		g.setLayoutData(gd);
-		layout= new GridLayout();
-		layout.numColumns= 2;
+		layout = new GridLayout();
+		layout.numColumns = 2;
 		g.setLayout(layout);
-		
+
 		fCleanDelete = new Button(g, SWT.RADIO);
 		fCleanDelete.setText(AutotoolsPropertyMessages.getString(CLEAN_DELETE_LABEL));
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 2;
 		fCleanDelete.setLayoutData(gd);
 		fCleanMake = new Button(g, SWT.RADIO);
 		fCleanMake.setText(AutotoolsPropertyMessages.getString(CLEAN_MAKE_LABEL));
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 2;
 		fCleanMake.setLayoutData(gd);
-		
+
 		Label label = new Label(g, SWT.LEFT);
 		label.setText(AutotoolsPropertyMessages.getString(CLEAN_MAKETARGET_LABEL));
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
-		
+
 		fCleanMakeTarget = new Text(g, SWT.SINGLE | SWT.BORDER);
 		fCleanMakeTarget.setText(AutotoolsPropertyConstants.CLEAN_MAKE_TARGET_DEFAULT);
 		fCleanMakeTarget.setToolTipText(AutotoolsPropertyMessages.getString(CLEAN_MAKETARGET_TOOLTIP));
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd = new GridData(
+				GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fCleanMakeTarget.setLayoutData(gd);
-		
+
 		fCleanDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -111,7 +113,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 				fCleanMakeTarget.setEnabled(false);
 			}
 		});
-		
+
 		fCleanMake.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -120,21 +122,21 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 				fCleanMakeTarget.setEnabled(true);
 			}
 		});
-		
+
 		fCleanMakeTarget.addModifyListener(e -> {
 			if (fCleanMakeTarget.getText().isEmpty()) {
 				// FIXME: should probably issue warning here, but how?
 			}
 		});
-		
+
 		fAutoName = new Button(composite, SWT.LEFT | SWT.CHECK);
 		fAutoName.setText(AutotoolsPropertyMessages.getString(AUTO_BUILDNAME_LABEL));
 		fAutoName.setToolTipText(AutotoolsPropertyMessages.getString(AUTO_BUILDNAME_TOOLTIP));
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 2;
 		fAutoName.setLayoutData(gd);
-		
+
 		initialize();
 	}
 
@@ -143,7 +145,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		IProject project = getProject();
 		if (fCleanDelete.getSelection()) {
 			try {
-				project.setPersistentProperty(AutotoolsPropertyConstants.CLEAN_DELETE, TRUE); 
+				project.setPersistentProperty(AutotoolsPropertyConstants.CLEAN_DELETE, TRUE);
 			} catch (CoreException ce) {
 				// FIXME: what can we do here?
 			}
@@ -159,10 +161,10 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 				// FIXME: what can we do here?
 			}
 		}
-		
+
 		if (fAutoName.getSelection()) {
 			try {
-				project.setPersistentProperty(AutotoolsPropertyConstants.AUTO_BUILD_NAME, TRUE); 
+				project.setPersistentProperty(AutotoolsPropertyConstants.AUTO_BUILD_NAME, TRUE);
 			} catch (CoreException ce) {
 				// FIXME: what can we do here?
 			}
@@ -180,7 +182,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		performOK();
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		fCleanDelete.setSelection(false);
@@ -189,12 +191,12 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		fCleanMakeTarget.setEnabled(true);
 		fAutoName.setEnabled(true);
 	}
-	
+
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		// what to do here?
 	}
-	
+
 	@Override
 	public void updateButtons() {
 		// what to do here?
@@ -227,11 +229,11 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 			fCleanMake.setSelection(false);
 			fCleanMakeTarget.setEnabled(false);
 		}
-		
+
 		if (autoName == null || autoName.equals(TRUE))
 			fAutoName.setSelection(true);
 		else
 			fAutoName.setSelection(false);
 	}
-	
+
 }

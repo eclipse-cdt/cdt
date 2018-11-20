@@ -68,7 +68,7 @@ public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 	 */
 	@Override
 	public ICPPASTExplicitTemplateInstantiation copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

@@ -47,8 +47,8 @@ public abstract class CRefactoringDescriptor extends RefactoringDescriptor {
 	public static final String SELECTION = "selection"; //$NON-NLS-1$
 	protected Map<String, String> arguments;
 
-	public CRefactoringDescriptor(String id, String project, String description, String comment,
-			int flags, Map<String, String> arguments) {
+	public CRefactoringDescriptor(String id, String project, String description, String comment, int flags,
+			Map<String, String> arguments) {
 		super(id, project, description, comment, flags);
 		this.arguments = arguments;
 	}
@@ -62,7 +62,7 @@ public abstract class CRefactoringDescriptor extends RefactoringDescriptor {
 
 	@Override
 	public CRefactoringContext createRefactoringContext(RefactoringStatus status) throws CoreException {
-		CRefactoring refactoring= createRefactoring(status);
+		CRefactoring refactoring = createRefactoring(status);
 		if (refactoring == null)
 			return null;
 		return new CRefactoringContext(refactoring);
@@ -76,8 +76,8 @@ public abstract class CRefactoringDescriptor extends RefactoringDescriptor {
 			int length = Integer.parseInt(selectStrings[1]);
 			selection = new TextSelection(offset, length);
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
-					Messages.CRefactoringDescriptor_illegal_selection));
+			throw new CoreException(
+					new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, Messages.CRefactoringDescriptor_illegal_selection));
 		}
 		return selection;
 	}

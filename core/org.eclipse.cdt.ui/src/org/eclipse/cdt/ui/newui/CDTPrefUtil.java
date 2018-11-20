@@ -35,28 +35,28 @@ import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationManager;
  */
 public class CDTPrefUtil {
 	// boolean keys (KEY_NO-s are to be inverted !)
-	public static final String KEY_NOSUPP  = "wizard.show.unsupported.disable";  //$NON-NLS-1$
-	public static final String KEY_OTHERS  = "wizard.group.others.enable";  //$NON-NLS-1$
-	public static final String KEY_NOMNG   = "properties.manage.config.disable"; //$NON-NLS-1$
-	public static final String KEY_DTREE   = "properties.data.hierarchy.enable"; //$NON-NLS-1$
-	public static final String KEY_NOTOOLM   = "properties.toolchain.modification.disable"; //$NON-NLS-1$
-	public static final String KEY_EXPORT   = "properties.export.page.enable"; //$NON-NLS-1$
+	public static final String KEY_NOSUPP = "wizard.show.unsupported.disable"; //$NON-NLS-1$
+	public static final String KEY_OTHERS = "wizard.group.others.enable"; //$NON-NLS-1$
+	public static final String KEY_NOMNG = "properties.manage.config.disable"; //$NON-NLS-1$
+	public static final String KEY_DTREE = "properties.data.hierarchy.enable"; //$NON-NLS-1$
+	public static final String KEY_NOTOOLM = "properties.toolchain.modification.disable"; //$NON-NLS-1$
+	public static final String KEY_EXPORT = "properties.export.page.enable"; //$NON-NLS-1$
 	/** @since 5.2 Show the "Include Files" settings entry tab */
 	public static final String KEY_SHOW_INC_FILES = "properties.includefiles.page.enable"; //$NON-NLS-1$
 	/** @since 5.4 Show the "Scanner Discovery" tab*/
-	public static final String KEY_SHOW_SD   = "properties.sd.page.enable"; //$NON-NLS-1$
+	public static final String KEY_SHOW_SD = "properties.sd.page.enable"; //$NON-NLS-1$
 	/** @since 5.2 */
-	public static final String KEY_TIPBOX   = "properties.option.tipbox.enable"; //$NON-NLS-1$
+	public static final String KEY_TIPBOX = "properties.option.tipbox.enable"; //$NON-NLS-1$
 	// string keys
-	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
-	public static final String KEY_CONFSET = "workingsets.selected.configs";  //$NON-NLS-1$
+	public static final String KEY_PREFTC = "wizard.preferred.toolchains"; //$NON-NLS-1$
+	public static final String KEY_CONFSET = "workingsets.selected.configs"; //$NON-NLS-1$
 	// integer keys
-	public static final String KEY_POSSAVE  = "properties.save.position"; //$NON-NLS-1$
+	public static final String KEY_POSSAVE = "properties.save.position"; //$NON-NLS-1$
 	public static final int POSITION_SAVE_SIZE = 0;
 	public static final int POSITION_SAVE_NONE = 2;
 	public static final int POSITION_SAVE_BOTH = 3;
 
-	public static final String KEY_DISC_NAMES  = "properties.discovery.naming"; //$NON-NLS-1$
+	public static final String KEY_DISC_NAMES = "properties.discovery.naming"; //$NON-NLS-1$
 	public static final int DISC_NAMING_UNIQUE_OR_BOTH = 0;
 	public static final int DISC_NAMING_UNIQUE_OR_IDS = 1;
 	public static final int DISC_NAMING_ALWAYS_BOTH = 2;
@@ -73,7 +73,7 @@ public class CDTPrefUtil {
 	/** Property key used for string list write mode for multi-configuration edits (modify/replace) */
 	public static final String KEY_WMODE = "properties.multi.write.mode"; //$NON-NLS-1$
 	/** Modify implies changing only given elements and not changing any others */
-	public static final int WMODE_MODIFY  = 4;
+	public static final int WMODE_MODIFY = 4;
 	/** Replace implies replacing the whole list with the given one, overwriting old entries */
 	public static final int WMODE_REPLACE = 8;
 
@@ -86,40 +86,68 @@ public class CDTPrefUtil {
 	public static final Object[] EMPTY_ARRAY = new Object[0];
 
 	// low-level methods
-	public static boolean getBool(String key) { return pref.getBoolean(key); }
-	public static void setBool(String key, boolean val) { pref.setValue(key, val); }
-	public static int getInt(String key) { return pref.getInt(key); }
-	public static void setInt(String key, int val) { pref.setValue(key, val); }
-	public static String getStr(String key) { return pref.getString(key); }
-	public static void setStr(String key, String val) {	pref.setValue(key, val); }
+	public static boolean getBool(String key) {
+		return pref.getBoolean(key);
+	}
+
+	public static void setBool(String key, boolean val) {
+		pref.setValue(key, val);
+	}
+
+	public static int getInt(String key) {
+		return pref.getInt(key);
+	}
+
+	public static void setInt(String key, int val) {
+		pref.setValue(key, val);
+	}
+
+	public static String getStr(String key) {
+		return pref.getString(key);
+	}
+
+	public static void setStr(String key, String val) {
+		pref.setValue(key, val);
+	}
 
 	// up-level methods
 	public static void readPreferredTCs() {
 		preferredTCs = new LinkedList<String>(Arrays.asList(getStr(KEY_PREFTC).split(DELIMITER)));
 	}
+
 	public static List<String> getPreferredTCs() {
-		if (preferredTCs == null) readPreferredTCs();
+		if (preferredTCs == null)
+			readPreferredTCs();
 		return preferredTCs;
 	}
+
 	public static void delPreferredTC(String s) {
-		if (preferredTCs == null) readPreferredTCs();
+		if (preferredTCs == null)
+			readPreferredTCs();
 		preferredTCs.remove(s);
 	}
+
 	public static void addPreferredTC(String s) {
-		if (preferredTCs == null) readPreferredTCs();
-		if (!preferredTCs.contains(s)) preferredTCs.add(s);
+		if (preferredTCs == null)
+			readPreferredTCs();
+		if (!preferredTCs.contains(s))
+			preferredTCs.add(s);
 	}
+
 	public static void cleanPreferredTCs() {
 		setStr(KEY_PREFTC, IPreferenceStore.STRING_DEFAULT_DEFAULT);
 		readPreferredTCs();
 	}
+
 	public static void savePreferredTCs() {
-		if (preferredTCs == null) return;
+		if (preferredTCs == null)
+			return;
 		Iterator<String> it = preferredTCs.iterator();
 		StringBuilder b = new StringBuilder();
 		while (it.hasNext()) {
 			String s = it.next();
-			if (s == null) continue;
+			if (s == null)
+				continue;
 			b.append(s);
 			b.append(DELIMITER);
 		}
@@ -136,7 +164,7 @@ public class CDTPrefUtil {
 	 */
 	public static int getMultiCfgStringListDisplayMode() {
 		int mode = getInt(KEY_DMODE);
-		if (mode!=DMODE_CONJUNCTION && mode!=DMODE_DISJUNCTION) {
+		if (mode != DMODE_CONJUNCTION && mode != DMODE_DISJUNCTION) {
 			mode = DMODE_CONJUNCTION;
 		}
 		return mode;
@@ -164,7 +192,7 @@ public class CDTPrefUtil {
 	 */
 	public static int getMultiCfgStringListWriteMode() {
 		int mode = getInt(KEY_WMODE);
-		if (mode!=WMODE_MODIFY && mode!=WMODE_REPLACE) {
+		if (mode != WMODE_MODIFY && mode != WMODE_REPLACE) {
 			mode = WMODE_MODIFY;
 		}
 		return mode;
@@ -188,7 +216,7 @@ public class CDTPrefUtil {
 	@Deprecated
 	public static String getDMode() {
 		String s = null;
-		switch(getMultiCfgStringListDisplayMode()) {
+		switch (getMultiCfgStringListDisplayMode()) {
 		case DMODE_CONJUNCTION:
 			s = Messages.EnvironmentTab_17;
 			break;
@@ -205,7 +233,7 @@ public class CDTPrefUtil {
 	@Deprecated
 	public static String getWMode() {
 		String s = null;
-		switch(getMultiCfgStringListWriteMode()) {
+		switch (getMultiCfgStringListWriteMode()) {
 		case WMODE_MODIFY:
 			s = Messages.EnvironmentTab_24;
 			break;
@@ -221,7 +249,7 @@ public class CDTPrefUtil {
 	 */
 	public static void spinDMode() {
 		int mode = getMultiCfgStringListDisplayMode();
-		if (mode==DMODE_CONJUNCTION) {
+		if (mode == DMODE_CONJUNCTION) {
 			mode = DMODE_DISJUNCTION;
 		} else {
 			mode = DMODE_CONJUNCTION;
@@ -234,7 +262,7 @@ public class CDTPrefUtil {
 	 */
 	public static void spinWMode() {
 		int mode = getMultiCfgStringListWriteMode();
-		if (mode==WMODE_MODIFY) {
+		if (mode == WMODE_MODIFY) {
 			mode = WMODE_REPLACE;
 		} else {
 			mode = WMODE_MODIFY;
@@ -256,6 +284,7 @@ public class CDTPrefUtil {
 	public static final Object[] getListForDisplay(Object[][] input, Comparator<Object> cmp) {
 		return getListForDisplay(input, getMultiCfgStringListDisplayMode(), cmp);
 	}
+
 	/**
 	 * Utility method forms string list
 	 * according to current list display mode
@@ -277,11 +306,11 @@ public class CDTPrefUtil {
 
 		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION) {
 			ArrayList<Object> lst = new ArrayList<Object>();
-			for (int i=0; i<s1.length; i++) {
+			for (int i = 0; i < s1.length; i++) {
 				if (s1[i] == null)
 					continue;
 				boolean found = true;
-				for (int k = 1; k<input.length; k++) {
+				for (int k = 1; k < input.length; k++) {
 					Object[] s2 = input[k];
 					if (s2 == null || s2.length == 0) {
 						return EMPTY_ARRAY;
@@ -329,7 +358,8 @@ public class CDTPrefUtil {
 	public static void saveConfigSets(List<String> out) {
 		StringBuilder b = new StringBuilder();
 		for (String s : out) {
-			if (s == null) continue;
+			if (s == null)
+				continue;
 			b.append(s);
 			b.append(CONFSETDEL);
 		}

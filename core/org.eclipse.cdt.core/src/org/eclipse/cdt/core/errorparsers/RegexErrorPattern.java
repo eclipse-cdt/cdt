@@ -59,7 +59,7 @@ public class RegexErrorPattern implements Cloneable {
 	 * Additional "severity" flag which tells if qualified output line should be ignored.
 	 */
 	public static final int SEVERITY_SKIP = -1;
-	private static final String EMPTY_STR=""; //$NON-NLS-1$
+	private static final String EMPTY_STR = ""; //$NON-NLS-1$
 
 	private Pattern pattern;
 	private String fileExpression;
@@ -89,18 +89,13 @@ public class RegexErrorPattern implements Cloneable {
 	 *
 	 * <p>See general description for this class {@link RegexErrorPattern} for more details.
 	 */
-	public RegexErrorPattern(String pattern,
-				String fileExpression,
-				String lineExpression,
-				String descriptionExpression,
-				String varNameExpression,
-				int severity,
-				boolean eat) {
-		this.pattern = Pattern.compile(pattern!=null ? pattern : EMPTY_STR);
-		this.fileExpression = fileExpression!=null ? fileExpression : EMPTY_STR;
-		this.lineExpression = lineExpression!=null ? lineExpression : EMPTY_STR;
-		this.descriptionExpression = descriptionExpression!=null ? descriptionExpression : EMPTY_STR;
-		this.varNameExpression = varNameExpression!=null ? varNameExpression : EMPTY_STR;
+	public RegexErrorPattern(String pattern, String fileExpression, String lineExpression, String descriptionExpression,
+			String varNameExpression, int severity, boolean eat) {
+		this.pattern = Pattern.compile(pattern != null ? pattern : EMPTY_STR);
+		this.fileExpression = fileExpression != null ? fileExpression : EMPTY_STR;
+		this.lineExpression = lineExpression != null ? lineExpression : EMPTY_STR;
+		this.descriptionExpression = descriptionExpression != null ? descriptionExpression : EMPTY_STR;
+		this.varNameExpression = varNameExpression != null ? varNameExpression : EMPTY_STR;
 		this.severity = severity;
 		this.eatProcessedLine = eat;
 	}
@@ -221,10 +216,11 @@ public class RegexErrorPattern implements Cloneable {
 	}
 
 	private String parseStr(Matcher matcher, String str) {
-		if (str!=null)
+		if (str != null)
 			return matcher.replaceAll(str);
 		return null;
 	}
+
 	/**
 	 * @param matcher - matcher to parse the input line.
 	 * @return parsed file name or {@code null}.
@@ -304,7 +300,7 @@ public class RegexErrorPattern implements Cloneable {
 		int lineNum = getLineNum(matcher);
 		String desc = getDesc(matcher);
 		String varName = getVarName(matcher);
-		IPath externalPath = null ;
+		IPath externalPath = null;
 
 		IResource file = null;
 		if (fileName != null) {
@@ -329,14 +325,14 @@ public class RegexErrorPattern implements Cloneable {
 	 * @param filename - file name
 	 * @return location (outside of the workspace).
 	 */
-	private IPath getLocation(String filename)  {
+	private IPath getLocation(String filename) {
 		IPath path = new Path(filename);
-		File file = path.toFile() ;
-		if (!file.exists() && isCygwin && path.isAbsolute())  {
+		File file = path.toFile();
+		if (!file.exists() && isCygwin && path.isAbsolute()) {
 			try {
 				String cygfilename = Cygwin.cygwinToWindowsPath(filename);
 				IPath convertedPath = new Path(cygfilename);
-				file = convertedPath.toFile() ;
+				file = convertedPath.toFile();
 				if (file.exists()) {
 					path = convertedPath;
 				}
@@ -345,7 +341,7 @@ public class RegexErrorPattern implements Cloneable {
 			} catch (IOException e) {
 			}
 		}
-		return path ;
+		return path;
 	}
 
 	/* (non-Javadoc)
@@ -354,14 +350,13 @@ public class RegexErrorPattern implements Cloneable {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RegexErrorPattern) {
-			RegexErrorPattern that = (RegexErrorPattern)o;
+			RegexErrorPattern that = (RegexErrorPattern) o;
 			return this.pattern.toString().equals(that.pattern.toString())
-				&& this.fileExpression.equals(that.fileExpression)
-				&& this.lineExpression.equals(that.lineExpression)
-				&& this.descriptionExpression.equals(that.descriptionExpression)
-				&& this.varNameExpression.equals(that.varNameExpression)
-				&& this.severity==that.severity
-				&& this.eatProcessedLine==that.eatProcessedLine;
+					&& this.fileExpression.equals(that.fileExpression)
+					&& this.lineExpression.equals(that.lineExpression)
+					&& this.descriptionExpression.equals(that.descriptionExpression)
+					&& this.varNameExpression.equals(that.varNameExpression) && this.severity == that.severity
+					&& this.eatProcessedLine == that.eatProcessedLine;
 		}
 		return false;
 
@@ -372,12 +367,7 @@ public class RegexErrorPattern implements Cloneable {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return new RegexErrorPattern(pattern.toString(),
-				fileExpression,
-				lineExpression,
-				descriptionExpression,
-				varNameExpression,
-				severity,
-				eatProcessedLine);
+		return new RegexErrorPattern(pattern.toString(), fileExpression, lineExpression, descriptionExpression,
+				varNameExpression, severity, eatProcessedLine);
 	}
 }

@@ -60,7 +60,7 @@ public class CreateUsingOperation extends CreateElementInTUOperation {
 	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
-	public String getMainTaskName(){
+	public String getMainTaskName() {
 		return "operation.createUsingProgress"; //$NON-NLS-1$
 	}
 

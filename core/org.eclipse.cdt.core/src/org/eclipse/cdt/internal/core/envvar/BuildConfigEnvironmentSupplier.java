@@ -21,8 +21,7 @@ public class BuildConfigEnvironmentSupplier implements ICoreEnvironmentVariableS
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if (context instanceof IBuildConfiguration) {
-			ICBuildConfiguration cconfig = ((IBuildConfiguration) context)
-					.getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration cconfig = ((IBuildConfiguration) context).getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
 				try {
 					return cconfig.getVariable(name);
@@ -38,8 +37,7 @@ public class BuildConfigEnvironmentSupplier implements ICoreEnvironmentVariableS
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context instanceof IBuildConfiguration) {
-			ICBuildConfiguration cconfig = ((IBuildConfiguration) context)
-					.getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration cconfig = ((IBuildConfiguration) context).getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
 				try {
 					return cconfig.getVariables();

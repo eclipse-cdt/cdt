@@ -48,7 +48,7 @@ class DialogsMessages extends NLS {
 	public static String CacheSizeBlock_headerFileCache;
 	public static String CacheSizeBlock_indexDatabaseCache;
 	public static String CacheSizeBlock_limitRelativeToMaxHeapSize;
-	
+
 	public static String DocCommentOwnerBlock_DocToolLabel;
 	public static String DocCommentOwnerBlock_EnableProjectSpecificSettings;
 	public static String DocCommentOwnerBlock_SelectDocToolDescription;

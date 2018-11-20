@@ -46,16 +46,17 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 	@Override
 	public void init(ICommonActionExtensionSite actionSite) {
 		super.init(actionSite);
-		ICommonViewerWorkbenchSite workbenchSite= null;
+		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (actionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
 			workbenchSite = (ICommonViewerWorkbenchSite) actionSite.getViewSite();
 		}
 		if (workbenchSite != null) {
-			final IWorkbenchPartSite partSite= workbenchSite.getSite();
-			resourceRefactorGroup= new CNavigatorRefactorActionGroup(partSite, (Tree)actionSite.getStructuredViewer().getControl());
-			IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+			final IWorkbenchPartSite partSite = workbenchSite.getSite();
+			resourceRefactorGroup = new CNavigatorRefactorActionGroup(partSite,
+					(Tree) actionSite.getStructuredViewer().getControl());
+			IUndoContext workspaceContext = ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 			undoRedoGroup = new UndoRedoActionGroup(partSite, workspaceContext, true);
-			cElementRefactorGroup= new CRefactoringActionGroup(workbenchSite.getPart());
+			cElementRefactorGroup = new CRefactoringActionGroup(workbenchSite.getPart());
 		}
 	}
 

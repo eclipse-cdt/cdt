@@ -86,7 +86,7 @@ abstract public class AbstractCaseBreakQuickFix extends AbstractAstRewriteQuickF
 	}
 
 	protected IASTStatement getNextStatement(IASTStatement beforeStatement) {
-		assert(beforeStatement != null);
+		assert (beforeStatement != null);
 		IASTNode parent = beforeStatement.getParent();
 		if (parent instanceof IASTCompoundStatement) {
 			IASTCompoundStatement enclosingStatement = (IASTCompoundStatement) parent;

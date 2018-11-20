@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class CLIThread extends CLICommand<CLIThreadInfo> {
 
-    public CLIThread(IContainerDMContext ctx) {
+	public CLIThread(IContainerDMContext ctx) {
 		super(ctx, "thread"); //$NON-NLS-1$
 	}
 

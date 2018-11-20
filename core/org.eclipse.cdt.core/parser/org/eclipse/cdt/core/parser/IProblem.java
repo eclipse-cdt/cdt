@@ -85,7 +85,7 @@ public interface IProblem {
 	 * -1, returned when an offset or a line number is unknown.
 	 */
 	public final static int INT_VALUE_NOT_PROVIDED = -1;
-	
+
 	/**
 	 * Problem Categories
 	 * The high bits of a problem ID contains information about the category of a problem. 
@@ -97,27 +97,26 @@ public interface IProblem {
 	 * When a problem is tagged as Internal, it means that no change other than a local source code change
 	 * can  fix the corresponding problem.
 	 */
-	
+
 	/**
 	 * IProblem relates to a valid error on the Scanner
 	 */
 	public final static int SCANNER_RELATED = 0x01000000;
-	
+
 	/**
 	 * IProblem relates to a valid error on the preprocessor 
 	 */
 	public final static int PREPROCESSOR_RELATED = 0x02000000;
-	
+
 	/**
 	 * IProblem relates to a valid syntax error in the parser
 	 */
 	public final static int SYNTAX_RELATED = 0x04000000;
-	
+
 	/**
 	 * IProblem relates to an implementation or design limitation
 	 */
 	public final static int INTERNAL_RELATED = 0x10000000;
-
 
 	/**
 	 * Check the parameter bit-mask against an IProblem's ID to broadly segregate the 
@@ -133,44 +132,43 @@ public interface IProblem {
 	 */
 	public final static int IGNORE_CATEGORIES_MASK = 0xFFFFFF;
 
-
 	// Lexer
 	/** 
 	 * Bad character encountered by Scanner. 
 	 * Required attributes: A_SCANNER_BADCHAR
 	 */
 	public final static int SCANNER_BAD_CHARACTER = SCANNER_RELATED | 0x001;
-	
+
 	/** 
 	 * Unbounded literal string encountered by Scanner. 
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_UNBOUNDED_STRING = SCANNER_RELATED | 0x002;
-	
+
 	/** 
 	 * Invalid escape sequence encountered by Scanner. 
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_INVALID_ESCAPECHAR = SCANNER_RELATED | 0x003;
-	
+
 	/** 
 	 * Bad floating point encountered by Scanner. 
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_BAD_FLOATING_POINT = SCANNER_RELATED | 0x004;
-	
+
 	/** 
 	 * Bad hexadecimal encountered by Scanner. 
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_BAD_HEX_FORMAT = SCANNER_RELATED | 0x005;
-	
+
 	/** 
 	 * Unexpected EOF encountered by Scanner.   
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_UNEXPECTED_EOF = SCANNER_RELATED | 0x006;
-	
+
 	/** 
 	 * Bad octal encountered by Scanner. 
 	 * Required attributes: none.  
@@ -194,19 +192,19 @@ public interface IProblem {
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_DIVIDE_BY_ZERO = SCANNER_RELATED | 0x00A;
-	
+
 	/** 
 	 * Missing ')' encountered in macro by Scanner. 
 	 * Required attributes: none.  
 	 */
-	public final static int SCANNER_MISSING_R_PAREN = SCANNER_RELATED | 0x00B;	
+	public final static int SCANNER_MISSING_R_PAREN = SCANNER_RELATED | 0x00B;
 
 	/** 
 	 * Expression syntax error encountered in macro by Scanner. 
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_EXPRESSION_SYNTAX_ERROR = SCANNER_RELATED | 0x00C;
-	
+
 	/** 
 	 * Expression syntax error encountered in macro by Scanner. 
 	 * Required attributes: none.  
@@ -218,26 +216,26 @@ public interface IProblem {
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_BAD_CONDITIONAL_EXPRESSION = SCANNER_RELATED | 0x00E;
-	
+
 	/** 
 	 * Bad binary encountered by Scanner. 
 	 * Required attributes: none.  
 	 * @since 5.1
 	 */
 	public final static int SCANNER_BAD_BINARY_FORMAT = SCANNER_RELATED | 0x00F;
-	
+
 	/**
 	 * Invalid suffix on constant
 	 * @since 5.11
 	 */
 	public final static int SCANNER_CONSTANT_WITH_BAD_SUFFIX = SCANNER_RELATED | 0x010;
-	
+
 	/**
 	 * Invalid prefix on float
 	 * @since 5.11
 	 */
 	public final static int SCANNER_FLOAT_WITH_BAD_PREFIX = SCANNER_RELATED | 0x011;
-	
+
 	// Preprocessor
 	/**
 	 *	#error encountered by Preprocessor.  
@@ -245,82 +243,82 @@ public interface IProblem {
 	 * @see #A_PREPROC_POUND_ERROR
 	 */
 	public final static int PREPROCESSOR_POUND_ERROR = PREPROCESSOR_RELATED | 0x001;
-	
+
 	/**
 	 *	Inclusion not found by Preprocessor.  
 	 * Required attributes: A_PREPROC_INCLUDE_FILENAME
 	 * @see #A_PREPROC_INCLUDE_FILENAME
-	 */	
+	 */
 	public final static int PREPROCESSOR_INCLUSION_NOT_FOUND = PREPROCESSOR_RELATED | 0x002;
-	
+
 	/**
 	 *	Macro definition not found by Preprocessor.  
 	 * Required attributes:  A_PREPROC_MACRO_NAME
 	 * @see #A_PREPROC_MACRO_NAME
-	 */ 
+	 */
 	public final static int PREPROCESSOR_DEFINITION_NOT_FOUND = PREPROCESSOR_RELATED | 0x003;
-	
+
 	/**
 	 *	Preprocessor conditionals seem unbalanced.  
 	 * Required attributes:  A_PREPROC_CONDITIONAL_MISMATCH
 	 * @see #A_PREPROC_CONDITIONAL_MISMATCH
 	 */
-	
+
 	public final static int PREPROCESSOR_UNBALANCE_CONDITION = PREPROCESSOR_RELATED | 0x004;
-	
+
 	/**
 	 *	Invalid format to Macro definition.    
 	 * Required attributes:  A_PREPROC_MACRO_NAME
 	 * @see #A_PREPROC_MACRO_NAME
-	 */	
+	 */
 	public final static int PREPROCESSOR_INVALID_MACRO_DEFN = PREPROCESSOR_RELATED | 0x005;
-	
+
 	/**
 	 *	Invalid or unknown preprocessor directive encountered by Preprocessor.  
 	 * Required attributes: A_PREPROC_UNKNOWN_DIRECTIVE
 	 * @see #A_PREPROC_UNKNOWN_DIRECTIVE
-	 */	
+	 */
 	public final static int PREPROCESSOR_INVALID_DIRECTIVE = PREPROCESSOR_RELATED | 0x006;
-	
+
 	/**
 	 *	Invalid macro redefinition encountered by Preprocessor.    
 	 * Required attributes: A_PREPROC_MACRO_NAME
 	 * @see #A_PREPROC_MACRO_NAME
-	 */	
+	 */
 	public final static int PREPROCESSOR_INVALID_MACRO_REDEFN = PREPROCESSOR_RELATED | 0x007;
-	
+
 	/**
 	 *	Preprocessor Conditional cannot not be evaluated due.    
 	 * Required attributes: A_PREPROC_CONDITION
 	 * @see #A_PREPROC_CONDITION
-	 */	
+	 */
 	public final static int PREPROCESSOR_CONDITIONAL_EVAL_ERROR = PREPROCESSOR_RELATED | 0x008;
-	
+
 	/**
 	 * Invalid macro usage encountered by Preprocessor.  
 	 * Required attributes: A_PREPROC_MACRO_NAME
 	 * @see #A_PREPROC_MACRO_NAME
-	 */	
+	 */
 	public final static int PREPROCESSOR_MACRO_USAGE_ERROR = PREPROCESSOR_RELATED | 0x009;
-	
+
 	/**
 	 * Invalid Macro Pasting encountered by Preprocessor. 
 	 * Required attributes: A_PREPROC_MACRO_NAME
 	 * @see #A_PREPROC_MACRO_NAME
 	 */
 	public final static int PREPROCESSOR_MACRO_PASTING_ERROR = PREPROCESSOR_RELATED | 0x00A;
-	
+
 	/**
 	 * Circular inclusion encountered by Preprocessor.  
 	 * Required attributes: A_PREPROC_INCLUDE_FILENAME
 	 * @see #A_PREPROC_INCLUDE_FILENAME
-	 */	
+	 */
 	public final static int PREPROCESSOR_CIRCULAR_INCLUSION = PREPROCESSOR_RELATED | 0x00B;
-	
+
 	/**
 	 * macro argument "..." encountered without the required ')' i.e. must be last argument if used  
 	 * Required attributes: none
-	 */	
+	 */
 	public final static int PREPROCESSOR_MISSING_RPAREN_PARMLIST = PREPROCESSOR_RELATED | 0x00C;
 
 	/**
@@ -328,43 +326,43 @@ public interface IProblem {
 	 * Required attributes: none
 	 */
 	public final static int PREPROCESSOR_INVALID_VA_ARGS = PREPROCESSOR_RELATED | 0x00D;
-	
+
 	/**
 	 * #warning encountered by Preprocessor.  
 	 * Required attributes:  A_PREPROC_POUND_WARNING
 	 * @see #A_PREPROC_POUND_WARNING
 	 */
 	public final static int PREPROCESSOR_POUND_WARNING = PREPROCESSOR_RELATED | 0x00E;
-	
+
 	/**
 	 * Maximum inclusion depth is exceeded  
 	 * @since 5.4
 	 */
-	public final static int PREPROCESSOR_EXCEEDS_MAXIMUM_INCLUSION_DEPTH= PREPROCESSOR_RELATED | 0x00F;
-	
+	public final static int PREPROCESSOR_EXCEEDS_MAXIMUM_INCLUSION_DEPTH = PREPROCESSOR_RELATED | 0x00F;
+
 	/**
 	 * During concatenation of string literals, at least two were found with more than one type of UDL suffix.
 	 * @since 5.11
 	 */
 	public final static int PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION = PREPROCESSOR_RELATED | 0x010;
-	
+
 	/*
 	 * Syntax error, detected by the parser.
 	 */
 	public final static int SYNTAX_ERROR = SYNTAX_RELATED | 0x001;
-	
+
 	/**
 	 * Missing semicolon.
 	 * @since 5.3
 	 */
 	public final static int MISSING_SEMICOLON = SYNTAX_RELATED | 0x002;
-	
+
 	/**
 	 * The parser's template argument nesting depth limit was exceeded.
 	 * @since 6.4
 	 */
 	public final static int TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED = INTERNAL_RELATED | 0x01;
-	
+
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.

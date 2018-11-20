@@ -68,12 +68,9 @@ public class ExpDialog extends AbstractPropertyDialog {
 	private String[] names_l, names_t;
 	private java.util.List<String> existing;
 
-	public ExpDialog(Shell parent, boolean _newAction,
-		String title, String _data1, String _data2,
-		ICConfigurationDescription _cfgd,
-		String[] _langs, String[] _types,
-		int _kind, String[] _names_l, String[] _names_t,
-		java.util.List<String> _existing, boolean _isWsp) {
+	public ExpDialog(Shell parent, boolean _newAction, String title, String _data1, String _data2,
+			ICConfigurationDescription _cfgd, String[] _langs, String[] _types, int _kind, String[] _names_l,
+			String[] _names_t, java.util.List<String> _existing, boolean _isWsp) {
 		super(parent, title);
 		super.text1 = (_data1 == null) ? EMPTY_STR : _data1;
 		super.text2 = (_data2 == null) ? EMPTY_STR : _data2;
@@ -92,7 +89,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 	protected Control createDialogArea(Composite c) {
 		GridData gd;
 		if (c.getLayoutData() instanceof GridData) {
-			gd = (GridData)c.getLayoutData();
+			gd = (GridData) c.getLayoutData();
 			gd.horizontalIndent = 10;
 			c.setLayoutData(gd);
 		}
@@ -111,7 +108,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons(false);
-			}});
+			}
+		});
 
 		Label l2 = new Label(c, SWT.NONE);
 		l2.setText(Messages.ExpDialog_7);
@@ -126,7 +124,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons(false);
-			}});
+			}
+		});
 
 		if (kind != ICSettingEntry.MACRO) {
 			l1.setVisible(false);
@@ -135,7 +134,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 		} else {
 			txt1.setText(super.text1);
 			txt2.setText(super.text1);
-			if (!newAction) txt1.setEnabled(false); // macro name
+			if (!newAction)
+				txt1.setEnabled(false); // macro name
 		}
 
 		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
@@ -160,7 +160,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
-			}});
+			}
+		});
 
 		c_wsp.setImage(AbstractExportTab.getWspImage(isWsp));
 
@@ -192,7 +193,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				langs.setEnabled(!c_langs.getSelection());
-			}});
+			}
+		});
 
 		c_types = new Button(dest, SWT.CHECK);
 		c_types.setText(TO_ALL);
@@ -201,7 +203,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				types.setEnabled(!c_types.getSelection());
-			}});
+			}
+		});
 
 		langs = new List(dest, SWT.BORDER | SWT.MULTI);
 		langs.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -217,7 +220,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		message.setLayoutData(gd);
-	    message.setForeground(c.getDisplay().getSystemColor(SWT.COLOR_RED));
+		message.setForeground(c.getDisplay().getSystemColor(SWT.COLOR_RED));
 
 		// DUMMY PLACEHOLDER
 		new Label(c, 0).setLayoutData(new GridData(GridData.BEGINNING));
@@ -231,12 +234,13 @@ public class ExpDialog extends AbstractPropertyDialog {
 	}
 
 	private void setButtons(boolean anew) {
-		if (b_ok == null) return; // while init only
+		if (b_ok == null)
+			return; // while init only
 		message.setText(EMPTY_STR);
 		String name;
 		boolean enabled = true;
 		if (kind == ICSettingEntry.MACRO)
-			name  = txt1.getText().trim();
+			name = txt1.getText().trim();
 		else
 			name = txt2.getText().trim();
 		if (name.length() == 0) {
@@ -272,10 +276,10 @@ public class ExpDialog extends AbstractPropertyDialog {
 			shell.dispose();
 		} else if (e.widget.equals(b_vars)) {
 			s = AbstractCPropertyTab.getVariableDialog(shell, cfgd);
-			if (s != null) txt2.insert(s);
-		}  else if (e.widget.equals(b_work)) {
-			if (kind == ICSettingEntry.INCLUDE_PATH ||
-				kind == ICSettingEntry.LIBRARY_PATH)
+			if (s != null)
+				txt2.insert(s);
+		} else if (e.widget.equals(b_work)) {
+			if (kind == ICSettingEntry.INCLUDE_PATH || kind == ICSettingEntry.LIBRARY_PATH)
 				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, txt2.getText());
 			else
 				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, txt2.getText());
@@ -286,13 +290,14 @@ public class ExpDialog extends AbstractPropertyDialog {
 				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_file)) {
-			if (kind == ICSettingEntry.INCLUDE_PATH ||
-				kind == ICSettingEntry.LIBRARY_PATH) {
+			if (kind == ICSettingEntry.INCLUDE_PATH || kind == ICSettingEntry.LIBRARY_PATH) {
 				s = AbstractCPropertyTab.getFileSystemDirDialog(shell, txt2.getText());
-			} else if (kind==ICSettingEntry.INCLUDE_FILE) {
-				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText(), IncludeDialog.FILTER_INCLUDE_FILE);
-			} else if (kind==ICSettingEntry.LIBRARY_FILE) {
-				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText(), IncludeDialog.FILTER_LIBRARY_FILE);
+			} else if (kind == ICSettingEntry.INCLUDE_FILE) {
+				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText(),
+						IncludeDialog.FILTER_INCLUDE_FILE);
+			} else if (kind == ICSettingEntry.LIBRARY_FILE) {
+				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText(),
+						IncludeDialog.FILTER_LIBRARY_FILE);
 			} else {
 				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText());
 			}
@@ -311,14 +316,16 @@ public class ExpDialog extends AbstractPropertyDialog {
 		} else {
 			lst.setEnabled(true);
 			check.setSelection(false);
-			if (sel.length == 0) return;
+			if (sel.length == 0)
+				return;
 			int cnt = 0;
 			String[] items = lst.getItems();
 
 			int[] indices = new int[items.length];
-			for (int i=0; i<indices.length; i++) indices[i] = -1;
+			for (int i = 0; i < indices.length; i++)
+				indices[i] = -1;
 
-			for (int i=0; i<items.length; i++) {
+			for (int i = 0; i < items.length; i++) {
 				for (String element : sel) {
 					if (items[i].equals(element)) {
 						indices[cnt++] = i;

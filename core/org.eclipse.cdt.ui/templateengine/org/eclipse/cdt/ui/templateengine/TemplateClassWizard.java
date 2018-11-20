@@ -46,20 +46,17 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 	}
 
 	@Override
-	public String getListSelectionTitle()
-	{
+	public String getListSelectionTitle() {
 		return Messages.getString("TemplateClassWizard.1"); //$NON-NLS-1$
 	}
 
 	@Override
-	public String getListSelectionDescription()
-	{
+	public String getListSelectionDescription() {
 		return Messages.getString("TemplateClassWizard.2"); //$NON-NLS-1$
 	}
 
 	@Override
-	public String getListSelectionLabel()
-	{
+	public String getListSelectionLabel() {
 		return Messages.getString("TemplateClassWizard.3"); //$NON-NLS-1$
 	}
 
@@ -70,7 +67,7 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 			projectSelectionPage.setTitle(Messages.getString("TemplateClassWizard.4")); //$NON-NLS-1$
 			projectSelectionPage.setDescription(Messages.getString("TemplateClassWizard.5")); //$NON-NLS-1$
 			projectSelectionPage.init(selection);
-			pagesBeforeTemplatePages = new IWizardDataPage[] {projectSelectionPage};
+			pagesBeforeTemplatePages = new IWizardDataPage[] { projectSelectionPage };
 		}
 		return pagesBeforeTemplatePages;
 	}
@@ -85,13 +82,15 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 
 	@Override
 	public Template[] getTemplates() {
-		SortedSet<TemplateCore> templateList = new TreeSet<TemplateCore>(TemplateCore.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
+		SortedSet<TemplateCore> templateList = new TreeSet<TemplateCore>(
+				TemplateCore.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
 		templateList.addAll(Arrays.asList(TemplateEngineUI.getDefault().getTemplates()));
 		return templateList.toArray(new Template[templateList.size()]);
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		configElement = config;
 	}
 
@@ -112,9 +111,8 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 
 	@Override
 	public String getDescription(Object object) {
-		if (object instanceof Template)
-		{
-			return ((Template)object).getDescription();
+		if (object instanceof Template) {
+			return ((Template) object).getDescription();
 		}
 		return ""; //$NON-NLS-1$
 	}

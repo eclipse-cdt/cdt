@@ -20,6 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * Marks ambiguous condition nodes.
  */
 public interface IASTAmbiguousCondition extends IASTExpression {
-    public static final ASTNodeProperty SUBCONDITION = new ASTNodeProperty("IASTAmbiguousCondition.SUBCONDITION"); //$NON-NLS-1$
+	public static final ASTNodeProperty SUBCONDITION = new ASTNodeProperty("IASTAmbiguousCondition.SUBCONDITION"); //$NON-NLS-1$
 
 }

@@ -23,7 +23,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 public class QuickFixUseDotOperator extends AbstractCodanCMarkerResolution {
-	
+
 	@Override
 	public String getLabel() {
 		return QuickFixMessages.QuickFixUseDotOperator_replace_ptr;
@@ -40,10 +40,10 @@ public class QuickFixUseDotOperator extends AbstractCodanCMarkerResolution {
 				IRegion region;
 				try {
 					region = dad.find(lineOffset + columnOffset, "->", //$NON-NLS-1$
-							/* forwardSearch */true, /* caseSensitive */true,
-							/* wholeWord */true, /* regExSearch */false);
+							/* forwardSearch */true, /* caseSensitive */true, /* wholeWord */true,
+							/* regExSearch */false);
 					if (region == null) {
-						CheckersUiActivator.log("QuickFixUseDotOperator failed to find '->'");  //$NON-NLS-1$
+						CheckersUiActivator.log("QuickFixUseDotOperator failed to find '->'"); //$NON-NLS-1$
 						return;
 					}
 					document.replace(region.getOffset(), 2, "."); //$NON-NLS-1$
@@ -68,5 +68,5 @@ public class QuickFixUseDotOperator extends AbstractCodanCMarkerResolution {
 		}
 		return 0;
 	}
-	
+
 }

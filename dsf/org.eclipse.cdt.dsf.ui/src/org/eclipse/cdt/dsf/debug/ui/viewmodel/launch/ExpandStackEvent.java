@@ -22,9 +22,9 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
  * @since 1.1
  */
 public class ExpandStackEvent extends AbstractDMEvent<IExecutionDMContext> {
-    
-    public ExpandStackEvent(IExecutionDMContext execCtx) {
-        super(execCtx);
-    }
+
+	public ExpandStackEvent(IExecutionDMContext execCtx) {
+		super(execCtx);
+	}
 
 }

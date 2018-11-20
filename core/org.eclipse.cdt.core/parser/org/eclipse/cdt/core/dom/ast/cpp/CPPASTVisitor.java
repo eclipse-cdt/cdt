@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
  */
 @Deprecated
 public abstract class CPPASTVisitor extends ASTVisitor implements ICPPASTVisitor {
-	
+
 	/**
 	 * @see ASTVisitor#ASTVisitor()
 	 */

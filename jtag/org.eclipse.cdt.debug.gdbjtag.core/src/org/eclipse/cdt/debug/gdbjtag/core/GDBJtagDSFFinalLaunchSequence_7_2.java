@@ -13,7 +13,6 @@
  \******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,8 @@ import org.eclipse.core.runtime.Status;
  */
 public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequence {
 
-	public GDBJtagDSFFinalLaunchSequence_7_2(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	public GDBJtagDSFFinalLaunchSequence_7_2(DsfSession session, Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
 	}
 
@@ -47,8 +47,9 @@ public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequ
 			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_JTAG)));
 
 			// Now insert our steps right after the initialization of the base class.
-			orderList.add(orderList.indexOf("stepInitializeJTAGFinalLaunchSequence") + 1, "stepInitializeJTAGSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+			orderList.add(orderList.indexOf("stepInitializeJTAGFinalLaunchSequence") + 1, //$NON-NLS-1$
+					"stepInitializeJTAGSequence_7_2"); //$NON-NLS-1$
+
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
@@ -65,13 +66,14 @@ public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequ
 		IGDBControl gdbControl = tracker.getService(IGDBControl.class);
 		IGDBProcesses procService = tracker.getService(IGDBProcesses.class);
 		tracker.dispose();
-		
-        if (gdbControl == null || procService == null) {
+
+		if (gdbControl == null || procService == null) {
 			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot obtain service", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
-        setContainerContext(procService.createContainerContextFromGroupId(gdbControl.getContext(), GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID));
+		setContainerContext(procService.createContainerContextFromGroupId(gdbControl.getContext(),
+				GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID));
 		rm.done();
 	}
 }

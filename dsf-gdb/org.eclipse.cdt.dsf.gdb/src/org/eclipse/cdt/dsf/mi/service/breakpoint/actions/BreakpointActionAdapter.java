@@ -29,32 +29,32 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public class BreakpointActionAdapter implements IAdaptable {
 
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fServiceTracker;
-    private final IDMContext fContext;
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fServiceTracker;
+	private final IDMContext fContext;
 
-    public BreakpointActionAdapter(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
-        fExecutor = executor;
-        fServiceTracker = serviceTracker;
-        fContext = context;
-    }
+	public BreakpointActionAdapter(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
+		fExecutor = executor;
+		fServiceTracker = serviceTracker;
+		fContext = context;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-   	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter.equals(ILogActionEnabler.class)) {
-            return (T)new MILogActionEnabler(fExecutor, fServiceTracker, fContext);
-        }
-        if (adapter.equals(IResumeActionEnabler.class)) {
-            return (T)new MIResumeActionEnabler(fExecutor, fServiceTracker, fContext);
-        }
-        if (adapter.equals(IReverseDebugEnabler.class)) {
-        	return (T)new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
-        }
-        if (adapter.equals(ICLIDebugActionEnabler.class)) {
-        	return (T)new CLIDebugActionEnabler(fExecutor, fServiceTracker, fContext);
-        }
-        return null;
-    }
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.equals(ILogActionEnabler.class)) {
+			return (T) new MILogActionEnabler(fExecutor, fServiceTracker, fContext);
+		}
+		if (adapter.equals(IResumeActionEnabler.class)) {
+			return (T) new MIResumeActionEnabler(fExecutor, fServiceTracker, fContext);
+		}
+		if (adapter.equals(IReverseDebugEnabler.class)) {
+			return (T) new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
+		}
+		if (adapter.equals(ICLIDebugActionEnabler.class)) {
+			return (T) new CLIDebugActionEnabler(fExecutor, fServiceTracker, fContext);
+		}
+		return null;
+	}
 
 }

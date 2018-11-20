@@ -27,14 +27,16 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(
-				ProblemBindingChecker.ERR_ID_AmbiguousProblem, ProblemBindingChecker.ERR_ID_Candidates,
-				ProblemBindingChecker.ERR_ID_CircularReferenceProblem, ProblemBindingChecker.ERR_ID_FieldResolutionProblem,
+		enableProblems(ProblemBindingChecker.ERR_ID_AmbiguousProblem, ProblemBindingChecker.ERR_ID_Candidates,
+				ProblemBindingChecker.ERR_ID_CircularReferenceProblem,
+				ProblemBindingChecker.ERR_ID_FieldResolutionProblem,
 				ProblemBindingChecker.ERR_ID_FunctionResolutionProblem, ProblemBindingChecker.ERR_ID_InvalidArguments,
-				ProblemBindingChecker.ERR_ID_InvalidTemplateArgumentsProblem, ProblemBindingChecker.ERR_ID_LabelStatementNotFoundProblem,
-				ProblemBindingChecker.ERR_ID_MemberDeclarationNotFoundProblem, ProblemBindingChecker.ERR_ID_MethodResolutionProblem,
-				ProblemBindingChecker.ERR_ID_OverloadProblem, ProblemBindingChecker.ERR_ID_RedeclarationProblem,
-				ProblemBindingChecker.ERR_ID_RedefinitionProblem, ProblemBindingChecker.ERR_ID_TypeResolutionProblem,
+				ProblemBindingChecker.ERR_ID_InvalidTemplateArgumentsProblem,
+				ProblemBindingChecker.ERR_ID_LabelStatementNotFoundProblem,
+				ProblemBindingChecker.ERR_ID_MemberDeclarationNotFoundProblem,
+				ProblemBindingChecker.ERR_ID_MethodResolutionProblem, ProblemBindingChecker.ERR_ID_OverloadProblem,
+				ProblemBindingChecker.ERR_ID_RedeclarationProblem, ProblemBindingChecker.ERR_ID_RedefinitionProblem,
+				ProblemBindingChecker.ERR_ID_TypeResolutionProblem,
 				ProblemBindingChecker.ERR_ID_VariableResolutionProblem);
 	}
 

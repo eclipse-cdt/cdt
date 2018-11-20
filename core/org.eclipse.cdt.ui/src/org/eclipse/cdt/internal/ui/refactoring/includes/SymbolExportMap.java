@@ -74,13 +74,13 @@ public class SymbolExportMap {
 
 	/**
 	 * Indicates that the given symbol is exported by the given header.
-
+	
 	 * @param symbol The symbol represented by its fully qualified name.
 	 * @param header The header file exporting the symbol.
 	 */
 	protected void addMapping(String symbol, IncludeInfo header) {
 		if (symbol.equals(header))
-			return;  // Don't allow mapping to itself.
+			return; // Don't allow mapping to itself.
 		Set<IncludeInfo> list = map.get(symbol);
 		if (list == null) {
 			list = new LinkedHashSet<IncludeInfo>();
@@ -91,7 +91,7 @@ public class SymbolExportMap {
 
 	/**
 	 * Indicates that the given symbol is exported by the given header.
-
+	
 	 * @param symbol The symbol represented by its fully qualified name.
 	 * @param header The header file exporting the symbol. The header is represented by an include
 	 *     name optionally surrounded by double quotes or angle brackets. Angle brackets indicate
@@ -181,7 +181,7 @@ public class SymbolExportMap {
 				if (i > 0)
 					buf.append(", "); //$NON-NLS-1$
 				buf.append(targets.get(i));
-			} 
+			}
 		}
 		return buf.toString();
 	}

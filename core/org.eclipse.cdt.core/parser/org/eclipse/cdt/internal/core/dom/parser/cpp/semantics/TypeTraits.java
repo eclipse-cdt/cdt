@@ -57,22 +57,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
  * A collection of static methods for determining type traits.
  */
 public class TypeTraits {
-	private static final ICPPBasicType[] SIGNED_UNDERLYING_ENUM_TYPES = {
-		CPPBasicType.INT,
-		CPPBasicType.LONG,
-		CPPBasicType.LONG_LONG,
-		CPPBasicType.INT128
-	};
-	private static final ICPPBasicType[] UNSIGNED_UNDERLYING_ENUM_TYPES = {
-		CPPBasicType.UNSIGNED_INT,
-		CPPBasicType.UNSIGNED_LONG,
-		CPPBasicType.UNSIGNED_LONG_LONG,
-		CPPBasicType.UNSIGNED_INT128
-	};
+	private static final ICPPBasicType[] SIGNED_UNDERLYING_ENUM_TYPES = { CPPBasicType.INT, CPPBasicType.LONG,
+			CPPBasicType.LONG_LONG, CPPBasicType.INT128 };
+	private static final ICPPBasicType[] UNSIGNED_UNDERLYING_ENUM_TYPES = { CPPBasicType.UNSIGNED_INT,
+			CPPBasicType.UNSIGNED_LONG, CPPBasicType.UNSIGNED_LONG_LONG, CPPBasicType.UNSIGNED_INT128 };
 
-	private TypeTraits() {}
-
-
+	private TypeTraits() {
+	}
 
 	public static boolean isDefaultedMethod(ICPPMethod method) {
 		if (method instanceof ICPPInternalFunction) {
@@ -85,7 +76,6 @@ public class TypeTraits {
 		}
 		return false;
 	}
-
 
 	/**
 	 *	From $3.9 / 10:
@@ -329,8 +319,8 @@ public class TypeTraits {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
-				if (type instanceof ICPPClassType && !classType.isSameType(type) &&
-						!hasTrivialCopyCtor((ICPPClassType) type)) {
+				if (type instanceof ICPPClassType && !classType.isSameType(type)
+						&& !hasTrivialCopyCtor((ICPPClassType) type)) {
 					return false;
 				}
 			}
@@ -368,8 +358,8 @@ public class TypeTraits {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
-				if (type instanceof ICPPClassType && !classType.isSameType(type) &&
-						!hasTrivialDefaultConstructor((ICPPClassType) type, maxdepth - 1)) {
+				if (type instanceof ICPPClassType && !classType.isSameType(type)
+						&& !hasTrivialDefaultConstructor((ICPPClassType) type, maxdepth - 1)) {
 					return false;
 				}
 			}
@@ -397,7 +387,7 @@ public class TypeTraits {
 
 	private static boolean hasTrivialDestructor(ICPPClassType classType, Set<ICPPClassType> checkedClasses) {
 		if (!checkedClasses.add(classType))
-			return true;  // Checked already.
+			return true; // Checked already.
 
 		for (ICPPMethod method : classType.getDeclaredMethods()) {
 			if (method.isDestructor() && !isDefaultedMethod(method))
@@ -411,8 +401,7 @@ public class TypeTraits {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
-				if (type instanceof ICPPClassType &&
-						!hasTrivialDestructor((ICPPClassType) type, checkedClasses)) {
+				if (type instanceof ICPPClassType && !hasTrivialDestructor((ICPPClassType) type, checkedClasses)) {
 					return false;
 				}
 			}
@@ -479,7 +468,7 @@ public class TypeTraits {
 		if (CPPTemplates.isDependentType(type)) {
 			return new CPPUnaryTypeTransformation(Operator.underlying_type, type);
 		}
-		
+
 		type = SemanticUtil.getSimplifiedType(type);
 		if (!(type instanceof ICPPEnumeration)) {
 			return ProblemType.ENUMERATION_EXPECTED;
@@ -519,7 +508,7 @@ public class TypeTraits {
 				return type;
 			}
 		}
-		return types[types.length - 1];  // Assume it fits into the largest type provided.
+		return types[types.length - 1]; // Assume it fits into the largest type provided.
 	}
 
 	/**
@@ -578,8 +567,8 @@ public class TypeTraits {
 	 * If 'checkTrivial' is true, additionally checks if 'typeToConstruct'
 	 * is trivially constructible from said argument types.
 	 */
-	public static boolean isConstructible(IType typeToConstruct, IType[] argumentTypes,
-			IBinding pointOfDefinition, boolean checkTrivial) {
+	public static boolean isConstructible(IType typeToConstruct, IType[] argumentTypes, IBinding pointOfDefinition,
+			boolean checkTrivial) {
 		IType type = SemanticUtil.getSimplifiedType(typeToConstruct);
 		if (!(type instanceof ICPPClassType)) {
 			return true;

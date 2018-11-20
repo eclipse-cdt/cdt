@@ -52,7 +52,6 @@ import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
 import org.eclipse.cdt.internal.ui.editor.CMarkerAnnotation;
 import org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.AnnotationHoverInput;
 
-
 /**
  * Originally copied from org.eclipse.jdt.internal.ui.text.java.hover.JavaExpandHover
  * @since 6.1
@@ -61,9 +60,9 @@ public class CExpandHover extends AnnotationExpandHover {
 
 	/** Id of CDT Breakpoint annotation type */
 	private static final String ANNOTATION_TYPE_BREAKPOINT = "org.eclipse.cdt.debug.core.breakpoint"; //$NON-NLS-1$
-	
+
 	/** Id of the no breakpoint fake annotation */
-	public static final String NO_BREAKPOINT_ANNOTATION= "org.eclipse.cdt.internal.ui.NoBreakpointAnnotation"; //$NON-NLS-1$
+	public static final String NO_BREAKPOINT_ANNOTATION = "org.eclipse.cdt.internal.ui.NoBreakpointAnnotation"; //$NON-NLS-1$
 
 	private static class NoBreakpointAnnotation extends Annotation implements IAnnotationPresentation {
 
@@ -77,7 +76,7 @@ public class CExpandHover extends AnnotationExpandHover {
 		@Override
 		public void paint(GC gc, Canvas canvas, Rectangle bounds) {
 			// draw affordance so the user know she can click here to get a breakpoint
-			Image fImage= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_PUBLIC_FIELD);
+			Image fImage = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_PUBLIC_FIELD);
 			ImageUtilities.drawImage(fImage, gc, canvas, bounds, SWT.CENTER);
 		}
 
@@ -90,8 +89,8 @@ public class CExpandHover extends AnnotationExpandHover {
 		}
 	}
 
-	private AnnotationPreferenceLookup fLookup= new AnnotationPreferenceLookup();
-	private IPreferenceStore fStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
+	private AnnotationPreferenceLookup fLookup = new AnnotationPreferenceLookup();
+	private IPreferenceStore fStore = CUIPlugin.getDefault().getCombinedPreferenceStore();
 
 	public CExpandHover(CompositeRuler ruler, IAnnotationAccess access, IDoubleClickListener doubleClickListener) {
 		super(ruler, access, doubleClickListener);
@@ -103,35 +102,36 @@ public class CExpandHover extends AnnotationExpandHover {
 	@Override
 	protected Object getHoverInfoForLine(final ISourceViewer viewer, final int line) {
 		//Use EDITOR_EVALUATE_TEMPORARY_PROBLEMS rather than EDITOR_CORRECTION_INDICATION as EDITOR_CORRECTION_INDICATION is not used in CDT
-		final boolean showTemporaryProblems= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS);
-		IAnnotationModel model= viewer.getAnnotationModel();
-		IDocument document= viewer.getDocument();
+		final boolean showTemporaryProblems = PreferenceConstants.getPreferenceStore()
+				.getBoolean(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS);
+		IAnnotationModel model = viewer.getAnnotationModel();
+		IDocument document = viewer.getDocument();
 
 		if (model == null)
 			return null;
 
-		List<Annotation> exact= new ArrayList<>();
-		HashMap<Position, Object> messagesAtPosition= new HashMap<>();
+		List<Annotation> exact = new ArrayList<>();
+		HashMap<Position, Object> messagesAtPosition = new HashMap<>();
 
-		Iterator<Annotation> e= model.getAnnotationIterator();
+		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Annotation annotation= e.next();
+			Annotation annotation = e.next();
 
 			if (fAnnotationAccess instanceof IAnnotationAccessExtension)
-				if (!((IAnnotationAccessExtension)fAnnotationAccess).isPaintable(annotation))
+				if (!((IAnnotationAccessExtension) fAnnotationAccess).isPaintable(annotation))
 					continue;
 
-			if (annotation instanceof ICAnnotation && !isIncluded((ICAnnotation)annotation, showTemporaryProblems))
+			if (annotation instanceof ICAnnotation && !isIncluded((ICAnnotation) annotation, showTemporaryProblems))
 				continue;
 
-			AnnotationPreference pref= fLookup.getAnnotationPreference(annotation);
+			AnnotationPreference pref = fLookup.getAnnotationPreference(annotation);
 			if (pref != null) {
-				String key= pref.getVerticalRulerPreferenceKey();
+				String key = pref.getVerticalRulerPreferenceKey();
 				if (key != null && !fStore.getBoolean(key))
 					continue;
 			}
 
-			Position position= model.getPosition(annotation);
+			Position position = model.getPosition(annotation);
 			if (position == null)
 				continue;
 
@@ -159,13 +159,13 @@ public class CExpandHover extends AnnotationExpandHover {
 		if (exact.size() <= 1)
 			return null;
 
-		AnnotationHoverInput input= new AnnotationHoverInput();
-		input.fAnnotations= exact.toArray(new Annotation[0]);
-		input.fViewer= viewer;
-		input.fRulerInfo= fCompositeRuler;
-		input.fAnnotationListener= fgListener;
-		input.fDoubleClickListener= fDblClickListener;
-		input.redoAction= new AnnotationExpansionControl.ICallback() {
+		AnnotationHoverInput input = new AnnotationHoverInput();
+		input.fAnnotations = exact.toArray(new Annotation[0]);
+		input.fViewer = viewer;
+		input.fRulerInfo = fCompositeRuler;
+		input.fAnnotationListener = fgListener;
+		input.fDoubleClickListener = fDblClickListener;
+		input.redoAction = new AnnotationExpansionControl.ICallback() {
 
 			@Override
 			public void run(IInformationControlExtension2 control) {
@@ -173,7 +173,7 @@ public class CExpandHover extends AnnotationExpandHover {
 			}
 
 		};
-		input.model= model;
+		input.model = model;
 
 		return input;
 	}
@@ -181,7 +181,8 @@ public class CExpandHover extends AnnotationExpandHover {
 	private boolean isIncluded(ICAnnotation annotation, boolean showTemporaryProblems) {
 
 		// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=138601
-		if (annotation instanceof ProblemAnnotation && CMarkerAnnotation.TASK_ANNOTATION_TYPE.equals(annotation.getType()))
+		if (annotation instanceof ProblemAnnotation
+				&& CMarkerAnnotation.TASK_ANNOTATION_TYPE.equals(annotation.getType()))
 			return false;
 
 		if (!annotation.isProblem())
@@ -193,7 +194,6 @@ public class CExpandHover extends AnnotationExpandHover {
 		if (annotation.hasOverlay() && !annotation.isMarkedDeleted())
 			return true;
 
-
 		if (annotation.hasOverlay())
 			return (!isIncluded(annotation.getOverlay(), showTemporaryProblems));
 
@@ -202,14 +202,14 @@ public class CExpandHover extends AnnotationExpandHover {
 	}
 
 	@Override
-	protected int getAnnotationOffsetForSort(IAnnotationModel model, Annotation a)  {
-		if(this.isBreakpointAnnotation(a)) {
+	protected int getAnnotationOffsetForSort(IAnnotationModel model, Annotation a) {
+		if (this.isBreakpointAnnotation(a)) {
 			return Integer.MAX_VALUE; //Force breakpoints to end
 		} else {
 			return model.getPosition(a).offset;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.texteditor.AnnotationExpandHover#getOrder(org.eclipse.jface.text.source.Annotation)
 	 */
@@ -224,14 +224,14 @@ public class CExpandHover extends AnnotationExpandHover {
 	private boolean isBreakpointAnnotation(Annotation a) {
 		return a.getType().equals(ANNOTATION_TYPE_BREAKPOINT);
 	}
-	
+
 	private boolean containsBreakpointAnnotation(List<Annotation> annotations) {
-		for(Annotation a : annotations) {
-			if(isBreakpointAnnotation(a)) {
+		for (Annotation a : annotations) {
+			if (isBreakpointAnnotation(a)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 }

@@ -19,25 +19,24 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICfgScannerConfigBuilderInfo2Set {
 	boolean isPerRcTypeDiscovery();
-	
+
 	void setPerRcTypeDiscovery(boolean on);
-	
+
 	Map<CfgInfoContext, IScannerConfigBuilderInfo2> getInfoMap();
-	
+
 	CfgInfoContext[] getContexts();
-	
+
 	IScannerConfigBuilderInfo2 getInfo(CfgInfoContext context);
-	
+
 	IScannerConfigBuilderInfo2 applyInfo(CfgInfoContext context, IScannerConfigBuilderInfo2 base) throws CoreException;
-	
+
 	IConfiguration getConfiguration();
-	
+
 	boolean isProfileSupported(CfgInfoContext context, String profileId);
 }

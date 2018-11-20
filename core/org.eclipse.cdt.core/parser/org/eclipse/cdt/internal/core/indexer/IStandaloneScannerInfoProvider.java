@@ -30,7 +30,7 @@ public interface IStandaloneScannerInfoProvider {
 	 * or an empty IScannerInfo object if the file path is invalid.
 	 */
 	IScannerInfo getScannerInformation(String path);
-	
+
 	/**
 	 * Returns an IScannerInfo when you don't necessary have access to a path. 
 	 * 

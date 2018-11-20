@@ -31,25 +31,25 @@ import org.eclipse.swt.graphics.RGB;
  */
 
 public class LabelBackground extends LabelAttribute {
-    private RGB fBackground;
+	private RGB fBackground;
 
-    public LabelBackground(RGB background) {
-        fBackground = background;
-    }
-    
-    public RGB getBackground() {
-        return fBackground;
-    }
-    
-    public void setBackground(RGB background) {
-        fBackground = background;
-    }
+	public LabelBackground(RGB background) {
+		fBackground = background;
+	}
 
-    @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
-        RGB background = getBackground();
-        if (background != null) {
-            update.setBackground(background, columnIndex);
-        }
-    }
+	public RGB getBackground() {
+		return fBackground;
+	}
+
+	public void setBackground(RGB background) {
+		fBackground = background;
+	}
+
+	@Override
+	public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+		RGB background = getBackground();
+		if (background != null) {
+			update.setBackground(background, columnIndex);
+		}
+	}
 }

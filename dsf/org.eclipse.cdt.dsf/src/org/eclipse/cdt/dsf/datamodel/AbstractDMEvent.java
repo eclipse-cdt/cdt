@@ -25,14 +25,15 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 @Immutable
 abstract public class AbstractDMEvent<V extends IDMContext> implements IDMEvent<V> {
 
-    private final V fModelContext;
-    public AbstractDMEvent(V context) {
-        fModelContext = context;
-    }
-    
-    @Override
-    public V getDMContext() {
-        return fModelContext;
-    }
+	private final V fModelContext;
+
+	public AbstractDMEvent(V context) {
+		fModelContext = context;
+	}
+
+	@Override
+	public V getDMContext() {
+		return fModelContext;
+	}
 
 }

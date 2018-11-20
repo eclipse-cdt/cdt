@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
 import org.eclipse.cdt.core.model.ICElement;
 
 /**

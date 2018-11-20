@@ -24,7 +24,7 @@ public final class WizardMessages extends NLS {
 	public static String RunNinjaPage_env_description;
 	public static String RunNinjaPage_options_label;
 	public static String RunNinjaPage_options_description;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages("org.eclipse.cdt.internal.meson.ui.wizards.wizardmessages", WizardMessages.class); //$NON-NLS-1$
@@ -33,4 +33,3 @@ public final class WizardMessages extends NLS {
 	private WizardMessages() {
 	}
 }
-

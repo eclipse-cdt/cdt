@@ -21,7 +21,7 @@ import org.eclipse.swt.dnd.*;
 public class DisassemblyDropAdapter extends DropTargetAdapter {
 
 	private DisassemblyPart fDisassembly;
-	
+
 	/**
 	 * New DisassemblyDropAdapter.
 	 */
@@ -39,12 +39,12 @@ public class DisassemblyDropAdapter extends DropTargetAdapter {
 		if (isFileDataType(dataType)) {
 			// event.data is an array of strings which represent the absolute file pathes
 			assert event.data instanceof String[];
-			String fileNames[] = (String[])event.data;
+			String fileNames[] = (String[]) event.data;
 			dropFiles(fileNames);
 		} else if (isTextDataType(dataType)) {
 			// event.data is a string
 			assert event.data instanceof String;
-			String text = (String)event.data;
+			String text = (String) event.data;
 			if (text.indexOf('/') != -1 || text.indexOf('.') != -1) {
 				dropFiles(new String[] { text });
 			} else {
@@ -74,6 +74,7 @@ public class DisassemblyDropAdapter extends DropTargetAdapter {
 	private static boolean isFileDataType(TransferData dataType) {
 		return FileTransfer.getInstance().isSupportedType(dataType);
 	}
+
 	private static boolean isTextDataType(TransferData dataType) {
 		return TextTransfer.getInstance().isSupportedType(dataType);
 	}

@@ -42,15 +42,15 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 
 public class OpenExternalProblemAction extends ActionDelegate implements IObjectActionDelegate {
-	
-	IStructuredSelection selection ;
+
+	IStructuredSelection selection;
 
 	public OpenExternalProblemAction() {
 	}
 
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		
+
 	}
 
 	@Override
@@ -60,19 +60,21 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 			try {
 				IMarker marker = (IMarker) object;
 				Object attributeObject = marker.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
-				if (attributeObject instanceof String)  {
+				if (attributeObject instanceof String) {
 					String externalLocation = (String) attributeObject;
 					IPath externalPath = new Path(externalLocation);
-					
-					File file = externalPath.toFile() ;
+
+					File file = externalPath.toFile();
 					if (!file.canRead()) {
-						MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
+						MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(),
+								SWT.ICON_ERROR | SWT.OK);
 						errorMsg.setText(Messages.OpenExternalProblemAction_ErrorOpeningFile);
-						errorMsg.setMessage(NLS.bind(Messages.OpenExternalProblemAction_CannotReadExternalLocation, externalPath));
+						errorMsg.setMessage(
+								NLS.bind(Messages.OpenExternalProblemAction_CannotReadExternalLocation, externalPath));
 						errorMsg.open();
 						return;
 					}
-					
+
 					IEditorPart editor = EditorUtility.openInEditor(externalPath, getCProject(marker));
 					if (editor != null) {
 						IDE.gotoMarker(editor, marker);
@@ -83,17 +85,17 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 			}
 		}
 	}
-	
-	private ICProject getCProject(IMarker marker)  {
-		ICProject cproject = null ;
-		
+
+	private ICProject getCProject(IMarker marker) {
+		ICProject cproject = null;
+
 		if (marker.getResource() instanceof IProject) {
 			IProject project = (IProject) marker.getResource();
 			cproject = CModelManager.getDefault().create(project);
 		}
-		return cproject ;
+		return cproject;
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
@@ -103,15 +105,15 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 				try {
 					IMarker marker = (IMarker) object;
 					if ((marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER))
-							&&(null!=marker.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, null))) {
-							enable = true;
+							&& (null != marker.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, null))) {
+						enable = true;
 					}
-					this.selection = (IStructuredSelection)selection;
+					this.selection = (IStructuredSelection) selection;
 					action.setEnabled(enable);
 				} catch (CoreException e) {
 				}
 			}
 		}
 	}
-	
+
 }

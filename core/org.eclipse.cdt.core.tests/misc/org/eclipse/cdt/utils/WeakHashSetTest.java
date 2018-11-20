@@ -29,17 +29,20 @@ public class WeakHashSetTest extends TestCase {
 	 */
 	private class MockClass {
 		private String str;
+
 		private MockClass(String str) {
 			super();
 			this.str = str;
 		}
+
 		@Override
 		public int hashCode() {
 			// for test purpose make hashcodes equal for all "str" stating with the same letter
 			// note that "equals()" still reports difference
-			String s = str.substring(0,1);
+			String s = str.substring(0, 1);
 			return s.hashCode();
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			MockClass other = (MockClass) obj;
@@ -102,10 +105,10 @@ public class WeakHashSetTest extends TestCase {
 	public void testHashSetSyncronization() throws Exception {
 		final WeakHashSet<Integer> weakSet = new WeakHashSetSynchronized<Integer>(1);
 
-		Thread[] threads= new Thread[5000];
+		Thread[] threads = new Thread[5000];
 		for (int i = 0; i < threads.length; i++) {
 			final Integer n = i;
-			Thread t= new Thread() {
+			Thread t = new Thread() {
 				@Override
 				public void run() {
 					weakSet.add(n);

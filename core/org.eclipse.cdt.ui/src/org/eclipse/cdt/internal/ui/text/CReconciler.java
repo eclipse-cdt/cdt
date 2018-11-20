@@ -66,7 +66,7 @@ public class CReconciler extends MonoReconciler {
 
 		SingletonJob(String name, Runnable code) {
 			super(name);
-			fCode= code;
+			fCode = code;
 			setPriority(Job.SHORT);
 			setRule(this);
 			setUser(false);
@@ -144,7 +144,7 @@ public class CReconciler extends MonoReconciler {
 
 		public ActivationListener(Control control) {
 			Assert.isNotNull(control);
-			fControl= control;
+			fControl = control;
 		}
 
 		@Override
@@ -189,16 +189,14 @@ public class CReconciler extends MonoReconciler {
 					setCModelChanged(true);
 				}
 			}
-			if ((flags & (
-					ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE | 
-					ICElementDelta.F_CHANGED_PATHENTRY_MACRO
-					)) != 0) {
+			if ((flags
+					& (ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE | ICElementDelta.F_CHANGED_PATHENTRY_MACRO)) != 0) {
 				if (isRelevantProject(delta.getElement().getCProject())) {
 					return true;
 				}
 			}
 			if ((flags & ICElementDelta.F_CHILDREN) != 0) {
-				ICElementDelta[] childDeltas= delta.getChangedChildren();
+				ICElementDelta[] childDeltas = delta.getChangedChildren();
 				for (int i = 0; i < childDeltas.length; i++) {
 					if (isRelevantDelta(childDeltas[i])) {
 						return true;
@@ -216,7 +214,7 @@ public class CReconciler extends MonoReconciler {
 		public void indexChanged(IIndexerStateEvent event) {
 			if (event.indexerIsIdle()) {
 				if (fIndexChanged || hasCModelChanged()) {
-					fIndexChanged= false;
+					fIndexChanged = false;
 					if (!fIsReconciling && isEditorActive() && fInitialProcessDone) {
 						CReconciler.this.scheduleReconciling();
 					} else {
@@ -229,7 +227,7 @@ public class CReconciler extends MonoReconciler {
 		@Override
 		public void indexChanged(IIndexChangeEvent event) {
 			if (!fIndexChanged && isRelevantProject(event.getAffectedProject())) {
-				fIndexChanged= true;
+				fIndexChanged = true;
 			}
 		}
 	}
@@ -243,14 +241,14 @@ public class CReconciler extends MonoReconciler {
 	/** The C element changed listener.  */
 	private IElementChangedListener fCElementChangedListener;
 	/** The indexer listener */
-	private IndexerListener fIndexerListener; 
+	private IndexerListener fIndexerListener;
 	/** Tells whether the C model might have changed. */
 	private volatile boolean fHasCModelChanged;
 	/** Tells whether this reconciler's editor is active. */
-	private volatile boolean fIsEditorActive= true;
+	private volatile boolean fIsEditorActive = true;
 	/** Tells whether a reconcile is in progress. */
 	private volatile boolean fIsReconciling;
-	
+
 	private boolean fInitialProcessDone;
 	private Job fTriggerReconcilerJob;
 
@@ -262,56 +260,57 @@ public class CReconciler extends MonoReconciler {
 	 */
 	public CReconciler(ITextEditor editor, CCompositeReconcilingStrategy strategy) {
 		super(strategy, false);
-		fTextEditor= editor;
+		fTextEditor = editor;
 	}
 
 	@Override
 	public void install(ITextViewer textViewer) {
 		super.install(textViewer);
-		
-		fPartListener= new PartListener();
-		IWorkbenchPartSite site= fTextEditor.getSite();
-		IWorkbenchWindow window= site.getWorkbenchWindow();
+
+		fPartListener = new PartListener();
+		IWorkbenchPartSite site = fTextEditor.getSite();
+		IWorkbenchWindow window = site.getWorkbenchWindow();
 		window.getPartService().addPartListener(fPartListener);
 
-		fActivationListener= new ActivationListener(textViewer.getTextWidget());
-		Shell shell= window.getShell();
+		fActivationListener = new ActivationListener(textViewer.getTextWidget());
+		Shell shell = window.getShell();
 		shell.addShellListener(fActivationListener);
 
-		fCElementChangedListener= new ElementChangedListener();
+		fCElementChangedListener = new ElementChangedListener();
 		CoreModel.getDefault().addElementChangedListener(fCElementChangedListener);
-		
-		fIndexerListener= new IndexerListener();
+
+		fIndexerListener = new IndexerListener();
 		CCorePlugin.getIndexManager().addIndexerStateListener(fIndexerListener);
 		CCorePlugin.getIndexManager().addIndexChangeListener(fIndexerListener);
-		
-		fTriggerReconcilerJob= new SingletonJob("Trigger Reconciler", new Runnable() { //$NON-NLS-1$
+
+		fTriggerReconcilerJob = new SingletonJob("Trigger Reconciler", new Runnable() { //$NON-NLS-1$
 			@Override
 			public void run() {
 				forceReconciling();
-			}});
+			}
+		});
 	}
 
 	@Override
 	public void uninstall() {
 		fTriggerReconcilerJob.cancel();
-		
-		IWorkbenchPartSite site= fTextEditor.getSite();
-		IWorkbenchWindow window= site.getWorkbenchWindow();
-		window.getPartService().removePartListener(fPartListener);
-		fPartListener= null;
 
-		Shell shell= window.getShell();
+		IWorkbenchPartSite site = fTextEditor.getSite();
+		IWorkbenchWindow window = site.getWorkbenchWindow();
+		window.getPartService().removePartListener(fPartListener);
+		fPartListener = null;
+
+		Shell shell = window.getShell();
 		if (shell != null && !shell.isDisposed())
 			shell.removeShellListener(fActivationListener);
-		fActivationListener= null;
+		fActivationListener = null;
 
 		CoreModel.getDefault().removeElementChangedListener(fCElementChangedListener);
-		fCElementChangedListener= null;
+		fCElementChangedListener = null;
 
 		CCorePlugin.getIndexManager().removeIndexerStateListener(fIndexerListener);
 		CCorePlugin.getIndexManager().removeIndexChangeListener(fIndexerListener);
-		fIndexerListener= null;
+		fIndexerListener = null;
 		super.uninstall();
 	}
 
@@ -332,25 +331,26 @@ public class CReconciler extends MonoReconciler {
 
 	@Override
 	protected void aboutToBeReconciled() {
-		CCompositeReconcilingStrategy strategy= (CCompositeReconcilingStrategy) getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
+		CCompositeReconcilingStrategy strategy = (CCompositeReconcilingStrategy) getReconcilingStrategy(
+				IDocument.DEFAULT_CONTENT_TYPE);
 		strategy.aboutToBeReconciled();
 	}
 
 	@Override
 	protected void initialProcess() {
 		super.initialProcess();
-		fInitialProcessDone= true;
+		fInitialProcessDone = true;
 		if (!fIsReconciling && isEditorActive() && hasCModelChanged()) {
 			CReconciler.this.scheduleReconciling();
-		} 
+		}
 	}
 
 	@Override
 	protected void process(DirtyRegion dirtyRegion) {
-		fIsReconciling= true;
+		fIsReconciling = true;
 		setCModelChanged(false);
 		super.process(dirtyRegion);
-		fIsReconciling= false;
+		fIsReconciling = false;
 	}
 
 	/**
@@ -368,9 +368,9 @@ public class CReconciler extends MonoReconciler {
 	 * @param state <code>true</code> iff the C model has changed
 	 */
 	private synchronized void setCModelChanged(boolean state) {
-		fHasCModelChanged= state;
+		fHasCModelChanged = state;
 	}
-	
+
 	/**
 	 * Tells whether this reconciler's editor is active.
 	 *
@@ -386,7 +386,7 @@ public class CReconciler extends MonoReconciler {
 	 * @param state <code>true</code> iff the editor is active
 	 */
 	private synchronized void setEditorActive(boolean active) {
-		fIsEditorActive= active;
+		fIsEditorActive = active;
 		if (!active) {
 			fTriggerReconcilerJob.cancel();
 		}
@@ -400,9 +400,9 @@ public class CReconciler extends MonoReconciler {
 			return false;
 		}
 		if (element instanceof ITranslationUnit) {
-			IEditorInput input= fTextEditor.getEditorInput();
-			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
-			IWorkingCopy copy= manager.getWorkingCopy(input);
+			IEditorInput input = fTextEditor.getEditorInput();
+			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+			IWorkingCopy copy = manager.getWorkingCopy(input);
 			if (copy == null || copy.getOriginalElement().equals(element)) {
 				return false;
 			}
@@ -415,23 +415,23 @@ public class CReconciler extends MonoReconciler {
 		if (affectedProject == null) {
 			return false;
 		}
-		IEditorInput input= fTextEditor.getEditorInput();
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
-		IWorkingCopy copy= manager.getWorkingCopy(input);
+		IEditorInput input = fTextEditor.getEditorInput();
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+		IWorkingCopy copy = manager.getWorkingCopy(input);
 		if (copy == null) {
 			return false;
 		}
 		if (copy.getCProject().equals(affectedProject)) {
 			return true;
 		}
-		IProject project= copy.getCProject().getProject();
+		IProject project = copy.getCProject().getProject();
 		if (project == null) {
 			return false;
 		}
 		try {
-			IProject[] referencedProjects= project.getReferencedProjects();
-			for (int i= 0; i < referencedProjects.length; i++) {
-				project= referencedProjects[i];
+			IProject[] referencedProjects = project.getReferencedProjects();
+			for (int i = 0; i < referencedProjects.length; i++) {
+				project = referencedProjects[i];
 				if (project.equals(affectedProject.getProject())) {
 					return true;
 				}

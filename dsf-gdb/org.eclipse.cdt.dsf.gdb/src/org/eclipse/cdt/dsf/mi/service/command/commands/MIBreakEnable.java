@@ -27,18 +27,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * Result:
  *  ^done
  */
- 
-public class MIBreakEnable extends MICommand<MIInfo>
-{
-    /** @since 5.0 */
-    public MIBreakEnable (IBreakpointsTargetDMContext ctx, String[] array) {
-        super(ctx, "-break-enable"); //$NON-NLS-1$
-        if (array != null && array.length > 0) {
-            String[] brkids = new String[array.length];
-            for (int i = 0; i < array.length; i++) {
-                brkids[i] = array[i];
-            }
-            setParameters(brkids);
-        } 
-    }
+
+public class MIBreakEnable extends MICommand<MIInfo> {
+	/** @since 5.0 */
+	public MIBreakEnable(IBreakpointsTargetDMContext ctx, String[] array) {
+		super(ctx, "-break-enable"); //$NON-NLS-1$
+		if (array != null && array.length > 0) {
+			String[] brkids = new String[array.length];
+			for (int i = 0; i < array.length; i++) {
+				brkids[i] = array[i];
+			}
+			setParameters(brkids);
+		}
+	}
 }

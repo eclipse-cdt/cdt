@@ -28,8 +28,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * @since Sep 23, 2002
  */
-public interface ICSourceLocation extends IAdaptable
-{
+public interface ICSourceLocation extends IAdaptable {
 	/**
 	 * Returns an object representing the source code
 	 * for a file with the specified name, or <code>null</code>
@@ -42,7 +41,7 @@ public interface ICSourceLocation extends IAdaptable
 	 * @return source element
 	 * @exception CoreException if an exception occurs while searching for the specified source element
 	 */
-	Object findSourceElement( String name ) throws CoreException;
+	Object findSourceElement(String name) throws CoreException;
 
 	/**
 	 * Returns a memento for this source location from which this
@@ -52,7 +51,7 @@ public interface ICSourceLocation extends IAdaptable
 	 * @exception CoreException if unable to create a memento
 	 */
 	String getMemento() throws CoreException;
-	
+
 	/**
 	 * Initializes this source location from the given memento.
 	 * 
@@ -60,7 +59,7 @@ public interface ICSourceLocation extends IAdaptable
 	 * @exception CoreException if unable to initialize this source
 	 * 	location
 	 */
-	void initializeFrom( String memento ) throws CoreException;
+	void initializeFrom(String memento) throws CoreException;
 
 	/**
 	 * Returns whether to search for all source elements, or just the first match.
@@ -74,7 +73,7 @@ public interface ICSourceLocation extends IAdaptable
 	 * 
 	 * @param search - a value to set
 	 */
-	void setSearchForDuplicateFiles( boolean search );
+	void setSearchForDuplicateFiles(boolean search);
 
 	void dispose();
 }

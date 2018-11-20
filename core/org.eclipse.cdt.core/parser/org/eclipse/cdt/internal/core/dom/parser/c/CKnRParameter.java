@@ -93,41 +93,43 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 		return declaration;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
+	 */
+	@Override
 	public boolean isStatic() {
-        return false;
-    }
+		return false;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+	 */
+	@Override
 	public boolean isExtern() {
-        return false;
-    }
+		return false;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+	 */
+	@Override
 	public boolean isAuto() {
-        if (declaration instanceof IASTSimpleDeclaration)
-            return ((IASTSimpleDeclaration) declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_auto;
-        return false;
-    }
+		if (declaration instanceof IASTSimpleDeclaration)
+			return ((IASTSimpleDeclaration) declaration).getDeclSpecifier()
+					.getStorageClass() == IASTDeclSpecifier.sc_auto;
+		return false;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+	 */
+	@Override
 	public boolean isRegister() {
-        if (declaration instanceof IASTSimpleDeclaration)
-            return ((IASTSimpleDeclaration) declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_register;
-        return false;
-    }
+		if (declaration instanceof IASTSimpleDeclaration)
+			return ((IASTSimpleDeclaration) declaration).getDeclSpecifier()
+					.getStorageClass() == IASTDeclSpecifier.sc_register;
+		return false;
+	}
 
 	@Override
 	public ILinkage getLinkage() {

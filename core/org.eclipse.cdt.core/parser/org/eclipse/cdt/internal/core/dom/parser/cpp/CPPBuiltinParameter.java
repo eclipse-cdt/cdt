@@ -29,99 +29,99 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
 		if (ft == null) {
 			return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 		}
-		IType[] ptypes= ft.getParameterTypes();
-		ICPPParameter[] result= new ICPPParameter[ptypes.length];
+		IType[] ptypes = ft.getParameterTypes();
+		ICPPParameter[] result = new ICPPParameter[ptypes.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= new CPPBuiltinParameter(ptypes[i]);
+			result[i] = new CPPBuiltinParameter(ptypes[i]);
 		}
 		return result;
 	}
 
-    private IType type;
+	private IType type;
 
-    public CPPBuiltinParameter(IType type) {
-        this.type = type;
-    }
+	public CPPBuiltinParameter(IType type) {
+		this.type = type;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public boolean isStatic() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isExtern() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isAuto() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isRegister() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return ""; //$NON-NLS-1$
-    }
+		return ""; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-    	return CharArrayUtils.EMPTY;
-    }
+		return CharArrayUtils.EMPTY;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean hasDefaultValue() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public IValue getDefaultValue() {
 		return null;
 	}
 
-    @Override
+	@Override
 	public boolean isMutable() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isConstexpr() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return new String[0];
-    }
+		return new String[0];
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return new char[0][];
-    }
+		return new char[0][];
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public ILinkage getLinkage() {

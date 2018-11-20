@@ -47,20 +47,20 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  */
 public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 		implements ICPPASTFunctionDefinition, IASTImplicitNameOwner {
-    private IASTDeclSpecifier declSpecifier;
-    private IASTFunctionDeclarator declarator;
-    private IASTStatement bodyStatement;
-    private ICPPASTConstructorChainInitializer[] memInits;
-    private IASTImplicitName[] implicitNames;  // for constructors: base constructors called implicitly
-    private int memInitPos= -1;
-    private boolean fDeleted;
-    private boolean fDefaulted;
+	private IASTDeclSpecifier declSpecifier;
+	private IASTFunctionDeclarator declarator;
+	private IASTStatement bodyStatement;
+	private ICPPASTConstructorChainInitializer[] memInits;
+	private IASTImplicitName[] implicitNames; // for constructors: base constructors called implicitly
+	private int memInitPos = -1;
+	private boolean fDeleted;
+	private boolean fDefaulted;
 
-    public CPPASTFunctionDefinition() {
+	public CPPASTFunctionDefinition() {
 	}
 
-	public CPPASTFunctionDefinition(IASTDeclSpecifier declSpecifier,
-			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
+	public CPPASTFunctionDefinition(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
+			IASTStatement bodyStatement) {
 		setDeclSpecifier(declSpecifier);
 		setDeclarator(declarator);
 		setBody(bodyStatement);
@@ -95,67 +95,67 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
-        return declSpecifier;
-    }
+		return declSpecifier;
+	}
 
-    @Override
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
-        assertNotFrozen();
-        declSpecifier = declSpec;
-        if (declSpec != null) {
+		assertNotFrozen();
+		declSpecifier = declSpec;
+		if (declSpec != null) {
 			declSpec.setParent(this);
 			declSpec.setPropertyInParent(DECL_SPECIFIER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTFunctionDeclarator getDeclarator() {
-        return declarator;
-    }
+		return declarator;
+	}
 
-    @Override
+	@Override
 	public void setDeclarator(IASTFunctionDeclarator declarator) {
-        assertNotFrozen();
-        this.declarator = declarator;
-        if (declarator != null) {
-        	IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
-        	outerDtor.setParent(this);
-        	outerDtor.setPropertyInParent(DECLARATOR);
+		assertNotFrozen();
+		this.declarator = declarator;
+		if (declarator != null) {
+			IASTDeclarator outerDtor = ASTQueries.findOutermostDeclarator(declarator);
+			outerDtor.setParent(this);
+			outerDtor.setPropertyInParent(DECLARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getBody() {
-        return bodyStatement;
-    }
+		return bodyStatement;
+	}
 
-    @Override
+	@Override
 	public void setBody(IASTStatement statement) {
-        assertNotFrozen();
-        bodyStatement = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		bodyStatement = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(FUNCTION_BODY);
 		}
-    }
+	}
 
 	@Override
 	public void addMemberInitializer(ICPPASTConstructorChainInitializer initializer) {
-        assertNotFrozen();
-    	if (initializer != null) {
-    		memInits= ArrayUtil.appendAt(ICPPASTConstructorChainInitializer.class, memInits, ++memInitPos, initializer);
-    		initializer.setParent(this);
+		assertNotFrozen();
+		if (initializer != null) {
+			memInits = ArrayUtil.appendAt(ICPPASTConstructorChainInitializer.class, memInits, ++memInitPos,
+					initializer);
+			initializer.setParent(this);
 			initializer.setPropertyInParent(MEMBER_INITIALIZER);
-    	}
+		}
 	}
 
 	@Override
 	public ICPPASTConstructorChainInitializer[] getMemberInitializers() {
-        if (memInits == null)
-        	return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
+		if (memInits == null)
+			return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
 
-        return memInits= ArrayUtil.trimAt(
-        		ICPPASTConstructorChainInitializer.class, memInits, memInitPos);
+		return memInits = ArrayUtil.trimAt(ICPPASTConstructorChainInitializer.class, memInits, memInitPos);
 	}
 
 	@Override
@@ -176,13 +176,13 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 	@Override
 	public void setIsDefaulted(boolean isDefaulted) {
 		assertNotFrozen();
-		fDefaulted= isDefaulted;
+		fDefaulted = isDefaulted;
 	}
 
 	@Override
 	public void setIsDeleted(boolean isDeleted) {
 		assertNotFrozen();
-		fDeleted= isDeleted;
+		fDeleted = isDeleted;
 	}
 
 	@Override
@@ -234,23 +234,23 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 		return true;
 	}
 
-    /**
-     * Allows subclasses to visit catch handlers, returns whether the visit should continue.
-     */
+	/**
+	 * Allows subclasses to visit catch handlers, returns whether the visit should continue.
+	 */
 	protected boolean acceptCatchHandlers(ASTVisitor action) {
 		return true;
 	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (bodyStatement == child) {
-            other.setPropertyInParent(bodyStatement.getPropertyInParent());
-            other.setParent(bodyStatement.getParent());
-            bodyStatement = (IASTStatement) other;
-            return;
-        }
-        super.replace(child, other);
-    }
+		if (bodyStatement == child) {
+			other.setPropertyInParent(bodyStatement.getPropertyInParent());
+			other.setParent(bodyStatement.getParent());
+			bodyStatement = (IASTStatement) other;
+			return;
+		}
+		super.replace(child, other);
+	}
 
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
@@ -262,7 +262,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 				CPPSemantics.pushLookupPoint(this);
 				try {
 					ICPPClassType classOwner = ((ICPPConstructor) function).getClassOwner();
-	
+
 					// Determine the bases of 'classOwner' that need to be initialized by this constructor.
 					Set<ICPPClassType> basesThatNeedInitialization = new HashSet<>();
 					for (ICPPBase base : classOwner.getBases()) {
@@ -274,16 +274,16 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 					for (ICPPClassType virtualBase : ClassTypeHelper.getVirtualBases(classOwner)) {
 						basesThatNeedInitialization.add(virtualBase);
 					}
-	
+
 					// Go through the bases determined above, and see which ones aren't initialized
 					// explicitly in the mem-initializer list.
 					for (ICPPClassType base : basesThatNeedInitialization) {
 						if (!isInitializedExplicitly(base)) {
 							// Try to find a default constructor to create an implicit name for.
 							for (ICPPConstructor constructor : base.getConstructors()) {
-								if (constructor.getRequiredArgumentCount() == 0) {  // default constructor
-									CPPASTImplicitName ctorName = new CPPASTImplicitName(
-											constructor.getNameCharArray(), this);
+								if (constructor.getRequiredArgumentCount() == 0) { // default constructor
+									CPPASTImplicitName ctorName = new CPPASTImplicitName(constructor.getNameCharArray(),
+											this);
 									ctorName.setBinding(constructor);
 									ctorName.setOffsetAndLength((ASTNode) functionName);
 									implicitNames = ArrayUtil.append(implicitNames, ctorName);

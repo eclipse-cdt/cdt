@@ -49,9 +49,9 @@ public abstract class BaseParserTest {
 			assertNotNull(exception);
 			errors.add(exception);
 		};
-	
+
 		this.macroDetector = new AutoconfMacroDetector();
-		
+
 		macroNames = new HashSet<>();
 		this.macroValidator = (AutoconfMacroElement element) -> {
 			assertNotNull(element);
@@ -87,10 +87,10 @@ public abstract class BaseParserTest {
 	 */
 	protected AutoconfElement parseWithHandlers(IDocument document) {
 		AutoconfParser parser = new AutoconfParser(errorHandler, macroDetector, macroValidator);
-		
+
 		errors.clear();
 		macroNames.clear();
-		
+
 		AutoconfElement root = parser.parse(document);
 		assertNotNull(root);
 		return root;
@@ -113,34 +113,33 @@ public abstract class BaseParserTest {
 		assertNotNull(root1);
 		AutoconfElement root2 = parseWithHandlers(document);
 		assertNotNull(root2);
-	
+
 		validateSourceTree(root1);
 		validateSourceTree(root2);
-	
+
 		// TODO: check root1 == root2
-		
+
 		// ensure the doc wasn't changed (sanity)
 		assertEquals(string, document.get());
-	
+
 		if (!allowErrors) {
 			if (!errors.isEmpty())
 				fail("got errors" + errors.get(0));
-		}
-		else
+		} else
 			assertFalse(errors.isEmpty());
-		
+
 		return root2;
 	}
 
 	protected void checkError(String msgKey) {
-		for (ParseException exc: errors) {
+		for (ParseException exc : errors) {
 			if (exc.getMessage().contains(msgKey))
 				return;
 		}
 		String any = "";
 		if (!errors.isEmpty())
 			any = ", but saw " + errors.get(0).toString();
-		fail("did not find error: " + msgKey + any );
+		fail("did not find error: " + msgKey + any);
 	}
 
 	protected void checkError(String msgKey, int line) {
@@ -160,7 +159,8 @@ public abstract class BaseParserTest {
 		if (possible == null)
 			fail("did not find any error: " + msgKey);
 		else
-			fail("did not find error: " + msgKey + " on line: " + line +", but found one at " + possible.getLineNumber());
+			fail("did not find error: " + msgKey + " on line: " + line + ", but found one at "
+					+ possible.getLineNumber());
 	}
 
 	/**
@@ -176,8 +176,7 @@ public abstract class BaseParserTest {
 		validateSourceElement(element);
 		AutoconfElement[] kids = element.getChildren();
 		for (int i = 0; i < kids.length; i++) {
-			if (kids[i].getStartOffset() < element.getStartOffset() 
-					|| kids[i].getEndOffset() > element.getEndOffset())
+			if (kids[i].getStartOffset() < element.getStartOffset() || kids[i].getEndOffset() > element.getEndOffset())
 				fail(describeElement(kids[i]) + " not inside parent " + describeElement(element));
 			validateSourceTree(kids[i]);
 		}
@@ -226,16 +225,16 @@ public abstract class BaseParserTest {
 		assertEquals(elements.length, assertTreeStructure(tree, elements, 0));
 	}
 
-	private int assertTreeStructure(AutoconfElement tree, String[] elements,
-			int elementIdx) {
+	private int assertTreeStructure(AutoconfElement tree, String[] elements, int elementIdx) {
 		AutoconfElement[] kids = tree.getChildren();
 		for (int j = 0; j < kids.length; j++) {
-			if (elementIdx >= elements.length  || elements[elementIdx] == null) {
+			if (elementIdx >= elements.length || elements[elementIdx] == null) {
 				fail("extra children in " + tree + " at " + kids[j]);
 			}
-			if (!kids[j].getName().equals(elements[elementIdx])) 
-				fail("did not match " + elements[elementIdx] + ", instead got " + kids[j].getClass().getSimpleName() + "=" + kids[j].getName());
-			
+			if (!kids[j].getName().equals(elements[elementIdx]))
+				fail("did not match " + elements[elementIdx] + ", instead got " + kids[j].getClass().getSimpleName()
+						+ "=" + kids[j].getName());
+
 			elementIdx++;
 			if (kids[j].getChildren().length > 0) {
 				elementIdx = assertTreeStructure(kids[j], elements, elementIdx);

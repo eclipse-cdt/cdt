@@ -46,7 +46,8 @@ import org.eclipse.core.runtime.QualifiedName;
 public class DiscoveredScannerInfoProvider extends ScannerProvider {
 
 	// This is the id of the IScannerInfoProvider extension point entry
-	public static final String INTERFACE_IDENTITY = MakeCorePlugin.getUniqueIdentifier() + ".DiscoveredScannerInfoProvider"; //$NON-NLS-1$
+	public static final String INTERFACE_IDENTITY = MakeCorePlugin.getUniqueIdentifier()
+			+ ".DiscoveredScannerInfoProvider"; //$NON-NLS-1$
 
 	// Name we will use to store build property with the project
 	private static final QualifiedName scannerInfoProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(),
@@ -54,6 +55,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 
 	// Singleton
 	private static DiscoveredScannerInfoProvider instance;
+
 	public static DiscoveredScannerInfoProvider getDefault() {
 		if (instance == null) {
 			instance = new DiscoveredScannerInfoProvider();
@@ -101,15 +103,15 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 		DiscoveredScannerInfo scannerInfo = null;
 		// See if there's already one associated with the resource for this
 		// session
-		scannerInfo = (DiscoveredScannerInfo)project.getSessionProperty(scannerInfoProperty);
+		scannerInfo = (DiscoveredScannerInfo) project.getSessionProperty(scannerInfoProperty);
 
 		if (scannerInfo == null) {
 			scannerInfo = new DiscoveredScannerInfo(project);
 			// this will convert user info
-			org.eclipse.cdt.make.core.MakeScannerInfo makeScannerInfo = org.eclipse.cdt.make.core.MakeScannerProvider.getDefault().getMakeScannerInfo(
-					project, cacheInfo);
+			org.eclipse.cdt.make.core.MakeScannerInfo makeScannerInfo = org.eclipse.cdt.make.core.MakeScannerProvider
+					.getDefault().getMakeScannerInfo(project, cacheInfo);
 			scannerInfo.setUserScannerInfo(makeScannerInfo);
-			
+
 			// migrate to new C Path Entries
 			IContainerEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
 			ICProject cProject = CoreModel.getDefault().create(project);
@@ -123,8 +125,8 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 			}
 			ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 			descriptor.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID); // remove scanner provider which will fallback to default
-																	   // cpath provider.
-			// place holder to that we don't convert again.
+																		// cpath provider.
+																		// place holder to that we don't convert again.
 			project.setSessionProperty(scannerInfoProperty, scannerInfo);
 		}
 		return scannerInfo;

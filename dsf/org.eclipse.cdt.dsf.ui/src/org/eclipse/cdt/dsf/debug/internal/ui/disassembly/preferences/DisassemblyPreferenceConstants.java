@@ -41,7 +41,7 @@ public class DisassemblyPreferenceConstants {
 	public static final String AVOID_READ_BEFORE_PC = "disassembly.avoidReadBeforePC"; //$NON-NLS-1$
 	public static final String TRACK_EXPRESSION = "disassembly.trackExpression"; //$NON-NLS-1$
 	public static final String SYNC_ACTIVE_CONTEXT = "disassembly.syncActiveContext"; //$NON-NLS-1$
-	
+
 	/**
 	 * 
 	 */

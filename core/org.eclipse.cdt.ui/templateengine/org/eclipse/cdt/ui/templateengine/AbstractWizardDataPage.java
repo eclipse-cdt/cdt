@@ -24,25 +24,25 @@ import org.eclipse.jface.wizard.WizardPage;
 public abstract class AbstractWizardDataPage extends WizardPage implements IWizardDataPage {
 	protected IWizardPage next;
 
-	 /**
-     * Creates a new wizard page with the given name, and
-     * with no title or image.
-     *
-     * @param pageName the name of the page
-     */
+	/**
+	* Creates a new wizard page with the given name, and
+	* with no title or image.
+	*
+	* @param pageName the name of the page
+	*/
 	public AbstractWizardDataPage(String pageName) {
 		super(pageName);
 	}
 
-    /**
-     * Creates a new wizard page with the given name, title, and image.
-     *
-     * @param pageName the name of the page
-     * @param title the title for this wizard page,
-     *   or <code>null</code> if none
-     * @param imageDescriptor the image descriptor for the title of this wizard page,
-     *   or <code>null</code> if none
-     */
+	/**
+	 * Creates a new wizard page with the given name, title, and image.
+	 *
+	 * @param pageName the name of the page
+	 * @param title the title for this wizard page,
+	 *   or <code>null</code> if none
+	 * @param imageDescriptor the image descriptor for the title of this wizard page,
+	 *   or <code>null</code> if none
+	 */
 	public AbstractWizardDataPage(String pageName, String title, ImageDescriptor imageDescriptor) {
 		super(pageName, title, imageDescriptor);
 	}
@@ -53,7 +53,7 @@ public abstract class AbstractWizardDataPage extends WizardPage implements IWiza
 	 */
 	@Override
 	public void setNextPage(IWizardPage next) {
-		this.next= next;
+		this.next = next;
 	}
 
 	/*
@@ -62,7 +62,7 @@ public abstract class AbstractWizardDataPage extends WizardPage implements IWiza
 	 */
 	@Override
 	public IWizardPage getNextPage() {
-		if(next != null) {
+		if (next != null) {
 			return next;
 		}
 		return super.getNextPage();

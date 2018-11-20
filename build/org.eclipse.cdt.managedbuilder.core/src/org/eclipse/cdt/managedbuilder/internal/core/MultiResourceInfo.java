@@ -33,14 +33,13 @@ import org.osgi.framework.Version;
  * belonging to different configurations while they are
  * edited simultaneously.
  */
-public abstract class MultiResourceInfo extends MultiItemsHolder implements
-		IResourceInfo {
+public abstract class MultiResourceInfo extends MultiItemsHolder implements IResourceInfo {
 	private static final int MODE_BOOL = 0;
-	private static final int MODE_STR  = 1;
-	private static final int MODE_SAR  = 2;
-	private static final int MODE_OSV  = 3;
-	private static final int MODE_CMDLINE  = 4;
-	private static final int MODE_COMMAND  = 5;
+	private static final int MODE_STR = 1;
+	private static final int MODE_SAR = 2;
+	private static final int MODE_OSV = 3;
+	private static final int MODE_CMDLINE = 4;
+	private static final int MODE_COMMAND = 5;
 
 	protected IResourceInfo[] fRis = null;
 	protected int curr = 0;
@@ -49,10 +48,10 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	public MultiResourceInfo(IResourceInfo[] ris, IConfiguration _parent) {
 		fRis = ris;
 		parent = _parent;
-		for (int i=0; i<fRis.length; i++) {
-			if (! (fRis[i].getParent() instanceof Configuration))
+		for (int i = 0; i < fRis.length; i++) {
+			if (!(fRis[i].getParent() instanceof Configuration))
 				continue;
-			Configuration cfg = (Configuration)fRis[i].getParent();
+			Configuration cfg = (Configuration) fRis[i].getParent();
 			if (cfg.getConfigurationDescription().isActive()) {
 				curr = i;
 				break;
@@ -65,8 +64,8 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean canExclude(boolean exclude) {
-		for (int i=0; i<fRis.length; i++)
-			if (! fRis[i].canExclude(exclude))
+		for (int i = 0; i < fRis.length; i++)
+			if (!fRis[i].canExclude(exclude))
 				return false;
 		return true;
 	}
@@ -126,7 +125,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isDirty() {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			if (fRis[i].isDirty())
 				return true;
 		return false;
@@ -137,7 +136,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isExcluded() {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			if (fRis[i].isExcluded())
 				return true;
 		return false;
@@ -148,7 +147,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isExtensionElement() {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			if (fRis[i].isExtensionElement())
 				return true;
 		return false;
@@ -159,7 +158,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isSupported() {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			if (fRis[i].isSupported())
 				return true;
 		return false;
@@ -170,7 +169,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isValid() {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			if (!fRis[i].isValid())
 				return false;
 		return true;
@@ -181,7 +180,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean needsRebuild() {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			if (fRis[i].needsRebuild())
 				return true;
 		return false;
@@ -192,7 +191,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setDirty(boolean dirty) {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			fRis[i].setDirty(dirty);
 	}
 
@@ -201,14 +200,14 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setExclude(boolean excluded) {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			fRis[i].setExclude(excluded);
 	}
 
 	private String getSuperClassId(IOption op) {
 		String s = null;
-		while (op != null){
-			s =  op.getId();
+		while (op != null) {
+			s = op.getId();
 			op = op.getSuperClass();
 		}
 		return s;
@@ -224,11 +223,10 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 
 	private void setTool(ITool tool, String s, int mode) {
 		String ext = tool.getDefaultInputExtension();
-		for (int i=0; i<fRis.length; i++) {
+		for (int i = 0; i < fRis.length; i++) {
 			ITool[] ts = fRis[i].getTools();
-			for (int j=0; j<ts.length; j++) {
-				if (ext != null &&
-						! ext.equals(ts[j].getDefaultInputExtension()))
+			for (int j = 0; j < ts.length; j++) {
+				if (ext != null && !ext.equals(ts[j].getDefaultInputExtension()))
 					continue;
 				switch (mode) {
 				case MODE_COMMAND:
@@ -242,40 +240,39 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 		}
 	}
 
-	private IOption setOption(IHoldsOptions parent, IOption option, Object value, int mode)
-	throws BuildException {
+	private IOption setOption(IHoldsOptions parent, IOption option, Object value, int mode) throws BuildException {
 		IOption op = null;
-		String ext = parent instanceof ITool ? ((ITool)parent).getDefaultInputExtension() : null;
+		String ext = parent instanceof ITool ? ((ITool) parent).getDefaultInputExtension() : null;
 
 		String sid = getSuperClassId(option);
-		for (int i=0; i<fRis.length; i++) {
+		for (int i = 0; i < fRis.length; i++) {
 			IHoldsOptions[] hos;
 			if (parent instanceof ITool)
 				hos = fRis[i].getTools();
 			else if (parent instanceof IToolChain)
 				// If parent is an IToolChain then the resource infos must be at folder level
-				hos = new IHoldsOptions[] {((IFolderInfo)fRis[i]).getToolChain()};
+				hos = new IHoldsOptions[] { ((IFolderInfo) fRis[i]).getToolChain() };
 			else // Shouldn't happen
-				throw new BuildException(ManagedMakeMessages.getString("MultiResourceInfo.MultiResourceInfo.UnhandledIHoldsOptionsType")); //$NON-NLS-1$
+				throw new BuildException(ManagedMakeMessages
+						.getString("MultiResourceInfo.MultiResourceInfo.UnhandledIHoldsOptionsType")); //$NON-NLS-1$
 
-			for (int j=0; j<hos.length; j++) {
-				if (ext != null &&
-						! ext.equals(((ITool)hos[j]).getDefaultInputExtension()))
+			for (int j = 0; j < hos.length; j++) {
+				if (ext != null && !ext.equals(((ITool) hos[j]).getDefaultInputExtension()))
 					continue;
 				IOption op2 = hos[j].getOptionBySuperClassId(sid);
 				if (op2 != null) {
 					switch (mode) {
 					case MODE_BOOL:
-						op = fRis[i].setOption(hos[j], op2, ((Boolean)value).booleanValue());
+						op = fRis[i].setOption(hos[j], op2, ((Boolean) value).booleanValue());
 						break;
 					case MODE_STR:
-						op = fRis[i].setOption(hos[j], op2, (String)value);
+						op = fRis[i].setOption(hos[j], op2, (String) value);
 						break;
 					case MODE_SAR:
-						op = fRis[i].setOption(hos[j], op2, (String[])value);
+						op = fRis[i].setOption(hos[j], op2, (String[]) value);
 						break;
 					case MODE_OSV:
-						op = fRis[i].setOption(hos[j], op2, (OptionStringValue[])value);
+						op = fRis[i].setOption(hos[j], op2, (OptionStringValue[]) value);
 						break;
 					}
 				}
@@ -288,8 +285,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, boolean)
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		return setOption(parent, option, Boolean.valueOf(value), MODE_BOOL);
 	}
 
@@ -297,8 +293,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, java.lang.String)
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option, String value)
-			throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException {
 		return setOption(parent, option, value, MODE_STR);
 	}
 
@@ -306,8 +301,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, java.lang.String[])
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option,
-			String[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException {
 		return setOption(parent, option, value, MODE_SAR);
 	}
 
@@ -315,8 +309,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, org.eclipse.cdt.managedbuilder.core.OptionStringValue[])
 	 */
 	@Override
-	public IOption setOption(IHoldsOptions parent, IOption option,
-			OptionStringValue[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions parent, IOption option, OptionStringValue[] value) throws BuildException {
 		return setOption(parent, option, value, MODE_OSV);
 	}
 
@@ -325,7 +318,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setPath(IPath path) {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			fRis[i].setPath(path);
 	}
 
@@ -334,7 +327,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setRebuildState(boolean rebuild) {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			fRis[i].setRebuildState(rebuild);
 	}
 
@@ -391,7 +384,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setVersion(Version version) {
-		for (int i=0; i<fRis.length; i++)
+		for (int i = 0; i < fRis.length; i++)
 			fRis[i].setVersion(version);
 	}
 
@@ -401,7 +394,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	}
 
 	public boolean isRoot() {
-		return ((ResourceInfo)fRis[curr]).isRoot();
+		return ((ResourceInfo) fRis[curr]).isRoot();
 	}
 
 }

@@ -44,7 +44,7 @@ public abstract class CExternalSettingProvider {
 	 * @since 5.2
 	 */
 	public CExternalSetting[] getSettings(IProject project, ICConfigurationDescription cfg,
-											CExternalSetting[] previousSettings) {
+			CExternalSetting[] previousSettings) {
 		return getSettings(project, cfg);
 	}
 }

@@ -37,8 +37,7 @@ public class IndexToASTNameHelper {
 		return visitor.getMatches();
 	}
 
-	public static IASTName findMatchingASTName(IASTTranslationUnit tu, IName name, IIndex index)
-			throws CoreException {
+	public static IASTName findMatchingASTName(IASTTranslationUnit tu, IName name, IIndex index) throws CoreException {
 		if (name instanceof IASTName) {
 			return (IASTName) name;
 		} else if (!(name instanceof IIndexName)) {
@@ -97,7 +96,8 @@ public class IndexToASTNameHelper {
 		}
 
 		private boolean isEquivalent(IASTName candidate) {
-			return CharArrayUtils.equals(candidate.getSimpleID(), toFindName) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
+			return CharArrayUtils.equals(candidate.getSimpleID(), toFindName)
+					&& bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
 		}
 
 		public List<IASTName> getMatches() {
@@ -141,10 +141,10 @@ public class IndexToASTNameHelper {
 
 		private boolean matchesIndexName(IASTName candidate) {
 			IASTFileLocation candidateLocation = candidate.getFileLocation();
-			return locationToFind.getNodeOffset() == candidateLocation.getNodeOffset() &&
-					locationToFind.getNodeLength() == candidateLocation.getNodeLength() &&
-					locationToFind.getFileName().equals(candidateLocation.getFileName()) &&
-					CharArrayUtils.equals(candidate.getSimpleID(), charNameToFind);
+			return locationToFind.getNodeOffset() == candidateLocation.getNodeOffset()
+					&& locationToFind.getNodeLength() == candidateLocation.getNodeLength()
+					&& locationToFind.getFileName().equals(candidateLocation.getFileName())
+					&& CharArrayUtils.equals(candidate.getSimpleID(), charNameToFind);
 		}
 
 		public IASTName getMatch() {

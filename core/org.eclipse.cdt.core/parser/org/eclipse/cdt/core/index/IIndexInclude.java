@@ -40,7 +40,7 @@ public interface IIndexInclude {
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludedByLocation() throws CoreException;
-	
+
 	/**
 	 * Returns the IIndexFileLocation of the file that is included by this
 	 * directive. In case of an unresolved include {@code null}
@@ -51,7 +51,7 @@ public interface IIndexInclude {
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludesLocation() throws CoreException;
-	
+
 	/**
 	 * Returns the simple name of the directive. This skips any leading
 	 * directories. E.g. for {@code <sys/types.h>} {@code "types.h"} will be returned.

@@ -41,17 +41,19 @@ public final class CollectionUtils {
 	 * @throws NullPointerException if list is {@code null}
 	 */
 	public static <T> Iterator<T> reverseIterator(final List<T> list) {
-		return new Iterator<T>() {	
+		return new Iterator<T>() {
 			ListIterator<T> iterator = list.listIterator(list.size());
-			
+
 			@Override
 			public boolean hasNext() {
 				return iterator.hasPrevious();
 			}
+
 			@Override
 			public T next() {
 				return iterator.previous();
 			}
+
 			@Override
 			public void remove() {
 				throw new UnsupportedOperationException("remove() not supported"); //$NON-NLS-1$
@@ -90,7 +92,7 @@ public final class CollectionUtils {
 	public static <T> Iterable<T> iterable(final Iterator<T> iter) {
 		if (iter == null)
 			throw new NullPointerException("iter parameter is null"); //$NON-NLS-1$
-			
+
 		return new Iterable<T>() {
 			@Override
 			public Iterator<T> iterator() {
@@ -155,9 +157,9 @@ public final class CollectionUtils {
 		}
 		return result;
 	}
-	
-    /**
-     * Filter the elements of a collection down to just the ones that match the given predicate.
+
+	/**
+	 * Filter the elements of a collection down to just the ones that match the given predicate.
 	 * @since 5.6
 	 */
 	public static <T> Collection<T> filter(Collection<T> collection, IUnaryPredicate<T> predicate) {
@@ -182,5 +184,5 @@ public final class CollectionUtils {
 			}
 		}
 		return result == null ? collection : result;
-    }
+	}
 }

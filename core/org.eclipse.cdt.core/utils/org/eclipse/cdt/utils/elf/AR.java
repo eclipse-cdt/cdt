@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -66,10 +65,10 @@ public class AR {
 	public class ARHeader {
 
 		private String object_name;
-//		private String modification_time;
-//		private String uid;
-//		private String gid;
-//		private String mode;
+		//		private String modification_time;
+		//		private String uid;
+		//		private String gid;
+		//		private String mode;
 		private long size;
 		private long elf_offset;
 
@@ -148,10 +147,10 @@ public class AR {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = removeBlanks(new String(object_name));
-//			this.modification_time = new String(modification_time);
-//			this.uid = new String(uid);
-//			this.gid = new String(gid);
-//			this.mode = new String(mode);
+			//			this.modification_time = new String(modification_time);
+			//			this.uid = new String(uid);
+			//			this.gid = new String(gid);
+			//			this.mode = new String(mode);
 			this.size = Long.parseLong(removeBlanks(new String(size)));
 
 			//
@@ -185,7 +184,7 @@ public class AR {
 		public long getSize() {
 			return size;
 		}
-		
+
 		public String getArchiveName() {
 			return filename;
 		}
@@ -219,14 +218,8 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 7
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>')
+		if (ident == null || ident.length < 7 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a'
+				|| ident[3] != 'r' || ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>')
 			return false;
 		return true;
 	}

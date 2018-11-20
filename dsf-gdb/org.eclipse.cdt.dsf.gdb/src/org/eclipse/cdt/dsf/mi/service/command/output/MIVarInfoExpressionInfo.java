@@ -23,30 +23,30 @@ public class MIVarInfoExpressionInfo extends MIInfo {
 
 	public MIVarInfoExpressionInfo(MIOutput record) {
 		super(record);
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    MIValue value = results[i].getMIValue();
-                    String str = ""; //$NON-NLS-1$
-                    if (value instanceof MIConst) {
-                        str = ((MIConst)value).getString();
-                    }
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					MIValue value = results[i].getMIValue();
+					String str = ""; //$NON-NLS-1$
+					if (value instanceof MIConst) {
+						str = ((MIConst) value).getString();
+					}
 
-                    if (var.equals("lang")) { //$NON-NLS-1$
-                        lang = str;
-                    } else if (var.equals("exp")) { //$NON-NLS-1$
-                        exp = str;
-                    }
-                }
-            }
-        }
+					if (var.equals("lang")) { //$NON-NLS-1$
+						lang = str;
+					} else if (var.equals("exp")) { //$NON-NLS-1$
+						exp = str;
+					}
+				}
+			}
+		}
 	}
 
-	public String getLanguage () {
+	public String getLanguage() {
 		return lang;
 	}
 

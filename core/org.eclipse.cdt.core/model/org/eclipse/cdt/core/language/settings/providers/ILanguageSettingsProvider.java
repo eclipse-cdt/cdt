@@ -85,5 +85,6 @@ public interface ILanguageSettingsProvider {
 	 *    The list needs to be a pooled list created by {@link LanguageSettingsStorage#getPooledList(List)}
 	 *    to save memory and avoid deep equality comparisons.
 	 */
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId);
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId);
 }

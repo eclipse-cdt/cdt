@@ -103,11 +103,10 @@ public class ClassMemberInserter {
 	 * @param collector the modification collector recording the insertion
 	 * @return the rewriter for making further modifications to the inserted node
 	 */
-	public static ASTRewrite createChange(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, IASTNode nodeToAdd, boolean isField,
-			ModificationCollector collector) {
-		List<ASTRewrite> addedNodesRewrites =
-				createChange(classNode, visibility,	Collections.singletonList(nodeToAdd), isField, collector);
+	public static ASTRewrite createChange(ICPPASTCompositeTypeSpecifier classNode, VisibilityEnum visibility,
+			IASTNode nodeToAdd, boolean isField, ModificationCollector collector) {
+		List<ASTRewrite> addedNodesRewrites = createChange(classNode, visibility, Collections.singletonList(nodeToAdd),
+				isField, collector);
 		return addedNodesRewrites.get(0);
 	}
 
@@ -121,9 +120,8 @@ public class ClassMemberInserter {
 	 * @param collector the modification collector recording the insertion
 	 * @return the rewriters for making further modifications to the inserted nodes
 	 */
-	public static List<ASTRewrite> createChange(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, List<IASTNode> nodesToAdd, boolean isField,
-			ModificationCollector collector) {
+	public static List<ASTRewrite> createChange(ICPPASTCompositeTypeSpecifier classNode, VisibilityEnum visibility,
+			List<IASTNode> nodesToAdd, boolean isField, ModificationCollector collector) {
 		InsertionInfo info = findInsertionPoint(classNode, visibility, isField);
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(classNode.getTranslationUnit());
 
@@ -146,11 +144,12 @@ public class ClassMemberInserter {
 		return addedNodeRewrites;
 	}
 
-	public static InsertionInfo findInsertionPoint(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, boolean isField) {
+	public static InsertionInfo findInsertionPoint(ICPPASTCompositeTypeSpecifier classNode, VisibilityEnum visibility,
+			boolean isField) {
 		InsertionInfo info = new InsertionInfo(classNode);
-		VisibilityEnum defaultVisibility = classNode.getKey() == IASTCompositeTypeSpecifier.k_struct ?
-				VisibilityEnum.v_public : VisibilityEnum.v_private;
+		VisibilityEnum defaultVisibility = classNode.getKey() == IASTCompositeTypeSpecifier.k_struct
+				? VisibilityEnum.v_public
+				: VisibilityEnum.v_private;
 		VisibilityEnum currentVisibility = defaultVisibility;
 
 		boolean ascendingVisibilityOrder = isAscendingVisibilityOrder(classNode);
@@ -188,8 +187,8 @@ public class ClassMemberInserter {
 			}
 		}
 
-		int index = isField && lastFieldIndex >= 0 || !isField && lastFunctionIndex < 0 ?
-				lastFieldIndex : lastFunctionIndex;
+		int index = isField && lastFieldIndex >= 0 || !isField && lastFunctionIndex < 0 ? lastFieldIndex
+				: lastFunctionIndex;
 		if (index < 0)
 			index = lastMatchingVisibilityIndex;
 		if (index < 0)
@@ -198,12 +197,11 @@ public class ClassMemberInserter {
 		if (index < members.length)
 			info.insertBeforeNode = members[index];
 
-		if (lastMatchingVisibilityIndex < 0 &&
-				!(index == 0 && classNode.getKey() == IASTCompositeTypeSpecifier.k_struct &&
-						visibility == defaultVisibility)) {
+		if (lastMatchingVisibilityIndex < 0 && !(index == 0 && classNode.getKey() == IASTCompositeTypeSpecifier.k_struct
+				&& visibility == defaultVisibility)) {
 			info.prologue = new CPPASTVisibilityLabel(visibility.getVisibilityLabelValue());
-			if (index == 0 && info.insertBeforeNode != null &&
-					!(info.insertBeforeNode instanceof ICPPASTVisibilityLabel)) {
+			if (index == 0 && info.insertBeforeNode != null
+					&& !(info.insertBeforeNode instanceof ICPPASTVisibilityLabel)) {
 				info.epilogue = new CPPASTVisibilityLabel(defaultVisibility.getVisibilityLabelValue());
 			}
 		}
@@ -211,8 +209,8 @@ public class ClassMemberInserter {
 	}
 
 	private static TextEditGroup createEditDescription(ICPPASTCompositeTypeSpecifier classNode) {
-		return new TextEditGroup(NLS.bind(Messages.AddDeclarationNodeToClassChange_AddDeclaration,
-				classNode.getName()));
+		return new TextEditGroup(
+				NLS.bind(Messages.AddDeclarationNodeToClassChange_AddDeclaration, classNode.getName()));
 	}
 
 	private static boolean isAscendingVisibilityOrder(ICPPASTCompositeTypeSpecifier classNode) {
@@ -220,8 +218,7 @@ public class ClassMemberInserter {
 		IASTTranslationUnit ast = classNode.getTranslationUnit();
 		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
 		IProject project = tu != null ? tu.getCProject().getProject() : null;
-		return preferences.getBoolean(CUIPlugin.PLUGIN_ID,
-    			PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, false,
-    			PreferenceConstants.getPreferenceScopes(project));
+		return preferences.getBoolean(CUIPlugin.PLUGIN_ID, PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
+				false, PreferenceConstants.getPreferenceScopes(project));
 	}
 }

@@ -21,23 +21,23 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 
 	private String value;
 	private ArrayList<String> children = new ArrayList<>();
-	
+
 	public FlagConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
 		this.value = name;
 	}
-	
+
 	public FlagConfigureOption(String name, String msgName, AutotoolsConfiguration cfg) {
 		super(name, msgName, cfg);
 		this.value = name;
 	}
-	
+
 	private FlagConfigureOption(String name, AutotoolsConfiguration cfg, String value, ArrayList<String> children) {
 		super(name, cfg);
 		this.value = value;
 		this.children = new ArrayList<>(children);
 	}
-	
+
 	@Override
 	public String getParameter() {
 		StringBuilder parms = new StringBuilder();
@@ -56,7 +56,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 					IConfigureOption o = cfg.getOption(fvname);
 					if (o.isParmSet()) {
 						if (o instanceof IFlagConfigureValueOption) {
-							parm.append(separator).append(((IFlagConfigureValueOption)o).getFlags());
+							parm.append(separator).append(((IFlagConfigureValueOption) o).getFlags());
 							separator = " "; //$NON-NLS-1$
 							haveParm = true;
 						}
@@ -75,7 +75,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	public String getParameterName() {
 		return getName();
 	}
-	
+
 	@Override
 	public boolean isParmSet() {
 		for (int i = 0; i < children.size(); ++i) {
@@ -106,18 +106,18 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	public int getType() {
 		return FLAG;
 	}
-	
+
 	@Override
 	public boolean isFlag() {
 		return true;
 	}
-	
+
 	public void addChild(String name) {
 		children.add(name);
 	}
-	
+
 	public List<String> getChildren() {
 		return children;
 	}
-	
+
 }

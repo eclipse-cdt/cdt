@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
- 
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -30,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
 public class PEBinaryArchive extends BinaryFile implements IBinaryArchive {
 
 	ArrayList<IBinaryObject> children;
-	
+
 	public PEBinaryArchive(PEParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
 		new AR(path.toOSString()).dispose(); // check file type

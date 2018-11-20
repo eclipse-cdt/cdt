@@ -43,18 +43,20 @@ public class PDOMDependencyGenerator implements IManagedDependencyGenerator2 {
 	}
 
 	@Override
-	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		return getDependencySourceInfo(source, null, buildContext, tool, topBuildDirectory);
 	}
 
 	@Override
-	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
-		if(resource == null && source != null){
-			if(!source.isAbsolute())
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext,
+			ITool tool, IPath topBuildDirectory) {
+		if (resource == null && source != null) {
+			if (!source.isAbsolute())
 				source = topBuildDirectory.append(source);
 
 			IFile files[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(source);
-			if(files.length > 0)
+			if (files.length > 0)
 				resource = files[0];
 		}
 
@@ -62,7 +64,8 @@ public class PDOMDependencyGenerator implements IManagedDependencyGenerator2 {
 	}
 
 	@Override
-	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool, IPath topBuildDirectory) {
+	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		return false;
 	}
 

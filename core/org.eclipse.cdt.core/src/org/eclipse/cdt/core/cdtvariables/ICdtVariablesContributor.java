@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.cdtvariables;
 
-
-
 public interface ICdtVariablesContributor {
 	ICdtVariable getVariable(String name, ICdtVariableManager provider);
 

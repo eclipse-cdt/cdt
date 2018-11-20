@@ -41,7 +41,8 @@ public class QuickFixAssignmentInCondition extends AbstractAstRewriteQuickFix {
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		try {
-			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index,
+					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			int markerStart = marker.getAttribute(IMarker.CHAR_START, -1);
 			int markerEnd = marker.getAttribute(IMarker.CHAR_END, -1);
 			if (markerStart == -1 || markerEnd == -1 || markerStart >= markerEnd)
@@ -51,20 +52,19 @@ public class QuickFixAssignmentInCondition extends AbstractAstRewriteQuickFix {
 			if (containedNode instanceof IASTBinaryExpression) {
 				IASTBinaryExpression expr = (IASTBinaryExpression) containedNode;
 				IASTNodeLocation[] leftSubexprLocations = expr.getOperand1().getNodeLocations();
-				if (leftSubexprLocations.length != 1)  // don't handle expressions in macro expansions
+				if (leftSubexprLocations.length != 1) // don't handle expressions in macro expansions
 					return;
 				IASTNodeLocation leftSubexprLocation = leftSubexprLocations[0];
 				int leftSubexprEnd = leftSubexprLocation.getNodeOffset() + leftSubexprLocation.getNodeLength();
-				
+
 				// Assignment operator will be following the end of the left subexpression. 
 				FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(getDocument());
-				adapter.find(leftSubexprEnd, 
-						 "=",                                 ///$NON-NLS-1$
-						 true,    /* forwardSearch */ 
-						 false,   /* caseSensitive */ 
-						 false,   /* wholeWord */
-						 false);  /* regExSearch */      
-				adapter.replace("==", false /* regExReplace */);  ///$NON-NLS-1$
+				adapter.find(leftSubexprEnd, "=", ///$NON-NLS-1$
+						true, /* forwardSearch */
+						false, /* caseSensitive */
+						false, /* wholeWord */
+						false); /* regExSearch */
+				adapter.replace("==", false /* regExReplace */); ///$NON-NLS-1$
 			}
 		} catch (CoreException e) {
 			CheckersUiActivator.log(e);

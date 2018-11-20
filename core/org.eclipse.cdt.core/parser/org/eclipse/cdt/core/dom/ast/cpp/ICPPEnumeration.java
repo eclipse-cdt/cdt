@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -24,17 +24,17 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPEnumeration extends IEnumeration, ICPPBinding {
-    /**
-     * Returns whether this enumeration is scoped.
-     * An enumeration can only be scoped in C++.
-     */
-    boolean isScoped();
-    
-    /**
-     * Returns the underlying type of the enumeration if it is fixed, or {@code null} otherwise.
-     * The underlying type can only be fixed in C++.
-     */
-    IType getFixedType();
+	/**
+	 * Returns whether this enumeration is scoped.
+	 * An enumeration can only be scoped in C++.
+	 */
+	boolean isScoped();
+
+	/**
+	 * Returns the underlying type of the enumeration if it is fixed, or {@code null} otherwise.
+	 * The underlying type can only be fixed in C++.
+	 */
+	IType getFixedType();
 
 	/**
 	 * Returns the scope containing the enumerators.

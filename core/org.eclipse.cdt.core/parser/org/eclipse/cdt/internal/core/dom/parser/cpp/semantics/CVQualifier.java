@@ -27,7 +27,7 @@ public enum CVQualifier {
 	final private int fQualifiers;
 
 	private CVQualifier(int qualifiers) {
-		fQualifiers= qualifiers;
+		fQualifiers = qualifiers;
 	}
 
 	public boolean isConst() {
@@ -60,14 +60,23 @@ public enum CVQualifier {
 
 	private CVQualifier fromQualifier(final int q) {
 		switch (q) {
-		case C|V|R: return CONST_VOLATILE_RESTRICT;
-		case V|R: 	return VOLATILE_RESTRICT;
-		case C|R: 	return CONST_RESTRICT;
-		case R: 	return RESTRICT;
-		case C|V: 	return CONST_VOLATILE;
-		case V: 	return VOLATILE;
-		case C: 	return CONST;
-		case 0: default: return NONE;
+		case C | V | R:
+			return CONST_VOLATILE_RESTRICT;
+		case V | R:
+			return VOLATILE_RESTRICT;
+		case C | R:
+			return CONST_RESTRICT;
+		case R:
+			return RESTRICT;
+		case C | V:
+			return CONST_VOLATILE;
+		case V:
+			return VOLATILE;
+		case C:
+			return CONST;
+		case 0:
+		default:
+			return NONE;
 		}
 	}
 

@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.ui.dialogs;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */

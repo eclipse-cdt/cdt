@@ -17,13 +17,11 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredVariableInstance;
 import org.eclipse.core.runtime.CoreException;
 
-public class CompositeCPPDeferredVariableInstance extends CPPDeferredVariableInstance
-		implements IIndexBinding {
-	public CompositeCPPDeferredVariableInstance(ICPPVariableTemplate template, 
-			ICPPTemplateArgument[] arguments) {
+public class CompositeCPPDeferredVariableInstance extends CPPDeferredVariableInstance implements IIndexBinding {
+	public CompositeCPPDeferredVariableInstance(ICPPVariableTemplate template, ICPPTemplateArgument[] arguments) {
 		super(template, arguments);
 	}
-	
+
 	@Override
 	public boolean isFileLocal() throws CoreException {
 		return false;

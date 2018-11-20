@@ -39,29 +39,29 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 7.2
  */
 public abstract class CToggleBreakpointObjectActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
-	
+
 	private IWorkbenchPart fPart;
 	private IStructuredSelection fSelection;
-	
+
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fPart = targetPart;
 	}
 
 	public void run(IAction action) {
-	    runWithEvent(action, null);
+		runWithEvent(action, null);
 	}
 
 	public void runWithEvent(IAction action, Event event) {
-        IToggleBreakpointsTarget target = 
-            DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
-        if (target != null) {
-            try {
-                performAction(target, fPart, fSelection, event);
-            } catch (CoreException e) {
-                DebugPlugin.log(e);
-            }
-        }
-    }
+		IToggleBreakpointsTarget target = DebugUITools.getToggleBreakpointsTargetManager()
+				.getToggleBreakpointsTarget(fPart, fSelection);
+		if (target != null) {
+			try {
+				performAction(target, fPart, fSelection, event);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
+		}
+	}
 
 	/**
 	 * Performs the operation specific to this action.
@@ -72,9 +72,9 @@ public abstract class CToggleBreakpointObjectActionDelegate implements IObjectAc
 	 * @param event that triggered this action
 	 * @exception CoreException if an exception occurs
 	 */
-	protected abstract void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection, Event event) 
-	    throws CoreException;
-	
+	protected abstract void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection,
+			Event event) throws CoreException;
+
 	/**
 	 * Returns whether the specific operation is supported.
 	 * 
@@ -83,8 +83,9 @@ public abstract class CToggleBreakpointObjectActionDelegate implements IObjectAc
 	 * @param part the part the operation has been requested on
 	 * @return whether the operation can be performed
 	 */
-	protected abstract boolean canPerformAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection);
-	
+	protected abstract boolean canPerformAction(IToggleBreakpointsTarget target, IWorkbenchPart part,
+			ISelection selection);
+
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled = false;
 		if (selection instanceof IStructuredSelection) {
@@ -93,9 +94,9 @@ public abstract class CToggleBreakpointObjectActionDelegate implements IObjectAc
 			// selectionChagned() can sometimes be called before setActivePart().
 			// Guard here against that possibility.
 			if (fPart != null) {
-			    IToggleBreakpointsTarget target = 
-			        DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
-			    enabled = target != null && canPerformAction(target, fPart, fSelection);
+				IToggleBreakpointsTarget target = DebugUITools.getToggleBreakpointsTargetManager()
+						.getToggleBreakpointsTarget(fPart, fSelection);
+				enabled = target != null && canPerformAction(target, fPart, fSelection);
 			}
 		}
 		action.setEnabled(enabled);
@@ -103,7 +104,7 @@ public abstract class CToggleBreakpointObjectActionDelegate implements IObjectAc
 
 	public void init(IAction action) {
 	}
-	
+
 	public void dispose() {
 		fSelection = null;
 		fPart = null;

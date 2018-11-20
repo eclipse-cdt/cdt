@@ -27,53 +27,53 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
-     */
-    @Override
-    public IDetailPane createDetailPane(String id) {
-        return new NumberFormatDetailPane();
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
+	 */
+	@Override
+	public IDetailPane createDetailPane(String id) {
+		return new NumberFormatDetailPane();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDetailsTypes(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Set getDetailPaneTypes(IStructuredSelection selection) {
-        Set<String> possibleIDs = new HashSet<String>(1);
-        possibleIDs.add(NumberFormatDetailPane.ID);
-        return possibleIDs;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    @Override
-    public String getDefaultDetailPane(IStructuredSelection selection) {
-        return null; // Allow competing detail pane factories to override this one
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDetailsTypes(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Set getDetailPaneTypes(IStructuredSelection selection) {
+		Set<String> possibleIDs = new HashSet<String>(1);
+		possibleIDs.add(NumberFormatDetailPane.ID);
+		return possibleIDs;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)
-     */
-    @Override
-    public String getDetailPaneName(String id) {
-        if (id.equals(NumberFormatDetailPane.ID)){
-            return MessagesForDetailPane.NumberFormatDetailPane_Name;
-        }
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	@Override
+	public String getDefaultDetailPane(IStructuredSelection selection) {
+		return null; // Allow competing detail pane factories to override this one
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
-     */
-    @Override
-    public String getDetailPaneDescription(String id) {
-        if (id.equals(NumberFormatDetailPane.ID)){
-            return MessagesForDetailPane.NumberFormatDetailPane_Description;
-        }
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)
+	 */
+	@Override
+	public String getDetailPaneName(String id) {
+		if (id.equals(NumberFormatDetailPane.ID)) {
+			return MessagesForDetailPane.NumberFormatDetailPane_Name;
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
+	 */
+	@Override
+	public String getDetailPaneDescription(String id) {
+		if (id.equals(NumberFormatDetailPane.ID)) {
+			return MessagesForDetailPane.NumberFormatDetailPane_Description;
+		}
+		return null;
+	}
 
 }

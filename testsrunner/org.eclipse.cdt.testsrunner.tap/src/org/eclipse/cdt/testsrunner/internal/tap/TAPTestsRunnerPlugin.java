@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -28,7 +27,6 @@ public class TAPTestsRunnerPlugin extends Plugin {
 
 	/** Plug-in instance. */
 	private static TAPTestsRunnerPlugin plugin;
-
 
 	public TAPTestsRunnerPlugin() {
 		super();
@@ -57,7 +55,7 @@ public class TAPTestsRunnerPlugin extends Plugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified throwable
 	 * 

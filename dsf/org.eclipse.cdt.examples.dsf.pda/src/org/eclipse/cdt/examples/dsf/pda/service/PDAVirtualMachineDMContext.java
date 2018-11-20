@@ -42,57 +42,56 @@ import org.eclipse.core.runtime.PlatformObject;
  * </p>
  */
 public class PDAVirtualMachineDMContext extends PlatformObject
-    implements ICommandControlDMContext, IContainerDMContext, IBreakpointsTargetDMContext 
-{
-    final static IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
-    
-    final private String fSessionId;
-    final private String fProgram;
-    
-    public PDAVirtualMachineDMContext(String sessionId, String program) {
-        fSessionId = sessionId;
-        fProgram = program;
-    }
+		implements ICommandControlDMContext, IContainerDMContext, IBreakpointsTargetDMContext {
+	final static IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
 
-    @Override
-    public String getSessionId() {
-        return fSessionId;
-    }
-    
-    public String getProgram() {
-        return fProgram;
-    }
-    
-    @Override
-    public IDMContext[] getParents() {
-        return EMPTY_PARENTS_ARRAY;
-    }
-    
-    @Override
-    public String toString() {
-        return "pda[" + getSessionId() + "]";
-    }
+	final private String fSessionId;
+	final private String fProgram;
 
-    @Override
-    public String getCommandControlId() {
-        return getProgram();
-    }
-    
-    /**
-     * @see AbstractDMContext#getAdapter(Class)
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object getAdapter(Class adapterType) {
-        Object retVal = null;
-        DsfSession session = DsfSession.getSession(fSessionId);
-        if (session != null) {
-            retVal = session.getModelAdapter(adapterType);
-        }
-        if (retVal == null) {
-            retVal = super.getAdapter(adapterType);
-        }
-        return retVal;
-    }
+	public PDAVirtualMachineDMContext(String sessionId, String program) {
+		fSessionId = sessionId;
+		fProgram = program;
+	}
+
+	@Override
+	public String getSessionId() {
+		return fSessionId;
+	}
+
+	public String getProgram() {
+		return fProgram;
+	}
+
+	@Override
+	public IDMContext[] getParents() {
+		return EMPTY_PARENTS_ARRAY;
+	}
+
+	@Override
+	public String toString() {
+		return "pda[" + getSessionId() + "]";
+	}
+
+	@Override
+	public String getCommandControlId() {
+		return getProgram();
+	}
+
+	/**
+	 * @see AbstractDMContext#getAdapter(Class)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapterType) {
+		Object retVal = null;
+		DsfSession session = DsfSession.getSession(fSessionId);
+		if (session != null) {
+			retVal = session.getModelAdapter(adapterType);
+		}
+		if (retVal == null) {
+			retVal = super.getAdapter(adapterType);
+		}
+		return retVal;
+	}
 
 }

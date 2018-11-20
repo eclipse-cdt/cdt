@@ -73,13 +73,13 @@ public interface IAddress extends Comparable<Object> {
 	boolean equals(Object addr);
 
 	/**
-     * Return true if address is zero, i.e. minimal possible
+	 * Return true if address is zero, i.e. minimal possible
 	 * @return true is address is zero
 	 */
 	boolean isZero();
 
 	/**
-     * Return true if address is maximal, i.e. maximal possible
+	 * Return true if address is maximal, i.e. maximal possible
 	 * @return true if address is maximal
 	 */
 	boolean isMax();

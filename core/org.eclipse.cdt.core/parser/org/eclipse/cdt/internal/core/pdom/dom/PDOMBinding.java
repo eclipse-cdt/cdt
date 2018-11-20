@@ -54,9 +54,9 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	private static final int FIRST_EXTREF = LOCAL_TO_FILE + Database.PTR_SIZE; // size 4
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FIRST_EXTREF + + Database.PTR_SIZE;
+	protected static final int RECORD_SIZE = FIRST_EXTREF + +Database.PTR_SIZE;
 
-	private byte hasDeclaration= -1;
+	private byte hasDeclaration = -1;
 
 	protected PDOMBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
 		super(linkage, parent, name);
@@ -96,22 +96,19 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	 */
 	public static boolean isOrphaned(PDOM pdom, long record) throws CoreException {
 		Database db = pdom.getDB();
-		return db.getRecPtr(record + FIRST_DECL) == 0
-				&& db.getRecPtr(record + FIRST_DEF) == 0
-				&& db.getRecPtr(record + FIRST_REF) == 0
-				&& db.getRecPtr(record + FIRST_EXTREF) == 0;
+		return db.getRecPtr(record + FIRST_DECL) == 0 && db.getRecPtr(record + FIRST_DEF) == 0
+				&& db.getRecPtr(record + FIRST_REF) == 0 && db.getRecPtr(record + FIRST_EXTREF) == 0;
 	}
 
 	@Override
 	public final boolean hasDeclaration() throws CoreException {
 		if (hasDeclaration == -1) {
 			final Database db = getDB();
-			if (db.getRecPtr(record + FIRST_DECL) != 0
-					|| db.getRecPtr(record + FIRST_DEF) != 0) {
-				hasDeclaration= 1;
+			if (db.getRecPtr(record + FIRST_DECL) != 0 || db.getRecPtr(record + FIRST_DEF) != 0) {
+				hasDeclaration = 1;
 				return true;
 			}
-			hasDeclaration= 0;
+			hasDeclaration = 0;
 			return false;
 		}
 		return hasDeclaration != 0;
@@ -211,8 +208,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		// This needs to filter between the local and external lists because it can be used in
 		// contexts that don't know which type of list they are iterating over.  E.g., this is
 		// used when deleting names from a PDOMFile.
-		if (name != null
-		 && !getLinkage().equals(name.getLinkage())) {
+		if (name != null && !getLinkage().equals(name.getLinkage())) {
 			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF).add(name);
 			return;
 		}
@@ -276,7 +272,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	public IIndexScope getScope() {
 		// The parent node in the binding hierarchy is the scope.
 		try {
-			IBinding parent= getParentBinding();
+			IBinding parent = getParentBinding();
 			if (parent instanceof IIndexScope) {
 				return (IIndexScope) parent;
 			}
@@ -311,7 +307,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		if (this instanceof IType) {
 			return ASTTypeUtil.getType((IType) this);
 		} else if (this instanceof IFunction) {
-			IFunctionType t= null;
+			IFunctionType t = null;
 			t = ((IFunction) this).getType();
 			if (t != null) {
 				return getName() + ASTTypeUtil.getParameterTypeString(t);
@@ -329,14 +325,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	 * @return String representation of {@code value}.
 	 */
 	protected static String getConstantNameForValue(PDOMLinkage linkage, int value) {
-		Class<? extends PDOMLinkage> c= linkage.getClass();
-		Field[] fields= c.getFields();
+		Class<? extends PDOMLinkage> c = linkage.getClass();
+		Field[] fields = c.getFields();
 		for (Field field : fields) {
 			try {
 				field.setAccessible(true);
 				if ((field.getModifiers() & Modifier.STATIC) != 0) {
 					if (int.class.equals(field.getType())) {
-						int fvalue= field.getInt(null);
+						int fvalue = field.getInt(null);
 						if (fvalue == value)
 							return field.getName();
 					}
@@ -377,14 +373,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 
 	/**
 	 * Compares two binding fully qualified names. If b0 has
-     * less segments than b1 then -1 is returned, if b0 has
-     * more segments than b1 then 1 is returned. If the segment
-     * lengths are equal then comparison is lexicographical on each
-     * component name, beginning with the most nested name and working
-     * outward.
-     * If one of the bindings in the hierarchy is file-local it is treated as a different
-     * binding.
-     * The first non-zero comparison is returned as the result.
+	 * less segments than b1 then -1 is returned, if b0 has
+	 * more segments than b1 then 1 is returned. If the segment
+	 * lengths are equal then comparison is lexicographical on each
+	 * component name, beginning with the most nested name and working
+	 * outward.
+	 * If one of the bindings in the hierarchy is file-local it is treated as a different
+	 * binding.
+	 * The first non-zero comparison is returned as the result.
 	 * @param b0
 	 * @param b1
 	 * @return <ul><li> -1 if b0 &lt; b1
@@ -400,8 +396,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 				IString s0 = b0.getDBName(), s1 = b1.getDBName();
 				cmp = s0.compare(s1, true);
 				if (cmp == 0) {
-					long l1= b0.getLocalToFileRec();
-					long l2= b1.getLocalToFileRec();
+					long l1 = b0.getLocalToFileRec();
+					long l2 = b1.getLocalToFileRec();
 					if (l1 != l2) {
 						return l1 < l2 ? -1 : 1;
 					}
@@ -436,10 +432,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	/**
-     * Returns whether pdomCompareTo returns zero
-     */
+	 * Returns whether pdomCompareTo returns zero
+	 */
 	public final boolean pdomEquals(PDOMBinding other) {
-		return pdomCompareTo(other)==0;
+		return pdomCompareTo(other) == 0;
 	}
 
 	@Override

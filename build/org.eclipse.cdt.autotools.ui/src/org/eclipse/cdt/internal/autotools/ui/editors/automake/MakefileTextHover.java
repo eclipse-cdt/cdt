@@ -26,7 +26,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 
-
 /**
  * MakefileTextHover
  *  
@@ -62,7 +61,7 @@ public class MakefileTextHover implements ITextHover {
 								statements = makefile.getBuiltinMacroDefinitions(name);
 							}
 						}
-						
+
 						if (statements == null) {
 							statements = new IMacroDefinition[0];
 						}
@@ -75,7 +74,7 @@ public class MakefileTextHover implements ITextHover {
 							String infoString = statements[i].getValue().toString();
 							buffer.append(name);
 							buffer.append(" - "); //$NON-NLS-1$
-							buffer.append(infoString);			
+							buffer.append(infoString);
 						}
 						return buffer.toString();
 					}

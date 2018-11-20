@@ -25,9 +25,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *   
  *   @since 4.0
  */
-public class MIRemoveInferior extends MICommand<MIInfo>
-{
-    public MIRemoveInferior(ICommandControlDMContext dmc, String groupId) {
-        super(dmc, "-remove-inferior", new String[] { groupId }); //$NON-NLS-1$
-    }
+public class MIRemoveInferior extends MICommand<MIInfo> {
+	public MIRemoveInferior(ICommandControlDMContext dmc, String groupId) {
+		super(dmc, "-remove-inferior", new String[] { groupId }); //$NON-NLS-1$
+	}
 }

@@ -31,7 +31,7 @@ public interface ICHelpResourceDescriptor {
 	 * @return ICHelpBook interface representing the help book where help was found 
 	 */
 	ICHelpBook getCHelpBook();
-	
+
 	/**
 	 * gets the array of help resources found in the HelpBook represented
 	 * by getCHelpBook() method
@@ -39,4 +39,3 @@ public interface ICHelpResourceDescriptor {
 	 */
 	IHelpResource[] getHelpResources();
 }
-

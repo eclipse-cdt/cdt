@@ -32,13 +32,23 @@ public class CPPClassSpecializationScope extends AbstractCPPClassSpecializationS
 
 	// This scope does not cache its own names
 	@Override
-	public void addName(IASTName name, boolean adlOnly) {}
+	public void addName(IASTName name, boolean adlOnly) {
+	}
+
 	@Override
-	public IASTNode getPhysicalNode() { return null; }
+	public IASTNode getPhysicalNode() {
+		return null;
+	}
+
 	@Override
-	public void addBinding(IBinding binding) {}
+	public void addBinding(IBinding binding) {
+	}
+
 	@Override
-	public void populateCache() {}
+	public void populateCache() {
+	}
+
 	@Override
-	public void removeNestedFromCache(IASTNode container) {}
+	public void removeNestedFromCache(IASTNode container) {
+	}
 }

@@ -25,6 +25,6 @@ public class TestProposalFilter implements IProposalFilter {
 	 */
 	@Override
 	public ICCompletionProposal[] filterProposals(ICCompletionProposal[] proposals) {
-		return proposals ;
+		return proposals;
 	}
 }

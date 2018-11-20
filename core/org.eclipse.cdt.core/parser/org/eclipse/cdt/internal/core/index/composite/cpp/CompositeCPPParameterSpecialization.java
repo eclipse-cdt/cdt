@@ -34,7 +34,7 @@ public class CompositeCPPParameterSpecialization extends CompositeCPPParameter i
 
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		IBinding owner= getOwner();
+		IBinding owner = getOwner();
 		if (owner instanceof ICPPSpecialization) {
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}

@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.build.core.scannerconfig.tests;
+package org.eclipse.cdt.build.core.scannerconfig.tests;
 
 import java.util.List;
 import java.util.Map;
@@ -72,22 +72,27 @@ public class GCCSpecsConsoleParserTest extends TestCase {
 		enterLine("#define __MY_MACRO__ __MY_VALUE__");
 		checkMacro("__MY_MACRO__", "__MY_VALUE__");
 	}
+
 	public void testProcessLine_Const() {
 		enterLine("#define A (3)");
 		checkMacro("A", "(3)");
 	}
+
 	public void testProcessLine_EmptyArgList() {
 		enterLine("#define A() B");
 		checkMacro("A()", "B");
 	}
+
 	public void testProcessLine_ParamUnused() {
 		enterLine("#define A(X) B");
 		checkMacro("A(X)", "B");
 	}
+
 	public void testProcessLine_ParamSpace() {
 		enterLine("#define __MY_MACRO__(P1, P2) __MY_VALUE__(P1, P2)");
 		checkMacro("__MY_MACRO__(P1, P2)", "__MY_VALUE__(P1, P2)");
 	}
+
 	public void testProcessLine_EmptyBody() {
 		enterLine("#define __MY_MACRO__(P1, P2) ");
 		checkMacro("__MY_MACRO__(P1, P2)", "");

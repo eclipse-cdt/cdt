@@ -19,11 +19,11 @@ public class C99Parameter extends C99Variable implements IParameter, ITypeable {
 
 	public C99Parameter() {
 	}
-	
+
 	public C99Parameter(String name) {
 		super(name);
 	}
-	
+
 	public static C99Parameter valueOf(C99Variable var) {
 		C99Parameter param = new C99Parameter(var.getName());
 		param.setType(var.getType());

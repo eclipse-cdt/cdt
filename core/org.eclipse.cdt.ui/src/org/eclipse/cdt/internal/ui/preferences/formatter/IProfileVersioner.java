@@ -20,8 +20,8 @@ public interface IProfileVersioner {
 	public int getFirstVersion();
 
 	public int getCurrentVersion();
-	
-    public String getProfileKind();
+
+	public String getProfileKind();
 
 	/**
 	 * Update the <code>profile</code> to the 

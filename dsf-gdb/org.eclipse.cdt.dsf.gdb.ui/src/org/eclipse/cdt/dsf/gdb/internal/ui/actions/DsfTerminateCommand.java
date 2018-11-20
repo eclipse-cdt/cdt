@@ -48,153 +48,147 @@ import org.eclipse.debug.core.model.IProcess;
 public class DsfTerminateCommand implements ITerminateHandler {
 	private final DsfSession fSession;
 	private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fTracker;
-    
-    public DsfTerminateCommand(DsfSession session) {
-    	fSession = session;
-        fExecutor = session.getExecutor();
-        fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-    }    
+	private final DsfServicesTracker fTracker;
 
-    public void dispose() {
-        fTracker.dispose();
-    }
+	public DsfTerminateCommand(DsfSession session) {
+		fSession = session;
+		fExecutor = session.getExecutor();
+		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+	}
 
-    @Override
-    public void canExecute(final IEnabledStateRequest request) {
-        if (request.getElements().length == 0) {
-            request.setEnabled(false);
-            request.done();
-            return;
-        }
+	public void dispose() {
+		fTracker.dispose();
+	}
 
-    	final GdbLaunch launch = getLaunch(request);
-    	if (launch != null) {
-    		fExecutor.execute(new DsfRunnable() {				
+	@Override
+	public void canExecute(final IEnabledStateRequest request) {
+		if (request.getElements().length == 0) {
+			request.setEnabled(false);
+			request.done();
+			return;
+		}
+
+		final GdbLaunch launch = getLaunch(request);
+		if (launch != null) {
+			fExecutor.execute(new DsfRunnable() {
 				@Override
 				public void run() {
-		    		request.setEnabled(false);
-		    		IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-		    		if (gdbControl != null && gdbControl.isActive()) {
-		        		request.setEnabled(true);
-		    		}
-		    		else {
-		    			// The GDB session may be terminated at this moment but if there 
-		    			// are processes in this launch that are not controlled by GDB 
-		    			// we need to check them as well.
-		    			for (IProcess p : launch.getProcesses()) {
-		    				if (p.canTerminate()) {
-		    					request.setEnabled(true);
-		    					break;
-		    				}
-		    			}
-		    		}
-		    		request.done();
+					request.setEnabled(false);
+					IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
+					if (gdbControl != null && gdbControl.isActive()) {
+						request.setEnabled(true);
+					} else {
+						// The GDB session may be terminated at this moment but if there 
+						// are processes in this launch that are not controlled by GDB 
+						// we need to check them as well.
+						for (IProcess p : launch.getProcesses()) {
+							if (p.canTerminate()) {
+								request.setEnabled(true);
+								break;
+							}
+						}
+					}
+					request.done();
 				}
 			});
-    	}
-    	else {
-    		fExecutor.execute(new DsfRunnable() {				
+		} else {
+			fExecutor.execute(new DsfRunnable() {
 				@Override
 				public void run() {
-			        IProcessDMContext[] procDmcs = getProcessDMContexts(request.getElements());
+					IProcessDMContext[] procDmcs = getProcessDMContexts(request.getElements());
 					canTerminate(procDmcs, new DataRequestMonitor<Boolean>(fExecutor, null) {
 						@Override
 						protected void handleCompleted() {
-		    				if (!isSuccess()) {
-		    					request.setEnabled(false);
-		    				}
-		    				else {
-		    					request.setEnabled(getData());
-		    				}
-		    				request.done();
+							if (!isSuccess()) {
+								request.setEnabled(false);
+							} else {
+								request.setEnabled(getData());
+							}
+							request.done();
 						}
 					});
 				}
 			});
-    	}
-    }
+		}
+	}
 
-    @Override
-    public boolean execute(final IDebugCommandRequest request) {
-        if (request.getElements().length == 0) {
-        	request.done();
-        	return false;
-        }
+	@Override
+	public boolean execute(final IDebugCommandRequest request) {
+		if (request.getElements().length == 0) {
+			request.done();
+			return false;
+		}
 
-        final GdbLaunch launch = getLaunch(request);
-        if (launch != null) {
-        	fExecutor.execute(new DsfRunnable() {
+		final GdbLaunch launch = getLaunch(request);
+		if (launch != null) {
+			fExecutor.execute(new DsfRunnable() {
 				@Override
 				public void run() {
-		    		IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-		    		if (gdbControl != null && gdbControl.isActive()) {
-		    			gdbControl.terminate(new RequestMonitor(fExecutor, null) {
-		    				@Override
+					IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
+					if (gdbControl != null && gdbControl.isActive()) {
+						gdbControl.terminate(new RequestMonitor(fExecutor, null) {
+							@Override
 							protected void handleCompleted() {
-		    					if (!isSuccess()) {
-		    						request.setStatus(getStatus());
-		        					request.done();
-		    					}
-		    					else {
-		        					waitForTermination(request);        						
-		    					}
-		    				}
-		    			});
-		    		}
-		    		else {
-		    			terminateRemainingProcesses(launch, request);
-		    		}
+								if (!isSuccess()) {
+									request.setStatus(getStatus());
+									request.done();
+								} else {
+									waitForTermination(request);
+								}
+							}
+						});
+					} else {
+						terminateRemainingProcesses(launch, request);
+					}
 				}
 			});
-        }
-        else {
-        	fExecutor.execute(new DsfRunnable() {
+		} else {
+			fExecutor.execute(new DsfRunnable() {
 				@Override
 				public void run() {
-		        	IProcessDMContext[] procDmcs = getProcessDMContexts(request.getElements());
+					IProcessDMContext[] procDmcs = getProcessDMContexts(request.getElements());
 					terminate(procDmcs, new RequestMonitor(fExecutor, null) {
 						@Override
 						protected void handleCompleted() {
-		    				if (!isSuccess()) {
-		    					request.setStatus(getStatus());
-		    					request.done();
-		    				}
-		    				else {
-		    					waitForTermination(request);
-		    				}
+							if (!isSuccess()) {
+								request.setStatus(getStatus());
+								request.done();
+							} else {
+								waitForTermination(request);
+							}
 						}
 					});
 				}
-        	});
-        }        
-        return false;
-    }
-    
-    /**
-     * Wait for the debug session to be fully shutdown before reporting
-     * that the terminate was completed.  This is important for the
-     * 'Terminate and remove' operation.
-     * The wait time is limited with a timeout so as to eventually complete the
-     * request in the case of termination error, or when terminating
-     * a single process in a multi-process session.
-     * See bug 377447
-     */
-    private void waitForTermination(final IDebugCommandRequest request) {
-    	class ScheduledFutureWrapper {
-    		ScheduledFuture<?> fFuture;
-    	};
-    	
-    	final ScheduledFutureWrapper fFutureWrapper = new ScheduledFutureWrapper();
-    	
-    	// It is possible that the session already had time to terminate
+			});
+		}
+		return false;
+	}
+
+	/**
+	 * Wait for the debug session to be fully shutdown before reporting
+	 * that the terminate was completed.  This is important for the
+	 * 'Terminate and remove' operation.
+	 * The wait time is limited with a timeout so as to eventually complete the
+	 * request in the case of termination error, or when terminating
+	 * a single process in a multi-process session.
+	 * See bug 377447
+	 */
+	private void waitForTermination(final IDebugCommandRequest request) {
+		class ScheduledFutureWrapper {
+			ScheduledFuture<?> fFuture;
+		}
+		;
+
+		final ScheduledFutureWrapper fFutureWrapper = new ScheduledFutureWrapper();
+
+		// It is possible that the session already had time to terminate
 		if (!DsfSession.isSessionActive(fSession.getId())) {
 			request.done();
 			return;
 		}
 
 		// Listener that will indicate when the shutdown is complete
-		final SessionEndedListener endedListener = new SessionEndedListener () { 
+		final SessionEndedListener endedListener = new SessionEndedListener() {
 			@Override
 			public void sessionEnded(DsfSession session) {
 				if (fSession.equals(session)) {
@@ -204,15 +198,14 @@ public class DsfTerminateCommand implements ITerminateHandler {
 					GdbLaunch launch = getLaunch(request);
 					if (launch != null) {
 						terminateRemainingProcesses(launch, request);
-					}
-					else {
+					} else {
 						request.done();
 					}
 				}
 			}
 		};
 
-		DsfSession.addSessionEndedListener(endedListener); 
+		DsfSession.addSessionEndedListener(endedListener);
 
 		// Create the timeout
 		// For a multi-process session, if a single process is
@@ -220,7 +213,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
 		// session is also terminated before the timeout).
 		// We haven't found a problem with delaying the completion
 		// of the request that way.
-		 fFutureWrapper.fFuture = fExecutor.schedule(new Runnable() { 
+		fFutureWrapper.fFuture = fExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
 				// Check that the session is still active when the timeout hits.
@@ -237,104 +230,97 @@ public class DsfTerminateCommand implements ITerminateHandler {
 					request.setStatus(Status.CANCEL_STATUS);
 					request.done();
 				}
-			}},
-			1, TimeUnit.MINUTES);
-    }
+			}
+		}, 1, TimeUnit.MINUTES);
+	}
 
-    private IProcessDMContext[] getProcessDMContexts(Object[] elements) {
-    	final Set<IProcessDMContext> procDmcs = new HashSet<IProcessDMContext>();
-    	for (Object obj : elements) {
-    		if (obj instanceof IDMVMContext) {
-				IProcessDMContext procDmc = 
-					DMContexts.getAncestorOfType(((IDMVMContext)obj).getDMContext(), IProcessDMContext.class);
+	private IProcessDMContext[] getProcessDMContexts(Object[] elements) {
+		final Set<IProcessDMContext> procDmcs = new HashSet<IProcessDMContext>();
+		for (Object obj : elements) {
+			if (obj instanceof IDMVMContext) {
+				IProcessDMContext procDmc = DMContexts.getAncestorOfType(((IDMVMContext) obj).getDMContext(),
+						IProcessDMContext.class);
 				if (procDmc != null) {
 					procDmcs.add(procDmc);
 				}
-    		}
-    	}
-		return procDmcs.toArray(new IProcessDMContext[procDmcs.size()]);
-    }
-
-    private void canTerminate(IProcessDMContext[] procDmcs, DataRequestMonitor<Boolean> rm) {
-    	if (procDmcs.length == 0) {
-    		IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-    		if (gdbControl != null) {
-    			rm.setData(gdbControl.isActive());
-    		}
-    		else {
-    			rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service is not available."));	 //$NON-NLS-1$
-    		}
-    		rm.done();
-    		return;
-    	}
-    	
-    	IMultiTerminate multiTerminate = fTracker.getService(IMultiTerminate.class);
-		if (multiTerminate != null) {
-			multiTerminate.canTerminateSome(procDmcs, rm); 
+			}
 		}
-		else {
+		return procDmcs.toArray(new IProcessDMContext[procDmcs.size()]);
+	}
+
+	private void canTerminate(IProcessDMContext[] procDmcs, DataRequestMonitor<Boolean> rm) {
+		if (procDmcs.length == 0) {
+			IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
+			if (gdbControl != null) {
+				rm.setData(gdbControl.isActive());
+			} else {
+				rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service is not available.")); //$NON-NLS-1$
+			}
+			rm.done();
+			return;
+		}
+
+		IMultiTerminate multiTerminate = fTracker.getService(IMultiTerminate.class);
+		if (multiTerminate != null) {
+			multiTerminate.canTerminateSome(procDmcs, rm);
+		} else {
 			IProcesses procService = fTracker.getService(IProcesses.class);
 			if (procService != null && procDmcs.length == 1) {
 				procService.canTerminate(procDmcs[0], rm);
-			}
-			else {
+			} else {
 				rm.setData(false);
 				rm.done();
 			}
-		}    	
-    }
-    
-    private void terminate(IProcessDMContext[] procDmcs, RequestMonitor rm) {
-    	if (procDmcs.length == 0) {
-    		IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-    		if (gdbControl != null) {
-    			gdbControl.terminate(rm);
-    		}
-    		else {
-        		rm.done();
-    		}
-    		return;
-    	}
+		}
+	}
 
-    	IMultiTerminate multiTerminate = fTracker.getService(IMultiTerminate.class);
-    	if (multiTerminate != null) {
-    		multiTerminate.terminate(procDmcs, rm);
-    	}
-    	else {
-    		IProcesses procService = fTracker.getService(IProcesses.class);
-    		if (procService != null && procDmcs.length == 1) {
-    			procService.terminate(procDmcs[0], rm);
-    		}
-    		else {
-    			rm.done();
-    		}
-    	}
-    }
-    
-    private GdbLaunch getLaunch(IDebugCommandRequest request) {
-        for (Object el : request.getElements()) {
-        	if (el instanceof GdbLaunch) {
-        		return (GdbLaunch)el;
-        	}
-        }
-        return null;
-    }
-    
-    private void terminateRemainingProcesses(final GdbLaunch launch, final IDebugCommandRequest request) {
-    	// Run this in a separate job since this method is called from 
-    	// the executor thread. The job is scheduled with a delay to make 
-    	// sure that MIInferiorProcess is terminated. See MIInferiorProcess.waitForSync()
-    	new Job("Terminate Job") { //$NON-NLS-1$
+	private void terminate(IProcessDMContext[] procDmcs, RequestMonitor rm) {
+		if (procDmcs.length == 0) {
+			IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
+			if (gdbControl != null) {
+				gdbControl.terminate(rm);
+			} else {
+				rm.done();
+			}
+			return;
+		}
+
+		IMultiTerminate multiTerminate = fTracker.getService(IMultiTerminate.class);
+		if (multiTerminate != null) {
+			multiTerminate.terminate(procDmcs, rm);
+		} else {
+			IProcesses procService = fTracker.getService(IProcesses.class);
+			if (procService != null && procDmcs.length == 1) {
+				procService.terminate(procDmcs[0], rm);
+			} else {
+				rm.done();
+			}
+		}
+	}
+
+	private GdbLaunch getLaunch(IDebugCommandRequest request) {
+		for (Object el : request.getElements()) {
+			if (el instanceof GdbLaunch) {
+				return (GdbLaunch) el;
+			}
+		}
+		return null;
+	}
+
+	private void terminateRemainingProcesses(final GdbLaunch launch, final IDebugCommandRequest request) {
+		// Run this in a separate job since this method is called from 
+		// the executor thread. The job is scheduled with a delay to make 
+		// sure that MIInferiorProcess is terminated. See MIInferiorProcess.waitForSync()
+		new Job("Terminate Job") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				MultiStatus status = 
-					new MultiStatus(GdbUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, Messages.DsfTerminateCommand_Terminate_failed, null);
+				MultiStatus status = new MultiStatus(GdbUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+						Messages.DsfTerminateCommand_Terminate_failed, null);
 				for (IProcess p : launch.getProcesses()) {
 					if (p.canTerminate()) {
 						try {
 							p.terminate();
-						}
-						catch(DebugException e) {
+						} catch (DebugException e) {
 							status.merge(e.getStatus());
 						}
 					}
@@ -346,5 +332,5 @@ public class DsfTerminateCommand implements ITerminateHandler {
 				return Status.OK_STATUS;
 			}
 		}.schedule(100);
-    }
+	}
 }

@@ -47,8 +47,8 @@ public class CIndenterTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions= new HashMap<>();
+		fDefaultOptions = DefaultCodeFormatterOptions.getDefaultSettings().getMap();
+		fOptions = new HashMap<>();
 	}
 
 	@Override
@@ -59,14 +59,14 @@ public class CIndenterTest extends BaseUITestCase {
 
 	protected void assertIndenterResult() throws Exception {
 		CCorePlugin.setOptions(fOptions);
-		StringBuilder[] contents= getContentsForTest(2);
-		String before= contents[0].toString();
-		IDocument document= new Document(before);
-		String expected= contents[1].toString();
+		StringBuilder[] contents = getContentsForTest(2);
+		String before = contents[0].toString();
+		IDocument document = new Document(before);
+		String expected = contents[1].toString();
 		new CDocumentSetupParticipant().setup(document);
 		int numLines = document.getNumberOfLines();
 		if (document.getLineLength(numLines - 1) == 0) {
-			numLines--;  // Exclude an empty line at the end.
+			numLines--; // Exclude an empty line at the end.
 		}
 		IndentUtil.indentLines(document, new LineRange(0, numLines), null, null);
 		assertEquals(expected, document.get());
@@ -117,7 +117,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1)
 	//foo->bar();
 	//dontIndent();
-	
+
 	//if (1)
 	//	foo->bar();
 	//dontIndent();
@@ -128,7 +128,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1)
 	//foo>>bar;
 	//  dontIndent();
-	
+
 	//if (1)
 	//	foo>>bar;
 	//dontIndent();
@@ -139,7 +139,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1)
 	//foo >= bar();
 	//  dontIndent();
-	
+
 	//if (1)
 	//	foo >= bar();
 	//dontIndent();
@@ -151,7 +151,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//const BinFileParser::Exception& exp)
 	//{
 	//}
-	
+
 	//std::ostream& operator<<(std::ostream& stream,
 	//		const BinFileParser::Exception& exp)
 	//{
@@ -164,14 +164,14 @@ public class CIndenterTest extends BaseUITestCase {
 	//const BinFileParser::Exception& exp)
 	//{
 	//}
-	
+
 	//std::ostream& operator<<(std::ostream& stream,
 	//                         const BinFileParser::Exception& exp)
 	//{
 	//}
 	public void testOperatorMethodBody_2_Bug192412() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
@@ -181,7 +181,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//const std::string& s)
 	//{
 	//}
-	
+
 	//void func(std::vector<int>* v,
 	//    const std::string& s)
 	//{
@@ -190,7 +190,7 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_DEFAULT));
 		assertIndenterResult();
@@ -200,7 +200,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//const std::string& s)
 	//{
 	//}
-	
+
 	//void func(std::vector<int>* v,
 	//          const std::string& s)
 	//{
@@ -209,7 +209,7 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
@@ -230,7 +230,7 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
@@ -251,8 +251,9 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
-				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				DefaultCodeFormatterConstants.createAlignmentValue(false,
+						DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
 	}
@@ -270,7 +271,7 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "4");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "4");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
@@ -281,7 +282,7 @@ public class CIndenterTest extends BaseUITestCase {
 	// int f2 : 1;
 	// int f3 : 1;
 	//}
-	
+
 	//struct x {
 	//	int f1 : 1;
 	//	int f2 : 1;
@@ -315,7 +316,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//{
 	//}
 	//};
-	
+
 	//class A {
 	//	A(int a,
 	//			int b)
@@ -334,7 +335,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//g(0) {
 	//}
 	//};
-	
+
 	//class A {
 	//	A(int a,
 	//			int b)
@@ -353,7 +354,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//g(0) {
 	//}
 	//};
-	
+
 	//class A {
 	//public:
 	//	A(int a, int b) :
@@ -418,7 +419,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//{ 1,2,3 }
 	//}
 	//};
-	
+
 	//struct_t a[]=
 	//{
 	//		{
@@ -460,9 +461,9 @@ public class CIndenterTest extends BaseUITestCase {
 	//		int a;
 	//};
 	public void testClassDeclaration_Bug278713() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
 				DefaultCodeFormatterConstants.TRUE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
 				DefaultCodeFormatterConstants.TRUE);
 		assertIndenterResult();
 	}
@@ -501,7 +502,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	class A;
 	//}
 	public void testNamespace_1() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER,
 				DefaultCodeFormatterConstants.TRUE);
 		assertIndenterResult();
 	}
@@ -514,7 +515,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//class A;
 	//}
 	public void testNamespace_2() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER,
 				DefaultCodeFormatterConstants.FALSE);
 		assertIndenterResult();
 	}
@@ -526,7 +527,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//  union DisUnion 
 	//		{ 
 	//};
-	
+
 	//// a comment
 	//class MyClass
 	//	{
@@ -535,7 +536,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	{ 
 	//	};
 	public void testIndentedClass_1_Bug210417() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION,
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
 	}
@@ -544,50 +545,50 @@ public class CIndenterTest extends BaseUITestCase {
 	//class MyClass : public Base
 	//{
 	//};
-	
+
 	//// a comment
 	//class MyClass : public Base
 	//	{
 	//	};
 	public void testIndentedClass_2_Bug210417() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION,
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
-	}	
-	
+	}
+
 	//// a comment
 	//class MyClass : public Base, public OtherBase
 	//{
 	//};
-	
+
 	//// a comment
 	//class MyClass : public Base, public OtherBase
 	//	{
 	//	};
 	public void testIndentedClass_3_Bug210417() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION,
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
-	}	
-	
+	}
+
 	//// a comment
 	//class MyClass : public Base, public OtherBase
 	//{
 	//};
-	
+
 	//// a comment
 	//class MyClass : public Base, public OtherBase
 	//	{
 	//	};
 	public void testIndentedClass_4_Bug210417() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION,
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
 	}
 
 	//x =
 	//0;
-	
+
 	//x =
 	//		0;
 	public void testWrappedAssignment_1_Bug277624() throws Exception {
@@ -612,7 +613,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1 > 0) {
 	//double d = a * b /
 	//c;
-	
+
 	//if (1 > 0) {
 	//	double d = a * b /
 	//			c;
@@ -635,7 +636,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//for (int i = 0;
 	//i < 2; i++)
-	
+
 	//for (int i = 0;
 	//		i < 2; i++)
 	public void testWrappedFor_1_Bug277625() throws Exception {
@@ -644,7 +645,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//for (int i = 0; i < 2;
 	//i++)
-	
+
 	//for (int i = 0; i < 2;
 	//		i++)
 	public void testWrappedFor_2_Bug277625() throws Exception {
@@ -655,7 +656,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//i < 2;
 	//i++)
 	//{
-	
+
 	//for (int i = 0;
 	//		i < 2;
 	//		i++)
@@ -738,7 +739,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//public:
 	//A();
 	//};
-	
+
 	//class A
 	//    {
 	//public:
@@ -746,8 +747,10 @@ public class CIndenterTest extends BaseUITestCase {
 	//    };
 	public void testWhiteSmithsAccessSpecifier_1_Bug204575() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.FALSE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
+				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
+				DefaultCodeFormatterConstants.TRUE);
 		assertIndenterResult();
 	}
 
@@ -756,7 +759,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//public:
 	//A();
 	//};
-	
+
 	//class A
 	//    {
 	//    public:
@@ -764,8 +767,10 @@ public class CIndenterTest extends BaseUITestCase {
 	//    };
 	public void testWhiteSmithsAccessSpecifier_2_Bug204575() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
+				DefaultCodeFormatterConstants.FALSE);
 		assertIndenterResult();
 	}
 
@@ -774,7 +779,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//public:
 	//A();
 	//};
-	
+
 	//class A
 	//    {
 	//    public:
@@ -782,8 +787,10 @@ public class CIndenterTest extends BaseUITestCase {
 	//    };
 	public void testWhiteSmithsAccessSpecifier_3_Bug204575() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
+				DefaultCodeFormatterConstants.TRUE);
 		assertIndenterResult();
 	}
 
@@ -797,7 +804,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//doOther();
 	//}
 	//}
-	
+
 	//void f()
 	//    {
 	//    switch(x)
@@ -810,8 +817,10 @@ public class CIndenterTest extends BaseUITestCase {
 	//    }
 	public void testWhiteSmithsSwitch_1() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, DefaultCodeFormatterConstants.TRUE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH,
+				DefaultCodeFormatterConstants.FALSE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);
 		assertIndenterResult();
 	}
@@ -826,7 +835,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//doOther();
 	//}
 	//}
-	
+
 	//void f()
 	//	{
 	//	switch(x)
@@ -839,8 +848,10 @@ public class CIndenterTest extends BaseUITestCase {
 	//	}
 	public void testWhiteSmithsSwitch_2() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, DefaultCodeFormatterConstants.FALSE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES,
+				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH,
+				DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		assertIndenterResult();
 	}
@@ -855,7 +866,7 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationInsideLinkageSpec_Bug299482() throws Exception {
 		assertIndenterResult();
 	}
-	
+
 	//void t() const
 	//{
 	//}
@@ -864,11 +875,11 @@ public class CIndenterTest extends BaseUITestCase {
 	//	{
 	//	}
 	public void testIndentationOfConstMethodBody_Bug298282() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION,
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
 	}
-	
+
 	//class A {
 	//int f,g;
 	//A():f(0)
@@ -882,7 +893,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//{
 	//}
 	//};
-	
+
 	//class A {
 	//	int f,g;
 	//	A():f(0)
@@ -912,7 +923,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	z=3
 	//	};
 	//};
-	
+
 	//class A {
 	//	enum E1 {
 	//		a=1,
@@ -1029,7 +1040,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//}
 	public void testMultilineFunctionCall_Bug380490() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();

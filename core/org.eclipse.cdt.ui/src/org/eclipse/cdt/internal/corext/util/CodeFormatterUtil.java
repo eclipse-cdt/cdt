@@ -35,7 +35,7 @@ public class CodeFormatterUtil {
 	 * @return the indent string
 	 */
 	public static String createIndentString(int indentationUnits, ICProject project) {
-		Map<String, String> options= project != null ? project.getOptions(true) : CCorePlugin.getOptions();
+		Map<String, String> options = project != null ? project.getOptions(true) : CCorePlugin.getOptions();
 		return ToolFactory.createDefaultCodeFormatter(options).createIndentationString(indentationUnits);
 	}
 
@@ -56,9 +56,9 @@ public class CodeFormatterUtil {
 		 */
 		String key;
 		if (CCorePlugin.SPACE.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
-			key= DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+			key = DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
 		} else {
-			key= DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+			key = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
 		}
 
 		return getCoreOption(project, key, 4);
@@ -73,10 +73,11 @@ public class CodeFormatterUtil {
 	 */
 	public static int getIndentWidth(ICProject project) {
 		String key;
-		if (DefaultCodeFormatterConstants.MIXED.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
-			key= DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+		if (DefaultCodeFormatterConstants.MIXED
+				.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
+			key = DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
 		} else {
-			key= DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+			key = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
 		}
 
 		return getCoreOption(project, key, 4);
@@ -122,7 +123,7 @@ public class CodeFormatterUtil {
 			String lineSeparator, Map<String, ?> options) {
 		if (offset < 0 || length < 0 || offset + length > source.length()) {
 			throw new IllegalArgumentException("offset or length outside of string. offset: " + //$NON-NLS-1$
-					offset + ", length: " + length + ", string size: " + source.length());   //$NON-NLS-1$//$NON-NLS-2$
+					offset + ", length: " + length + ", string size: " + source.length()); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 		return formatter.format(kind, source, offset, length, indentationLevel, lineSeparator);
@@ -130,27 +131,27 @@ public class CodeFormatterUtil {
 
 	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator,
 			Map<String, ?> options) {
-		String prefix= ""; //$NON-NLS-1$
-		String suffix= ""; //$NON-NLS-1$
+		String prefix = ""; //$NON-NLS-1$
+		String suffix = ""; //$NON-NLS-1$
 		switch (kind) {
 		case CodeFormatter.K_EXPRESSION:
-			prefix= "int __dummy__="; //$NON-NLS-1$
-			suffix= ";"; //$NON-NLS-1$
+			prefix = "int __dummy__="; //$NON-NLS-1$
+			suffix = ";"; //$NON-NLS-1$
 			break;
 		case CodeFormatter.K_STATEMENTS:
-			prefix= "void __dummy__() {"; //$NON-NLS-1$
-			suffix= "}"; //$NON-NLS-1$
+			prefix = "void __dummy__() {"; //$NON-NLS-1$
+			suffix = "}"; //$NON-NLS-1$
 			--indentationLevel;
 			break;
 		}
-		String tuSource= prefix + source + suffix;
+		String tuSource = prefix + source + suffix;
 		return format(tuSource, prefix.length(), source.length(), indentationLevel, lineSeparator, options);
 	}
 
-	private static TextEdit format(String source, int offset, int length, int indentationLevel,
-			String lineSeparator, Map<String, ?> options) {
-		TextEdit edit= format(CodeFormatter.K_TRANSLATION_UNIT, source, offset, length,
-				indentationLevel, lineSeparator, options);
+	private static TextEdit format(String source, int offset, int length, int indentationLevel, String lineSeparator,
+			Map<String, ?> options) {
+		TextEdit edit = format(CodeFormatter.K_TRANSLATION_UNIT, source, offset, length, indentationLevel,
+				lineSeparator, options);
 		if (edit != null && offset > 0) {
 			edit.moveTree(-offset);
 		}

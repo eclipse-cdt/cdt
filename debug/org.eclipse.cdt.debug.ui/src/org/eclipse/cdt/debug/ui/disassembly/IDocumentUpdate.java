@@ -28,17 +28,17 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 public interface IDocumentUpdate extends IViewerUpdate {
 
-    /**
-     * Returns the root element associated with this request.
-     * 
-     * @return the root element
-     */
-    public Object getRootElement();
-    
-    /**
-     * Returns the base element associated with this request.
-     * 
-     * @return the base element
-     */
-    public Object getBaseElement();
+	/**
+	 * Returns the root element associated with this request.
+	 * 
+	 * @return the root element
+	 */
+	public Object getRootElement();
+
+	/**
+	 * Returns the base element associated with this request.
+	 * 
+	 * @return the base element
+	 */
+	public Object getBaseElement();
 }

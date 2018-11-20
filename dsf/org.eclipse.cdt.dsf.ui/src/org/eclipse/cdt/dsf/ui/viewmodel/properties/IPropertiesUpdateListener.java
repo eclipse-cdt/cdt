@@ -19,15 +19,15 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
  * @since 2.2
  */
 public interface IPropertiesUpdateListener {
-    
-    /**
-     * Indicates that the given updates were requested from a properties provider.
-     */
-    public void propertiesUpdatesStarted(IPropertiesUpdate[] updates);
-    
-    /**
-     * Indicates that the given update has been completed.
-     */
-    public void propertiesUpdateCompleted(IPropertiesUpdate update);
+
+	/**
+	 * Indicates that the given updates were requested from a properties provider.
+	 */
+	public void propertiesUpdatesStarted(IPropertiesUpdate[] updates);
+
+	/**
+	 * Indicates that the given update has been completed.
+	 */
+	public void propertiesUpdateCompleted(IPropertiesUpdate update);
 
 }

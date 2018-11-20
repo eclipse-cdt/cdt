@@ -32,46 +32,46 @@ import org.eclipse.core.runtime.IPath;
  * @since 3.0
  */
 public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
-//	private static final String fVariableNames[] = new String[]{
-//		"CWD",	//$NON-NLS-1$
-//		"PWD"	//$NON-NLS-1$
-//	};
+	//	private static final String fVariableNames[] = new String[]{
+	//		"CWD",	//$NON-NLS-1$
+	//		"PWD"	//$NON-NLS-1$
+	//	};
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
-		if(context instanceof IConfiguration)
-			return getConfigurationVariable(name,(IConfiguration)context);
+		if (context instanceof IConfiguration)
+			return getConfigurationVariable(name, (IConfiguration) context);
 		return null;
 	}
 
 	public IBuildEnvironmentVariable getConfigurationVariable(String name, IConfiguration configuration) {
 		IBuildEnvironmentVariable variable = null;
-		if("CWD".equals(name) || "PWD".equals(name)){	//$NON-NLS-1$	//$NON-NLS-2$
+		if ("CWD".equals(name) || "PWD".equals(name)) { //$NON-NLS-1$	//$NON-NLS-2$
 			IResource owner = configuration.getOwner();
-			if(owner != null){
-//				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
-//				if(info != null && configuration.equals(info.getDefaultConfiguration())){
-//					IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(configuration);
-//					generator.initialize((IProject)owner,info,null);
+			if (owner != null) {
+				//				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
+				//				if(info != null && configuration.equals(info.getDefaultConfiguration())){
+				//					IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(configuration);
+				//					generator.initialize((IProject)owner,info,null);
 				IBuilder builder = configuration.getEditableBuilder();
 				IPath topBuildDir = ManagedBuildManager.getBuildLocation(configuration, builder);
 
-
-////					IPath topBuildDir = generator.getBuildWorkingDir();
-//					if(topBuildDir == null)
-//						topBuildDir = new Path(configuration.getName());
-//
-//					IPath projectLocation = owner.getLocation();
-//					IPath workingDirectory = projectLocation.append(topBuildDir);
-//					String value = workingDirectory.toOSString();
-				if(topBuildDir != null) {
-					variable = new BuildEnvVar(name, topBuildDir.toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,null);
+				////					IPath topBuildDir = generator.getBuildWorkingDir();
+				//					if(topBuildDir == null)
+				//						topBuildDir = new Path(configuration.getName());
+				//
+				//					IPath projectLocation = owner.getLocation();
+				//					IPath workingDirectory = projectLocation.append(topBuildDir);
+				//					String value = workingDirectory.toOSString();
+				if (topBuildDir != null) {
+					variable = new BuildEnvVar(name, topBuildDir.toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,
+							null);
 				}
 
-//				}
+				//				}
 			}
 		}
 		return variable;
@@ -82,10 +82,10 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	 */
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
-		if(context instanceof IConfiguration){
+		if (context instanceof IConfiguration) {
 			List<IBuildEnvironmentVariable> variables = new ArrayList<IBuildEnvironmentVariable>(2);
-			IBuildEnvironmentVariable var = getConfigurationVariable("CWD",(IConfiguration)context); //$NON-NLS-1$
-			if(var != null){
+			IBuildEnvironmentVariable var = getConfigurationVariable("CWD", (IConfiguration) context); //$NON-NLS-1$
+			if (var != null) {
 				variables.add(var);
 				variables.add(new BuildEnvVar("PWD", var.getValue(), IBuildEnvironmentVariable.ENVVAR_REPLACE, null)); //$NON-NLS-1$
 			} else {

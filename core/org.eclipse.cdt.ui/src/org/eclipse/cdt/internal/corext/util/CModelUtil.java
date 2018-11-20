@@ -36,7 +36,7 @@ public class CModelUtil {
 	 */
 	public static ITranslationUnit toWorkingCopy(ITranslationUnit unit) {
 		if (!unit.isWorkingCopy()) {
-			ITranslationUnit workingCopy= EditorUtility.getWorkingCopy(unit);
+			ITranslationUnit workingCopy = EditorUtility.getWorkingCopy(unit);
 			if (workingCopy != null) {
 				return workingCopy;
 			}
@@ -59,7 +59,7 @@ public class CModelUtil {
 		ICElement root = element;
 		while (root != null) {
 			if (root instanceof ISourceRoot)
-				return (ISourceRoot)root;
+				return (ISourceRoot) root;
 			ICElement parent = root.getAncestor(ICElement.C_CCONTAINER);
 			if (parent == root)
 				return null;
@@ -79,9 +79,9 @@ public class CModelUtil {
 			while (curr != null && !(curr instanceof ISourceRoot)) {
 				curr = curr.getParent();
 			}
-			folder = (ISourceRoot)curr;
+			folder = (ISourceRoot) curr;
 			if (folder == null) {
-			    ICProject cproject = element.getCProject();
+				ICProject cproject = element.getCProject();
 				folder = cproject.findSourceRoot(cproject.getProject());
 			}
 		}
@@ -95,10 +95,10 @@ public class CModelUtil {
 	 * doesn't have an underlying resource.
 	 */
 	public static boolean isReferenced(ISourceRoot root) {
-		IResource resource= root.getResource();
+		IResource resource = root.getResource();
 		if (resource != null) {
-			IProject project= resource.getProject();
-			IProject container= root.getCProject().getProject();
+			IProject project = resource.getProject();
+			IProject container = root.getCProject().getProject();
 			return !container.equals(project);
 		}
 		return false;
@@ -112,18 +112,18 @@ public class CModelUtil {
 			if (elem instanceof ITranslationUnit) {
 				return (ITranslationUnit) elem;
 			}
-			elem= elem.getParent();
+			elem = elem.getParent();
 		}
 		return null;
 	}
 
 	/*
-     * Don't log not-exists exceptions
+	 * Don't log not-exists exceptions
 	 */
 	public static boolean isExceptionToBeLogged(CoreException exception) {
 		if (!(exception instanceof CModelException))
 			return true;
-		CModelException ce= (CModelException)exception;
+		CModelException ce = (CModelException) exception;
 		ICModelStatus status = ce.getCModelStatus();
 		if (status == null || !status.doesNotExist())
 			return true;

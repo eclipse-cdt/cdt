@@ -36,12 +36,11 @@ public class CNavigatorProblemsLabelDecorator extends ProblemsLabelDecorator {
 	 * @see org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator#fireProblemsChanged(org.eclipse.core.resources.IResource[], boolean)
 	 */
 	@Override
-	protected void fireProblemsChanged(IResource[] changedResources,
-			boolean isMarkerChange) {
+	protected void fireProblemsChanged(IResource[] changedResources, boolean isMarkerChange) {
 		// performance: if the number of changed resources is large, it is faster
 		// to trigger a viewer refresh by setting changedResources to null
 		if (changedResources != null && changedResources.length > 500) {
-			changedResources= null;
+			changedResources = null;
 		}
 		super.fireProblemsChanged(changedResources, isMarkerChange);
 	}

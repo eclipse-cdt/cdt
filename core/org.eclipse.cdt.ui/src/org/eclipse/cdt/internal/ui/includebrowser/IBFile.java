@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    IBM Corporation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -32,29 +32,29 @@ public class IBFile {
 	final public ITranslationUnit fTU;
 	final public IIndexFileLocation fLocation;
 	final public String fName;
-	
+
 	public IBFile(ITranslationUnit tu) {
-		fTU= tu;
-		fLocation= IndexLocationFactory.getIFL(tu);
-		fName= tu.getElementName();
+		fTU = tu;
+		fLocation = IndexLocationFactory.getIFL(tu);
+		fName = tu.getElementName();
 	}
-	
+
 	public IBFile(ICProject preferredProject, IIndexFileLocation location) throws CModelException {
-		fLocation= location;
+		fLocation = location;
 		ITranslationUnit TU = CoreModelUtil.findTranslationUnitForLocation(location, preferredProject);
 		if (TU == null) //for EFS file that might not be on this filesystem
 			TU = CoreModelUtil.findTranslationUnitForLocation(location.getURI(), preferredProject);
 		fTU = TU;
-		String name= fLocation.getURI().getPath();
-		fName= name.substring(name.lastIndexOf('/')+1);
+		String name = fLocation.getURI().getPath();
+		fName = name.substring(name.lastIndexOf('/') + 1);
 	}
 
 	public IBFile(String name) {
-		fName= name;
-		fLocation= null;
-		fTU= null;
+		fName = name;
+		fLocation = null;
+		fTU = null;
 	}
-	
+
 	public IIndexFileLocation getLocation() {
 		return fLocation;
 	}
@@ -63,17 +63,14 @@ public class IBFile {
 	public boolean equals(Object obj) {
 		if (obj instanceof IBFile) {
 			IBFile file = (IBFile) obj;
-			return (Objects.equals(fLocation, file.fLocation) &&
-					Objects.equals(fTU, file.fTU));
+			return (Objects.equals(fLocation, file.fLocation) && Objects.equals(fTU, file.fTU));
 		}
 		return super.equals(obj);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(fLocation)
-			+ 31* (Objects.hashCode(fTU) 
-			+ 31* Objects.hashCode(fName));
+		return Objects.hashCode(fLocation) + 31 * (Objects.hashCode(fTU) + 31 * Objects.hashCode(fName));
 	}
 
 	public ITranslationUnit getTranslationUnit() {
@@ -82,9 +79,9 @@ public class IBFile {
 
 	public IFile getResource() {
 		if (fLocation != null) {
-			String fullPath= fLocation.getFullPath();
+			String fullPath = fLocation.getFullPath();
 			if (fullPath != null) {
-				IResource file= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+				IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
 				if (file instanceof IFile) {
 					return (IFile) file;
 				}
@@ -92,7 +89,7 @@ public class IBFile {
 		}
 		return null;
 	}
-	
+
 	public String getName() {
 		return fName;
 	}

@@ -29,8 +29,7 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 /**
  * Abstract page to be used as base for preference pages
  */
-public abstract class AbstractPrefPage extends AbstractPage
-				implements IWorkbenchPreferencePage {
+public abstract class AbstractPrefPage extends AbstractPage implements IWorkbenchPreferencePage {
 
 	public Label titleLabel;
 
@@ -43,7 +42,7 @@ public abstract class AbstractPrefPage extends AbstractPage
 		compositeLayout.numColumns = 1;
 		compositeLayout.marginHeight = 0;
 		compositeLayout.marginWidth = 0;
-		composite.setLayout( compositeLayout );
+		composite.setLayout(compositeLayout);
 
 		String s = getHeader();
 		if (s != null) {
@@ -54,23 +53,38 @@ public abstract class AbstractPrefPage extends AbstractPage
 			titleLabel = ControlFactory.createLabel(configGroup, s);
 		}
 		createWidgets(composite);
-    	return composite;
+		return composite;
 	}
 
 	@Override
-	protected boolean checkElement() { return true; }
+	protected boolean checkElement() {
+		return true;
+	}
+
 	@Override
-	public boolean isForPrefs()    { return true; }
+	public boolean isForPrefs() {
+		return true;
+	}
+
 	@Override
-	public void init(IWorkbench workbench) {}
+	public void init(IWorkbench workbench) {
+	}
+
 	@Override
-	public ICResourceDescription getResDesc() { return null; }
+	public ICResourceDescription getResDesc() {
+		return null;
+	}
+
 	@Override
-	public void performApply() { performOk(); }
+	public void performApply() {
+		performOk();
+	}
+
 	@Override
 	public boolean performOk() {
 		forEach(ICPropertyTab.OK, null);
 		return true;
 	}
+
 	abstract protected String getHeader();
 }

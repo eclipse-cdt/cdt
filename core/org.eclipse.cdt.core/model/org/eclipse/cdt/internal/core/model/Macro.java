@@ -40,7 +40,7 @@ public class Macro extends SourceManipulation implements IMacro {
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new SourceManipulationInfo(this);
 	}
 

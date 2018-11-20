@@ -21,7 +21,7 @@ package org.eclipse.cdt.internal.corext.template.c;
 public class DocCommentContextType extends CommentContextType {
 
 	@SuppressWarnings("hiding")
-	public static final String ID= "org.eclipse.cdt.ui.text.templates.doccomment"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.ui.text.templates.doccomment"; //$NON-NLS-1$
 
 	public DocCommentContextType() {
 	}

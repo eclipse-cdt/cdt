@@ -21,18 +21,17 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoProce
 
 public class MakeDiscoveredInfoProcessor extends CDataDiscoveredInfoProcessor {
 	private static MakeDiscoveredInfoProcessor fInstance;
-	
-	public static MakeDiscoveredInfoProcessor getDefault(){
-		if(fInstance == null)
+
+	public static MakeDiscoveredInfoProcessor getDefault() {
+		if (fInstance == null)
 			fInstance = new MakeDiscoveredInfoProcessor();
 		return fInstance;
 	}
 
 	@Override
-	protected void setInfoForData(CConfigurationData cfgData,
-			CResourceData rcData, CLanguageData data, PathInfo pi,
+	protected void setInfoForData(CConfigurationData cfgData, CResourceData rcData, CLanguageData data, PathInfo pi,
 			CResourceData baseRcData, CLanguageData baseLangData) {
-		MakeLanguageData mld = (MakeLanguageData)data;
+		MakeLanguageData mld = (MakeLanguageData) data;
 		mld.setDiscoveredInfo(pi);
 	}
 

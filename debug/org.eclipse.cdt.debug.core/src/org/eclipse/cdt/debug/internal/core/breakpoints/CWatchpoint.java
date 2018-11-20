@@ -37,21 +37,21 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/**
 	 * Constructor for CWatchpoint.
 	 */
-	public CWatchpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public CWatchpoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	@Override
 	public String getMarkerType() {
-	    return C_WATCHPOINT_MARKER;
+		return C_WATCHPOINT_MARKER;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICWatchpoint#isWriteType()
 	 */
 	@Override
 	public boolean isWriteType() throws CoreException {
-		return ensureMarker().getAttribute( WRITE, true );
+		return ensureMarker().getAttribute(WRITE, true);
 	}
 
 	/* (non-Javadoc)
@@ -59,7 +59,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 */
 	@Override
 	public boolean isReadType() throws CoreException {
-		return ensureMarker().getAttribute( READ, false );
+		return ensureMarker().getAttribute(READ, false);
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +67,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 */
 	@Override
 	public String getExpression() throws CoreException {
-		return ensureMarker().getAttribute( EXPRESSION, "" ); //$NON-NLS-1$
+		return ensureMarker().getAttribute(EXPRESSION, ""); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -75,14 +75,14 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		String format = BreakpointMessages.getString( "CWatchpoint.3" ); //$NON-NLS-1$
-		if ( isWriteType() && !isReadType() )
-			format = BreakpointMessages.getString( "CWatchpoint.0" ); //$NON-NLS-1$
-		else if ( !isWriteType() && isReadType() )
-			format = BreakpointMessages.getString( "CWatchpoint.1" ); //$NON-NLS-1$
-		else if ( isWriteType() && isReadType() )
-			format = BreakpointMessages.getString( "CWatchpoint.2" ); //$NON-NLS-1$
-		return MessageFormat.format( format, new Object[] { CDebugUtils.getBreakpointText( this, false ) } );
+		String format = BreakpointMessages.getString("CWatchpoint.3"); //$NON-NLS-1$
+		if (isWriteType() && !isReadType())
+			format = BreakpointMessages.getString("CWatchpoint.0"); //$NON-NLS-1$
+		else if (!isWriteType() && isReadType())
+			format = BreakpointMessages.getString("CWatchpoint.1"); //$NON-NLS-1$
+		else if (isWriteType() && isReadType())
+			format = BreakpointMessages.getString("CWatchpoint.2"); //$NON-NLS-1$
+		return MessageFormat.format(format, new Object[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 
 	/* (non-Javadoc)
@@ -90,7 +90,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 */
 	@Override
 	public int getLineNumber() throws CoreException {
-		return ensureMarker().getAttribute( IMarker.LINE_NUMBER, -1 );
+		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +98,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 */
 	@Override
 	public int getCharStart() throws CoreException {
-		return ensureMarker().getAttribute( IMarker.CHAR_START, -1 );
+		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
 
 	/* (non-Javadoc)
@@ -106,18 +106,18 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 */
 	@Override
 	public int getCharEnd() throws CoreException {
-		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
+		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 	}
 
 	@Override
 	public String getMemorySpace() throws CoreException {
-		return ensureMarker().getAttribute( MEMORYSPACE, "" ); //$NON-NLS-1$
+		return ensureMarker().getAttribute(MEMORYSPACE, ""); //$NON-NLS-1$
 	}
 
 	@Override
 	public BigInteger getRange() throws CoreException {
-		String attr = ensureMarker().getAttribute( RANGE, "0" ); //$NON-NLS-1$
-		return new BigInteger( attr.length() > 0 ? attr : "0" ); //$NON-NLS-1$
+		String attr = ensureMarker().getAttribute(RANGE, "0"); //$NON-NLS-1$
+		return new BigInteger(attr.length() > 0 ? attr : "0"); //$NON-NLS-1$
 	}
 
 }

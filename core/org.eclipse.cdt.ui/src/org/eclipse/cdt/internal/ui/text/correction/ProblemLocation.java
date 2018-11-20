@@ -31,33 +31,33 @@ public class ProblemLocation implements IProblemLocation {
 	private final String fMarkerType;
 
 	public ProblemLocation(int offset, int length, ICAnnotation annotation) {
-		fId= annotation.getId();
-		fArguments= annotation.getArguments();
-		fOffset= offset;
-		fLength= length;
-		fIsError= CMarkerAnnotation.ERROR_ANNOTATION_TYPE.equals(annotation.getType());
-		
-		String markerType= annotation.getMarkerType();
-		fMarkerType= markerType != null ? markerType : ICModelMarker.C_MODEL_PROBLEM_MARKER;
+		fId = annotation.getId();
+		fArguments = annotation.getArguments();
+		fOffset = offset;
+		fLength = length;
+		fIsError = CMarkerAnnotation.ERROR_ANNOTATION_TYPE.equals(annotation.getType());
+
+		String markerType = annotation.getMarkerType();
+		fMarkerType = markerType != null ? markerType : ICModelMarker.C_MODEL_PROBLEM_MARKER;
 	}
 
 	public ProblemLocation(int offset, int length, int id, String[] arguments, boolean isError, String markerType) {
-		fId= id;
-		fArguments= arguments;
-		fOffset= offset;
-		fLength= length;
-		fIsError= isError;
-		fMarkerType= markerType;
+		fId = id;
+		fArguments = arguments;
+		fOffset = offset;
+		fLength = length;
+		fIsError = isError;
+		fMarkerType = markerType;
 	}
-	
+
 	public ProblemLocation(IProblem problem) {
-		fId= problem.getID();
-		fArguments= problem.getArguments();
-		fOffset= problem.getSourceStart();
-		fLength= problem.getSourceEnd() - fOffset + 1;
-		fIsError= problem.isError();
-		fMarkerType= problem instanceof IPersistableProblem ?
-				((IPersistableProblem) problem).getMarkerType() : ICModelMarker.C_MODEL_PROBLEM_MARKER;
+		fId = problem.getID();
+		fArguments = problem.getArguments();
+		fOffset = problem.getSourceStart();
+		fLength = problem.getSourceEnd() - fOffset + 1;
+		fIsError = problem.isError();
+		fMarkerType = problem instanceof IPersistableProblem ? ((IPersistableProblem) problem).getMarkerType()
+				: ICModelMarker.C_MODEL_PROBLEM_MARKER;
 	}
 
 	@Override
@@ -89,24 +89,24 @@ public class ProblemLocation implements IProblemLocation {
 	public String getMarkerType() {
 		return fMarkerType;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append("Id: ").append(getErrorCode(fId)).append('\n'); //$NON-NLS-1$
 		buf.append('[').append(fOffset).append(", ").append(fLength).append(']').append('\n'); //$NON-NLS-1$
-		String[] arg= fArguments;
+		String[] arg = fArguments;
 		if (arg != null) {
-			for (int i= 0; i < arg.length; i++) {
+			for (int i = 0; i < arg.length; i++) {
 				buf.append(arg[i]);
-				buf.append('\n');				 
+				buf.append('\n');
 			}
 		}
 		return buf.toString();
 	}
 
 	private String getErrorCode(int code) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		if ((code & IProblem.SCANNER_RELATED) != 0) {
 			buf.append("ScannerRelated + "); //$NON-NLS-1$
 		}

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-
 /**
  * Handler for {@link org.eclipse.cdt.internal.ui.actions.FreshenIndexAction}
  *
@@ -23,7 +22,7 @@ package org.eclipse.cdt.internal.ui.actions;
 public class FreshenAllFilesHandler extends AbstractUpdateIndexHandler {
 
 	private final FreshenIndexAction freshenIndexAction = new FreshenIndexAction();
-	
+
 	@Override
 	public AbstractUpdateIndexAction getAction() {
 		return freshenIndexAction;

@@ -337,8 +337,8 @@ public class WorkingSetConfigurationManager {
 	 * 
 	 * @since 6.0
 	 */
-	private class WorkingSetChangeTracker extends java.util.IdentityHashMap<IWorkingSet, String> implements
-			IPropertyChangeListener {
+	private class WorkingSetChangeTracker extends java.util.IdentityHashMap<IWorkingSet, String>
+			implements IPropertyChangeListener {
 
 		WorkingSetChangeTracker() {
 			for (IWorkingSet next : WS_MGR.getWorkingSets()) {

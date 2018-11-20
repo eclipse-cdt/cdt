@@ -61,12 +61,12 @@ public class CPPTemplateTypeParameterSpecialization extends CPPTemplateParameter
 
 	@Override
 	public Object clone() {
-        Object o = null;
-   		try {
-            o = super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return o;
-    }
+		Object o = null;
+		try {
+			o = super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return o;
+	}
 }

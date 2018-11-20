@@ -74,7 +74,7 @@ public class PreprocessorRule extends WordRule {
 	 */
 	public PreprocessorRule(IWordDetector detector, IToken defaultToken, IToken malformedToken) {
 		super(detector, defaultToken);
-		fMalformedToken= malformedToken;
+		fMalformedToken = malformedToken;
 	}
 
 	/*
@@ -83,7 +83,7 @@ public class PreprocessorRule extends WordRule {
 	@Override
 	public void addWord(String word, IToken token) {
 		if (word.charAt(0) == '#') {
-			word= word.substring(1);
+			word = word.substring(1);
 		}
 		super.addWord(word, token);
 	}
@@ -101,7 +101,7 @@ public class PreprocessorRule extends WordRule {
 			c = scanner.read();
 			nCharsToRollback++;
 		} while (c == ' ' || c == '\t');
-		
+
 		// Di- and trigraph support
 		if (c == '#') {
 			hashSignDetected = true;
@@ -145,7 +145,7 @@ public class PreprocessorRule extends WordRule {
 			IToken token = fWords.get(fBuffer.toString());
 			if (token != null)
 				return token;
-			
+
 			if (fMalformedToken != null) {
 				do {
 					c = scanner.read();
@@ -157,7 +157,7 @@ public class PreprocessorRule extends WordRule {
 
 		}
 		// Doesn't start with '#', roll back scanner
-		
+
 		for (int i = 0; i < nCharsToRollback; i++) {
 			scanner.unread();
 		}

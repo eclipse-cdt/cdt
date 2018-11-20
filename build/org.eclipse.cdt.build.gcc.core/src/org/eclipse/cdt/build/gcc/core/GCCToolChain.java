@@ -127,7 +127,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				}
 			}
 		}
-		
+
 		if (pathVar == null && this.path != null) {
 			// Make one with the directory containing out tool
 			pathVar = new EnvironmentVariable("PATH", this.path.getParent().toString(), //$NON-NLS-1$
@@ -219,7 +219,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	public void setProperty(String key, String value) {
 		properties.put(key, value);
 	}
-	
+
 	@Override
 	public String getBinaryParserId() {
 		// Assume local builds
@@ -261,12 +261,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 			int offset = 0;
 			Path command = Paths.get(commandStrings.get(offset));
-			
+
 			// look for ccache being used
 			if (command.toString().contains("ccache")) { //$NON-NLS-1$
 				command = Paths.get(commandStrings.get(++offset));
 			}
-			
+
 			List<String> commandLine = new ArrayList<>();
 			if (command.isAbsolute()) {
 				commandLine.add(command.toString());
@@ -415,7 +415,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 						commandLine.add("-I" + includePath); //$NON-NLS-1$
 					}
 				}
-				
+
 				if (baseScannerInfo.getDefinedSymbols() != null) {
 					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
 						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
@@ -460,15 +460,15 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 		// Startup the command
 		ProcessBuilder processBuilder = new ProcessBuilder(commandLine).directory(buildDirectory.toFile());
-		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(processBuilder.environment(),
-				buildConfig, true);
+		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(processBuilder.environment(), buildConfig,
+				true);
 		Process process = processBuilder.start();
 
 		// Scan for the scanner info
 		Map<String, String> symbols = new HashMap<>();
 		List<String> includePath = new ArrayList<>();
 		Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
-		
+
 		// First the include path off the error stream
 		Thread includePathReaderThread = new Thread("Include Path Reader") {
 			@Override
@@ -498,7 +498,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			}
 		};
 		includePathReaderThread.start();
-		
+
 		Thread macroReaderThread = new Thread("Macro reader") {
 			public void run() {
 				// Now the defines off the output stream

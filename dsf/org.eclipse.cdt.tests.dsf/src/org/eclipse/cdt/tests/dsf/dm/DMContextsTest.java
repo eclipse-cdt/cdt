@@ -27,102 +27,109 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
 public class DMContextsTest {
 
-    TestDsfExecutor fExecutor;
-    DsfSession fSession;
-    
-    @Before public void startExecutor() throws ExecutionException, InterruptedException {
-        fExecutor = new TestDsfExecutor();
-        fExecutor.submit(new DsfRunnable() { @Override
-	public void run() {
-            fSession = DsfSession.startSession(fExecutor, "DMContextsTest"); //$NON-NLS-1$
-        }}).get();
+	TestDsfExecutor fExecutor;
+	DsfSession fSession;
 
-        // Build a hierarchy of contexts to run the tests.  Note that this hierarchy
-        // is not valid in the DSF model, but that is ok for these tests.
-        // Let's build the following:
-        //
-        //     SecondType4
-        //        |
-        //     FirstType3  SecondType7
-        //        |             |         
-        //     ThirdType2   ThirdType6
-        //        |       /     |
-        //     FirstType1   ThirdType5
-        //        |       /
-        //     FirstType0 
-         c[7] = new SecondType(new IDMContext[0], 7);
-         c[6] = new ThirdType(new IDMContext[]{c[7]}, 6);
-         c[5] = new ThirdType(new IDMContext[]{c[6]}, 5);
-         c[4] = new SecondType(new IDMContext[0], 4);
-         c[3] = new FirstType(new IDMContext[]{c[4]}, 3);
-         c[2] = new ThirdType(new IDMContext[]{c[3]}, 2);
-         c[1] = new FirstType(new IDMContext[]{c[2],c[6]}, 1);      
-         c[0] = new FirstType(new IDMContext[]{c[1],c[5]}, 0);
-    }   
-    
-    @After public void shutdownExecutor() throws ExecutionException, InterruptedException {
-        DsfSession.endSession(fSession);
-        fSession = null;
-        
-        fExecutor.submit(new DsfRunnable() { @Override
-	public void run() {
-            fExecutor.shutdown();
-        }}).get();
-        if (fExecutor.exceptionsCaught()) {
-            Throwable[] exceptions = fExecutor.getExceptions();
-            throw new ExecutionException(exceptions[0]);
-        }
-        fExecutor = null;
-    }
-    
-    
+	@Before
+	public void startExecutor() throws ExecutionException, InterruptedException {
+		fExecutor = new TestDsfExecutor();
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fSession = DsfSession.startSession(fExecutor, "DMContextsTest"); //$NON-NLS-1$
+			}
+		}).get();
+
+		// Build a hierarchy of contexts to run the tests.  Note that this hierarchy
+		// is not valid in the DSF model, but that is ok for these tests.
+		// Let's build the following:
+		//
+		//     SecondType4
+		//        |
+		//     FirstType3  SecondType7
+		//        |             |         
+		//     ThirdType2   ThirdType6
+		//        |       /     |
+		//     FirstType1   ThirdType5
+		//        |       /
+		//     FirstType0 
+		c[7] = new SecondType(new IDMContext[0], 7);
+		c[6] = new ThirdType(new IDMContext[] { c[7] }, 6);
+		c[5] = new ThirdType(new IDMContext[] { c[6] }, 5);
+		c[4] = new SecondType(new IDMContext[0], 4);
+		c[3] = new FirstType(new IDMContext[] { c[4] }, 3);
+		c[2] = new ThirdType(new IDMContext[] { c[3] }, 2);
+		c[1] = new FirstType(new IDMContext[] { c[2], c[6] }, 1);
+		c[0] = new FirstType(new IDMContext[] { c[1], c[5] }, 0);
+	}
+
+	@After
+	public void shutdownExecutor() throws ExecutionException, InterruptedException {
+		DsfSession.endSession(fSession);
+		fSession = null;
+
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fExecutor.shutdown();
+			}
+		}).get();
+		if (fExecutor.exceptionsCaught()) {
+			Throwable[] exceptions = fExecutor.getExceptions();
+			throw new ExecutionException(exceptions[0]);
+		}
+		fExecutor = null;
+	}
+
 	BaseContextType c[] = new BaseContextType[8];
-
 
 	private class BaseContextType extends AbstractDMContext {
 		final int fId;
 
-        public BaseContextType(IDMContext[] parents, int id) {
-            super(fSession.getId(), parents);
-            fId = id;
-        }
-        
-        @Override
-        public String toString() { return baseToString() + ".[" + fId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
-    
-        @Override
-        public boolean equals(Object obj) {
-            return super.baseEquals(obj) && ((BaseContextType)obj).fId == fId;
-        }
-        
-        @Override
-        public int hashCode() { return super.baseHashCode() ^ fId; }
+		public BaseContextType(IDMContext[] parents, int id) {
+			super(fSession.getId(), parents);
+			fId = id;
+		}
+
+		@Override
+		public String toString() {
+			return baseToString() + ".[" + fId + "]"; //$NON-NLS-1$//$NON-NLS-2$
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return super.baseEquals(obj) && ((BaseContextType) obj).fId == fId;
+		}
+
+		@Override
+		public int hashCode() {
+			return super.baseHashCode() ^ fId;
+		}
 	}
 
 	private class FirstType extends BaseContextType {
-        public FirstType(IDMContext[] parents, int id) {
-            super(parents, id);
-        }
+		public FirstType(IDMContext[] parents, int id) {
+			super(parents, id);
+		}
 	}
 
 	private class SecondType extends BaseContextType {
-        public SecondType(IDMContext[] parents, int id) {
-            super(parents, id);
-        }
+		public SecondType(IDMContext[] parents, int id) {
+			super(parents, id);
+		}
 	}
-	
+
 	private class ThirdType extends BaseContextType {
-        public ThirdType(IDMContext[] parents, int id) {
-            super(parents, id);
-        }
+		public ThirdType(IDMContext[] parents, int id) {
+			super(parents, id);
+		}
 	}
-	
-	private interface UnknownType extends IDMContext {}
-    	
+
+	private interface UnknownType extends IDMContext {
+	}
+
 	/**
 	 * Test that we get the closest ancestor in terms of depth.
 	 */
@@ -158,29 +165,29 @@ public class DMContextsTest {
 	@Test
 	public void testAllClosestAncestors() throws Throwable {
 
-		checkAncestors(c[0], BaseContextType.class, new int[]{0,1,5,2,6,3,7,4});
-		checkAncestors(c[0], FirstType.class, new int[]{0,1,3});
-		checkAncestors(c[0], SecondType.class, new int[]{7,4});
-		checkAncestors(c[0], ThirdType.class, new int[]{5,2,6});
+		checkAncestors(c[0], BaseContextType.class, new int[] { 0, 1, 5, 2, 6, 3, 7, 4 });
+		checkAncestors(c[0], FirstType.class, new int[] { 0, 1, 3 });
+		checkAncestors(c[0], SecondType.class, new int[] { 7, 4 });
+		checkAncestors(c[0], ThirdType.class, new int[] { 5, 2, 6 });
 
 		UnknownType[] exprAncestors = DMContexts.getAllAncestorsOfType(c[0], UnknownType.class);
 		assertTrue("Got unexpected non-null ancestor list", exprAncestors == null);
 	}
-	
+
 	private <V extends IDMContext> void checkAncestors(BaseContextType ctx, Class<V> type, int[] expected) {
-		BaseContextType[] ancestors = (BaseContextType[])DMContexts.getAllAncestorsOfType(ctx, type);
+		BaseContextType[] ancestors = (BaseContextType[]) DMContexts.getAllAncestorsOfType(ctx, type);
 		assertTrue("Got unexpected null ancestor", ancestors != null);
 
 		String ancestorsStr = "", expectedStr = "";
-		for (int k=0;k<ancestors.length;k++) {
+		for (int k = 0; k < ancestors.length; k++) {
 			ancestorsStr += ancestors[k].fId + ",";
 		}
-		for (int j=0;j<expected.length;j++) {
+		for (int j = 0; j < expected.length; j++) {
 			expectedStr += expected[j] + ",";
 		}
 
 		assertTrue("Got " + ancestorsStr + " instead of " + expectedStr, ancestors.length == expected.length);
-		for (int i=0;i<expected.length;i++) {
+		for (int i = 0; i < expected.length; i++) {
 			if (ancestors[i].fId != expected[i]) {
 				assertTrue("Got " + ancestorsStr + " instead of " + expectedStr, false);
 			}

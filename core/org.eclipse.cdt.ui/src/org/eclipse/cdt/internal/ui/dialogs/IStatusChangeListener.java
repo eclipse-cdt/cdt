@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.ui.dialogs;
 import org.eclipse.core.runtime.IStatus;
 
 public interface IStatusChangeListener {
-	
+
 	/**
 	 * Called to announce that the given status has changed.
 	 */

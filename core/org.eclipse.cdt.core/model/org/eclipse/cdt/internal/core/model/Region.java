@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IRegion;
 
-
 /**
  * @see IRegion
  */

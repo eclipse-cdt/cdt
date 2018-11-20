@@ -20,7 +20,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
  * Represents the global C index scope.
  */
 public class PDOMCGlobalScope extends PDOMGlobalScope implements ICScope {
-	public static final PDOMCGlobalScope INSTANCE = new PDOMCGlobalScope(); 
+	public static final PDOMCGlobalScope INSTANCE = new PDOMCGlobalScope();
 
-	private PDOMCGlobalScope() {}
+	private PDOMCGlobalScope() {
+	}
 }

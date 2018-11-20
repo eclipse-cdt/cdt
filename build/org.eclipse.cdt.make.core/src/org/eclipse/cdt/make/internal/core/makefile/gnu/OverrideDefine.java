@@ -15,7 +15,6 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 public class OverrideDefine extends DefineVariable {
 
 	public OverrideDefine(Directive parent, String name, StringBuffer value) {
@@ -24,7 +23,8 @@ public class OverrideDefine extends DefineVariable {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer(GNUMakefileConstants.VARIABLE_OVERRIDE + " " + GNUMakefileConstants.VARIABLE_DEFINE); //$NON-NLS-1$
+		StringBuffer sb = new StringBuffer(
+				GNUMakefileConstants.VARIABLE_OVERRIDE + " " + GNUMakefileConstants.VARIABLE_DEFINE); //$NON-NLS-1$
 		sb.append(getName()).append('\n');
 		sb.append(getValue());
 		sb.append(GNUMakefileConstants.TERMINAL_ENDEF);

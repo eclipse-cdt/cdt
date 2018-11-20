@@ -38,16 +38,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class BuildConsoleViewer extends TextViewer
-	implements  LineStyleListener,
-				LineBackgroundListener,
-				MouseTrackListener,
-				MouseListener {
+		implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseListener {
 
 	protected InternalDocumentListener fInternalDocumentListener = new InternalDocumentListener();
 	/**
 	 * Whether the console scrolls as output is appended.
 	 */
 	private boolean fAutoScroll = true;
+
 	/**
 	 * Internal document listener.
 	 */
@@ -55,6 +53,7 @@ public class BuildConsoleViewer extends TextViewer
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
+
 		@Override
 		public void documentChanged(DocumentEvent e) {
 			revealEndOfDocument();
@@ -158,26 +157,30 @@ public class BuildConsoleViewer extends TextViewer
 	@Override
 	public void lineGetStyle(LineStyleEvent event) {
 		IDocument document = getDocument();
-		if (document == null) return;
+		if (document == null)
+			return;
 		BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
-		if (partitioner == null) return;
+		if (partitioner == null)
+			return;
 
 		BuildConsolePartition p = partitioner.fDocumentMarkerManager.getCurrentPartition();
-		Color problemHighlightedColor =  partitioner.fManager.getProblemHighlightedColor();
+		Color problemHighlightedColor = partitioner.fManager.getProblemHighlightedColor();
 
 		// Note, computePartitioning actually doesn't change anything in partitioning,
 		// but only computes number of affected regions.
-		List<BuildConsolePartition> regions = partitioner.computePartitioningAsList(event.lineOffset, event.lineText.length());
+		List<BuildConsolePartition> regions = partitioner.computePartitioningAsList(event.lineOffset,
+				event.lineText.length());
 		StyleRange[] styles = new StyleRange[regions.size()];
 		for (int i = 0; i < regions.size(); i++) {
 			BuildConsolePartition partition = regions.get(i);
-			if (partition.getStream()== null) return;
+			if (partition.getStream() == null)
+				return;
 
 			Color colorFG = partition.getStream().getColor();
 			Color colorBG = null;
 
 			// Highlight current partition
-			if ( partition == p ) {
+			if (partition == p) {
 				colorFG = problemHighlightedColor;
 			}
 			StyleRange styleRange = new StyleRange(partition.getOffset(), partition.getLength(), colorFG, colorBG);
@@ -199,22 +202,22 @@ public class BuildConsoleViewer extends TextViewer
 		if (st != null) {
 			try {
 				int start = partitioner.getDocument().getLineOfOffset(p.getOffset());
-				int end = partitioner.getDocument().getLineOfOffset(p.getOffset()+p.getLength()-1);
-	
-				if ( fAutoScroll ) {
+				int end = partitioner.getDocument().getLineOfOffset(p.getOffset() + p.getLength() - 1);
+
+				if (fAutoScroll) {
 					// Check if area around this line is visible, scroll if needed
 					int top = getTopIndex();
 					int bottom = getBottomIndex();
-					if ( start < top + 1 ) {
+					if (start < top + 1) {
 						setTopIndex(start - 1 > 0 ? start - 1 : 0);
-					} else if ( end > bottom -1 ) {
+					} else if (end > bottom - 1) {
 						setTopIndex(top + start - bottom + 1);
 					}
 				}
-	
+
 				// Select line
 				st.redrawRange(p.getOffset(), p.getLength(), false);
-	
+
 			} catch (BadLocationException e) {
 				CUIPlugin.log(e);
 			}
@@ -266,19 +269,21 @@ public class BuildConsoleViewer extends TextViewer
 	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
 		IDocument document = getDocument();
-		if (document == null) return;
+		if (document == null)
+			return;
 		BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
-		if (partitioner == null) return;
+		if (partitioner == null)
+			return;
 
 		BuildConsolePartition partition = (BuildConsolePartition) partitioner.getPartition(event.lineOffset);
 		// Set background for error partitions
-		if (partition!=null) {
+		if (partition != null) {
 			String type = partition.getType();
-			if (type==BuildConsolePartition.ERROR_PARTITION_TYPE) {
+			if (type == BuildConsolePartition.ERROR_PARTITION_TYPE) {
 				event.lineBackground = partitioner.fManager.getProblemBackgroundColor();
-			} else if (type==BuildConsolePartition.WARNING_PARTITION_TYPE) {
+			} else if (type == BuildConsolePartition.WARNING_PARTITION_TYPE) {
 				event.lineBackground = partitioner.fManager.getWarningBackgroundColor();
-			} else if (type==BuildConsolePartition.INFO_PARTITION_TYPE) {
+			} else if (type == BuildConsolePartition.INFO_PARTITION_TYPE) {
 				event.lineBackground = partitioner.fManager.getInfoBackgroundColor();
 			}
 		}

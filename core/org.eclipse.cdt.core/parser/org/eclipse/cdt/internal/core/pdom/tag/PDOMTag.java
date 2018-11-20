@@ -57,18 +57,15 @@ public class PDOMTag implements IWritableTag {
 			return db.getRecPtr(instance + offset + data_offset);
 		}
 
-		public void putRecPtr(Database db, long instance, long data_offset, long value)
-				throws CoreException {
+		public void putRecPtr(Database db, long instance, long data_offset, long value) throws CoreException {
 			db.putRecPtr(instance + offset + data_offset, value);
 		}
 
-		public void put(Database db, long instance, long data_offset, byte value)
-				throws CoreException {
+		public void put(Database db, long instance, long data_offset, byte value) throws CoreException {
 			db.putByte(instance + offset + data_offset, value);
 		}
 
-		public void put(Database db, long instance, byte[] data, long data_offset, int len)
-				throws CoreException {
+		public void put(Database db, long instance, byte[] data, long data_offset, int len) throws CoreException {
 			db.putBytes(instance + offset + data_offset, data, len);
 		}
 
@@ -76,15 +73,13 @@ public class PDOMTag implements IWritableTag {
 			return db.getByte(instance + offset + data_offset);
 		}
 
-		public byte[] getBytes(Database db, long instance, long data_offset, int len)
-				throws CoreException {
+		public byte[] getBytes(Database db, long instance, long data_offset, int len) throws CoreException {
 			byte[] data = new byte[len];
 			db.getBytes(instance + offset + data_offset, data);
 			return data;
 		}
 
-		public void put(Database db, long instance, long data_offset, int value)
-				throws CoreException {
+		public void put(Database db, long instance, long data_offset, int value) throws CoreException {
 			db.putInt(instance + offset + data_offset, value);
 		}
 

@@ -58,7 +58,7 @@ public abstract class Directive implements IDirective {
 		}
 		return filename;
 	}
-	
+
 	@Override
 	public IMakefile getMakefile() {
 		if (makefile == null) {

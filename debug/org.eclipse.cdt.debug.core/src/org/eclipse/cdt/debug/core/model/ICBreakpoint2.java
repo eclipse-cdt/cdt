@@ -23,27 +23,27 @@ import org.eclipse.core.runtime.CoreException;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICBreakpoint2 extends ICBreakpoint {
-    /**
-     * Refresh the marker message for the breakpoint.
-     * <p>
-     * Many of breakpoint settings are backed by marker attributes and it is 
-     * sometimes more convenient to modify those attributes in the marker 
-     * directly rather than through accessor methods of the breakpoint.  This 
-     * method allows the client to force the breakpoint to refresh its 
-     * {@link org.eclipse.core.resources.IMarker#MESSAGE} attribute to reflect
-     * its current attribute values.
-     * </p>
-     * 
-     * @throws CoreException if unable to access the property 
-     *  on this breakpoint's underlying marker
-     */
-    public void refreshMessage() throws CoreException;    
+	/**
+	 * Refresh the marker message for the breakpoint.
+	 * <p>
+	 * Many of breakpoint settings are backed by marker attributes and it is 
+	 * sometimes more convenient to modify those attributes in the marker 
+	 * directly rather than through accessor methods of the breakpoint.  This 
+	 * method allows the client to force the breakpoint to refresh its 
+	 * {@link org.eclipse.core.resources.IMarker#MESSAGE} attribute to reflect
+	 * its current attribute values.
+	 * </p>
+	 * 
+	 * @throws CoreException if unable to access the property 
+	 *  on this breakpoint's underlying marker
+	 */
+	public void refreshMessage() throws CoreException;
 
-    /**
-     * Returns the marker type of the given CDT Breakpoint.
-     * @return marker type ID
-     */
-    public String getMarkerType();
+	/**
+	 * Returns the marker type of the given CDT Breakpoint.
+	 * @return marker type ID
+	 */
+	public String getMarkerType();
 
 	/**
 	 * Obtain the combined message from all installed extensions on the

@@ -22,8 +22,7 @@ public class ToolChainEnvironmentSupplier implements ICoreEnvironmentVariableSup
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if (context instanceof IBuildConfiguration) {
-			ICBuildConfiguration config = ((IBuildConfiguration) context)
-					.getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration config = ((IBuildConfiguration) context).getAdapter(ICBuildConfiguration.class);
 			if (config != null) {
 				try {
 					IToolChain toolChain = config.getToolChain();
@@ -42,8 +41,7 @@ public class ToolChainEnvironmentSupplier implements ICoreEnvironmentVariableSup
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context instanceof IBuildConfiguration) {
-			ICBuildConfiguration config = ((IBuildConfiguration) context)
-					.getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration config = ((IBuildConfiguration) context).getAdapter(ICBuildConfiguration.class);
 			if (config != null) {
 				try {
 					IToolChain toolChain = config.getToolChain();

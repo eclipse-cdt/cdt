@@ -30,26 +30,27 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public abstract class FormatterTabPage extends ModifyDialogTabPage {
-	private final static String SHOW_INVISIBLE_PREFERENCE_KEY= CUIPlugin.PLUGIN_ID + ".formatter_page.show_invisible_characters"; //$NON-NLS-1$
+	private final static String SHOW_INVISIBLE_PREFERENCE_KEY = CUIPlugin.PLUGIN_ID
+			+ ".formatter_page.show_invisible_characters"; //$NON-NLS-1$
 
-    /**
-     * Constant array for boolean true/false selection.
-     * 
-     * @since 5.3
-     */
-    protected static String[] TRUE_FALSE= { DefaultCodeFormatterConstants.TRUE, DefaultCodeFormatterConstants.FALSE };
+	/**
+	 * Constant array for boolean true/false selection.
+	 * 
+	 * @since 5.3
+	 */
+	protected static String[] TRUE_FALSE = { DefaultCodeFormatterConstants.TRUE, DefaultCodeFormatterConstants.FALSE };
 
-    /**
-     * Constant array for boolean true/false selection.
-     * 
-     * @since 5.3
-     */
-    protected static String[] FALSE_TRUE= { DefaultCodeFormatterConstants.FALSE, DefaultCodeFormatterConstants.TRUE };
+	/**
+	 * Constant array for boolean true/false selection.
+	 * 
+	 * @since 5.3
+	 */
+	protected static String[] FALSE_TRUE = { DefaultCodeFormatterConstants.FALSE, DefaultCodeFormatterConstants.TRUE };
 
 	/**
 	 * Constant array for insert / not_insert.
 	 */
-	protected static String[] DO_NOT_INSERT_INSERT= { CCorePlugin.DO_NOT_INSERT, CCorePlugin.INSERT };
+	protected static String[] DO_NOT_INSERT_INSERT = { CCorePlugin.DO_NOT_INSERT, CCorePlugin.INSERT };
 
 	private CPreview fPreview;
 	private final IDialogSettings fDialogSettings;
@@ -58,14 +59,14 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
 	public FormatterTabPage(IModifyDialogTabPage.IModificationListener modifyListener,
 			Map<String, String> workingValues) {
 		super(modifyListener, workingValues);
-		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();
+		fDialogSettings = CUIPlugin.getDefault().getDialogSettings();
 	}
 
 	@Override
 	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
-		createLabel(numColumns - 1, composite, FormatterMessages.ModifyDialogTabPage_preview_label_text);  
-		
-		fShowInvisibleButton= new Button(composite, SWT.CHECK);
+		createLabel(numColumns - 1, composite, FormatterMessages.ModifyDialogTabPage_preview_label_text);
+
+		fShowInvisibleButton = new Button(composite, SWT.CHECK);
 		fShowInvisibleButton.setText(FormatterMessages.FormatterTabPage_ShowInvisibleCharacters_label);
 		fShowInvisibleButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 		fShowInvisibleButton.addSelectionListener(new SelectionAdapter() {
@@ -77,26 +78,26 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
 			}
 		});
 		fShowInvisibleButton.setSelection(isShowInvisible());
-		
-		fPreview= doCreateCPreview(composite);
+
+		fPreview = doCreateCPreview(composite);
 		fDefaultFocusManager.add(fPreview.getControl());
 		fPreview.showInvisibleCharacters(fShowInvisibleButton.getSelection());
-		
-		final GridData gd= createGridData(numColumns, GridData.FILL_BOTH, 0);
-		gd.widthHint= 0;
-		gd.heightHint=0;
+
+		final GridData gd = createGridData(numColumns, GridData.FILL_BOTH, 0);
+		gd.widthHint = 0;
+		gd.heightHint = 0;
 		fPreview.getControl().setLayoutData(gd);
-		
+
 		return composite;
 	}
 
 	private boolean isShowInvisible() {
 		return fDialogSettings.getBoolean(SHOW_INVISIBLE_PREFERENCE_KEY);
 	}
-	
+
 	@Override
 	protected void doUpdatePreview() {
-		boolean showInvisible= isShowInvisible();
+		boolean showInvisible = isShowInvisible();
 		fPreview.showInvisibleCharacters(showInvisible);
 		fShowInvisibleButton.setSelection(showInvisible);
 	}

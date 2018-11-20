@@ -39,7 +39,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	private ITextEditor fEditor;
 
 	public AsmReconcilingStrategy(ITextEditor editor) {
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	private IProgressMonitor fProgressMonitor;
@@ -73,7 +73,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 */
 	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
-		fProgressMonitor= monitor;
+		fProgressMonitor = monitor;
 	}
 
 	/*
@@ -86,7 +86,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 
 	private void reconcile(final boolean initialReconcile) {
 		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-		IWorkingCopy workingCopy= fManager.getWorkingCopy(fEditor.getEditorInput());
+		IWorkingCopy workingCopy = fManager.getWorkingCopy(fEditor.getEditorInput());
 		if (workingCopy == null) {
 			return;
 		}
@@ -98,9 +98,10 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 		} catch (OperationCanceledException oce) {
 			// document was modified while parsing
 		} catch (CModelException e) {
-			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
+					"Error in CDT UI during reconcile", e); //$NON-NLS-1$
 			CUIPlugin.log(status);
 		}
- 	}
+	}
 
 }

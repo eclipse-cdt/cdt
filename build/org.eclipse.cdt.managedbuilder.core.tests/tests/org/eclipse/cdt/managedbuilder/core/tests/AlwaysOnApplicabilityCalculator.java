@@ -27,10 +27,7 @@ public class AlwaysOnApplicabilityCalculator implements IOptionApplicability {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionUsedInCommandLine()
 	 */
 	@Override
-	public boolean isOptionUsedInCommandLine(
-			IBuildObject config,
-			IHoldsOptions holder,
-			IOption option) {
+	public boolean isOptionUsedInCommandLine(IBuildObject config, IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
@@ -38,10 +35,7 @@ public class AlwaysOnApplicabilityCalculator implements IOptionApplicability {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionVisible()
 	 */
 	@Override
-	public boolean isOptionVisible(
-			IBuildObject config,
-			IHoldsOptions holder,
-			IOption option) {
+	public boolean isOptionVisible(IBuildObject config, IHoldsOptions holder, IOption option) {
 		return false;
 	}
 
@@ -49,10 +43,7 @@ public class AlwaysOnApplicabilityCalculator implements IOptionApplicability {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionEnabled()
 	 */
 	@Override
-	public boolean isOptionEnabled(
-			IBuildObject config,
-			IHoldsOptions holder,
-			IOption option) {
+	public boolean isOptionEnabled(IBuildObject config, IHoldsOptions holder, IOption option) {
 		return false;
 	}
 

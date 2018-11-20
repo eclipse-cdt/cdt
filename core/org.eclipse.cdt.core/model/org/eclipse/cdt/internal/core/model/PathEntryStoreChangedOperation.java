@@ -25,7 +25,6 @@ public class PathEntryStoreChangedOperation extends CModelOperation {
 		super(cproject);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
 	 */
@@ -34,22 +33,21 @@ public class PathEntryStoreChangedOperation extends CModelOperation {
 		return true;
 	}
 
-
 	@Override
 	protected void executeOperation() throws CModelException {
 		PathEntryManager manager = PathEntryManager.getDefault();
-		ICProject cproject = (ICProject)getElementToProcess();
+		ICProject cproject = (ICProject) getElementToProcess();
 		// Clear the old cache entries.
 		IPathEntry[] oldResolvedEntries = manager.removeCachedResolvedPathEntries(cproject);
 		IPathEntry[] newResolvedEntries = manager.getResolvedPathEntries(cproject);
-//		if(needDelta(cproject.getProject())){
-			ICElementDelta[] deltas = manager.generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
-			if (deltas.length > 0) {
-				cproject.close();
-				for (int i = 0; i < deltas.length; i++) {
-					addDelta(deltas[i]);
-				}
+		//		if(needDelta(cproject.getProject())){
+		ICElementDelta[] deltas = manager.generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
+		if (deltas.length > 0) {
+			cproject.close();
+			for (int i = 0; i < deltas.length; i++) {
+				addDelta(deltas[i]);
 			}
-//		}
+		}
+		//		}
 	}
 }

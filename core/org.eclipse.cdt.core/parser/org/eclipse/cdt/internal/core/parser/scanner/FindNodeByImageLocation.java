@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
@@ -32,12 +32,12 @@ public class FindNodeByImageLocation extends ASTGenericVisitor {
 
 	public FindNodeByImageLocation(int offset, int length, ASTNodeSpecification<?> nodeSpec) {
 		super(!nodeSpec.requiresClass(IASTName.class));
-		fNodeSpec= nodeSpec;
+		fNodeSpec = nodeSpec;
 		fOffset = offset;
 		fLength = length;
 
 		shouldVisitNames = true;
-		shouldVisitDeclarations= true;
+		shouldVisitDeclarations = true;
 	}
 
 	@Override
@@ -48,13 +48,14 @@ public class FindNodeByImageLocation extends ASTGenericVisitor {
 	private int processNode(IASTNode node) {
 		if (node instanceof ASTNode) {
 			final ASTNode astNode = (ASTNode) node;
-			if (astNode.getOffset() > fOffset+fLength || astNode.getOffset() + astNode.getLength() < fOffset) {
+			if (astNode.getOffset() > fOffset + fLength || astNode.getOffset() + astNode.getLength() < fOffset) {
 				return PROCESS_SKIP;
 			}
 
 			if (fNodeSpec.isAcceptableNode(astNode)) {
-				IASTImageLocation imageLocation= astNode.getImageLocation();
-				if (imageLocation != null && imageLocation.getLocationKind() == IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION) {
+				IASTImageLocation imageLocation = astNode.getImageLocation();
+				if (imageLocation != null
+						&& imageLocation.getLocationKind() == IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION) {
 					fNodeSpec.visit(astNode, imageLocation);
 				}
 			}

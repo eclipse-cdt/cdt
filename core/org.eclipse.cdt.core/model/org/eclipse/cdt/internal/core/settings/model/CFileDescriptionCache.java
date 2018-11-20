@@ -25,8 +25,7 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultFileData;
 import org.eclipse.core.runtime.IPath;
 
-public class CFileDescriptionCache extends CDefaultFileData implements
-		ICFileDescription, ICachedData {
+public class CFileDescriptionCache extends CDefaultFileData implements ICFileDescription, ICachedData {
 	private CConfigurationDescriptionCache fCfg;
 	private ResourceDescriptionHolder fRcDesHolder;
 
@@ -54,13 +53,12 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	}
 
 	@Override
-	public void setName(String name) throws WriteAccessException{
+	public void setName(String name) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
-
 	@Override
-	public void setPath(IPath path) throws WriteAccessException{
+	public void setPath(IPath path) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
@@ -76,12 +74,12 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 
 	@Override
 	public ICLanguageSetting getLanguageSetting() {
-		return (ICLanguageSetting)fLanguageData;
+		return (ICLanguageSetting) fLanguageData;
 	}
 
 	@Override
 	public ICSettingObject[] getChildSettings() {
-		return new ICSettingObject[]{(ICSettingObject)fLanguageData};
+		return new ICSettingObject[] { (ICSettingObject) fLanguageData };
 	}
 
 	@Override
@@ -89,12 +87,11 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 		return true;
 	}
 
-	private ResourceDescriptionHolder getRcDesHolder(){
-		if(fRcDesHolder == null)
+	private ResourceDescriptionHolder getRcDesHolder() {
+		if (fRcDesHolder == null)
 			fRcDesHolder = fCfg.createHolderForRc(getPath());
 		return fRcDesHolder;
 	}
-
 
 	@Override
 	public ICFolderDescription getParentFolderDescription() {

@@ -46,38 +46,36 @@ public class RestoreDefaultTypeActionHandler extends AbstractHandler {
 		return fCastableItems;
 	}
 
-	protected void setCastToType( ICastToType[] castableItems ) {
+	protected void setCastToType(ICastToType[] castableItems) {
 		fCastableItems = castableItems;
 	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if ( getCastToType() == null || getCastToType().length == 0 )
+		if (getCastToType() == null || getCastToType().length == 0)
 			return null;
-		
-		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					doAction( getCastToType() );
-					setStatus( null );
-				}
-				catch( DebugException e ) {
-					setStatus( e.getStatus() );
+					doAction(getCastToType());
+					setStatus(null);
+				} catch (DebugException e) {
+					setStatus(e.getStatus());
 				}
 			}
-		} );
-		if ( getStatus() != null && !getStatus().isOK() ) {
+		});
+		if (getStatus() != null && !getStatus().isOK()) {
 			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-			if ( window != null ) {
-				CDebugUIPlugin.errorDialog( ActionMessages.getString( "RestoreDefaultTypeActionDelegate.0" ), getStatus() ); //$NON-NLS-1$
-			}
-			else {
-				CDebugUIPlugin.log( getStatus() );
+			if (window != null) {
+				CDebugUIPlugin.errorDialog(ActionMessages.getString("RestoreDefaultTypeActionDelegate.0"), getStatus()); //$NON-NLS-1$
+			} else {
+				CDebugUIPlugin.log(getStatus());
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -87,36 +85,36 @@ public class RestoreDefaultTypeActionHandler extends AbstractHandler {
 		setBaseEnabled(castableItems.length > 0);
 		setCastToType(castableItems);
 	}
-	
+
 	private ICastToType[] getCastToType(Object evaluationContext) {
 		List<ICastToType> castableItems = new ArrayList<ICastToType>();
-	    if (evaluationContext instanceof IEvaluationContext) {
-	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-	        if (s instanceof IStructuredSelection) {
-	        	Iterator<?> iter = ((IStructuredSelection)s).iterator();
-	        	while( iter.hasNext() ) {
-	        		Object element = DebugPlugin.getAdapter(iter.next(), ICastToType.class);
-	        		if (element instanceof ICastToType) {
-	        			if (((ICastToType)element).isCasted()) {
-	        				castableItems.add((ICastToType)element);
-	        			}
-                    }
-                }
-            }
-        }
-	    return castableItems.toArray(new ICastToType[castableItems.size()]);
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			if (s instanceof IStructuredSelection) {
+				Iterator<?> iter = ((IStructuredSelection) s).iterator();
+				while (iter.hasNext()) {
+					Object element = DebugPlugin.getAdapter(iter.next(), ICastToType.class);
+					if (element instanceof ICastToType) {
+						if (((ICastToType) element).isCasted()) {
+							castableItems.add((ICastToType) element);
+						}
+					}
+				}
+			}
+		}
+		return castableItems.toArray(new ICastToType[castableItems.size()]);
 	}
-	
+
 	public IStatus getStatus() {
 		return fStatus;
 	}
 
-	public void setStatus( IStatus status ) {
+	public void setStatus(IStatus status) {
 		fStatus = status;
 	}
 
-	protected void doAction( ICastToType[] castableItems ) throws DebugException {
-		for ( ICastToType castableItem : castableItems ) {
+	protected void doAction(ICastToType[] castableItems) throws DebugException {
+		for (ICastToType castableItem : castableItems) {
 			castableItem.restoreOriginal();
 		}
 	}

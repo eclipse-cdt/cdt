@@ -16,7 +16,6 @@ package org.eclipse.cdt.make.core.makefile;
 import java.io.File;
 import java.io.IOException;
 
-
 /**
  * ICommand
  * Commands are associated with a rule and executed by
@@ -26,7 +25,7 @@ import java.io.IOException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICommand extends IDirective {
-	
+
 	final public static char HYPHEN = '-';
 
 	final public static String HYPHEN_STRING = "-"; //$NON-NLS-1$
@@ -64,7 +63,6 @@ public interface ICommand extends IDirective {
 	 * specified.
 	 */
 	boolean shouldExecute();
-
 
 	/**
 	 * Executes the command in a separate process with the

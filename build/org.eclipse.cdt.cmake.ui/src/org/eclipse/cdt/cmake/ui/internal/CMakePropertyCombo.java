@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class CMakePropertyCombo implements ICMakePropertyPageControl {
-	
+
 	private String name;
 	private String initialValue;
 	private Combo combo;
-	
+
 	public CMakePropertyCombo(Composite composite, String name, String[] values, String initialValue, String tooltip) {
 		this.name = name;
 		this.initialValue = initialValue;
@@ -39,7 +39,6 @@ public class CMakePropertyCombo implements ICMakePropertyPageControl {
 		combo.setText(initialValue);
 		combo.setToolTipText(tooltip);
 	}
-
 
 	@Override
 	public String getFieldValue() {
@@ -60,7 +59,7 @@ public class CMakePropertyCombo implements ICMakePropertyPageControl {
 	public boolean isValid() {
 		return true;
 	}
-	
+
 	@Override
 	public String getErrorMessage() {
 		return null;

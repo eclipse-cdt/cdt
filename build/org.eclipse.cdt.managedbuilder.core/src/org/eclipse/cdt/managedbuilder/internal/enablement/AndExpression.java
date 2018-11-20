@@ -21,30 +21,27 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class AndExpression extends CompositeExpression {
-	public static final String NAME = "and"; 	//$NON-NLS-1$
+	public static final String NAME = "and"; //$NON-NLS-1$
 
 	public AndExpression(IManagedConfigElement element) {
 		super(element);
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo,
-            IHoldsOptions holder,
-            IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 		IBooleanExpression children[] = getChildren();
-		for(int i = 0; i < children.length; i++){
-			if(!children[i].evaluate(rcInfo, holder, option))
+		for (int i = 0; i < children.length; i++) {
+			if (!children[i].evaluate(rcInfo, holder, option))
 				return false;
 		}
 		return true;
 	}
+
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo,
-            IHoldsOptions holder,
-            IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		IBooleanExpression children[] = getChildren();
-		for(int i = 0; i < children.length; i++){
-			if(!children[i].evaluate(rcInfo, holder, category))
+		for (int i = 0; i < children.length; i++) {
+			if (!children[i].evaluate(rcInfo, holder, category))
 				return false;
 		}
 		return true;

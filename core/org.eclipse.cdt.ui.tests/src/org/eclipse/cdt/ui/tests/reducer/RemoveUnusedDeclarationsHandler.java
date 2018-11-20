@@ -31,18 +31,19 @@ public class RemoveUnusedDeclarationsHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-        if (selection instanceof ITextSelection) {
-    		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-    		if (part instanceof ICEditor) {
-    			ICEditor editor = (ICEditor) part;
-        		IWorkingCopy wc = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-        		if (wc != null && wc.getResource() != null) {
-        			RefactoringRunner runner = new RemoveUnusedDeclarationsRefactoringRunner(wc, selection,
-        					editor.getEditorSite(), wc.getCProject());
+		if (selection instanceof ITextSelection) {
+			IWorkbenchPart part = HandlerUtil.getActivePart(event);
+			if (part instanceof ICEditor) {
+				ICEditor editor = (ICEditor) part;
+				IWorkingCopy wc = CUIPlugin.getDefault().getWorkingCopyManager()
+						.getWorkingCopy(editor.getEditorInput());
+				if (wc != null && wc.getResource() != null) {
+					RefactoringRunner runner = new RemoveUnusedDeclarationsRefactoringRunner(wc, selection,
+							editor.getEditorSite(), wc.getCProject());
 					runner.run();
-        		}
-            }
-    	}
+				}
+			}
+		}
 
 		return null;
 	}

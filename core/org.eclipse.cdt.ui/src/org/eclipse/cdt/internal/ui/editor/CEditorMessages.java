@@ -21,9 +21,8 @@ import java.util.ResourceBundle;
 import org.eclipse.osgi.util.NLS;
 
 public final class CEditorMessages extends NLS {
-	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS=
-			"org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages"; //$NON-NLS-1$
-	private static ResourceBundle fgBundleForConstructedKeys= ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
+	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS = "org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages"; //$NON-NLS-1$
+	private static ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
 
 	/**
 	 * Returns the message bundle which contains constructed keys.

@@ -24,15 +24,15 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
-public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferencePage  {
+public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferencePage {
 
 	private CodeAssistAdvancedConfigurationBlock fConfigurationBlock;
 
 	@Override
 	public void createControl(Composite parent) {
-		IWorkbenchPreferenceContainer container= (IWorkbenchPreferenceContainer) getContainer();
-		fConfigurationBlock= new CodeAssistAdvancedConfigurationBlock(getNewStatusChangedListener(), container);
-		
+		IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
+		fConfigurationBlock = new CodeAssistAdvancedConfigurationBlock(getNewStatusChangedListener(), container);
+
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_PREF_PAGE);
 	}
@@ -57,7 +57,7 @@ public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferenc
 		// no project settings supported
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
@@ -68,7 +68,7 @@ public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferenc
 		}
 		super.dispose();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
 	 */
@@ -87,10 +87,10 @@ public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferenc
 	public boolean performOk() {
 		if (fConfigurationBlock != null && !fConfigurationBlock.performOk()) {
 			return false;
-		}	
+		}
 		return super.performOk();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performApply()
 	 */

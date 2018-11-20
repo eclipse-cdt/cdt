@@ -92,9 +92,9 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  */
 public class CMacroExpansionExplorationControl extends AbstractCompareViewerInformationControl {
 
-	private static final String COMMAND_ID_EXPANSION_BACK= "org.eclipse.cdt.ui.hover.backwardMacroExpansion"; //$NON-NLS-1$
-	private static final String COMMAND_ID_EXPANSION_FORWARD= "org.eclipse.cdt.ui.hover.forwardMacroExpansion"; //$NON-NLS-1$
-	private static final String CONTEXT_ID_MACRO_EXPANSION_HOVER= "org.eclipse.cdt.ui.macroExpansionHoverScope"; //$NON-NLS-1$
+	private static final String COMMAND_ID_EXPANSION_BACK = "org.eclipse.cdt.ui.hover.backwardMacroExpansion"; //$NON-NLS-1$
+	private static final String COMMAND_ID_EXPANSION_FORWARD = "org.eclipse.cdt.ui.hover.forwardMacroExpansion"; //$NON-NLS-1$
+	private static final String CONTEXT_ID_MACRO_EXPANSION_HOVER = "org.eclipse.cdt.ui.macroExpansionHoverScope"; //$NON-NLS-1$
 
 	/** Dialog settings key to persist control bounds. */
 	public static final String KEY_CONTROL_BOUNDS = "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration"; //$NON-NLS-1$
@@ -108,17 +108,21 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		public CDiffNode(DocumentRangeNode parent, int type, String id, IDocument doc, int start, int length) {
 			super(parent, type, id, doc, start, length);
 		}
+
 		public CDiffNode(int type, String id, IDocument doc, int start, int length) {
 			super(type, id, doc, start, length);
 		}
+
 		@Override
 		public String getName() {
 			return getId();
 		}
+
 		@Override
 		public String getType() {
 			return "c2"; //$NON-NLS-1$
 		}
+
 		@Override
 		public Image getImage() {
 			return null;
@@ -152,6 +156,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 			public void focusGained(FocusEvent e) {
 				registerCommandHandlers();
 			}
+
 			@Override
 			public void focusLost(FocusEvent e) {
 				unregisterCommandHandlers();
@@ -161,7 +166,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 			@Override
 			public void handleEvent(Event event) {
 				widgetClosed();
-			}});
+			}
+		});
 		fillToolBar();
 		setDefaultSize(MIN_WIDTH, MIN_HEIGHT);
 	}
@@ -183,29 +189,29 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 */
 	public CMacroExpansionExplorationControl(Shell parent, boolean restoreSize) {
 		this(parent, null);
-		fRestoreSize= restoreSize;
+		fRestoreSize = restoreSize;
 		if (restoreSize) {
 			restoreSize();
 		}
 	}
 
 	private void restoreSize() {
-		String sectionName= KEY_CONTROL_BOUNDS_INTERNAL;
-		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+		String sectionName = KEY_CONTROL_BOUNDS_INTERNAL;
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
 		if (settings == null) {
 			return;
 		}
 		try {
-			int width= settings.getInt(AbstractInformationControlManager.STORE_SIZE_WIDTH);
-			int height= settings.getInt(AbstractInformationControlManager.STORE_SIZE_HEIGHT);
+			int width = settings.getInt(AbstractInformationControlManager.STORE_SIZE_WIDTH);
+			int height = settings.getInt(AbstractInformationControlManager.STORE_SIZE_HEIGHT);
 			setDefaultSize(width, height);
 		} catch (NumberFormatException exc) {
 			// Ignore
 		}
 	}
-	
+
 	private void setDefaultSize(int width, int height) {
-		fDefaultSize= new Point(width, height);
+		fDefaultSize = new Point(width, height);
 	}
 
 	private void storeSize() {
@@ -213,12 +219,12 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (shell == null) {
 			return;
 		}
-		String sectionName= KEY_CONTROL_BOUNDS_INTERNAL;
-		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+		String sectionName = KEY_CONTROL_BOUNDS_INTERNAL;
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
 		if (settings == null) {
-			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+			settings = CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
 		}
-		Point size= shell.getSize();
+		Point size = shell.getSize();
 		settings.put(AbstractInformationControlManager.STORE_SIZE_WIDTH, size.x);
 		settings.put(AbstractInformationControlManager.STORE_SIZE_HEIGHT, size.y);
 	}
@@ -229,26 +235,27 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	@Override
-	protected CompareViewerControl createCompareViewerControl(Composite parent, int style, CompareConfiguration compareConfig) {
-		Splitter splitter= new Splitter(parent, SWT.VERTICAL);
+	protected CompareViewerControl createCompareViewerControl(Composite parent, int style,
+			CompareConfiguration compareConfig) {
+		Splitter splitter = new Splitter(parent, SWT.VERTICAL);
 		splitter.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// text viewer to show the macro definition
-		fTextScroller= new ScrolledComposite(splitter, SWT.H_SCROLL | SWT.V_SCROLL);
-		fMacroViewer= createSourceViewer(fTextScroller, style);
-		final StyledText textWidget= fMacroViewer.getTextWidget();
+		fTextScroller = new ScrolledComposite(splitter, SWT.H_SCROLL | SWT.V_SCROLL);
+		fMacroViewer = createSourceViewer(fTextScroller, style);
+		final StyledText textWidget = fMacroViewer.getTextWidget();
 		fTextScroller.setBackground(textWidget.getBackground());
 		fTextScroller.setContent(textWidget);
-		final Point size= textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		final Point size = textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		textWidget.setSize(size);
 		// compare viewer
-		CompareViewerControl control= super.createCompareViewerControl(splitter, style, compareConfig);
+		CompareViewerControl control = super.createCompareViewerControl(splitter, style, compareConfig);
 		splitter.setWeights(new int[] { 20, 80 });
 		return control;
 	}
 
 	@Override
 	protected Viewer createContentViewer(Composite parent, ICompareInput input, CompareConfiguration cc) {
-		fMacroCompareViewer= new CMacroCompareViewer(parent, SWT.NULL, cc);
+		fMacroCompareViewer = new CMacroCompareViewer(parent, SWT.NULL, cc);
 		if (fInput != null) {
 			fMacroCompareViewer.setMacroExpansionInput(fInput);
 			fMacroCompareViewer.setMacroExpansionStep(fIndex);
@@ -257,22 +264,23 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	protected ISourceViewer createSourceViewer(Composite parent, int style) {
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		SourceViewer sourceViewer= new CSourceViewer(parent, null, null, false, style, store);
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false));
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		SourceViewer sourceViewer = new CSourceViewer(parent, null, null, false, style, store);
+		CTextTools tools = CUIPlugin.getDefault().getTextTools();
+		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null,
+				ICPartitions.C_PARTITIONING, false));
 		sourceViewer.setEditable(false);
 
-		fMacroText= sourceViewer.getTextWidget();
+		fMacroText = sourceViewer.getTextWidget();
 
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		Font font = JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		fMacroText.setFont(font);
 
-		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-		gd.heightHint= fMacroText.getLineHeight() * 2;
+		GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+		gd.heightHint = fMacroText.getLineHeight() * 2;
 		fMacroText.setLayoutData(gd);
 
-		final Document doc= new Document();
+		final Document doc = new Document();
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
 		sourceViewer.setDocument(doc);
 		return sourceViewer;
@@ -282,11 +290,11 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (fHandlerService != null) {
 			fHandlerService.deactivateHandlers(fHandlerActivations);
 			fHandlerActivations.clear();
-			fHandlerService= null;
+			fHandlerService = null;
 		}
 		if (fContextActivation != null) {
 			fContextService.deactivateContext(fContextActivation);
-			fContextActivation= null;
+			fContextActivation = null;
 		}
 	}
 
@@ -294,48 +302,49 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (fContextActivation != null) {
 			return;
 		}
-        IHandler backwardHandler= new AbstractHandler() {
-            @Override
+		IHandler backwardHandler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
-                backward();
-                return null;
-            }
-        };
-        IHandler forwardHandler= new AbstractHandler() {
-            @Override
+				backward();
+				return null;
+			}
+		};
+		IHandler forwardHandler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
-                forward();
-                return null;
-            }
-        };
-        IHandler gotoDefinitionHandler= new AbstractHandler() {
-            @Override
+				forward();
+				return null;
+			}
+		};
+		IHandler gotoDefinitionHandler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
-                gotoMacroDefinition();
-                return null;
-            }
-        };
+				gotoMacroDefinition();
+				return null;
+			}
+		};
 
-        IWorkbench workbench= PlatformUI.getWorkbench();
-        fHandlerService= workbench.getService(IHandlerService.class);
-        fContextService= workbench.getService(IContextService.class);
-        fContextActivation= fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
-        fHandlerActivations= new ArrayList<IHandlerActivation>();
-        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
-        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
-        fHandlerActivations.add(fHandlerService.activateHandler(ICEditorActionDefinitionIds.OPEN_DECL, gotoDefinitionHandler));
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		fHandlerService = workbench.getService(IHandlerService.class);
+		fContextService = workbench.getService(IContextService.class);
+		fContextActivation = fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
+		fHandlerActivations = new ArrayList<IHandlerActivation>();
+		fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
+		fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
+		fHandlerActivations
+				.add(fHandlerService.activateHandler(ICEditorActionDefinitionIds.OPEN_DECL, gotoDefinitionHandler));
 
-        String infoText= getInfoText();
-        if (infoText != null) {
-            setStatusText(infoText);
-            //bug 234952 - truncation in the info label
-            PixelConverter converter = new PixelConverter(getShell());
-            Point pt = getShell().getSize();
-            int stringLengthInPixel = converter.convertWidthInCharsToPixels(infoText.length()+5);
-            if (pt.x < stringLengthInPixel) {
-            	getShell().setSize(new Point(stringLengthInPixel, pt.y));
-            }
-        }
+		String infoText = getInfoText();
+		if (infoText != null) {
+			setStatusText(infoText);
+			//bug 234952 - truncation in the info label
+			PixelConverter converter = new PixelConverter(getShell());
+			Point pt = getShell().getSize();
+			int stringLengthInPixel = converter.convertWidthInCharsToPixels(infoText.length() + 5);
+			if (pt.x < stringLengthInPixel) {
+				getShell().setSize(new Point(stringLengthInPixel, pt.y));
+			}
+		}
 	}
 
 	private void fillToolBar() {
@@ -343,32 +352,35 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (mgr == null) {
 			return;
 		}
-        IWorkbench workbench= PlatformUI.getWorkbench();
-        CommandContributionItemParameter param= new CommandContributionItemParameter(workbench, null, COMMAND_ID_EXPANSION_BACK, CommandContributionItem.STYLE_PUSH);
-        param.icon= CPluginImages.DESC_ELCL_NAVIGATE_BACKWARD;
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		CommandContributionItemParameter param = new CommandContributionItemParameter(workbench, null,
+				COMMAND_ID_EXPANSION_BACK, CommandContributionItem.STYLE_PUSH);
+		param.icon = CPluginImages.DESC_ELCL_NAVIGATE_BACKWARD;
 		mgr.add(new CommandContributionItem(param));
-		param = new CommandContributionItemParameter(workbench, null, COMMAND_ID_EXPANSION_FORWARD, CommandContributionItem.STYLE_PUSH);
-        param.icon= CPluginImages.DESC_ELCL_NAVIGATE_FORWARD;
-        mgr.add(new CommandContributionItem(param));
-        param = new CommandContributionItemParameter(workbench, null, ICEditorActionDefinitionIds.OPEN_DECL, CommandContributionItem.STYLE_PUSH);
-        param.icon = CPluginImages.DESC_ELCL_OPEN_DECLARATION;
-        mgr.add(new CommandContributionItem(param));
-        mgr.update(true);
+		param = new CommandContributionItemParameter(workbench, null, COMMAND_ID_EXPANSION_FORWARD,
+				CommandContributionItem.STYLE_PUSH);
+		param.icon = CPluginImages.DESC_ELCL_NAVIGATE_FORWARD;
+		mgr.add(new CommandContributionItem(param));
+		param = new CommandContributionItemParameter(workbench, null, ICEditorActionDefinitionIds.OPEN_DECL,
+				CommandContributionItem.STYLE_PUSH);
+		param.icon = CPluginImages.DESC_ELCL_OPEN_DECLARATION;
+		mgr.add(new CommandContributionItem(param));
+		mgr.update(true);
 	}
 
 	protected final void gotoMacroDefinition() {
-		int index= fIndex < getStepCount() ? fIndex : 0;
-		final IMacroExpansionStep step= fInput.fExplorer.getExpansionStep(index);
-		IASTFileLocation fileLocation= step.getLocationOfExpandedMacroDefinition();
+		int index = fIndex < getStepCount() ? fIndex : 0;
+		final IMacroExpansionStep step = fInput.fExplorer.getExpansionStep(index);
+		IASTFileLocation fileLocation = step.getLocationOfExpandedMacroDefinition();
 		if (fileLocation != null) {
-			final IPath path= new Path(fileLocation.getFileName());
-			final int offset= fileLocation.getNodeOffset();
-			final int length= fileLocation.getNodeLength();
+			final IPath path = new Path(fileLocation.getFileName());
+			final int offset = fileLocation.getNodeOffset();
+			final int length = fileLocation.getNodeLength();
 			IEditorPart editor;
 			try {
 				editor = EditorUtility.openInEditor(path, null);
 				if (editor instanceof ITextEditor) {
-					ITextEditor textEditor = (ITextEditor)editor;
+					ITextEditor textEditor = (ITextEditor) editor;
 					textEditor.selectAndReveal(offset, length);
 				}
 				dispose();
@@ -379,9 +391,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	protected final void forward() {
-		fIndex= fixIndex(fIndex + 1);
+		fIndex = fixIndex(fIndex + 1);
 		if (fIndex > getStepCount()) {
-			fIndex= 0;
+			fIndex = 0;
 		}
 		showExpansion();
 	}
@@ -389,7 +401,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	protected final void backward() {
 		--fIndex;
 		if (fIndex < 0) {
-			fIndex= fixIndex(getStepCount());
+			fIndex = fixIndex(getStepCount());
 		}
 		showExpansion();
 	}
@@ -401,14 +413,15 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @return The text to be shown in the popup's information area or <code>null</code>
 	 */
 	private String getInfoText() {
-		IWorkbench workbench= PlatformUI.getWorkbench();
-		IBindingService bindingService= workbench.getService(IBindingService.class);
-		String formattedBindingBack= bindingService.getBestActiveBindingFormattedFor(COMMAND_ID_EXPANSION_BACK);
-		String formattedBindingForward= bindingService.getBestActiveBindingFormattedFor(COMMAND_ID_EXPANSION_FORWARD);
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IBindingService bindingService = workbench.getService(IBindingService.class);
+		String formattedBindingBack = bindingService.getBestActiveBindingFormattedFor(COMMAND_ID_EXPANSION_BACK);
+		String formattedBindingForward = bindingService.getBestActiveBindingFormattedFor(COMMAND_ID_EXPANSION_FORWARD);
 
-		String infoText= null;
+		String infoText = null;
 		if (formattedBindingBack != null && formattedBindingForward != null) {
-			infoText= NLS.bind(CHoverMessages.CMacroExpansionControl_statusText, formattedBindingBack, formattedBindingForward);
+			infoText = NLS.bind(CHoverMessages.CMacroExpansionControl_statusText, formattedBindingBack,
+					formattedBindingForward);
 		}
 		return infoText;
 	}
@@ -431,7 +444,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
 	@Override
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		Point constraints= getSizeConstraints();
+		Point constraints = getSizeConstraints();
 		if (constraints != null) {
 			super.setSizeConstraints(Math.max(constraints.x, maxWidth), Math.max(constraints.y, maxHeight));
 		} else {
@@ -442,9 +455,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	@Override
 	public void setSize(int width, int height) {
 		if (fDefaultSize != null) {
-			width= Math.max(fDefaultSize.x, width);
-			height= Math.max(fDefaultSize.y, height);
-			fDefaultSize= null;
+			width = Math.max(fDefaultSize.x, width);
+			height = Math.max(fDefaultSize.y, height);
+			fDefaultSize = null;
 		}
 		super.setSize(width, height);
 	}
@@ -467,7 +480,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	private void widgetClosed() {
 		if (fRestoreSize) {
 			storeSize();
-			fRestoreSize= false;
+			fRestoreSize = false;
 		}
 		unregisterCommandHandlers();
 	}
@@ -477,7 +490,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (!visible) {
 			if (fRestoreSize) {
 				storeSize();
-				fRestoreSize= false;
+				fRestoreSize = false;
 			}
 		}
 		super.setVisible(visible);
@@ -488,7 +501,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
 	@Override
 	public Rectangle computeTrim() {
-		Rectangle trim= super.computeTrim();
+		Rectangle trim = super.computeTrim();
 		addInternalTrim(trim);
 		return trim;
 	}
@@ -500,11 +513,11 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @since 5.0
 	 */
 	private void addInternalTrim(Rectangle trim) {
-		Rectangle textTrim= fMacroText.computeTrim(0, 0, 0, 0);
-		trim.x+= textTrim.x;
-		trim.y+= textTrim.y;
-		trim.width+= textTrim.width;
-		trim.height+= textTrim.height;
+		Rectangle textTrim = fMacroText.computeTrim(0, 0, 0, 0);
+		trim.x += textTrim.x;
+		trim.y += textTrim.y;
+		trim.width += textTrim.width;
+		trim.height += textTrim.height;
 	}
 
 	/**
@@ -512,12 +525,12 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @param input
 	 */
 	private void setMacroExpansionInput(CMacroExpansionInput input) {
-		fInput= input;
+		fInput = input;
 		if (fMacroCompareViewer != null) {
 			fMacroCompareViewer.setMacroExpansionInput(input);
 		}
 		if (fInput != null) {
-			fIndex= fixIndex(input.fStartWithFullExpansion ? getStepCount() : 0);
+			fIndex = fixIndex(input.fStartWithFullExpansion ? getStepCount() : 0);
 			showExpansion();
 		}
 	}
@@ -534,20 +547,20 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	private void showExpansion() {
-		final int idxLeft= fIndex == getStepCount() ? 0 : fIndex;
-		final int idxRight= fIndex + 1;
+		final int idxLeft = fIndex == getStepCount() ? 0 : fIndex;
+		final int idxRight = fIndex + 1;
 
-		CompareConfiguration config= getCompareConfiguration();
+		CompareConfiguration config = getCompareConfiguration();
 		config.setLeftLabel(getLabelForIndex(idxLeft));
 		config.setRightLabel(getLabelForIndex(idxRight));
 
-		final ITypedElement left= getContentForIndex(fIndex, true);
-		final ITypedElement right= getContentForIndex(fIndex, false);
-		
+		final ITypedElement left = getContentForIndex(fIndex, true);
+		final ITypedElement right = getContentForIndex(fIndex, false);
+
 		setTitleText(NLS.bind(CHoverMessages.CMacroExpansionControl_title_macroExpansionExploration, getStepCount()));
 		fMacroViewer.getDocument().set(getMacroText(fIndex));
-		final StyledText textWidget= fMacroViewer.getTextWidget();
-		final Point size= textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		final StyledText textWidget = fMacroViewer.getTextWidget();
+		final Point size = textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		textWidget.setSize(size);
 		setInput(createCompareInput(null, left, right));
 	}
@@ -556,50 +569,51 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (index == 0) {
 			return CHoverMessages.CMacroExpansionControl_title_original;
 		} else if (index < getStepCount()) {
-			return NLS.bind(CHoverMessages.CMacroExpansionControl_title_expansion,
-					String.valueOf(index), String.valueOf(getStepCount()));
+			return NLS.bind(CHoverMessages.CMacroExpansionControl_title_expansion, String.valueOf(index),
+					String.valueOf(getStepCount()));
 		} else {
 			return CHoverMessages.CMacroExpansionControl_title_fullyExpanded;
 		}
 	}
+
 	private Object createCompareInput(ITypedElement original, ITypedElement left, ITypedElement right) {
-		Differencer d= new Differencer();
+		Differencer d = new Differencer();
 		return d.findDifferences(false, new NullProgressMonitor(), null, original, left, right);
 	}
 
 	private ITypedElement getContentForIndex(int index, boolean before) {
 		final IMacroExpansionStep expansionStep;
 		if (index < getStepCount()) {
-			expansionStep= fInput.fExplorer.getExpansionStep(index);
+			expansionStep = fInput.fExplorer.getExpansionStep(index);
 		} else {
-			expansionStep= fInput.fExplorer.getFullExpansion();
+			expansionStep = fInput.fExplorer.getFullExpansion();
 		}
 		final String text;
 		if (before) {
-			text= expansionStep.getCodeBeforeStep();
+			text = expansionStep.getCodeBeforeStep();
 		} else {
-			text= expansionStep.getCodeAfterStep();
+			text = expansionStep.getCodeAfterStep();
 		}
-		final Document doc= new Document(text);
+		final Document doc = new Document(text);
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
 		return new CDiffNode(0, String.valueOf(index), doc, 0, text.length());
 	}
 
 	private String getMacroText(int index) {
-		index= index < getStepCount() ? index : 0;
-		final IMacroExpansionStep expansionStep= fInput.fExplorer.getExpansionStep(index);
-		IMacroBinding binding= expansionStep.getExpandedMacro();
-		StringBuilder buffer= new StringBuilder();
+		index = index < getStepCount() ? index : 0;
+		final IMacroExpansionStep expansionStep = fInput.fExplorer.getExpansionStep(index);
+		IMacroBinding binding = expansionStep.getExpandedMacro();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define ").append(binding.getName()); //$NON-NLS-1$
-		char[][] params= binding.getParameterList();
+		char[][] params = binding.getParameterList();
 		if (params != null) {
 			buffer.append('(');
-			for (int i= 0; i < params.length; i++) {
+			for (int i = 0; i < params.length; i++) {
 				if (i > 0) {
 					buffer.append(',');
 					buffer.append(' ');
 				}
-				char[] param= params[i];
+				char[] param = params[i];
 				buffer.append(new String(param));
 			}
 			buffer.append(')');
@@ -607,9 +621,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		buffer.append(' ');
 		if (!binding.isDynamic()) {
 			buffer.append(binding.getExpansionImage());
-		}
-		else {
-			ReplaceEdit[] replacements= expansionStep.getReplacements();
+		} else {
+			ReplaceEdit[] replacements = expansionStep.getReplacements();
 			if (replacements.length == 1) {
 				buffer.append(replacements[0].getText());
 			}

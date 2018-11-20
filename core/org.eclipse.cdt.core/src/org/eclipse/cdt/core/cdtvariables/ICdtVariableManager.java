@@ -22,16 +22,16 @@ import org.eclipse.core.variables.IStringVariable;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICdtVariableManager{
-/*	public final static int CONTEXT_FILE = 1;
-	public final static int CONTEXT_OPTION = 2;
-	public final static int CONTEXT_CONFIGURATION = 3;
-	public final static int CONTEXT_PROJECT = 4;
-	public final static int CONTEXT_WORKSPACE = 5;
-	public final static int CONTEXT_INSTALLATIONS = 6;
-	public final static int CONTEXT_ECLIPSEENV = 7;
-	public final static int CONTEXT_TOOL = 8;
-*/
+public interface ICdtVariableManager {
+	/*	public final static int CONTEXT_FILE = 1;
+		public final static int CONTEXT_OPTION = 2;
+		public final static int CONTEXT_CONFIGURATION = 3;
+		public final static int CONTEXT_PROJECT = 4;
+		public final static int CONTEXT_WORKSPACE = 5;
+		public final static int CONTEXT_INSTALLATIONS = 6;
+		public final static int CONTEXT_ECLIPSEENV = 7;
+		public final static int CONTEXT_TOOL = 8;
+	*/
 	/**
 	 * 
 	 * Returns reference to the IBuildMacro interface representing Macro of the
@@ -46,22 +46,21 @@ public interface ICdtVariableManager{
 	 */
 	public ICdtVariable[] getVariables(ICConfigurationDescription cfg);
 
-
 	/**
 	 * This method is defined to be used primarily by the UI classes and should not be used by the
 	 * tool-integrator
 	 * @return the array of the provider-internal suppliers for the given context
 	 */
-/*	public IBuildMacroSupplier[] getSuppliers(int contextType, 
-					Object contextData);
-*/
+	/*	public IBuildMacroSupplier[] getSuppliers(int contextType, 
+						Object contextData);
+	*/
 
 	/**
 	 * 
 	 * converts StringList value into String of the following format:
 	 * "<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>"
 	 */
-	public String convertStringListToString (String value[], String listDelimiter);
+	public String convertStringListToString(String value[], String listDelimiter);
 
 	/**
 	 * 
@@ -75,20 +74,16 @@ public interface ICdtVariableManager{
 	 * otherwise the BuildMacroException is thrown in case the string to be resolved references 
 	 * string-list macros 
 	 */
-	public String resolveValue(String value, 
-					String nonexistentMacrosValue,
-					String listDelimiter, 
-					ICConfigurationDescription cfg) throws CdtVariableException;
+	public String resolveValue(String value, String nonexistentMacrosValue, String listDelimiter,
+			ICConfigurationDescription cfg) throws CdtVariableException;
 
 	/**
 	 * 
 	 * if the string contains a value that can be treated as a StringList resolves it to arrays of strings
 	 * otherwise throws the BuildMacroException exception
 	 */
-	public String[] resolveStringListValue(String value, 
-					String nonexistentMacrosValue,
-					String listDelimiter,
-					ICConfigurationDescription cfg) throws CdtVariableException;
+	public String[] resolveStringListValue(String value, String nonexistentMacrosValue, String listDelimiter,
+			ICConfigurationDescription cfg) throws CdtVariableException;
 
 	/**
 	 * 
@@ -96,18 +91,15 @@ public interface ICdtVariableManager{
 	 * 
 	 * @see #isStringListValue
 	 */
-	public String[] resolveStringListValues(String value[], 
-					String nonexistentMacrosValue,
-					String listDelimiter,
-					ICConfigurationDescription cfg) throws CdtVariableException;
+	public String[] resolveStringListValues(String value[], String nonexistentMacrosValue, String listDelimiter,
+			ICConfigurationDescription cfg) throws CdtVariableException;
 
 	/**
 	 * 
 	 * @return true if the specified expression can be treated as StringList
 	 * 1. The string value is "${<some_StringList_Macro_name>}"
 	 */
-	public boolean isStringListValue(String value, ICConfigurationDescription cfg)
-							throws CdtVariableException;
+	public boolean isStringListValue(String value, ICConfigurationDescription cfg) throws CdtVariableException;
 
 	/**
 	 * 
@@ -121,11 +113,10 @@ public interface ICdtVariableManager{
 	 * section of this design)
 	 */
 	public void checkVariableIntegrity(ICConfigurationDescription cfg) throws CdtVariableException;
-	
+
 	public boolean isEnvironmentVariable(ICdtVariable variable, ICConfigurationDescription cfg);
-	
+
 	public boolean isUserVariable(ICdtVariable variable, ICConfigurationDescription cfg);
 
 	public IStringVariable toEclipseVariable(ICdtVariable variable, ICConfigurationDescription cfg);
 }
-

@@ -25,37 +25,35 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 public class ContainsFilter extends ViewerFilter {
 
-    private String lookFor;
+	private String lookFor;
 
-    public void setLookFor(String lookFor) {
-        this.lookFor = lookFor;
-    }
+	public void setLookFor(String lookFor) {
+		this.lookFor = lookFor;
+	}
 
-    @Override
-    public boolean select(Viewer viewer, Object parentElement, Object element) {
-        if (!(viewer instanceof TreeViewer)) {
-            return true;
-        }
-        TreeViewer treeViewer = (TreeViewer) viewer;
-        String currentLabel = ((ILabelProvider) treeViewer.getLabelProvider())
-                .getText(element);
-        if (lookFor == null) {
-            return true;
-        }
+	@Override
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		if (!(viewer instanceof TreeViewer)) {
+			return true;
+		}
+		TreeViewer treeViewer = (TreeViewer) viewer;
+		String currentLabel = ((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
+		if (lookFor == null) {
+			return true;
+		}
 		if (currentLabel != null && currentLabel.toLowerCase().contains(lookFor)) {
-            return true;
-        }
-        return hasUnfilteredChild(treeViewer, element);
-    }
+			return true;
+		}
+		return hasUnfilteredChild(treeViewer, element);
+	}
 
-    private boolean hasUnfilteredChild(TreeViewer viewer, Object element) {
-        Object[] children = ((ITreeContentProvider) viewer.getContentProvider())
-                .getChildren(element);
-        for (Object child :children) {
-            if (select(viewer, element, child)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean hasUnfilteredChild(TreeViewer viewer, Object element) {
+		Object[] children = ((ITreeContentProvider) viewer.getContentProvider()).getChildren(element);
+		for (Object child : children) {
+			if (select(viewer, element, child)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

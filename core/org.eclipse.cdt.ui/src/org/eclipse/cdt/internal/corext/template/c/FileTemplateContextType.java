@@ -42,17 +42,17 @@ import org.eclipse.cdt.internal.corext.util.Messages;
  * @since 5.0
  */
 public class FileTemplateContextType extends TemplateContextType {
-	public static final String CONTEXTTYPE_SUFFIX= ".contenttype_context"; //$NON-NLS-1$
+	public static final String CONTEXTTYPE_SUFFIX = ".contenttype_context"; //$NON-NLS-1$
 
-	public static final String CONTENTTYPE_TEXT= "org.eclipse.core.runtime.text"; //$NON-NLS-1$
-	public static final String TEXTFILE_CONTEXTTYPE= CONTENTTYPE_TEXT + CONTEXTTYPE_SUFFIX;
+	public static final String CONTENTTYPE_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$
+	public static final String TEXTFILE_CONTEXTTYPE = CONTENTTYPE_TEXT + CONTEXTTYPE_SUFFIX;
 
 	/* resolver types */
-	public static final String FILENAME= "file_name"; //$NON-NLS-1$
-	public static final String FILEBASE= "file_base"; //$NON-NLS-1$
-	public static final String FILELOCATION= "file_loc"; //$NON-NLS-1$
-	public static final String FILEPATH= "file_path"; //$NON-NLS-1$
-	public static final String PROJECTNAME= "project_name"; //$NON-NLS-1$
+	public static final String FILENAME = "file_name"; //$NON-NLS-1$
+	public static final String FILEBASE = "file_base"; //$NON-NLS-1$
+	public static final String FILELOCATION = "file_loc"; //$NON-NLS-1$
+	public static final String FILEPATH = "file_path"; //$NON-NLS-1$
+	public static final String PROJECTNAME = "project_name"; //$NON-NLS-1$
 
 	/**
 	 * Resolver that resolves to the variable defined in the context.
@@ -61,10 +61,10 @@ public class FileTemplateContextType extends TemplateContextType {
 		public FileTemplateVariableResolver(String type, String description) {
 			super(type, description);
 		}
-		
+
 		@Override
 		protected String resolve(TemplateContext context) {
-			String value= context.getVariable(getType());
+			String value = context.getVariable(getType());
 			return value != null ? value : ""; //$NON-NLS-1$
 		}
 	}
@@ -78,21 +78,21 @@ public class FileTemplateContextType extends TemplateContextType {
 		public DateVariableResolver() {
 			super("date", TemplateMessages.FileTemplateContextType_variable_description_date); //$NON-NLS-1$
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateVariable, org.eclipse.jface.text.templates.TemplateContext)
 		 */
 		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
-			fFormat= null;
-			TemplateVariableType type= variable.getVariableType();
-			List<?> params= type.getParams();
+			fFormat = null;
+			TemplateVariableType type = variable.getVariableType();
+			List<?> params = type.getParams();
 			if (params.size() == 1) {
-				fFormat= params.get(0).toString();
+				fFormat = params.get(0).toString();
 			}
 			super.resolve(variable, context);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.templates.SimpleTemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateContext)
 		 */
@@ -100,9 +100,9 @@ public class FileTemplateContextType extends TemplateContextType {
 		protected String resolve(TemplateContext context) {
 			DateFormat f;
 			if (fFormat == null) {
-				f= DateFormat.getDateInstance();
+				f = DateFormat.getDateInstance();
 			} else {
-				f= new SimpleDateFormat(fFormat);
+				f = new SimpleDateFormat(fFormat);
 			}
 			return f.format(new java.util.Date());
 		}
@@ -124,25 +124,25 @@ public class FileTemplateContextType extends TemplateContextType {
 		 */
 		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
-			fVariableName= variable.getName();
-			TemplateVariableType type= variable.getVariableType();
-			List<?> params= type.getParams();
-			fArguments= params.toArray(new String[params.size()]);
+			fVariableName = variable.getName();
+			TemplateVariableType type = variable.getVariableType();
+			List<?> params = type.getParams();
+			fArguments = params.toArray(new String[params.size()]);
 			super.resolve(variable, context);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.templates.SimpleTemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateContext)
 		 */
 		@Override
 		protected String resolve(TemplateContext context) {
-			StringBuilder expr= new StringBuilder("${"); //$NON-NLS-1$
+			StringBuilder expr = new StringBuilder("${"); //$NON-NLS-1$
 			expr.append(fVariableName);
 			for (int i = 0; i < fArguments.length; i++) {
 				expr.append(':').append(fArguments[i]);
 			}
 			expr.append('}');
-			IStringVariableManager mgr= VariablesPlugin.getDefault().getStringVariableManager();
+			IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 			try {
 				return mgr.performStringSubstitution(expr.toString(), false);
 			} catch (CoreException exc) {
@@ -165,43 +165,50 @@ public class FileTemplateContextType extends TemplateContextType {
 		addResolver(new GlobalTemplateVariables.Time());
 		addResolver(new GlobalTemplateVariables.User());
 
-//		addResolver(new CoreVariableResolver("eclipse")); //$NON-NLS-1$
-		
+		//		addResolver(new CoreVariableResolver("eclipse")); //$NON-NLS-1$
+
 		addResourceVariables();
 	}
-	
+
 	protected void addResourceVariables() {
-		addResolver(new FileTemplateVariableResolver(FILENAME, TemplateMessages.FileTemplateContextType_variable_description_filename));
-		addResolver(new FileTemplateVariableResolver(FILEBASE, TemplateMessages.FileTemplateContextType_variable_description_filebase));
-		addResolver(new FileTemplateVariableResolver(FILELOCATION, TemplateMessages.FileTemplateContextType_variable_description_fileloc));
-		addResolver(new FileTemplateVariableResolver(FILEPATH, TemplateMessages.FileTemplateContextType_variable_description_filepath));
-		addResolver(new FileTemplateVariableResolver(PROJECTNAME, TemplateMessages.FileTemplateContextType_variable_description_projectname));
+		addResolver(new FileTemplateVariableResolver(FILENAME,
+				TemplateMessages.FileTemplateContextType_variable_description_filename));
+		addResolver(new FileTemplateVariableResolver(FILEBASE,
+				TemplateMessages.FileTemplateContextType_variable_description_filebase));
+		addResolver(new FileTemplateVariableResolver(FILELOCATION,
+				TemplateMessages.FileTemplateContextType_variable_description_fileloc));
+		addResolver(new FileTemplateVariableResolver(FILEPATH,
+				TemplateMessages.FileTemplateContextType_variable_description_filepath));
+		addResolver(new FileTemplateVariableResolver(PROJECTNAME,
+				TemplateMessages.FileTemplateContextType_variable_description_projectname));
 	}
 
 	@Override
 	protected TemplateVariableResolver getResolver(String type) {
 		// compatibility with editor template variables
 		if ("file".equals(type)) { //$NON-NLS-1$
-			type= FILENAME;
+			type = FILENAME;
 		} else if ("project".equals(type) || "enclosing_project".equals(type)) { //$NON-NLS-1$ //$NON-NLS-2$
-			type= PROJECTNAME;
+			type = PROJECTNAME;
 		}
 		return super.getResolver(type);
 	}
 
 	@Override
 	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
-		ArrayList<String> required=  new ArrayList<String>(5);
-		for (int i= 0; i < variables.length; i++) {
-			String type= variables[i].getType();
+		ArrayList<String> required = new ArrayList<String>(5);
+		for (int i = 0; i < variables.length; i++) {
+			String type = variables[i].getType();
 			if (getResolver(type) == null) {
-				throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_unknownvariable, type));
+				throw new TemplateException(
+						Messages.format(TemplateMessages.FileTemplateContextType_validate_unknownvariable, type));
 			}
 			required.remove(type);
 		}
 		if (!required.isEmpty()) {
-			String missing= required.get(0);
-			throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_missingvariable, missing));
+			String missing = required.get(0);
+			throw new TemplateException(
+					Messages.format(TemplateMessages.FileTemplateContextType_validate_missingvariable, missing));
 		}
 		super.validateVariables(variables);
 	}
@@ -211,21 +218,22 @@ public class FileTemplateContextType extends TemplateContextType {
 	 */
 	@Override
 	public void resolve(TemplateVariable variable, TemplateContext context) {
-		String type= variable.getType();
-		TemplateVariableResolver resolver= getResolver(type);
+		String type = variable.getType();
+		TemplateVariableResolver resolver = getResolver(type);
 		if (resolver == null) {
-			resolver= new FileTemplateVariableResolver(type, ""); //$NON-NLS-1$
+			resolver = new FileTemplateVariableResolver(type, ""); //$NON-NLS-1$
 		}
 		resolver.resolve(variable, context);
 	}
 
 	public static void registerContextTypes(ContextTypeRegistry registry) {
-		IContentTypeManager contentTypeMgr= Platform.getContentTypeManager();
-		IContentType[] contentTypes= contentTypeMgr.getAllContentTypes();
+		IContentTypeManager contentTypeMgr = Platform.getContentTypeManager();
+		IContentType[] contentTypes = contentTypeMgr.getAllContentTypes();
 		for (int i = 0; i < contentTypes.length; i++) {
 			IContentType contentType = contentTypes[i];
-			if (isTextContentType(contentType) && contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC).length > 0) {
-				final String contextTypeId= contextTypeIdForContentType(contentType);
+			if (isTextContentType(contentType)
+					&& contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC).length > 0) {
+				final String contextTypeId = contextTypeIdForContentType(contentType);
 				if (registry.getContextType(contextTypeId) == null) {
 					registry.addContextType(new FileTemplateContextType(contextTypeId, contentType.getName()));
 				}
@@ -253,7 +261,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		if (contentType == null) {
 			return false;
 		}
-		String id= contentType.getId();
+		String id = contentType.getId();
 		if (id.equals(CONTENTTYPE_TEXT)) {
 			return true;
 		}

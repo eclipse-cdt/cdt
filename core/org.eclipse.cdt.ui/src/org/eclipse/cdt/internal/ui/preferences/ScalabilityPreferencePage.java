@@ -52,18 +52,18 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 
 public class ScalabilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	// Files with this number of lines will trigger scalability mode
 	private IntegerFieldEditor fLinesToTrigger;
-	
+
 	private Button fEnableAll;
-	
+
 	private Button fReconciler;
-	
+
 	private Button fSyntaxColor;
-	
+
 	private Button fSemanticHighlighting;
-	
+
 	private Button fContentAssist;
 
 	private Button fContentAssistAutoActivation;
@@ -72,52 +72,52 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 
 	private ScalabilityIntegerFieldEditor fMaximumTokens;
 
-	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
 	 * 
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
-	
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+
 	public ScalabilityPreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
 		setDescription(PreferencesMessages.ScalabilityPreferencePage_description);
 	}
-	
+
 	/**
 	 * Creates a button with the given label and sets the default configuration data.
 	 */
-	private Button createCheckButton( Composite parent, String label, String key ) {
-		Button button = new Button( parent, SWT.CHECK | SWT.LEFT );
-		button.setText( label );
+	private Button createCheckButton(Composite parent, String label, String key) {
+		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setText(label);
 		// FieldEditor GridData
 		GridData data = new GridData();
-		button.setLayoutData( data );
+		button.setLayoutData(data);
 		fCheckBoxes.put(button, key);
 		return button;
 	}
-	
-	private void initFields() {
-		IPreferenceStore prefs=getPreferenceStore();
 
-		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
+	private void initFields() {
+		IPreferenceStore prefs = getPreferenceStore();
+
+		Iterator<Object> iter = fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
-			Button b= (Button) iter.next();
-			String key= fCheckBoxes.get(b);
+			Button b = (Button) iter.next();
+			String key = fCheckBoxes.get(b);
 			b.setSelection(prefs.getBoolean(key));
 		}
 
-        // Update slaves
-        iter= fMasterSlaveListeners.iterator();
-        while (iter.hasNext()) {
-            SelectionListener listener= (SelectionListener)iter.next();
-            listener.widgetSelected(null);
-        }
-        fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
-        fMaximumTrivialExpressions.load();
-        fMaximumTokens.load();
+		// Update slaves
+		iter = fMasterSlaveListeners.iterator();
+		while (iter.hasNext()) {
+			SelectionListener listener = (SelectionListener) iter.next();
+			listener.widgetSelected(null);
+		}
+		fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
+		fMaximumTrivialExpressions.load();
+		fMaximumTokens.load();
 	}
 
 	/*
@@ -135,24 +135,24 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
-		int nColumns= 1;
-				
-		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= 0;
-		layout.numColumns= nColumns;
+		int nColumns = 1;
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = 0;
+		layout.numColumns = nColumns;
 		composite.setLayout(layout);
-		
+
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData( data );
-		
+		composite.setLayoutData(data);
+
 		createDetectionSettings(composite);
 
 		new Separator().doFillIntoGrid(composite, nColumns);
-		
+
 		createScalabilityModeSettings(composite);
 
 		new Separator().doFillIntoGrid(composite, nColumns);
@@ -161,11 +161,11 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 
 		new Separator().doFillIntoGrid(composite, nColumns);
 
-		String noteTitle= PreferencesMessages.ScalabilityPreferencePage_note;
-		String noteMessage= PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewEditors;
-		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
+		String noteTitle = PreferencesMessages.ScalabilityPreferencePage_note;
+		String noteMessage = PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewEditors;
+		Composite noteControl = createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
 		noteControl.setLayoutData(gd);
 
 		initFields();
@@ -185,69 +185,76 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	 *            the text label of the new composite
 	 * @return the newly-created composite
 	 */
-	private Composite createGroupComposite( Composite parent, int numColumns, String labelText ) {
-		return ControlFactory.createGroup( parent, labelText, numColumns );
+	private Composite createGroupComposite(Composite parent, int numColumns, String labelText) {
+		return ControlFactory.createGroup(parent, labelText, numColumns);
 	}
 
 	/**
 	 * Create the view setting preferences composite widget
 	 */
-	private void createDetectionSettings( Composite parent ) {
-		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_detection_group_label );
-		createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_detection_label,PreferenceConstants.SCALABILITY_ALERT);
+	private void createDetectionSettings(Composite parent) {
+		Composite group = createGroupComposite(parent, 1,
+				PreferencesMessages.ScalabilityPreferencePage_detection_group_label);
+		createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_detection_label,
+				PreferenceConstants.SCALABILITY_ALERT);
 
-		Composite comp= new Composite(group, SWT.NONE);
+		Composite comp = new Composite(group, SWT.NONE);
 		fLinesToTrigger = createIntegerField(comp, PreferenceConstants.SCALABILITY_NUMBER_OF_LINES,
 				PreferencesMessages.ScalabilityPreferencePage_trigger_lines_label, 1, Integer.MAX_VALUE);
 	}
-	
+
 	/**
 	 * Create the view setting preferences composite widget
 	 */
-	private void createScalabilityModeSettings( Composite parent ) {
-		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_group_label );
-		
-		fEnableAll = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_label, PreferenceConstants.SCALABILITY_ENABLE_ALL);
-		fReconciler = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_reconciler_label, PreferenceConstants.SCALABILITY_RECONCILER);
+	private void createScalabilityModeSettings(Composite parent) {
+		Composite group = createGroupComposite(parent, 1,
+				PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_group_label);
+
+		fEnableAll = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_label,
+				PreferenceConstants.SCALABILITY_ENABLE_ALL);
+		fReconciler = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_reconciler_label,
+				PreferenceConstants.SCALABILITY_RECONCILER);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fReconciler, true);
-		
-		fSemanticHighlighting = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_semanticHighlighting_label, PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT);
+
+		fSemanticHighlighting = createCheckButton(group,
+				PreferencesMessages.ScalabilityPreferencePage_semanticHighlighting_label,
+				PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fSemanticHighlighting, true);
-		
-		fSyntaxColor = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_syntaxColor_label, PreferenceConstants.SCALABILITY_SYNTAX_COLOR);
+
+		fSyntaxColor = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_syntaxColor_label,
+				PreferenceConstants.SCALABILITY_SYNTAX_COLOR);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fSyntaxColor, true);
-		
-		fContentAssist = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_label, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST);
+
+		fContentAssist = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_label,
+				PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssist, true);
-		
-		fContentAssistAutoActivation = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_autoActivation, PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION);
-		createDependency(fContentAssist, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, fContentAssistAutoActivation, true);
+
+		fContentAssistAutoActivation = createCheckButton(group,
+				PreferencesMessages.ScalabilityPreferencePage_contentAssist_autoActivation,
+				PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION);
+		createDependency(fContentAssist, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST,
+				fContentAssistAutoActivation, true);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssistAutoActivation, false);
 	}
 
 	private void createParserSettings(Composite parent) {
-		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_parserSettings_group_label );
+		Composite group = createGroupComposite(parent, 1,
+				PreferencesMessages.ScalabilityPreferencePage_parserSettings_group_label);
 
-		fMaximumTrivialExpressions
-			= createScalabilityIntegerField(
-					group,
-					CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS,
-					CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
-					PreferencesMessages.ScalabilityPreferencePage_skipTrivialExpressions_label,
-					1, Integer.MAX_VALUE);
+		fMaximumTrivialExpressions = createScalabilityIntegerField(group,
+				CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS,
+				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
+				PreferencesMessages.ScalabilityPreferencePage_skipTrivialExpressions_label, 1, Integer.MAX_VALUE);
 		fMaximumTrivialExpressions.setPreferenceStore(CUIPlugin.getDefault().getCorePreferenceStore());
 
-		fMaximumTokens
-			= createScalabilityIntegerField(
-					group,
-					CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU,
-					CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS,
-					PreferencesMessages.ScalabilityPreferencePage_maximumTokensPerTU_label,
-					1, 1000000000);
+		fMaximumTokens = createScalabilityIntegerField(group, CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU,
+				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS,
+				PreferencesMessages.ScalabilityPreferencePage_maximumTokensPerTU_label, 1, 1000000000);
 		fMaximumTokens.setPreferenceStore(CUIPlugin.getDefault().getCorePreferenceStore());
 	}
 
-	private IntegerFieldEditor createIntegerField(Composite parent, String name, String labelText, int rangeMinimum, int rangeMaximum) {
+	private IntegerFieldEditor createIntegerField(Composite parent, String name, String labelText, int rangeMinimum,
+			int rangeMaximum) {
 		final IntegerFieldEditor integerField = new IntegerFieldEditor(name, labelText, parent);
 
 		GridData data = (GridData) integerField.getTextControl(parent).getLayoutData();
@@ -269,7 +276,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		return integerField;
 	}
 
-	private ScalabilityIntegerFieldEditor createScalabilityIntegerField(Composite parent, String enable, String name, String labelText, int rangeMinimum, int rangeMaximum) {
+	private ScalabilityIntegerFieldEditor createScalabilityIntegerField(Composite parent, String enable, String name,
+			String labelText, int rangeMinimum, int rangeMaximum) {
 		final ScalabilityIntegerFieldEditor field = new ScalabilityIntegerFieldEditor(enable, name, labelText, parent);
 
 		GridData data = (GridData) field.getTextControl(parent).getLayoutData();
@@ -292,55 +300,56 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	private static void indent(Control control, GridData masterLayoutData) {
-		GridData gridData= new GridData();
-		gridData.horizontalIndent= masterLayoutData.horizontalIndent + 20;
+		GridData gridData = new GridData();
+		gridData.horizontalIndent = masterLayoutData.horizontalIndent + 20;
 		control.setLayoutData(gridData);
 	}
-	
+
 	private void createDependency(final Button master, String masterKey, final Control slave, boolean indent) {
 		if (indent) {
-			indent(slave, (GridData)master.getLayoutData());
+			indent(slave, (GridData) master.getLayoutData());
 		}
-		boolean masterState= getPreferenceStore().getBoolean(masterKey);
+		boolean masterState = getPreferenceStore().getBoolean(masterKey);
 		slave.setEnabled(!masterState);
-		
+
 		if (masterState) {
-			((Button)slave).setSelection(masterState);
+			((Button) slave).setSelection(masterState);
 		}
-		
-		SelectionListener listener= new SelectionListener() {
+
+		SelectionListener listener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				slave.setEnabled(!master.getSelection());
 				if (master.getSelection()) {
-					((Button)slave).setSelection(master.getSelection());
+					((Button) slave).setSelection(master.getSelection());
 				}
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 		};
 		master.addSelectionListener(listener);
 		fMasterSlaveListeners.add(listener);
 	}
-	
+
 	/*
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
 	@Override
 	public boolean performOk() {
-		IPreferenceStore prefs= getPreferenceStore();
-		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
+		IPreferenceStore prefs = getPreferenceStore();
+		Iterator<Object> iter = fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
-			Button b= (Button) iter.next();
-			String key= fCheckBoxes.get(b);
+			Button b = (Button) iter.next();
+			String key = fCheckBoxes.get(b);
 			prefs.setValue(key, b.getSelection());
 		}
 		prefs.setValue(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, fLinesToTrigger.getIntValue());
@@ -348,29 +357,30 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		fMaximumTokens.store();
 		return super.performOk();
 	}
-	
+
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
 	@Override
 	protected void performDefaults() {
-		IPreferenceStore prefs= getPreferenceStore();
+		IPreferenceStore prefs = getPreferenceStore();
 
-		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
+		Iterator<Object> iter = fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
-			Button b= (Button) iter.next();
-			String key= fCheckBoxes.get(b);
+			Button b = (Button) iter.next();
+			String key = fCheckBoxes.get(b);
 			b.setSelection(prefs.getDefaultBoolean(key));
 		}
 
-        // Update slaves
-        iter= fMasterSlaveListeners.iterator();
-        while (iter.hasNext()) {
-            SelectionListener listener= (SelectionListener)iter.next();
-            listener.widgetSelected(null);
-        }
-        fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
-        fMaximumTrivialExpressions.loadDefault();
-        fMaximumTokens.loadDefault();
+		// Update slaves
+		iter = fMasterSlaveListeners.iterator();
+		while (iter.hasNext()) {
+			SelectionListener listener = (SelectionListener) iter.next();
+			listener.widgetSelected(null);
+		}
+		fLinesToTrigger
+				.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
+		fMaximumTrivialExpressions.loadDefault();
+		fMaximumTokens.loadDefault();
 	}
 }

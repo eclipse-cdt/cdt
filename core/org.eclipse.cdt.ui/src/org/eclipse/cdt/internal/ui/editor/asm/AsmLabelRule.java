@@ -43,9 +43,9 @@ final class AsmLabelRule implements IRule {
 		Assert.isNotNull(labelToken);
 		Assert.isNotNull(defaultToken);
 
-		fDetector= detector;
-		fLabelToken= labelToken;
-		fDefaultToken= defaultToken;
+		fDetector = detector;
+		fLabelToken = labelToken;
+		fDefaultToken = defaultToken;
 	}
 
 	/*
@@ -53,14 +53,14 @@ final class AsmLabelRule implements IRule {
 	 */
 	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
-		int c= scanner.read();
+		int c = scanner.read();
 		if (fDetector.isWordStart((char) c)) {
-			int count= 1;
+			int count = 1;
 			do {
-				c= scanner.read();
+				c = scanner.read();
 				++count;
 			} while (fDetector.isWordPart((char) c));
-			if(c == ':') {
+			if (c == ':') {
 				return fLabelToken;
 			}
 			if (fDefaultToken.isUndefined()) {
@@ -70,7 +70,7 @@ final class AsmLabelRule implements IRule {
 			}
 			return fDefaultToken;
 		}
-		
+
 		scanner.unread();
 		return Token.UNDEFINED;
 	}

@@ -29,29 +29,29 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 1.0
  */
 public class LabelImage extends LabelAttribute {
-    private ImageDescriptor fImageDescriptor;
+	private ImageDescriptor fImageDescriptor;
 
-    public LabelImage() {
-        this(null);
-    }
+	public LabelImage() {
+		this(null);
+	}
 
-    public LabelImage(ImageDescriptor image) {
-        fImageDescriptor = image;
-    }
-    
-    public ImageDescriptor getImageDescriptor() {
-        return fImageDescriptor;
-    }
-    
-    public void setImageDescriptor(ImageDescriptor image) {
-        fImageDescriptor = image;
-    }
-    
-    @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
-        ImageDescriptor descriptor = getImageDescriptor();
-        if (descriptor != null) {
-            update.setImageDescriptor(descriptor, columnIndex);
-        }
-    }
+	public LabelImage(ImageDescriptor image) {
+		fImageDescriptor = image;
+	}
+
+	public ImageDescriptor getImageDescriptor() {
+		return fImageDescriptor;
+	}
+
+	public void setImageDescriptor(ImageDescriptor image) {
+		fImageDescriptor = image;
+	}
+
+	@Override
+	public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+		ImageDescriptor descriptor = getImageDescriptor();
+		if (descriptor != null) {
+			update.setImageDescriptor(descriptor, columnIndex);
+		}
+	}
 }

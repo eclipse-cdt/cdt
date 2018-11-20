@@ -37,7 +37,8 @@ public class ProblemDetailsExtensions {
 	private static synchronized void readExtensions() {
 		if (extensionsLoaded)
 			return;
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID,
+				EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		try {

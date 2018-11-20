@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAFrameCommand extends AbstractPDACommand<PDAFrameCommandResult> {
 
-    public PDAFrameCommand(PDAThreadDMContext thread, int frameNum) {
-        super(thread, "frame " + thread.getID() + " " + frameNum);
-    }
-    
-    @Override
-    public PDAFrameCommandResult createResult(String resultText) {
-        return new PDAFrameCommandResult(resultText);
-    }
+	public PDAFrameCommand(PDAThreadDMContext thread, int frameNum) {
+		super(thread, "frame " + thread.getID() + " " + frameNum);
+	}
+
+	@Override
+	public PDAFrameCommandResult createResult(String resultText) {
+		return new PDAFrameCommandResult(resultText);
+	}
 }

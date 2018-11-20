@@ -36,13 +36,12 @@ import org.eclipse.core.runtime.Assert;
  * <br>
  * Example: void f(int (D));  // is D a type?
  */
-public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
-		implements IASTAmbiguousDeclarator, ICPPASTDeclarator {
-    private IASTDeclarator[] dtors = new IASTDeclarator[2];
-    private int dtorPos= -1;
+public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator, ICPPASTDeclarator {
+	private IASTDeclarator[] dtors = new IASTDeclarator[2];
+	private int dtorPos = -1;
 	private IASTInitializer fInitializer;
 
-    public CPPASTAmbiguousDeclarator(IASTDeclarator... decls) {
+	public CPPASTAmbiguousDeclarator(IASTDeclarator... decls) {
 		for (IASTDeclarator d : decls) {
 			if (d != null) {
 				addDeclarator(d);
@@ -53,20 +52,20 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.
-		IScope scope= CPPVisitor.getContainingNonTemplateScope(this);
+		IScope scope = CPPVisitor.getContainingNonTemplateScope(this);
 		if (scope instanceof ICPPASTInternalScope) {
 			((ICPPASTInternalScope) scope).populateCache();
 		}
 	}
 
-    @Override
+	@Override
 	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
-    	// if we have an initializer it needs to be added to the chosen alternative.
-    	// we also need to resolve ambiguities in the initializer.
-    	if (fInitializer != null) {
-    		((IASTDeclarator) best).setInitializer(fInitializer);
-    		fInitializer.accept(resolver);
-    	}
+		// if we have an initializer it needs to be added to the chosen alternative.
+		// we also need to resolve ambiguities in the initializer.
+		if (fInitializer != null) {
+			((IASTDeclarator) best).setInitializer(fInitializer);
+			fInitializer.accept(resolver);
+		}
 	}
 
 	@Override
@@ -81,24 +80,24 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 
 	@Override
 	public void addDeclarator(IASTDeclarator d) {
-        assertNotFrozen();
-    	if (d != null) {
-    		dtors = ArrayUtil.appendAt(IASTDeclarator.class, dtors, ++dtorPos, d);
-    		d.setParent(this);
+		assertNotFrozen();
+		if (d != null) {
+			dtors = ArrayUtil.appendAt(IASTDeclarator.class, dtors, ++dtorPos, d);
+			d.setParent(this);
 			d.setPropertyInParent(SUBDECLARATOR);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public IASTDeclarator[] getDeclarators() {
-    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos);
-        return dtors;
-    }
+		dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos);
+		return dtors;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getDeclarators();
-    }
+		return getDeclarators();
+	}
 
 	@Override
 	public IASTInitializer getInitializer() {
@@ -122,7 +121,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 
 	@Override
 	public void addPointerOperator(IASTPointerOperator operator) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
@@ -134,7 +133,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 	@Override
 	@Deprecated
 	public void addAttribute(IASTAttribute attribute) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
@@ -157,18 +156,18 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 	@Override
 	public void setInitializer(IASTInitializer initializer) {
 		// store the initializer until the ambiguity is resolved
-		fInitializer= initializer;
+		fInitializer = initializer;
 	}
 
 	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	@Override
 	public void setNestedDeclarator(IASTDeclarator nested) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
@@ -179,7 +178,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 
 	@Override
 	public void setDeclaresParameterPack(boolean val) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 }

@@ -81,7 +81,7 @@ public class PDOMCPPVariableTemplatePartialSpecialization extends PDOMCPPVariabl
 	public void setTemplateArguments(ICPPTemplateArgument[] args) throws CoreException {
 		final Database db = getPDOM().getDB();
 		long oldRec = db.getRecPtr(record + ARGUMENTS);
-		long rec= PDOMCPPArgumentList.putArguments(this, args);
+		long rec = PDOMCPPArgumentList.putArguments(this, args);
 		db.putRecPtr(record + ARGUMENTS, rec);
 		if (oldRec != 0) {
 			PDOMCPPArgumentList.clearArguments(this, oldRec);

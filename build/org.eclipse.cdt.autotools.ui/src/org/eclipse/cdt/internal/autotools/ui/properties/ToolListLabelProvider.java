@@ -22,41 +22,41 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
- 
+
 public class ToolListLabelProvider extends LabelProvider {
 	private final Image IMG_TOOL = AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_CFG_TOOL);
 	private final Image IMG_CAT = AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_CFG_CATEGORY);
-	private static final String ERROR_UNKNOWN_ELEMENT = "ConfigurePropertyPage.error.Unknown_tree_element";	//$NON-NLS-1$
+	private static final String ERROR_UNKNOWN_ELEMENT = "ConfigurePropertyPage.error.Unknown_tree_element"; //$NON-NLS-1$
 
 	private ImageDescriptor descriptor = null;
 	private ResourceManager manager = null;
 	private IAConfiguration cfg = null;
-	
+
 	public ToolListLabelProvider(IAConfiguration cfg) {
 		this.cfg = cfg;
 	}
-	
+
 	public IAConfiguration getCfg() {
 		return cfg;
 	}
-	
+
 	public void setCfg(IAConfiguration cfg) {
 		this.cfg = cfg;
 	}
-	
+
 	@Override
 	public Image getImage(Object element) {
 		if (!(element instanceof ToolListElement)) {
 			throw unknownElement(element);
 		}
 		Image defaultImage = IMG_CAT;
-		ToolListElement toolListElement = (ToolListElement)element;
+		ToolListElement toolListElement = (ToolListElement) element;
 		IConfigureOption cat = cfg.getOption(toolListElement.getName());
-	
+
 		if (cat == null) {
 			defaultImage = IMG_TOOL;
 		}
-		
+
 		// Use default icon for display 
 		return defaultImage;
 	}
@@ -66,13 +66,12 @@ public class ToolListLabelProvider extends LabelProvider {
 		if (!(element instanceof ToolListElement)) {
 			throw unknownElement(element);
 		}
-		ToolListElement toolListElement = (ToolListElement)element;
+		ToolListElement toolListElement = (ToolListElement) element;
 		IConfigureOption cat = cfg.getOption(toolListElement.getName());
-	
+
 		if (cat == null) {
 			return toolListElement.getName();
-		}
-		else {
+		} else {
 			return cat.getDescription();
 		}
 	}
@@ -81,15 +80,15 @@ public class ToolListLabelProvider extends LabelProvider {
 		return new RuntimeException(UIMessages.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
 	}
 
-    /**
-     * Disposing any images that were allocated for it.
-     * 
-     * @since 3.0
-     */
-    @Override
+	/**
+	 * Disposing any images that were allocated for it.
+	 * 
+	 * @since 3.0
+	 */
+	@Override
 	public void dispose() {
-        if (descriptor != null && manager != null) {
-            manager.destroyImage(descriptor);
-        }
-    };
+		if (descriptor != null && manager != null) {
+			manager.destroyImage(descriptor);
+		}
+	};
 }

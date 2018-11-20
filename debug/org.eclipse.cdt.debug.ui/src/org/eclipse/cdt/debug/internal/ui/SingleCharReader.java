@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public abstract class SingleCharReader extends Reader {
-	
+
 	/**
 	 * @see Reader#read()
 	 */
@@ -29,33 +29,33 @@ public abstract class SingleCharReader extends Reader {
 	 */
 	@Override
 	public int read(char cbuf[], int off, int len) throws IOException {
-		int end= off + len;
-		for (int i= off; i < end; i++) {
-			int ch= read();
+		int end = off + len;
+		for (int i = off; i < end; i++) {
+			int ch = read();
 			if (ch == -1) {
 				return (i == off) ? -1 : i - off;
 			}
-			cbuf[i]= (char)ch;
+			cbuf[i] = (char) ch;
 		}
 		return len;
-	}		
-	
+	}
+
 	/**
 	 * @see Reader#ready()
-	 */		
-    @Override
+	 */
+	@Override
 	public boolean ready() throws IOException {
 		return true;
 	}
-	
+
 	/**
 	 * Gets the content as a String
 	 */
 	public String getString() throws IOException {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		int ch;
-		while ((ch= read()) != -1) {
-			buf.append((char)ch);
+		while ((ch = read()) != -1) {
+			buf.append((char) ch);
 		}
 		return buf.toString();
 	}

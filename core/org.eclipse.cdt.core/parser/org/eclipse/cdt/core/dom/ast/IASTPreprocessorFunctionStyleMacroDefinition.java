@@ -24,8 +24,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorFunctionStyleMacroDefinition extends
-		IASTPreprocessorMacroDefinition {
+public interface IASTPreprocessorFunctionStyleMacroDefinition extends IASTPreprocessorMacroDefinition {
 	/**
 	 * This property represents the relationship between a function style macro
 	 * definition and one of its parameters.

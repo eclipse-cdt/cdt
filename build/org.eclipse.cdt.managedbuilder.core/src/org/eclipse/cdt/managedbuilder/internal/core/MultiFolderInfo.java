@@ -36,81 +36,78 @@ public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 
 	@Override
 	public boolean buildsFileType(String srcExt) {
-		for (int i=0; i<fRis.length; i++)
-			if (! ((IFolderInfo)fRis[i]).buildsFileType(srcExt))
+		for (int i = 0; i < fRis.length; i++)
+			if (!((IFolderInfo) fRis[i]).buildsFileType(srcExt))
 				return false;
 		return true;
 	}
 
 	@Override
-	public IToolChain changeToolChain(IToolChain newSuperClass, String Id,
-			String name) throws BuildException {
+	public IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException {
 		IToolChain t = null;
-		for (int i=0; i<fRis.length; i++)
-			t = ((IFolderInfo)fRis[i]).changeToolChain(newSuperClass, Id, name);
+		for (int i = 0; i < fRis.length; i++)
+			t = ((IFolderInfo) fRis[i]).changeToolChain(newSuperClass, Id, name);
 		return t;
 	}
 
 	@Override
 	public ITool[] getFilteredTools() {
-		return ((IFolderInfo)fRis[curr]).getFilteredTools();
+		return ((IFolderInfo) fRis[curr]).getFilteredTools();
 	}
 
 	@Override
 	public CFolderData getFolderData() {
-		return ((IFolderInfo)fRis[curr]).getFolderData();
+		return ((IFolderInfo) fRis[curr]).getFolderData();
 	}
 
 	@Override
 	public String getOutputExtension(String resourceExtension) {
-		return ((IFolderInfo)fRis[curr]).getOutputExtension(resourceExtension);
+		return ((IFolderInfo) fRis[curr]).getOutputExtension(resourceExtension);
 	}
 
 	@Override
 	public ITool getTool(String id) {
-		return ((IFolderInfo)fRis[curr]).getTool(id);
+		return ((IFolderInfo) fRis[curr]).getTool(id);
 	}
 
 	@Override
 	public IToolChain getToolChain() {
-		return ((IFolderInfo)fRis[curr]).getToolChain();
+		return ((IFolderInfo) fRis[curr]).getToolChain();
 	}
 
 	@Override
-	public IModificationStatus getToolChainModificationStatus(ITool[] removed,
-			ITool[] added) {
-		return ((IFolderInfo)fRis[curr]).getToolChainModificationStatus(removed, added);
+	public IModificationStatus getToolChainModificationStatus(ITool[] removed, ITool[] added) {
+		return ((IFolderInfo) fRis[curr]).getToolChainModificationStatus(removed, added);
 	}
 
 	@Override
 	public ITool getToolFromInputExtension(String sourceExtension) {
-		return ((IFolderInfo)fRis[curr]).getToolFromInputExtension(sourceExtension);
+		return ((IFolderInfo) fRis[curr]).getToolFromInputExtension(sourceExtension);
 	}
 
 	@Override
 	public ITool getToolFromOutputExtension(String extension) {
-		return ((IFolderInfo)fRis[curr]).getToolFromOutputExtension(extension);
+		return ((IFolderInfo) fRis[curr]).getToolFromOutputExtension(extension);
 	}
 
 	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
-		return ((IFolderInfo)fRis[curr]).getToolsBySuperClassId(id);
+		return ((IFolderInfo) fRis[curr]).getToolsBySuperClassId(id);
 	}
 
 	@Override
 	public boolean isHeaderFile(String ext) {
-		return ((IFolderInfo)fRis[curr]).isHeaderFile(ext);
+		return ((IFolderInfo) fRis[curr]).isHeaderFile(ext);
 	}
 
 	@Override
 	public boolean isToolChainCompatible(IToolChain ch) {
-		return ((IFolderInfo)fRis[curr]).isToolChainCompatible(ch);
+		return ((IFolderInfo) fRis[curr]).isToolChainCompatible(ch);
 	}
 
 	@Override
-	public void modifyToolChain(ITool[] removed, ITool[] added)
-			throws BuildException {
-		((IFolderInfo)fRis[curr]).modifyToolChain(removed, added);
+	public void modifyToolChain(ITool[] removed, ITool[] added) throws BuildException {
+		((IFolderInfo) fRis[curr]).modifyToolChain(removed, added);
 	}
 
 }

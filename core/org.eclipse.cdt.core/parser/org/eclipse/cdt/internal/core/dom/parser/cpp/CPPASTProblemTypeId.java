@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
  */
 public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProblemTypeId {
 
-    public CPPASTProblemTypeId() {
+	public CPPASTProblemTypeId() {
 	}
 
 	public CPPASTProblemTypeId(IASTProblem problem) {
@@ -43,24 +43,27 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
 		return copy(copy, style);
 	}
 
-    @Override
-	public final boolean accept (ASTVisitor action) {
-    	if (action.shouldVisitTypeIds) {
-		    switch (action.visit(this)) {
-            case ASTVisitor.PROCESS_ABORT: return false;
-            case ASTVisitor.PROCESS_SKIP: return true;
-            default: break;
-        }
+	@Override
+	public final boolean accept(ASTVisitor action) {
+		if (action.shouldVisitTypeIds) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 
-		// Visit the problem
-		if (!super.accept(action))
-			return false;
+			// Visit the problem
+			if (!super.accept(action))
+				return false;
 
-        if (action.shouldVisitTypeIds && action.leave(this) == ASTVisitor.PROCESS_ABORT)
-        	return false;
-    	}
-        return true;
-    }
+			if (action.shouldVisitTypeIds && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+				return false;
+		}
+		return true;
+	}
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {

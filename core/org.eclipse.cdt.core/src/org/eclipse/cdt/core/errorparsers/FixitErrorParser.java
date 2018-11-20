@@ -32,17 +32,17 @@ import org.eclipse.core.runtime.CoreException;
  * @since 6.3
  */
 public class FixitErrorParser extends RegexErrorParser {
-	
+
 	private final static Pattern fixit = Pattern.compile("fix-it:\"(.*)\":\\{(.*-.*)\\}:\"(.*)\""); //$NON-NLS-1$
 
-	public FixitErrorParser (String id, String name) {
+	public FixitErrorParser(String id, String name) {
 		super(id, name);
 	}
-	
-	public FixitErrorParser () {
+
+	public FixitErrorParser() {
 		super();
 	}
-	
+
 	@Override
 	public boolean processLine(String line, ErrorParserManager epManager) {
 		Matcher m = fixit.matcher(line);
@@ -59,16 +59,14 @@ public class FixitErrorParser extends RegexErrorParser {
 					}
 
 					// Try to find matching marker to tie to fix-it
-					IMarker[] markers = f.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
-							IResource.DEPTH_ONE);
+					IMarker[] markers = f.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
 					for (IMarker marker : markers) {
 						int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 						int sev = marker.getAttribute(IMarker.SEVERITY, -1);
 						String msg = (String) marker.getAttribute(IMarker.MESSAGE);
-						if (lineNumber == info.lineNumber
-								&& sev == info.severity
-								&& msg.equals(info.description)) {
-							String extloc = (String) marker.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
+						if (lineNumber == info.lineNumber && sev == info.severity && msg.equals(info.description)) {
+							String extloc = (String) marker
+									.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 							if (extloc == null || extloc.equals(externalLocation)) {
 								if (project == null || project.equals(info.file.getProject())) {
 									FixitManager.getInstance().addMarker(marker, m.group(2), m.group(3));
@@ -98,7 +96,7 @@ public class FixitErrorParser extends RegexErrorParser {
 	public Object clone() throws CloneNotSupportedException {
 		FixitErrorParser that = new FixitErrorParser(getId(), getName());
 		for (RegexErrorPattern pattern : getPatterns()) {
-			that.addPattern((RegexErrorPattern)pattern.clone());
+			that.addPattern((RegexErrorPattern) pattern.clone());
 		}
 		return that;
 	}

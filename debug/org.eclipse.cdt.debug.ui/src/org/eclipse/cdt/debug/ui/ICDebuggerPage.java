@@ -11,10 +11,10 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.ui; 
+package org.eclipse.cdt.debug.ui;
 
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
- 
+
 /**
  * Interface for debugger pages contributed via the "CDebuggerPage" 
  * extension point.
@@ -30,7 +30,7 @@ public interface ICDebuggerPage extends ILaunchConfigurationTab {
 	 * 
 	 * @param debuggerID the identifier of the debugger this page is created for.
 	 */
-	public void init( String debuggerID );
+	public void init(String debuggerID);
 
 	/**
 	 * Returns the identifier of the debugger this page is associated with.

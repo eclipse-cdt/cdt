@@ -165,7 +165,8 @@ public class MemoryTree {
 		}
 	}
 
-	static final int[] ALL_ATTRIBUTES = new int[] {EFS.ATTRIBUTE_ARCHIVE, EFS.ATTRIBUTE_EXECUTABLE, EFS.ATTRIBUTE_HIDDEN, EFS.ATTRIBUTE_READ_ONLY,};
+	static final int[] ALL_ATTRIBUTES = new int[] { EFS.ATTRIBUTE_ARCHIVE, EFS.ATTRIBUTE_EXECUTABLE,
+			EFS.ATTRIBUTE_HIDDEN, EFS.ATTRIBUTE_READ_ONLY, };
 
 	public static final MemoryTree TREE = new MemoryTree();
 

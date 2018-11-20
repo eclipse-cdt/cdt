@@ -25,7 +25,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
-
 /**
  * 
  * This class permits to enable, disable or toggle the reverse
@@ -33,23 +32,26 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
  *   
  * @since 4.2
  */
-public class MIReverseDebugEnabler  implements IReverseDebugEnabler {
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fServiceTracker;
-    private final ICommandControlDMContext fContext;
-    private static enum REVERSE_DEBUG_MODE {ENABLE, DISABLE, TOGGLE};
+public class MIReverseDebugEnabler implements IReverseDebugEnabler {
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fServiceTracker;
+	private final ICommandControlDMContext fContext;
 
-    /**
-     * @param executor
-     * @param serviceTracker
-     * @param context
-     */
-    public MIReverseDebugEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
-        fExecutor = executor;
-        fServiceTracker = serviceTracker;
-        fContext = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
-        assert fContext != null;
-    }
+	private static enum REVERSE_DEBUG_MODE {
+		ENABLE, DISABLE, TOGGLE
+	};
+
+	/**
+	 * @param executor
+	 * @param serviceTracker
+	 * @param context
+	 */
+	public MIReverseDebugEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
+		fExecutor = executor;
+		fServiceTracker = serviceTracker;
+		fContext = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
+		assert fContext != null;
+	}
 
 	@Override
 	public void enable() throws Exception {
@@ -60,33 +62,32 @@ public class MIReverseDebugEnabler  implements IReverseDebugEnabler {
 	public void disable() throws Exception {
 		setMode(REVERSE_DEBUG_MODE.DISABLE);
 	}
-	
+
 	@Override
 	public void toggle() throws Exception {
 		setMode(REVERSE_DEBUG_MODE.TOGGLE);
 	}
 
-	private void setMode(final REVERSE_DEBUG_MODE mode) throws Exception {		
-		fExecutor.execute(new DsfRunnable() { 
-    		@Override
-    		public void run() {
-    			final IReverseRunControl runControl = fServiceTracker.getService(IReverseRunControl.class);
-    			if (runControl != null) {
-    				runControl.isReverseModeEnabled(fContext, new DataRequestMonitor<Boolean>(fExecutor, null) {
-       					@Override
-       					public void handleSuccess() {
-       						Boolean enabled = getData();
-       						if ( (enabled.equals(false) && mode.equals(REVERSE_DEBUG_MODE.ENABLE) ) || 
-       							 (enabled.equals(true) && mode.equals(REVERSE_DEBUG_MODE.DISABLE) ) ||
-       							 (mode.equals(REVERSE_DEBUG_MODE.TOGGLE)) )
-       						{
-       							runControl.enableReverseMode(fContext, !enabled, new RequestMonitor(fExecutor, null));
-       						}
-       					}
-       				});
-    			}
-    		}
-    	});
+	private void setMode(final REVERSE_DEBUG_MODE mode) throws Exception {
+		fExecutor.execute(new DsfRunnable() {
+			@Override
+			public void run() {
+				final IReverseRunControl runControl = fServiceTracker.getService(IReverseRunControl.class);
+				if (runControl != null) {
+					runControl.isReverseModeEnabled(fContext, new DataRequestMonitor<Boolean>(fExecutor, null) {
+						@Override
+						public void handleSuccess() {
+							Boolean enabled = getData();
+							if ((enabled.equals(false) && mode.equals(REVERSE_DEBUG_MODE.ENABLE))
+									|| (enabled.equals(true) && mode.equals(REVERSE_DEBUG_MODE.DISABLE))
+									|| (mode.equals(REVERSE_DEBUG_MODE.TOGGLE))) {
+								runControl.enableReverseMode(fContext, !enabled, new RequestMonitor(fExecutor, null));
+							}
+						}
+					});
+				}
+			}
+		});
 	}
-	
+
 }

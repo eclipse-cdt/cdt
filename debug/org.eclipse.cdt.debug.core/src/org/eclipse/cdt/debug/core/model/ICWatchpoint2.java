@@ -40,7 +40,7 @@ public interface ICWatchpoint2 extends ICWatchpoint {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String getMemorySpace() throws CoreException;
-	
+
 	/**
 	 * Returns the watchpoint's range.
 	 * 

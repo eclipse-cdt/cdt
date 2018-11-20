@@ -219,13 +219,13 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * <code>op_min</code> represents <?
 	 */
 	public static final int op_min = 33;
-	
+
 	/**
 	 * For gcc compilers, only.
 	 * <code>op_ellipses</code> represents ... as used for case ranges.
 	 */
-	public static final int op_ellipses= 34;
-	
+	public static final int op_ellipses = 34;
+
 	/**
 	 * Get the first operand.
 	 * 
@@ -253,14 +253,14 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * a braced list initializer.
 	 * @since 5.2
 	 */
-    public IASTInitializerClause getInitOperand2();
+	public IASTInitializerClause getInitOperand2();
 
 	/**
 	 * @param expression
 	 *            <code>IASTExpression</code> value
 	 */
 	public void setOperand2(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

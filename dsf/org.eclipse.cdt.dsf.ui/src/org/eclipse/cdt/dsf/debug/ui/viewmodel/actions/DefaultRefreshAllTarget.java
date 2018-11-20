@@ -29,30 +29,30 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class DefaultRefreshAllTarget implements IRefreshAllTarget {
 
-    @Override
+	@Override
 	public void refresh(ISelection debugContext) throws CoreException {
-        IVMAdapter adapter = getActiveVMAdapter( debugContext );
+		IVMAdapter adapter = getActiveVMAdapter(debugContext);
 
-        if (adapter != null) {
-            for (IVMProvider provider : adapter.getActiveProviders()) {
-                if (provider instanceof ICachingVMProvider) {
-                    ((ICachingVMProvider)provider).refresh();
-                }
-            }
-        }
-    }
+		if (adapter != null) {
+			for (IVMProvider provider : adapter.getActiveProviders()) {
+				if (provider instanceof ICachingVMProvider) {
+					((ICachingVMProvider) provider).refresh();
+				}
+			}
+		}
+	}
 
-    /**
+	/**
 	 * @since 2.0
 	 */
-    protected IVMAdapter getActiveVMAdapter(ISelection debugContext) {
-        
-        if (debugContext instanceof IStructuredSelection) {
-            Object activeElement = ((IStructuredSelection)debugContext).getFirstElement();
-            if (activeElement instanceof IAdaptable) {
-                return ((IAdaptable)activeElement).getAdapter(IVMAdapter.class);
-            }
-        }
-        return null;
-    }
+	protected IVMAdapter getActiveVMAdapter(ISelection debugContext) {
+
+		if (debugContext instanceof IStructuredSelection) {
+			Object activeElement = ((IStructuredSelection) debugContext).getFirstElement();
+			if (activeElement instanceof IAdaptable) {
+				return ((IAdaptable) activeElement).getAdapter(IVMAdapter.class);
+			}
+		}
+		return null;
+	}
 }

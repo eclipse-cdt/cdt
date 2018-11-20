@@ -21,22 +21,22 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public class MIOutput {
 
-    private final MIResultRecord rr;
-    private final MIOOBRecord[] oobs;
+	private final MIResultRecord rr;
+	private final MIOOBRecord[] oobs;
 	private MIStreamRecord[] streamRecords;
 
-    public MIOutput() {
-        this(null, (MIOOBRecord[])null);
-    }
+	public MIOutput() {
+		this(null, (MIOOBRecord[]) null);
+	}
 
-    /**
-     * @param oob
-     * @deprecated Use {@link #MIOutput(MIOOBRecord, MIStreamRecord[])} 
-     */
-    @Deprecated
+	/**
+	 * @param oob
+	 * @deprecated Use {@link #MIOutput(MIOOBRecord, MIStreamRecord[])} 
+	 */
+	@Deprecated
 	public MIOutput(MIOOBRecord oob) {
-        this(null, new MIOOBRecord[] { oob });
-    }
+		this(null, new MIOOBRecord[] { oob });
+	}
 
 	/**
 	 * Constructor used when handling a single out-of-band record
@@ -52,11 +52,11 @@ public class MIOutput {
 	 *            records. Must not be null; may be empty
 	 * @since 3.0
 	 */
-    public MIOutput(MIOOBRecord oob, MIStreamRecord[] streamRecords) {
-    	this(null, new MIOOBRecord[] { oob });
-        this.streamRecords = streamRecords;
-        assert streamRecords != null;
-    }
+	public MIOutput(MIOOBRecord oob, MIStreamRecord[] streamRecords) {
+		this(null, new MIOOBRecord[] { oob });
+		this.streamRecords = streamRecords;
+		assert streamRecords != null;
+	}
 
 	/**
 	 * Constructor used when handling a command result.
@@ -71,18 +71,18 @@ public class MIOutput {
 	 *            This will have the most recent records.
 	 * 
 	 */
-    public MIOutput(MIResultRecord rr, MIOOBRecord[] oobs) {
-        this.rr = rr;
-        this.oobs = oobs;
-    }
-    
-    public MIResultRecord getMIResultRecord() {
-        return rr;
-    }
+	public MIOutput(MIResultRecord rr, MIOOBRecord[] oobs) {
+		this.rr = rr;
+		this.oobs = oobs;
+	}
 
-    public MIOOBRecord[] getMIOOBRecords() {
-        return oobs;
-    }
+	public MIResultRecord getMIResultRecord() {
+		return rr;
+	}
+
+	public MIOOBRecord[] getMIOOBRecords() {
+		return oobs;
+	}
 
 	/**
 	 * See param in {@link #MIOutput(MIOOBRecord, MIStreamRecord[])}
@@ -94,19 +94,19 @@ public class MIOutput {
 	 *         {@link #getMIOOBRecords()} in that case.
 	 * @since 3.0
 	 */
-    public MIStreamRecord[] getStreamRecords() {
-    	return streamRecords;
-    }
+	public MIStreamRecord[] getStreamRecords() {
+		return streamRecords;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < oobs.length; i++) {
-            buffer.append(oobs[i].toString());
-        }
-        if (rr != null) {
-            buffer.append(rr.toString());
-        }
-        return buffer.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder buffer = new StringBuilder();
+		for (int i = 0; i < oobs.length; i++) {
+			buffer.append(oobs[i].toString());
+		}
+		if (rr != null) {
+			buffer.append(rr.toString());
+		}
+		return buffer.toString();
+	}
 }

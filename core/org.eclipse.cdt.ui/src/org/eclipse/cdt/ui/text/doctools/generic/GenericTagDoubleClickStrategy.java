@@ -33,17 +33,17 @@ import org.eclipse.jface.text.Region;
  */
 public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected char[] fTagMarkers;
-	
+
 	/**
 	 * A double-click strategy that additionally understands tag markers form part of a
 	 * selectable word.
 	 * @param tagMarkers the set of characters to additionally consider part of a word
 	 */
 	public GenericTagDoubleClickStrategy(char[] tagMarkers) {
-		fTagMarkers= new char[tagMarkers.length];
+		fTagMarkers = new char[tagMarkers.length];
 		System.arraycopy(tagMarkers, 0, fTagMarkers, 0, tagMarkers.length);
 	}
-	
+
 	/**
 	 * Implements a character iterator that works directly on
 	 * instances of <code>IDocument</code>. Used to collaborate with
@@ -57,11 +57,11 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/** Document to iterate over. */
 		private IDocument fDocument;
 		/** Start offset of iteration. */
-		private int fOffset= -1;
+		private int fOffset = -1;
 		/** End offset of iteration. */
-		private int fEndOffset= -1;
+		private int fEndOffset = -1;
 		/** Current offset of iteration. */
-		private int fIndex= -1;
+		private int fIndex = -1;
 
 		/** Creates a new document iterator. */
 		public DocumentCharacterIterator() {
@@ -74,9 +74,9 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		 * @param iteratorRange the range in the document to be iterated
 		 */
 		public void setDocument(IDocument document, IRegion iteratorRange) {
-			fDocument= document;
-			fOffset= iteratorRange.getOffset();
-			fEndOffset= fOffset + iteratorRange.getLength();
+			fDocument = document;
+			fOffset = iteratorRange.getOffset();
+			fEndOffset = fOffset + iteratorRange.getLength();
 		}
 
 		/*
@@ -84,7 +84,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		 */
 		@Override
 		public char first() {
-			fIndex= fOffset;
+			fIndex = fOffset;
 			return current();
 		}
 
@@ -93,7 +93,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		 */
 		@Override
 		public char last() {
-			fIndex= fOffset < fEndOffset ? fEndOffset -1 : fEndOffset;
+			fIndex = fOffset < fEndOffset ? fEndOffset - 1 : fEndOffset;
 			return current();
 		}
 
@@ -117,9 +117,9 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		@Override
 		public char next() {
 			++fIndex;
-			int end= getEndIndex();
+			int end = getEndIndex();
 			if (fIndex >= end) {
-				fIndex= end;
+				fIndex = end;
 				return DONE;
 			}
 			return current();
@@ -134,7 +134,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 				return DONE;
 
 			if (fIndex > fOffset)
-				-- fIndex;
+				--fIndex;
 
 			return current();
 		}
@@ -144,7 +144,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		 */
 		@Override
 		public char setIndex(int index) {
-			fIndex= index;
+			fIndex = index;
 			return current();
 		}
 
@@ -177,21 +177,20 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		 */
 		@Override
 		public Object clone() {
-			DocumentCharacterIterator i= new DocumentCharacterIterator();
-			i.fDocument= fDocument;
-			i.fIndex= fIndex;
-			i.fOffset= fOffset;
-			i.fEndOffset= fEndOffset;
+			DocumentCharacterIterator i = new DocumentCharacterIterator();
+			i.fDocument = fDocument;
+			i.fIndex = fIndex;
+			i.fOffset = fOffset;
+			i.fEndOffset = fEndOffset;
 			return i;
 		}
 	}
-
 
 	/**
 	 * The document character iterator used by this strategy.
 	 * @since 2.0
 	 */
-	private DocumentCharacterIterator fDocIter= new DocumentCharacterIterator();
+	private DocumentCharacterIterator fDocIter = new DocumentCharacterIterator();
 
 	/*
 	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
@@ -199,12 +198,12 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 	@Override
 	public void doubleClicked(ITextViewer text) {
 
-		int position= text.getSelectedRange().x;
+		int position = text.getSelectedRange().x;
 
 		if (position < 0)
 			return;
 
-		IRegion word= getWordRegion(text.getDocument(), position);
+		IRegion word = getWordRegion(text.getDocument(), position);
 
 		if (word != null)
 			text.setSelectedRange(word.getOffset(), word.getLength());
@@ -220,35 +219,38 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 	private IRegion getWordRegion(IDocument document, int position) {
 		try {
 
-			IRegion line= document.getLineInformationOfOffset(position);
+			IRegion line = document.getLineInformationOfOffset(position);
 			if (position == line.getOffset() + line.getLength())
 				return null;
 
 			fDocIter.setDocument(document, line);
 
-			BreakIterator breakIter= BreakIterator.getWordInstance();
+			BreakIterator breakIter = BreakIterator.getWordInstance();
 			breakIter.setText(fDocIter);
 
-			int start= breakIter.preceding(position);
+			int start = breakIter.preceding(position);
 			if (start == BreakIterator.DONE)
-				start= line.getOffset();
+				start = line.getOffset();
 
-			int end= breakIter.following(position);
+			int end = breakIter.following(position);
 			if (end == BreakIterator.DONE)
-				end= line.getOffset() + line.getLength();
+				end = line.getOffset() + line.getLength();
 
 			if (breakIter.isBoundary(position)) {
-				if (end - position > position- start)
-					start= position;
+				if (end - position > position - start)
+					start = position;
 				else
-					end= position;
+					end = position;
 			}
 
-			if (start > 0 && isTagMarker(document.getChar(start - 1)) && Character.isJavaIdentifierPart(document.getChar(start))
-					&& (start == 1 || Character.isWhitespace(document.getChar(start - 2)) || document.getChar(start - 2) == '{')) {
+			if (start > 0 && isTagMarker(document.getChar(start - 1))
+					&& Character.isJavaIdentifierPart(document.getChar(start))
+					&& (start == 1 || Character.isWhitespace(document.getChar(start - 2))
+							|| document.getChar(start - 2) == '{')) {
 				// double click after @ident
 				start--;
-			} else if (end == position && end == start + 1 && end < line.getOffset() + line.getLength() && document.getChar(end) == '@') {
+			} else if (end == position && end == start + 1 && end < line.getOffset() + line.getLength()
+					&& document.getChar(end) == '@') {
 				// double click before " @ident"
 				return getWordRegion(document, position + 1);
 			}
@@ -262,10 +264,9 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		}
 	}
 
-
 	protected boolean isTagMarker(char c) {
-		for(int i=0; i<fTagMarkers.length; i++) {
-			if(c == fTagMarkers[i])
+		for (int i = 0; i < fTagMarkers.length; i++) {
+			if (c == fTagMarkers[i])
 				return true;
 		}
 		return false;

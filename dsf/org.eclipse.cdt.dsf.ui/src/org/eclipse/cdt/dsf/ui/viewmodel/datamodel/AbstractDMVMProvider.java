@@ -42,19 +42,22 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
  */
 @ConfinedToDsfExecutor("fSession#getExecutor")
 @SuppressWarnings("restriction")
-abstract public class AbstractDMVMProvider extends AbstractCachingVMProvider
-{
-    private final DsfSession fSession;
-    /**
-     * Constructs the view model provider for given DSF session.  The 
-     * constructor is thread-safe to allow VM provider to be constructed
-     * synchronously when a call to getAdapter() is made on an element 
-     * in a view.
-     */
-    public AbstractDMVMProvider(AbstractVMAdapter adapter,  IPresentationContext presentationContext, DsfSession session) {
-        super(adapter, presentationContext);
-        fSession = session;
-    }    
+abstract public class AbstractDMVMProvider extends AbstractCachingVMProvider {
+	private final DsfSession fSession;
 
-    public DsfSession getSession() { return fSession; }
+	/**
+	 * Constructs the view model provider for given DSF session.  The 
+	 * constructor is thread-safe to allow VM provider to be constructed
+	 * synchronously when a call to getAdapter() is made on an element 
+	 * in a view.
+	 */
+	public AbstractDMVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext,
+			DsfSession session) {
+		super(adapter, presentationContext);
+		fSession = session;
+	}
+
+	public DsfSession getSession() {
+		return fSession;
+	}
 }

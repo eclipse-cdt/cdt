@@ -100,8 +100,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertExpectedBindings(names, fBindingClassifier.getBindingsToForwardDeclare(), "declared");
 	}
 
-	private void assertExpectedBindings(String[] expectedNames, Set<IBinding> bindings, String verb)
-			throws Exception {
+	private void assertExpectedBindings(String[] expectedNames, Set<IBinding> bindings, String verb) throws Exception {
 		Set<String> expected = new TreeSet<>(Arrays.asList(expectedNames));
 		Set<String> extra = new TreeSet<>();
 		for (IBinding binding : bindings) {
@@ -118,8 +117,8 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 					missing.size(), StringUtil.join(missing, "\", \""), verb));
 		}
 		if (!extra.isEmpty()) {
-			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" should not be {2}.",
-					extra.size(), StringUtil.join(extra, "\", \""), verb));
+			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" should not be {2}.", extra.size(),
+					StringUtil.join(extra, "\", \""), verb));
 		}
 		fail(StringUtil.join(errors, " "));
 	}
@@ -394,7 +393,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	class B {};
 	//	class C {};
 	//	class D {};
-	
+
 	//	void foo(A* a, B& b, C& c) {
 	//	  A& aa(*a);
 	//	  B* bb(&b);
@@ -510,7 +509,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  void* x = &a;
 	//	}
 	public void testVariableReference() throws Exception {
-		assertDefined("a");  // Forward declaration of variables is not allowed by default.
+		assertDefined("a"); // Forward declaration of variables is not allowed by default.
 		assertDeclared();
 	}
 
@@ -594,7 +593,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	struct A {
 	//	  void m();
 	//	};
-		
+
 	//	template <typename T>
 	//	void g(T& p) {
 	//	  p.m();
@@ -776,7 +775,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	struct C {};
 	//	struct prefixD {};
 	//	#define MACRO(t1, v1, t2, v3, t4, v4) t1 v1; t2 b; C v3; prefix##t4 v4  
-	
+
 	//	MACRO(A, a, B, c, D, d);
 	public void testMacro_1() throws Exception {
 		assertDefined("A", "B", "MACRO");

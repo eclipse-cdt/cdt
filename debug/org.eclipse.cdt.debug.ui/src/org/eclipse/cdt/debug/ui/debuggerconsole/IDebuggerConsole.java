@@ -24,7 +24,7 @@ public interface IDebuggerConsole extends IConsole {
 	 * @return the launch associated with this console.
 	 */
 	ILaunch getLaunch();
-	
+
 	/**
 	 * Creates and returns a new page for this console. The page is displayed
 	 * for this console in the console given view.
@@ -33,12 +33,12 @@ public interface IDebuggerConsole extends IConsole {
 	 * @return a page book view page representation of this console
 	 */
 	IPageBookViewPage createDebuggerPage(IDebuggerConsoleView view);
-	
+
 	/**
 	 * Request a re-computation of the name of the console.
 	 */
 	void resetName();
-	
+
 	/**
 	 * This console has become selected, the implementation shall use this 
 	 * notification to e.g. keep other views in sync with the context of the console

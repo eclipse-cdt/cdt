@@ -43,24 +43,24 @@ public abstract class FindInWorkingSetAction extends FindAction {
 		fWorkingSets = workingSets;
 	}
 
-	public FindInWorkingSetAction(IWorkbenchSite site, String label, String tooltip, IWorkingSet[] workingSets){
+	public FindInWorkingSetAction(IWorkbenchSite site, String label, String tooltip, IWorkingSet[] workingSets) {
 		super(site);
 		setText(label);
 		setToolTipText(tooltip);
-		fWorkingSets= workingSets;
+		fWorkingSets = workingSets;
 	}
 
 	@Override
 	final public void run() {
-		IWorkingSet[] initial= fWorkingSets;
+		IWorkingSet[] initial = fWorkingSets;
 		if (fWorkingSets == null) {
-			fWorkingSets= askForWorkingSets();
+			fWorkingSets = askForWorkingSets();
 		}
 		if (fWorkingSets != null) {
 			scopeDescription = Messages.format(CSearchMessages.WorkingSetScope, CSearchUtil.toString(fWorkingSets));
 			super.run();
 		}
-		fWorkingSets= initial;
+		fWorkingSets = initial;
 	}
 
 	@Override
@@ -87,15 +87,14 @@ public abstract class FindInWorkingSetAction extends FindAction {
 	}
 
 	private IWorkingSet[] askForWorkingSets() {
-		IWorkingSetManager wsm= PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dlg=
-			wsm.createWorkingSetSelectionDialog(getSite().getShell(), true);
-		IWorkingSet[] mru= wsm.getRecentWorkingSets();
+		IWorkingSetManager wsm = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dlg = wsm.createWorkingSetSelectionDialog(getSite().getShell(), true);
+		IWorkingSet[] mru = wsm.getRecentWorkingSets();
 		if (mru != null && mru.length > 0) {
-			dlg.setSelection(new IWorkingSet[] {mru[0]});
+			dlg.setSelection(new IWorkingSet[] { mru[0] });
 		}
 		if (dlg.open() == Window.OK) {
-			mru= dlg.getSelection();
+			mru = dlg.getSelection();
 			if (mru != null && mru.length == 1) {
 				wsm.addRecentWorkingSet(mru[0]);
 			}

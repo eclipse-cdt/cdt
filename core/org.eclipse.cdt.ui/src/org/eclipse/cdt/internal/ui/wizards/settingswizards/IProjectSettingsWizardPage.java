@@ -30,23 +30,22 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 public interface IProjectSettingsWizardPage {
 
 	static final String FILENAME_EXTENSION = "xml"; //$NON-NLS-1$
-	
 
 	/**
 	 * Sets the input list for the displayed list of settings processors.
 	 */
 	void setDisplayedSettingsProcessors(List<ISettingsProcessor> processors);
-	
+
 	/**
 	 * Returns a list of all the available settings processors.
 	 */
 	List<ISettingsProcessor> getSettingsProcessors();
-	
+
 	/**
 	 * Returns a list of the settings processors that were selected by the user.
 	 */
 	List<ISettingsProcessor> getSelectedSettingsProcessors();
-	
+
 	/**
 	 * Returns the contents of the file path text box.
 	 */
@@ -59,7 +58,7 @@ public interface IProjectSettingsWizardPage {
 	 * ICCOnfigurationDescription.getProjectDescription().getProject();
 	 */
 	ICConfigurationDescription getSelectedConfiguration();
-	
+
 	/**
 	 * Causes an error dialog to be shown to the user.
 	 */
@@ -70,6 +69,5 @@ public interface IProjectSettingsWizardPage {
 	 * @param flag a constant from the IMessageProvider interface
 	 */
 	void setMessage(String message, int flag);
-
 
 }

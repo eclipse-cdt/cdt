@@ -47,7 +47,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		fProject = ManagedBuildTestHelper.createProject("CfgScannerConfigProfileManagerProj",
-														"cdt.managedbuild.target.gnu.exe");
+				"cdt.managedbuild.target.gnu.exe");
 		ManagedBuildTestHelper.addManagedBuildNature(fProject);
 	}
 
@@ -118,7 +118,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 		CoreModel.getDefault().setProjectDescription(fProject, prjDesc);
 		fProject.close(null);
 		fProject.open(null);
-		
+
 		// Check settings are back to original
 		prjDesc = CoreModel.getDefault().getProjectDescription(fProject);
 		cfg0 = ManagedBuildManager.getConfigurationForDescription(prjDesc.getConfigurations()[0]);

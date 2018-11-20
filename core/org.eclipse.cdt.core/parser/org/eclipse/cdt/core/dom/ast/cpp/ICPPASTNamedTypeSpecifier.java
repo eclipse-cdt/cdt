@@ -37,7 +37,7 @@ public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier, ICPPA
 	 *            boolean
 	 */
 	public void setIsTypename(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

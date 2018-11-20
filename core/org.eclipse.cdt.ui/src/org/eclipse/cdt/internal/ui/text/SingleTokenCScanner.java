@@ -22,9 +22,9 @@ import org.eclipse.cdt.ui.text.ITokenStoreFactory;
  * 
  */
 public final class SingleTokenCScanner extends AbstractCScanner {
-	
+
 	public SingleTokenCScanner(ITokenStoreFactory factory, String property) {
-		super(factory.createTokenStore(new String[] {property}), 20);
+		super(factory.createTokenStore(new String[] { property }), 20);
 		setDefaultReturnToken(getToken(property));
 	}
 

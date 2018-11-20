@@ -22,12 +22,14 @@ public class UPCDOMLocationMacroTests extends LRDOMLocationMacroTests {
 
 	public UPCDOMLocationMacroTests() {
 	}
+
 	//TODO ??? overwrite some failed test cases
 	@Override
-	public void testStdioBug() throws ParserException{}
+	public void testStdioBug() throws ParserException {
+	}
 
 	@Override
 	protected ILanguage getCLanguage() {
-    	return UPCLanguage.getDefault();
-    }
+		return UPCLanguage.getDefault();
+	}
 }

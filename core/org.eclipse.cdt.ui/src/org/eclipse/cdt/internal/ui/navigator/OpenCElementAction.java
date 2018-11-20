@@ -37,6 +37,7 @@ import org.eclipse.ui.actions.OpenFileAction;
 public class OpenCElementAction extends OpenFileAction {
 
 	private ICElement fOpenElement;
+
 	/**
 	 * @param page
 	 */
@@ -52,7 +53,7 @@ public class OpenCElementAction extends OpenFileAction {
 		if (fOpenElement != null) {
 			IEditorPart part;
 			try {
-				part= EditorUtility.openInEditor(fOpenElement);
+				part = EditorUtility.openInEditor(fOpenElement);
 				if (fOpenElement instanceof ISourceReference && !(fOpenElement instanceof ITranslationUnit)) {
 					EditorUtility.revealInEditor(part, fOpenElement);
 				}
@@ -72,11 +73,10 @@ public class OpenCElementAction extends OpenFileAction {
 		fOpenElement = null;
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
-			if (!(element instanceof ICElement)	&& element instanceof IAdaptable) {
+			if (!(element instanceof ICElement) && element instanceof IAdaptable) {
 				element = ((IAdaptable) element).getAdapter(ICElement.class);
 			}
-			if (element instanceof ICElement
-					&& (element instanceof ISourceReference || element instanceof IBinary)) {
+			if (element instanceof ICElement && (element instanceof ISourceReference || element instanceof IBinary)) {
 				fOpenElement = (ICElement) element;
 			}
 		}

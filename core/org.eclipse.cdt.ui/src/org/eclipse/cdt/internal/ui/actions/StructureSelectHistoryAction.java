@@ -28,8 +28,7 @@ public class StructureSelectHistoryAction extends StructureSelectionAction {
 
 	public static final String PREFIX = "StructureSelectHistory."; //$NON-NLS-1$
 
-	public StructureSelectHistoryAction(ResourceBundle bundle, ITextEditor editor,
-			SelectionHistory history) {
+	public StructureSelectHistoryAction(ResourceBundle bundle, ITextEditor editor, SelectionHistory history) {
 		super(bundle, PREFIX, editor, history);
 	}
 

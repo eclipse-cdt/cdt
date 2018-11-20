@@ -27,8 +27,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 /**
  *   This class is responsible for storing all of the data associated with a given custom wizard page.
  */
-public final class MBSCustomPageData
-{
+public final class MBSCustomPageData {
 
 	private Set natureSet = null;
 
@@ -47,8 +46,7 @@ public final class MBSCustomPageData
 	/**
 	 *  Stores data on a particular toolchain that a custom wizard page supports.
 	 */
-	public class ToolchainData implements Comparable
-	{
+	public class ToolchainData implements Comparable {
 		private String id = null;
 
 		private String[] versionsSupported = null;
@@ -57,8 +55,7 @@ public final class MBSCustomPageData
 		 * @param id The id to set.
 		 * @since 3.0
 		 */
-		public void setId(String id)
-		{
+		public void setId(String id) {
 			this.id = id;
 		}
 
@@ -66,8 +63,7 @@ public final class MBSCustomPageData
 		 * @return Returns the id.
 		 * @since 3.0
 		 */
-		public String getId()
-		{
+		public String getId() {
 			return id;
 		}
 
@@ -75,8 +71,7 @@ public final class MBSCustomPageData
 		 * @param versionsSupported The versionsSupported to set.
 		 * @since 3.0
 		 */
-		public void setVersionsSupported(String[] versionsSupported)
-		{
+		public void setVersionsSupported(String[] versionsSupported) {
 			this.versionsSupported = versionsSupported;
 		}
 
@@ -84,8 +79,7 @@ public final class MBSCustomPageData
 		 * @return Returns the versionsSupported.
 		 * @since 3.0
 		 */
-		public String[] getVersionsSupported()
-		{
+		public String[] getVersionsSupported() {
 			return versionsSupported;
 		}
 
@@ -96,22 +90,22 @@ public final class MBSCustomPageData
 		public int compareTo(Object arg0) {
 			if (arg0 == null || !(arg0 instanceof ToolchainData))
 				return 0;
-			ToolchainData other = (ToolchainData)arg0;
+			ToolchainData other = (ToolchainData) arg0;
 			return this.id.compareTo(other.id);
 		}
 
-       /* (non-Javadoc)
-        * @see java.lang.Object#equals(java.lang.Object)
-        */
-        @Override
+		/* (non-Javadoc)
+		* @see java.lang.Object#equals(java.lang.Object)
+		*/
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || !(obj instanceof ToolchainData))
 				return false;
-           if (this == obj) {
-              return true;
-           }
-           return this.id.equals(((ToolchainData)obj).id);
-        }
+			if (this == obj) {
+				return true;
+			}
+			return this.id.equals(((ToolchainData) obj).id);
+		}
 
 	}
 
@@ -124,9 +118,7 @@ public final class MBSCustomPageData
 	 * @param isStock - true if the page is a stock page provided by Managed Build, false otherwise.
 	 * @since 3.0
 	 */
-	public MBSCustomPageData(String id, IWizardPage wizardPage,
-			Runnable operation, boolean isStock)
-	{
+	public MBSCustomPageData(String id, IWizardPage wizardPage, Runnable operation, boolean isStock) {
 		this(id, wizardPage, convertRunnable(operation), isStock);
 	}
 
@@ -139,9 +131,7 @@ public final class MBSCustomPageData
 	 * @param isStock - true if the page is a stock page provided by Managed Build, false otherwise.
 	 * @since 3.0
 	 */
-	public MBSCustomPageData(String id, IWizardPage wizardPage,
-			IRunnableWithProgress operation, boolean isStock)
-	{
+	public MBSCustomPageData(String id, IWizardPage wizardPage, IRunnableWithProgress operation, boolean isStock) {
 
 		this.id = id;
 		this.wizardPage = wizardPage;
@@ -153,8 +143,7 @@ public final class MBSCustomPageData
 	 * @return The unique ID by which this page is referred to.
 	 * @since 3.0
 	 */
-	public String getID()
-	{
+	public String getID() {
 		return id;
 	}
 
@@ -162,8 +151,7 @@ public final class MBSCustomPageData
 	 * @return The IWizardPage corresponding to the actual page to be displayed in the wizard.
 	 * @since 3.0
 	 */
-	public IWizardPage getWizardPage()
-	{
+	public IWizardPage getWizardPage() {
 		return wizardPage;
 	}
 
@@ -171,8 +159,7 @@ public final class MBSCustomPageData
 	 * @return true if this page is a stock page provided by the Managed Build System, false otherwise.
 	 * @since 3.0
 	 */
-	public boolean isStockPage()
-	{
+	public boolean isStockPage() {
 
 		return isStock;
 	}
@@ -189,25 +176,26 @@ public final class MBSCustomPageData
 	 * Accepting null allows to process projects w/o nature
 	 * @since 4.0
 	 */
-	public boolean shouldBeVisibleForNature(Object nature)
-	{
-		if (natureSet == null) return true;
-		if (nature == null) return false;
+	public boolean shouldBeVisibleForNature(Object nature) {
+		if (natureSet == null)
+			return true;
+		if (nature == null)
+			return false;
 
 		if (nature instanceof String) // old style
-			return hasNature((String)nature);
+			return hasNature((String) nature);
 		else if (nature instanceof Set) {
-			Iterator it = ((Set)nature).iterator();
+			Iterator it = ((Set) nature).iterator();
 			while (it.hasNext()) {
 				String s = it.next().toString();
-				if (hasNature(s)) return true;
+				if (hasNature(s))
+					return true;
 			}
 		}
 		return false; // no one nature fits or bad data
 	}
 
-	private boolean hasNature(String nature)
-	{
+	private boolean hasNature(String nature) {
 		return natureSet.contains(nature);
 	}
 
@@ -215,16 +203,14 @@ public final class MBSCustomPageData
 	 * @return An array of nature IDs corresponding to the natures for which this page should appear.
 	 * @since 3.0
 	 */
-	public String[] getNatures()
-	{
+	public String[] getNatures() {
 		if (natureSet == null || natureSet.size() == 0)
 			return null;
 
 		Object[] objArray = natureSet.toArray();
 
 		String[] strArray = new String[objArray.length];
-		for (int k = 0; k < objArray.length; k++)
-		{
+		for (int k = 0; k < objArray.length; k++) {
 			strArray[k] = objArray[k].toString();
 
 		}
@@ -238,20 +224,17 @@ public final class MBSCustomPageData
 	 * @return true if the page should be present for the given toolchain and version, false otherwise.
 	 * @since 3.0
 	 */
-	public boolean shouldBeVisibleForToolchain(String id, String version)
-	{
+	public boolean shouldBeVisibleForToolchain(String id, String version) {
 		// if no toolchains specified then always return true
 		if (toolchainSet.size() == 0)
 			return true;
 
 		Iterator iterator = toolchainSet.iterator();
-		while (iterator.hasNext())
-		{
+		while (iterator.hasNext()) {
 			ToolchainData tcd = (ToolchainData) iterator.next();
 			// look for toolchain with same id.  The id in the tool-chain data should never
 			// contain a version suffix.
-			if (tcd.getId().equals(id))
-			{
+			if (tcd.getId().equals(id)) {
 				// if we don't check versions then we're done
 				if (tcd.getVersionsSupported() == null)
 					return true;
@@ -270,8 +253,7 @@ public final class MBSCustomPageData
 	 * 		   toolchain dependencies.
 	 * @since 3.0
 	 */
-	public ToolchainData[] getToolchains()
-	{
+	public ToolchainData[] getToolchains() {
 		if (toolchainSet == null)
 			return null;
 
@@ -281,8 +263,7 @@ public final class MBSCustomPageData
 
 		int k = 0;
 
-		while (iterator.hasNext())
-		{
+		while (iterator.hasNext()) {
 			tcd[k++] = (ToolchainData) iterator.next();
 		}
 		if (tcd.length > 0)
@@ -295,16 +276,14 @@ public final class MBSCustomPageData
 	 * @return The set of project types supported by this page, or null if there are no such dependencies.
 	 * @since 3.0
 	 */
-	public String[] getProjectTypes()
-	{
+	public String[] getProjectTypes() {
 		if (projectTypeSet == null || projectTypeSet.size() == 0)
 			return null;
 
 		Object[] objArray = projectTypeSet.toArray();
 
 		String[] strArray = new String[objArray.length];
-		for (int k = 0; k < objArray.length; k++)
-		{
+		for (int k = 0; k < objArray.length; k++) {
 			strArray[k] = objArray[k].toString();
 
 		}
@@ -319,8 +298,7 @@ public final class MBSCustomPageData
 	 * @param nature The unique ID of the nature.
 	 * @since 3.0
 	 */
-	public void addNature(String nature)
-	{
+	public void addNature(String nature) {
 		if (nature == null)
 			return;
 
@@ -339,9 +317,8 @@ public final class MBSCustomPageData
 	 * @param versionsSupported - A comma separated list of supported versions, or null if no version checking is to be done.
 	 * @since 3.0
 	 */
-	public void addToolchain(String toolchainID, String[] versionsSupported)
-	{
-		if(toolchainID == null)
+	public void addToolchain(String toolchainID, String[] versionsSupported) {
+		if (toolchainID == null)
 			return;
 
 		if (toolchainSet == null)
@@ -364,15 +341,16 @@ public final class MBSCustomPageData
 	 * or types absence in some cases
 	 * @since 4.0
 	 */
-	public boolean shouldBeVisibleForProjectType(Object projectType)
-	{
-		if (projectTypeSet == null)	return true;
-		if (projectType == null) return false;
+	public boolean shouldBeVisibleForProjectType(Object projectType) {
+		if (projectTypeSet == null)
+			return true;
+		if (projectType == null)
+			return false;
 
 		if (projectType instanceof String)
 			return projectTypeSet.contains(projectType);
 		else if (projectType instanceof Set) {
-			Iterator it = ((Set)projectType).iterator();
+			Iterator it = ((Set) projectType).iterator();
 			while (it.hasNext()) {
 				String s = it.next().toString();
 				if (projectTypeSet.contains(s))
@@ -389,9 +367,8 @@ public final class MBSCustomPageData
 	 * @param projectType - The unique ID of the project type.
 	 * @since 3.0
 	 */
-	public void addProjectType(String projectType)
-	{
-		if(projectType == null)
+	public void addProjectType(String projectType) {
+		if (projectType == null)
 			return;
 
 		if (projectTypeSet == null)
@@ -406,8 +383,7 @@ public final class MBSCustomPageData
 	 * is visible.
 	 * @since 3.0
 	 */
-	public IRunnableWithProgress getOperation()
-	{
+	public IRunnableWithProgress getOperation() {
 		return operation;
 	}
 

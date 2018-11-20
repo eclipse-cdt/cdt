@@ -23,37 +23,37 @@ public interface IManagedCommandLineInfo {
 	 * @return command line
 	 */
 	public String getCommandLine();
-	
+
 	/**
 	 * give command line pattern 
 	 */
 	public String getCommandLinePattern();
-	
+
 	/**
 	 * provide tool name
 	 */
 	public String getCommandName();
-	
+
 	/**
 	 * give command flags
 	 */
 	public String getFlags();
-	
+
 	/**
 	 * provide list of resources used by tool for transformation
 	 */
 	public String getInputs();
-	
+
 	/**
 	 * return output file name
 	 */
 	public String getOutput();
-	
+
 	/**
 	 * give command flag to generate output
 	 */
 	public String getOutputFlag();
-	
+
 	/**
 	 * return output prefix
 	 */

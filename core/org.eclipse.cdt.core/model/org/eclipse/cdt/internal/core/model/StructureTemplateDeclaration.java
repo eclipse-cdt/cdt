@@ -35,7 +35,7 @@ public class StructureTemplateDeclaration extends StructureDeclaration implement
 
 	@Override
 	public String[] getTemplateArguments() {
-		return  fTemplate.getTemplateArguments();
+		return fTemplate.getTemplateArguments();
 	}
 
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
@@ -56,7 +56,7 @@ public class StructureTemplateDeclaration extends StructureDeclaration implement
 	public void getHandleMemento(StringBuilder buff) {
 		super.getHandleMemento(buff);
 		if (fTemplate.getNumberOfTemplateParameters() > 0) {
-			final String[] parameterTypes= fTemplate.getTemplateParameterTypes();
+			final String[] parameterTypes = fTemplate.getTemplateParameterTypes();
 			for (String parameterType : parameterTypes) {
 				buff.append(CEM_PARAMETER);
 				escapeMementoName(buff, parameterType);

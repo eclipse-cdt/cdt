@@ -21,11 +21,11 @@ package org.eclipse.cdt.core;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICLogConstants {
-    public class LogConst {
-        private LogConst() {
-        }
-    }
+	public class LogConst {
+		private LogConst() {
+		}
+	}
 
-    public static final LogConst PDE = new LogConst();
-    public static final LogConst CDT = new LogConst();
+	public static final LogConst PDE = new LogConst();
+	public static final LogConst CDT = new LogConst();
 }

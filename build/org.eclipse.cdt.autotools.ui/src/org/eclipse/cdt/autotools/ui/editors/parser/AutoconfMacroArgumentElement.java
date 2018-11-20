@@ -26,6 +26,7 @@ public class AutoconfMacroArgumentElement extends AutoconfElement {
 	public AutoconfMacroArgumentElement() {
 		super(""); // //$NON-NLS-N$
 	}
+
 	public AutoconfMacroArgumentElement(String name) {
 		super(name);
 	}

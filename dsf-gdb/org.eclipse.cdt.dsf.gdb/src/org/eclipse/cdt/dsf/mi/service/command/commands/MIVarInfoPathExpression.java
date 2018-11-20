@@ -34,18 +34,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoPathExpressionInfo
  *  as ancestor.
  */
 
-public class MIVarInfoPathExpression extends MICommand<MIVarInfoPathExpressionInfo> 
-{
+public class MIVarInfoPathExpression extends MICommand<MIVarInfoPathExpressionInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarInfoPathExpression(ICommandControlDMContext dmc, String name) {
-		super(dmc, "-var-info-path-expression", new String[]{name}); //$NON-NLS-1$
+		super(dmc, "-var-info-path-expression", new String[] { name }); //$NON-NLS-1$
 	}
 
-    @Override
-    public MIVarInfoPathExpressionInfo getResult(MIOutput out) {
-        return new MIVarInfoPathExpressionInfo(out);
-    }
+	@Override
+	public MIVarInfoPathExpressionInfo getResult(MIOutput out) {
+		return new MIVarInfoPathExpressionInfo(out);
+	}
 }
-

@@ -27,7 +27,7 @@ public class BuildConsoleFactory implements IConsoleFactory {
 	public void openConsole() {
 		IBuildConsoleManager manager = CUIPlugin.getDefault().getConsoleManager();
 		if (manager instanceof BuildConsoleManager) {
-			((BuildConsoleManager)manager).showConsole(true);
+			((BuildConsoleManager) manager).showConsole(true);
 		}
 	}
 

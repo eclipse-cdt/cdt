@@ -42,9 +42,7 @@ public class CCommandAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[] {
-				IRestartHandler.class
-		};
+		return new Class[] { IRestartHandler.class };
 	}
 
 }

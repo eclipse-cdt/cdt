@@ -19,7 +19,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 
 public interface ICProjectConverter {
-	ICProjectDescription convertProject(IProject project, IProjectDescription eclipseProjDes, String oldOwnerId, ICProjectDescription des) throws CoreException;
-	
+	ICProjectDescription convertProject(IProject project, IProjectDescription eclipseProjDes, String oldOwnerId,
+			ICProjectDescription des) throws CoreException;
+
 	boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription des);
 }

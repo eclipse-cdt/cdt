@@ -27,12 +27,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier
  */
 public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		implements IASTInternalEnumerationSpecifier, ICASTEnumerationSpecifier {
-    private IASTName fName;
+	private IASTName fName;
 	private Boolean fValuesComputed;
-    private IASTEnumerator[] fEnumerators = IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-    private int fNumEnumerators;
+	private IASTEnumerator[] fEnumerators = IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
+	private int fNumEnumerators;
 
-    public CASTEnumerationSpecifier() {
+	public CASTEnumerationSpecifier() {
 	}
 
 	public CASTEnumerationSpecifier(IASTName name) {
@@ -63,13 +63,13 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		if (fValuesComputed != null)
 			return false;
 
-		fValuesComputed= Boolean.FALSE;
+		fValuesComputed = Boolean.FALSE;
 		return true;
 	}
 
 	@Override
 	public void finishValueComputation() {
-		fValuesComputed= Boolean.TRUE;
+		fValuesComputed = Boolean.TRUE;
 	}
 
 	@Override
@@ -79,63 +79,69 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 
 	@Override
 	public void addEnumerator(IASTEnumerator enumerator) {
-        assertNotFrozen();
-    	if (enumerator != null) {
-    		enumerator.setParent(this);
+		assertNotFrozen();
+		if (enumerator != null) {
+			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-    		fEnumerators = ArrayUtil.appendAt(fEnumerators, fNumEnumerators++, enumerator);
-    	}
-    }
+			fEnumerators = ArrayUtil.appendAt(fEnumerators, fNumEnumerators++, enumerator);
+		}
+	}
 
-    @Override
+	@Override
 	public IASTEnumerator[] getEnumerators() {
-        fEnumerators = ArrayUtil.trim(fEnumerators, fNumEnumerators);
-        return fEnumerators;
-    }
+		fEnumerators = ArrayUtil.trim(fEnumerators, fNumEnumerators);
+		return fEnumerators;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.fName = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.fName = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ENUMERATION_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (!visitAlignmentSpecifiers(action)) {
-        	return false;
-        }
-        if (fName != null && !fName.accept(action))
-        	return false;
-        IASTEnumerator[] etors = getEnumerators();
-        for (int i = 0; i < etors.length; i++) {
-            if (!etors[i].accept(action))
-            	return false;
-        }
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (!visitAlignmentSpecifiers(action)) {
+			return false;
 		}
-        return true;
-    }
+		if (fName != null && !fName.accept(action))
+			return false;
+		IASTEnumerator[] etors = getEnumerators();
+		for (int i = 0; i < etors.length; i++) {
+			if (!etors[i].accept(action))
+				return false;
+		}
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {

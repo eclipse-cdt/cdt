@@ -156,8 +156,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	public ContainerPropertyTab() {
 		this.containerTab = this;
-		this.model = new ContainerPropertyVolumesModel(
-				(IDockerConnection) null);
+		this.model = new ContainerPropertyVolumesModel((IDockerConnection) null);
 	}
 
 	@Override
@@ -182,8 +181,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		enableButton.setLayoutData(gd);
 
 		Label connectionSelectorLabel = new Label(usercomp, SWT.NULL);
-		connectionSelectorLabel
-				.setText(Messages.ContainerTab_Connection_Selector_Label);
+		connectionSelectorLabel.setText(Messages.ContainerTab_Connection_Selector_Label);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		gd.grabExcessHorizontalSpace = false;
@@ -236,8 +234,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setImageId(imageCombo.getText());
-				model.setSelectedImage(
-						displayedImages.get(imageCombo.getSelectionIndex()));
+				model.setSelectedImage(displayedImages.get(imageCombo.getSelectionIndex()));
 			}
 
 			@Override
@@ -250,34 +247,28 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		try {
 			IProject project = iCfgd.getProjectDescription().getProject();
-			IProjectNature nature = project.getNature(
-					"org.eclipse.cdt.autotools.core.autotoolsNatureV2"); //$NON-NLS-1$
+			IProjectNature nature = project.getNature("org.eclipse.cdt.autotools.core.autotoolsNatureV2"); //$NON-NLS-1$
 			isAutotoolsProject = (nature != null);
 			if (isAutotoolsProject) {
 				launchAutotoolsButton = new Button(usercomp, SWT.CHECK);
-				launchAutotoolsButton.setText(
-						Messages.ContainerPropertyTab_Run_Autotools_In_Container_Msg);
-				launchAutotoolsButton.setToolTipText(
-						Messages.ContainerPropertyTab_Run_Autotools_In_Container_Tooltip);
+				launchAutotoolsButton.setText(Messages.ContainerPropertyTab_Run_Autotools_In_Container_Msg);
+				launchAutotoolsButton.setToolTipText(Messages.ContainerPropertyTab_Run_Autotools_In_Container_Tooltip);
 				gd = new GridData(GridData.FILL_HORIZONTAL);
 				gd.horizontalSpan = 5;
 				launchAutotoolsButton.setLayoutData(gd);
 				initializeLaunchAutotoolsButton();
-				launchAutotoolsButton
-						.addSelectionListener(new SelectionListener() {
+				launchAutotoolsButton.addSelectionListener(new SelectionListener() {
 
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								setLaunchAutotoolsEnablement(
-										launchAutotoolsButton.getSelection());
-							}
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						setLaunchAutotoolsEnablement(launchAutotoolsButton.getSelection());
+					}
 
-							@Override
-							public void widgetDefaultSelected(
-									SelectionEvent e) {
-								// ignore
-							}
-						});
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// ignore
+					}
+				});
 			}
 		} catch (CoreException e) {
 			DockerLaunchUIPlugin.log(e);
@@ -303,60 +294,40 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	private void createVolumeSettingsContainer(final Composite container) {
 		final Label volumesLabel = new Label(container, SWT.NONE);
-		volumesLabel.setText(WizardMessages
-				.getString("ImageRunResourceVolVarPage.dataVolumesLabel")); //$NON-NLS-1$
+		volumesLabel.setText(WizardMessages.getString("ImageRunResourceVolVarPage.dataVolumesLabel")); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().grab(false, false).applyTo(volumesLabel);
-		final CheckboxTableViewer dataVolumesTableViewer = createVolumesTable(
-				container);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
-				.grab(true, false).hint(400, 200)
+		final CheckboxTableViewer dataVolumesTableViewer = createVolumesTable(container);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).hint(400, 200)
 				.applyTo(dataVolumesTableViewer.getTable());
 		// buttons
 		final Composite buttonsContainers = new Composite(container, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
-				.grab(false, false).applyTo(buttonsContainers);
-		GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0)
-				.spacing(SWT.DEFAULT, 0).applyTo(buttonsContainers);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(false, false).applyTo(buttonsContainers);
+		GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).spacing(SWT.DEFAULT, 0).applyTo(buttonsContainers);
 
 		addButton = new Button(buttonsContainers, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
-				.grab(true, false).applyTo(addButton);
-		addButton.setText(WizardMessages
-				.getString("ImageRunResourceVolVarPage.addButton")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(addButton);
+		addButton.setText(WizardMessages.getString("ImageRunResourceVolVarPage.addButton")); //$NON-NLS-1$
 		addButton.addSelectionListener(onAddDataVolume(dataVolumesTableViewer));
 		if (imageCombo.getText() != null && !imageCombo.getText().equals("")) {
 			setVolumeControlsEnabled(new Button[] { addButton }, true);
 		}
 		final Button editButton = new Button(buttonsContainers, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
-				.grab(true, false).applyTo(editButton);
-		editButton.setText(WizardMessages
-				.getString("ImageRunResourceVolVarPage.editButton")); //$NON-NLS-1$
-		editButton
-				.addSelectionListener(onEditDataVolume(dataVolumesTableViewer));
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(editButton);
+		editButton.setText(WizardMessages.getString("ImageRunResourceVolVarPage.editButton")); //$NON-NLS-1$
+		editButton.addSelectionListener(onEditDataVolume(dataVolumesTableViewer));
 		editButton.setEnabled(false);
 		final Button removeButton = new Button(buttonsContainers, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
-				.grab(true, false).applyTo(removeButton);
-		removeButton.setText(WizardMessages
-				.getString("ImageRunResourceVolVarPage.removeButton")); //$NON-NLS-1$
-		removeButton.addSelectionListener(
-				onRemoveDataVolumes(dataVolumesTableViewer));
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(removeButton);
+		removeButton.setText(WizardMessages.getString("ImageRunResourceVolVarPage.removeButton")); //$NON-NLS-1$
+		removeButton.addSelectionListener(onRemoveDataVolumes(dataVolumesTableViewer));
 		removeButton.setEnabled(false);
 		// update table content when selected image changes
-		bind(dataVolumesTableViewer, model.getDataVolumes(),
-				BeanProperties.values(DataVolumeModel.class,
-						DataVolumeModel.CONTAINER_PATH, DataVolumeModel.MOUNT,
-						DataVolumeModel.READ_ONLY_VOLUME));
-		dbc.bindSet(
-				ViewersObservables.observeCheckedElements(
-						dataVolumesTableViewer, DataVolumeModel.class),
-				BeanProperties.set(
-						ContainerPropertyVolumesModel.SELECTED_DATA_VOLUMES)
-						.observe(model));
+		bind(dataVolumesTableViewer, model.getDataVolumes(), BeanProperties.values(DataVolumeModel.class,
+				DataVolumeModel.CONTAINER_PATH, DataVolumeModel.MOUNT, DataVolumeModel.READ_ONLY_VOLUME));
+		dbc.bindSet(ViewersObservables.observeCheckedElements(dataVolumesTableViewer, DataVolumeModel.class),
+				BeanProperties.set(ContainerPropertyVolumesModel.SELECTED_DATA_VOLUMES).observe(model));
 		// disable the edit and removeButton if the table is empty
-		dataVolumesTableViewer.addSelectionChangedListener(
-				onSelectionChanged(editButton, removeButton));
+		dataVolumesTableViewer.addSelectionChangedListener(onSelectionChanged(editButton, removeButton));
 
 		initializeVolumesTable();
 	}
@@ -370,25 +341,22 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	 * @param input
 	 * @param labelProperties
 	 */
-	private void bind(final StructuredViewer viewer,
-			final IObservableList input,
+	private void bind(final StructuredViewer viewer, final IObservableList input,
 			final IBeanValueProperty[] labelProperties) {
 		final ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 		if (viewer.getInput() != null) {
 			viewer.setInput(null);
 		}
 		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(
-				new DataVolumesLabelProvider(Properties.observeEach(
-						contentProvider.getKnownElements(), labelProperties)));
+		viewer.setLabelProvider(new DataVolumesLabelProvider(
+				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
 		if (input != null) {
 			viewer.setInput(input);
 		}
 
 	}
 
-	private ISelectionChangedListener onSelectionChanged(
-			final Button... targetButtons) {
+	private ISelectionChangedListener onSelectionChanged(final Button... targetButtons) {
 		return e -> {
 			if (e.getSelection().isEmpty()) {
 				setVolumeControlsEnabled(targetButtons, false);
@@ -398,8 +366,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		};
 	}
 
-	private static void setVolumeControlsEnabled(final Control[] controls,
-			final boolean enabled) {
+	private static void setVolumeControlsEnabled(final Control[] controls, final boolean enabled) {
 		for (Control control : controls) {
 			if (control != null) {
 				control.setEnabled(enabled);
@@ -407,12 +374,10 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 	}
 
-	private SelectionListener onAddDataVolume(
-			final CheckboxTableViewer dataVolumesTableViewer) {
+	private SelectionListener onAddDataVolume(final CheckboxTableViewer dataVolumesTableViewer) {
 		return SelectionListener.widgetSelectedAdapter(e -> {
 			final ContainerDataVolumeDialog dialog = new ContainerDataVolumeDialog(
-					Display.getDefault().getActiveShell(),
-					model.getConnection());
+					Display.getDefault().getActiveShell(), model.getConnection());
 			dialog.create();
 			if (dialog.open() == IDialogConstants.OK_ID) {
 				final DataVolumeModel dataVolume = dialog.getDataVolume();
@@ -425,30 +390,22 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		});
 	}
 
-	private SelectionListener onEditDataVolume(
-			final CheckboxTableViewer dataVolumesTableViewer) {
+	private SelectionListener onEditDataVolume(final CheckboxTableViewer dataVolumesTableViewer) {
 		return SelectionListener.widgetSelectedAdapter(e -> {
-			final IStructuredSelection selection = (IStructuredSelection) dataVolumesTableViewer
-					.getSelection();
+			final IStructuredSelection selection = (IStructuredSelection) dataVolumesTableViewer.getSelection();
 			if (selection.isEmpty()) {
 				return;
 			}
-			final DataVolumeModel selectedDataVolume = (DataVolumeModel) selection
-					.getFirstElement();
+			final DataVolumeModel selectedDataVolume = (DataVolumeModel) selection.getFirstElement();
 			final ContainerDataVolumeDialog dialog = new ContainerDataVolumeDialog(
-					Display.getDefault().getActiveShell(),
-					model.getConnection(), selectedDataVolume);
+					Display.getDefault().getActiveShell(), model.getConnection(), selectedDataVolume);
 			dialog.create();
 			if (dialog.open() == IDialogConstants.OK_ID) {
 				final DataVolumeModel dialogDataVolume = dialog.getDataVolume();
-				selectedDataVolume.setContainerMount(
-						dialogDataVolume.getContainerMount());
-				selectedDataVolume
-						.setMountType(dialogDataVolume.getMountType());
-				selectedDataVolume
-						.setHostPathMount(dialogDataVolume.getHostPathMount());
-				selectedDataVolume.setContainerMount(
-						dialogDataVolume.getContainerMount());
+				selectedDataVolume.setContainerMount(dialogDataVolume.getContainerMount());
+				selectedDataVolume.setMountType(dialogDataVolume.getMountType());
+				selectedDataVolume.setHostPathMount(dialogDataVolume.getHostPathMount());
+				selectedDataVolume.setContainerMount(dialogDataVolume.getContainerMount());
 				selectedDataVolume.setReadOnly(dialogDataVolume.isReadOnly());
 				model.getSelectedDataVolumes().add(selectedDataVolume);
 				dataVolumesTableViewer.setChecked(selectedDataVolume, true);
@@ -457,14 +414,11 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		});
 	}
 
-	private SelectionListener onRemoveDataVolumes(
-			final TableViewer dataVolumesTableViewer) {
+	private SelectionListener onRemoveDataVolumes(final TableViewer dataVolumesTableViewer) {
 		return SelectionListener.widgetSelectedAdapter(e -> {
-			final IStructuredSelection selection = dataVolumesTableViewer
-					.getStructuredSelection();
+			final IStructuredSelection selection = dataVolumesTableViewer.getStructuredSelection();
 			for (@SuppressWarnings("unchecked")
-			Iterator<DataVolumeModel> iterator = selection.iterator(); iterator
-					.hasNext();) {
+			Iterator<DataVolumeModel> iterator = selection.iterator(); iterator.hasNext();) {
 				final DataVolumeModel volume = iterator.next();
 				model.removeDataVolume(volume);
 				model.getSelectedDataVolumes().remove(volume);
@@ -474,37 +428,24 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	}
 
 	private CheckboxTableViewer createVolumesTable(final Composite container) {
-		final Table table = new Table(container, SWT.CHECK | SWT.BORDER
-				| SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
+		final Table table = new Table(container,
+				SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
 		final CheckboxTableViewer tableViewer = new CheckboxTableViewer(table);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		dbc.bindSet(
-				ViewersObservables.observeCheckedElements(tableViewer,
-						DataVolumeModel.class),
-				BeanProperties.set(
-						ContainerPropertyVolumesModel.SELECTED_DATA_VOLUMES)
-						.observe(model));
-		addTableViewerColumn(tableViewer,
-				WizardMessages.getString(
-						"ImageRunResourceVolVarPage.containerPathColumn"), //$NON-NLS-1$
+		dbc.bindSet(ViewersObservables.observeCheckedElements(tableViewer, DataVolumeModel.class),
+				BeanProperties.set(ContainerPropertyVolumesModel.SELECTED_DATA_VOLUMES).observe(model));
+		addTableViewerColumn(tableViewer, WizardMessages.getString("ImageRunResourceVolVarPage.containerPathColumn"), //$NON-NLS-1$
 				180);
-		addTableViewerColumn(tableViewer,
-				WizardMessages
-						.getString("ImageRunResourceVolVarPage.mountColumn"), //$NON-NLS-1$
+		addTableViewerColumn(tableViewer, WizardMessages.getString("ImageRunResourceVolVarPage.mountColumn"), //$NON-NLS-1$
 				180);
-		addTableViewerColumn(tableViewer,
-				WizardMessages
-						.getString("ImageRunResourceVolVarPage.readonlyColumn"), //$NON-NLS-1$
+		addTableViewerColumn(tableViewer, WizardMessages.getString("ImageRunResourceVolVarPage.readonlyColumn"), //$NON-NLS-1$
 				60);
 		return tableViewer;
 	}
 
-	private TableViewerColumn addTableViewerColumn(
-			final TableViewer tableViewer,
-			final String title, final int width) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
+	private TableViewerColumn addTableViewerColumn(final TableViewer tableViewer, final String title, final int width) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
 		if (title != null) {
 			column.setText(title);
@@ -513,13 +454,10 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		return viewerColumn;
 	}
 
-	private static final class DataVolumesLabelProvider
-			extends ObservableMapLabelProvider {
+	private static final class DataVolumesLabelProvider extends ObservableMapLabelProvider {
 
-		private Image CONTAINER_IMAGE = SWTImagesFactory.DESC_CONTAINER
-				.createImage();
-		private Image FOLDER_CLOSED_IMAGE = SWTImagesFactory.DESC_FOLDER_CLOSED
-				.createImage();
+		private Image CONTAINER_IMAGE = SWTImagesFactory.DESC_CONTAINER.createImage();
+		private Image FOLDER_CLOSED_IMAGE = SWTImagesFactory.DESC_FOLDER_CLOSED.createImage();
 		private Image FILE_IMAGE = SWTImagesFactory.DESC_FILE.createImage();
 
 		public DataVolumesLabelProvider(final IObservableMap[] attributeMaps) {
@@ -567,11 +505,9 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				if (dataVolume.getMountType() != MountType.HOST_FILE_SYSTEM) {
 					return null;
 				} else if (dataVolume.isReadOnly()) {
-					return WizardMessages
-							.getString("ImageRunResourceVolVarPage.true"); //$NON-NLS-1$
+					return WizardMessages.getString("ImageRunResourceVolVarPage.true"); //$NON-NLS-1$
 				}
-				return WizardMessages
-						.getString("ImageRunResourceVolVarPage.false"); //$NON-NLS-1$
+				return WizardMessages.getString("ImageRunResourceVolVarPage.false"); //$NON-NLS-1$
 			default:
 				return null;
 			}
@@ -594,29 +530,23 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			separator = VOLUME_SEPARATOR;
 		}
 		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
-					.getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
 				IConfiguration cfg = cfs[i];
 				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(ContainerCommandLauncher.VOLUMES_ID,
-						buffer.toString());
-				p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID,
-						selectedBuffer.toString());
+				p.setProperty(ContainerCommandLauncher.VOLUMES_ID, buffer.toString());
+				p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedBuffer.toString());
 			}
 		} else {
 			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(ContainerCommandLauncher.VOLUMES_ID,
-					buffer.toString());
-			p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID,
-					selectedBuffer.toString());
+			p.setProperty(ContainerCommandLauncher.VOLUMES_ID, buffer.toString());
+			p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedBuffer.toString());
 		}
 	}
 
 	private void setEnablement(boolean enabled) {
 		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
-					.getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
 				IConfiguration cfg = cfs[i];
 				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
@@ -630,8 +560,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 		// if enabled, make sure we have ELF binary parsers specified
 		if (enabled) {
-			String[] ids = CoreModelUtil
-					.getBinaryParserIds(page.getCfgsEditable());
+			String[] ids = CoreModelUtil.getBinaryParserIds(page.getCfgsEditable());
 			List<String> idList = new ArrayList<>(Arrays.asList(ids));
 			if (!idList.contains(GNU_ELF_PARSER_ID)) {
 				idList.add(GNU_ELF_PARSER_ID);
@@ -639,32 +568,27 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			if (!idList.contains(ELF_PARSER_ID)) {
 				idList.add(ELF_PARSER_ID);
 			}
-			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(),
-					idList.toArray(new String[0]));
+			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), idList.toArray(new String[0]));
 		}
 	}
 
 	private void setLaunchAutotoolsEnablement(boolean enabled) {
 		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
-					.getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
 				IConfiguration cfg = cfs[i];
 				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(RUN_IN_CONFIGURE_LAUNCHER,
-						Boolean.toString(launchAutotoolsButton.getSelection()));
+				p.setProperty(RUN_IN_CONFIGURE_LAUNCHER, Boolean.toString(launchAutotoolsButton.getSelection()));
 			}
 		} else {
 			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(RUN_IN_CONFIGURE_LAUNCHER,
-					Boolean.toString(launchAutotoolsButton.getSelection()));
+			p.setProperty(RUN_IN_CONFIGURE_LAUNCHER, Boolean.toString(launchAutotoolsButton.getSelection()));
 		}
 	}
 
 	private void setImageId(String imageId) {
 		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
-					.getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
 				IConfiguration cfg = cfs[i];
 				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
@@ -678,8 +602,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	private void setConnection(String uri) {
 		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
-					.getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
 				IConfiguration cfg = cfs[i];
 				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
@@ -703,11 +626,9 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private void initializeEnablementButton() {
 		initialEnabled = false;
 		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
-		String savedEnabled = properties
-				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+		String savedEnabled = properties.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 		if (savedEnabled != null) {
-			initialEnabled = Boolean
-					.parseBoolean(savedEnabled);
+			initialEnabled = Boolean.parseBoolean(savedEnabled);
 		}
 		enableButton.setSelection(initialEnabled);
 		setControlsEnabled(initialEnabled);
@@ -727,8 +648,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		int defaultIndex = -1;
 		initialConnection = null;
 		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
-		String id = properties
-				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		String id = properties.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 		if (id != null) {
 			initialConnection = id;
 		}
@@ -807,19 +727,15 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private void initializeVolumesTable() {
 		model.clearDataVolumes();
 		int imageSelectionIndex = imageCombo.getSelectionIndex();
-		if (imageSelectionIndex >= 0
-				&& imageSelectionIndex < displayedImages.size()) {
+		if (imageSelectionIndex >= 0 && imageSelectionIndex < displayedImages.size()) {
 			model.setSelectedImage(displayedImages.get(imageSelectionIndex));
 		}
 
 		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
-		initialVolumes = properties
-				.getProperty(ContainerCommandLauncher.VOLUMES_ID);
+		initialVolumes = properties.getProperty(ContainerCommandLauncher.VOLUMES_ID);
 		Map<String, DataVolumeModel> volumeMap = parseVolumes(initialVolumes);
-		initialSelectedVolumes = properties
-				.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
-		Map<String, DataVolumeModel> selectedVolumeMap = parseVolumes(
-				initialSelectedVolumes);
+		initialSelectedVolumes = properties.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
+		Map<String, DataVolumeModel> selectedVolumeMap = parseVolumes(initialSelectedVolumes);
 		Set<DataVolumeModel> selectedVolumes = new HashSet<>();
 		for (DataVolumeModel dvm : selectedVolumeMap.values()) {
 			// we need selected volumes to be volumes that are in the volumes
@@ -836,12 +752,10 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private Map<String, DataVolumeModel> parseVolumes(String volumesString) {
 		Map<String, DataVolumeModel> volumeMap = new HashMap<>();
 		if (volumesString != null && !volumesString.equals("")) { //$NON-NLS-1$
-			String[] volumes = volumesString
-					.split("[" + VOLUME_SEPARATOR + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			String[] volumes = volumesString.split("[" + VOLUME_SEPARATOR + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (String volume : volumes) {
 				if (volume != null && !volume.equals("")) { //$NON-NLS-1$
-					DataVolumeModel dataVolume = DataVolumeModel
-							.parseString(volume);
+					DataVolumeModel dataVolume = DataVolumeModel.parseString(volume);
 					volumeMap.put(dataVolume.getContainerPath(), dataVolume);
 				}
 			}
@@ -850,35 +764,28 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	}
 
 	@Override
-	protected void performApply(ICResourceDescription src,
-			ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		setVolumes();
 		boolean needToRecalculate = false;
 		ICConfigurationDescription defaultCfg = null;
 		if (page.isMultiCfg()) {
-			ICMultiConfigDescription mc1 = (ICMultiConfigDescription) src
-					.getConfiguration();
-			ICMultiConfigDescription mc2 = (ICMultiConfigDescription) dst
-					.getConfiguration();
-			ICConfigurationDescription[] cds1 = (ICConfigurationDescription[]) mc1
-					.getItems();
-			ICConfigurationDescription[] cds2 = (ICConfigurationDescription[]) mc2
-					.getItems();
+			ICMultiConfigDescription mc1 = (ICMultiConfigDescription) src.getConfiguration();
+			ICMultiConfigDescription mc2 = (ICMultiConfigDescription) dst.getConfiguration();
+			ICConfigurationDescription[] cds1 = (ICConfigurationDescription[]) mc1.getItems();
+			ICConfigurationDescription[] cds2 = (ICConfigurationDescription[]) mc2.getItems();
 			defaultCfg = cds1[0];
 			for (int i = 0; i < cds1.length; i++)
 				needToRecalculate |= applyToCfg(cds1[i], cds2[i]);
 		} else {
 			defaultCfg = src.getConfiguration();
-			needToRecalculate = applyToCfg(src.getConfiguration(),
-					dst.getConfiguration());
+			needToRecalculate = applyToCfg(src.getConfiguration(), dst.getConfiguration());
 		}
 		if (needToRecalculate) {
 			recalculateSpecs(defaultCfg, true);
 		}
 	}
 
-	private boolean applyToCfg(ICConfigurationDescription c1,
-			ICConfigurationDescription c2) {
+	private boolean applyToCfg(ICConfigurationDescription c1, ICConfigurationDescription c2) {
 		Configuration cfg01 = (Configuration) getCfg(c1);
 		Configuration cfg02 = (Configuration) getCfg(c2);
 		IOptionalBuildProperties prop1 = cfg01.getOptionalBuildProperties();
@@ -890,66 +797,45 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		ICTargetPlatformSetting tps2 = c2.getTargetPlatformSetting();
 		tps2.setBinaryParserIds(pids);
 
-		String enablementProperty = prop1
-				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
-		String enablementProperty2 = prop2
-				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
-		if (enablementProperty != null
-				&& !enablementProperty.equals(enablementProperty2)) {
+		String enablementProperty = prop1.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+		String enablementProperty2 = prop2.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+		if (enablementProperty != null && !enablementProperty.equals(enablementProperty2)) {
 			needToRecalculate = true;
 		}
-		prop2.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
-				enablementProperty);
+		prop2.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, enablementProperty);
 
-		String connectionProperty = prop1
-				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
-		String connectionProperty2 = prop2
-				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
-		if (connectionProperty != null
-				&& !connectionProperty.equals(connectionProperty2)) {
+		String connectionProperty = prop1.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		String connectionProperty2 = prop2.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		if (connectionProperty != null && !connectionProperty.equals(connectionProperty2)) {
 			needToRecalculate = true;
 		}
-		prop2.setProperty(ContainerCommandLauncher.CONNECTION_ID,
-				connectionProperty);
+		prop2.setProperty(ContainerCommandLauncher.CONNECTION_ID, connectionProperty);
 
-		String imageProperty = prop1
-				.getProperty(ContainerCommandLauncher.IMAGE_ID);
-		String imageProperty2 = prop2
-				.getProperty(ContainerCommandLauncher.IMAGE_ID);
+		String imageProperty = prop1.getProperty(ContainerCommandLauncher.IMAGE_ID);
+		String imageProperty2 = prop2.getProperty(ContainerCommandLauncher.IMAGE_ID);
 		if (imageProperty != null && !imageProperty.equals(imageProperty2)) {
 			needToRecalculate = true;
 		}
 		prop2.setProperty(ContainerCommandLauncher.IMAGE_ID, imageProperty);
 
-		String volumesProperty = prop1
-				.getProperty(ContainerCommandLauncher.VOLUMES_ID);
+		String volumesProperty = prop1.getProperty(ContainerCommandLauncher.VOLUMES_ID);
 		prop2.setProperty(ContainerCommandLauncher.VOLUMES_ID, volumesProperty);
 
-		String selectedVolumesProperty = prop1
-				.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
-		prop2.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID,
-				selectedVolumesProperty);
+		String selectedVolumesProperty = prop1.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
+		prop2.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedVolumesProperty);
 
 		return needToRecalculate;
 	}
 
-
-	protected void recalculateSpecs(ICConfigurationDescription cfgd,
-			boolean performingApply) {
+	protected void recalculateSpecs(ICConfigurationDescription cfgd, boolean performingApply) {
 		IConfiguration cfg = getCfg(cfgd);
 		IOptionalBuildProperties properties = cfg.getOptionalBuildProperties();
-		initialEnabled = Boolean.parseBoolean(properties
-				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED));
-		initialConnection = properties
-				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
-		initialImageId = properties
-				.getProperty(ContainerCommandLauncher.IMAGE_ID);
-		initialVolumes = properties
-				.getProperty(ContainerCommandLauncher.VOLUMES_ID);
-		initialSelectedVolumes = properties
-				.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
-		initialAutotoolsLaunchEnabled = Boolean.parseBoolean(
-				properties.getProperty(RUN_IN_CONFIGURE_LAUNCHER));
+		initialEnabled = Boolean.parseBoolean(properties.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED));
+		initialConnection = properties.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		initialImageId = properties.getProperty(ContainerCommandLauncher.IMAGE_ID);
+		initialVolumes = properties.getProperty(ContainerCommandLauncher.VOLUMES_ID);
+		initialSelectedVolumes = properties.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
+		initialAutotoolsLaunchEnabled = Boolean.parseBoolean(properties.getProperty(RUN_IN_CONFIGURE_LAUNCHER));
 		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgd)
 				.getLanguageSettingProviders();
 		for (ILanguageSettingsProvider provider : providers) {
@@ -966,7 +852,6 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 	}
 
-
 	@Override
 	protected void performOK() {
 		boolean needToRecalculate = false;
@@ -975,55 +860,42 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			needToRecalculate = multiChange;
 		} else {
 			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			if (initialEnabled != Boolean.parseBoolean(p.getProperty(
-					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED))) {
+			if (initialEnabled != Boolean
+					.parseBoolean(p.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED))) {
 				needToRecalculate = true;
 			} else if (initialEnabled == true) {
-				if (!initialConnection.equals(
-						p.getProperty(ContainerCommandLauncher.CONNECTION_ID))
-						|| !initialImageId.equals(p.getProperty(
-								ContainerCommandLauncher.IMAGE_ID))) {
+				if (!initialConnection.equals(p.getProperty(ContainerCommandLauncher.CONNECTION_ID))
+						|| !initialImageId.equals(p.getProperty(ContainerCommandLauncher.IMAGE_ID))) {
 					needToRecalculate = true;
 				}
 			}
 		}
 		if (needToRecalculate) {
-			recalculateSpecs(
-					ManagedBuildManager.getDescriptionForConfiguration(iCfg),
-					false);
+			recalculateSpecs(ManagedBuildManager.getDescriptionForConfiguration(iCfg), false);
 		}
 	}
 
 	@Override
 	protected void performDefaults() {
 		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
-					.getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
-				IOptionalBuildProperties props = cfs[i]
-						.getOptionalBuildProperties();
-				props.setProperty(
-						ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
-						Boolean.toString(false));
+				IOptionalBuildProperties props = cfs[i].getOptionalBuildProperties();
+				props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
 				if (connections.length > 0) {
-					props.setProperty(ContainerCommandLauncher.CONNECTION_ID,
-							connections[0].getUri());
+					props.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
 				} else {
-					props.setProperty(ContainerCommandLauncher.CONNECTION_ID,
-							null);
+					props.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
 				}
 				props.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
 				props.setProperty(ContainerCommandLauncher.VOLUMES_ID, null);
-				props.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID,
-						null);
+				props.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, null);
 			}
 		} else {
 			IOptionalBuildProperties props = iCfg.getOptionalBuildProperties();
-			props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
-					Boolean.toString(false));
+			props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
 			if (connections.length > 0) {
-				props.setProperty(ContainerCommandLauncher.CONNECTION_ID,
-						connections[0].getUri());
+				props.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
 			} else {
 				props.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
 			}
@@ -1102,8 +974,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	}
 
 	@Override
-	public void listChanged(IDockerConnection c,
-			java.util.List<IDockerImage> list) {
+	public void listChanged(IDockerConnection c, java.util.List<IDockerImage> list) {
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);
 		if (c.getName().equals(connection.getName())) {
 			Display.getDefault().syncExec(new Runnable() {

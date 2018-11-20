@@ -16,7 +16,6 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * GDB/MI var-create.
  * -var-create "-" * a
@@ -28,23 +27,22 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public class MIVarCreateInfo extends MIInfo {
 
-    private MIVar child;
-	
-    public MIVarCreateInfo(MIOutput record) {
-        super(record);
-        if (isDone()) {
-            MIResultRecord rr = getMIOutput().getMIResultRecord();
-            if (rr != null) {
-                child = new MIVar(rr.getFields());
-            }
-        }
-    }
-    
-    public String getType()
-    {
-        return child.getType();
-    }
-    
+	private MIVar child;
+
+	public MIVarCreateInfo(MIOutput record) {
+		super(record);
+		if (isDone()) {
+			MIResultRecord rr = getMIOutput().getMIResultRecord();
+			if (rr != null) {
+				child = new MIVar(rr.getFields());
+			}
+		}
+	}
+
+	public String getType() {
+		return child.getType();
+	}
+
 	/**
 	 * @return Whether the created variable's value and children are provided
 	 *         by a pretty printer.
@@ -61,11 +59,10 @@ public class MIVarCreateInfo extends MIInfo {
 	 *         fetched by gdb. Check {@link #hasMore()} in order to find out
 	 *         whether the are more children. 
 	 */
-    public int getNumChildren()
-    {
-        return child.getNumChild();
-    }
-    
+	public int getNumChildren() {
+		return child.getNumChild();
+	}
+
 	/**
 	 * @return For dynamic varobjs ({@link #isDynamic() returns true} this
 	 *         method returns whether there are children in addition to the
@@ -78,27 +75,25 @@ public class MIVarCreateInfo extends MIInfo {
 		return child.hasMore();
 	}
 
-    public String getName()
-    {
-        return child.getVarName();
-    }
-    
-    public String getValue()
-    {
-        return child.getValue();
-    }
-    
+	public String getName() {
+		return child.getVarName();
+	}
+
+	public String getValue() {
+		return child.getValue();
+	}
+
 	/**
 	 * @return Whether the underlying value conceptually represents a string,
 	 *         array, or map.
 	 *         
 	 * @since 4.0
 	 */
-    public MIDisplayHint getDisplayHint() {
-        return child.getDisplayHint();
-    }
+	public MIDisplayHint getDisplayHint() {
+		return child.getDisplayHint();
+	}
 
-    public MIVar getMIVar() {
-        return child;
-    }
+	public MIVar getMIVar() {
+		return child;
+	}
 }

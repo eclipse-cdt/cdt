@@ -50,7 +50,8 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 	private final IPath topBuildDirectory;
 	private IPath[] dependencies;
 
-	public PDOMDependencyCalculator(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public PDOMDependencyCalculator(IPath source, IResource resource, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		this.source = source;
 		this.resource = resource;
 		this.buildContext = buildContext;
@@ -72,7 +73,7 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 					IIndex index = CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES);
 					index.acquireReadLock();
 					try {
-						IIndexFile[] files = index.getFiles(IndexLocationFactory.getWorkspaceIFL((IFile)resource));
+						IIndexFile[] files = index.getFiles(IndexLocationFactory.getWorkspaceIFL((IFile) resource));
 						if (files.length > 0) {
 							IIndexInclude[] includes = index.findIncludes(files[0], IIndex.DEPTH_INFINITE);
 
@@ -85,12 +86,11 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 							dependencies = list.toArray(new IPath[list.size()]);
 						} else
 							dependencies = new IPath[0];
-					}
-					finally {
+					} finally {
 						index.releaseReadLock();
 					}
 				} catch (CoreException e) {
-//					Activator.getDefault().getLog().log(e.getStatus());
+					//					Activator.getDefault().getLog().log(e.getStatus());
 					dependencies = new IPath[0];
 				} catch (InterruptedException e) {
 					dependencies = new IPath[0];

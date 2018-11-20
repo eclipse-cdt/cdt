@@ -67,7 +67,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	private final static String CONNECTION_URI = "org.eclipse.cdt.docker.launcher.connection_uri"; //$NON-NLS-1$
-	
+
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		searchAndLaunch(new Object[] { editor.getEditorInput() }, mode);
@@ -81,11 +81,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	}
 
 	public void launch(IBinary bin, String mode) {
-        ILaunchConfiguration config = findLaunchConfiguration(bin, mode);
-        if (config != null) {
-            DebugUITools.launch(config, mode);
-        }
-    }
+		ILaunchConfiguration config = findLaunchConfiguration(bin, mode);
+		if (config != null) {
+			DebugUITools.launch(config, mode);
+		}
+	}
 
 	/**
 	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.
@@ -104,7 +104,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				String projectName = CDebugUtils.getProjectName(config);
 				IPath name = bin.getResource().getProjectRelativePath();
 				// don't match any launch config that is used for a Container launch
-				String connectionURI = config.getAttribute(CONNECTION_URI, (String)null);
+				String connectionURI = config.getAttribute(CONNECTION_URI, (String) null);
 				if (connectionURI == null) {
 					if (programPath != null && programPath.equals(name)) {
 						if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
@@ -114,7 +114,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				}
 			}
 		} catch (CoreException e) {
-		    CDebugUIPlugin.log(e);
+			CDebugUIPlugin.log(e);
 		}
 
 		// If there are no existing configs associated with the IBinary, create one.
@@ -145,8 +145,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		try {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
 			ILaunchConfigurationType configType = getCLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc =
-					configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(bin.getElementName()));
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null,
+					getLaunchManager().generateLaunchConfigurationName(bin.getElementName()));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
 			wc.setMappedResources(new IResource[] { bin.getResource().getProject() });
@@ -154,10 +154,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 
-			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
+			ICProjectDescription projDes = CCorePlugin.getDefault()
+					.getProjectDescription(bin.getCProject().getProject());
 			if (projDes != null) {
 				String buildConfigID = projDes.getActiveConfiguration().getId();
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);				
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);
 			}
 
 			config = wc.doSave();
@@ -184,10 +185,10 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	protected Shell getShell() {
 		IWorkbenchWindow w = CDebugUIPlugin.getActiveWorkbenchWindow();
-        if (w != null) {
-            return w.getShell();
-        }
-        return null;
+		if (w != null) {
+			return w.getShell();
+		}
+		return null;
 	}
 
 	/**
@@ -199,8 +200,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle(getLaunchSelectionDialogTitleString(configList, mode)); 
-		dialog.setMessage(getLaunchSelectionDialogMessageString(configList, mode)); 
+		dialog.setTitle(getLaunchSelectionDialogTitleString(configList, mode));
+		dialog.setMessage(getLaunchSelectionDialogMessageString(configList, mode));
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
@@ -211,14 +212,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	}
 
 	protected String getLaunchSelectionDialogTitleString(List<ILaunchConfiguration> configList, String mode) {
-		return LaunchMessages.getString("CApplicationLaunchShortcut.LaunchConfigSelection");  //$NON-NLS-1$
+		return LaunchMessages.getString("CApplicationLaunchShortcut.LaunchConfigSelection"); //$NON-NLS-1$
 	}
-	
+
 	protected String getLaunchSelectionDialogMessageString(List<ILaunchConfiguration> binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToDebug");  //$NON-NLS-1$
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToDebug"); //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
-			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToRun");  //$NON-NLS-1$
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToRun"); //$NON-NLS-1$
 		}
 		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_2"); //$NON-NLS-1$
 	}
@@ -233,7 +234,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
-					IBinary bin = (IBinary)element;
+					IBinary bin = (IBinary) element;
 					StringBuilder name = new StringBuilder();
 					name.append(bin.getPath().lastSegment());
 					return name.toString();
@@ -246,7 +247,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
-					IBinary bin = (IBinary)element;
+					IBinary bin = (IBinary) element;
 					StringBuilder name = new StringBuilder();
 					name.append(bin.getCPU()).append(bin.isLittleEndian() ? "le" : "be"); //$NON-NLS-1$ //$NON-NLS-2$
 					name.append(" - "); //$NON-NLS-1$
@@ -256,8 +257,9 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				return super.getText(element);
 			}
 		};
-		
-		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
+
+		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider,
+				qualifierLabelProvider);
 		dialog.setElements(binList.toArray());
 		dialog.setTitle(getBinarySelectionDialogTitleString(binList, mode));
 		dialog.setMessage(getBinarySelectionDialogMessageString(binList, mode));
@@ -270,16 +272,16 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
 		return null;
 	}
-	
+
 	protected String getBinarySelectionDialogTitleString(List<IBinary> binList, String mode) {
-		return LaunchMessages.getString("CApplicationLaunchShortcut.CLocalApplication");  //$NON-NLS-1$
+		return LaunchMessages.getString("CApplicationLaunchShortcut.CLocalApplication"); //$NON-NLS-1$
 	}
-	
+
 	protected String getBinarySelectionDialogMessageString(List<IBinary> binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToDebug");  //$NON-NLS-1$
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToDebug"); //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
-			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToRun");  //$NON-NLS-1$
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToRun"); //$NON-NLS-1$
 		}
 		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_3"); //$NON-NLS-1$
 	}
@@ -293,7 +295,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		if (elements != null && elements.length > 0) {
 			IBinary bin = null;
 			if (elements.length == 1 && elements[0] instanceof IBinary) {
-				bin = (IBinary)elements[0];
+				bin = (IBinary) elements[0];
 			} else {
 				final List<IBinary> results = new ArrayList<IBinary>();
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
@@ -338,12 +340,16 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				} catch (InterruptedException e) {
 					return;
 				} catch (InvocationTargetException e) {
-					MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), e.getMessage()); //$NON-NLS-1$
+					MessageDialog.openError(getShell(),
+							LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), //$NON-NLS-1$
+							e.getMessage());
 					return;
 				}
 				int count = results.size();
-				if (count == 0) {					
-					MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$ //$NON-NLS-2$
+				if (count == 0) {
+					MessageDialog.openError(getShell(),
+							LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), //$NON-NLS-1$
+							LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$
 				} else if (count > 1) {
 					bin = chooseBinary(results, mode);
 				} else {
@@ -354,7 +360,9 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				launch(bin, mode);
 			}
 		} else {
-			MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_project_selected")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getShell(),
+					LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), //$NON-NLS-1$
+					LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_project_selected")); //$NON-NLS-1$
 		}
 	}
 
@@ -384,14 +392,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 					return file.getProject();
 				}
 				if (firstElement instanceof Executable) {
-					return ((Executable)firstElement).getProject();
+					return ((Executable) firstElement).getProject();
 				}
 				if (firstElement instanceof IBinary) {
-					return ((IBinary)firstElement).getResource().getProject();
+					return ((IBinary) firstElement).getResource().getProject();
 				}
 			}
 		}
-		List<IProject> projects = getProjectsFromSelection(selection);		
+		List<IProject> projects = getProjectsFromSelection(selection);
 		if (projects.size() > 0) {
 			return projects.get(0);
 		}
@@ -408,15 +416,15 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
 		if (selection != null && !selection.isEmpty()) {
 			if (selection instanceof ITextSelection) {
-				
-				IWorkbenchWindow activeWindow = CDebugUIPlugin.getActiveWorkbenchWindow();				
+
+				IWorkbenchWindow activeWindow = CDebugUIPlugin.getActiveWorkbenchWindow();
 				IWorkbenchPage wpage = activeWindow.getActivePage();
 				if (wpage != null) {
 					IEditorPart ep = wpage.getActiveEditor();
 					if (ep != null) {
 						IEditorInput editorInput = ep.getEditorInput();
 						if (editorInput instanceof IFileEditorInput) {
-							IFile file = ((IFileEditorInput)editorInput).getFile();
+							IFile file = ((IFileEditorInput) editorInput).getFile();
 							if (file != null) {
 								projects.add(file.getProject());
 							}
@@ -425,32 +433,32 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				}
 			} else if (selection instanceof IStructuredSelection) {
 				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-				
+
 				for (Iterator<?> iter = structuredSelection.iterator(); iter.hasNext();) {
 					Object element = iter.next();
 					if (element != null) {
 						if (element instanceof ICProject) {
-							projects.add(((ICProject)element).getProject());
+							projects.add(((ICProject) element).getProject());
 						} else if (element instanceof IResource) {
-							projects.add(((IResource)element).getProject());
+							projects.add(((IResource) element).getProject());
 						} else if (element instanceof ICElement) {
 							ICElement unit = (ICElement) element;
 
 							// Get parent of the Element until we reach the owner project.
-							while (unit != null && ! (unit instanceof ICProject))
+							while (unit != null && !(unit instanceof ICProject))
 								unit = unit.getParent();
-							
+
 							if (unit != null) {
-								projects.add(((ICProject)unit).getProject());
+								projects.add(((ICProject) unit).getProject());
 							}
 						} else if (element instanceof IAdaptable) {
-							Object adapter = ((IAdaptable)element).getAdapter(IResource.class);
+							Object adapter = ((IAdaptable) element).getAdapter(IResource.class);
 							if (adapter != null && adapter instanceof IResource) {
-								projects.add(((IResource)adapter).getProject());
+								projects.add(((IResource) adapter).getProject());
 							} else {
-								adapter = ((IAdaptable)element).getAdapter(ICProject.class);
+								adapter = ((IAdaptable) element).getAdapter(ICProject.class);
 								if (adapter != null && adapter instanceof ICProject) {
-									projects.add(((ICProject)adapter).getProject());
+									projects.add(((ICProject) adapter).getProject());
 								}
 							}
 						}
@@ -466,7 +474,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		// This handles the case where the selection is text in an editor.
 		IEditorInput editorInput = editorpart.getEditorInput();
 		if (editorInput instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput)editorInput).getFile();
+			IFile file = ((IFileEditorInput) editorInput).getFile();
 			if (file != null) {
 				return file.getProject();
 			}

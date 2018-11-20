@@ -65,11 +65,11 @@ public class NullMakefile extends AbstractMakefile {
 	@Override
 	public void parse(String name, Reader makefile) {
 	}
-	
+
 	@Override
 	public void parse(URI fileURI, Reader reader) {
 	}
-	
+
 	protected void parse(URI fileURI, MakefileReader reader) {
 	}
 

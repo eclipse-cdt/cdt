@@ -33,13 +33,12 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 	private int fTabRatio;
 	private ILineTracker fLineTracker;
 
-
 	public void setNumberOfSpacesPerTab(int ratio) {
-		fTabRatio= ratio;
+		fTabRatio = ratio;
 	}
 
 	public void setLineTracker(ILineTracker lineTracker) {
-		fLineTracker= lineTracker;
+		fLineTracker = lineTracker;
 	}
 
 	private int insertTabString(StringBuilder buffer, int offsetInLine) {
@@ -47,55 +46,56 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		if (fTabRatio == 0)
 			return 0;
 
-		int remainder= offsetInLine % fTabRatio;
-		remainder= fTabRatio - remainder;
-		for (int i= 0; i < remainder; i++)
+		int remainder = offsetInLine % fTabRatio;
+		remainder = fTabRatio - remainder;
+		for (int i = 0; i < remainder; i++)
 			buffer.append(' ');
 		return remainder;
 	}
 
 	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-		String text= command.text;
+		String text = command.text;
 		if (text == null)
 			return;
 
-		int index= text.indexOf('\t');
+		int index = text.indexOf('\t');
 		if (index > -1) {
 
-			StringBuilder buffer= new StringBuilder();
+			StringBuilder buffer = new StringBuilder();
 
 			fLineTracker.set(command.text);
-			int lines= fLineTracker.getNumberOfLines();
+			int lines = fLineTracker.getNumberOfLines();
 
 			try {
 
-				for (int i= 0; i < lines; i++) {
+				for (int i = 0; i < lines; i++) {
 
-					int offset= fLineTracker.getLineOffset(i);
-					int endOffset= offset + fLineTracker.getLineLength(i);
-					String line= text.substring(offset, endOffset);
+					int offset = fLineTracker.getLineOffset(i);
+					int endOffset = offset + fLineTracker.getLineLength(i);
+					String line = text.substring(offset, endOffset);
 
-					int position= 0;
+					int position = 0;
 					if (i == 0) {
-						IRegion firstLine= document.getLineInformationOfOffset(command.offset);
-						position= computeVisualLength(document.get(firstLine.getOffset(), command.offset - firstLine.getOffset()));
+						IRegion firstLine = document.getLineInformationOfOffset(command.offset);
+						position = computeVisualLength(
+								document.get(firstLine.getOffset(), command.offset - firstLine.getOffset()));
 					}
 
-					int length= line.length();
-					for (int j= 0; j < length; j++) {
-						char c= line.charAt(j);
+					int length = line.length();
+					for (int j = 0; j < length; j++) {
+						char c = line.charAt(j);
 						if (c == '\t') {
 							position += insertTabString(buffer, position);
 						} else {
 							buffer.append(c);
-							++ position;
+							++position;
 						}
 					}
 
 				}
 
-				command.text= buffer.toString();
+				command.text = buffer.toString();
 
 			} catch (BadLocationException x) {
 			}
@@ -105,7 +105,7 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 	private int computeVisualLength(String text) {
 		int length = text.length();
 		int offset = 0;
-		for (int i=0; i < length; ++i) {
+		for (int i = 0; i < length; ++i) {
 			if (text.charAt(i) == '\t') {
 				if (fTabRatio != 0)
 					offset += fTabRatio - offset % fTabRatio;

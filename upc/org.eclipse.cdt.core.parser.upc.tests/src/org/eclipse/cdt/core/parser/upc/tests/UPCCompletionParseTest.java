@@ -19,9 +19,13 @@ import org.eclipse.cdt.core.model.ILanguage;
 
 public class UPCCompletionParseTest extends LRCompletionParseTest {
 
-	public UPCCompletionParseTest() { }
-	public UPCCompletionParseTest(String name) { super(name); }
-	
+	public UPCCompletionParseTest() {
+	}
+
+	public UPCCompletionParseTest(String name) {
+		super(name);
+	}
+
 	@Override
 	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();

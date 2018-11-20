@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 public class XlcCNodeFactory extends CNodeFactory implements IXlcCNodeFactory {
 
 	private static final XlcCNodeFactory DEFAULT_INSTANCE = new XlcCNodeFactory();
-	
+
 	public static XlcCNodeFactory getDefault() {
 		return DEFAULT_INSTANCE;
 	}

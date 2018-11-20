@@ -38,9 +38,8 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.EditorPart;
 
-public abstract class AbstractTargetAction
-	extends ActionDelegate
-	implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
+public abstract class AbstractTargetAction extends ActionDelegate
+		implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 	private IWorkbenchPart fPart;
 	private IWorkbenchWindow fWindow;
 	private boolean isEnabled;
@@ -77,32 +76,32 @@ public abstract class AbstractTargetAction
 			IStructuredSelection sel = (IStructuredSelection) selection;
 			Object obj = sel.getFirstElement();
 			if (obj instanceof ICElement) {
-				if ( obj instanceof ICContainer || obj instanceof ICProject) {
+				if (obj instanceof ICContainer || obj instanceof ICProject) {
 					fContainer = (IContainer) ((ICElement) obj).getUnderlyingResource();
 				} else {
-					obj = ((ICElement)obj).getResource();
-					if ( obj != null) {
-						fContainer = ((IResource)obj).getParent();
+					obj = ((ICElement) obj).getResource();
+					if (obj != null) {
+						fContainer = ((IResource) obj).getParent();
 					}
 				}
 			} else if (obj instanceof IResource) {
 				if (obj instanceof IContainer) {
 					fContainer = (IContainer) obj;
 				} else {
-					fContainer = ((IResource)obj).getParent();
+					fContainer = ((IResource) obj).getParent();
 				}
 			} else if (obj instanceof TargetSourceContainer) {
-				fContainer = ((TargetSourceContainer)obj).getContainer();
+				fContainer = ((TargetSourceContainer) obj).getContainer();
 			} else if (obj instanceof MakeTargetsContainer) {
 				fContainer = ((MakeTargetsContainer) obj).getContainer();
 			} else if (obj instanceof IMakeTarget) {
-				fContainer = ((IMakeTarget)obj).getContainer();
+				fContainer = ((IMakeTarget) obj).getContainer();
 			} else {
 				fContainer = null;
 			}
-		} else if (selection instanceof ITextSelection)	{
+		} else if (selection instanceof ITextSelection) {
 			// Key binding pressed inside active text editor
-			fContainer= null;
+			fContainer = null;
 			IWorkbenchPart part = fPart != null ? fPart : fWindow.getActivePage().getActivePart();
 			if (part instanceof TextEditor) {
 				IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(((EditorPart) part).getEditorInput());
@@ -111,10 +110,11 @@ public abstract class AbstractTargetAction
 				}
 			}
 		}
-		if (fContainer != null && MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(fContainer.getProject())) {
+		if (fContainer != null
+				&& MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(fContainer.getProject())) {
 			isEnabled = true;
 		}
-		if ( action != null )
+		if (action != null)
 			action.setEnabled(isEnabled);
 	}
 

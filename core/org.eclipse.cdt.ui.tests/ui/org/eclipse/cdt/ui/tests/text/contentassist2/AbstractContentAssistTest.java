@@ -63,16 +63,18 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ParameterGuessingProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
-	public static enum CompareType { ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION	}
-	
-	protected final static int IS_COMPLETION       = 0x01;
-	protected final static int IS_TEMPLATE         = 0x02;
-	protected final static int FILTER_RESULTS      = 0x04;
+	public static enum CompareType {
+		ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION
+	}
+
+	protected final static int IS_COMPLETION = 0x01;
+	protected final static int IS_TEMPLATE = 0x02;
+	protected final static int FILTER_RESULTS = 0x04;
 	protected final static int ALLOW_EXTRA_RESULTS = 0x08;
-	protected final static int CHECK_ORDER         = 0x10;
+	protected final static int CHECK_ORDER = 0x10;
 
 	protected final static int DEFAULT_FLAGS = FILTER_RESULTS;
-	
+
 	protected class ContentAssistResult {
 		long startTime;
 		long endTime;
@@ -93,25 +95,25 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 	public AbstractContentAssistTest(String name, boolean isCpp) {
 		super(name);
-		fIsCpp= isCpp;
+		fIsCpp = isCpp;
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		if (fIsCpp) {
-			fCProject= CProjectHelper.createCCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
+			fCProject = CProjectHelper.createCCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
 		} else {
-			fCProject= CProjectHelper.createCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
+			fCProject = CProjectHelper.createCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
 		}
-		fCFile= setUpProjectContent(fCProject.getProject());
+		fCFile = setUpProjectContent(fCProject.getProject());
 		assertNotNull(fCFile);
 		waitForIndexer(fCProject);
-		fEditor= (ITextEditor) EditorTestHelper.openInEditor(fCFile, true);
+		fEditor = (ITextEditor) EditorTestHelper.openInEditor(fCFile, true);
 		assertNotNull(fEditor);
-		CPPASTNameBase.sAllowNameComputation= true;
+		CPPASTNameBase.sAllowNameComputation = true;
 
-//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor) fEditor);
+		//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor) fEditor);
 	}
 
 	/**
@@ -125,10 +127,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	protected void tearDown() throws Exception {
 		ContentAssistInvocationContext.assertNoUndisposedContexts();
 		EditorTestHelper.closeEditor(fEditor);
-		fEditor= null;
+		fEditor = null;
 		CProjectHelper.delete(fCProject);
-		fCProject= null;
-		fCFile= null;
+		fCProject = null;
+		fCFile = null;
 		super.tearDown();
 	}
 
@@ -136,44 +138,44 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	protected ContentAssistResult invokeContentAssist(int offset, int length, boolean isCompletion,
-			boolean isTemplate, boolean filterResults) throws Exception {
-		if (CTestPlugin.getDefault().isDebugging())  {
+	protected ContentAssistResult invokeContentAssist(int offset, int length, boolean isCompletion, boolean isTemplate,
+			boolean filterResults) throws Exception {
+		if (CTestPlugin.getDefault().isDebugging()) {
 			System.out.println("\n\n\n\n\nTesting " + this.getClass().getName());
 		}
 
 		// Call the CContentAssistProcessor
-		ISourceViewer sourceViewer= EditorTestHelper.getSourceViewer((AbstractTextEditor)fEditor);
-		String contentType= TextUtilities.getContentType(sourceViewer.getDocument(), ICPartitions.C_PARTITIONING, offset, true);
-		boolean isCode= IDocument.DEFAULT_CONTENT_TYPE.equals(contentType);
+		ISourceViewer sourceViewer = EditorTestHelper.getSourceViewer((AbstractTextEditor) fEditor);
+		String contentType = TextUtilities.getContentType(sourceViewer.getDocument(), ICPartitions.C_PARTITIONING,
+				offset, true);
+		boolean isCode = IDocument.DEFAULT_CONTENT_TYPE.equals(contentType);
 		ContentAssistant assistant = new ContentAssistant();
 		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
 		assistant.setContentAssistProcessor(processor, contentType);
 		if (fProcessorNeedsConfiguring) {
 			ContentAssistPreference.configure(assistant, getPreferenceStore());
 		}
-		long startTime= System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		sourceViewer.setSelectedRange(offset, length);
-		Object[] results = isCompletion ?
-				(Object[]) processor.computeCompletionProposals(sourceViewer, offset) :
-				(Object[]) processor.computeContextInformation(sourceViewer, offset);
-		long endTime= System.currentTimeMillis();
+		Object[] results = isCompletion ? (Object[]) processor.computeCompletionProposals(sourceViewer, offset)
+				: (Object[]) processor.computeContextInformation(sourceViewer, offset);
+		long endTime = System.currentTimeMillis();
 		assertTrue(results != null);
 		// Make sure no exception was thrown during content assist invocation.
-		assertTrue(processor.getErrorMessage() == null || 
-				   processor.getErrorMessage().equals(ContentAssistMessages.ContentAssistProcessor_no_completions));
+		assertTrue(processor.getErrorMessage() == null
+				|| processor.getErrorMessage().equals(ContentAssistMessages.ContentAssistProcessor_no_completions));
 
 		if (filterResults) {
 			if (isTemplate) {
-				results= filterResultsKeepTemplates(results);
+				results = filterResultsKeepTemplates(results);
 			} else {
-				results= filterResults(results, isCode);
+				results = filterResults(results, isCode);
 			}
 		}
 		return new ContentAssistResult(startTime, endTime, results);
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected, int flags, 
+	protected void assertContentAssistResults(int offset, int length, String[] expected, int flags,
 			CompareType compareType) throws Exception {
 		boolean isCompletion = (flags & IS_COMPLETION) != 0;
 		boolean isTemplate = (flags & IS_TEMPLATE) != 0;
@@ -183,50 +185,49 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 
-		String[] resultStrings= toStringArray(r.results, compareType);
+		String[] resultStrings = toStringArray(r.results, compareType);
 		if (!checkOrder) {
 			Arrays.sort(expected);
 			Arrays.sort(resultStrings);
 		}
 
-		if (CTestPlugin.getDefault().isDebugging())  {
+		if (CTestPlugin.getDefault().isDebugging()) {
 			System.out.println("Time: " + (r.endTime - r.startTime) + " ms");
 			for (String proposal : resultStrings) {
 				System.out.println("Result: " + proposal);
 			}
 		}
 
-		boolean allFound = true;  // For the time being, let's be optimistic.
+		boolean allFound = true; // For the time being, let's be optimistic.
 
 		for (String element : expected) {
 			boolean found = false;
 			for (String proposal : resultStrings) {
-				if(element.equals(proposal)){
+				if (element.equals(proposal)) {
 					found = true;
-					if (CTestPlugin.getDefault().isDebugging())  {
+					if (CTestPlugin.getDefault().isDebugging()) {
 						System.out.println("Lookup success for " + element);
 					}
 					break;
 				}
 			}
-			if (!found)  {
+			if (!found) {
 				allFound = false;
-				if (CTestPlugin.getDefault().isDebugging())  {
-					System.out.println( "Lookup failed for " + element); //$NON-NLS-1$
+				if (CTestPlugin.getDefault().isDebugging()) {
+					System.out.println("Lookup failed for " + element); //$NON-NLS-1$
 				}
 			}
 		}
 
 		if (!allFound) {
 			assertEquals("Missing results!", toString(expected), toString(resultStrings));
-		} else if (!allowExtraResults)  {
+		} else if (!allowExtraResults) {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
 	}
 
-	protected void assertContentAssistResults(int offset, int length, Map<String, String[][]> expected,
-			int flags, CompareType compareType)
-			throws Exception {
+	protected void assertContentAssistResults(int offset, int length, Map<String, String[][]> expected, int flags,
+			CompareType compareType) throws Exception {
 		boolean isCompletion = (flags & IS_COMPLETION) != 0;
 		boolean isTemplate = (flags & IS_TEMPLATE) != 0;
 		boolean filterResults = (flags & FILTER_RESULTS) != 0;
@@ -276,8 +277,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 					ParameterGuessingProposal proposal = (ParameterGuessingProposal) result;
 					proposal.generateParameterGuesses();
 					String pName = proposal.getReplacementString();
-					ICompletionProposal[][] pProposals = proposal
-							.getParametersGuesses();
+					ICompletionProposal[][] pProposals = proposal.getParametersGuesses();
 					String[][] p;
 					if (pProposals != null) {
 						p = new String[pProposals.length][];
@@ -298,11 +298,11 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return resultsMap;
 	}
 
-	protected void assertContentAssistResults(int offset, String[] expected,
-			int flags, CompareType compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, String[] expected, int flags, CompareType compareType)
+			throws Exception {
 		assertContentAssistResults(offset, 0, expected, flags, compareType);
 	}
-	
+
 	/**
 	 * Filter out template and keyword proposals.
 	 *
@@ -311,7 +311,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	 * @return filtered proposals
 	 */
 	private Object[] filterResults(Object[] results, boolean isCodeCompletion) {
-		List<Object> filtered= new ArrayList<>();
+		List<Object> filtered = new ArrayList<>();
 		for (Object result : results) {
 			if (result instanceof TemplateProposal) {
 				continue;
@@ -319,7 +319,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 			if (result instanceof ICCompletionProposal) {
 				if (isCodeCompletion) {
 					// Check for keywords proposal.
-					int relevance = ((ICCompletionProposal)result).getRelevance();
+					int relevance = ((ICCompletionProposal) result).getRelevance();
 					if (relevance >= RelevanceConstants.CASE_MATCH_RELEVANCE) {
 						relevance -= RelevanceConstants.CASE_MATCH_RELEVANCE;
 					}
@@ -334,12 +334,12 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		}
 		return filtered.toArray();
 	}
-	
+
 	/**
 	 * Filter out proposals, keep only templates
 	 */
 	private Object[] filterResultsKeepTemplates(Object[] results) {
-		List<Object> filtered= new ArrayList<>();
+		List<Object> filtered = new ArrayList<>();
 		for (Object result : results) {
 			if (result instanceof TemplateProposal) {
 				filtered.add(result);
@@ -347,7 +347,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		}
 		return filtered.toArray();
 	}
-	
+
 	private String[] toStringArray(Object[] results, CompareType type) {
 		String[] strings = new String[results.length];
 
@@ -395,9 +395,9 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		}
 		return strings;
 	}
-	
+
 	private String toString(String[] strings) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		for (String string : strings) {
 			buf.append(string).append('\n');
 		}
@@ -410,7 +410,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	protected String getBuffer() {
 		return getDocument().get();
 	}
-	
+
 	/**
 	 * Returns the editor document
 	 */
@@ -419,8 +419,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	}
 
 	protected void setCommaAfterFunctionParameter(String value) {
-		fCProject.setOption(
-				FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, value);
+		fCProject.setOption(FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, value);
 	}
 
 	protected void setCommaAfterTemplateParameter(String value) {

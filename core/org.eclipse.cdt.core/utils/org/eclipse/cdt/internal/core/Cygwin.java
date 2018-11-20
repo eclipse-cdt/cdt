@@ -44,7 +44,7 @@ public class Cygwin {
 	private static final String REGISTRY_KEY_SETUP_WIN64 = "SOFTWARE\\Wow6432Node\\Cygwin\\setup"; //$NON-NLS-1$
 	// note that in Cygwin 1.7 the mount point storage has been moved out of the registry
 	private static final String REGISTRY_KEY_MOUNTS = "SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\"; //$NON-NLS-1$
-	private static final String PATH_NAME = "native";   //$NON-NLS-1$
+	private static final String PATH_NAME = "native"; //$NON-NLS-1$
 	private static final String ROOTPATTERN = "/"; //$NON-NLS-1$
 	private static final char SLASH = '/';
 	private static final char BACKSLASH = '\\';
@@ -56,8 +56,10 @@ public class Cygwin {
 	private static String cygwinLocation = null;
 	private static boolean isCygwinLocationCached = false;
 
-	private final static Map<String/*envPath*/, String /*cygpathLocation*/> cygpathLocationCache = Collections.synchronizedMap(new LRUCache<String, String>(1,20));
-	private final static Map<String/*command*/, String /*translatedPath*/> translatedPathsCache = Collections.synchronizedMap(new LRUCache<String, String>(10,500));
+	private final static Map<String/*envPath*/, String /*cygpathLocation*/> cygpathLocationCache = Collections
+			.synchronizedMap(new LRUCache<String, String>(1, 20));
+	private final static Map<String/*command*/, String /*translatedPath*/> translatedPathsCache = Collections
+			.synchronizedMap(new LRUCache<String, String>(10, 500));
 
 	/**
 	 * Find location of "cygpath" utility on the file system.
@@ -65,7 +67,8 @@ public class Cygwin {
 	private static String findCygpathLocation(String envPath) {
 		if (envPath == null) {
 			// $PATH from user preferences
-			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
+			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH,
+					(ICConfigurationDescription) null, true);
 			if (varPath != null) {
 				envPath = varPath.getValue();
 			}
@@ -151,7 +154,8 @@ public class Cygwin {
 	 * @throws UnsupportedOperationException if Cygwin is unavailable.
 	 * @throws IOException on IO problem.
 	 */
-	public static String cygwinToWindowsPath(String cygwinPath, String envPath) throws IOException, UnsupportedOperationException {
+	public static String cygwinToWindowsPath(String cygwinPath, String envPath)
+			throws IOException, UnsupportedOperationException {
 		if (cygwinPath == null || cygwinPath.trim().length() == 0)
 			return cygwinPath;
 
@@ -164,7 +168,7 @@ public class Cygwin {
 			throw new UnsupportedOperationException(CYGPATH + " is not in the system search path."); //$NON-NLS-1$
 		}
 
-		String windowsPath = runCygpath(new String[] {cygpathLocation, "-w", cygwinPath}); //$NON-NLS-1$
+		String windowsPath = runCygpath(new String[] { cygpathLocation, "-w", cygwinPath }); //$NON-NLS-1$
 		return windowsPath;
 	}
 
@@ -193,7 +197,8 @@ public class Cygwin {
 	 * @throws UnsupportedOperationException if Cygwin is unavailable.
 	 * @throws IOException on IO problem.
 	 */
-	public static String windowsToCygwinPath(String windowsPath, String envPath) throws IOException, UnsupportedOperationException {
+	public static String windowsToCygwinPath(String windowsPath, String envPath)
+			throws IOException, UnsupportedOperationException {
 		if (windowsPath == null || windowsPath.trim().length() == 0)
 			return windowsPath;
 
@@ -206,7 +211,7 @@ public class Cygwin {
 			throw new UnsupportedOperationException(CYGPATH + " is not in the system search path."); //$NON-NLS-1$
 		}
 
-		String cygwinPath = runCygpath(new String[] {cygpathLocation, "-u", windowsPath}); //$NON-NLS-1$
+		String cygwinPath = runCygpath(new String[] { cygpathLocation, "-u", windowsPath }); //$NON-NLS-1$
 		return cygwinPath;
 	}
 
@@ -238,13 +243,16 @@ public class Cygwin {
 			return null;
 		}
 
-		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH,
+				(ICConfigurationDescription) null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
-		IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_CYGWIN_HOME, (ICConfigurationDescription) null, true);
+		IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
+				.getVariable(ENV_CYGWIN_HOME, (ICConfigurationDescription) null, true);
 		String envCygwinHomeValue = varCygwinHome != null ? varCygwinHome.getValue() : null;
 
-		 // isCygwinLocationCached is used to figure fact of caching when all cached objects are null
-		if (isCygwinLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached) && CDataUtil.objectsEqual(envCygwinHomeValue, envCygwinHomeValueCached)) {
+		// isCygwinLocationCached is used to figure fact of caching when all cached objects are null
+		if (isCygwinLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached)
+				&& CDataUtil.objectsEqual(envCygwinHomeValue, envCygwinHomeValueCached)) {
 			return cygwinLocation;
 		}
 
@@ -253,7 +261,7 @@ public class Cygwin {
 		envPathValueCached = envPathValue;
 		envCygwinHomeValueCached = envCygwinHomeValue;
 		isCygwinLocationCached = true;
-		
+
 		return cygwinLocation;
 	}
 
@@ -269,7 +277,7 @@ public class Cygwin {
 		WindowsRegistry registry = WindowsRegistry.getRegistry();
 		if (registry != null) {
 			String s = registry.getCurrentUserValue(key, name);
-			if(s == null) {
+			if (s == null) {
 				s = registry.getLocalMachineValue(key, name);
 			}
 
@@ -296,7 +304,7 @@ public class Cygwin {
 		}
 
 		// Look in PATH values. Look for cygwin1.dll
-		if(rootValue == null) {
+		if (rootValue == null) {
 			IPath location = PathUtil.findProgramLocation(CYGWIN_DLL, envPathValue);
 			if (location != null) {
 				// get rootValue from "rootValue\bin\cygwin1.dll"
@@ -305,12 +313,12 @@ public class Cygwin {
 		}
 
 		// Try to find the root dir in SOFTWARE\Cygwin\setup
-		if(rootValue == null) {
+		if (rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP, "rootdir"); //$NON-NLS-1$
 		}
 
 		// Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
-		if(rootValue == null) {
+		if (rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP_WIN64, "rootdir"); //$NON-NLS-1$
 		}
 
@@ -320,13 +328,13 @@ public class Cygwin {
 		}
 
 		// Try the default Cygwin install dir
-		if(rootValue == null) {
+		if (rootValue == null) {
 			File file = new File(DEFAULT_ROOT);
 			if (file.exists() && file.isDirectory())
 				rootValue = DEFAULT_ROOT;
 		}
 
-		if(rootValue != null) {
+		if (rootValue != null) {
 			rootValue = rootValue.replace(BACKSLASH, SLASH);
 		}
 

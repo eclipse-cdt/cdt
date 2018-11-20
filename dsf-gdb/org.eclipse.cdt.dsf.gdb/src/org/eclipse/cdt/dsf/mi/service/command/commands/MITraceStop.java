@@ -31,8 +31,9 @@ public class MITraceStop extends MICommand<MITraceStopInfo> {
 	public MITraceStop(ITraceTargetDMContext ctx) {
 		super(ctx, "-trace-stop"); //$NON-NLS-1$
 	}
-    @Override
-    public MITraceStopInfo getResult(MIOutput out) {
-        return new MITraceStopInfo(out);
-    }
+
+	@Override
+	public MITraceStopInfo getResult(MIOutput out) {
+		return new MITraceStopInfo(out);
+	}
 }

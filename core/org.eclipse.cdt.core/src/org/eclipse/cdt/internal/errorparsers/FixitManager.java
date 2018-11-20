@@ -29,24 +29,24 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 public class FixitManager implements IResourceChangeListener {
-	
+
 	private static FixitManager instance;
-	
+
 	private Map<IMarker, Fixit> fixitMap = new HashMap<>();
 	private Map<IResource, Set<IMarker>> fixitResourceMap = new HashMap<>();
-	
+
 	private FixitManager() {
 		// add resource change listener so we can remove any stored
 		// markers if the resource is removed.
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
-	
+
 	public static FixitManager getInstance() {
 		if (instance == null)
 			instance = new FixitManager();
 		return instance;
 	}
-	
+
 	public void addMarker(IMarker marker, String range, String value) {
 		Fixit f = new Fixit(range, value);
 		fixitMap.put(marker, f);
@@ -60,7 +60,7 @@ public class FixitManager implements IResourceChangeListener {
 		}
 		markerSet.add(marker);
 	}
-	
+
 	public void deleteMarker(IMarker marker) {
 		fixitMap.remove(marker);
 		IResource r = marker.getResource();
@@ -74,17 +74,17 @@ public class FixitManager implements IResourceChangeListener {
 			}
 		}
 	}
-	
+
 	public void deleteMarkers(IMarker[] markers) {
 		for (IMarker marker : markers) {
 			deleteMarker(marker);
 		}
 	}
-	
+
 	public boolean hasFixit(IMarker marker) {
 		return fixitMap.containsKey(marker);
 	}
-	
+
 	public Fixit findFixit(IMarker marker) {
 		return fixitMap.get(marker);
 	}
@@ -94,8 +94,8 @@ public class FixitManager implements IResourceChangeListener {
 		try {
 			// look for resource removals that remove a resource we have
 			// saved a marker for
-			if (event.getType() == IResourceChangeEvent.POST_CHANGE){
-				event.getDelta().accept(new IResourceDeltaVisitor(){
+			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+				event.getDelta().accept(new IResourceDeltaVisitor() {
 					@Override
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						// we only care about removal of an IResource we have registered
@@ -116,6 +116,5 @@ public class FixitManager implements IResourceChangeListener {
 		} catch (CoreException e) {
 			CCorePlugin.log(e); // should not happen
 		}
-	}	
+	}
 }
-

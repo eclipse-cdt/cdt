@@ -34,14 +34,10 @@ public class PDATabGroup extends AbstractLaunchConfigurationTabGroup {
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		//#ifdef ex1
-//#		// TODO: Exercise 1 - add the PDA main tab, source lookup tab and common
-//#		//  tab to the tab group		
+		//#		// TODO: Exercise 1 - add the PDA main tab, source lookup tab and common
+		//#		//  tab to the tab group		
 		//#else
-		setTabs(new ILaunchConfigurationTab[] {
-				new PDAMainTab(),
-				new SourceLookupTab(),
-				new CommonTab()
-		});
+		setTabs(new ILaunchConfigurationTab[] { new PDAMainTab(), new SourceLookupTab(), new CommonTab() });
 		//#endif
 	}
 }

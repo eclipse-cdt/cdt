@@ -73,7 +73,7 @@ public class AlignConstAction extends TextEditorAction {
 			String candidate = signature.substring(0, Keywords.CONST.length() + 1);
 			return !IdentifierHelper.checkIdentifierName(candidate).isCorrect();
 		}
-		
+
 		private boolean endsWithConst(String signature) {
 			if (!signature.endsWith(Keywords.CONST)) {
 				return false;
@@ -91,14 +91,12 @@ public class AlignConstAction extends TextEditorAction {
 		boolean expectConstRight = CCorePreferenceConstants.getPreference(
 				CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, cProject,
 				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
-		MisalignedConstFinderVisitor misalignedConstVisitor = new MisalignedConstFinderVisitor(
-				expectConstRight);
+		MisalignedConstFinderVisitor misalignedConstVisitor = new MisalignedConstFinderVisitor(expectConstRight);
 		rootNode.accept(misalignedConstVisitor);
 		return misalignedConstVisitor.getDeclSpecifiersWithMisaligedConst();
 	}
 
-	public static void rewriteMisalignedConstSpecifiers(IASTNode node, IProgressMonitor monitor)
-			throws CoreException {
+	public static void rewriteMisalignedConstSpecifiers(IASTNode node, IProgressMonitor monitor) throws CoreException {
 		ICProject cProject = node.getTranslationUnit().getOriginatingTranslationUnit().getCProject();
 		List<IASTDeclSpecifier> misalignedSpecifiers = findMisalignedConsts(node, cProject);
 		if (!misalignedSpecifiers.isEmpty()) {

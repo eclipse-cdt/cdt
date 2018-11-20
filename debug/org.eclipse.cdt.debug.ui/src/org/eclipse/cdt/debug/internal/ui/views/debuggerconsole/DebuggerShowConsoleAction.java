@@ -34,7 +34,7 @@ public class DebuggerShowConsoleAction extends Action {
 	 */
 	public static void showConsole(IDebuggerConsole console, DebuggerConsoleView consoleView) {
 		if (!console.equals(consoleView.getCurrentConsole())) {
-		    consoleView.display(console);
+			consoleView.display(console);
 		}
 	}
 

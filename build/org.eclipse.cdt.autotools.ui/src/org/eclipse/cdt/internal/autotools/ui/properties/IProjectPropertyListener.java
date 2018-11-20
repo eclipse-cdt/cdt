@@ -24,5 +24,5 @@ public interface IProjectPropertyListener {
 	 * @param property the name of the property changed
 	 */
 	void handleProjectPropertyChanged(IProject project, String property);
-	
+
 }

@@ -18,15 +18,15 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.ObjectSetList;
 public abstract class ObjectSetListBasedDefinition {
 	public static final int CONFLICT = 1;
 	private ObjectSetList fList;
-	
-	protected ObjectSetListBasedDefinition(ObjectSetList list){
+
+	protected ObjectSetListBasedDefinition(ObjectSetList list) {
 		fList = list;
 	}
 
-	public ObjectSetList getObjectSetList(){
+	public ObjectSetList getObjectSetList() {
 		return fList;
 	}
-	
+
 	public abstract int getType();
-	
+
 }

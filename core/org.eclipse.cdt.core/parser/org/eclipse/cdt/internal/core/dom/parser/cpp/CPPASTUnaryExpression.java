@@ -49,12 +49,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
  */
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
 	private int fOperator;
-    private ICPPASTExpression fOperand;
+	private ICPPASTExpression fOperand;
 	private ICPPEvaluation fEvaluation;
-    private IASTImplicitName[] fImplicitNames;
+	private IASTImplicitName[] fImplicitNames;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTUnaryExpression() {
+	public CPPASTUnaryExpression() {
 	}
 
 	public CPPASTUnaryExpression(int operator, IASTExpression operand) {
@@ -69,42 +69,42 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 	@Override
 	public CPPASTUnaryExpression copy(CopyStyle style) {
-		CPPASTUnaryExpression copy =
-				new CPPASTUnaryExpression(fOperator, fOperand == null ? null : fOperand.copy(style));
+		CPPASTUnaryExpression copy = new CPPASTUnaryExpression(fOperator,
+				fOperand == null ? null : fOperand.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getOperator() {
-        return fOperator;
-    }
+		return fOperator;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int operator) {
-        assertNotFrozen();
-        fOperator = operator;
-    }
+		assertNotFrozen();
+		fOperator = operator;
+	}
 
-    @Override
+	@Override
 	public IASTExpression getOperand() {
-        return fOperand;
-    }
+		return fOperand;
+	}
 
-    @Override
+	@Override
 	public void setOperand(IASTExpression expression) {
-        assertNotFrozen();
-        fOperand = (ICPPASTExpression) expression;
-        if (expression != null) {
+		assertNotFrozen();
+		fOperand = (ICPPASTExpression) expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND);
 		}
-    }
+	}
 
-    public boolean isPostfixOperator() {
-    	return fOperator == op_postFixDecr || fOperator == op_postFixIncr;
-    }
+	public boolean isPostfixOperator() {
+		return fOperator == op_postFixDecr || fOperator == op_postFixIncr;
+	}
 
-    @Override
+	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (fImplicitNames == null) {
 			ICPPFunction overload = getOverload();
@@ -131,58 +131,64 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        final boolean isPostfix = isPostfixOperator();
+		final boolean isPostfix = isPostfixOperator();
 
-        if (!isPostfix && action.shouldVisitImplicitNames) {
-        	for (IASTImplicitName name : getImplicitNames()) {
-        		if (!name.accept(action))
-        			return false;
-        	}
-        }
-
-        if (fOperand != null && !fOperand.accept(action))
-        	return false;
-
-        if (isPostfix && action.shouldVisitImplicitNames) {
-        	for (IASTImplicitName name : getImplicitNames()) {
-        		if (!name.accept(action))
-        			return false;
-        	}
-        }
-
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
-
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (!isPostfix && action.shouldVisitImplicitNames) {
+			for (IASTImplicitName name : getImplicitNames()) {
+				if (!name.accept(action))
+					return false;
+			}
 		}
-        return true;
-    }
 
-    @Override
+		if (fOperand != null && !fOperand.accept(action))
+			return false;
+
+		if (isPostfix && action.shouldVisitImplicitNames) {
+			for (IASTImplicitName name : getImplicitNames()) {
+				if (!name.accept(action))
+					return false;
+			}
+		}
+
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
+
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == fOperand) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            fOperand  = (ICPPASTExpression) other;
-        }
-    }
+		if (child == fOperand) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fOperand = (ICPPASTExpression) other;
+		}
+	}
 
-    @Override
+	@Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
 		if (eval instanceof EvalUnary) {
@@ -194,12 +200,12 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			}
 		}
 		return null;
-    }
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			fEvaluation= computeEvaluation();
+			fEvaluation = computeEvaluation();
 		}
 		return fEvaluation;
 	}
@@ -216,23 +222,23 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return nestedEval;
 		}
 
-		IBinding addressOfQualifiedNameBinding= null;
-    	if (fOperator == op_amper && fOperand instanceof IASTIdExpression) {
-			IASTName name= ((IASTIdExpression) fOperand).getName();
+		IBinding addressOfQualifiedNameBinding = null;
+		if (fOperator == op_amper && fOperand instanceof IASTIdExpression) {
+			IASTName name = ((IASTIdExpression) fOperand).getName();
 			if (name instanceof ICPPASTQualifiedName) {
-				addressOfQualifiedNameBinding= name.resolveBinding();
+				addressOfQualifiedNameBinding = name.resolveBinding();
 				if (addressOfQualifiedNameBinding instanceof IProblemBinding)
 					return EvalFixed.INCOMPLETE;
 			}
 		}
-    	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding, this);
+		return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding, this);
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-		IType type= CPPEvaluation.getType(this);
+		IType type = CPPEvaluation.getType(this);
 		if (type instanceof FunctionSetType) {
-			type= fOperand.getExpressionType();
+			type = fOperand.getExpressionType();
 			if (fOperator == op_amper) {
 				if (fOperand instanceof IASTIdExpression) {
 					IASTIdExpression idExpr = (IASTIdExpression) fOperand;
@@ -242,7 +248,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 						if (binding instanceof ICPPMethod) {
 							ICPPMethod method = (ICPPMethod) binding;
 							if (!method.isStatic()) {
-								return new CPPPointerToMemberType(method.getType(), method.getClassOwner(), false, false, false);
+								return new CPPPointerToMemberType(method.getType(), method.getClassOwner(), false,
+										false, false);
 							}
 						}
 					}
@@ -251,7 +258,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			}
 		}
 		return type;
-    }
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {

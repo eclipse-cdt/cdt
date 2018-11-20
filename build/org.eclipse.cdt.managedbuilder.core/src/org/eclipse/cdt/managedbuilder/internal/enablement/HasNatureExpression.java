@@ -41,14 +41,12 @@ public class HasNatureExpression implements IBooleanExpression {
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 		return evaluate(rcInfo);
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		return evaluate(rcInfo);
 	}
 

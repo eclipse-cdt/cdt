@@ -27,22 +27,21 @@ import org.eclipse.core.runtime.CoreException;
  * PDOM binding for alias template specializations.
  */
 public class PDOMCPPAliasTemplateSpecialization extends PDOMCPPSpecialization implements ICPPAliasTemplate {
-	private static final int ALIASED_TYPE = PDOMCPPSpecialization.RECORD_SIZE;  // TYPE_SIZE
-	private static final int TEMPLATE_PARAMS = ALIASED_TYPE + Database.TYPE_SIZE;  // PTR_SIZE
-	
+	private static final int ALIASED_TYPE = PDOMCPPSpecialization.RECORD_SIZE; // TYPE_SIZE
+	private static final int TEMPLATE_PARAMS = ALIASED_TYPE + Database.TYPE_SIZE; // PTR_SIZE
+
 	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE = TEMPLATE_PARAMS + Database.PTR_SIZE;
-	
+
 	private volatile IPDOMCPPTemplateParameter[] fParameters;
-	
-	public PDOMCPPAliasTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, 
-			ICPPAliasTemplate aliasTemplateSpec, IPDOMBinding specialized) 
-			throws CoreException, DOMException {
+
+	public PDOMCPPAliasTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
+			ICPPAliasTemplate aliasTemplateSpec, IPDOMBinding specialized) throws CoreException, DOMException {
 		super(linkage, parent, (ICPPSpecialization) aliasTemplateSpec, specialized);
 		final ICPPTemplateParameter[] origParams = aliasTemplateSpec.getTemplateParameters();
 		fParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		final Database db = getDB();
-		long rec= PDOMTemplateParameterArray.putArray(db, fParameters);
+		long rec = PDOMTemplateParameterArray.putArray(db, fParameters);
 		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
 		linkage.new ConfigureAliasTemplateSpecialization(aliasTemplateSpec, this);
 	}
@@ -50,7 +49,7 @@ public class PDOMCPPAliasTemplateSpecialization extends PDOMCPPSpecialization im
 	public PDOMCPPAliasTemplateSpecialization(PDOMCPPLinkage linkage, long record) {
 		super(linkage, record);
 	}
-	
+
 	public void initData(IType aliasedType) {
 		try {
 			getLinkage().storeType(record + ALIASED_TYPE, aliasedType);
@@ -58,7 +57,7 @@ public class PDOMCPPAliasTemplateSpecialization extends PDOMCPPSpecialization im
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -82,11 +81,11 @@ public class PDOMCPPAliasTemplateSpecialization extends PDOMCPPSpecialization im
 		if (fParameters == null) {
 			try {
 				Database db = getDB();
-				long rec= db.getRecPtr(record + TEMPLATE_PARAMS);
+				long rec = db.getRecPtr(record + TEMPLATE_PARAMS);
 				if (rec == 0) {
-					fParameters= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+					fParameters = IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {
-					fParameters= PDOMTemplateParameterArray.getArray(this, rec);
+					fParameters = PDOMTemplateParameterArray.getArray(this, rec);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);

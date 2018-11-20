@@ -21,11 +21,7 @@ public class GenericLaunchConfigTabGroup extends AbstractLaunchConfigurationTabG
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		setTabs(new ILaunchConfigurationTab[] {
-			new GenericMainTab(),
-			new EnvironmentTab(),
-			new CommonTab()
-		});
+		setTabs(new ILaunchConfigurationTab[] { new GenericMainTab(), new EnvironmentTab(), new CommonTab() });
 	}
 
 }

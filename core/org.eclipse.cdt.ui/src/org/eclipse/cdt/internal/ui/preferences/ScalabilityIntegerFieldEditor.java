@@ -39,7 +39,7 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 
 	public ScalabilityIntegerFieldEditor(String enableKey, String nameKey, String labelText, Composite parent) {
 		super(nameKey, labelText, parent);
-		fEnableKey= enableKey;
+		fEnableKey = enableKey;
 	}
 
 	@Override
@@ -47,17 +47,18 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 		Text control = super.getTextControl(parent);
 		if (fDecoration == null) {
 			fDecoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP);
-			FieldDecoration errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+			FieldDecoration errorDecoration = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 			fDecoration.setImage(errorDecoration.getImage());
 			fDecoration.setDescriptionText(getErrorMessage());
 
 			// validate on focus gain
-            control.addFocusListener(new FocusAdapter() {
-                @Override
+			control.addFocusListener(new FocusAdapter() {
+				@Override
 				public void focusGained(FocusEvent e) {
-                    refreshValidState();
-                }
-            });
+					refreshValidState();
+				}
+			});
 		}
 		return control;
 	}
@@ -87,11 +88,11 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 
 	private Button getCheckboxControl(Composite parent) {
 		if (fCheckbox == null) {
-			Composite inner= new Composite(parent, SWT.NULL);
-			final GridLayout layout= new GridLayout(2, false);
+			Composite inner = new Composite(parent, SWT.NULL);
+			final GridLayout layout = new GridLayout(2, false);
 			layout.marginWidth = 0;
 			inner.setLayout(layout);
-			fCheckbox= new Button(inner, SWT.CHECK);
+			fCheckbox = new Button(inner, SWT.CHECK);
 			fCheckbox.setFont(parent.getFont());
 			fCheckbox.setText(getLabelText());
 			// create and hide label from base class
@@ -101,9 +102,9 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 			fCheckbox.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-                    boolean isSelected = fCheckbox.getSelection();
-                    valueChanged(fWasSelected, isSelected);
-                    fWasSelected = isSelected;
+					boolean isSelected = fCheckbox.getSelection();
+					valueChanged(fWasSelected, isSelected);
+					fWasSelected = isSelected;
 				}
 			});
 		} else {
@@ -114,7 +115,7 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 
 	@Override
 	public Label getLabelControl(Composite parent) {
-		final Label label= getLabelControl();
+		final Label label = getLabelControl();
 		if (label == null) {
 			return super.getLabelControl(parent);
 		} else {
@@ -124,11 +125,11 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 	}
 
 	protected void valueChanged(boolean oldValue, boolean newValue) {
-        if (oldValue != newValue) {
-    		valueChanged();
+		if (oldValue != newValue) {
+			valueChanged();
 			fireStateChanged(VALUE, oldValue, newValue);
-        	getTextControl().setEnabled(newValue);
-        	getLabelControl().setEnabled(newValue);
+			getTextControl().setEnabled(newValue);
+			getLabelControl().setEnabled(newValue);
 		}
 	}
 
@@ -144,55 +145,55 @@ public class ScalabilityIntegerFieldEditor extends IntegerFieldEditor {
 	@Override
 	protected void doLoad() {
 		super.doLoad();
-        if (fCheckbox != null) {
-            boolean value = getPreferenceStore().getBoolean(fEnableKey);
-            fCheckbox.setSelection(value);
-            fWasSelected = value;
-        	getTextControl().setEnabled(value);
-        	getLabelControl().setEnabled(value);
-        }
+		if (fCheckbox != null) {
+			boolean value = getPreferenceStore().getBoolean(fEnableKey);
+			fCheckbox.setSelection(value);
+			fWasSelected = value;
+			getTextControl().setEnabled(value);
+			getLabelControl().setEnabled(value);
+		}
 	}
 
 	@Override
 	protected void doLoadDefault() {
 		super.doLoadDefault();
-        if (fCheckbox != null) {
-            boolean value = getPreferenceStore().getDefaultBoolean(fEnableKey);
-            fCheckbox.setSelection(value);
-            fWasSelected = value;
-        	getTextControl().setEnabled(value);
-        	getLabelControl().setEnabled(value);
-        }
+		if (fCheckbox != null) {
+			boolean value = getPreferenceStore().getDefaultBoolean(fEnableKey);
+			fCheckbox.setSelection(value);
+			fWasSelected = value;
+			getTextControl().setEnabled(value);
+			getLabelControl().setEnabled(value);
+		}
 	}
 
-    @Override
+	@Override
 	protected void doStore() {
-    	super.doStore();
-        getPreferenceStore().setValue(fEnableKey, fCheckbox.getSelection());
-    }
+		super.doStore();
+		getPreferenceStore().setValue(fEnableKey, fCheckbox.getSelection());
+	}
 
-    /**
-     * Returns this field editor's current boolean value.
-     *
-     * @return the value
-     */
-    public boolean getBooleanValue() {
-        return fCheckbox.getSelection();
-    }
+	/**
+	 * Returns this field editor's current boolean value.
+	 *
+	 * @return the value
+	 */
+	public boolean getBooleanValue() {
+		return fCheckbox.getSelection();
+	}
 
-    /**
-     * Set the checkbox selection and enablement of the other controls as specified.
-     */
-    public void setBooleanValue(boolean value) {
-    	// The checkbox selection will normally be propagated to the label and text controls in the
-    	// checkbox selection listener.  However, the callback is only invoked when the selection changes,
-    	// which means that an initial value of false will not be properly propagated.  The state is
-    	// directly updated here.
-    	if (fCheckbox != null) {
-	    	fWasSelected = value;
-	    	getLabelControl().setEnabled(value);
-	    	getTextControl().setEnabled(value);
-	    	fCheckbox.setSelection(value);
-    	}
-    }
+	/**
+	 * Set the checkbox selection and enablement of the other controls as specified.
+	 */
+	public void setBooleanValue(boolean value) {
+		// The checkbox selection will normally be propagated to the label and text controls in the
+		// checkbox selection listener.  However, the callback is only invoked when the selection changes,
+		// which means that an initial value of false will not be properly propagated.  The state is
+		// directly updated here.
+		if (fCheckbox != null) {
+			fWasSelected = value;
+			getLabelControl().setEnabled(value);
+			getTextControl().setEnabled(value);
+			fCheckbox.setSelection(value);
+		}
+	}
 }

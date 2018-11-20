@@ -27,7 +27,6 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
-
 /**
  * View Model provider for the Launch (AKA Debug) view. The launch VM 
  * provider is configured with three nodes:
@@ -41,28 +40,27 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * </ul> 
  */
 @SuppressWarnings("restriction")
-public class PDALaunchVMProvider extends AbstractLaunchVMProvider 
-    implements IDebugEventSetListener, ILaunchesListener2
-{
-    @ThreadSafe
-    public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) 
-    {
-        super(adapter, presentationContext, session);
-        
-        IRootVMNode launchNode = new LaunchRootVMNode(this);
-        setRootNode(launchNode);
+public class PDALaunchVMProvider extends AbstractLaunchVMProvider
+		implements IDebugEventSetListener, ILaunchesListener2 {
+	@ThreadSafe
+	public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext,
+			DsfSession session) {
+		super(adapter, presentationContext, session);
 
-        // Launch node is a parent to the processes and program nodes.
-        IVMNode pdaVirtualMachineNode = new PDAVirtualMachineVMNode(this, getSession());
-        IVMNode processesNode = new StandardProcessVMNode(this);
-        addChildNodes(launchNode, new IVMNode[] { pdaVirtualMachineNode, processesNode});
-        
-        // Virtual machine node is under the PDA threads node.
-        IVMNode threadsNode = new PDAThreadsVMNode(this, getSession());
-        addChildNodes(pdaVirtualMachineNode, new IVMNode[] { threadsNode });
-        
-        // Stack frames node is under the PDA threads node.
-        IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
-        addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
-    }
+		IRootVMNode launchNode = new LaunchRootVMNode(this);
+		setRootNode(launchNode);
+
+		// Launch node is a parent to the processes and program nodes.
+		IVMNode pdaVirtualMachineNode = new PDAVirtualMachineVMNode(this, getSession());
+		IVMNode processesNode = new StandardProcessVMNode(this);
+		addChildNodes(launchNode, new IVMNode[] { pdaVirtualMachineNode, processesNode });
+
+		// Virtual machine node is under the PDA threads node.
+		IVMNode threadsNode = new PDAThreadsVMNode(this, getSession());
+		addChildNodes(pdaVirtualMachineNode, new IVMNode[] { threadsNode });
+
+		// Stack frames node is under the PDA threads node.
+		IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
+		addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
+	}
 }

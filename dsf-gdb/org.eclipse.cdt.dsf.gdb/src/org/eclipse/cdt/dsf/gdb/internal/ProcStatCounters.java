@@ -22,7 +22,7 @@ import java.util.Map;
  * TODO: extend to more than the tick counters.
  */
 public class ProcStatCounters {
-	private Map<String,OneCoreTickCounters> fTickCounters = new HashMap<String,OneCoreTickCounters>();
+	private Map<String, OneCoreTickCounters> fTickCounters = new HashMap<String, OneCoreTickCounters>();
 
 	/**
 	 * An object of this class holds one set of core/CPU tick counter values, for a single CPU core
@@ -39,7 +39,8 @@ public class ProcStatCounters {
 		public OneCoreTickCounters(Integer[] c) {
 			// sanity checks
 			assert (c != null && c.length >= 7);
-			if (c == null || c.length < 7) return;
+			if (c == null || c.length < 7)
+				return;
 
 			fUser = c[0];
 			fNice = c[1];
@@ -56,12 +57,12 @@ public class ProcStatCounters {
 		private int getActiveTicks() {
 			return fUser + fNice + fSystem + fIowait + fIrq + fSoftirq;
 		}
-		
+
 		/**
 		 * @return The "idle" tick counter
 		 */
 		private int getIdleTicks() {
-			return  fIdle;
+			return fIdle;
 		}
 	}
 
@@ -69,7 +70,7 @@ public class ProcStatCounters {
 	 *
 	 */
 	public ProcStatCounters() {
-		fTickCounters = new HashMap<String,OneCoreTickCounters>();
+		fTickCounters = new HashMap<String, OneCoreTickCounters>();
 	}
 
 	/**
@@ -80,7 +81,7 @@ public class ProcStatCounters {
 	public void addTickCounters(String core, Integer[] ticks) {
 		fTickCounters.put(core, new OneCoreTickCounters(ticks));
 	}
-	
+
 	/**
 	 * Note: It was discovered during testing that sometimes, the counters in
 	 * /proc/stat are not updated for a given core, between two measurements. 
@@ -97,27 +98,27 @@ public class ProcStatCounters {
 	 */
 	public final ProcStatCoreLoads computeLoads(final ProcStatCounters old) {
 		ProcStatCoreLoads loads = new ProcStatCoreLoads();
-		
+
 		// for each core
-		for(String coreId: fTickCounters.keySet()) {
+		for (String coreId : fTickCounters.keySet()) {
 			OneCoreTickCounters coreCountersNew = fTickCounters.get(coreId);
 			// Do we have 2 sets of counters to compute the load from?
 			if (old != null) {
 				OneCoreTickCounters coreCountersOld = old.fTickCounters.get(coreId);
 				int diffIdle = coreCountersNew.getIdleTicks() - coreCountersOld.getIdleTicks();
 				int diffActive = coreCountersNew.getActiveTicks() - coreCountersOld.getActiveTicks();
-				
+
 				// Sanity check - we do not expect that the counter should decrease
-				assert(diffIdle >= 0);
-				assert(diffActive >= 0);
-				
+				assert (diffIdle >= 0);
+				assert (diffActive >= 0);
+
 				if (diffIdle < 0 || diffActive < 0) {
 					return null;
 				}
-				
+
 				float load;
 				if (diffIdle + diffActive != 0) {
-					load = diffActive / (float)(diffActive + diffIdle);
+					load = diffActive / (float) (diffActive + diffIdle);
 				}
 				// Here we catch the cases where a core has been asleep for the whole
 				// measurement period.  See note above this method.
@@ -132,11 +133,11 @@ public class ProcStatCounters {
 				int diffIdle = coreCountersNew.getIdleTicks();
 				int diffActive = coreCountersNew.getActiveTicks();
 				assert (diffActive + diffIdle != 0);
-				float load = diffActive / (float)(diffActive + diffIdle);
+				float load = diffActive / (float) (diffActive + diffIdle);
 				loads.put(coreId, load * 100.0f);
 			}
 		}
-		
+
 		return loads;
 	}
 

@@ -59,68 +59,85 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public CPPClassTypeProblem(IASTName name, int id) {
 			super(name, id);
 		}
+
 		public CPPClassTypeProblem(ICPPASTNameSpecifier nameSpec, int id) {
 			super(nameSpec, id, nameSpec instanceof IASTName ? null : nameSpec.toCharArray());
 		}
+
 		public CPPClassTypeProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}
+
 		@Override
 		public ICPPBase[] getBases() {
 			return ICPPBase.EMPTY_BASE_ARRAY;
 		}
+
 		@Override
 		public IField[] getFields() {
 			return IField.EMPTY_FIELD_ARRAY;
 		}
+
 		@Override
 		public ICPPField[] getDeclaredFields() {
 			return ICPPField.EMPTY_CPPFIELD_ARRAY;
 		}
+
 		@Override
 		public ICPPMethod[] getMethods() {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
+
 		@Override
 		public ICPPMethod[] getAllDeclaredMethods() {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
+
 		@Override
 		public ICPPMethod[] getDeclaredMethods() {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
+
 		@Override
 		public ICPPConstructor[] getConstructors() {
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		}
+
 		@Override
 		public int getKey() {
 			return k_class;
 		}
+
 		@Override
 		public IField findField(String name) {
 			return null;
 		}
+
 		@Override
 		public IScope getCompositeScope() {
 			return this;
 		}
+
 		@Override
 		public IBinding[] getFriends() {
 			return IBinding.EMPTY_BINDING_ARRAY;
 		}
+
 		@Override
 		public ICPPClassType[] getNestedClasses() {
 			return ICPPClassType.EMPTY_CLASS_ARRAY;
 		}
+
 		@Override
 		public ICPPUsingDeclaration[] getUsingDeclarations() {
 			return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
 		}
+
 		@Override
 		public boolean isFinal() {
 			return false;
 		}
+
 		@Override
 		public int getVisibility(IBinding member) {
 			throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
@@ -147,7 +164,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		name.setBinding(this);
 		if (indexBinding instanceof ICPPClassType && indexBinding instanceof IIndexBinding) {
-			typeInIndex= (ICPPClassType) indexBinding;
+			typeInIndex = (ICPPClassType) indexBinding;
 		}
 	}
 
@@ -166,9 +183,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		// Ambiguity resolution ensures that definitions are resolved.
 		if (!checked) {
 			if (definition == null && typeInIndex == null) {
-				IIndex index= getPhysicalNode().getTranslationUnit().getIndex();
+				IIndex index = getPhysicalNode().getTranslationUnit().getIndex();
 				if (index != null) {
-					typeInIndex= (ICPPClassType) index.adaptBinding(this);
+					typeInIndex = (ICPPClassType) index.adaptBinding(this);
 				}
 			}
 			checked = true;
@@ -376,7 +393,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public ICPPClassType[] getNestedClasses() {
 		return ClassTypeHelper.getNestedClasses(this);
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ClassTypeHelper.getUsingDeclarations(this);
@@ -417,9 +434,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		if (getNameCharArray().length > 0)
 			return false;
 
-		ICPPASTCompositeTypeSpecifier spec= getCompositeTypeSpecifier();
+		ICPPASTCompositeTypeSpecifier spec = getCompositeTypeSpecifier();
 		if (spec != null) {
-			IASTNode node= spec.getParent();
+			IASTNode node = spec.getParent();
 			if (node instanceof IASTSimpleDeclaration) {
 				if (((IASTSimpleDeclaration) node).getDeclarators().length == 0) {
 					return true;
@@ -440,8 +457,8 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	private IASTName stripQualifier(IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
-	        name = ((ICPPASTQualifiedName) name).getLastName();
-	    }
+			name = ((ICPPASTQualifiedName) name).getLastName();
+		}
 		return name;
 	}
 

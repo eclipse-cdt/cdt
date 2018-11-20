@@ -58,8 +58,8 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 
 		private boolean isUsedAsCondition(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
-			if (prop == IASTForStatement.CONDITION || prop == IASTIfStatement.CONDITION || prop == IASTWhileStatement.CONDITIONEXPRESSION
-					|| prop == IASTDoStatement.CONDITION)
+			if (prop == IASTForStatement.CONDITION || prop == IASTIfStatement.CONDITION
+					|| prop == IASTWhileStatement.CONDITIONEXPRESSION || prop == IASTDoStatement.CONDITION)
 				return true;
 			if (prop == IASTUnaryExpression.OPERAND) {
 				IASTUnaryExpression expr = (IASTUnaryExpression) expression.getParent();

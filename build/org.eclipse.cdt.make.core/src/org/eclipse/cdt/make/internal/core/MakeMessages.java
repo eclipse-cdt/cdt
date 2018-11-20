@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 
 public class MakeMessages {
 
-	private static final String RESOURCE_BUNDLE= MakeMessages.class.getName();
+	private static final String RESOURCE_BUNDLE = MakeMessages.class.getName();
 	private static ResourceBundle fgResourceBundle;
 	static {
 		try {
@@ -28,10 +28,10 @@ public class MakeMessages {
 			fgResourceBundle = null;
 		}
 	}
-	
+
 	private MakeMessages() {
 	}
-		
+
 	public static String getString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
@@ -41,7 +41,7 @@ public class MakeMessages {
 			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
 	 * 
@@ -53,7 +53,7 @@ public class MakeMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with arguments
-	 */	
+	 */
 	public static String getFormattedString(String key, Object[] args) {
 		return MessageFormat.format(getString(key), args);
 	}

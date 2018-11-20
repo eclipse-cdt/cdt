@@ -23,7 +23,7 @@ public class AutoconfIdentifierRule implements IPredicateRule {
 
 	private IToken fToken;
 	private String fExtraChars = "_${@"; //$NON-NLS-1$
-	
+
 	public AutoconfIdentifierRule(IToken token) {
 		Assert.isNotNull(token);
 		fToken = token;
@@ -38,14 +38,14 @@ public class AutoconfIdentifierRule implements IPredicateRule {
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
 	}
-	
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		int c = scanner.read();
-		if (Character.isLetterOrDigit((char)c) || fExtraChars.indexOf((char)c) >= 0) {
+		if (Character.isLetterOrDigit((char) c) || fExtraChars.indexOf((char) c) >= 0) {
 			do {
 				c = scanner.read();
-			} while (Character.isLetterOrDigit((char)c) || fExtraChars.indexOf((char)c) >= 0);
+			} while (Character.isLetterOrDigit((char) c) || fExtraChars.indexOf((char) c) >= 0);
 			scanner.unread();
 			return fToken;
 		}

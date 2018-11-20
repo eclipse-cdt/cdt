@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPClosureSpecialization extends CPPClosureType implements ICPPClassSpecialization {
 	private CPPClosureType fSpecialized;
 	private ICPPTemplateParameterMap fMap;
-	
+
 	public CPPClosureSpecialization(ICPPASTLambdaExpression lambda, CPPClosureType specialized,
 			InstantiationContext context) {
 		super(lambda);

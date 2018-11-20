@@ -47,7 +47,8 @@ public class GdbMemoryAddressInfoRegistersRetrieval implements IGdbMemoryAddress
 	}
 
 	@Override
-	public void itemsRequest(final IDMContext context, final IMemoryBlock memBlock, final DataRequestMonitor<IMemoryBlockAddressInfoItem[]> rm) {
+	public void itemsRequest(final IDMContext context, final IMemoryBlock memBlock,
+			final DataRequestMonitor<IMemoryBlockAddressInfoItem[]> rm) {
 		if (fSession == null || fSession.getExecutor() == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Initialization problem, invalid session")); //$NON-NLS-1$
 			return;
@@ -67,34 +68,35 @@ public class GdbMemoryAddressInfoRegistersRetrieval implements IGdbMemoryAddress
 						// Resolve register data
 						getRegistersData(service, registers,
 								new DataRequestMonitor<IRegisterDMData[]>(fSession.getExecutor(), rm) {
-							@Override
-							protected void handleSuccess() {
-								final IRegisterDMData[] regBaseData = getData();
-								// Resolve register values
-								getRegisterValues(service, registers,
-										new DataRequestMonitor<FormattedValueDMData[]>(fSession.getExecutor(),
-												rm) {
 									@Override
 									protected void handleSuccess() {
-										// Extract the register information needed to build the requested data items
-										FormattedValueDMData[] regFormattedData = getData();
-										String[] regNames = extractRegNames(regBaseData);
-										String[] regValues = extractValues(regFormattedData);
+										final IRegisterDMData[] regBaseData = getData();
+										// Resolve register values
+										getRegisterValues(service, registers,
+												new DataRequestMonitor<FormattedValueDMData[]>(fSession.getExecutor(),
+														rm) {
+													@Override
+													protected void handleSuccess() {
+														// Extract the register information needed to build the requested data items
+														FormattedValueDMData[] regFormattedData = getData();
+														String[] regNames = extractRegNames(regBaseData);
+														String[] regValues = extractValues(regFormattedData);
 
-										// Consolidate the Register information in a container class
-										IMemoryBlockAddressInfoItem[] regDataContainers = createRegisterDataContainers(
-												registers, regNames, regValues);
-										
-										// Filter or arrange data as needed
-										regDataContainers = normalizeRegisterData(regDataContainers, memBlock);
+														// Consolidate the Register information in a container class
+														IMemoryBlockAddressInfoItem[] regDataContainers = createRegisterDataContainers(
+																registers, regNames, regValues);
 
-										rm.setData(regDataContainers);
-										rm.done();
-									}
+														// Filter or arrange data as needed
+														regDataContainers = normalizeRegisterData(regDataContainers,
+																memBlock);
+
+														rm.setData(regDataContainers);
+														rm.done();
+													}
+												});
+
+									};
 								});
-
-							};
-						});
 					} else {
 						// no valid registers
 						rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
@@ -108,13 +110,14 @@ public class GdbMemoryAddressInfoRegistersRetrieval implements IGdbMemoryAddress
 		}
 	}
 
-	protected IMemoryBlockAddressInfoItem[] normalizeRegisterData(IMemoryBlockAddressInfoItem[] regDataContainers, IMemoryBlock memBlock) {
-//		// The information provided may be applicable per memory space
-//		String memSpaceId = ""; //$NON-NLS-1$
-//		if (memBlock instanceof IMemorySpaceAwareMemoryBlock) {
-//			memSpaceId = ((IMemorySpaceAwareMemoryBlock) memBlock).getMemorySpaceID();
-//		}
-		
+	protected IMemoryBlockAddressInfoItem[] normalizeRegisterData(IMemoryBlockAddressInfoItem[] regDataContainers,
+			IMemoryBlock memBlock) {
+		//		// The information provided may be applicable per memory space
+		//		String memSpaceId = ""; //$NON-NLS-1$
+		//		if (memBlock instanceof IMemorySpaceAwareMemoryBlock) {
+		//			memSpaceId = ((IMemorySpaceAwareMemoryBlock) memBlock).getMemorySpaceID();
+		//		}
+
 		List<IMemoryBlockAddressInfoItem> items = new ArrayList<IMemoryBlockAddressInfoItem>();
 		// Remove all items with value zero
 		for (IMemoryBlockAddressInfoItem item : regDataContainers) {
@@ -127,7 +130,7 @@ public class GdbMemoryAddressInfoRegistersRetrieval implements IGdbMemoryAddress
 
 		return items.toArray(new IMemoryBlockAddressInfoItem[items.size()]);
 	}
-	
+
 	@Override
 	public String getInfoType() {
 		return REGISTERS_INFO_TYPE;

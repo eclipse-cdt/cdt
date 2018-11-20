@@ -86,14 +86,13 @@ public class PosixMakefile extends AbstractMakefile {
 	}
 
 	@Override
-	public void parse(URI fileURI,
-			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+	public void parse(URI fileURI, IMakefileReaderProvider makefileReaderProvider) throws IOException {
 		this.makefileReaderProvider = makefileReaderProvider;
 		MakefileReader reader;
 		if (makefileReaderProvider == null) {
 			try {
-				reader = new MakefileReader(new InputStreamReader(
-						EFS.getStore(fileURI).openInputStream(EFS.NONE, null)));
+				reader = new MakefileReader(
+						new InputStreamReader(EFS.getStore(fileURI).openInputStream(EFS.NONE, null)));
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
 				throw new IOException(e.getMessage());
@@ -165,7 +164,7 @@ public class PosixMakefile extends AbstractMakefile {
 
 				// 3- Empty lines ?
 				if (Util.isEmptyLine(line)) {
-					Directive empty =  new EmptyLine(this);
+					Directive empty = new EmptyLine(this);
 					empty.setLines(startLine, endLine);
 					if (rules != null) {
 						for (Rule rule : rules) {
@@ -197,7 +196,7 @@ public class PosixMakefile extends AbstractMakefile {
 					InferenceRule irule = parseInferenceRule(line);
 					irule.setLines(startLine, endLine);
 					addDirective(irule);
-					rules = new Rule[]{irule};
+					rules = new Rule[] { irule };
 					continue;
 				}
 
@@ -235,15 +234,15 @@ public class PosixMakefile extends AbstractMakefile {
 	public IDirective[] getBuiltins() {
 		return builtins;
 	}
+
 	@Override
 	public IAutomaticVariable[] getAutomaticVariables() {
 		return automaticVariables;
 	}
 
-
 	protected SpecialRule processSpecialRule(String line) {
 		line = line.trim();
-		String keyword =  null;
+		String keyword = null;
 		String[] reqs = null;
 		SpecialRule special = null;
 		int index = Util.indexOf(line, ':');

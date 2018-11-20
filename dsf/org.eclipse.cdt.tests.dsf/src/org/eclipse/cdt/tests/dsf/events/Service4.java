@@ -27,43 +27,45 @@ import org.osgi.framework.InvalidSyntaxException;
  * 
  */
 public class Service4 extends AbstractService {
-    Service4(DsfSession session) {
-        super(session);
-    }
+	Service4(DsfSession session) {
+		super(session);
+	}
 
-    @Override public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize(
-            new RequestMonitor(getExecutor(), requestMonitor) { 
-                @Override
-                public void handleSuccess() {
-                    doInitialize(requestMonitor);
-                }
-            });
-    }
-            
-    private void doInitialize(RequestMonitor requestMonitor) {
-        getServicesTracker().getService(Service1.class);
-        getServicesTracker().getService(Service2.class);
-        getServicesTracker().getService(Service3.class);
-        register(new String[]{Service4.class.getName()}, new Hashtable<String,String>());
-        requestMonitor.done();
-    }
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+			@Override
+			public void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
+	}
 
-    @Override public void shutdown(RequestMonitor requestMonitor) {
-        unregister();
-        super.shutdown(requestMonitor);
-    }
-    
-    /**
-     * We want to get events only from Service2.
-     * @see org.eclipse.cdt.tests.dsf.events.AbstractService#getEventServicesFilter()
-     */
-    @Override protected Filter getEventServicesFilter() {
-    	try {
+	private void doInitialize(RequestMonitor requestMonitor) {
+		getServicesTracker().getService(Service1.class);
+		getServicesTracker().getService(Service2.class);
+		getServicesTracker().getService(Service3.class);
+		register(new String[] { Service4.class.getName() }, new Hashtable<String, String>());
+		requestMonitor.done();
+	}
+
+	@Override
+	public void shutdown(RequestMonitor requestMonitor) {
+		unregister();
+		super.shutdown(requestMonitor);
+	}
+
+	/**
+	 * We want to get events only from Service2.
+	 * @see org.eclipse.cdt.tests.dsf.events.AbstractService#getEventServicesFilter()
+	 */
+	@Override
+	protected Filter getEventServicesFilter() {
+		try {
 			return getBundleContext().createFilter("(objectClass=org.eclipse.cdt.tests.dsf.events.Service2)");
 		} catch (InvalidSyntaxException e) {
 			Assert.fail();
 			return null;
 		}
-    }
+	}
 }

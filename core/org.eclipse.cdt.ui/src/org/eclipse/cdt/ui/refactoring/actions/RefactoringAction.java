@@ -34,8 +34,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class RefactoringAction extends Action {
-    protected CEditor fEditor;
-    private IWorkbenchSite fSite;
+	protected CEditor fEditor;
+	private IWorkbenchSite fSite;
 	private ICElement fElement;
 	private boolean saveRequired;
 
@@ -55,48 +55,50 @@ public abstract class RefactoringAction extends Action {
 		this.saveRequired = saveRequired;
 	}
 
-    public void setEditor(IEditorPart editor) {
-        fEditor= null;
-        fSite= null;
-        if (editor instanceof CEditor) {
-            fEditor= (CEditor) editor;
-        }
-        setEnabled(fEditor != null);
-    }
-
-	public void setSite(IWorkbenchSite site) {
-        fEditor= null;
-        fSite= site;
+	public void setEditor(IEditorPart editor) {
+		fEditor = null;
+		fSite = null;
+		if (editor instanceof CEditor) {
+			fEditor = (CEditor) editor;
+		}
+		setEnabled(fEditor != null);
 	}
 
-    @Override
+	public void setSite(IWorkbenchSite site) {
+		fEditor = null;
+		fSite = site;
+	}
+
+	@Override
 	public final void run() {
-    	if (saveRequired) {
-	    	EclipseObjects.getActivePage().saveAllEditors(true);
-	    	if (EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
-	    		return;
-	    	}
-    	}
-    	if (fEditor != null) {
-            ISelectionProvider provider= fEditor.getSelectionProvider();
-            if (provider != null) {
-                ISelection s= provider.getSelection();
-                if (s instanceof ITextSelection) {
-            		IWorkingCopy wc= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-            		if (wc != null)
-            			run(fEditor.getSite(), wc, (ITextSelection) s);
-                }
-            }
-        } else if (fSite != null && fElement != null) {
-            run(fSite, fElement);
-        }
-    }
+		if (saveRequired) {
+			EclipseObjects.getActivePage().saveAllEditors(true);
+			if (EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
+				return;
+			}
+		}
+		if (fEditor != null) {
+			ISelectionProvider provider = fEditor.getSelectionProvider();
+			if (provider != null) {
+				ISelection s = provider.getSelection();
+				if (s instanceof ITextSelection) {
+					IWorkingCopy wc = CUIPlugin.getDefault().getWorkingCopyManager()
+							.getWorkingCopy(fEditor.getEditorInput());
+					if (wc != null)
+						run(fEditor.getSite(), wc, (ITextSelection) s);
+				}
+			}
+		} else if (fSite != null && fElement != null) {
+			run(fSite, fElement);
+		}
+	}
 
 	public void updateSelection(ICElement elem) {
-		fElement= elem;
+		fElement = elem;
 		setEnabled(elem != null);
 	}
 
-    public abstract void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s);
-    public abstract void run(IShellProvider shellProvider, ICElement elem);
+	public abstract void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s);
+
+	public abstract void run(IShellProvider shellProvider, ICElement elem);
 }

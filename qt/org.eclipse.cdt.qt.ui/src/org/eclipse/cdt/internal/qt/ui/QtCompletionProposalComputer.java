@@ -35,8 +35,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(
-			ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		// this is overridden in order to find proposals when the completion node is null
 		try {
 			if (context instanceof CContentAssistInvocationContext) {
@@ -73,12 +73,12 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 		if (project == null)
 			return false;
 
-        return QtNature.hasNature(project);
-    }
+		return QtNature.hasNature(project);
+	}
 
 	@Override
-	protected List<ICompletionProposal> computeCompletionProposals(
-			CContentAssistInvocationContext context, IASTCompletionNode completionNode, String prefix) throws CoreException {
+	protected List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext context,
+			IASTCompletionNode completionNode, String prefix) throws CoreException {
 
 		// make sure this is a Qt project
 		if (!isApplicable(context))
@@ -98,7 +98,8 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 					continue;
 				IASTNode astNode = (IASTNode) astContext;
 
-				proposals = addAll(proposals, QObjectConnectCompletion.getProposals(context, name, astContext, astNode));
+				proposals = addAll(proposals,
+						QObjectConnectCompletion.getProposals(context, name, astContext, astNode));
 				proposals = addAll(proposals, QObjectDeclarationCompletion.getProposals(context, name));
 				proposals = addAll(proposals, QPropertyCompletion.getProposals(context, name, astContext, astNode));
 			}
@@ -111,8 +112,7 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 	}
 
 	private static <T> List<T> addAll(List<T> list, Collection<T> toAdd) {
-		if (toAdd == null
-		 || toAdd.isEmpty())
+		if (toAdd == null || toAdd.isEmpty())
 			return list;
 
 		if (list == null)

@@ -158,7 +158,8 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	private void updateTable() {
 		List<IQtInstall> sorted = new ArrayList<>(getInstalls().values());
-		Collections.sort(sorted, (o1, o2) -> o1.getQmakePath().toString().compareToIgnoreCase(o2.getQmakePath().toString()));
+		Collections.sort(sorted,
+				(o1, o2) -> o1.getQmakePath().toString().compareToIgnoreCase(o2.getQmakePath().toString()));
 
 		installTable.removeAll();
 		for (IQtInstall install : sorted) {

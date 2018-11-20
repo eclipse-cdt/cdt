@@ -142,7 +142,7 @@ public class CodanPreferencesLoader {
 	 * @param storePreferences
 	 */
 	public void load(Preferences[] storePreferences) {
-    	IPreferencesService prefService = Platform.getPreferencesService();
+		IPreferencesService prefService = Platform.getPreferencesService();
 		IProblem[] probs = getProblems();
 		for (int i = 0; i < probs.length; i++) {
 			String id = probs[i].getId();
@@ -185,7 +185,7 @@ public class CodanPreferencesLoader {
 	 * @param storePreferences
 	 */
 	private void setProblemPreferenceValues(String problemId, Preferences[] storePreferences) {
-    	IPreferencesService prefService = Platform.getPreferencesService();
+		IPreferencesService prefService = Platform.getPreferencesService();
 		IProblem prob = baseModel.findProblem(problemId);
 		String prefKey = getPreferencesKey(problemId);
 		if (prefKey == null)

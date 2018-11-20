@@ -48,8 +48,7 @@ public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 		this(null, testSourceReader, cpp);
 	}
 
-	public OneSourceMultipleHeadersTestCase(String name, TestSourceReader testSourceReader,
-			boolean cpp) {
+	public OneSourceMultipleHeadersTestCase(String name, TestSourceReader testSourceReader, boolean cpp) {
 		super(name);
 		this.testSourceReader = testSourceReader;
 		this.cpp = cpp;
@@ -81,15 +80,18 @@ public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 	}
 
 	protected void setUp(boolean generateIncludeStatements) throws Exception {
-		cproject = cpp ?
-				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		cproject = cpp
+				? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER)
+				: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER);
 		testData = testSourceReader.getContentsForTest(getName());
 
 		if (testData.length > 0) {
 			for (int i = 0; i < testData.length - 1; i++) {
 				String filename = String.format("header%d.h", i + 1);
-				IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename), testData[i].toString());
+				IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename),
+						testData[i].toString());
 				CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 			}
 		}
@@ -103,15 +105,16 @@ public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 			testData[testData.length - 1].insert(0, buf);
 		}
 
-		IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("source.c" + (cpp ? "pp" : "")), getAstSource());
-        waitForIndexer(cproject);
+		IFile cppfile = TestSourceReader.createFile(cproject.getProject(), new Path("source.c" + (cpp ? "pp" : "")),
+				getAstSource());
+		waitForIndexer(cproject);
 
 		if (DEBUG) {
 			System.out.println("Project PDOM: " + getName());
 			((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 		}
 
-		index= CCorePlugin.getIndexManager().getIndex(cproject);
+		index = CCorePlugin.getIndexManager().getIndex(cproject);
 
 		index.acquireReadLock();
 		ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
@@ -123,7 +126,8 @@ public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 			index.releaseReadLock();
 		}
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
 }

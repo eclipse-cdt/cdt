@@ -33,21 +33,19 @@ import org.eclipse.core.runtime.Status;
  * @since 4.2
  */
 public class GDBHardwareAndOS_7_5 extends GDBHardwareAndOS implements IGDBHardwareAndOS2 {
-	
-    public GDBHardwareAndOS_7_5(DsfSession session) {
-    	super(session);
-    }
 
+	public GDBHardwareAndOS_7_5(DsfSession session) {
+		super(session);
+	}
 
-    @Override
-    public void initialize(final RequestMonitor requestMonitor) {
-	super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
-		@Override
-		protected void handleSuccess() {
-			register(new String[] { IGDBHardwareAndOS2.class.getName() },
-					 new Hashtable<String, String>());
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+			@Override
+			protected void handleSuccess() {
+				register(new String[] { IGDBHardwareAndOS2.class.getName() }, new Hashtable<String, String>());
 
-			requestMonitor.done();
+				requestMonitor.done();
 			}
 		});
 	}
@@ -73,7 +71,8 @@ public class GDBHardwareAndOS_7_5 extends GDBHardwareAndOS implements IGDBHardwa
 	}
 
 	@Override
-	public void getResourcesInformation(final IDMContext dmc, final String resourceClass, final DataRequestMonitor<IResourcesInformation> rm) {
+	public void getResourcesInformation(final IDMContext dmc, final String resourceClass,
+			final DataRequestMonitor<IResourcesInformation> rm) {
 
 		IGDBControl control = getServicesTracker().getService(IGDBControl.class);
 		if (control == null) {
@@ -82,13 +81,14 @@ public class GDBHardwareAndOS_7_5 extends GDBHardwareAndOS implements IGDBHardwa
 		}
 
 		CommandFactory factory = control.getCommandFactory();
-		control.queueCommand(factory.createMIInfoOS(dmc, resourceClass), new DataRequestMonitor<MIInfoOsInfo>(getExecutor(), rm) {
+		control.queueCommand(factory.createMIInfoOS(dmc, resourceClass),
+				new DataRequestMonitor<MIInfoOsInfo>(getExecutor(), rm) {
 
-			@Override
-			protected void handleSuccess() {
-				rm.setData(getData().getResourcesInformation());
-				rm.done();
-			}
-		});
+					@Override
+					protected void handleSuccess() {
+						rm.setData(getData().getResourcesInformation());
+						rm.done();
+					}
+				});
 	}
 }

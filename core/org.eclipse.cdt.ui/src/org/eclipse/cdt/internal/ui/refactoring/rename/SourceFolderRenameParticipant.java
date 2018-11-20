@@ -44,7 +44,7 @@ public class SourceFolderRenameParticipant extends RenameParticipant {
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		String newName = getArguments().getNewName();		
+		String newName = getArguments().getNewName();
 		IPath newFolderPath = oldFolder.getFullPath().removeLastSegments(1).append(newName);
 		return new RenameCSourceFolderChange(oldFolder, newFolderPath);
 	}

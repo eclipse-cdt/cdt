@@ -35,10 +35,9 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 	 * @see org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier#getMacro(java.lang.String, org.eclipse.cdt.managedbuilder.core.IManagedProject, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
 	@Override
-	public IBuildMacro getMacro(String macroName, IManagedProject project,
-			IBuildMacroProvider provider) {
+	public IBuildMacro getMacro(String macroName, IManagedProject project, IBuildMacroProvider provider) {
 
-		if(macroName.equals(PreferenceConstants.P_XL_COMPILER_ROOT)) {
+		if (macroName.equals(PreferenceConstants.P_XL_COMPILER_ROOT)) {
 			String compilerPath = null;
 
 			// figure out compiler path from properties and preferences
@@ -46,21 +45,20 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 			// search for property first
 			IProject theProject = (IProject) project.getOwner();
 			try {
-				compilerPath = theProject.getPersistentProperty(new QualifiedName("",
-						PreferenceConstants.P_XL_COMPILER_ROOT));
+				compilerPath = theProject
+						.getPersistentProperty(new QualifiedName("", PreferenceConstants.P_XL_COMPILER_ROOT));
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			if(compilerPath == null) {
+			if (compilerPath == null) {
 				// use the workbench preference
 				IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 				compilerPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 			}
 
-			BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR,
-					compilerPath);
+			BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR, compilerPath);
 
 			return macro;
 		}
@@ -73,8 +71,7 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 	 * @see org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier#getMacros(org.eclipse.cdt.managedbuilder.core.IManagedProject, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
 	@Override
-	public IBuildMacro[] getMacros(IManagedProject project,
-			IBuildMacroProvider provider) {
+	public IBuildMacro[] getMacros(IManagedProject project, IBuildMacroProvider provider) {
 
 		String macroName = PreferenceConstants.P_XL_COMPILER_ROOT;
 
@@ -85,50 +82,48 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 		// search for property first
 		IProject theProject = (IProject) project.getOwner();
 		try {
-			compilerPath = theProject.getPersistentProperty(new QualifiedName("",
-					PreferenceConstants.P_XL_COMPILER_ROOT));
+			compilerPath = theProject
+					.getPersistentProperty(new QualifiedName("", PreferenceConstants.P_XL_COMPILER_ROOT));
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		if(compilerPath == null) {
+		if (compilerPath == null) {
 			// use the workbench preference
 			IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 			compilerPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 		}
 
-		BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR,
-				compilerPath);
+		BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR, compilerPath);
 
 		// our array consists of our macro, plus all the macros from our parent
 		IBuildMacro[] parentMacros = provider.getMacros(IBuildMacroProvider.CONTEXT_PROJECT, project, true);
 
-		
 		// look for an existing macro definition
 		int foundIndex = -1;
-		for(int k = 0; k < parentMacros.length; k++) {
-			
-			if(parentMacros[k].getName().equals(macro.getName())) {
+		for (int k = 0; k < parentMacros.length; k++) {
+
+			if (parentMacros[k].getName().equals(macro.getName())) {
 				foundIndex = k;
 				break;
 			}
 		}
-		
+
 		int numMacros = (foundIndex == -1) ? parentMacros.length + 1 : parentMacros.length;
-		
+
 		IBuildMacro[] macros = new IBuildMacro[numMacros];
 
 		// if there was no existing value then add it to the front
-		if(foundIndex == -1) {
+		if (foundIndex == -1) {
 			macros[0] = macro;
-			for(int k = 1; k < macros.length; k++) {
-				macros[k] = parentMacros[k-1];
+			for (int k = 1; k < macros.length; k++) {
+				macros[k] = parentMacros[k - 1];
 			}
 		}
 
-		else {  // replace the old value
-			for(int k = 0; k < macros.length; k++) {
+		else { // replace the old value
+			for (int k = 0; k < macros.length; k++) {
 				macros[k] = parentMacros[k];
 			}
 			macros[foundIndex] = macro;

@@ -52,7 +52,7 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 	private static PathEntryDataFactory fFactory;
 
 	public static CDataFactory getDataFactory() {
-		if(fFactory == null) {
+		if (fFactory == null) {
 			fFactory = new PathEntryDataFactory();
 		}
 		return fFactory;
@@ -74,11 +74,11 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		//			super(id, path, cfg, factory);
 		//		}
 
-		public PathEntryFolderData(String id, IPath path, PathEntryFolderData base,
-				CConfigurationData cfgData, CDataFactory factory, boolean clone) {
+		public PathEntryFolderData(String id, IPath path, PathEntryFolderData base, CConfigurationData cfgData,
+				CDataFactory factory, boolean clone) {
 			super(id, path, cfgData, factory);
 
-			if(base != null)
+			if (base != null)
 				fStore = new EntryStore(base.fStore, true);
 			else
 				fStore = new EntryStore(true);
@@ -99,8 +99,8 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		//			super(id, path, cfg, factory);
 		//		}
 
-		public PathEntryFileData(String id, IPath path, PathEntryFileData base,
-				CConfigurationData cfg, CDataFactory factory, boolean clone) {
+		public PathEntryFileData(String id, IPath path, PathEntryFileData base, CConfigurationData cfg,
+				CDataFactory factory, boolean clone) {
 			super(id, path, cfg, factory);
 
 			fStore = new EntryStore(base.fStore, true);
@@ -108,9 +108,8 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 			copyDataFrom(base, clone);
 		}
 
-		public PathEntryFileData(String id, IPath path, PathEntryFolderData base,
-				CLanguageData baseLangData, CConfigurationData cfgData,
-				CDataFactory factory) {
+		public PathEntryFileData(String id, IPath path, PathEntryFolderData base, CLanguageData baseLangData,
+				CConfigurationData cfgData, CDataFactory factory) {
 			super(id, path, cfgData, factory);
 
 			fStore = new EntryStore(base.fStore, true);
@@ -127,8 +126,8 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 			copySettingsFrom(base);
 		}
 
-		public PathEntryLanguageData(String id, String name, String languageId, int kinds,
-				String[] ids, boolean isContentTypes, EntryStore store) {
+		public PathEntryLanguageData(String id, String name, String languageId, int kinds, String[] ids,
+				boolean isContentTypes, EntryStore store) {
 			super(id, languageId, ids, isContentTypes);
 			fStore = store;
 			fName = name;
@@ -149,11 +148,11 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 
 	private static class PathEntryDataFactory extends CDataFactory {
 		@Override
-		public CConfigurationData createConfigurationdata(String id,
-				String name, CConfigurationData base, boolean clone) {
-			if(clone){
+		public CConfigurationData createConfigurationdata(String id, String name, CConfigurationData base,
+				boolean clone) {
+			if (clone) {
 				id = base.getId();
-			} else if(id == null){
+			} else if (id == null) {
 				id = CDataUtil.genId(null);
 			}
 
@@ -161,50 +160,46 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		}
 
 		@Override
-		public CFileData createFileData(CConfigurationData cfg,
-				CResourceData base, CLanguageData base2,
-				String id, boolean clone,
+		public CFileData createFileData(CConfigurationData cfg, CResourceData base, CLanguageData base2, String id,
+				boolean clone, IPath path) {
+			if (id == null)
+				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+			if (base.getType() == ICSettingBase.SETTING_FILE)
+				return new PathEntryFileData(id, path, (PathEntryFileData) base, cfg, this, clone);
+			return new PathEntryFileData(id, path, (PathEntryFolderData) base, base2, cfg, this);
+		}
+
+		@Override
+		public CFolderData createFolderData(CConfigurationData cfg, CFolderData base, String id, boolean clone,
 				IPath path) {
-			if(id == null)
+			if (id == null)
 				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-				if(base.getType() == ICSettingBase.SETTING_FILE)
-					return new PathEntryFileData(id, path, (PathEntryFileData)base, cfg, this, clone);
-				return new PathEntryFileData(id, path, (PathEntryFolderData)base,
-						base2, cfg,	this);
+			return new PathEntryFolderData(id, path, (PathEntryFolderData) base, cfg, this, clone);
 		}
 
 		@Override
-		public CFolderData createFolderData(CConfigurationData cfg,
-				CFolderData base, String id, boolean clone, IPath path) {
-			if(id == null)
-				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-				return new PathEntryFolderData(id, path, (PathEntryFolderData)base, cfg, this, clone);
-		}
-
-		@Override
-		public CLanguageData createLanguageData(CConfigurationData cfg,
-				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
-			if(id == null)
+		public CLanguageData createLanguageData(CConfigurationData cfg, CResourceData rcBase, CLanguageData base,
+				String id, boolean clone) {
+			if (id == null)
 				id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
-				EntryStore store;
-				if(rcBase.getType() == ICSettingBase.SETTING_FOLDER)
-					store = ((PathEntryFolderData)rcBase).fStore;
-				else
-					store = ((PathEntryFileData)rcBase).fStore;
-				return new PathEntryLanguageData(id, base, store);
+			EntryStore store;
+			if (rcBase.getType() == ICSettingBase.SETTING_FOLDER)
+				store = ((PathEntryFolderData) rcBase).fStore;
+			else
+				store = ((PathEntryFileData) rcBase).fStore;
+			return new PathEntryLanguageData(id, base, store);
 		}
 
 		@Override
-		public CLanguageData createLanguageData(CConfigurationData cfg,
-				CResourceData rcBase, String id, String name, String languageId, int supportedEntryKinds, String[] rcTypes,
-				boolean isContentTypes) {
-			if(id == null)
+		public CLanguageData createLanguageData(CConfigurationData cfg, CResourceData rcBase, String id, String name,
+				String languageId, int supportedEntryKinds, String[] rcTypes, boolean isContentTypes) {
+			if (id == null)
 				id = CDataUtil.genId(rcBase.getId());
 			EntryStore store;
-			if(rcBase.getType() == ICSettingBase.SETTING_FOLDER)
-				store = ((PathEntryFolderData)rcBase).fStore;
+			if (rcBase.getType() == ICSettingBase.SETTING_FOLDER)
+				store = ((PathEntryFolderData) rcBase).fStore;
 			else
-				store = ((PathEntryFileData)rcBase).fStore;
+				store = ((PathEntryFileData) rcBase).fStore;
 			return new PathEntryLanguageData(id, name, languageId, supportedEntryKinds, rcTypes, isContentTypes, store);
 		}
 
@@ -216,6 +211,7 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		public CfgData(String id, String name, CConfigurationData base, boolean clone) {
 			super(id, name, base, fFactory, clone);
 		}
+
 		public CfgData(String id, String name) {
 			super(id, name, fFactory);
 		}
@@ -229,14 +225,14 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		//		}
 	}
 
-	public static boolean isPathEntryData(CConfigurationData data){
+	public static boolean isPathEntryData(CConfigurationData data) {
 		return data instanceof CfgData;
 	}
 
 	@Override
 	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			IProgressMonitor monitor) throws CoreException {
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, IProgressMonitor monitor)
+			throws CoreException {
 
 		//TODO: check external/reference info here as well.
 		if (!fFactory.isModified(baseData)) {
@@ -245,15 +241,16 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 
 		IProject project = cfgDescription.getProjectDescription().getProject();
 		//		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
-		IPathEntry entries[] = PathEntryTranslator.getPathEntries(project, baseCfgDescription, PathEntryTranslator.INCLUDE_USER);
+		IPathEntry entries[] = PathEntryTranslator.getPathEntries(project, baseCfgDescription,
+				PathEntryTranslator.INCLUDE_USER);
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 		IPathEntry[] curRawEntries = PathEntryManager.getDefault().getRawPathEntries(cproject);
 
 		List<IPathEntry> list = new ArrayList<IPathEntry>();
 		list.addAll(Arrays.asList(entries));
-		for(int i = 0; i < curRawEntries.length; i++){
-			if(curRawEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER){
+		for (int i = 0; i < curRawEntries.length; i++) {
+			if (curRawEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER) {
 				list.add(curRawEntries[i]);
 			}
 		}
@@ -263,15 +260,16 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		return createData(cfgDescription, baseData, false, false);
 	}
 
-	private CConfigurationData createData(ICConfigurationDescription cfgDescription, CConfigurationData fallbackData, boolean modifiedFlag, boolean useCache) throws CoreException {
+	private CConfigurationData createData(ICConfigurationDescription cfgDescription, CConfigurationData fallbackData,
+			boolean modifiedFlag, boolean useCache) throws CoreException {
 		CConfigurationData dataToReturn;
 		try {
 			dataToReturn = createData(cfgDescription, useCache);
-		} catch (Exception e){
-			if(fallbackData != null)
+		} catch (Exception e) {
+			if (fallbackData != null)
 				dataToReturn = fallbackData;
 			else if (e instanceof CoreException)
-				throw (CoreException)e;
+				throw (CoreException) e;
 			else
 				throw ExceptionFactory.createCoreException(e);
 		}
@@ -282,8 +280,8 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 
 	@Override
 	public CConfigurationData createConfiguration(ICConfigurationDescription cfgDescription,
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			boolean clone, IProgressMonitor monitor) throws CoreException {
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, boolean clone,
+			IProgressMonitor monitor) throws CoreException {
 
 		CfgData copy = new CfgData(cfgDescription.getId(), cfgDescription.getName(), baseData, clone);
 		copy.setModified(false);
@@ -308,12 +306,10 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		cfgDescription.removeExternalSettings();
 		if (extSettings.length != 0) {
 			ICExternalSetting setting;
-			for(int i = 0; i < extSettings.length; i++){
+			for (int i = 0; i < extSettings.length; i++) {
 				setting = extSettings[i];
 				cfgDescription.createExternalSetting(setting.getCompatibleLanguageIds(),
-						setting.getCompatibleContentTypeIds(),
-						setting.getCompatibleExtensions(),
-						setting.getEntries());
+						setting.getCompatibleContentTypeIds(), setting.getCompatibleExtensions(), setting.getEntries());
 			}
 		}
 
@@ -338,29 +334,32 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		return data;
 	}
 
-	private String[] getIds(ICConfigExtensionReference refs[]){
-		if(refs == null || refs.length == 0)
+	private String[] getIds(ICConfigExtensionReference refs[]) {
+		if (refs == null || refs.length == 0)
 			return new String[0];
 
 		String[] ids = new String[refs.length];
-		for(int i = 0; i < refs.length; i++){
+		for (int i = 0; i < refs.length; i++) {
 			ids[i] = refs[i].getID();
 		}
 		return ids;
 	}
 
 	@Override
-	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor) throws CoreException {
+	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor)
+			throws CoreException {
 		return createData(cfgDescription, null, false, true);
 	}
 
 	@Override
-	public void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
+	public void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data,
+			IProgressMonitor monitor) {
 		//do nothing for now
 	}
 
 	@Override
-	public void dataCached(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
+	public void dataCached(ICConfigurationDescription cfgDescription, CConfigurationData data,
+			IProgressMonitor monitor) {
 		fFactory.setModified(data, false);
 	}
 

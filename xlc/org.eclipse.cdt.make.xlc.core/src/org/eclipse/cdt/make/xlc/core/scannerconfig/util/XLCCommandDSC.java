@@ -38,13 +38,11 @@ public class XLCCommandDSC extends CCommandDSC {
 	 */
 	@Override
 	public void addSCOption(KVStringPair option) {
-		if (project != null &&
-			(option.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()) ||
-			 option.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-			 option.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) ||
-			 option.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString()) ||
-			 option.getKey().equals(SCDOptionsEnum.IQUOTE.toString())))
-		{
+		if (project != null && (option.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString())
+				|| option.getKey().equals(SCDOptionsEnum.INCLUDE.toString())
+				|| option.getKey().equals(SCDOptionsEnum.ISYSTEM.toString())
+				|| option.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())
+				|| option.getKey().equals(SCDOptionsEnum.IQUOTE.toString()))) {
 			String value = option.getValue();
 			value = makeRelative(project, new Path(value)).toOSString();
 			option = new KVStringPair(option.getKey(), value);

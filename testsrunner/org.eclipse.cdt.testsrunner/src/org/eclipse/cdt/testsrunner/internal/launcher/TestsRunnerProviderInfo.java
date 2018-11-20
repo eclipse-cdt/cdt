@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * provider plug-in).
  */
 public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
-	
+
 	private static final String TESTS_RUNNER_FEATURES_ELEMENT = "features"; //$NON-NLS-1$
 	private static final String TESTS_RUNNER_FEATURE_MULTIPLE_TEST_FILTER_ATTRIBUTE = "multipleTestFilter"; //$NON-NLS-1$
 	private static final String TESTS_RUNNER_FEATURE_TESTING_TIME_MEASUREMENT_ATTRIBUTE = "testingTimeMeasurement"; //$NON-NLS-1$
@@ -78,14 +78,14 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		try {
 			Object object = element.createExecutableExtension(TESTS_RUNNER_CLASS_ATTRIBUTE);
 			if (object instanceof ITestsRunnerProvider) {
-				return (ITestsRunnerProvider)object;
+				return (ITestsRunnerProvider) object;
 			}
 		} catch (CoreException e) {
 			TestsRunnerPlugin.log(e);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides an access to the 'features' node of Tests Runner provider
 	 * plug-in configuration element.
@@ -99,7 +99,7 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides an access to the value of the feature with specified name.
 	 * 
@@ -114,7 +114,7 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides an access to the boolean value of the feature with the specified
 	 * name. If the feature with such name cannot be accessed or it contains
@@ -132,12 +132,12 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		}
 		return defaultValue;
 	}
-	
+
 	@Override
 	public boolean isAllowedMultipleTestFilter() {
 		return getBooleanFeatureValue(TESTS_RUNNER_FEATURE_MULTIPLE_TEST_FILTER_ATTRIBUTE, false);
 	}
-	
+
 	/**
 	 * Returns whether test execution time measurement should be performed by
 	 * the Tests Runner Plug-in.
@@ -153,7 +153,7 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 	public boolean isAllowedTestingTimeMeasurement() {
 		return getBooleanFeatureValue(TESTS_RUNNER_FEATURE_TESTING_TIME_MEASUREMENT_ATTRIBUTE, false);
 	}
-	
+
 	@Override
 	public boolean isOutputStreamRequired() {
 		return !isErrorStreamRequired();

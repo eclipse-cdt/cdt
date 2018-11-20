@@ -32,7 +32,7 @@ public class ProgramRelativePathSourceContainerType extends AbstractSourceContai
 
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
-		if (container instanceof ProgramRelativePathSourceContainer) {		
+		if (container instanceof ProgramRelativePathSourceContainer) {
 			return ELEMENT_NAME;
 		} else {
 			return ""; //$NON-NLS-1$

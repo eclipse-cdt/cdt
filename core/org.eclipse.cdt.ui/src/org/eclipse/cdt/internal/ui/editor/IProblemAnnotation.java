@@ -18,20 +18,18 @@ package org.eclipse.cdt.internal.ui.editor;
  * Interface of annotations representing problems.
  */
 public interface IProblemAnnotation {
-	
+
 	String getMessage();
-	
+
 	int getId();
-	
+
 	String[] getArguments();
-	
+
 	boolean isTemporaryProblem();
-	
+
 	boolean isWarning();
-	
+
 	boolean isError();
-	
+
 	boolean isProblem();
 }
-
-

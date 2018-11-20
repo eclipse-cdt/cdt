@@ -14,11 +14,11 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 public class AutoconfCaseConditionElement extends AutoconfElement {
-	
+
 	public AutoconfCaseConditionElement() {
 		super("");
 	}
-	
+
 	public AutoconfCaseConditionElement(String name) {
 		super(name);
 	}

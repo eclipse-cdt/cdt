@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow fWindow;
-	
+
 	public OpenCSearchPageAction() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -38,7 +38,7 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-		fWindow= window;
+		fWindow = window;
 	}
 
 	@Override
@@ -57,13 +57,13 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void dispose() {
-		fWindow= null;
+		fWindow = null;
 	}
 
 	protected void beep() {
-		Shell shell= CUIPlugin.getActiveWorkbenchShell();
+		Shell shell = CUIPlugin.getActiveWorkbenchShell();
 		if (shell != null && shell.getDisplay() != null)
 			shell.getDisplay().beep();
-	}	
+	}
 
 }

@@ -30,7 +30,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.junit.Test;
 
-
 /**
  * Test autoconf tokenizer.  The tokenizer mainly is used to detect boundaries and keywords
  * and is not a full shell tokenizer.
@@ -51,7 +50,7 @@ public class TestTokenizer {
 			tokenizerErrors.add(exception);
 		});
 		tokenizer.setM4Context(isM4Mode);
-		
+
 		return tokenize(tokenizer);
 	}
 
@@ -69,6 +68,7 @@ public class TestTokenizer {
 	protected void checkNoErrors() {
 		assertEquals(0, tokenizerErrors.size());
 	}
+
 	@Test
 	public void testEmpty() {
 		IDocument document = createDocument("");
@@ -76,6 +76,7 @@ public class TestTokenizer {
 		checkNoErrors();
 		assertEquals(0, tokens.size());
 	}
+
 	@Test
 	public void testEOL1() {
 		IDocument document = createDocument("\n");
@@ -84,6 +85,7 @@ public class TestTokenizer {
 		assertEquals(1, tokens.size());
 		checkToken(tokens.get(0), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testEOL2() {
 		IDocument document = createDocument("\r\n");
@@ -92,6 +94,7 @@ public class TestTokenizer {
 		assertEquals(1, tokens.size());
 		checkToken(tokens.get(0), document, ITokenConstants.EOL, "\r\n");
 	}
+
 	@Test
 	public void testEOL3() {
 		IDocument document = createDocument("\n\r\n\n");
@@ -102,6 +105,7 @@ public class TestTokenizer {
 		checkToken(tokens.get(1), document, ITokenConstants.EOL, "\r\n");
 		checkToken(tokens.get(2), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testShellText() {
 		// default mode is shell
@@ -110,13 +114,12 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(4, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"random");
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "random");
 		checkToken(tokens.get(1), document, ITokenConstants.EOL, "\n");
-		checkToken(tokens.get(2), document, ITokenConstants.WORD,
-				"stuff");
+		checkToken(tokens.get(2), document, ITokenConstants.WORD, "stuff");
 		checkToken(tokens.get(3), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testShellTokens() {
 		// default mode is shell
@@ -125,18 +128,16 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(8, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.SH_WHILE,
-				"while");
-		checkToken(tokens.get(1), document, ITokenConstants.WORD,
-				"true");
+		checkToken(tokens.get(0), document, ITokenConstants.SH_WHILE, "while");
+		checkToken(tokens.get(1), document, ITokenConstants.WORD, "true");
 		checkToken(tokens.get(2), document, ITokenConstants.SEMI, ";");
 		checkToken(tokens.get(3), document, ITokenConstants.SH_DO, "do");
 		checkToken(tokens.get(4), document, ITokenConstants.WORD, "ls");
 		checkToken(tokens.get(5), document, ITokenConstants.SEMI, ";");
-		checkToken(tokens.get(6), document, ITokenConstants.SH_DONE,
-				"done");
+		checkToken(tokens.get(6), document, ITokenConstants.SH_DONE, "done");
 		checkToken(tokens.get(7), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testShellTokens2() {
 		// don't misread partial tokens
@@ -145,11 +146,10 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(2, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"while_stuff");
-		checkToken(tokens.get(1), document, ITokenConstants.WORD,
-				"incase");
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "while_stuff");
+		checkToken(tokens.get(1), document, ITokenConstants.WORD, "incase");
 	}
+
 	@Test
 	public void testShellTokens3() {
 		// don't interpret m4 strings in shell mode
@@ -160,6 +160,7 @@ public class TestTokenizer {
 		assertEquals(1, tokens.size());
 		checkToken(tokens.get(0), document, ITokenConstants.SH_STRING_BACKTICK, "foo'", 5);
 	}
+
 	@Test
 	public void testShellTokens4() {
 		String text = "echo $if $((foo)) $\n";
@@ -181,6 +182,7 @@ public class TestTokenizer {
 		checkToken(tokens.get(10), document, ITokenConstants.EOL, "\n");
 
 	}
+
 	@Test
 	public void testShellTokens5() {
 		String text = "while do select for until done\n";
@@ -197,6 +199,7 @@ public class TestTokenizer {
 		checkToken(tokens.get(6), document, ITokenConstants.EOL, "\n");
 
 	}
+
 	@Test
 	public void testShellComments() {
 		// comments are stripped and ignored in the shell mode
@@ -205,10 +208,10 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(2, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.SH_FOR,
-				"for");
+		checkToken(tokens.get(0), document, ITokenConstants.SH_FOR, "for");
 		checkToken(tokens.get(1), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testShellComments2() {
 		// comments are stripped and ignored in the shell mode
@@ -221,6 +224,7 @@ public class TestTokenizer {
 		checkToken(tokens.get(1), document, ITokenConstants.EOL, "\n");
 		checkToken(tokens.get(2), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4Tokens0() {
 		String text = "while_stuff incase";
@@ -228,56 +232,49 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(document, true);
 		checkNoErrors();
 		assertEquals(2, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"while_stuff");
-		checkToken(tokens.get(1), document, ITokenConstants.WORD,
-				"incase");
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "while_stuff");
+		checkToken(tokens.get(1), document, ITokenConstants.WORD, "incase");
 	}
+
 	@Test
 	public void testShellStrings() {
-		String QUOTED = 
-			"ls -la \"*.c\"";
+		String QUOTED = "ls -la \"*.c\"";
 		String text = "echo `" + QUOTED + "`\n";
 		IDocument document = createDocument(text);
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(3, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"echo");
-		checkToken(tokens.get(1), document, ITokenConstants.SH_STRING_BACKTICK,
-				QUOTED, QUOTED.length() + 2);
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "echo");
+		checkToken(tokens.get(1), document, ITokenConstants.SH_STRING_BACKTICK, QUOTED, QUOTED.length() + 2);
 		checkToken(tokens.get(2), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testShellStrings2() {
-		String QUOTED = 
-			"ls -la 'space file'";
+		String QUOTED = "ls -la 'space file'";
 		String text = "echo \"" + QUOTED + "\"\n";
 		IDocument document = createDocument(text);
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(3, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"echo");
-		checkToken(tokens.get(1), document, ITokenConstants.SH_STRING_DOUBLE,
-				QUOTED, QUOTED.length() + 2);
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "echo");
+		checkToken(tokens.get(1), document, ITokenConstants.SH_STRING_DOUBLE, QUOTED, QUOTED.length() + 2);
 		checkToken(tokens.get(2), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testShellStrings3() {
-		String QUOTED = 
-			"echo \"*.c\" | sed s/[a-z]/[A-Z]/g";
+		String QUOTED = "echo \"*.c\" | sed s/[a-z]/[A-Z]/g";
 		String text = "echo '" + QUOTED + "'\n";
 		IDocument document = createDocument(text);
 		List<Token> tokens = tokenize(document, false);
 		checkNoErrors();
 		assertEquals(3, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"echo");
-		checkToken(tokens.get(1), document, ITokenConstants.SH_STRING_SINGLE,
-				QUOTED, QUOTED.length() + 2);
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "echo");
+		checkToken(tokens.get(1), document, ITokenConstants.SH_STRING_SINGLE, QUOTED, QUOTED.length() + 2);
 		checkToken(tokens.get(2), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4Tokens1() {
 		String text = "define(`hi\', `HI\')\n";
@@ -285,18 +282,16 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(document, true);
 		checkNoErrors();
 		assertEquals(7, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"define");
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "define");
 		checkToken(tokens.get(1), document, ITokenConstants.LPAREN, "(");
 		// strings are unquoted in token text
-		checkToken(tokens.get(2), document, ITokenConstants.M4_STRING,
-				"hi", 4);
+		checkToken(tokens.get(2), document, ITokenConstants.M4_STRING, "hi", 4);
 		checkToken(tokens.get(3), document, ITokenConstants.COMMA, ",");
-		checkToken(tokens.get(4), document, ITokenConstants.M4_STRING,
-				"HI", 4);
+		checkToken(tokens.get(4), document, ITokenConstants.M4_STRING, "HI", 4);
 		checkToken(tokens.get(5), document, ITokenConstants.RPAREN, ")");
 		checkToken(tokens.get(6), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4Comments() {
 		String text = "dnl # comment\n";
@@ -305,9 +300,9 @@ public class TestTokenizer {
 		checkNoErrors();
 		assertEquals(2, tokens.size());
 		checkToken(tokens.get(0), document, ITokenConstants.WORD, "dnl");
-		checkToken(tokens.get(1), document, ITokenConstants.M4_COMMENT,
-				"# comment\n");
+		checkToken(tokens.get(1), document, ITokenConstants.M4_COMMENT, "# comment\n");
 	}
+
 	@Test
 	public void testM4Comments2() {
 		String text = "dnl /* word(`quoted')\n" + "*/\n";
@@ -319,10 +314,10 @@ public class TestTokenizer {
 		List<Token> tokens = tokenize(tokenizer);
 		assertEquals(3, tokens.size());
 		checkToken(tokens.get(0), document, ITokenConstants.WORD, "dnl");
-		checkToken(tokens.get(1), document, ITokenConstants.M4_COMMENT,
-				"/* word(`quoted')\n*/");
+		checkToken(tokens.get(1), document, ITokenConstants.M4_COMMENT, "/* word(`quoted')\n*/");
 		checkToken(tokens.get(2), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4Strings1() {
 		// double quotes only removes one level of quotes
@@ -333,10 +328,10 @@ public class TestTokenizer {
 
 		List<Token> tokens = tokenize(tokenizer);
 		assertEquals(2, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.M4_STRING,
-				"`double'", 8 + 1 + 1);
+		checkToken(tokens.get(0), document, ITokenConstants.M4_STRING, "`double'", 8 + 1 + 1);
 		checkToken(tokens.get(1), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4Strings2() {
 		String text = "myword(!!boundary==)\n";
@@ -347,14 +342,13 @@ public class TestTokenizer {
 
 		List<Token> tokens = tokenize(tokenizer);
 		assertEquals(5, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"myword");
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "myword");
 		checkToken(tokens.get(1), document, ITokenConstants.LPAREN, "(");
-		checkToken(tokens.get(2), document, ITokenConstants.M4_STRING,
-				"boundary", 8 + 2 + 2);
+		checkToken(tokens.get(2), document, ITokenConstants.M4_STRING, "boundary", 8 + 2 + 2);
 		checkToken(tokens.get(3), document, ITokenConstants.RPAREN, ")");
 		checkToken(tokens.get(4), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4Tokens2() {
 		// dollar is not seen in m4 mode (only important when expanding)
@@ -365,8 +359,7 @@ public class TestTokenizer {
 
 		List<Token> tokens = tokenize(tokenizer);
 		assertEquals(8, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.WORD,
-				"define");
+		checkToken(tokens.get(0), document, ITokenConstants.WORD, "define");
 		checkToken(tokens.get(1), document, ITokenConstants.LPAREN, "(");
 		checkToken(tokens.get(2), document, ITokenConstants.WORD, "foo");
 		checkToken(tokens.get(3), document, ITokenConstants.COMMA, ",");
@@ -375,21 +368,22 @@ public class TestTokenizer {
 		checkToken(tokens.get(6), document, ITokenConstants.RPAREN, ")");
 		checkToken(tokens.get(7), document, ITokenConstants.EOL, "\n");
 	}
+
 	@Test
 	public void testM4QuoteNesting() {
 		String quote = "this is `nested\'!";
-		String text = "`" + quote +"'\n";
+		String text = "`" + quote + "'\n";
 		IDocument document = createDocument(text);
 		AutoconfTokenizer tokenizer = createTokenizer(document);
 		tokenizer.setM4Context(true);
 
 		List<Token> tokens = tokenize(tokenizer);
 		assertEquals(2, tokens.size());
-		checkToken(tokens.get(0), document, ITokenConstants.M4_STRING,
-				quote, quote.length() + 2);
+		checkToken(tokens.get(0), document, ITokenConstants.M4_STRING, quote, quote.length() + 2);
 		checkToken(tokens.get(1), document, ITokenConstants.EOL, "\n");
-		
+
 	}
+
 	@Test
 	public void testMixedContext() {
 		String text = "AM_INIT([arg])if true\n";
@@ -441,18 +435,17 @@ public class TestTokenizer {
 			fail(exception.toString());
 		});
 	}
-	
+
 	private void checkToken(Token token, IDocument document, int type) {
 		assertEquals(type, token.getType());
 		assertSame(document, token.getDocument());
 		assertTrue(token.getOffset() >= 0);
 		assertTrue(token.getType() == ITokenConstants.EOF || token.getLength() > 0);
-		assertEquals(document.get().substring(token.getOffset(),
-				token.getOffset() + token.getLength()), token.getText());
+		assertEquals(document.get().substring(token.getOffset(), token.getOffset() + token.getLength()),
+				token.getText());
 	}
 
-	private void checkToken(Token token, IDocument document, int type,
-			String text) {
+	private void checkToken(Token token, IDocument document, int type, String text) {
 		assertEquals(type, token.getType());
 		assertSame(document, token.getDocument());
 		assertTrue(token.getOffset() >= 0);
@@ -460,8 +453,7 @@ public class TestTokenizer {
 		assertEquals(text.length(), token.getLength());
 	}
 
-	private void checkToken(Token token, IDocument document, int type,
-			String text, int length) {
+	private void checkToken(Token token, IDocument document, int type, String text, int length) {
 		assertEquals(type, token.getType());
 		assertSame(document, token.getDocument());
 		assertTrue(token.getOffset() >= 0);

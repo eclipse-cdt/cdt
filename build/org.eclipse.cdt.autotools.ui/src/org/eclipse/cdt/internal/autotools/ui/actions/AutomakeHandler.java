@@ -47,8 +47,7 @@ public class AutomakeHandler extends AbstractAutotoolsHandler {
 		TwoInputDialog optionDialog = new TwoInputDialog(activeShell, cwd,
 				InvokeMessages.getString("InvokeAutomakeAction.windowTitle.options"), //$NON-NLS-1$
 				InvokeMessages.getString("InvokeAutomakeAction.message.options.otherOptions"), //$NON-NLS-1$
-				InvokeMessages
-						.getString("InvokeAutomakeAction.message.options.makeTargets"), //$NON-NLS-1$
+				InvokeMessages.getString("InvokeAutomakeAction.message.options.makeTargets"), //$NON-NLS-1$
 				DEFAULT_OPTION, null);
 
 		optionDialog.open();

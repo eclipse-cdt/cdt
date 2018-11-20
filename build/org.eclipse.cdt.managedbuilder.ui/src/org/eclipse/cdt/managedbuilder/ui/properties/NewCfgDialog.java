@@ -107,8 +107,9 @@ public class NewCfgDialog implements INewCfgDialog {
 	private class LocalDialog extends Dialog {
 		LocalDialog(Shell parentShell) {
 			super(parentShell);
-			setShellStyle(getShellStyle()|SWT.RESIZE);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
 		}
+
 		/* (non-Javadoc)
 		 * Method declared on Dialog. Cache the name and base config selections.
 		 * We don't have to worry that the index or name is wrong because we
@@ -212,24 +213,24 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			});
 
-//			 Add a label and a text widget for Configuration's description
-	        final Label descriptionLabel = new Label(group1, SWT.LEFT);
-	        descriptionLabel.setFont(parent.getFont());
-	        descriptionLabel.setText(Messages.NewConfiguration_label_description);
+			//			 Add a label and a text widget for Configuration's description
+			final Label descriptionLabel = new Label(group1, SWT.LEFT);
+			descriptionLabel.setFont(parent.getFont());
+			descriptionLabel.setText(Messages.NewConfiguration_label_description);
 
-	        gd = new GridData(GridData.FILL_HORIZONTAL);
-	        gd.horizontalSpan = 1;
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
 			gd.grabExcessHorizontalSpace = false;
-	        descriptionLabel.setLayoutData(gd);
-	        configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
-	        configDescription.setFont(group1.getFont());
+			descriptionLabel.setLayoutData(gd);
+			configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
+			configDescription.setFont(group1.getFont());
 			configDescription.setText(newDescription);
 			configDescription.setFocus();
 
-	        gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-	        gd.horizontalSpan = 2;
-	        gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-	        configDescription.setLayoutData(gd);
+			gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+			gd.horizontalSpan = 2;
+			gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+			configDescription.setLayoutData(gd);
 
 			final Group group = new Group(composite, SWT.NONE);
 			group.setFont(composite.getFont());
@@ -293,7 +294,7 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			});
 
-			if(extCfgs.length == 0)
+			if (extCfgs.length == 0)
 				b_cloneFromExtension.setEnabled(false);
 
 			/* import */
@@ -367,15 +368,15 @@ public class NewCfgDialog implements INewCfgDialog {
 			String s = null;
 			String currentName = configName.getText();
 			// Trim trailing whitespace
-			while (currentName.length() > 0 && Character.isWhitespace(currentName.charAt(currentName.length()-1))) {
-				currentName = currentName.substring(0, currentName.length()-1);
+			while (currentName.length() > 0 && Character.isWhitespace(currentName.charAt(currentName.length() - 1))) {
+				currentName = currentName.substring(0, currentName.length() - 1);
 			}
 			// Make sure that the name is at least one character in length
 			if (currentName.length() == 0) {
 				// No error message, but cannot select OK
-				s = "";	//$NON-NLS-1$
+				s = ""; //$NON-NLS-1$
 			} else if (cfgds.length == 0) {
-				s = "";	//$NON-NLS-1$
+				s = ""; //$NON-NLS-1$
 				// Make sure the name is not a duplicate
 			} else if (isDuplicateName(currentName)) {
 				s = NLS.bind(Messages.NewConfiguration_error_duplicateName, currentName);
@@ -384,20 +385,25 @@ public class NewCfgDialog implements INewCfgDialog {
 			} else if (!validateName(currentName)) {
 				s = Messages.NewConfiguration_error_invalidName;
 			}
-			if (statusLabel == null) return;
+			if (statusLabel == null)
+				return;
 			Button b = getButton(IDialogConstants.OK_ID);
 			if (s != null) {
 				statusLabel.setText(s);
 				statusLabel.setVisible(true);
-				if (b != null) b.setEnabled(false);
+				if (b != null)
+					b.setEnabled(false);
 			} else {
 				statusLabel.setVisible(false);
-				if (b != null) b.setEnabled(true);
+				if (b != null)
+					b.setEnabled(true);
 			}
 			if (b_importFromOtherProject.getSelection() && importSelector.getSelectionIndex() == 0)
-				if (b != null) b.setEnabled(false);
+				if (b != null)
+					b.setEnabled(false);
 			if (b_importPredefined.getSelection() && importDefSelector.getSelectionIndex() == 0)
-				if (b != null) b.setEnabled(false);
+				if (b != null)
+					b.setEnabled(false);
 
 			cloneConfigSelector.setEnabled(b_cloneFromProject.getSelection());
 			realConfigSelector.setEnabled(b_cloneFromExtension.getSelection());
@@ -408,7 +414,8 @@ public class NewCfgDialog implements INewCfgDialog {
 
 	@Override
 	public int open() {
-		if (parentShell == null) return 1;
+		if (parentShell == null)
+			return 1;
 		LocalDialog dlg = new LocalDialog(parentShell);
 		return dlg.open();
 	}
@@ -434,10 +441,11 @@ public class NewCfgDialog implements INewCfgDialog {
 		for (int i = 0; i < descs.length; ++i) {
 			cfgds[i] = ManagedBuildManager.getConfigurationForDescription(descs[i]);
 			IConfiguration cfg = cfgds[i];
-			for(; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent()) {}
+			for (; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent()) {
+			}
 			if (cfg != null) {
 				IProjectType pType = cfg.getProjectType();
-				if(pType != null){
+				if (pType != null) {
 					IConfiguration[] cfs = pType.getConfigurations();
 					for (IConfiguration c : cfs) {
 						if (c != null && !lst.contains(c))
@@ -454,16 +462,15 @@ public class NewCfgDialog implements INewCfgDialog {
 		title = _title;
 	}
 
-
-	private String [] getConfigNamesAndDescriptions(IConfiguration[] arr, boolean check) {
-		String [] names = new String[arr.length];
+	private String[] getConfigNamesAndDescriptions(IConfiguration[] arr, boolean check) {
+		String[] names = new String[arr.length];
 		for (int i = 0; i < arr.length; ++i)
 			names[i] = getNameAndDescription(arr[i]);
 
 		if (check) {
 			boolean doubles = false;
-			for (int i=0; i<names.length; i++) {
-				for (int j=0; j<names.length; j++) {
+			for (int i = 0; i < names.length; i++) {
+				for (int j = 0; j < names.length; j++) {
 					if (i != j && names[i].equals(names[j])) {
 						doubles = true;
 						break;
@@ -471,7 +478,7 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			}
 			if (doubles) {
-				for (int i=0; i<names.length; i++) {
+				for (int i = 0; i < names.length; i++) {
 					IToolChain tc = arr[i].getToolChain();
 					String s = (tc == null) ? NULL : tc.getName();
 					names[i] = names[i] + " : " + s; //$NON-NLS-1$
@@ -483,11 +490,12 @@ public class NewCfgDialog implements INewCfgDialog {
 
 	private String getNameAndDescription(IConfiguration cfg) {
 		String name = cfg.getName();
-		if (name == null) name = NULL;
-		if ( (cfg.getDescription() == null) || cfg.getDescription().isEmpty())
+		if (name == null)
+			name = NULL;
+		if ((cfg.getDescription() == null) || cfg.getDescription().isEmpty())
 			return name;
 		else
-			return name + "( " + cfg.getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$
+			return name + "( " + cfg.getDescription() + " )"; //$NON-NLS-1$	//$NON-NLS-2$
 	}
 
 	protected boolean isDuplicateName(String newName) {
@@ -550,20 +558,22 @@ public class NewCfgDialog implements INewCfgDialog {
 	private void newConfiguration() {
 		String id = ManagedBuildManager.calculateChildId(parentConfig.getId(), null);
 		IManagedProject imp = ManagedBuildManager.getBuildInfo(des.getProject()).getManagedProject();
-		if (imp == null || !(imp instanceof ManagedProject)) return;
+		if (imp == null || !(imp instanceof ManagedProject))
+			return;
 		ManagedProject mp = (ManagedProject) imp;
 		try {
 			ICConfigurationDescription cfgDescription = null;
-			Configuration cfg = new Configuration(mp, (Configuration)parentConfig, id, false, true);
+			Configuration cfg = new Configuration(mp, (Configuration) parentConfig, id, false, true);
 			if (b_cloneFromProject.getSelection()) {
 				ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
 				cfgDescription = des.createConfiguration(id, newName, base);
 				cfgDescription.setDescription(newDescription);
 			} else if (b_importFromOtherProject.getSelection()) {
 				IResource owner = parentConfig.getOwner();
-				if (owner!=null) {
+				if (owner != null) {
 					// need writable cfg description for cloning
-					ICProjectDescription prjDesOther = CCorePlugin.getDefault().getProjectDescription(owner.getProject(), true);
+					ICProjectDescription prjDesOther = CCorePlugin.getDefault()
+							.getProjectDescription(owner.getProject(), true);
 					ICConfigurationDescription base = prjDesOther.getConfigurationByName(parentConfig.getName());
 					if (base != null) {
 						cfgDescription = des.createConfiguration(id, newName, base);
@@ -581,8 +591,10 @@ public class NewCfgDialog implements INewCfgDialog {
 					if (defaultIds == null) {
 						defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(cfgDescription);
 					}
-					((ILanguageSettingsProvidersKeeper) cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
-					List<ILanguageSettingsProvider> providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
+					((ILanguageSettingsProvidersKeeper) cfgDescription)
+							.setDefaultLanguageSettingsProvidersIds(defaultIds);
+					List<ILanguageSettingsProvider> providers = LanguageSettingsManager
+							.createLanguageSettingsProviders(defaultIds);
 					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 				}
 			}
@@ -599,9 +611,8 @@ public class NewCfgDialog implements INewCfgDialog {
 				cfg.exportArtifactInfo();
 			}
 			if (cfgDescription == null) {
-				throw new CoreException(new Status(IStatus.ERROR,
-					"org.eclipse.cdt.managedbuilder.ui", -1, //$NON-NLS-1$
-					Messages.NewCfgDialog_2, null));
+				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.cdt.managedbuilder.ui", -1, //$NON-NLS-1$
+						Messages.NewCfgDialog_2, null));
 			}
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);
@@ -639,14 +650,15 @@ public class NewCfgDialog implements INewCfgDialog {
 		for (IBuildPropertyValue v : bpt.getSupportedValues()) {
 			String id = v.getId();
 			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(ART, id, false);
-			if (tcs == null || tcs.length == 0) continue;
+			if (tcs == null || tcs.length == 0)
+				continue;
 			for (IToolChain tc : tcs) {
-				if (tc.isSystemObject() || tc.isAbstract() || ! tc.isSupported())
+				if (tc.isSystemObject() || tc.isAbstract() || !tc.isSupported())
 					continue;
 				// prefix: "X" shown if toolchain is not supported by platform.
 				String pre = ManagedBuildManager.isPlatformOk(tc) ? "  " : "X "; //$NON-NLS-1$ //$NON-NLS-2$
 				for (IConfiguration c : ManagedBuildManager.getExtensionConfigurations(tc, ART, id)) {
-					if (c.isSystemObject() || ! c.isSupported())
+					if (c.isSystemObject() || !c.isSupported())
 						continue;
 					importedDef.put(pre + v.getName() + SEPARATOR + tc.getName() + SEPARATOR + c.getName(), c);
 				}

@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildDescriptionFactory {
-	
+
 	/**
 	 * creates the build description
 	 * @param cfg the build configuration for which the description is to be
@@ -47,10 +47,8 @@ public interface IBuildDescriptionFactory {
 	 * @return IBuildDescription
 	 * @throws CoreException if the build description creation fails
 	 */
-	IBuildDescription createBuildDescription(IConfiguration cfg,
-			IResourceDelta delta,
-			int flags) throws CoreException;
-	
+	IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException;
+
 	/**
 	 * 
 	 * returns the supported methods of generation the build description

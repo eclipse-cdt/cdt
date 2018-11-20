@@ -26,32 +26,33 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * @since 2.0
  */
 public class ViewerRequestMonitor extends RequestMonitor {
-    
-    private final IViewerUpdate fUpdate;
-    public ViewerRequestMonitor(Executor executor, IViewerUpdate update) {
-        super(executor, null);
-        fUpdate = update;
-    }
-    
-    @Override
-    public synchronized boolean isCanceled() { 
-        return fUpdate.isCanceled() || super.isCanceled();
-    }
-    
-    @Override
-    protected void handleSuccess() {
-        fUpdate.done();
-    }
 
-    @Override
-    protected void handleErrorOrWarning() {
-        fUpdate.setStatus(getStatus());
-        fUpdate.done();
-    }
-    
-    @Override
-    protected void handleCancel() {
-        fUpdate.setStatus(getStatus());
-        fUpdate.done();
-    }
+	private final IViewerUpdate fUpdate;
+
+	public ViewerRequestMonitor(Executor executor, IViewerUpdate update) {
+		super(executor, null);
+		fUpdate = update;
+	}
+
+	@Override
+	public synchronized boolean isCanceled() {
+		return fUpdate.isCanceled() || super.isCanceled();
+	}
+
+	@Override
+	protected void handleSuccess() {
+		fUpdate.done();
+	}
+
+	@Override
+	protected void handleErrorOrWarning() {
+		fUpdate.setStatus(getStatus());
+		fUpdate.done();
+	}
+
+	@Override
+	protected void handleCancel() {
+		fUpdate.setStatus(getStatus());
+		fUpdate.done();
+	}
 }

@@ -45,8 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Var
 /**
  * Models expression variants for the ambiguity of a template id.
  */
-public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
-		implements IASTAmbiguousExpression,	ICPPASTExpression {
+public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTAmbiguousExpression, ICPPASTExpression {
 	private final BinaryOperator fEndOperator;
 	private final BranchPoint fVariants;
 	private IASTNode[] fNodes;
@@ -54,23 +53,23 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 
 	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator endOperator,
 			BranchPoint variants) {
-		fParser= parser;
-		fEndOperator= endOperator;
-		fVariants= variants;
+		fParser = parser;
+		fEndOperator = endOperator;
+		fVariants = variants;
 	}
 
 	@Override
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
-		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
-		IASTNode nodeToReplace= this;
+		final IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+		IASTNode nodeToReplace = this;
 
 		// Try all variants and under the ones with correct template-ids select the one with
 		// the most template-ids.
-		int minOffset= -1;
-		for (BranchPoint v= fVariants; v != null; v= v.getNext()) {
-			Variant selected= null;
-			int bestCount= 0;
-			for (Variant q= v.getFirstVariant(); q != null ; q= q.getNext()) {
+		int minOffset = -1;
+		for (BranchPoint v = fVariants; v != null; v = v.getNext()) {
+			Variant selected = null;
+			int bestCount = 0;
+			for (Variant q = v.getFirstVariant(); q != null; q = q.getNext()) {
 				final IASTName[] templateNames = q.getTemplateNames();
 				if (templateNames.length > bestCount) {
 					// Don't check branch-points inside of a selected variant.
@@ -80,19 +79,19 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 
 					// Setup the AST to use the alternative.
 					owner.replace(nodeToReplace, expression);
-					nodeToReplace= resolveNestedAmbiguities(expression, resolver);
+					nodeToReplace = resolveNestedAmbiguities(expression, resolver);
 
-					int count= checkNames(templateNames);
+					int count = checkNames(templateNames);
 					if (count > bestCount) {
-						selected= q;
-						bestCount= count;
+						selected = q;
+						bestCount = count;
 					}
 				}
 			}
 
 			// Adjust the operator sequence.
 			if (selected != null) {
-				minOffset= selected.getRightOffset();
+				minOffset = selected.getRightOffset();
 				BinaryOperator targetOp = selected.getTargetOperator();
 				if (targetOp != null) {
 					targetOp.exchange(selected.getExpression());
@@ -114,7 +113,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 	}
 
 	private int checkNames(final IASTName[] templateNames) {
-		int count= 0;
+		int count = 0;
 		for (IASTName templateName : templateNames) {
 			if (templateName.getTranslationUnit() != null) {
 				// It's sufficient to perform the first phase of binding resolution here,
@@ -122,7 +121,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 				// The second phase of binding resolution, when performed for an incorrect
 				// variant, can cause incorrect bindings to be cached in places where they
 				// are hard to clear.
-				IBinding b= templateName.resolvePreBinding();
+				IBinding b = templateName.resolvePreBinding();
 				if (b instanceof IProblemBinding) {
 					if (!containsFunctionTemplate(((IProblemBinding) b).getCandidateBindings()))
 						return -1;
@@ -141,8 +140,8 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 
 	private boolean containsFunctionTemplate(IBinding[] candidateBindings) {
 		for (IBinding cand : candidateBindings) {
-			if (cand instanceof ICPPFunctionTemplate ||
-					(cand instanceof ICPPFunction && cand instanceof ICPPSpecialization)) {
+			if (cand instanceof ICPPFunctionTemplate
+					|| (cand instanceof ICPPFunction && cand instanceof ICPPSpecialization)) {
 				return true;
 			}
 		}
@@ -152,14 +151,14 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 	@Override
 	public IASTNode[] getNodes() {
 		if (fNodes == null) {
-			List<IASTNode> nl= new ArrayList<>();
-			BinaryOperator op= fEndOperator;
+			List<IASTNode> nl = new ArrayList<>();
+			BinaryOperator op = fEndOperator;
 			while (op != null) {
 				nl.add(op.getExpression());
-				op= op.getNext();
+				op = op.getNext();
 			}
 			Collections.reverse(nl);
-			fNodes= nl.toArray(new IASTNode[nl.size()]);
+			fNodes = nl.toArray(new IASTNode[nl.size()]);
 		}
 		return fNodes;
 	}

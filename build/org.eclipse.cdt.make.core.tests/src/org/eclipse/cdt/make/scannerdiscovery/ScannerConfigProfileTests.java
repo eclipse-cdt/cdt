@@ -37,7 +37,7 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath)null, MakeCorePlugin.MAKE_PROJECT_ID);
+		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath) null, MakeCorePlugin.MAKE_PROJECT_ID);
 		fCFile = fCProject.getProject().getFile("main.c");
 		if (!fCFile.exists()) {
 			fCFile.create(new ByteArrayInputStream(" \n".getBytes()), false, new NullProgressMonitor());
@@ -55,7 +55,8 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 	 */
 	public void testBasicScannerConfigProfile() throws CoreException {
 		// Add a scanner config profile to the project
-		IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fCProject, ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID);
+		IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fCProject,
+				ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID);
 		// Save
 		scProjInfo.save();
 
@@ -78,7 +79,8 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 		fCProject.close(new NullProgressMonitor());
 		fCProject.open(new NullProgressMonitor());
 
-		scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fCProject, ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
+		scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fCProject,
+				ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
 		// Check that the previously set items have persisted...
 		Assert.isTrue(autoDiscovery != scProjInfo.isAutoDiscoveryEnabled());
 		Assert.isTrue(problemReport != scProjInfo.isProblemReportingEnabled());

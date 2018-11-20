@@ -19,7 +19,7 @@ package org.eclipse.cdt.utils.debug;
  *
  */
 public final class DebugVisibility {
-	
+
 	/* What is it ?? .  */
 	public final static DebugVisibility UNKNOWN = new DebugVisibility(0);
 	/* public field  */
@@ -28,8 +28,9 @@ public final class DebugVisibility {
 	public final static DebugVisibility PROTECTED = new DebugVisibility(2);
 	/* private field.  */
 	public final static DebugVisibility PRIVATE = new DebugVisibility(3);
- 
+
 	private int id;
+
 	/**
 	 * 
 	 */
@@ -40,7 +41,7 @@ public final class DebugVisibility {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DebugVisibility) {
-			DebugVisibility kind = (DebugVisibility)obj;
+			DebugVisibility kind = (DebugVisibility) obj;
 			return kind.id == id;
 		}
 		return super.equals(obj);

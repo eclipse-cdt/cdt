@@ -88,7 +88,7 @@ public class SoundAction extends AbstractBreakpointAction {
 			}
 
 		}
-		
+
 		if (soundFile.exists()) {
 			new SoundPlayer().start();
 		}
@@ -102,8 +102,10 @@ public class SoundAction extends AbstractBreakpointAction {
 	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		if (soundFile == null || !soundFile.exists()) {
-			String errorMsg = MessageFormat.format(Messages.getString("SoundAction.error.0"), new Object[] {getSummary()}); //$NON-NLS-1$
-			return new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
+			String errorMsg = MessageFormat.format(Messages.getString("SoundAction.error.0"), //$NON-NLS-1$
+					new Object[] { getSummary() });
+			return new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+					ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
 		}
 
 		playSoundFile(soundFile);

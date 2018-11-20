@@ -75,17 +75,18 @@ public abstract class SharedASTJob extends Job {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				return SharedASTJob.this.runOnAST(lang, ast);
-			}});
+			}
+		});
 	}
 
-    @Override
+	@Override
 	public boolean shouldSchedule() {
-        return super.shouldSchedule() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
-    }
+		return super.shouldSchedule() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
+	}
 
-    @Override
+	@Override
 	public boolean shouldRun() {
-        return super.shouldRun() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
-    }
+		return super.shouldRun() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
+	}
 
 }

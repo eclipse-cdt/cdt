@@ -26,7 +26,7 @@ public interface IProxyCache {
 
 	CDataProxy getCachedProxy(CDataObject data);
 
-//	Object addCachedProxy(CDataProxy proxy);
+	//	Object addCachedProxy(CDataProxy proxy);
 
 	void addCachedProxy(CDataProxy proxy);
 
@@ -34,12 +34,12 @@ public interface IProxyCache {
 
 	void removeCachedProxy(String id);
 
-//	void clearInvalidCachedProxies();
-	
-	void clear();
-	
-//	Map reuseProxies(List dataList, Map freeProxyMap);
+	//	void clearInvalidCachedProxies();
 
-//	void cacheScope(IDataScope scope);
-//	boolean presentsScope(IDataScope scope);
+	void clear();
+
+	//	Map reuseProxies(List dataList, Map freeProxyMap);
+
+	//	void cacheScope(IDataScope scope);
+	//	boolean presentsScope(IDataScope scope);
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
 public class EmptyFilesProvider extends InternalFileContentProvider {
-	final private static EmptyFilesProvider INSTANCE= new EmptyFilesProvider();
+	final private static EmptyFilesProvider INSTANCE = new EmptyFilesProvider();
 
 	public static InternalFileContentProvider getInstance() {
 		return INSTANCE;
@@ -30,11 +30,10 @@ public class EmptyFilesProvider extends InternalFileContentProvider {
 	}
 
 	@Override
-	public InternalFileContent getContentForInclusion(String path, 
-			IMacroDictionary macroDictionary) {
+	public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
-		
+
 		return (InternalFileContent) FileContent.create(path, CharArrayUtils.EMPTY);
 	}
 

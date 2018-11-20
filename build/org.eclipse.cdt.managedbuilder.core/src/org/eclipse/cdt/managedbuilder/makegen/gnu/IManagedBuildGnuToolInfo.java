@@ -23,7 +23,7 @@ import java.util.Vector;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IManagedBuildGnuToolInfo {
-	public final String DOT = ".";	//$NON-NLS-1$
+	public final String DOT = "."; //$NON-NLS-1$
 
 	/**
 	 * Returns <code>true</code> if the tool's inputs have been calculated, 
@@ -32,7 +32,7 @@ public interface IManagedBuildGnuToolInfo {
 	 * @return boolean 
 	 */
 	public boolean areInputsCalculated();
-	
+
 	/**
 	 * Returns the tool's inputs in command line format.  This will use
 	 * variables rather than actual file names as appropriate.
@@ -40,21 +40,21 @@ public interface IManagedBuildGnuToolInfo {
 	 *  @return Vector
 	 */
 	public Vector<String> getCommandInputs();
-	
+
 	/**
 	 * Returns the raw list of tool's input file names.
 	 * 
 	 *  @return Vector
 	 */
 	public Vector<String> getEnumeratedInputs();
-	
+
 	/**
 	 * Returns <code>true</code> if the tool's outputs have been calculated, 
 	 * else <code>false</code>.
 	 * 
 	 * @return boolean 
 	 */
-	public boolean areOutputsCalculated();  
+	public boolean areOutputsCalculated();
 
 	/**
 	 * Returns the tool's outputs in command line format.  This will use
@@ -63,28 +63,28 @@ public interface IManagedBuildGnuToolInfo {
 	 *  @return Vector
 	 */
 	public Vector<String> getCommandOutputs();
-	
+
 	/**
 	 * Returns the raw list of tool's primary output file names.
 	 * 
 	 *  @return Vector
 	 */
 	public Vector<String> getEnumeratedPrimaryOutputs();
-	
+
 	/**
 	 * Returns the raw list of tool's secondary output file names.
 	 * 
 	 *  @return Vector
 	 */
 	public Vector<String> getEnumeratedSecondaryOutputs();
-	
+
 	/**
 	 * Returns the raw list of tool's output variable names.
 	 * 
 	 *  @return Vector
 	 */
 	public Vector<String> getOutputVariables();
-	
+
 	/**
 	 * Returns <code>true</code> if the tool's dependencies have been calculated, 
 	 * else <code>false</code>.
@@ -92,7 +92,7 @@ public interface IManagedBuildGnuToolInfo {
 	 * @return boolean 
 	 */
 	public boolean areDependenciesCalculated();
-	
+
 	/**
 	 * Returns the tool's dependencies in command line format.  This will use
 	 * variables rather than actual file names as appropriate.
@@ -110,19 +110,19 @@ public interface IManagedBuildGnuToolInfo {
 	 *  @return Vector
 	 */
 	public Vector<String> getAdditionalTargets();
-	
+
 	/**
 	 * Returns the raw list of tool's input dependencies.
 	 * 
 	 *  @return Vector
 	 */
 	//public Vector<String> getEnumeratedDependencies();  
-	
+
 	/**
 	 * Returns <code>true</code> if this is the target tool 
 	 * else <code>false</code>.
 	 * 
 	 * @return boolean 
 	 */
-	public boolean isTargetTool();  
+	public boolean isTargetTool();
 }

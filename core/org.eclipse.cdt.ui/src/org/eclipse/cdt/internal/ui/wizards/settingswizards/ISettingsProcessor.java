@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 
-
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-
 
 /**
  * The exported XML file is divided into 'section' elements, each
@@ -42,15 +40,13 @@ public interface ISettingsProcessor {
 	 * on the wizard page.
 	 */
 	String getDisplayName();
-	
-	
+
 	/**
 	 * Return the image that will appear in the selection list
 	 * on the wizard page.
 	 */
 	Image getIcon();
-	
-	
+
 	/**
 	 * The name of the section in the XML file.
 	 * 
@@ -59,7 +55,6 @@ public interface ISettingsProcessor {
 	 */
 	String getSectionName();
 
-	
 	/**
 	 * Outputs a section of the XML file using the given SAX ContentHandler.
 	 * 
@@ -67,8 +62,7 @@ public interface ISettingsProcessor {
 	 * @throws SettingsImportExportException if the section could not be written
 	 */
 	void writeSectionXML(ICFolderDescription projectRoot, ContentHandler content) throws SettingsImportExportException;
-	
-	
+
 	/**
 	 * Passed part of the DOM tree that represents the section 
 	 * that is processed by this importer.

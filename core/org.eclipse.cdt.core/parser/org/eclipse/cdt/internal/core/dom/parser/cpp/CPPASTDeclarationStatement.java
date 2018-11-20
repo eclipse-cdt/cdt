@@ -30,9 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarationSta
  */
 public class CPPASTDeclarationStatement extends ASTNode
 		implements IASTDeclarationStatement, IASTAmbiguityParent, ICPPExecutionOwner {
-    private IASTDeclaration declaration;
+	private IASTDeclaration declaration;
 
-    public CPPASTDeclarationStatement() {
+	public CPPASTDeclarationStatement() {
 	}
 
 	public CPPASTDeclarationStatement(IASTDeclaration declaration) {
@@ -53,49 +53,56 @@ public class CPPASTDeclarationStatement extends ASTNode
 
 	@Override
 	public IASTDeclaration getDeclaration() {
-        return declaration;
-    }
+		return declaration;
+	}
 
-    @Override
+	@Override
 	public void setDeclaration(IASTDeclaration declaration) {
-        assertNotFrozen();
-        this.declaration = declaration;
-        if (declaration != null) {
+		assertNotFrozen();
+		this.declaration = declaration;
+		if (declaration != null) {
 			declaration.setParent(this);
 			declaration.setPropertyInParent(DECLARATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (declaration != null && !declaration.accept(action)) return false;
+		if (declaration != null && !declaration.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (declaration == child) {
-            other.setParent(child.getParent());
-            other.setPropertyInParent(child.getPropertyInParent());
-            declaration = (IASTDeclaration) other;
-        }
-    }
+		if (declaration == child) {
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+			declaration = (IASTDeclaration) other;
+		}
+	}
 
 	@Override
 	public IASTAttribute[] getAttributes() {
@@ -106,7 +113,7 @@ public class CPPASTDeclarationStatement extends ASTNode
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
 		// Declaration statements don't have attributes.
-    	throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

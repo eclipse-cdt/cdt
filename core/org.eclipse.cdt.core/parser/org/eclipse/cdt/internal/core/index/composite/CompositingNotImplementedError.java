@@ -20,7 +20,7 @@ public class CompositingNotImplementedError extends Error {
 		super();
 		printStackTrace();
 	}
-	
+
 	public CompositingNotImplementedError(String msg) {
 		super(msg);
 		printStackTrace();

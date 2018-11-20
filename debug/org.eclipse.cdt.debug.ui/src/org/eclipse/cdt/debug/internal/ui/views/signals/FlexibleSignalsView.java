@@ -51,7 +51,8 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 /**
  * A Signals view based on flexible hierarchy.
  */
-public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpdateListener, IDebugContextListener, IModelChangedListener {
+public class FlexibleSignalsView extends AbstractDebugView
+		implements IViewerUpdateListener, IDebugContextListener, IModelChangedListener {
 
 	private PresentationContext fPresentationContext;
 
@@ -65,7 +66,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 		@Override
 		public void viewerInputComplete(IViewerInputUpdate update) {
 			if (!update.isCanceled()) {
-			    viewerInputUpdateComplete(update);
+				viewerInputUpdateComplete(update);
 			}
 		}
 	};
@@ -92,31 +93,31 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 		}
 		return fModelPresentation;
 	}
-	
+
 	protected TreeModelViewer createTreeViewer(Composite parent) {
 		int style = getViewerStyle();
-		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), this, fModelPresentation); 
+		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), this, fModelPresentation);
 		final TreeModelViewer variablesViewer = new TreeModelViewer(parent, style, fPresentationContext);
-		
-		variablesViewer.getPresentationContext().addPropertyChangeListener(
-				new IPropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
-							IAction action = getAction("ShowTypeNames"); //$NON-NLS-1$
-							if (action != null) {
-								action.setEnabled(event.getNewValue() == null);
-							}
-						}
+
+		variablesViewer.getPresentationContext().addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
+					IAction action = getAction("ShowTypeNames"); //$NON-NLS-1$
+					if (action != null) {
+						action.setEnabled(event.getNewValue() == null);
 					}
-				});
-		
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
+				}
+			}
+		});
+
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
+				.addDebugContextListener(this);
 		return variablesViewer;
 	}
 
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
-	    setViewerInput(update.getInputElement());
+		setViewerInput(update.getInputElement());
 	}
 
 	/**
@@ -124,18 +125,18 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	 * @param context the object context
 	 */
 	protected void setViewerInput(Object context) {
-        Object current = getViewer().getInput();
-        
-        if (current == null && context == null) {
-            return;
-        }
+		Object current = getViewer().getInput();
 
-        if (current != null && current.equals(context)) {
-            return;
-        }
-        
-        showViewer();
-        getViewer().setInput(context);		
+		if (current == null && context == null) {
+			return;
+		}
+
+		if (current != null && current.equals(context)) {
+			return;
+		}
+
+		showViewer();
+		getViewer().setInput(context);
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	protected String getPresentationContextId() {
 		return ICDebugUIConstants.ID_SIGNALS_VIEW;
 	}
-	
+
 	/**
 	 * Returns the style bits for the viewer.
 	 * 
@@ -155,7 +156,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	protected int getViewerStyle() {
 		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION;
 	}
-	
+
 	@Override
 	protected void createActions() {
 	}
@@ -167,7 +168,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 
 	@Override
 	protected void fillContextMenu(IMenuManager menu) {
-		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		updateObjects();
 	}
 
@@ -180,11 +181,10 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	 */
 	@Override
 	public void viewerUpdatesBegin() {
-        IWorkbenchSiteProgressService progressService = 
-            getSite().getAdapter(IWorkbenchSiteProgressService.class);
-        if (progressService != null) {
-            progressService.incrementBusy();
-        }
+		IWorkbenchSiteProgressService progressService = getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if (progressService != null) {
+			progressService.incrementBusy();
+		}
 	}
 
 	/*
@@ -192,11 +192,10 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	 */
 	@Override
 	public void viewerUpdatesComplete() {
-        IWorkbenchSiteProgressService progressService = 
-            getSite().getAdapter(IWorkbenchSiteProgressService.class);
-        if (progressService != null) {
-            progressService.decrementBusy();
-        }       
+		IWorkbenchSiteProgressService progressService = getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if (progressService != null) {
+			progressService.decrementBusy();
+		}
 	}
 
 	/*
@@ -240,11 +239,11 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 			return;
 		}
 		if (selection instanceof IStructuredSelection) {
-			Object source = ((IStructuredSelection)selection).getFirstElement();
+			Object source = ((IStructuredSelection) selection).getFirstElement();
 			fInputService.resolveViewerInput(source);
 		}
 	}
-		
+
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
 	 */

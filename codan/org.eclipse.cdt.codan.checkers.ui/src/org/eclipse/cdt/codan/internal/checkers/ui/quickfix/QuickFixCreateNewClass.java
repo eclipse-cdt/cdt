@@ -71,7 +71,7 @@ public class QuickFixCreateNewClass extends AbstractCodanCMarkerResolution imple
 	public boolean isApplicable(IMarker marker) {
 		return getTranslationUnitViaEditorOrWorkspace(marker).map(tu -> {
 			try {
-				ILanguage language = tu.getLanguage(); 
+				ILanguage language = tu.getLanguage();
 				return language != null && language.getLinkageID() != ILinkage.C_LINKAGE_ID;
 			} catch (CoreException e) {
 				return true;

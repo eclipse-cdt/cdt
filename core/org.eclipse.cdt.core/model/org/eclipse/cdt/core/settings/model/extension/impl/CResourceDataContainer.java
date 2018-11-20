@@ -29,27 +29,27 @@ public class CResourceDataContainer {
 	private PathSettingsContainer fRcDataContainer;
 	private boolean fIncludeCurrent;
 
-	public CResourceDataContainer(PathSettingsContainer pathSettings, boolean includeCurrent){
+	public CResourceDataContainer(PathSettingsContainer pathSettings, boolean includeCurrent) {
 		fRcDataContainer = pathSettings;
 		fIncludeCurrent = includeCurrent;
 	}
 
-	public void changeCurrentPath(IPath path, boolean moveChildren){
+	public void changeCurrentPath(IPath path, boolean moveChildren) {
 		fRcDataContainer.setPath(path, moveChildren);
 	}
 
-	public IPath getCurrentPath(){
+	public IPath getCurrentPath() {
 		return fRcDataContainer.getPath();
 	}
 
-	public CResourceData getCurrentResourceData(){
-		return (CResourceData)fRcDataContainer.getValue();
+	public CResourceData getCurrentResourceData() {
+		return (CResourceData) fRcDataContainer.getValue();
 	}
 
 	public CResourceData getResourceData(IPath path, boolean exactPath) {
 		PathSettingsContainer cr = fRcDataContainer.getChildContainer(path, false, exactPath);
-		if(cr != null)
-			return (CResourceData)cr.getValue();
+		if (cr != null)
+			return (CResourceData) cr.getValue();
 		return null;
 	}
 
@@ -61,23 +61,23 @@ public class CResourceDataContainer {
 		return getResourceDatas(kind, CResourceData.class);
 	}
 
-	public CResourceData[] getResourceDatas(int kind, Class<CResourceData> clazz){
+	public CResourceData[] getResourceDatas(int kind, Class<CResourceData> clazz) {
 		List<CResourceData> list = getRcDataList(kind);
 
-		CResourceData datas[] = (CResourceData[])Array.newInstance(clazz, list.size());
+		CResourceData datas[] = (CResourceData[]) Array.newInstance(clazz, list.size());
 
 		return list.toArray(datas);
 	}
 
-	public List<CResourceData> getRcDataList(final int kind){
+	public List<CResourceData> getRcDataList(final int kind) {
 		final List<CResourceData> list = new ArrayList<CResourceData>();
-		fRcDataContainer.accept(new IPathSettingsContainerVisitor(){
+		fRcDataContainer.accept(new IPathSettingsContainerVisitor() {
 
 			@Override
 			public boolean visit(PathSettingsContainer container) {
-				if(fIncludeCurrent || container != fRcDataContainer){
-					CResourceData data = (CResourceData)container.getValue();
-					if((data.getType() & kind) == data.getType())
+				if (fIncludeCurrent || container != fRcDataContainer) {
+					CResourceData data = (CResourceData) container.getValue();
+					if ((data.getType() & kind) == data.getType())
 						list.add(data);
 				}
 				return true;
@@ -87,9 +87,9 @@ public class CResourceDataContainer {
 		return list;
 	}
 
-	public CResourceData getResourceData(IPath path, boolean exactPath, int kind){
+	public CResourceData getResourceData(IPath path, boolean exactPath, int kind) {
 		CResourceData data = getResourceData(path, exactPath);
-		if(data != null && (data.getType() & kind) == data.getType())
+		if (data != null && (data.getType() & kind) == data.getType())
 			return data;
 		return null;
 	}
@@ -98,16 +98,16 @@ public class CResourceDataContainer {
 		fRcDataContainer.removeChildContainer(path);
 	}
 
-	public void addResourceData(CResourceData data){
+	public void addResourceData(CResourceData data) {
 		PathSettingsContainer cr = fRcDataContainer.getChildContainer(data.getPath(), true, true);
 		cr.setValue(data);
 	}
 
-	public CFileData getFileData(IPath path){
-		return (CFileData)getResourceData(path, true, ICSettingBase.SETTING_FILE);
+	public CFileData getFileData(IPath path) {
+		return (CFileData) getResourceData(path, true, ICSettingBase.SETTING_FILE);
 	}
 
-	public CFolderData getFolderData(IPath path){
-		return (CFolderData)getResourceData(path, true, ICSettingBase.SETTING_FOLDER);
+	public CFolderData getFolderData(IPath path) {
+		return (CFolderData) getResourceData(path, true, ICSettingBase.SETTING_FOLDER);
 	}
 }

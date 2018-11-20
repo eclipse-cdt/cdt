@@ -27,9 +27,9 @@ import org.eclipse.cdt.utils.elf.Elf;
  * @author alain
  */
 public class DebugAddr2line {
-	
+
 	DebugSymsRequestor symreq;
-	
+
 	public DebugAddr2line(String file) throws IOException {
 		Elf elf = new Elf(file);
 		init(elf);
@@ -39,7 +39,7 @@ public class DebugAddr2line {
 	public DebugAddr2line(Elf elf) throws IOException {
 		init(elf);
 	}
-	
+
 	void init(Elf elf) throws IOException {
 		symreq = new DebugSymsRequestor();
 		Elf.Attribute attribute = elf.getAttributes();

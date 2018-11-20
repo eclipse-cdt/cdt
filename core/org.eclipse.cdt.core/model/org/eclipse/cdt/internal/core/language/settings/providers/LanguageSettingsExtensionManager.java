@@ -94,8 +94,7 @@ public class LanguageSettingsExtensionManager {
 			public int compare(ILanguageSettingsProvider pr1, ILanguageSettingsProvider pr2) {
 				return pr1.getName().compareTo(pr2.getName());
 			}
-		}
-);
+		});
 
 		fExtensionProviders.clear();
 		for (ILanguageSettingsProvider provider : providers) {
@@ -109,7 +108,8 @@ public class LanguageSettingsExtensionManager {
 	 * @param registry - extension registry
 	 * @param providers - resulting set of providers
 	 */
-	private static void loadProviderExtensions(IExtensionRegistry registry, Collection<ILanguageSettingsProvider> providers) {
+	private static void loadProviderExtensions(IExtensionRegistry registry,
+			Collection<ILanguageSettingsProvider> providers) {
 		providers.clear();
 		IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, PROVIDER_EXTENSION_SIMPLE_ID);
 		if (extension != null) {
@@ -133,7 +133,6 @@ public class LanguageSettingsExtensionManager {
 		}
 	}
 
-
 	private static String determineAttributeValue(IConfigurationElement ce, String attr) {
 		String value = ce.getAttribute(attr);
 		return value != null ? value : ""; //$NON-NLS-1$
@@ -150,15 +149,15 @@ public class LanguageSettingsExtensionManager {
 	private static ILanguageSettingsProvider createExecutableExtension(IConfigurationElement ce) throws CoreException {
 		String ceClass = ce.getAttribute(ATTR_CLASS);
 		ILanguageSettingsProvider provider = null;
-		if (ceClass==null || ceClass.trim().length()==0 || ceClass.equals(LanguageSettingsBaseProvider.class.getCanonicalName())) {
+		if (ceClass == null || ceClass.trim().length() == 0
+				|| ceClass.equals(LanguageSettingsBaseProvider.class.getCanonicalName())) {
 			provider = new LanguageSettingsBaseProvider();
 		} else {
-			provider = (ILanguageSettingsProvider)ce.createExecutableExtension(ATTR_CLASS);
+			provider = (ILanguageSettingsProvider) ce.createExecutableExtension(ATTR_CLASS);
 		}
 
 		return provider;
 	}
-
 
 	/**
 	 * Configure language settings provider with parameters defined in XML metadata.
@@ -191,18 +190,20 @@ public class LanguageSettingsExtensionManager {
 
 		for (IConfigurationElement ceEntry : ce.getChildren(ELEM_ENTRY)) {
 			try {
-				int entryKind = LanguageSettingEntriesSerializer.stringToKind(determineAttributeValue(ceEntry, ATTR_ENTRY_KIND));
+				int entryKind = LanguageSettingEntriesSerializer
+						.stringToKind(determineAttributeValue(ceEntry, ATTR_ENTRY_KIND));
 				String entryName = determineAttributeValue(ceEntry, ATTR_ENTRY_NAME);
 				String entryValue = determineAttributeValue(ceEntry, ATTR_ENTRY_VALUE);
 
 				int flags = 0;
 				for (IConfigurationElement ceFlags : ceEntry.getChildren(ELEM_ENTRY_FLAG)) {
-					int bitFlag = LanguageSettingEntriesSerializer.composeFlags(determineAttributeValue(ceFlags, ATTR_ENTRY_VALUE));
+					int bitFlag = LanguageSettingEntriesSerializer
+							.composeFlags(determineAttributeValue(ceFlags, ATTR_ENTRY_VALUE));
 					flags |= bitFlag;
 				}
 
-				ICLanguageSettingEntry entry = (ICLanguageSettingEntry) CDataUtil.createEntry(
-						entryKind, entryName, entryValue, null, flags);
+				ICLanguageSettingEntry entry = (ICLanguageSettingEntry) CDataUtil.createEntry(entryKind, entryName,
+						entryValue, null, flags);
 
 				if (entries == null) {
 					entries = new ArrayList<ICLanguageSettingEntry>();
@@ -267,7 +268,7 @@ public class LanguageSettingsExtensionManager {
 	 * @throws CoreException if not able to create a new instance.
 	 */
 	/*package*/ static ILanguageSettingsProvider instantiateProviderClass(String className) throws CoreException {
-		if (className==null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
+		if (className == null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
 			return new LanguageSettingsSerializableProvider();
 		}
 		if (className.equals(LanguageSettingsGenericProvider.class.getName())) {
@@ -275,7 +276,8 @@ public class LanguageSettingsExtensionManager {
 		}
 
 		// Create it as executable extension from the extension registry.
-		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_CLASS, className, Platform.getExtensionRegistry(), false);
+		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_CLASS, className,
+				Platform.getExtensionRegistry(), false);
 		if (provider == null) {
 			String msg = "Not able to load provider class=" + className; //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg));
@@ -291,12 +293,13 @@ public class LanguageSettingsExtensionManager {
 	 * @return new instance of language settings provider.
 	 */
 	/*package*/ static ILanguageSettingsProvider loadProvider(String id) {
-		if (id==null) {
+		if (id == null) {
 			return null;
 		}
 
 		// Create it as executable extension from the extension registry.
-		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_ID, id, Platform.getExtensionRegistry(), true);
+		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_ID, id, Platform.getExtensionRegistry(),
+				true);
 		if (provider == null) {
 			String msg = "Not able to load provider id=" + id; //$NON-NLS-1$
 			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
@@ -323,7 +326,8 @@ public class LanguageSettingsExtensionManager {
 	 *
 	 * @return a copy of the provider or {@code null} if copying is not possible.
 	 */
-	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
+	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider,
+			boolean deep) {
 		try {
 			if (deep) {
 				return provider.clone();
@@ -372,7 +376,8 @@ public class LanguageSettingsExtensionManager {
 			ILanguageSettingsProvider extensionProvider = fExtensionProviders.get(id);
 			return provider.equals(extensionProvider);
 		} else {
-			ILanguageSettingsEditableProvider providerShallow = getProviderCopy((ILanguageSettingsEditableProvider) provider, false);
+			ILanguageSettingsEditableProvider providerShallow = getProviderCopy(
+					(ILanguageSettingsEditableProvider) provider, false);
 			ILanguageSettingsProvider extensionProviderShallow = getExtensionProviderCopy(id, false);
 			return providerShallow == extensionProviderShallow
 					|| (providerShallow != null && providerShallow.equals(extensionProviderShallow));
@@ -393,7 +398,7 @@ public class LanguageSettingsExtensionManager {
 	public static boolean isPreferShared(String id) {
 		ILanguageSettingsProvider provider = fExtensionProviders.get(id);
 		if (provider instanceof LanguageSettingsBaseProvider && provider instanceof ILanguageSettingsEditableProvider) {
-			return ! ((LanguageSettingsBaseProvider) provider).getPropertyBool(ATTR_PREFER_NON_SHARED);
+			return !((LanguageSettingsBaseProvider) provider).getPropertyBool(ATTR_PREFER_NON_SHARED);
 		}
 		return true;
 	}

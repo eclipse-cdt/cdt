@@ -33,23 +33,23 @@ public class TabFolderLayout extends Layout {
 		int count = children.length;
 		int maxWidth = 0, maxHeight = 0;
 		for (int i = 0; i < count; i++) {
-			Control child = children [i];
+			Control child = children[i];
 			Point pt = child.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 			maxWidth = Math.max(maxWidth, pt.x);
 			maxHeight = Math.max(maxHeight, pt.y);
 		}
 
 		if (wHint != SWT.DEFAULT)
-			maxWidth= wHint;
+			maxWidth = wHint;
 		if (hHint != SWT.DEFAULT)
-			maxHeight= hHint;
+			maxHeight = hHint;
 
 		return new Point(maxWidth, maxHeight);
 	}
 
 	@Override
 	protected void layout(Composite composite, boolean flushCache) {
-		Rectangle rect= composite.getClientArea();
+		Rectangle rect = composite.getClientArea();
 
 		Control[] children = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -57,4 +57,3 @@ public class TabFolderLayout extends Layout {
 		}
 	}
 }
-

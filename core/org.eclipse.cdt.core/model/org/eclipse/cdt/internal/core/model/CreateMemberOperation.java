@@ -32,7 +32,6 @@ public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 	 */
 	protected String fReturnType;
 
-
 	/**
 	 * The name of the <code>DOMNode</code> that may be used to
 	 * create this new element.
@@ -48,14 +47,14 @@ public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 		super(parentElement);
 		fName = name;
 		fReturnType = returnType;
-		fForce= force;
+		fForce = force;
 	}
 
 	/**
 	 * Returns the IType the member is to be created in.
 	 */
 	protected IStructure getStructure() {
-		return (IStructure)getParentElement();
+		return (IStructure) getParentElement();
 	}
 
 	/**

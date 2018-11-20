@@ -35,7 +35,7 @@ public interface IASTPointer extends IASTPointerOperator {
 	 * @since 5.3
 	 */
 	public boolean isRestrict();
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 */
@@ -45,13 +45,13 @@ public interface IASTPointer extends IASTPointerOperator {
 	 * Not allowed on frozen ast.
 	 */
 	public void setVolatile(boolean value);
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 * @since 5.3
 	 */
 	public void setRestrict(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

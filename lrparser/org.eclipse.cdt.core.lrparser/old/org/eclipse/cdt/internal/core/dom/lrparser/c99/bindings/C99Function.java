@@ -31,7 +31,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	private String name;
 	private IFunctionType type;
 	private List<IParameter> parameters = new ArrayList<IParameter>();
-	
+
 	private boolean isAuto;
 	private boolean isExtern;
 	private boolean isInline;
@@ -39,20 +39,20 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	private boolean isStatic;
 	private boolean isVarArgs;
 	private boolean isNoReturn;
-	
+
 	// the scope that the function is in (must be the global scope, no?)
 	private IScope scope;
-	
+
 	// the scope that represents the body of the function
 	private IScope bodyScope;
 
 	public C99Function() {
 	}
-	
+
 	public C99Function(String name) {
 		this.name = name;
 	}
-	
+
 	public C99Function(String name, IFunctionType type) {
 		this(name);
 		this.type = type;
@@ -62,7 +62,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	public IParameter[] getParameters() {
 		return parameters.toArray(new IParameter[parameters.size()]);
 	}
-	
+
 	public void addParameter(IParameter parameter) {
 		parameters.add(parameter);
 	}
@@ -71,7 +71,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	public IFunctionType getType() {
 		return type;
 	}
-	
+
 	public void setType(IFunctionType type) {
 		this.type = type;
 	}
@@ -147,7 +147,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -162,12 +162,12 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	public IScope getScope() {
 		return scope;
 	}
-	
+
 	@Override
 	public IScope getFunctionScope() {
 		return bodyScope;
 	}
-	
+
 	public void setFunctionScope(IScope bodyScope) {
 		this.bodyScope = bodyScope;
 	}

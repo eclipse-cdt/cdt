@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 class TrailName extends ASTNode {
 	private int nameNumber;
 	private IASTName realName;
-	
+
 	public TrailName(IASTName realName) {
 		super();
 		this.realName = realName;
@@ -51,7 +51,7 @@ class TrailName extends ASTNode {
 				return cppBind.isGloballyQualified();
 			}
 		} catch (DOMException e) {
-		}			
+		}
 		return false;
 	}
 

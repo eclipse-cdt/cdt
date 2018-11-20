@@ -81,8 +81,8 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	private final int IDX_REMOVE = 3;
 
 	public CPathSourceEntryPage(ListDialogField<CPElement> classPathList) {
-		super(CPathEntryMessages.SourcePathEntryPage_title); 
-		setDescription(CPathEntryMessages.SourcePathEntryPage_description); 
+		super(CPathEntryMessages.SourcePathEntryPage_title);
+		setDescription(CPathEntryMessages.SourcePathEntryPage_description);
 
 		fWorkspaceRoot = CUIPlugin.getWorkspace().getRoot();
 		fCPathList = classPathList;
@@ -91,15 +91,13 @@ public class CPathSourceEntryPage extends CPathBasePage {
 
 		String[] buttonLabels;
 
-		buttonLabels = new String[]{
-		CPathEntryMessages.SourcePathEntryPage_folders_add_button, 
-				/* 1 */null, CPathEntryMessages.SourcePathEntryPath_folders_edit_button, 
-				CPathEntryMessages.SourcePathEntryPage_folders_remove_button
-		};
+		buttonLabels = new String[] { CPathEntryMessages.SourcePathEntryPage_folders_add_button, /* 1 */null,
+				CPathEntryMessages.SourcePathEntryPath_folders_edit_button,
+				CPathEntryMessages.SourcePathEntryPage_folders_remove_button };
 
 		fFoldersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fFoldersList.setDialogFieldListener(adapter);
-		fFoldersList.setLabelText(CPathEntryMessages.SourcePathEntryPage_folders_label); 
+		fFoldersList.setLabelText(CPathEntryMessages.SourcePathEntryPage_folders_label);
 
 		fFoldersList.setViewerComparator(new CPElementSorter());
 		fFoldersList.enableButton(IDX_EDIT, false);
@@ -124,7 +122,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 
 		for (int i = 0; i < folders.size(); i++) {
 			CPElement cpe = folders.get(i);
-			IPath[] patterns = (IPath[])cpe.getAttribute(CPElement.EXCLUSION);
+			IPath[] patterns = (IPath[]) cpe.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fFoldersList.expandElement(cpe, 3);
 			}
@@ -136,7 +134,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fFoldersList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fFoldersList }, true);
 		LayoutUtil.setHorizontalGrabbing(fFoldersList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -146,14 +144,14 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		List<CPElement> elements = fFoldersList.getElements();
 		for (int i = 0; i < elements.size(); i++) {
 			CPElement elem = elements.get(i);
-			IPath[] patterns = (IPath[])elem.getAttribute(CPElement.EXCLUSION);
+			IPath[] patterns = (IPath[]) elem.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fFoldersList.expandElement(elem, 3);
 			}
 		}
 		setControl(composite);
-		
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_SOURCE);	
+
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_SOURCE);
 	}
 
 	private class SourceContainerAdapter implements ITreeListAdapter<CPElement>, IDialogFieldListener {
@@ -184,7 +182,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		@Override
 		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
-				return ((CPElement)element).getChildren();
+				return ((CPElement) element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
@@ -192,7 +190,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		@Override
 		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
-				return ((CPElementAttribute)element).getParent();
+				return ((CPElementAttribute) element).getParent();
 			}
 			return null;
 		}
@@ -278,9 +276,9 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (fFoldersList.getIndexOfElement(elem) != -1) {
-			editElementEntry((CPElement)elem);
+			editElementEntry((CPElement) elem);
 		} else if (elem instanceof CPElementAttribute) {
-			editAttributeEntry((CPElementAttribute)elem);
+			editAttributeEntry((CPElementAttribute) elem);
 		}
 	}
 
@@ -318,7 +316,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		for (int i = selElements.size() - 1; i >= 0; i--) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute)elem;
+				CPElementAttribute attrib = (CPElementAttribute) elem;
 				String key = attrib.getKey();
 				Object value = key.equals(CPElement.EXCLUSION) ? new Path[0] : null;
 				attrib.getParent().setAttribute(key, value);
@@ -340,16 +338,16 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute)elem;
+				CPElementAttribute attrib = (CPElementAttribute) elem;
 				if (attrib.getKey().equals(CPElement.EXCLUSION)) {
-					if ( ((IPath[])attrib.getValue()).length == 0) {
+					if (((IPath[]) attrib.getValue()).length == 0) {
 						return false;
 					}
 				} else if (attrib.getValue() == null) {
 					return false;
 				}
 			} else if (elem instanceof CPElement) {
-				CPElement curr = (CPElement)elem;
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
@@ -418,17 +416,18 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		if (includeLinked) {
 			NewFolderDialog dialog = new NewFolderDialog(getShell(), fCurrCProject.getProject());
 			if (dialog.open() == Window.OK) {
-				IResource createdFolder = (IResource)dialog.getResult()[0];
+				IResource createdFolder = (IResource) dialog.getResult()[0];
 				return newCPSourceElement(createdFolder);
 			}
 			return null;
 		}
 		String title = (existing == null) ? CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_new_title
-				: CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_edit_title; 
+				: CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_edit_title;
 
 		IProject proj = fCurrCProject.getProject();
-		NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj, getExistingContainers(existing), existing);
-		dialog.setMessage(NLS.bind(CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_description, 
+		NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj,
+				getExistingContainers(existing), existing);
+		dialog.setMessage(NLS.bind(CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_description,
 				fProjPath.toString()));
 		if (dialog.open() == Window.OK) {
 			IResource folder = dialog.getSourceFolder();
@@ -440,15 +439,15 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	private void askForAddingExclusionPatternsDialog(List<CPElement> newEntries, Set<CPElement> modifiedEntries) {
 		fixNestingConflicts(newEntries, fFoldersList.getElements(), modifiedEntries);
 		if (!modifiedEntries.isEmpty()) {
-			String title = CPathEntryMessages.SourcePathEntryPage_exclusion_added_title; 
-			String message = CPathEntryMessages.SourcePathEntryPage_exclusion_added_message; 
+			String title = CPathEntryMessages.SourcePathEntryPage_exclusion_added_title;
+			String message = CPathEntryMessages.SourcePathEntryPage_exclusion_added_message;
 			MessageDialog.openInformation(getShell(), title, message);
 		}
 	}
 
 	private CPElement[] openSourceContainerDialog(CPElement existing) {
 
-		Class<?>[] acceptedClasses = new Class[]{IProject.class, IFolder.class};
+		Class<?>[] acceptedClasses = new Class[] { IProject.class, IFolder.class };
 		List<IContainer> existingContainers = getExistingContainers(null);
 
 		IProject[] allProjects = fWorkspaceRoot.getProjects();
@@ -465,12 +464,11 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		ILabelProvider lp = new WorkbenchLabelProvider();
 		ITreeContentProvider cp = new BaseWorkbenchContentProvider();
 
-		String title = (existing == null)
-				? CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_new_title
-				: CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_edit_title; 
+		String title = (existing == null) ? CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_new_title
+				: CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_edit_title;
 		String message = (existing == null)
 				? CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_new_description
-				: CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_edit_description; 
+				: CPathEntryMessages.SourcePathEntryPage_ExistingSourceFolderDialog_edit_description;
 
 		MultipleFolderSelectionDialog dialog = new MultipleFolderSelectionDialog(getShell(), lp, cp);
 		dialog.setExisting(existingContainers.toArray());
@@ -487,7 +485,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 			Object[] elements = dialog.getResult();
 			CPElement[] res = new CPElement[elements.length];
 			for (int i = 0; i < res.length; i++) {
-				IResource elem = (IResource)elements[i];
+				IResource elem = (IResource) elements[i];
 				res[i] = newCPSourceElement(elem);
 			}
 			return res;

@@ -154,7 +154,7 @@ public interface ICStorageElement {
 	 * @since 5.1
 	 */
 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException;
-	
+
 	/**
 	 * Tests whether this storage element is exactly equal to other
 	 * To be equal all name, children attributes and value must be

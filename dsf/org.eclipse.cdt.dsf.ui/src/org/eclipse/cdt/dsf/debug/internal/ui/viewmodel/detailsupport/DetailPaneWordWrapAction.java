@@ -29,30 +29,31 @@ import org.eclipse.ui.PlatformUI;
 public class DetailPaneWordWrapAction extends Action {
 
 	ITextViewer fTextViewer;
-	
+
 	public DetailPaneWordWrapAction(ITextViewer textViewer) {
-		super(MessagesForDetailPane.PaneWordWrapAction_WrapText,IAction.AS_CHECK_BOX);
-        
+		super(MessagesForDetailPane.PaneWordWrapAction_WrapText, IAction.AS_CHECK_BOX);
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDsfDebugHelpContextIds.DETAIL_PANE_WORD_WRAP_ACTION);
-		
+
 		fTextViewer = textViewer;
 		setEnabled(true);
-		
-		boolean prefSetting = DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP);
+
+		boolean prefSetting = DsfUIPlugin.getDefault().getPreferenceStore()
+				.getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP);
 		fTextViewer.getTextWidget().setWordWrap(prefSetting);
 		setChecked(prefSetting);
-		
 
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
 		fTextViewer.getTextWidget().setWordWrap(isChecked());
-		DsfUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP,isChecked());
+		DsfUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP,
+				isChecked());
 		DsfUIPlugin.getDefault().savePluginPreferences();
 	}
-	
+
 }

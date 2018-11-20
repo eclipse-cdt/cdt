@@ -32,13 +32,12 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-
 public class AutoconfContentOutlinePage extends ContentOutlinePage {
 
 	private ITextEditor editor;
 	private IEditorInput input;
 	private LexicalSortingAction sortAction;
-	
+
 	public AutoconfContentOutlinePage(AutoconfEditor editor) {
 		super();
 		this.editor = editor;
@@ -50,14 +49,14 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 	}
 
 	protected ISelection updateSelection(ISelection sel) {
-		ArrayList<AutoconfElement> newSelection= new ArrayList<>();
+		ArrayList<AutoconfElement> newSelection = new ArrayList<>();
 		if (sel instanceof IStructuredSelection) {
 			Iterator<?> iter = ((IStructuredSelection) sel).iterator();
-			for (;iter.hasNext();) {
+			for (; iter.hasNext();) {
 				//ICElement elem= fInput.findEqualMember((ICElement)iter.next());
 				Object o = iter.next();
 				if (o instanceof AutoconfElement) {
-					newSelection.add((AutoconfElement)o);
+					newSelection.add((AutoconfElement) o);
 				}
 			}
 		}
@@ -69,11 +68,9 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 		//update the tree viewer state
 		final TreeViewer viewer = getTreeViewer();
 
-		if (viewer != null)
-		{
+		if (viewer != null) {
 			final Control control = viewer.getControl();
-			if (control != null && !control.isDisposed())
-			{
+			if (control != null && !control.isDisposed()) {
 				control.getDisplay().asyncExec(() -> {
 					if (!control.isDisposed()) {
 						ISelection sel = viewer.getSelection();
@@ -84,13 +81,13 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 
 		super.createControl(parent);
 
-		TreeViewer viewer= getTreeViewer();
+		TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new AutoconfContentProvider(editor));
 		viewer.setLabelProvider(new AutoconfLabelProvider());
 		viewer.addSelectionChangedListener(this);
@@ -100,23 +97,21 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 		}
 		sortAction.setTreeViewer(viewer);
 	}
-	
+
 	/*
 	 * Change in selection
 	 */
 	@Override
-	public void selectionChanged(SelectionChangedEvent event)
-	{
+	public void selectionChanged(SelectionChangedEvent event) {
 		super.selectionChanged(event);
-		
+
 		//find out which item in tree viewer we have selected, and set highlight range accordingly
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty()) {
 			editor.resetHighlightRange();
 		} else {
-			AutoconfElement element = (AutoconfElement) ((IStructuredSelection) selection)
-					.getFirstElement();		
-			
+			AutoconfElement element = (AutoconfElement) ((IStructuredSelection) selection).getFirstElement();
+
 			try {
 				int offset = element.getStartOffset();
 				int length = element.getEndOffset() - offset;

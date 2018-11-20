@@ -16,7 +16,7 @@ package org.eclipse.cdt.internal.autotools.core.configure;
 public class BinConfigureOption extends AbstractConfigurationOption {
 
 	private boolean value;
-	
+
 	public BinConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
 	}
@@ -29,25 +29,25 @@ public class BinConfigureOption extends AbstractConfigurationOption {
 		super(name, cfg);
 		this.value = value;
 	}
-	
+
 	@Override
 	public boolean isParmSet() {
 		return value;
 	}
-	
+
 	@Override
 	public String getParameter() {
-	   if (isParmSet())
-		   return getParameterName();
-	   else
-		   return ""; //$NON-NLS-1$
+		if (isParmSet())
+			return getParameterName();
+		else
+			return ""; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getValue() {
 		return Boolean.toString(value);
 	}
-	
+
 	@Override
 	public void setValue(String value) {
 		boolean oldValue = this.value;
@@ -58,7 +58,7 @@ public class BinConfigureOption extends AbstractConfigurationOption {
 		if (this.value != oldValue)
 			cfg.setDirty(true);
 	}
-	
+
 	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new BinConfigureOption(name, config, value);

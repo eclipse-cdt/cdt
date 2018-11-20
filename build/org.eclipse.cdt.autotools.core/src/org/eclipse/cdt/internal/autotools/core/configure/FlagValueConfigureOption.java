@@ -18,15 +18,13 @@ import java.util.ArrayList;
 public class FlagValueConfigureOption extends BinConfigureOption implements IFlagConfigureValueOption {
 
 	private String flags;
-	
-	public FlagValueConfigureOption(String name, String msgName, AutotoolsConfiguration cfg,
-			String flags) {
+
+	public FlagValueConfigureOption(String name, String msgName, AutotoolsConfiguration cfg, String flags) {
 		super(name, msgName, cfg);
 		this.flags = flags;
 	}
-	
-	private FlagValueConfigureOption(String name, AutotoolsConfiguration cfg, String value,
-			String flags) {
+
+	private FlagValueConfigureOption(String name, AutotoolsConfiguration cfg, String value, String flags) {
 		super(name, cfg);
 		this.setValue(value);
 		this.flags = flags;
@@ -36,7 +34,7 @@ public class FlagValueConfigureOption extends BinConfigureOption implements IFla
 	public ArrayList<String> getParameters() {
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public String getParameter() {
 		return "";
@@ -61,5 +59,5 @@ public class FlagValueConfigureOption extends BinConfigureOption implements IFla
 	public boolean isFlagValue() {
 		return true;
 	}
-	
+
 }

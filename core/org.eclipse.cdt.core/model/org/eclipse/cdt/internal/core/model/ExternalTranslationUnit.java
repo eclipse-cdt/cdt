@@ -43,6 +43,6 @@ public class ExternalTranslationUnit extends TranslationUnit {
 	 * A file included from a different project can still belong to a (non-CDT) project
 	 */
 	public void setResource(IFile file) {
-		resource= file;
+		resource = file;
 	}
 }

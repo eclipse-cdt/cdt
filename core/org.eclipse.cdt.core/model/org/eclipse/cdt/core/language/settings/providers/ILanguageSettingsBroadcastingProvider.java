@@ -28,10 +28,13 @@ import org.eclipse.core.resources.IResource;
 public interface ILanguageSettingsBroadcastingProvider extends ILanguageSettingsProvider {
 	@Override
 	public String getId();
+
 	@Override
 	public String getName();
+
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId);
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId);
 
 	/**
 	 * Return a copy of internal storage. This should be a deep copy/clone of the storage.

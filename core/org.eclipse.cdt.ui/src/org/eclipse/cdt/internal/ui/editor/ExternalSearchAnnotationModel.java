@@ -28,7 +28,7 @@ public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel
 	private final IPath fLocation;
 	private final int fDepth;
 	private final String fLocationAttribute;
-	
+
 	public ExternalSearchAnnotationModel(IResource markerResource, IPath location) {
 		this(markerResource, location, IResource.DEPTH_ZERO, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 	}
@@ -37,12 +37,11 @@ public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel
 		this(markerResource, location, depth, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 	}
 
-	ExternalSearchAnnotationModel(IResource markerResource, IPath location, int depth,
-			String locationAttribute) {
+	ExternalSearchAnnotationModel(IResource markerResource, IPath location, int depth, String locationAttribute) {
 		super(markerResource);
-		fLocation= location;
-		fDepth= depth;
-		fLocationAttribute= locationAttribute;
+		fLocation = location;
+		fDepth = depth;
+		fLocationAttribute = locationAttribute;
 	}
 
 	@Override

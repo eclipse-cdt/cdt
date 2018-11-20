@@ -43,15 +43,16 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	}
 
 	private final IType fType;
+
 	public PDOMCParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
-		fType= type;
+		fType = type;
 	}
 
 	public PDOMCParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, PDOMCParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
-		fType= null; // this constructor is used for adding parameters to the database, only.
+		fType = null; // this constructor is used for adding parameters to the database, only.
 
 		Database db = getDB();
 
@@ -129,7 +130,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 
 	@Override
 	public String[] getQualifiedName() {
-		return new String[] {getName()};
+		return new String[] { getName() };
 	}
 
 	@Override
@@ -139,13 +140,13 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		PDOMCParameter p= this;
+		PDOMCParameter p = this;
 		for (;;) {
 			long rec = p.getNextPtr();
 			p.flatDelete(linkage);
 			if (rec == 0)
 				return;
-			p= new PDOMCParameter(linkage, rec, null);
+			p = new PDOMCParameter(linkage, rec, null);
 		}
 	}
 

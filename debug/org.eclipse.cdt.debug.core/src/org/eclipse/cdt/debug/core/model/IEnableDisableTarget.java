@@ -11,10 +11,10 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.model; 
+package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.DebugException;
- 
+
 /**
  * Provides support for enable/disable actions.
  */
@@ -26,7 +26,7 @@ public interface IEnableDisableTarget {
 	 * @return whether this object supports enable/disable operations
 	 */
 	boolean canEnableDisable();
-	
+
 	/**
 	 * Returns whether this object is enabled.
 	 * 
@@ -41,5 +41,5 @@ public interface IEnableDisableTarget {
 	 * @param enabled enablement flag value
 	 * @throws DebugException
 	 */
-	void setEnabled( boolean enabled ) throws DebugException;
+	void setEnabled(boolean enabled) throws DebugException;
 }

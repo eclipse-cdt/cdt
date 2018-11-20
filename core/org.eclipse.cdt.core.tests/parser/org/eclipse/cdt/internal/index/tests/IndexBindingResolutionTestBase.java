@@ -71,7 +71,7 @@ import org.osgi.framework.Bundle;
  * the PDOM purely from AST information (i.e. without a real binding from the DOM).
  */
 public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
-	private static final boolean DEBUG= false;
+	private static final boolean DEBUG = false;
 	private static final String END_OF_ADDED_CODE_MARKER = "/*END_OF_ADDED_CODE*/";
 	protected ITestStrategy strategy;
 
@@ -91,8 +91,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		super.tearDown();
 	}
 
-	protected IASTName findName(String section, int offset, int len,
-			boolean preferImplicitName) {
+	protected IASTName findName(String section, int offset, int len, boolean preferImplicitName) {
 		if (len <= 0)
 			len += section.length();
 
@@ -111,11 +110,11 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 			}
 			sectionOffset = source.indexOf(section, sectionOffset);
 			if (sectionOffset >= 0) {
-				IASTName name= null;
+				IASTName name = null;
 				if (!preferImplicitName)
-					name= nodeSelector.findName(sectionOffset + offset, len);
+					name = nodeSelector.findName(sectionOffset + offset, len);
 				if (name == null)
-					name= nodeSelector.findImplicitName(sectionOffset + offset, len);
+					name = nodeSelector.findImplicitName(sectionOffset + offset, len);
 				return name;
 			}
 		}
@@ -145,7 +144,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	 * <ul>
 	 *  <li> There is not a unique name with the specified criteria
 	 *  <li> The binding associated with the name is null or a problem binding
-     *  <li> The binding is not an instance of the specified class
+	 *  <li> The binding is not an instance of the specified class
 	 * </ul>
 	 * @param section the code fragment to search for in the AST. The first occurrence of an identical
 	 *     section is used.
@@ -159,13 +158,14 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		if (len <= 0)
 			len += section.length() - offset;
 
-		IASTName name= findName(section, offset, len);
+		IASTName name = findName(section, offset, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
+				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
@@ -180,7 +180,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	 * <ul>
 	 *  <li> There is not a unique implicit name with the specified criteria
 	 *  <li> The binding associated with the implicit name is null or a problem binding
-     *  <li> The binding is not an instance of the specified class
+	 *  <li> The binding is not an instance of the specified class
 	 * </ul>
 	 * @param section the code fragment to search for in the AST. The first occurrence of an identical
 	 *     section is used.
@@ -193,13 +193,14 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		if (len <= 0)
 			len += section.length() - offset;
 
-		IASTName name= findImplicitName(section, offset, len);
+		IASTName name = findImplicitName(section, offset, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(offset, offset + len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
+				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
@@ -222,13 +223,14 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		if (len <= 0)
 			len += section.length() - offset;
 
-		IASTName name= findName(section, offset, len);
+		IASTName name = findName(section, offset, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(offset, offset + len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
+				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		return (T) binding;
 	}
 
@@ -249,7 +251,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		if (len <= 0)
 			len += section.length();
 
-		IASTName name= findImplicitName(section, 0, len);
+		IASTName name = findImplicitName(section, 0, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
@@ -267,7 +269,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	 * @return the associated name's binding
 	 */
 	protected IBinding getProblemFromASTName(String section, int len) {
-		IASTName name= findName(section, 0, len);
+		IASTName name = findName(section, 0, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
@@ -310,7 +312,8 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		assertTrue(type.isInstance((ft.getParameterTypes()[index])));
 	}
 
-	protected void assertCompositeTypeParam(int index, int compositeTypeKey, IType function, String qn) throws DOMException {
+	protected void assertCompositeTypeParam(int index, int compositeTypeKey, IType function, String qn)
+			throws DOMException {
 		// assert function is IFunctionType
 		IFunctionType ft = (IFunctionType) function;
 		assertTrue(ICPPClassType.class.isInstance((ft.getParameterTypes()[index])));
@@ -318,7 +321,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		assertEquals(qn, ASTTypeUtil.getQualifiedName((ICPPClassType) ft.getParameterTypes()[index]));
 	}
 
-	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
+	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
 		assertNotNull("Expected " + clazz.getName() + " but got null", o);
 		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
 		for (Class c : cs) {
@@ -341,16 +344,17 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		assertQNEquals(qn, variable);
 		assertInstance(variable.getType(), expType);
 		if (expTypeQN != null) {
-			IType type= variable.getType();
+			IType type = variable.getType();
 			assertInstance(type, IBinding.class);
 			assertQNEquals(expTypeQN, (IBinding) type);
 		}
 	}
 
-	protected static void assertTypeContainer(IType conType, String expQN, Class containerType, Class expContainedType, String expContainedTypeQN) {
+	protected static void assertTypeContainer(IType conType, String expQN, Class containerType, Class expContainedType,
+			String expContainedTypeQN) {
 		assertInstance(conType, ITypeContainer.class);
 		assertInstance(conType, containerType);
-		IType containedType= ((ITypeContainer) conType).getType();
+		IType containedType = ((ITypeContainer) conType).getType();
 		assertInstance(containedType, expContainedType);
 		if (expContainedTypeQN != null) {
 			assertInstance(containedType, IBinding.class);
@@ -388,7 +392,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		}
 		return i - offset;
 	}
-	
+
 	// Get a BindingAssertionHelper for the last AST.
 	protected BindingAssertionHelper getAssertionHelper() {
 		int index = strategy.getAstCount() - 1;
@@ -396,38 +400,46 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	}
 
 	static protected class NameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
+		{
+			shouldVisitNames = true;
 			shouldVisitImplicitNames = true;
-        }
-        public List<IASTName> nameList = new ArrayList<>();
+		}
+		public List<IASTName> nameList = new ArrayList<>();
 
-        @Override
+		@Override
 		public int visit(IASTName name) {
-            nameList.add(name);
-            return PROCESS_CONTINUE;
-        }
+			nameList.add(name);
+			return PROCESS_CONTINUE;
+		}
 
-        public IASTName getName(int idx) {
-            if (idx < 0 || idx >= nameList.size())
-                return null;
-            return nameList.get(idx);
-        }
+		public IASTName getName(int idx) {
+			if (idx < 0 || idx >= nameList.size())
+				return null;
+			return nameList.get(idx);
+		}
 
-        public int size() {
-        	return nameList.size();
-        }
-    }
+		public int size() {
+			return nameList.size();
+		}
+	}
 
 	protected interface ITestStrategy {
 		IIndex getIndex();
+
 		void setUp() throws Exception;
+
 		void tearDown() throws Exception;
+
 		public int getAstCount();
+
 		public IASTTranslationUnit getAst(int index);
+
 		public StringBuilder getAstSource(int index);
+
 		public StringBuilder[] getTestData();
+
 		public ICProject getCProject();
+
 		public boolean isCompositeIndex();
 	}
 
@@ -488,11 +500,14 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject = cpp ?
-					CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp
+					? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER)
+					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
-			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
+			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(),
+					getName(), 2);
 
 			if (testData.length < 2)
 				fail("Insufficient test data");
@@ -505,17 +520,18 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-	        waitForIndexer(cproject);
+			waitForIndexer(cproject);
 
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
-			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			index = CCorePlugin.getIndexManager().getIndex(cproject);
 
 			index.acquireReadLock();
-			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
+			IFile cppfile = TestSourceReader.createFile(cproject.getProject(),
+					new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
 			ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
 		}
 
@@ -525,7 +541,8 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 				index.releaseReadLock();
 			}
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 
@@ -551,7 +568,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		public SinglePDOMTestStrategy(boolean cpp) {
 			this(cpp, true);
 		}
-		
+
 		public SinglePDOMTestStrategy(boolean cpp, boolean shouldRequireHeaderFile) {
 			this.cpp = cpp;
 			this.shouldRequireHeaderFile = shouldRequireHeaderFile;
@@ -588,17 +605,20 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject = cpp ?
-					CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp
+					? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER)
+					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
-			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
+			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(),
+					getName(), 2);
 
-			if(testData.length < 1) {
+			if (testData.length < 1) {
 				fail("Insufficient test data");
-			} else if(shouldRequireHeaderFile && testData.length == 1) {
+			} else if (shouldRequireHeaderFile && testData.length == 1) {
 				fail("Insufficient test data");
-			} else if(testData.length == 1) {
+			} else if (testData.length == 1) {
 				StringBuilder newTestData[] = new StringBuilder[2];
 				newTestData[0] = new StringBuilder();
 				newTestData[1] = testData[0];
@@ -613,17 +633,18 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-	        waitForIndexer(cproject);
+			waitForIndexer(cproject);
 
-			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
-	        waitForIndexer(cproject);
+			IFile cppfile = TestSourceReader.createFile(cproject.getProject(),
+					new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
+			waitForIndexer(cproject);
 
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
-			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			index = CCorePlugin.getIndexManager().getIndex(cproject);
 
 			index.acquireReadLock();
 			ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
@@ -635,7 +656,8 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 				index.releaseReadLock();
 			}
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 
@@ -703,11 +725,14 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject = cpp ?
-					CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp
+					? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER)
+					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
-			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 0);
+			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(),
+					getName(), 0);
 
 			List<IFile> astFiles = new ArrayList<>();
 			for (int i = 0; i < testData.length;) {
@@ -730,8 +755,9 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 						// Wait for the indexer before updating the file.
 						break;
 					}
-					contents.delete(0, endOfLine);  // Remove first line from the file contents.
-					IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename), contents.toString());
+					contents.delete(0, endOfLine); // Remove first line from the file contents.
+					IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename),
+							contents.toString());
 					if (astRequested || (j == testData.length - 1 && astFiles.isEmpty())) {
 						int pos = astFiles.indexOf(file);
 						if (pos < 0) {
@@ -743,7 +769,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 					}
 				}
 				CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-		        waitForIndexer(cproject);
+				waitForIndexer(cproject);
 			}
 
 			if (DEBUG) {
@@ -751,7 +777,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
-			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			index = CCorePlugin.getIndexManager().getIndex(cproject);
 
 			index.acquireReadLock();
 			for (IFile file : astFiles) {
@@ -765,7 +791,8 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 				index.releaseReadLock();
 			}
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 
@@ -802,20 +829,25 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 				index.releaseReadLock();
 			}
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 			if (referenced != null) {
-				referenced.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				referenced.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 
 		@Override
 		public void setUp() throws Exception {
-			cproject= cpp ?
-					CProjectHelper.createCCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
-			Bundle b= CTestPlugin.getDefault().getBundle();
-			testData= TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
+			cproject = cpp
+					? CProjectHelper.createCCProject("OnlineContent" + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER)
+					: CProjectHelper.createCProject("OnlineContent" + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER);
+			Bundle b = CTestPlugin.getDefault().getBundle();
+			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(),
+					getName(), 2);
 			if (testData.length < 2)
 				fail("Insufficient test data");
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
@@ -826,36 +858,41 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 			referenced = createReferencedContent();
 
-			TestScannerProvider.sIncludes= new String[] {referenced.getProject().getLocation().toOSString()};
-			IFile references= TestSourceReader.createFile(cproject.getProject(), new Path("refs.c" + (cpp ? "pp" : "")), sourceContents);
+			TestScannerProvider.sIncludes = new String[] { referenced.getProject().getLocation().toOSString() };
+			IFile references = TestSourceReader.createFile(cproject.getProject(),
+					new Path("refs.c" + (cpp ? "pp" : "")), sourceContents);
 
-			IProject[] refs = new IProject[] {referenced.getProject()};
+			IProject[] refs = new IProject[] { referenced.getProject() };
 			IProjectDescription pd = cproject.getProject().getDescription();
 			pd.setReferencedProjects(refs);
 			cproject.getProject().setDescription(pd, new NullProgressMonitor());
 
-			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID,
+					IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(cproject);
 			waitForIndexer(cproject);
 
 			if (DEBUG) {
 				System.out.println("Online: " + getName());
-			 	((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
-			index= CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_DEPENDENCIES);
+			index = CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_DEPENDENCIES);
 			index.acquireReadLock();
-			ast= TestSourceReader.createIndexBasedAST(index, cproject, references);
+			ast = TestSourceReader.createIndexBasedAST(index, cproject, references);
 		}
 
 		private ICProject createReferencedContent() throws Exception {
-			ICProject referenced = cpp ?
-					CProjectHelper.createCCProject("ReferencedContent" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCProject("ReferencedContent" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			ICProject referenced = cpp
+					? CProjectHelper.createCCProject("ReferencedContent" + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER)
+					: CProjectHelper.createCProject("ReferencedContent" + System.currentTimeMillis(), "bin",
+							IPDOMManager.ID_NO_INDEXER);
 			String content = testData[0].toString();
 			IFile file = TestSourceReader.createFile(referenced.getProject(), new Path("header.h"), content);
 
-			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID,
+					IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(referenced);
 
 			waitForIndexer(referenced);
@@ -927,9 +964,10 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		}
 	}
 
-	protected static void assertSameType(IType first, IType second){
+	protected static void assertSameType(IType first, IType second) {
 		assertNotNull(first);
 		assertNotNull(second);
-		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
+		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second
+				+ "'", first.isSameType(second));
 	}
 }

@@ -30,5 +30,6 @@ public final class Checkers {
 		return checker.runInEditor() && checker instanceof IRunnableInEditorChecker;
 	}
 
-	private Checkers() {}
+	private Checkers() {
+	}
 }

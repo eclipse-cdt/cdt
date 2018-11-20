@@ -11,7 +11,7 @@
  * Contributors: 
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
@@ -21,14 +21,11 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class CRenameGlobalProcessor extends CRenameProcessorDelegate {
 
-    public CRenameGlobalProcessor(CRenameProcessor processor, String name) {
-        super(processor, name);
-        setAvailableOptions(
-        		CRefactory.OPTION_IN_CODE_REFERENCES |
-                CRefactory.OPTION_IN_COMMENT | 
-                CRefactory.OPTION_IN_MACRO_DEFINITION |
-                CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
-    }
+	public CRenameGlobalProcessor(CRenameProcessor processor, String name) {
+		super(processor, name);
+		setAvailableOptions(CRefactory.OPTION_IN_CODE_REFERENCES | CRefactory.OPTION_IN_COMMENT
+				| CRefactory.OPTION_IN_MACRO_DEFINITION | CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
+	}
 
 	@Override
 	public int getSaveMode() {

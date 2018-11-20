@@ -95,7 +95,7 @@ import org.eclipse.core.runtime.IPath;
  */
 
 public interface IManagedDependencyPreBuild extends IManagedDependencyInfo {
-	
+
 	/**
 	 * Returns the list of generated dependency files.
 	 *   
@@ -119,11 +119,11 @@ public interface IManagedDependencyPreBuild extends IManagedDependencyInfo {
 	/**
 	 * Returns the command line(s) to be invoked in the separate 
 	 * dependencies pre-build step.
-     *
+	 *
 	 * @return String[]
 	 */
 	public String[] getDependencyCommands();
-	
+
 	/**
 	 * Returns true if the command lines returned by this interface
 	 * are not specific to the particular source file, but are only specific to,
@@ -132,7 +132,7 @@ public interface IManagedDependencyPreBuild extends IManagedDependencyInfo {
 	 * are different than if the build context were the parent configuration.  
 	 * This can be used by the build file generator in helping to determine if 
 	 * a "pattern" (generic) rule can be used.
-     *
+	 *
 	 * @return boolean
 	 */
 	public boolean areCommandsGeneric();

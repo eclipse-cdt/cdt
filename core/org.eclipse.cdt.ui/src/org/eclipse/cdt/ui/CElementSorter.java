@@ -55,9 +55,9 @@ import org.eclipse.cdt.core.model.ISourceRoot;
  *  
  *  @noextend This class is not intended to be subclassed by clients.
  */
-public class CElementSorter extends ViewerSorter { 
+public class CElementSorter extends ViewerSorter {
 
-    protected static final int CMODEL = 0;
+	protected static final int CMODEL = 0;
 	protected static final int PROJECTS = 10;
 	protected static final int BINARYCONTAINER = 12;
 	protected static final int ARCHIVECONTAINER = 13;
@@ -72,7 +72,7 @@ public class CElementSorter extends ViewerSorter {
 	protected static final int TRANSLATIONUNITS = 22;
 	protected static final int BINARIES = 23;
 	protected static final int ARCHIVES = 24;
-	
+
 	protected static final int INCLUDES = 28;
 	protected static final int MACROS = 29;
 	protected static final int USINGS = 30;
@@ -101,11 +101,10 @@ public class CElementSorter extends ViewerSorter {
 	protected static final int CELEMENTS_RESERVED = 101;
 	protected static final int CELEMENTS_SYSTEM = 102;
 
-	protected static final int RESOURCEFOLDERS= 200;
-	protected static final int RESOURCES= 201;
-	protected static final int STORAGE= 202;
-	protected static final int OTHERS= 500;
-
+	protected static final int RESOURCEFOLDERS = 200;
+	protected static final int RESOURCES = 201;
+	protected static final int STORAGE = 202;
+	protected static final int OTHERS = 500;
 
 	/*
 	 * Constants added for names starting with '_' or '__'
@@ -128,20 +127,20 @@ public class CElementSorter extends ViewerSorter {
 	 * otherwise header and source files will be sorted by name.
 	 */
 	private boolean fSeparateHeaderAndSource;
-	
+
 	private boolean fKeepSortOrderOfExcludedFiles;
 
 	/**
 	 * Default constructor for use as executable extension.
 	 */
 	public CElementSorter() {
-		final IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
-		fSeparateHeaderAndSource= store.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE);
-		fKeepSortOrderOfExcludedFiles= store.getBoolean(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES);
+		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		fSeparateHeaderAndSource = store.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE);
+		fKeepSortOrderOfExcludedFiles = store.getBoolean(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES);
 	}
-	
+
 	@Override
-	public int category (Object element) {
+	public int category(Object element) {
 		if (element instanceof ICElement) {
 			ICElement cElement = (ICElement) element;
 			switch (cElement.getElementType()) {
@@ -176,7 +175,7 @@ public class CElementSorter extends ViewerSorter {
 			case ICElement.C_USING:
 				return USINGS;
 			case ICElement.C_TYPEDEF:
-			case ICElement.C_CLASS: 
+			case ICElement.C_CLASS:
 			case ICElement.C_CLASS_DECLARATION:
 			case ICElement.C_TEMPLATE_CLASS:
 			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
@@ -219,16 +218,16 @@ public class CElementSorter extends ViewerSorter {
 			case IResource.FOLDER:
 				return RESOURCEFOLDERS;
 			default: // translation unit that was excluded from the build
-				if(fKeepSortOrderOfExcludedFiles &&
-						CoreModel.isValidTranslationUnitName(resource.getProject(), resource.getName())) {
+				if (fKeepSortOrderOfExcludedFiles
+						&& CoreModel.isValidTranslationUnitName(resource.getProject(), resource.getName())) {
 					return getTranslationUnitCategory(resource.getProject(), resource.getName());
-				} 
+				}
 				return RESOURCES;
 			}
 		} else if (element instanceof IStorage) {
 			return STORAGE;
 		} else if (element instanceof CElementGrouping) {
-			int type = ((CElementGrouping)element).getType();
+			int type = ((CElementGrouping) element).getType();
 			switch (type) {
 			case CElementGrouping.INCLUDES_GROUPING:
 				return INCLUDES;
@@ -257,7 +256,7 @@ public class CElementSorter extends ViewerSorter {
 		}
 		return NORMAL;
 	}
-	
+
 	private int getTranslationUnitCategory(IProject project, String name) {
 		if (fSeparateHeaderAndSource) {
 			if (CoreModel.isValidHeaderUnitName(project, name)) {
@@ -268,7 +267,7 @@ public class CElementSorter extends ViewerSorter {
 			}
 		}
 		return TRANSLATIONUNITS;
-	} 
+	}
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
@@ -282,14 +281,14 @@ public class CElementSorter extends ViewerSorter {
 
 		final Comparator<? super String> comparator = getComparator();
 		if (cat1 == PROJECTS) {
-			IWorkbenchAdapter a1= ((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
-			IWorkbenchAdapter a2= ((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter a1 = ((IAdaptable) e1).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter a2 = ((IAdaptable) e2).getAdapter(IWorkbenchAdapter.class);
 			return comparator.compare(a1.getLabel(e1), a2.getLabel(e2));
 		}
 
 		if (cat1 == SOURCEROOTS) {
-			ISourceRoot root1= getSourceRoot(e1);
-			ISourceRoot root2= getSourceRoot(e2);
+			ISourceRoot root1 = getSourceRoot(e1);
+			ISourceRoot root2 = getSourceRoot(e2);
 			if (root1 == null) {
 				if (root2 == null) {
 					return 0;
@@ -297,10 +296,10 @@ public class CElementSorter extends ViewerSorter {
 				return 1;
 			} else if (root2 == null) {
 				return -1;
-			}			
+			}
 			if (!root1.getPath().equals(root2.getPath())) {
-				int p1= getPathEntryIndex(root1);
-				int p2= getPathEntryIndex(root2);
+				int p1 = getPathEntryIndex(root1);
+				int p2 = getPathEntryIndex(root2);
 				if (p1 != p2) {
 					return p1 - p2;
 				}
@@ -311,50 +310,50 @@ public class CElementSorter extends ViewerSorter {
 		if (cat1 == RESOURCES || cat1 == RESOURCEFOLDERS || cat1 == STORAGE || cat1 == OTHERS) {
 			return compareWithLabelProvider(viewer, e1, e2);
 		}
-		
+
 		String ns1 = ""; //$NON-NLS-1$
 		String ns2 = ns1;
-		
+
 		String name1;
 		String name2;
 
 		if (e1 instanceof ICElement) {
-			name1 = ((ICElement)e1).getElementName();
+			name1 = ((ICElement) e1).getElementName();
 			int idx = name1.lastIndexOf("::"); //$NON-NLS-1$
 			if (idx >= 0) {
 				ns1 = name1.substring(0, idx);
 				name1 = name1.substring(idx + 2);
 			}
-		    if (name1.length() > 0 && name1.charAt(0) == '~') {
-		    	name1 = name1.substring(1);
-		    }
+			if (name1.length() > 0 && name1.charAt(0) == '~') {
+				name1 = name1.substring(1);
+			}
 		} else if (e1 instanceof IResource) {
-		    name1 = ((IResource)e1).getName(); 
+			name1 = ((IResource) e1).getName();
 		} else {
 			name1 = e1.toString();
 		}
 		if (e2 instanceof ICElement) {
-			name2 = ((ICElement)e2).getElementName();
+			name2 = ((ICElement) e2).getElementName();
 			int idx = name2.lastIndexOf("::"); //$NON-NLS-1$
 			if (idx >= 0) {
 				ns2 = name2.substring(0, idx);
 				name2 = name2.substring(idx + 2);
 			}
-		    if (name2.length() > 0 && name2.charAt(0) == '~') {
-		    	name2 = name2.substring(1);
-		    }
-		} else if(e2 instanceof IResource) {
-		    name2 = ((IResource)e2).getName(); 
+			if (name2.length() > 0 && name2.charAt(0) == '~') {
+				name2 = name2.substring(1);
+			}
+		} else if (e2 instanceof IResource) {
+			name2 = ((IResource) e2).getName();
 		} else {
 			name2 = e2.toString();
 		}
-		
+
 		// compare namespace
 		int result = comparator.compare(ns1, ns2);
 		if (result != 0) {
 			return result;
 		}
-		
+
 		// compare method/member kind
 		if (e1 instanceof IMethodDeclaration && e2 instanceof IMethodDeclaration) {
 			result = getMethodKind((IMethodDeclaration) e1) - getMethodKind((IMethodDeclaration) e2);
@@ -402,18 +401,18 @@ public class CElementSorter extends ViewerSorter {
 	}
 
 	private ISourceRoot getSourceRoot(Object element) {
-		ICElement celement = (ICElement)element;
-		while (! (celement instanceof ISourceRoot) && celement != null) {
+		ICElement celement = (ICElement) element;
+		while (!(celement instanceof ISourceRoot) && celement != null) {
 			celement = celement.getParent();
 		}
-		return (ISourceRoot)celement;
+		return (ISourceRoot) celement;
 	}
 
 	private int compareWithLabelProvider(Viewer viewer, Object e1, Object e2) {
 		if (viewer instanceof ContentViewer) {
 			IBaseLabelProvider prov = ((ContentViewer) viewer).getLabelProvider();
 			if (prov instanceof ILabelProvider) {
-				ILabelProvider lprov= (ILabelProvider) prov;
+				ILabelProvider lprov = (ILabelProvider) prov;
 				String name1 = lprov.getText(e1);
 				String name2 = lprov.getText(e2);
 				if (name1 != null && name2 != null) {
@@ -427,9 +426,9 @@ public class CElementSorter extends ViewerSorter {
 
 	private int getPathEntryIndex(ISourceRoot root) {
 		try {
-			IPath rootPath= root.getPath();
-			ISourceRoot[] roots= root.getCProject().getSourceRoots();
-			for (int i= 0; i < roots.length; i++) {
+			IPath rootPath = root.getPath();
+			ISourceRoot[] roots = root.getCProject().getSourceRoots();
+			for (int i = 0; i < roots.length; i++) {
 				if (roots[i].getPath().equals(rootPath)) {
 					return i;
 				}

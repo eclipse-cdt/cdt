@@ -48,7 +48,10 @@ public class NodeWriter {
 	protected static final String CLOSING_SQUARE_BRACKET = "]"; //$NON-NLS-1$
 	protected static final String OPENING_PARENTHESIS = "("; //$NON-NLS-1$
 	protected static final String CLOSING_PARENTHESIS = ")"; //$NON-NLS-1$
-	protected enum SpaceLocation {BEFORE, AFTER}
+
+	protected enum SpaceLocation {
+		BEFORE, AFTER
+	}
 
 	public NodeWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super();
@@ -65,7 +68,7 @@ public class NodeWriter {
 			}
 		}
 	}
-	
+
 	protected void visitNodeIfNotNull(IASTNode node) {
 		if (node != null) {
 			node.accept(visitor);

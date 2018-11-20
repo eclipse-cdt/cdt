@@ -28,17 +28,16 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 @SuppressWarnings("restriction")
 @ThreadSafe
-public class TimersVMAdapter extends AbstractDMVMAdapter
-{
-    @Override
-    protected IVMProvider createViewModelProvider(IPresentationContext context) {
-        if ( TimersView.ID_VIEW_TIMERS.equals(context.getId()) ) {
-            return new TimersVMProvider(this, context, getSession());
-        }
-        return null;
-    }
-    
-    public TimersVMAdapter(DsfSession session, IPresentationContext presentationContext) {
-        super(session);
-    }    
+public class TimersVMAdapter extends AbstractDMVMAdapter {
+	@Override
+	protected IVMProvider createViewModelProvider(IPresentationContext context) {
+		if (TimersView.ID_VIEW_TIMERS.equals(context.getId())) {
+			return new TimersVMProvider(this, context, getSession());
+		}
+		return null;
+	}
+
+	public TimersVMAdapter(DsfSession session, IPresentationContext presentationContext) {
+		super(session);
+	}
 }

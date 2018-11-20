@@ -95,20 +95,20 @@ public class InputType extends BuildObject implements IInputType {
 	private boolean resolved = true;
 	private boolean rebuildState;
 
-//	private class DefaultLanguageInfoCalculator implements ILanguageInfoCalculator {
-//
-//		public String getLanguageId(IResourceInfo rcInfo, ITool tool, IInputType type) {
-//			if(languageId == null && superClass != null)
-//				return ((InputType)superClass).getLanguageInfoCalculator().getLanguageId(rcInfo, tool, type);
-//			return languageId;
-//		}
-//
-//		public String getLanguageName(IResourceInfo rcInfo, ITool tool, IInputType type) {
-//			if(languageName == null && superClass != null)
-//				return ((InputType)superClass).getLanguageInfoCalculator().getLanguageName(rcInfo, tool, type);
-//			return languageName;
-//		}
-//	}
+	//	private class DefaultLanguageInfoCalculator implements ILanguageInfoCalculator {
+	//
+	//		public String getLanguageId(IResourceInfo rcInfo, ITool tool, IInputType type) {
+	//			if(languageId == null && superClass != null)
+	//				return ((InputType)superClass).getLanguageInfoCalculator().getLanguageId(rcInfo, tool, type);
+	//			return languageId;
+	//		}
+	//
+	//		public String getLanguageName(IResourceInfo rcInfo, ITool tool, IInputType type) {
+	//			if(languageName == null && superClass != null)
+	//				return ((InputType)superClass).getLanguageInfoCalculator().getLanguageName(rcInfo, tool, type);
+	//			return languageName;
+	//		}
+	//	}
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -131,7 +131,7 @@ public class InputType extends BuildObject implements IInputType {
 		loadFromManifest(element);
 
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
-		if(enablements.length > 0)
+		if (enablements.length > 0)
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 
 		// Hook me up to the Managed Build Manager
@@ -232,7 +232,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (inputType.sourceContentTypeIds != null) {
 			sourceContentTypeIds = inputType.sourceContentTypeIds.clone();
 		}
-		if(inputType.sourceContentTypes != null) {
+		if (inputType.sourceContentTypes != null) {
 			sourceContentTypes = inputType.sourceContentTypes.clone();
 		}
 		if (inputType.inputExtensions != null) {
@@ -293,7 +293,7 @@ public class InputType extends BuildObject implements IInputType {
 			}
 		}
 
-		if (copyIds){
+		if (copyIds) {
 			isDirty = inputType.isDirty;
 			rebuildState = inputType.rebuildState;
 		} else {
@@ -327,12 +327,12 @@ public class InputType extends BuildObject implements IInputType {
 		// sourceContentType
 		List<String> list = new ArrayList<String>();
 		String ids = element.getAttribute(IInputType.SOURCE_CONTENT_TYPE);
-		if (ids != null){
+		if (ids != null) {
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
 				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
-			if(list.size() != 0){
+			if (list.size() != 0) {
 				sourceContentTypeIds = list.toArray(new String[list.size()]);
 				list.clear();
 			}
@@ -354,12 +354,12 @@ public class InputType extends BuildObject implements IInputType {
 
 		// headerContentType
 		ids = element.getAttribute(IInputType.HEADER_CONTENT_TYPE);
-		if (ids != null){
+		if (ids != null) {
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
 				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
-			if (list.size() != 0){
+			if (list.size() != 0) {
 				headerContentTypeIds = list.toArray(new String[list.size()]);
 				list.clear();
 			}
@@ -373,7 +373,7 @@ public class InputType extends BuildObject implements IInputType {
 				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 
-			if (list.size() != 0){
+			if (list.size() != 0) {
 				headerExtensions = list.toArray(new String[list.size()]);
 				list.clear();
 			}
@@ -398,16 +398,16 @@ public class InputType extends BuildObject implements IInputType {
 		assignToOptionId = SafeStringInterner.safeIntern(element.getAttribute(IInputType.ASSIGN_TO_OPTION));
 
 		// multipleOfType
-        String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
-        if (isMOT != null){
-    		multipleOfType = Boolean.parseBoolean(isMOT);
-        }
+		String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
+		if (isMOT != null) {
+			multipleOfType = Boolean.parseBoolean(isMOT);
+		}
 
 		// primaryInput
-        String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
-        if (isPI != null){
+		String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
+		if (isPI != null) {
 			primaryInput = Boolean.parseBoolean(isPI);
-        }
+		}
 
 		// buildVariable
 		buildVariable = SafeStringInterner.safeIntern(element.getAttribute(IInputType.BUILD_VARIABLE));
@@ -415,17 +415,17 @@ public class InputType extends BuildObject implements IInputType {
 		languageId = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_ID));
 		languageName = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_NAME));
 		if (element.getAttribute(LANGUAGE_INFO_CALCULATOR) != null && element instanceof DefaultManagedConfigElement) {
-			languageInfoCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			languageInfoCalculatorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
-//		else {
-//			languageInfoCalculator = new DefaultLanguageInfoCalculator();
-//		}
+		//		else {
+		//			languageInfoCalculator = new DefaultLanguageInfoCalculator();
+		//		}
 		buildInfoDicsoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
 
 		// Store the configuration element IFF there is a dependency generator defined
 		String depGenerator = element.getAttribute(ITool.DEP_CALC_ID);
 		if (depGenerator != null && element instanceof DefaultManagedConfigElement) {
-			dependencyGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			dependencyGeneratorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 	}
 
@@ -465,27 +465,27 @@ public class InputType extends BuildObject implements IInputType {
 					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
-				if (list.size() != 0){
+				if (list.size() != 0) {
 					sourceContentTypeIds = list.toArray(new String[list.size()]);
 					list.clear();
 				}
 
-				if(sourceContentTypeIds != null){
+				if (sourceContentTypeIds != null) {
 					List<IContentType> types = new ArrayList<IContentType>();
 					for (String sourceContentTypeId : sourceContentTypeIds) {
 						IContentType type = manager.getContentType(sourceContentTypeId);
-						if(type != null)
+						if (type != null)
 							types.add(type);
 					}
 
-					if (types.size() != 0){
+					if (types.size() != 0) {
 						sourceContentTypes = types.toArray(new IContentType[types.size()]);
 					}
 				}
 			}
 		}
 
-        // sources
+		// sources
 		if (element.getAttribute(IInputType.SOURCES) != null) {
 			String inputs = element.getAttribute(ITool.SOURCES);
 			if (inputs != null) {
@@ -494,7 +494,7 @@ public class InputType extends BuildObject implements IInputType {
 					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
-				if (list.size() != 0){
+				if (list.size() != 0) {
 					inputExtensions = list.toArray(new String[list.size()]);
 					list.clear();
 				}
@@ -510,27 +510,27 @@ public class InputType extends BuildObject implements IInputType {
 					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
-				if (list.size() != 0){
+				if (list.size() != 0) {
 					headerContentTypeIds = list.toArray(new String[list.size()]);
 					list.clear();
 				}
 
-				if (headerContentTypeIds != null){
+				if (headerContentTypeIds != null) {
 					List<IContentType> types = new ArrayList<>();
 					for (String headerContentTypeId : headerContentTypeIds) {
 						IContentType type = manager.getContentType(headerContentTypeId);
-						if(type != null)
+						if (type != null)
 							types.add(type);
 					}
 
-					if (types.size() != 0){
+					if (types.size() != 0) {
 						headerContentTypes = types.toArray(new IContentType[types.size()]);
 					}
 				}
 			}
 		}
 
-        // headers
+		// headers
 		if (element.getAttribute(IInputType.HEADERS) != null) {
 			String inputs = element.getAttribute(HEADERS);
 			if (inputs != null) {
@@ -539,7 +539,7 @@ public class InputType extends BuildObject implements IInputType {
 					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
-				if (list.size() != 0){
+				if (list.size() != 0) {
 					headerExtensions = list.toArray(new String[list.size()]);
 					list.clear();
 				}
@@ -579,17 +579,17 @@ public class InputType extends BuildObject implements IInputType {
 		// multipleOfType
 		if (element.getAttribute(IInputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
-			if (isMOT != null){
+			if (isMOT != null) {
 				multipleOfType = Boolean.parseBoolean(isMOT);
 			}
 		}
 
 		// primaryInput
 		if (element.getAttribute(IInputType.PRIMARY_INPUT) != null) {
-	        String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
-	        if (isPI != null){
+			String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
+			if (isPI != null) {
 				primaryInput = Boolean.parseBoolean(isPI);
-	        }
+			}
 		}
 
 		// buildVariable
@@ -610,7 +610,7 @@ public class InputType extends BuildObject implements IInputType {
 		return true;
 	}
 
-	private String composeString(String array[], String separator){
+	private String composeString(String array[], String separator) {
 		if (array == null)
 			return null;
 		if (array.length == 0)
@@ -618,7 +618,7 @@ public class InputType extends BuildObject implements IInputType {
 
 		StringBuilder buf = new StringBuilder();
 		buf.append(array[0]);
-		for (int i = 1; i < array.length; i++){
+		for (int i = 1; i < array.length; i++) {
 			buf.append(separator).append(array[i]);
 		}
 
@@ -669,9 +669,9 @@ public class InputType extends BuildObject implements IInputType {
 
 		// dependency (header file) extensions
 		if (getDependencyExtensionsList().size() > 0) {
-			String headers=""; //$NON-NLS-1$
+			String headers = ""; //$NON-NLS-1$
 			for (String header : getDependencyExtensionsList()) {
-				if (headers.length()>0)
+				if (headers.length() > 0)
 					headers += DEFAULT_SEPARATOR;
 				headers += header;
 			}
@@ -805,7 +805,7 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	IAdditionalInput createAdditionalInput(IAdditionalInput base) {
-		AdditionalInput newAdditionalInput = new AdditionalInput(this, (AdditionalInput)base);
+		AdditionalInput newAdditionalInput = new AdditionalInput(this, (AdditionalInput) base);
 		getAdditionalInputList().add(newAdditionalInput);
 		setDirty(true);
 		return newAdditionalInput;
@@ -851,7 +851,8 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public void removeAdditionalInput(String path) {
 		IAdditionalInput input = getAdditionalInput(path);
-		if (input != null) removeAdditionalInput(input);
+		if (input != null)
+			removeAdditionalInput(input);
 	}
 
 	/* (non-Javadoc)
@@ -871,8 +872,8 @@ public class InputType extends BuildObject implements IInputType {
 		List<IPath> deps = new ArrayList<IPath>();
 		for (AdditionalInput additionalInput : getAdditionalInputList()) {
 			int kind = additionalInput.getKind();
-			if (kind == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY ||
-				kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
+			if (kind == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY
+					|| kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
 				String[] paths = additionalInput.getPaths();
 				if (paths != null) {
 					for (String path : paths) {
@@ -894,8 +895,8 @@ public class InputType extends BuildObject implements IInputType {
 		List<IPath> ins = new ArrayList<IPath>();
 		for (AdditionalInput additionalInput : getAdditionalInputList()) {
 			int kind = additionalInput.getKind();
-			if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT ||
-				kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
+			if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT
+					|| kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
 				String[] paths = additionalInput.getPaths();
 				if (paths != null) {
 					for (String path : paths) {
@@ -928,7 +929,6 @@ public class InputType extends BuildObject implements IInputType {
 		}
 		return additionalInputList;
 	}
-
 
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
@@ -971,7 +971,8 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public void setBuildVariable(String variableName) {
-		if (variableName == null && buildVariable == null) return;
+		if (variableName == null && buildVariable == null)
+			return;
 		if (buildVariable == null || variableName == null || !(variableName.equals(buildVariable))) {
 			buildVariable = variableName;
 			setDirty(true);
@@ -1053,25 +1054,25 @@ public class InputType extends BuildObject implements IInputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType type = getDependencyContentType();
 		if (type != null) {
-			String[] exts = ((Tool)tool).getContentTypeFileSpecs(type);
+			String[] exts = ((Tool) tool).getContentTypeFileSpecs(type);
 			//  TODO: This is a temporary hack until we decide how to specify the langauge (C vs. C++)
 			//  of a .h file.  If the content type is the CDT-defined C/C++ content type, then
 			//  add "h" to the list if it is not already there.
-			if (type.getId().compareTo("org.eclipse.cdt.core.cxxHeader") == 0) {   //$NON-NLS-1$
+			if (type.getId().compareTo("org.eclipse.cdt.core.cxxHeader") == 0) { //$NON-NLS-1$
 				boolean h_found = false;
 				for (String ext : exts) {
-					if (ext.compareTo("h") == 0) {  //$NON-NLS-1$
+					if (ext.compareTo("h") == 0) { //$NON-NLS-1$
 						h_found = true;
 						break;
 					}
 				}
 				if (!h_found) {
-					String[] cppexts = new String[exts.length+1];
+					String[] cppexts = new String[exts.length + 1];
 					int i = 0;
-					for (; i<exts.length; i++) {
+					for (; i < exts.length; i++) {
 						cppexts[i] = exts[i];
 					}
-					cppexts[i] = "h";  //$NON-NLS-1$
+					cppexts[i] = "h"; //$NON-NLS-1$
 					return cppexts;
 				}
 			}
@@ -1087,7 +1088,8 @@ public class InputType extends BuildObject implements IInputType {
 	public boolean isDependencyExtension(ITool tool, String ext) {
 		String[] exts = getDependencyExtensions(tool);
 		for (String depExt : exts) {
-			if (ext.equals(depExt)) return true;
+			if (ext.equals(depExt))
+				return true;
 		}
 		return false;
 	}
@@ -1111,10 +1113,12 @@ public class InputType extends BuildObject implements IInputType {
 		if (element != null) {
 			try {
 				if (element.getAttribute(ITool.DEP_CALC_ID) != null) {
-					dependencyGenerator = (IManagedDependencyGeneratorType) element.createExecutableExtension(ITool.DEP_CALC_ID);
+					dependencyGenerator = (IManagedDependencyGeneratorType) element
+							.createExecutableExtension(ITool.DEP_CALC_ID);
 					return dependencyGenerator;
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
@@ -1125,7 +1129,7 @@ public class InputType extends BuildObject implements IInputType {
 	public IConfigurationElement getDependencyGeneratorElement() {
 		if (dependencyGeneratorElement == null) {
 			if (superClass != null) {
-				return ((InputType)superClass).getDependencyGeneratorElement();
+				return ((InputType) superClass).getDependencyGeneratorElement();
 			}
 		}
 		return dependencyGeneratorElement;
@@ -1149,7 +1153,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (superClass != null) {
 				return superClass.getMultipleOfType();
 			} else {
-				return false;	// default is false
+				return false; // default is false
 			}
 		}
 		return multipleOfType.booleanValue();
@@ -1176,7 +1180,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (superClass != null) {
 				return superClass.getPrimaryInput();
 			} else {
-				return false;	// default is false
+				return false; // default is false
 			}
 		}
 		return primaryInput.booleanValue();
@@ -1214,7 +1218,8 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public void setOptionId(String id) {
-		if (id == null && optionId == null) return;
+		if (id == null && optionId == null)
+			return;
 		if (id == null || optionId == null || !(optionId.equals(id))) {
 			optionId = id;
 			setDirty(true);
@@ -1242,7 +1247,8 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public void setAssignToOptionId(String id) {
-		if (id == null && assignToOptionId == null) return;
+		if (id == null && assignToOptionId == null)
+			return;
 		if (id == null || assignToOptionId == null || !(assignToOptionId.equals(id))) {
 			assignToOptionId = id;
 			setDirty(true);
@@ -1257,7 +1263,7 @@ public class InputType extends BuildObject implements IInputType {
 	public IContentType getSourceContentType() {
 		IContentType[] types = getSourceContentTypes();
 
-		if(types != null && types.length != 0) {
+		if (types != null && types.length != 0) {
 			return types[0];
 		}
 		return null;
@@ -1299,8 +1305,6 @@ public class InputType extends BuildObject implements IInputType {
 		return headerExtensions.clone();
 	}
 
-
-
 	@Override
 	public String[] getHeaderContentTypeIds() {
 		if (headerContentTypeIds == null) {
@@ -1327,9 +1331,8 @@ public class InputType extends BuildObject implements IInputType {
 
 	@Override
 	public void setHeaderContentTypeIds(String[] ids) {
-		if(!Arrays.equals(headerContentTypeIds, ids)){
-			headerContentTypeIds = ids != null ?
-					(String[])ids.clone() : null;
+		if (!Arrays.equals(headerContentTypeIds, ids)) {
+			headerContentTypeIds = ids != null ? (String[]) ids.clone() : null;
 
 			setDirty(true);
 			setRebuildState(true);
@@ -1338,9 +1341,8 @@ public class InputType extends BuildObject implements IInputType {
 
 	@Override
 	public void setHeaderExtensionsAttribute(String[] extensions) {
-		if(!Arrays.equals(headerExtensions, extensions)){
-			headerExtensions = extensions != null ?
-					(String[])extensions.clone() : null;
+		if (!Arrays.equals(headerExtensions, extensions)) {
+			headerExtensions = extensions != null ? (String[]) extensions.clone() : null;
 
 			setDirty(true);
 			setRebuildState(true);
@@ -1349,9 +1351,8 @@ public class InputType extends BuildObject implements IInputType {
 
 	@Override
 	public void setSourceContentTypeIds(String[] ids) {
-		if(!Arrays.equals(sourceContentTypeIds, ids)){
-			sourceContentTypeIds = ids != null ?
-					(String[])ids.clone() : null;
+		if (!Arrays.equals(sourceContentTypeIds, ids)) {
+			sourceContentTypeIds = ids != null ? (String[]) ids.clone() : null;
 
 			setDirty(true);
 			setRebuildState(true);
@@ -1360,9 +1361,8 @@ public class InputType extends BuildObject implements IInputType {
 
 	@Override
 	public void setSourceExtensionsAttribute(String[] extensions) {
-		if(!Arrays.equals(inputExtensions, extensions)){
-			inputExtensions = extensions != null ?
-					(String[])extensions.clone() : null;
+		if (!Arrays.equals(inputExtensions, extensions)) {
+			inputExtensions = extensions != null ? (String[]) extensions.clone() : null;
 
 			setDirty(true);
 			setRebuildState(true);
@@ -1374,17 +1374,15 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public void setSourceContentType(IContentType type) {
-		if(type == null){
-			if(sourceContentTypes != null){
+		if (type == null) {
+			if (sourceContentTypes != null) {
 				sourceContentTypes = null;
 				sourceContentTypeIds = null;
 				setDirty(true);
 				setRebuildState(true);
 			}
 		} else {
-			if(sourceContentTypes == null
-					|| sourceContentTypes.length != 1
-					|| sourceContentTypes[0] != type){
+			if (sourceContentTypes == null || sourceContentTypes.length != 1 || sourceContentTypes[0] != type) {
 				sourceContentTypes = new IContentType[1];
 				sourceContentTypes[0] = type;
 				sourceContentTypeIds = new String[1];
@@ -1392,13 +1390,13 @@ public class InputType extends BuildObject implements IInputType {
 				setDirty(true);
 				setRebuildState(true);
 			}
-				return;
+			return;
 		}
 	}
 
 	public void setSourceContentTypes(IContentType types[]) {
-		if(types == null){
-			if(sourceContentTypes != null){
+		if (types == null) {
+			if (sourceContentTypes != null) {
 				sourceContentTypes = null;
 				sourceContentTypeIds = null;
 				setDirty(true);
@@ -1407,7 +1405,7 @@ public class InputType extends BuildObject implements IInputType {
 		} else {
 			sourceContentTypes = types.clone();
 			sourceContentTypeIds = new String[types.length];
-			for(int i = 0; i < types.length; i++){
+			for (int i = 0; i < types.length; i++) {
 				sourceContentTypeIds[i] = types[i].getId();
 			}
 			setDirty(true);
@@ -1415,13 +1413,12 @@ public class InputType extends BuildObject implements IInputType {
 		}
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getSourceExtensionsAttribute()
 	 */
 	@Override
 	public String[] getSourceExtensionsAttribute() {
-		if( inputExtensions == null ) {
+		if (inputExtensions == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
 				return superClass.getSourceExtensionsAttribute();
@@ -1437,8 +1434,8 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public void setSourceExtensionsAttribute(String extensions) {
-		if(extensions == null){
-			if(inputExtensions != null){
+		if (extensions == null) {
+			if (inputExtensions != null) {
 				inputExtensions = null;
 				setDirty(true);
 				setRebuildState(true);
@@ -1451,7 +1448,7 @@ public class InputType extends BuildObject implements IInputType {
 			}
 
 			String[] newExts = list.toArray(new String[list.size()]);
-			if(!Arrays.equals(newExts, inputExtensions)){
+			if (!Arrays.equals(newExts, inputExtensions)) {
 				inputExtensions = newExts;
 				setDirty(true);
 				setRebuildState(true);
@@ -1464,19 +1461,19 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public String[] getSourceExtensions(ITool tool) {
-		return getSourceExtensions(tool, ((Tool)tool).getProject());
-//		//  Use content type if specified and registered with Eclipse
-//		IContentType types[] = getSourceContentTypes();
-//		if (types.length != 0) {
-//			IContentType type;
-//			List list = new ArrayList();
-//			for(int i = 0; i < types.length; i++){
-//				type = types[i];
-//				list.addAll(Arrays.asList(((Tool)tool).getContentTypeFileSpecs(type)));
-//			}
-//			return (String[])list.toArray(new String[list.size()]);
-//		}
-//		return getSourceExtensionsAttribute();
+		return getSourceExtensions(tool, ((Tool) tool).getProject());
+		//		//  Use content type if specified and registered with Eclipse
+		//		IContentType types[] = getSourceContentTypes();
+		//		if (types.length != 0) {
+		//			IContentType type;
+		//			List list = new ArrayList();
+		//			for(int i = 0; i < types.length; i++){
+		//				type = types[i];
+		//				list.addAll(Arrays.asList(((Tool)tool).getContentTypeFileSpecs(type)));
+		//			}
+		//			return (String[])list.toArray(new String[list.size()]);
+		//		}
+		//		return getSourceExtensionsAttribute();
 	}
 
 	public String[] getSourceExtensions(ITool tool, IProject project) {
@@ -1485,13 +1482,12 @@ public class InputType extends BuildObject implements IInputType {
 		if (types.length != 0) {
 			List<String> list = new ArrayList<String>();
 			for (IContentType type : types) {
-				list.addAll(Arrays.asList(((Tool)tool).getContentTypeFileSpecs(type, project)));
+				list.addAll(Arrays.asList(((Tool) tool).getContentTypeFileSpecs(type, project)));
 			}
 			return list.toArray(new String[list.size()]);
 		}
 		return getSourceExtensionsAttribute();
 	}
-
 
 	@Override
 	public String[] getHeaderExtensions(ITool tool) {
@@ -1499,7 +1495,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (types.length != 0) {
 			List<String> list = new ArrayList<String>();
 			for (IContentType type : types) {
-				list.addAll(Arrays.asList(((Tool)tool).getContentTypeFileSpecs(type)));
+				list.addAll(Arrays.asList(((Tool) tool).getContentTypeFileSpecs(type)));
 			}
 			return list.toArray(new String[list.size()]);
 		}
@@ -1511,13 +1507,14 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public boolean isSourceExtension(ITool tool, String ext) {
-		return isSourceExtension(tool, ext, ((Tool)tool).getProject());
+		return isSourceExtension(tool, ext, ((Tool) tool).getProject());
 	}
 
 	public boolean isSourceExtension(ITool tool, String ext, IProject project) {
 		String[] exts = getSourceExtensions(tool, project);
 		for (String srcExt : exts) {
-			if (ext.equals(srcExt)) return true;
+			if (ext.equals(srcExt))
+				return true;
 		}
 		return false;
 	}
@@ -1540,14 +1537,17 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension InputType
-		if (isExtensionInputType) return false;
+		if (isExtensionInputType)
+			return false;
 
 		// Check my children
 		for (InputOrder inputOrder : getInputOrderList()) {
-			if (inputOrder.isDirty()) return true;
+			if (inputOrder.isDirty())
+				return true;
 		}
 		for (AdditionalInput additionalInput : getAdditionalInputList()) {
-			if (additionalInput.isDirty()) return true;
+			if (additionalInput.isDirty())
+				return true;
 		}
 
 		return isDirty;
@@ -1581,10 +1581,8 @@ public class InputType extends BuildObject implements IInputType {
 				superClass = ManagedBuildManager.getExtensionInputType(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.outputResolveError(
-							"superClass",	//$NON-NLS-1$
-							superClassId,
-							"inputType",	//$NON-NLS-1$
+					ManagedBuildManager.outputResolveError("superClass", //$NON-NLS-1$
+							superClassId, "inputType", //$NON-NLS-1$
 							getId());
 				}
 			}
@@ -1595,10 +1593,10 @@ public class InputType extends BuildObject implements IInputType {
 			if (sourceContentTypeIds != null) {
 				for (String sourceContentTypeId : sourceContentTypeIds) {
 					IContentType type = manager.getContentType(sourceContentTypeId);
-					if(type != null)
+					if (type != null)
 						list.add(type);
 				}
-				if(list.size() != 0){
+				if (list.size() != 0) {
 					sourceContentTypes = list.toArray(new IContentType[list.size()]);
 					list.clear();
 				} else {
@@ -1609,10 +1607,10 @@ public class InputType extends BuildObject implements IInputType {
 			if (headerContentTypeIds != null) {
 				for (String headerContentTypeId : headerContentTypeIds) {
 					IContentType type = manager.getContentType(headerContentTypeId);
-					if(type != null)
+					if (type != null)
 						list.add(type);
 				}
-				if(list.size() != 0){
+				if (list.size() != 0) {
 					headerContentTypes = list.toArray(new IContentType[list.size()]);
 					list.clear();
 				} else {
@@ -1639,8 +1637,8 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public String getManagedBuildRevision() {
-		if ( managedBuildRevision == null) {
-			if ( getParent() != null) {
+		if (managedBuildRevision == null) {
+			if (getParent() != null) {
 				return getParent().getManagedBuildRevision();
 			}
 		}
@@ -1652,8 +1650,8 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public Version getVersion() {
-		if ( version == null) {
-			if ( getParent() != null) {
+		if (version == null) {
+			if (getParent() != null) {
 				return getParent().getVersion();
 			}
 		}
@@ -1665,22 +1663,24 @@ public class InputType extends BuildObject implements IInputType {
 		// Do nothing
 	}
 
-	public boolean needsRebuild(){
-		if(rebuildState)
+	public boolean needsRebuild() {
+		if (rebuildState)
 			return true;
 
 		for (InputOrder inputOrder : getInputOrderList()) {
-			if (inputOrder.needsRebuild()) return true;
+			if (inputOrder.needsRebuild())
+				return true;
 		}
 		for (AdditionalInput additionalInput : getAdditionalInputList()) {
-			if (additionalInput.needsRebuild()) return true;
+			if (additionalInput.needsRebuild())
+				return true;
 		}
 
 		return rebuildState;
 	}
 
-	public void setRebuildState(boolean rebuild){
-		if(isExtensionElement() && rebuild)
+	public void setRebuildState(boolean rebuild) {
+		if (isExtensionElement() && rebuild)
 			return;
 
 		rebuildState = rebuild;
@@ -1698,44 +1698,44 @@ public class InputType extends BuildObject implements IInputType {
 
 	public IResourceInfo getRcInfo(ITool tool) {
 		IBuildObject parent = tool.getParent();
-		if(parent instanceof IFileInfo)
-			return (IFileInfo)parent;
-		else if(parent instanceof IToolChain)
-			return ((IToolChain)parent).getParentFolderInfo();
+		if (parent instanceof IFileInfo)
+			return (IFileInfo) parent;
+		else if (parent instanceof IToolChain)
+			return ((IToolChain) parent).getParentFolderInfo();
 		return null;
 	}
 
-	private ILanguageInfoCalculator getLanguageInfoCalculator(){
-		if(languageInfoCalculator == null){
-			if(languageInfoCalculatorElement != null){
+	private ILanguageInfoCalculator getLanguageInfoCalculator() {
+		if (languageInfoCalculator == null) {
+			if (languageInfoCalculatorElement != null) {
 				try {
 					Object ex = languageInfoCalculatorElement.createExecutableExtension(LANGUAGE_INFO_CALCULATOR);
-					if(ex instanceof ILanguageInfoCalculator)
-						languageInfoCalculator = (ILanguageInfoCalculator)ex;
+					if (ex instanceof ILanguageInfoCalculator)
+						languageInfoCalculator = (ILanguageInfoCalculator) ex;
 				} catch (CoreException e) {
 				}
 			}
 
-//			if(languageInfoCalculator == null)
-//				languageInfoCalculator = new DefaultLanguageInfoCalculator();
+			//			if(languageInfoCalculator == null)
+			//				languageInfoCalculator = new DefaultLanguageInfoCalculator();
 		}
 		return languageInfoCalculator;
 	}
 
-	public String getLanguageIdAttribute(){
-		if(languageId == null){
-			if(superClass != null){
-				return ((InputType)superClass).getLanguageIdAttribute();
+	public String getLanguageIdAttribute() {
+		if (languageId == null) {
+			if (superClass != null) {
+				return ((InputType) superClass).getLanguageIdAttribute();
 			}
 			return null;
 		}
 		return languageId;
 	}
 
-	public String getLanguageNameAttribute(){
-		if(languageName == null){
-			if(superClass != null){
-				return ((InputType)superClass).getLanguageNameAttribute();
+	public String getLanguageNameAttribute() {
+		if (languageName == null) {
+			if (superClass != null) {
+				return ((InputType) superClass).getLanguageNameAttribute();
 			}
 			return null;
 		}
@@ -1743,24 +1743,24 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	@Override
-	public String getLanguageId(ITool tool){
+	public String getLanguageId(ITool tool) {
 		IResourceInfo rcInfo = getRcInfo(tool);
 		String langId = this.languageId;
-		if(langId == null || isExtensionInputType){
+		if (langId == null || isExtensionInputType) {
 			ILanguageInfoCalculator calc = getLanguageInfoCalculator();
-			if(calc != null)
+			if (calc != null)
 				langId = calc.getLanguageId(rcInfo, tool, this);
 		}
 
-		if(langId == null){
+		if (langId == null) {
 			langId = getLanguageIdAttribute();
 		}
 
-		if(langId == null){
+		if (langId == null) {
 			IContentType contentType = getSourceContentType();
-			if (contentType!=null) {
+			if (contentType != null) {
 				ILanguage language = LanguageManager.getInstance().getLanguage(contentType);
-				if (language!=null)
+				if (language != null)
 					langId = language.getId();
 			}
 		}
@@ -1769,32 +1769,32 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	@Override
-	public String getLanguageName(ITool tool){
+	public String getLanguageName(ITool tool) {
 		IResourceInfo rcInfo = getRcInfo(tool);
 		String langName = this.languageName;
-		if(langName == null || isExtensionInputType){
+		if (langName == null || isExtensionInputType) {
 			ILanguageInfoCalculator calc = getLanguageInfoCalculator();
-			if(calc != null)
+			if (calc != null)
 				langName = calc.getLanguageName(rcInfo, tool, this);
 		}
 
-		if(langName == null){
+		if (langName == null) {
 			langName = getLanguageNameAttribute();
-			if(langName == null){
+			if (langName == null) {
 				IContentType types[] = getSourceContentTypes();
 				for (IContentType type : types) {
 					String name = type.getName();
-					if(name != null && name.length() != 0){
+					if (name != null && name.length() != 0) {
 						langName = name;
 						break;
 					}
 				}
 
-				if(langName == null){
+				if (langName == null) {
 					types = getHeaderContentTypes();
 					for (IContentType type : types) {
 						String name = type.getName();
-						if(name != null && name.length() != 0){
+						if (name != null && name.length() != 0) {
 							langName = name;
 							break;
 						}
@@ -1803,22 +1803,22 @@ public class InputType extends BuildObject implements IInputType {
 			}
 		}
 
-		if(langName == null){
+		if (langName == null) {
 			String[] exts = getSourceExtensions(tool);
-			if(exts.length != 0){
+			if (exts.length != 0) {
 				langName = CDataUtil.arrayToString(exts, ","); //$NON-NLS-1$
 			} else {
 				exts = getHeaderExtensions(tool);
-				if(exts.length != 0)
+				if (exts.length != 0)
 					langName = CDataUtil.arrayToString(exts, ","); //$NON-NLS-1$
 			}
 		}
 
-		if(langName == null){
+		if (langName == null) {
 			langName = getName();
-			if(langName == null){
+			if (langName == null) {
 				langName = tool.getName();
-				if(langName == null){
+				if (langName == null) {
 					langName = getId();
 				}
 			}
@@ -1830,12 +1830,12 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public String getDiscoveryProfileId(ITool tool) {
 		String id = getDiscoveryProfileIdAttribute();
-		if(id == null){
-			id = ((Tool)tool).getDiscoveryProfileId();
+		if (id == null) {
+			id = ((Tool) tool).getDiscoveryProfileId();
 		}
 		// if there is more than one ('|'-separated), return the first one
 		// TODO: expand interface with String[] getDiscoveryProfileIds(ITool tool)
-		if(null != id) {
+		if (null != id) {
 			int nPos = id.indexOf('|');
 			if (nPos > 0)
 				id = id.substring(0, nPos);
@@ -1851,13 +1851,15 @@ public class InputType extends BuildObject implements IInputType {
 		ITool tool = getParent();
 		if (tool != null) {
 			IBuildObject toolchain = tool.getParent();
-			if (toolchain instanceof IToolChain && ((IToolChain) toolchain).getDefaultLanguageSettingsProviderIds() != null) {
+			if (toolchain instanceof IToolChain
+					&& ((IToolChain) toolchain).getDefaultLanguageSettingsProviderIds() != null) {
 				IConfiguration cfg = ((IToolChain) toolchain).getParent();
 				if (cfg != null && cfg.getDefaultLanguageSettingsProviderIds() != null) {
 					IResource rc = cfg.getOwner();
 					if (rc != null) {
 						IProject project = rc.getProject();
-						useLegacy = !ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+						useLegacy = !ScannerDiscoveryLegacySupport
+								.isLanguageSettingsProvidersFunctionalityEnabled(project);
 					}
 				}
 			}
@@ -1874,7 +1876,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (profileId == null) {
 			profileId = ScannerDiscoveryLegacySupport.getDeprecatedLegacyProfiles(id);
 			if (profileId == null && superClass instanceof InputType) {
-				profileId = ((InputType)superClass).getLegacyDiscoveryProfileIdAttribute();
+				profileId = ((InputType) superClass).getLegacyDiscoveryProfileIdAttribute();
 			}
 		}
 		return profileId;
@@ -1894,7 +1896,7 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	private String getDiscoveryProfileIdAttributeInternal() {
 		if (buildInfoDicsoveryProfileId == null && superClass instanceof InputType) {
-			return ((InputType)superClass).getDiscoveryProfileIdAttributeInternal();
+			return ((InputType) superClass).getDiscoveryProfileIdAttributeInternal();
 		}
 		return buildInfoDicsoveryProfileId;
 	}
@@ -1909,38 +1911,38 @@ public class InputType extends BuildObject implements IInputType {
 		languageName = name;
 	}
 
-	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
-		if(booleanExpressionCalculator == null){
-			if(superClass != null){
-				return ((InputType)superClass).getBooleanExpressionCalculator();
+	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator() {
+		if (booleanExpressionCalculator == null) {
+			if (superClass != null) {
+				return ((InputType) superClass).getBooleanExpressionCalculator();
 			}
 		}
 		return booleanExpressionCalculator;
 	}
 
 	public boolean isEnabled(ITool tool) {
-		if(tool.isExtensionElement())
+		if (tool.isExtensionElement())
 			return true;
 
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
-		if(calc == null)
+		if (calc == null)
 			return true;
 
 		return calc.isInputTypeEnabled(tool, this);
 	}
 
-	public boolean hasScannerConfigSettings(){
+	public boolean hasScannerConfigSettings() {
 
-		if(getDiscoveryProfileIdAttribute() != null)
+		if (getDiscoveryProfileIdAttribute() != null)
 			return true;
 
-		if (superClass!=null && superClass instanceof InputType)
-			return ((InputType)superClass).hasScannerConfigSettings();
+		if (superClass != null && superClass instanceof InputType)
+			return ((InputType) superClass).hasScannerConfigSettings();
 
 		return false;
 	}
 
-	public boolean hasCustomSettings(){
+	public boolean hasCustomSettings() {
 		//TODO:
 		return false;
 	}

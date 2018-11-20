@@ -27,10 +27,10 @@ public class ShowDebugToolbarAction extends VisualizerAction {
 
 	/** Visualizer instance we're associated with. */
 	private MulticoreVisualizer m_visualizer;
-	
+
 	/** persistent settings manager */
 	private PersistentSettingsManager m_persistentSettingsManager;
-	
+
 	/** Persistent parameter that remembers if the debug actions should be shown or not */
 	private PersistentParameter<Boolean> m_showDebugActions;
 
@@ -40,36 +40,33 @@ public class ShowDebugToolbarAction extends VisualizerAction {
 	 * @param  showDebugActions : show the debug actions by default
 	 * @param MVInstanceId : id that uniquely identifies a Multicore Visualizer instance
 	 */
-	public ShowDebugToolbarAction(boolean showDebugActions, String MVInstanceId)
-	{
-		super(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.ShowDebugToolbar.text"), Action.AS_CHECK_BOX); //$NON-NLS-1$
-		setDescription(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.ShowDebugToolbar.description")); //$NON-NLS-1$
-		
+	public ShowDebugToolbarAction(boolean showDebugActions, String MVInstanceId) {
+		super(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.ShowDebugToolbar.text"), //$NON-NLS-1$
+				Action.AS_CHECK_BOX);
+		setDescription(
+				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.ShowDebugToolbar.description")); //$NON-NLS-1$
+
 		m_persistentSettingsManager = new PersistentSettingsManager("ShowDebugToolbarAction", MVInstanceId); //$NON-NLS-1$
-		m_showDebugActions =  m_persistentSettingsManager.getNewParameter(Boolean.class, 
-				"showDebugActionsInMVToolbar", true, showDebugActions); //$NON-NLS-1$
-		
+		m_showDebugActions = m_persistentSettingsManager.getNewParameter(Boolean.class, "showDebugActionsInMVToolbar", //$NON-NLS-1$
+				true, showDebugActions);
+
 		// Set initial state
 		this.setChecked(m_showDebugActions.value());
 	}
 
 	/** Dispose method. */
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		m_visualizer = null;
 		super.dispose();
 	}
 
-
 	// --- init methods ---
 
 	/** Initializes this action for the specified view. */
-	public void init(MulticoreVisualizer visualizer)
-	{
+	public void init(MulticoreVisualizer visualizer) {
 		m_visualizer = visualizer;
 	}
-
 
 	// --- methods ---
 

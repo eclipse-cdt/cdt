@@ -29,23 +29,23 @@ public class DsfRemoveRegisterGroupsCommand extends AbstractDsfRegisterGroupActi
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		boolean state = false;
-	    if (evaluationContext instanceof IEvaluationContext) {
-	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-	        Object p = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_PART_NAME);
-	        if (s instanceof IStructuredSelection && p instanceof IWorkbenchPart) {
-	        	state = canRemoveRegisterGroups((IWorkbenchPart)p, (IStructuredSelection)s);
-	        }
-	    }
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			Object p = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_PART_NAME);
+			if (s instanceof IStructuredSelection && p instanceof IWorkbenchPart) {
+				state = canRemoveRegisterGroups((IWorkbenchPart) p, (IStructuredSelection) s);
+			}
+		}
 		setBaseEnabled(state);
 	}
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (selection instanceof IStructuredSelection) {
-			removeRegisterGroups(part, (IStructuredSelection)selection);
+			removeRegisterGroups(part, (IStructuredSelection) selection);
 		}
-    	return null;
-    }
+		return null;
+	}
 }

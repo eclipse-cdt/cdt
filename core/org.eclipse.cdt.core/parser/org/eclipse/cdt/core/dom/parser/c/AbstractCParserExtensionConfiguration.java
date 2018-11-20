@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 
-
 /**
  * Abstract C parser extension configuration to help model C dialects.
  * @since 4.0

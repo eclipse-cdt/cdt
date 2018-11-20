@@ -88,8 +88,7 @@ import org.eclipse.cdt.internal.ui.util.NameComposer;
  * @author Tom Ball
  */
 public class ExtractLocalVariableRefactoring extends CRefactoring {
-	public static final String ID =
-			"org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"; //$NON-NLS-1$
 
 	private IASTExpression target;
 	private final VariableNameInformation info;
@@ -123,8 +122,8 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 		boolean oneMarked = selectedRegion != null && isOneMarked(container.getNodesToWrite(), selectedRegion);
 		if (!oneMarked) {
-			initStatus.addFatalError(target == null ?
-					Messages.NoExpressionSelected : Messages.TooManyExpressionsSelected);
+			initStatus.addFatalError(
+					target == null ? Messages.NoExpressionSelected : Messages.TooManyExpressionsSelected);
 			return initStatus;
 		}
 		sm.worked(1);
@@ -183,8 +182,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		for (IASTNode node : selectedNodes) {
 			if (node instanceof IASTExpression) {
 				IASTExpression expression = (IASTExpression) node;
-				if (expression.isPartOfTranslationUnitFile() &&
-						isExpressionInSelection(expression, textSelection)) {
+				if (expression.isPartOfTranslationUnitFile() && isExpressionInSelection(expression, textSelection)) {
 					if (target == null) {
 						target = expression;
 						oneMarked = true;
@@ -219,8 +217,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		return false;
 	}
 
-	private NodeContainer findAllExpressions(IProgressMonitor pm)
-			throws OperationCanceledException, CoreException {
+	private NodeContainer findAllExpressions(IProgressMonitor pm) throws OperationCanceledException, CoreException {
 		final NodeContainer container = new NodeContainer();
 
 		IASTTranslationUnit ast = getAST(tu, pm);
@@ -263,8 +260,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		rewriter.insertBefore(declInsertPoint.getParent(), declInsertPoint, declaration, editGroup);
 
 		// Replace target with reference to temporary variable
-		CPPASTIdExpression idExpression =
-				new CPPASTIdExpression(new CPPASTName(variableName.toCharArray()));
+		CPPASTIdExpression idExpression = new CPPASTIdExpression(new CPPASTName(variableName.toCharArray()));
 		rewriter.replace(target, idExpression, editGroup);
 	}
 
@@ -288,8 +284,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		declSpec.setStorageClass(IASTDeclSpecifier.sc_unspecified);
 		simple.setDeclSpecifier(declSpec);
 
-		IASTDeclarator decl = generator.createDeclaratorFromType(target.getExpressionType(),
-				newName.toCharArray());
+		IASTDeclarator decl = generator.createDeclaratorFromType(target.getExpressionType(), newName.toCharArray());
 
 		IASTEqualsInitializer init = new CPPASTEqualsInitializer();
 		init.setInitializerClause(deblock(target.copy(CopyStyle.withLocations)));
@@ -305,7 +300,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	 */
 	private static IASTExpression deblock(IASTExpression expression) {
 		if (expression instanceof IASTUnaryExpression) {
-			IASTUnaryExpression unary = (IASTUnaryExpression)expression;
+			IASTUnaryExpression unary = (IASTUnaryExpression) expression;
 			if (unary.getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
 				return deblock(unary.getOperand());
 			}
@@ -314,7 +309,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	public String guessTempName() {
-		String[] proposals= guessTempNames();
+		String[] proposals = guessTempNames();
 		if (proposals.length == 0) {
 			return info.getName();
 		} else {
@@ -380,22 +375,22 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 						IASTLiteralExpression literal = (IASTLiteralExpression) expression;
 						String name = null;
 						switch (literal.getKind()) {
-				          case IASTLiteralExpression.lk_char_constant:
-				              name = "c"; //$NON-NLS-1$
-				              break;
-				          case IASTLiteralExpression.lk_float_constant:
-				              name = "f"; //$NON-NLS-1$
-				              break;
-				          case IASTLiteralExpression.lk_integer_constant:
-				              name = "i"; //$NON-NLS-1$
-				              break;
-				          case IASTLiteralExpression.lk_string_literal:
-				              name = literal.toString();
-				              break;
-				          case IASTLiteralExpression.lk_false:
-				          case IASTLiteralExpression.lk_true:
-				              name = "b"; //$NON-NLS-1$
-				              break;
+						case IASTLiteralExpression.lk_char_constant:
+							name = "c"; //$NON-NLS-1$
+							break;
+						case IASTLiteralExpression.lk_float_constant:
+							name = "f"; //$NON-NLS-1$
+							break;
+						case IASTLiteralExpression.lk_integer_constant:
+							name = "i"; //$NON-NLS-1$
+							break;
+						case IASTLiteralExpression.lk_string_literal:
+							name = literal.toString();
+							break;
+						case IASTLiteralExpression.lk_false:
+						case IASTLiteralExpression.lk_true:
+							name = "b"; //$NON-NLS-1$
+							break;
 						}
 						if (name != null) {
 							addTempName(name);
@@ -407,18 +402,18 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				private void addTempName(String name) {
 					name = trimPrefixes(name);
 
-			    	IPreferencesService preferences = Platform.getPreferencesService();
-			    	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
-			    			PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION,
-			    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE, null);
-			    	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
-			    			PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER, "", null); //$NON-NLS-1$
-			    	String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
-									PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX, "", null); //$NON-NLS-1$
-			    	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
-			    			PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
-			    	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
-			    	name = composer.compose(name);
+					IPreferencesService preferences = Platform.getPreferencesService();
+					int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION,
+							PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE, null);
+					String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER, "", null); //$NON-NLS-1$
+					String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX, "", null); //$NON-NLS-1$
+					String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
+					NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+					name = composer.compose(name);
 
 					if (name.length() > 0) {
 						if (nameAvailable(name, guessedTempNames, scope)) {
@@ -459,8 +454,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		if (start > 0) {
 			String nameWithoutPrefix = name.substring(start);
 			if (Character.isUpperCase(nameWithoutPrefix.charAt(0))) {
-				nameWithoutPrefix = nameWithoutPrefix.substring(0, 1).toLowerCase()
-						+ nameWithoutPrefix.substring(1);
+				nameWithoutPrefix = nameWithoutPrefix.substring(0, 1).toLowerCase() + nameWithoutPrefix.substring(1);
 			}
 
 			if (!Character.isJavaIdentifierStart(nameWithoutPrefix.charAt(0))) {
@@ -487,7 +481,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		List<String> noNames = new ArrayList<String>();
 		for (int i = 0; i < 10; i++) {
 			for (String used : usedNames) {
-				String name = used + i;   // such as "i2"
+				String name = used + i; // such as "i2"
 				if (nameAvailable(name, noNames, scope)) {
 					return name;
 				}
@@ -500,7 +494,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	protected RefactoringDescriptor getRefactoringDescriptor() {
 		Map<String, String> arguments = getArgumentMap();
 		RefactoringDescriptor desc = new ExtractLocalVariableRefactoringDescriptor(project.getProject().getName(),
-				"Extract Local Variable Refactoring", "Extract " + target.getRawSignature(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
+				"Extract Local Variable Refactoring", "Extract " + target.getRawSignature(), arguments); //$NON-NLS-1$//$NON-NLS-2$
 		return desc;
 	}
 

@@ -25,7 +25,7 @@ public class MakeUITestsPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static MakeUITestsPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */

@@ -24,10 +24,10 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
  * @since 2.2
  */
 public class DsfUngroupDebugContextsCommand extends DsfDebugViewLayoutCommand implements IDebugCommandHandler {
-	
-    public DsfUngroupDebugContextsCommand(DsfSession session) {
-    	super(session);
-    }
+
+	public DsfUngroupDebugContextsCommand(DsfSession session) {
+		super(session);
+	}
 
 	@Override
 	void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor rm) {
@@ -35,7 +35,8 @@ public class DsfUngroupDebugContextsCommand extends DsfDebugViewLayoutCommand im
 	}
 
 	@Override
-	void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+	void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts,
+			DataRequestMonitor<Boolean> rm) {
 		translator.canUngroup(contexts, rm);
-	}    
+	}
 }

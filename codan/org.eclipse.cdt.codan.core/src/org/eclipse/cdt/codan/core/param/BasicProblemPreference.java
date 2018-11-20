@@ -103,20 +103,20 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 		if (str.startsWith("\"")) //$NON-NLS-1$
 			str = unescape(str);
 		switch (getType()) {
-			case TYPE_STRING:
-				setValue(str);
-				break;
-			case TYPE_INTEGER:
-				setValue(Integer.parseInt(str));
-				break;
-			case TYPE_BOOLEAN:
-				setValue(Boolean.valueOf(str));
-				break;
-			case TYPE_FILE:
-				setValue(new File(str));
-				break;
-			default:
-				throw new IllegalArgumentException(getType() + " is not supported for basic type"); //$NON-NLS-1$
+		case TYPE_STRING:
+			setValue(str);
+			break;
+		case TYPE_INTEGER:
+			setValue(Integer.parseInt(str));
+			break;
+		case TYPE_BOOLEAN:
+			setValue(Boolean.valueOf(str));
+			break;
+		case TYPE_FILE:
+			setValue(new File(str));
+			break;
+		default:
+			throw new IllegalArgumentException(getType() + " is not supported for basic type"); //$NON-NLS-1$
 		}
 	}
 

@@ -28,32 +28,36 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * @since 1.0
  */
 public interface ISymbols extends IDsfService {
-    public interface ISymbolObjectDMContext extends IDMContext {}
-    
-    /**
-     * Data about a debug symbol.  
-     */
-    public interface ISymbolObjectDMData extends IDMData {
-        String getName();
-        String getTypeName();
-        String getFilepath();
-    }
+	public interface ISymbolObjectDMContext extends IDMContext {
+	}
 
-    /**
-     * Indicates that the list of symbol objects is changed.  Parsing debug 
-     * symbols can be a long running operation (order of 10's of seconds or 
-     * minutes), so it is useful for the service to provide access to the data
-     * even while it's still parsing.  This event may be issued periodically
-     * by the service to indicate that a section of debug symbols has been 
-     * parsed.
-     */
-    public interface ISymbolDataChangedDMEvent extends IDMEvent<IModules.ISymbolDMContext> {}
-    
-    /**
-     * Retrieves the list of symbols.
-     * @param symCtx Symbols context to retrieve symbols for.
-     * @param rm Request completion monitor.  The return value is an iterator (rather than 
-     * array) since there could be a very large number of symbols returned.
-     */
-    public void getSymbols(IModules.ISymbolDMContext symCtx, DataRequestMonitor<Iterable<ISymbolObjectDMContext>> rm);
+	/**
+	 * Data about a debug symbol.  
+	 */
+	public interface ISymbolObjectDMData extends IDMData {
+		String getName();
+
+		String getTypeName();
+
+		String getFilepath();
+	}
+
+	/**
+	 * Indicates that the list of symbol objects is changed.  Parsing debug 
+	 * symbols can be a long running operation (order of 10's of seconds or 
+	 * minutes), so it is useful for the service to provide access to the data
+	 * even while it's still parsing.  This event may be issued periodically
+	 * by the service to indicate that a section of debug symbols has been 
+	 * parsed.
+	 */
+	public interface ISymbolDataChangedDMEvent extends IDMEvent<IModules.ISymbolDMContext> {
+	}
+
+	/**
+	 * Retrieves the list of symbols.
+	 * @param symCtx Symbols context to retrieve symbols for.
+	 * @param rm Request completion monitor.  The return value is an iterator (rather than 
+	 * array) since there could be a very large number of symbols returned.
+	 */
+	public void getSymbols(IModules.ISymbolDMContext symCtx, DataRequestMonitor<Iterable<ISymbolObjectDMContext>> rm);
 }

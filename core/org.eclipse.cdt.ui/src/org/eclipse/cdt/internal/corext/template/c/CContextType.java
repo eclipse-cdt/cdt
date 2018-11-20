@@ -30,14 +30,14 @@ public class CContextType extends TranslationUnitContextType {
 	}
 
 	@Override
-	public TranslationUnitContext createContext(IDocument document, int offset,
-			int length, ITranslationUnit translationUnit) {
+	public TranslationUnitContext createContext(IDocument document, int offset, int length,
+			ITranslationUnit translationUnit) {
 		return new CContext(this, document, offset, length, translationUnit);
 	}
 
 	@Override
-	public TranslationUnitContext createContext(IDocument document,
-			Position position, ITranslationUnit translationUnit) {
+	public TranslationUnitContext createContext(IDocument document, Position position,
+			ITranslationUnit translationUnit) {
 		return new CContext(this, document, position, translationUnit);
 	}
 }

@@ -105,12 +105,12 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * Returns an array of bindings for those classes/functions declared as friends of this class.
 	 */
 	public IBinding[] getFriends();
-	
+
 	/**
 	 * Returns an array of nested classes/structures
 	 */
 	public ICPPClassType[] getNestedClasses();
-	
+
 	/**
 	 * Returns an array of using declarations in this class.
 	 *

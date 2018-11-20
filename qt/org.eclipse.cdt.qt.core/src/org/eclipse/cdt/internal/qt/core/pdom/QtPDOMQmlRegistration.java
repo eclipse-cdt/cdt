@@ -22,15 +22,10 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMQmlRegistration extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
+
 	protected static enum Field {
-		CppRecord(Database.PTR_SIZE),
-		QObjectName(Database.PTR_SIZE),
-		Version(8), // Database doesn't have a LONG_SIZE
-		Uri(Database.PTR_SIZE),
-		Major(8),
-		Minor(8),
-		QmlName(Database.PTR_SIZE),
-		Last(0);
+		CppRecord(Database.PTR_SIZE), QObjectName(Database.PTR_SIZE), Version(8), // Database doesn't have a LONG_SIZE
+		Uri(Database.PTR_SIZE), Major(8), Minor(8), QmlName(Database.PTR_SIZE), Last(0);
 
 		public final int offset;
 
@@ -44,7 +39,8 @@ public class QtPDOMQmlRegistration extends QtPDOMBinding {
 		super(linkage, record);
 	}
 
-	public QtPDOMQmlRegistration(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName) throws CoreException {
+	public QtPDOMQmlRegistration(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName)
+			throws CoreException {
 		super(linkage, null, qmlTypeReg);
 
 		putStringOrNull(Field.QObjectName.offset, qmlTypeReg.getQObjectName());
@@ -57,8 +53,7 @@ public class QtPDOMQmlRegistration extends QtPDOMBinding {
 
 	public static Collection<QtPDOMQmlRegistration> findFor(QtPDOMQObject qobj) throws CoreException {
 		PDOMLinkage linkage = qobj.getLinkage();
-		if (linkage == null
-		 || !(linkage instanceof QtPDOMLinkage))
+		if (linkage == null || !(linkage instanceof QtPDOMLinkage))
 			return Collections.emptyList();
 
 		String name = qobj.getName();

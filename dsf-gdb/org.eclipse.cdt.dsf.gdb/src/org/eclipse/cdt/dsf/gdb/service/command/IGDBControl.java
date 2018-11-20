@@ -39,7 +39,7 @@ public interface IGDBControl extends IMICommandControl {
 	default Process getGDBBackendProcess() {
 		return getCLIProcess();
 	};
-	
+
 	/**
 	 * @deprecated The return value of this method was too
 	 *             restrictive.  It has been replaced with
@@ -59,7 +59,7 @@ public interface IGDBControl extends IMICommandControl {
 	 * @param rm The requestMonitor indicating that GDB has been terminated.
 	 */
 	void terminate(RequestMonitor rm);
-	
+
 	/**
 	 * This method should be called once and only once, during the launch,
 	 * to complete the initialization.  It will perform the final steps
@@ -72,12 +72,12 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 4.0
 	 */
 	void completeInitialization(RequestMonitor rm);
-	
+
 	/**
 	 * @since 2.0
 	 */
 	void setTracingStream(OutputStream tracingStream);
-	
+
 	/** 
 	 * Sets any user-defined environment variables for the inferior.
 	 * 
@@ -89,7 +89,7 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 3.0 
 	 */
 	void setEnvironment(Properties props, boolean clear, RequestMonitor requestMonitor);
-	
+
 	/**
 	 * Returns a list of all the target-independent MI features
 	 * supported by the GDB that is being used. Consult the GDB MI documentation
@@ -100,7 +100,7 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 4.0
 	 */
 	List<String> getFeatures();
-	
+
 	/**
 	 * Enable the pretty printers also for MI variable objects. This basically
 	 * sends -enable-pretty-printing.

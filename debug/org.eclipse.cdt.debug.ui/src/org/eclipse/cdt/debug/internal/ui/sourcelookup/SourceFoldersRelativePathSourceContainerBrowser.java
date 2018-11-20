@@ -33,7 +33,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * The browser for adding a source folder relative path source container.
  */
 public class SourceFoldersRelativePathSourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -41,27 +41,26 @@ public class SourceFoldersRelativePathSourceContainerBrowser extends AbstractSou
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		if (director.getLaunchConfiguration() == null) {
 			TargetProjectSourceContainerDialog dialog = new TargetProjectSourceContainerDialog(shell);
-			if (dialog.open() == Window.OK) {		
+			if (dialog.open() == Window.OK) {
 				return new ISourceContainer[] {
-						new SourceFoldersRelativePathSourceContainer(null, dialog.isAddReferencedProjects()) };				
-			}	
+						new SourceFoldersRelativePathSourceContainer(null, dialog.isAddReferencedProjects()) };
+			}
 		} else {
 			Object input = ResourcesPlugin.getWorkspace().getRoot();
-			IStructuredContentProvider contentProvider=new BasicContainerContentProvider();
+			IStructuredContentProvider contentProvider = new BasicContainerContentProvider();
 			ILabelProvider labelProvider = new WorkbenchLabelProvider();
-			ProjectSourceContainerDialog dialog =
-					new ProjectSourceContainerDialog(shell, input, contentProvider, labelProvider,
-							SourceLookupUIMessages.projectSelection_chooseLabel);
-			if (dialog.open() == Window.OK) {		
-				ArrayList<ISourceContainer> res= new ArrayList<ISourceContainer>();
+			ProjectSourceContainerDialog dialog = new ProjectSourceContainerDialog(shell, input, contentProvider,
+					labelProvider, SourceLookupUIMessages.projectSelection_chooseLabel);
+			if (dialog.open() == Window.OK) {
+				ArrayList<ISourceContainer> res = new ArrayList<ISourceContainer>();
 				for (Object element : dialog.getResult()) {
 					if (!(element instanceof IProject))
-						continue;				
+						continue;
 					res.add(new SourceFoldersRelativePathSourceContainer((IProject) element,
 							dialog.isAddRequiredProjects()));
 				}
-				return res.toArray(new ISourceContainer[res.size()]);	
-			}	
+				return res.toArray(new ISourceContainer[res.size()]);
+			}
 		}
 		return new ISourceContainer[0];
 	}

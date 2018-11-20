@@ -58,8 +58,8 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 		if (isCanceled()) {
 			return;
 		}
-		
-//		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath(); //$NON-NLS-1$
+
+		//		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath(); //$NON-NLS-1$
 		final int projectLength = affectedProjects.length;
 		final ICProject[] modifiedProjects = new ICProject[projectLength];
 		System.arraycopy(affectedProjects, 0, modifiedProjects, 0, projectLength);
@@ -76,7 +76,7 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 			for (int j = 0, cpLength = rawPath.length; j < cpLength; j++) {
 				IPathEntry entry = rawPath[j];
 				if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
-					IContainerEntry cont = (IContainerEntry)entry;
+					IContainerEntry cont = (IContainerEntry) entry;
 					if (cont.getPath().equals(containerPath)) {
 						found = true;
 						break;
@@ -91,7 +91,7 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 				fPathEntryManager.containerPut(affectedProject, containerPath, newContainer);
 				continue;
 			}
-			
+
 			IPathEntryContainer oldContainer = fPathEntryManager.containerGet(affectedProject, containerPath, true);
 			if (oldContainer != null && newContainer != null && oldContainer.equals(newContainer)) {
 				modifiedProjects[i] = null; // filter out this project -
@@ -120,7 +120,8 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 			// Only fire deltas if we had previous cache
 			if (oldResolvedEntries[i] != null) {
 				IPathEntry[] newEntries = fPathEntryManager.getResolvedPathEntries(affectedProject);
-				ICElementDelta[] deltas = fPathEntryManager.generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
+				ICElementDelta[] deltas = fPathEntryManager.generatePathEntryDeltas(affectedProject,
+						oldResolvedEntries[i], newEntries);
 				if (deltas.length > 0) {
 					affectedProject.close();
 					//shouldFire = true;

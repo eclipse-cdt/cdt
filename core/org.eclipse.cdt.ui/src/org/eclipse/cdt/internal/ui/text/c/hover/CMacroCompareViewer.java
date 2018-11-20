@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.ui.compare.CMergeViewer;
  */
 class CMacroCompareViewer extends CMergeViewer {
 
-	private static final RGB CHANGE_COLOR= new RGB(212,212,212);
+	private static final RGB CHANGE_COLOR = new RGB(212, 212, 212);
 
 	private class ReplaceEditsHighlighter implements ITextPresentationListener {
 		private boolean fBefore;
@@ -50,24 +50,24 @@ class CMacroCompareViewer extends CMergeViewer {
 		private Color fBackground;
 
 		public ReplaceEditsHighlighter(Color background, boolean before) {
-			fBackground= background;
-			fBefore= before;
+			fBackground = background;
+			fBefore = before;
 		}
 
 		public void setReplaceEdits(int prefixLength, ReplaceEdit[] edits) {
-			fStarts= new int[edits.length];
-			fLengths= new int[edits.length];
-			int delta= 0;
-			for (int i= 0; i < edits.length; i++) {
-				ReplaceEdit edit= edits[i];
-				fStarts[i]= prefixLength + edit.getOffset() + delta;
-				fLengths[i]= fBefore ? edit.getLength() : edit.getText().length();
+			fStarts = new int[edits.length];
+			fLengths = new int[edits.length];
+			int delta = 0;
+			for (int i = 0; i < edits.length; i++) {
+				ReplaceEdit edit = edits[i];
+				fStarts[i] = prefixLength + edit.getOffset() + delta;
+				fLengths[i] = fBefore ? edit.getLength() : edit.getText().length();
 				if (!fBefore) {
 					delta += edit.getText().length() - edit.getLength();
 				}
 			}
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 		 */
@@ -88,18 +88,22 @@ class CMacroCompareViewer extends CMergeViewer {
 		public int getTokenLength(int index) {
 			return 0;
 		}
+
 		@Override
 		public int getTokenStart(int index) {
 			return 0;
 		}
+
 		@Override
 		public int getRangeCount() {
 			return 0;
 		}
+
 		@Override
 		public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
 			return true;
 		}
+
 		@Override
 		public boolean skipRangeComparison(int length, int maxLength, IRangeComparator other) {
 			return true;
@@ -113,23 +117,23 @@ class CMacroCompareViewer extends CMergeViewer {
 	private TextViewer fLeftViewer;
 	private TextViewer fRightViewer;
 	private TextViewer fTopViewer;
-	
+
 	private int fViewerIndex;
 
 	private CMacroExpansionInput fInput;
 	private int fStepIndex;
 	private int fPrefixLength;
-	
+
 	public CMacroCompareViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
-		RGB expansionHighlight = CMacroCompareViewer.createColor(getPreferenceStore(), 
+		RGB expansionHighlight = CMacroCompareViewer.createColor(getPreferenceStore(),
 				AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE);
-		if(expansionHighlight == null)
+		if (expansionHighlight == null)
 			expansionHighlight = CHANGE_COLOR;
-		fChangeBackground= new Color(parent.getDisplay(), expansionHighlight);
-		fLeftHighlighter= new ReplaceEditsHighlighter(fChangeBackground, true);
-		fRightHighlighter= new ReplaceEditsHighlighter(fChangeBackground, false);
-		fViewerIndex= 0;
+		fChangeBackground = new Color(parent.getDisplay(), expansionHighlight);
+		fLeftHighlighter = new ReplaceEditsHighlighter(fChangeBackground, true);
+		fRightHighlighter = new ReplaceEditsHighlighter(fChangeBackground, false);
+		fViewerIndex = 0;
 	}
 
 	/*
@@ -146,38 +150,38 @@ class CMacroCompareViewer extends CMergeViewer {
 		fChangeBackground.dispose();
 		super.handleDispose(event);
 	}
-	
+
 	@Override
 	protected IToolBarManager getToolBarManager(Composite parent) {
 		// no toolbar
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#configureTextViewer(org.eclipse.jface.text.TextViewer)
 	 */
 	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		super.configureTextViewer(textViewer);
-		
+
 		// hack: gain access to text viewers
 		switch (fViewerIndex++) {
 		case 0:
-			fTopViewer= textViewer;
+			fTopViewer = textViewer;
 			fTopViewer.getTextWidget().setFont(JFaceResources.getFont(CMergeViewer.class.getName()));
 			break;
 		case 1:
-			fLeftViewer= textViewer;
+			fLeftViewer = textViewer;
 			fLeftViewer.getTextWidget().setFont(JFaceResources.getFont(CMergeViewer.class.getName()));
 			fLeftViewer.addTextPresentationListener(fLeftHighlighter);
 			break;
 		case 2:
-			fRightViewer= textViewer;
+			fRightViewer = textViewer;
 			fRightViewer.getTextWidget().setFont(JFaceResources.getFont(CMergeViewer.class.getName()));
 			fRightViewer.addTextPresentationListener(fRightHighlighter);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.compare.contentmergeviewer.TextMergeViewer#createTokenComparator(java.lang.String)
 	 */
@@ -192,8 +196,8 @@ class CMacroCompareViewer extends CMergeViewer {
 	 * @param input
 	 */
 	public void setMacroExpansionInput(CMacroExpansionInput input) {
-		fInput= input;
-		fPrefixLength= 0;
+		fInput = input;
+		fPrefixLength = 0;
 	}
 
 	/*
@@ -201,29 +205,29 @@ class CMacroCompareViewer extends CMergeViewer {
 	 */
 	@Override
 	public void setInput(Object input) {
-		boolean redraw= true;
+		boolean redraw = true;
 		if (fLeftViewer != null && fRightViewer != null) {
-			redraw= false;
+			redraw = false;
 			fLeftViewer.setRedraw(false);
 			fRightViewer.setRedraw(false);
 		}
 		ReplaceEdit[] edits = null;
-		
+
 		try {
 			if (fInput != null) {
 				final IMacroExpansionStep step;
 				if (fStepIndex < fInput.fExplorer.getExpansionStepCount()) {
-					step= fInput.fExplorer.getExpansionStep(fStepIndex);
+					step = fInput.fExplorer.getExpansionStep(fStepIndex);
 				} else {
-					step= fInput.fExplorer.getFullExpansion();
+					step = fInput.fExplorer.getFullExpansion();
 				}
-				edits= step.getReplacements();
-	
+				edits = step.getReplacements();
+
 				fLeftHighlighter.setReplaceEdits(fPrefixLength, edits);
 				fRightHighlighter.setReplaceEdits(fPrefixLength, edits);
-			}	
+			}
 			super.setInput(input);
-			
+
 		} finally {
 			if (!redraw && fLeftViewer != null && fRightViewer != null) {
 				fLeftViewer.setRedraw(true);
@@ -232,7 +236,7 @@ class CMacroCompareViewer extends CMergeViewer {
 		}
 		if (edits != null && edits.length > 0) {
 			if (fLeftViewer != null && fRightViewer != null) {
-				final int firstDiffOffset= fPrefixLength + edits[0].getOffset();
+				final int firstDiffOffset = fPrefixLength + edits[0].getOffset();
 				fLeftViewer.revealRange(firstDiffOffset, edits[0].getLength());
 				fRightViewer.revealRange(firstDiffOffset, edits[0].getText().length());
 			}
@@ -240,7 +244,7 @@ class CMacroCompareViewer extends CMergeViewer {
 	}
 
 	public void setMacroExpansionStep(int index) {
-		fStepIndex= index;
+		fStepIndex = index;
 	}
 
 }

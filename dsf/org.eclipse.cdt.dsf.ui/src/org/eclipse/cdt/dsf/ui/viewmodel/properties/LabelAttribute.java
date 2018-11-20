@@ -37,87 +37,87 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * @since 1.0
  */
 abstract public class LabelAttribute {
-    public static final String[] EMPTY_PROPERTY_NAMES_ARRAY = new String[0];
-    
-    /**
-     * @since 2.0
-     */
-    private String[] fPropertyNames = EMPTY_PROPERTY_NAMES_ARRAY;
-    
-    public LabelAttribute() {
-        this(EMPTY_PROPERTY_NAMES_ARRAY);
-    }
-    
-    /**
-     * @since 2.0
-     */
-    public LabelAttribute(String[] propertyNames) {
-        setPropertyNames(propertyNames);
-    }
-    
-    protected void setPropertyNames(String[] propertyNames) {
-        fPropertyNames = propertyNames;
-    }
-    
-    /**
-     * Returns the properties that are needed by this attribute in order to 
-     * determine whether this attribute is enabled and/or for the actual
-     * attribute itself.
-     * @return Array of names of properties for the element properties provider.
-     */
-    public String[] getPropertyNames() {
-        return fPropertyNames;
-    }
-    
-    /**
-     * Returns whether this attribute is enabled for an element which has
-     * the given properties.  The default implementation checks if all the 
-     * label's attributes are present in the properties map.
-     * 
-     * @param status Result of the properties update.
-     * @param properties Properties supplied by a property update.
-     * @return true if this attribute is enabled.
-     * 
-     * @since 2.0
-     */
-    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
-        for (String propertyName : getPropertyNames()) {
-            if (!checkProperty(propertyName, status, properties)) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public static final String[] EMPTY_PROPERTY_NAMES_ARRAY = new String[0];
 
+	/**
+	 * @since 2.0
+	 */
+	private String[] fPropertyNames = EMPTY_PROPERTY_NAMES_ARRAY;
 
-    /**
-     * Checks the status of the given property in the given properties map.  The
-     * default implementation returns <code>true</code> if the given property
-     * exists and is not null.  
-     * 
-     * @param propertyName Name of the property to check.
-     * @param status Result of the properties update.
-     * @param properties Properties map following an update.
-     * @return <code>true</code> if the property exists in the given map and 
-     * its value is not null. 
-     * 
-     * @since 2.0
-     */
-    protected boolean checkProperty(String propertyName, IStatus status, Map<String, Object> properties) {
-        return properties.get(propertyName) != null;
-    }
+	public LabelAttribute() {
+		this(EMPTY_PROPERTY_NAMES_ARRAY);
+	}
 
-    /**
-     * Updates the label with this attribute. 
-     * 
-     * @param update Label update object to write to.
-     * @param columnIndex Column index to write at.
-     * @param status Result of the property update.
-     * @param properties Property values map.  It is guaranteed to contain all
-     * the properties that this attribute requested through 
-     * {@link getPropertyNames()}.
-     * 
-     * @since 2.0
-     */
-    abstract public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties);
+	/**
+	 * @since 2.0
+	 */
+	public LabelAttribute(String[] propertyNames) {
+		setPropertyNames(propertyNames);
+	}
+
+	protected void setPropertyNames(String[] propertyNames) {
+		fPropertyNames = propertyNames;
+	}
+
+	/**
+	 * Returns the properties that are needed by this attribute in order to 
+	 * determine whether this attribute is enabled and/or for the actual
+	 * attribute itself.
+	 * @return Array of names of properties for the element properties provider.
+	 */
+	public String[] getPropertyNames() {
+		return fPropertyNames;
+	}
+
+	/**
+	 * Returns whether this attribute is enabled for an element which has
+	 * the given properties.  The default implementation checks if all the 
+	 * label's attributes are present in the properties map.
+	 * 
+	 * @param status Result of the properties update.
+	 * @param properties Properties supplied by a property update.
+	 * @return true if this attribute is enabled.
+	 * 
+	 * @since 2.0
+	 */
+	public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+		for (String propertyName : getPropertyNames()) {
+			if (!checkProperty(propertyName, status, properties)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks the status of the given property in the given properties map.  The
+	 * default implementation returns <code>true</code> if the given property
+	 * exists and is not null.  
+	 * 
+	 * @param propertyName Name of the property to check.
+	 * @param status Result of the properties update.
+	 * @param properties Properties map following an update.
+	 * @return <code>true</code> if the property exists in the given map and 
+	 * its value is not null. 
+	 * 
+	 * @since 2.0
+	 */
+	protected boolean checkProperty(String propertyName, IStatus status, Map<String, Object> properties) {
+		return properties.get(propertyName) != null;
+	}
+
+	/**
+	 * Updates the label with this attribute. 
+	 * 
+	 * @param update Label update object to write to.
+	 * @param columnIndex Column index to write at.
+	 * @param status Result of the property update.
+	 * @param properties Property values map.  It is guaranteed to contain all
+	 * the properties that this attribute requested through 
+	 * {@link getPropertyNames()}.
+	 * 
+	 * @since 2.0
+	 */
+	abstract public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status,
+			Map<String, Object> properties);
 }

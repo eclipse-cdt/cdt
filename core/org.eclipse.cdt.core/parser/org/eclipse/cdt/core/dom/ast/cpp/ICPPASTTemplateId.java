@@ -79,14 +79,14 @@ public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 	 * @param ambiguity
 	 */
 	public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ambiguity);
-	
+
 	/**
 	 * Returns all template arguments as nodes.
 	 * 
 	 * @return nodes representing the template arguments
 	 */
 	public IASTNode[] getTemplateArguments();
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -50,15 +50,16 @@ public class AddMakeTarget extends ProcessRunner {
 
 	private static final String PROJECTNAME_VARNAME = "projectName"; //$NON-NLS-1$
 	private static final String TARGETNAME_VARNAME = "targetName"; //$NON-NLS-1$
-    private static final String MAKETARGET_VARNAME = "makeTarget"; //$NON-NLS-1$
-    private static final String BUILDCOMMAND_VARNAME = "buildCommand"; //$NON-NLS-1$
-    private static final String BUILDARGUMENTS_COMMAND_VARNAME = "buildArguments"; //$NON-NLS-1$
+	private static final String MAKETARGET_VARNAME = "makeTarget"; //$NON-NLS-1$
+	private static final String BUILDCOMMAND_VARNAME = "buildCommand"; //$NON-NLS-1$
+	private static final String BUILDARGUMENTS_COMMAND_VARNAME = "buildArguments"; //$NON-NLS-1$
 
-    private static final String BUILDCOMMAND_DEFAULT = "make"; //$NON-NLS-1$
-    private static final String BUILDARGUMENTS_DEFAULT = ""; //$NON-NLS-1$
+	private static final String BUILDCOMMAND_DEFAULT = "make"; //$NON-NLS-1$
+	private static final String BUILDARGUMENTS_DEFAULT = ""; //$NON-NLS-1$
 
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		IProject project = null;
 		String targetName = null;
 		String makeTarget = null;
@@ -75,7 +76,7 @@ public class AddMakeTarget extends ProcessRunner {
 				makeTarget = arg.getSimpleValue();
 			else if (BUILDCOMMAND_VARNAME.equals(argName))
 				buildCommand = arg.getSimpleValue();
-			else if(BUILDARGUMENTS_COMMAND_VARNAME.equals(argName))
+			else if (BUILDARGUMENTS_COMMAND_VARNAME.equals(argName))
 				buildArguments = arg.getSimpleValue();
 		}
 
@@ -91,11 +92,13 @@ public class AddMakeTarget extends ProcessRunner {
 			target.setBuildAttribute(IMakeTarget.BUILD_TARGET, makeTarget == null ? targetName : makeTarget);
 
 			target.setUseDefaultBuildCmd(buildCommand == null);
-			target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, buildCommand == null ? BUILDCOMMAND_DEFAULT : buildCommand);
-			target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, buildArguments == null ? BUILDARGUMENTS_DEFAULT : buildArguments);
+			target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+					buildCommand == null ? BUILDCOMMAND_DEFAULT : buildCommand);
+			target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
+					buildArguments == null ? BUILDARGUMENTS_DEFAULT : buildArguments);
 
 			makeTargetManager.addTarget(target);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			throw new ProcessFailureException(e);
 		}
 	}

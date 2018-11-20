@@ -26,9 +26,9 @@ public class FieldHandle extends CElementHandle implements org.eclipse.cdt.core.
 
 	public FieldHandle(ICElement parent, IField field) {
 		super(parent, ICElement.C_FIELD, field.getName());
-		fTypeName= ASTTypeUtil.getType(field.getType(), false);
-		fVisibility= getVisibility(field);
-		fIsStatic= field.isStatic();
+		fTypeName = ASTTypeUtil.getType(field.getType(), false);
+		fVisibility = getVisibility(field);
+		fIsStatic = field.isStatic();
 	}
 
 	@Override

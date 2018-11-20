@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 /**
@@ -22,13 +22,13 @@ public final class CharArray extends AbstractCharArray {
 	private long hash64;
 
 	public CharArray(char[] array) {
-		fArray= array;
+		fArray = array;
 	}
 
 	public CharArray(String str) {
-		fArray= str.toCharArray();
+		fArray = str.toCharArray();
 	}
-	
+
 	public char[] getArray() {
 		return fArray;
 	}

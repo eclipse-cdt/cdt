@@ -58,267 +58,274 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-
 /**
  * @since 1.1
  */
-public class AbstractLaunchVMProvider extends AbstractDMVMProvider 
-    implements IDebugEventSetListener, ILaunchesListener2
-{
-    /**
+public class AbstractLaunchVMProvider extends AbstractDMVMProvider
+		implements IDebugEventSetListener, ILaunchesListener2 {
+	/**
 	 * Delay (in milliseconds) before a full stack trace will be requested.
 	 */
-	private static final int FRAME_UPDATE_DELAY= 200;
-	
-    private final Map<IExecutionDMContext,ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<IExecutionDMContext,ScheduledFuture<?>>();
+	private static final int FRAME_UPDATE_DELAY = 200;
+
+	private final Map<IExecutionDMContext, ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<IExecutionDMContext, ScheduledFuture<?>>();
 
 	private IPropertyChangeListener fPreferencesListener;
 
 	@ThreadSafe
-    public AbstractLaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)
-    {
-        super(adapter, presentationContext, session);
-        
-        final IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
-        if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
-        	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
-        }
-        
-        fPreferencesListener = new IPropertyChangeListener() {
+	public AbstractLaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext,
+			DsfSession session) {
+		super(adapter, presentationContext, session);
+
+		final IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
+			getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT,
+					store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
+		}
+
+		fPreferencesListener = new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(final PropertyChangeEvent event) {
 				handlePropertyChanged(store, event);
-			}};
-        store.addPropertyChangeListener(fPreferencesListener);
-
-        final IPreferenceStore cStore= CDebugUIPlugin.getDefault().getPreferenceStore();
-       	getPresentationContext().setProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY, cStore.getBoolean(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY));
-		cStore.addPropertyChangeListener(fPreferencesListener);
- 
-        // Register the LaunchVM provider as a listener to debug and launch 
-        // events.  These events are used by the launch and processes nodes.
-        DebugPlugin.getDefault().addDebugEventListener(this);
-        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-    }
-    
-    @Override
-	protected IVMUpdatePolicy[] createUpdateModes() {
-		return new IVMUpdatePolicy[] {
-				new DelayedStackRefreshUpdatePolicy(new AutomaticUpdatePolicy()),
-				new DelayedStackRefreshUpdatePolicy(new ManualUpdatePolicy())
+			}
 		};
-    }
-    
-    @Override
+		store.addPropertyChangeListener(fPreferencesListener);
+
+		final IPreferenceStore cStore = CDebugUIPlugin.getDefault().getPreferenceStore();
+		getPresentationContext().setProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY,
+				cStore.getBoolean(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY));
+		cStore.addPropertyChangeListener(fPreferencesListener);
+
+		// Register the LaunchVM provider as a listener to debug and launch 
+		// events.  These events are used by the launch and processes nodes.
+		DebugPlugin.getDefault().addDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+	}
+
+	@Override
+	protected IVMUpdatePolicy[] createUpdateModes() {
+		return new IVMUpdatePolicy[] { new DelayedStackRefreshUpdatePolicy(new AutomaticUpdatePolicy()),
+				new DelayedStackRefreshUpdatePolicy(new ManualUpdatePolicy()) };
+	}
+
+	@Override
 	public void handleDebugEvents(final DebugEvent[] events) {
-        if (isDisposed()) return;
-        
+		if (isDisposed())
+			return;
+
 		// We're in session's executor thread. Re-dispatch to our executor thread
 		// and then call root layout node.
-        try {
-            getExecutor().execute(new Runnable() {
-                @Override
+		try {
+			getExecutor().execute(new Runnable() {
+				@Override
 				public void run() {
-                    if (isDisposed()) return;
-    
-                    for (final DebugEvent event : events) {
-                        handleEvent(event);
-                    }
-                }});
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
-        }
-    }
+					if (isDisposed())
+						return;
 
-    @Override
-    public void handleEvent(Object event, final RequestMonitor rm) {
-        if (event instanceof DoubleClickEvent && !isDisposed()) {
-            final ISelection selection= ((DoubleClickEvent) event).getSelection();
-            if (selection instanceof IStructuredSelection) {
-                Object element= ((IStructuredSelection) selection).getFirstElement();
-                if (element instanceof IncompleteStackVMContext) {
-                    IncompleteStackVMContext incStackVmc = ((IncompleteStackVMContext) element); 
-                    IVMNode node = incStackVmc.getVMNode();
-                    if (node instanceof StackFramesVMNode && node.getVMProvider() == this) {
-                        IExecutionDMContext exeCtx= incStackVmc.getExecutionDMContext();
+					for (final DebugEvent event : events) {
+						handleEvent(event);
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Ignore.  This exception could be thrown if the provider is being 
+			// shut down.  
+		}
+	}
+
+	@Override
+	public void handleEvent(Object event, final RequestMonitor rm) {
+		if (event instanceof DoubleClickEvent && !isDisposed()) {
+			final ISelection selection = ((DoubleClickEvent) event).getSelection();
+			if (selection instanceof IStructuredSelection) {
+				Object element = ((IStructuredSelection) selection).getFirstElement();
+				if (element instanceof IncompleteStackVMContext) {
+					IncompleteStackVMContext incStackVmc = ((IncompleteStackVMContext) element);
+					IVMNode node = incStackVmc.getVMNode();
+					if (node instanceof StackFramesVMNode && node.getVMProvider() == this) {
+						IExecutionDMContext exeCtx = incStackVmc.getExecutionDMContext();
 						((StackFramesVMNode) node).incrementStackFrameLimit(exeCtx);
 						// replace double click event with expand stack event
 						final ExpandStackEvent expandStackEvent = new ExpandStackEvent(exeCtx);
 						getExecutor().execute(new DsfRunnable() {
-						    @Override
+							@Override
 							public void run() {
-						        handleEvent(expandStackEvent, null);
-						    }
+								handleEvent(expandStackEvent, null);
+							}
 						});
-                    }
-                    if (rm != null) {
-                    	rm.done();
-                    }
-                    return;
-                }
-            }
-        } else if (event instanceof IRunControl.ISuspendedDMEvent) {
-            final IRunControl.ISuspendedDMEvent suspendEvent = (IRunControl.ISuspendedDMEvent)event;
-    		final IExecutionDMContext exeContext= suspendEvent.getDMContext();
-    		ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);
-    		// trigger delayed full stack frame update
-    		if (refreshStackFramesFuture != null) {
-    			// cancel previously scheduled frame update
-    			refreshStackFramesFuture.cancel(false);
-    		}
+					}
+					if (rm != null) {
+						rm.done();
+					}
+					return;
+				}
+			}
+		} else if (event instanceof IRunControl.ISuspendedDMEvent) {
+			final IRunControl.ISuspendedDMEvent suspendEvent = (IRunControl.ISuspendedDMEvent) event;
+			final IExecutionDMContext exeContext = suspendEvent.getDMContext();
+			ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);
+			// trigger delayed full stack frame update
+			if (refreshStackFramesFuture != null) {
+				// cancel previously scheduled frame update
+				refreshStackFramesFuture.cancel(false);
+			}
 
-    		try {
-        		refreshStackFramesFuture = getSession().getExecutor().schedule(
-    	            new DsfRunnable() { 
-    	                @Override
-						public void run() {
-    	                    if (getSession().isActive()) {
-    	                        getExecutor().execute(new Runnable() {
-    	                            @Override
-									public void run() {
-    	                                // trigger full stack frame update
-    	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
-    	                                if (future != null && !isDisposed()) {
-    	                                    fRefreshStackFramesFutures.remove(exeContext);
-    	                                    handleEvent(new FullStackRefreshEvent(exeContext, suspendEvent), null);
-    	                                }
-    	                            }});
-    	                    }
-    	                }
-    	            },
-    			    FRAME_UPDATE_DELAY, TimeUnit.MILLISECONDS);
-        		fRefreshStackFramesFutures.put(exeContext, refreshStackFramesFuture);
-    		} catch (RejectedExecutionException e) {}
-    	} else if (event instanceof IRunControl.IResumedDMEvent) {
-    		IExecutionDMContext exeContext= ((IRunControl.IResumedDMEvent) event).getDMContext();
-    		ScheduledFuture<?> refreshStackFramesFuture= fRefreshStackFramesFutures.get(exeContext);
-    		if (refreshStackFramesFuture != null) {
-    			// cancel previously scheduled frame update
-    			refreshStackFramesFuture.cancel(false);
-    			fRefreshStackFramesFutures.remove(exeContext);
-    		}
-    	}
+			try {
+				refreshStackFramesFuture = getSession().getExecutor().schedule(new DsfRunnable() {
+					@Override
+					public void run() {
+						if (getSession().isActive()) {
+							getExecutor().execute(new Runnable() {
+								@Override
+								public void run() {
+									// trigger full stack frame update
+									ScheduledFuture<?> future = fRefreshStackFramesFutures.get(exeContext);
+									if (future != null && !isDisposed()) {
+										fRefreshStackFramesFutures.remove(exeContext);
+										handleEvent(new FullStackRefreshEvent(exeContext, suspendEvent), null);
+									}
+								}
+							});
+						}
+					}
+				}, FRAME_UPDATE_DELAY, TimeUnit.MILLISECONDS);
+				fRefreshStackFramesFutures.put(exeContext, refreshStackFramesFuture);
+			} catch (RejectedExecutionException e) {
+			}
+		} else if (event instanceof IRunControl.IResumedDMEvent) {
+			IExecutionDMContext exeContext = ((IRunControl.IResumedDMEvent) event).getDMContext();
+			ScheduledFuture<?> refreshStackFramesFuture = fRefreshStackFramesFutures.get(exeContext);
+			if (refreshStackFramesFuture != null) {
+				// cancel previously scheduled frame update
+				refreshStackFramesFuture.cancel(false);
+				fRefreshStackFramesFutures.remove(exeContext);
+			}
+		}
 
-    	super.handleEvent(event, rm);
-    }
+		super.handleEvent(event, rm);
+	}
 
-    /**
-     * Returns the future for the given execution context or for any child of the 
-     * given execution context.
-     */
-    private ScheduledFuture<?> getRefreshFuture(IExecutionDMContext execCtx) {
-        for (IExecutionDMContext refreshCtx : fRefreshStackFramesFutures.keySet()) {
-            if (refreshCtx.equals(execCtx) || DMContexts.isAncestorOf(refreshCtx, execCtx)) {
-                return fRefreshStackFramesFutures.remove(refreshCtx);
-            }
-        }
-        return null;
-    }
-    
-    @Override
-    public void dispose() {
-        DebugPlugin.getDefault().removeDebugEventListener(this);
-        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+	/**
+	 * Returns the future for the given execution context or for any child of the 
+	 * given execution context.
+	 */
+	private ScheduledFuture<?> getRefreshFuture(IExecutionDMContext execCtx) {
+		for (IExecutionDMContext refreshCtx : fRefreshStackFramesFutures.keySet()) {
+			if (refreshCtx.equals(execCtx) || DMContexts.isAncestorOf(refreshCtx, execCtx)) {
+				return fRefreshStackFramesFutures.remove(refreshCtx);
+			}
+		}
+		return null;
+	}
 
-        final IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
-        store.removePropertyChangeListener(fPreferencesListener);
+	@Override
+	public void dispose() {
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 
-        final IPreferenceStore cStore= CDebugUIPlugin.getDefault().getPreferenceStore();
-        cStore.removePropertyChangeListener(fPreferencesListener);
+		final IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
+		store.removePropertyChangeListener(fPreferencesListener);
 
-        super.dispose();
-    }
-    
-    @Override
+		final IPreferenceStore cStore = CDebugUIPlugin.getDefault().getPreferenceStore();
+		cStore.removePropertyChangeListener(fPreferencesListener);
+
+		super.dispose();
+	}
+
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
-        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.ADDED)); 
-    }
-    
-    @Override
+		handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.ADDED));
+	}
+
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.REMOVED)); 
-    }
-    
-    @Override
+		handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.REMOVED));
+	}
+
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
-        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.CHANGED)); 
-    }
-    
-    @Override
+		handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.CHANGED));
+	}
+
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
-        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.TERMINATED)); 
-    }
-    
-    private void handleLaunchesEvent(final LaunchesEvent event) {
-        if (isDisposed()) return;
-        
+		handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.TERMINATED));
+	}
+
+	private void handleLaunchesEvent(final LaunchesEvent event) {
+		if (isDisposed())
+			return;
+
 		// We're in session's executor thread. Re-dispach to our executor thread
 		// and then call root layout node.
-        try {
-            getExecutor().execute(new Runnable() {
-                @Override
+		try {
+			getExecutor().execute(new Runnable() {
+				@Override
 				public void run() {
-                    if (isDisposed()) return;
-    
-                    IRootVMNode rootLayoutNode = getRootVMNode();
-                    if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != IModelDelta.NO_CHANGE) {
-                        handleEvent(event);
-                    }
-                }});
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
-        }
-    }
-    
-    @Override
-    protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
-        // To optimize view performance when stepping rapidly, skip events that came 
-        // before the last suspended events.  However, the debug view can get suspended
-        // events for different threads, so make sure to skip only the events if they
-        // were in the same hierarchy as the last suspended event.
-        // Note: Avoid skipping thread started/exited events which require a larger
-        // scope refresh than some suspended events.
-        if (newEvent instanceof IStartedDMEvent || newEvent instanceof IExitedDMEvent) {
-            return false;
-        }
-        
-        if (newEvent instanceof ISuspendedDMEvent && eventToSkip instanceof IDMEvent<?>) {
-            IDMContext newEventDmc = ((IDMEvent<?>)newEvent).getDMContext();
-            IDMContext eventToSkipDmc = ((IDMEvent<?>)eventToSkip).getDMContext();
-            
-            if (newEventDmc.equals(eventToSkipDmc) || DMContexts.isAncestorOf(eventToSkipDmc, newEventDmc)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
+					if (isDisposed())
+						return;
+
+					IRootVMNode rootLayoutNode = getRootVMNode();
+					if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != IModelDelta.NO_CHANGE) {
+						handleEvent(event);
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Ignore.  This exception could be thrown if the provider is being 
+			// shut down.  
+		}
+	}
+
+	@Override
+	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+		// To optimize view performance when stepping rapidly, skip events that came 
+		// before the last suspended events.  However, the debug view can get suspended
+		// events for different threads, so make sure to skip only the events if they
+		// were in the same hierarchy as the last suspended event.
+		// Note: Avoid skipping thread started/exited events which require a larger
+		// scope refresh than some suspended events.
+		if (newEvent instanceof IStartedDMEvent || newEvent instanceof IExitedDMEvent) {
+			return false;
+		}
+
+		if (newEvent instanceof ISuspendedDMEvent && eventToSkip instanceof IDMEvent<?>) {
+			IDMContext newEventDmc = ((IDMEvent<?>) newEvent).getDMContext();
+			IDMContext eventToSkipDmc = ((IDMEvent<?>) eventToSkip).getDMContext();
+
+			if (newEventDmc.equals(eventToSkipDmc) || DMContexts.isAncestorOf(eventToSkipDmc, newEventDmc)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
 		String property = event.getProperty();
 		boolean processEvent = false;
-		
+
 		if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
 				|| IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) {
 			if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
-		    	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
+				getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT,
+						store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
 			} else {
-		    	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, null);
+				getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, null);
 			}
 			processEvent = true;
 		} else if (IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY.equals(property)) {
-			getPresentationContext().setProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY, event.getNewValue());
+			getPresentationContext().setProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY,
+					event.getNewValue());
 			processEvent = true;
 		}
-		
+
 		if (processEvent) {
 			getExecutor().execute(new DsfRunnable() {
-			    @Override
+				@Override
 				public void run() {
-			        handleEvent(event);
-			    }
+					handleEvent(event);
+				}
 			});
 		}
 	}

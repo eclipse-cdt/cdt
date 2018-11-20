@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 @RunWith(AllTests.class)
 public class AllRemoteSuites {
 	public static junit.framework.Test suite() {
-		String gdbVersions = "gdbserver."+String.join(",gdbserver.", ITestConstants.ALL_SUPPORTED_VERSIONS);
+		String gdbVersions = "gdbserver." + String.join(",gdbserver.", ITestConstants.ALL_SUPPORTED_VERSIONS);
 		System.setProperty("cdt.tests.dsf.gdb.versions", gdbVersions);
 		TestSuite suite = new TestSuite();
 		suite.addTest(new JUnit4TestAdapter(SuiteGdb.class));

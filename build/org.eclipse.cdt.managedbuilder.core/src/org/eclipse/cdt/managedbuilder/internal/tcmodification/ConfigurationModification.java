@@ -34,8 +34,7 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IConfigurationModification;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 
-public class ConfigurationModification extends FolderInfoModification implements
-		IConfigurationModification {
+public class ConfigurationModification extends FolderInfoModification implements IConfigurationModification {
 	private IBuilder fSelectedBuilder;
 	private IBuilder fRealBuilder;
 	private boolean fCompatibilityInfoInited;
@@ -45,35 +44,35 @@ public class ConfigurationModification extends FolderInfoModification implements
 	private IBuilder[] fAllSysBuilders;
 	private BuilderCompatibilityInfoElement fCurrentBuilderCompatibilityInfo;
 
-
 	public static class BuilderCompatibilityInfoElement {
 		private Builder fBuilder;
 		private List<ConflictMatch> fErrComflictMatchList;
 		private CompatibilityStatus fStatus;
 
-		BuilderCompatibilityInfoElement(Builder builder, List<ConflictMatch> errConflictList){
+		BuilderCompatibilityInfoElement(Builder builder, List<ConflictMatch> errConflictList) {
 			fBuilder = builder;
-			if(errConflictList != null && errConflictList.size() != 0)
+			if (errConflictList != null && errConflictList.size() != 0)
 				fErrComflictMatchList = errConflictList;
 		}
 
-		public CompatibilityStatus getCompatibilityStatus(){
-			if(fStatus == null){
+		public CompatibilityStatus getCompatibilityStatus() {
+			if (fStatus == null) {
 				int severity;
 				String message;
-				if(fErrComflictMatchList != null){
+				if (fErrComflictMatchList != null) {
 					severity = IStatus.ERROR;
 					message = Messages.getString("ConfigurationModification.0"); //$NON-NLS-1$
 				} else {
 					severity = IStatus.OK;
 					message = ""; //$NON-NLS-1$
 				}
-				fStatus = new CompatibilityStatus(severity, message, new ConflictSet(fBuilder, fErrComflictMatchList, null));
+				fStatus = new CompatibilityStatus(severity, message,
+						new ConflictSet(fBuilder, fErrComflictMatchList, null));
 			}
 			return fStatus;
 		}
 
-		public boolean isCompatible(){
+		public boolean isCompatible() {
 			return fErrComflictMatchList == null;
 		}
 	}
@@ -88,7 +87,7 @@ public class ConfigurationModification extends FolderInfoModification implements
 		super(foInfo, base);
 
 		fSelectedBuilder = base.fSelectedBuilder;
-		if(!fSelectedBuilder.isExtensionElement())
+		if (!fSelectedBuilder.isExtensionElement())
 			fSelectedBuilder = ManagedBuildManager.getExtensionBuilder(fSelectedBuilder);
 
 		fRealBuilder = base.fRealBuilder;
@@ -114,28 +113,29 @@ public class ConfigurationModification extends FolderInfoModification implements
 		return currentBuilderCompatibilityInfo.getCompatibilityStatus();
 	}
 
-	private ConflictMatchSet getParentConflictMatchSet(){
-		if(fConflicts == null){
+	private ConflictMatchSet getParentConflictMatchSet() {
+		if (fConflicts == null) {
 			PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 			Set<IPath> restore = TcModificationUtil.removeBuilderInfo(storage, fRealBuilder);
 			try {
-				fConflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_BUILDER, storage);
+				fConflicts = ToolChainModificationManager.getInstance()
+						.getConflictInfo(IRealBuildObjectAssociation.OBJECT_BUILDER, storage);
 			} finally {
-				if(restore != null)
+				if (restore != null)
 					TcModificationUtil.restoreBuilderInfo(storage, fRealBuilder, restore);
 			}
 		}
 		return fConflicts;
 	}
 
-	private IBuilder[] getAllSysBuilders(){
-		if(fAllSysBuilders == null)
+	private IBuilder[] getAllSysBuilders() {
+		if (fAllSysBuilders == null)
 			fAllSysBuilders = ManagedBuildManager.getRealBuilders();
 		return fAllSysBuilders;
 	}
 
-	private void initCompatibilityInfo(){
-		if(fCompatibilityInfoInited)
+	private void initCompatibilityInfo() {
+		if (fCompatibilityInfoInited)
 			return;
 
 		fCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
@@ -144,11 +144,11 @@ public class ConfigurationModification extends FolderInfoModification implements
 		IBuilder sysBs[] = getAllSysBuilders();
 		@SuppressWarnings("unchecked")
 		Map<Builder, List<ConflictMatch>> conflictMap = (Map<Builder, List<ConflictMatch>>) conflicts.fObjToConflictListMap;
-		for(int i = 0; i < sysBs.length; i++){
+		for (int i = 0; i < sysBs.length; i++) {
 			Builder b = (Builder) sysBs[i];
 			List<ConflictMatch> l = conflictMap.get(b);
 			BuilderCompatibilityInfoElement info = new BuilderCompatibilityInfoElement(b, l);
-			if(info.isCompatible()){
+			if (info.isCompatible()) {
 				fCompatibleBuilders.put(b, info);
 			} else {
 				fInCompatibleBuilders.put(b, info);
@@ -158,11 +158,11 @@ public class ConfigurationModification extends FolderInfoModification implements
 		fCompatibilityInfoInited = true;
 	}
 
-	private BuilderCompatibilityInfoElement getCurrentBuilderCompatibilityInfo(){
-		if(fCurrentBuilderCompatibilityInfo == null){
+	private BuilderCompatibilityInfoElement getCurrentBuilderCompatibilityInfo() {
+		if (fCurrentBuilderCompatibilityInfo == null) {
 			initCompatibilityInfo();
 			BuilderCompatibilityInfoElement info = fCompatibleBuilders.get(fRealBuilder);
-			if(info == null)
+			if (info == null)
 				info = fInCompatibleBuilders.get(fRealBuilder);
 			fCurrentBuilderCompatibilityInfo = info;
 		}
@@ -177,7 +177,7 @@ public class ConfigurationModification extends FolderInfoModification implements
 
 		Set<IBuilder> keySet = fCompatibleBuilders.keySet();
 		for (IBuilder b : keySet) {
-			if(b != fRealBuilder && cfg.isBuilderCompatible(b))
+			if (b != fRealBuilder && cfg.isBuilderCompatible(b))
 				l.add(b);
 		}
 		return l.toArray(new IBuilder[l.size()]);
@@ -191,12 +191,12 @@ public class ConfigurationModification extends FolderInfoModification implements
 
 	@Override
 	public void setBuilder(IBuilder builder) {
-		if(builder == fSelectedBuilder)
+		if (builder == fSelectedBuilder)
 			return;
 
 		fSelectedBuilder = builder;
 		IBuilder realBuilder = ManagedBuildManager.getRealBuilder(builder);
-		if(realBuilder == fRealBuilder)
+		if (realBuilder == fRealBuilder)
 			return;
 
 		fRealBuilder = realBuilder;
@@ -222,7 +222,7 @@ public class ConfigurationModification extends FolderInfoModification implements
 		super.changeProjectTools(removeTool, addTool);
 	}
 
-	protected void clearBuilderCompatibilityInfo(){
+	protected void clearBuilderCompatibilityInfo() {
 		fInCompatibleBuilders = null;
 		fCompatibleBuilders = null;
 		fCompatibilityInfoInited = false;

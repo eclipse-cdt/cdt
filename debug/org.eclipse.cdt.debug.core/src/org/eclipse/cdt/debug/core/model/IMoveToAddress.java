@@ -27,12 +27,12 @@ public interface IMoveToAddress {
 	 *
 	 * @return whether this operation is currently available
 	 */
-	public boolean canMoveToAddress( IAddress address );
+	public boolean canMoveToAddress(IAddress address);
 
 	/**
 	 * Causes this element can move the instruction pointer to the specified address.
 	 *
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void moveToAddress( IAddress address ) throws DebugException;
+	public void moveToAddress(IAddress address) throws DebugException;
 }

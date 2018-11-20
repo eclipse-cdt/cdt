@@ -47,7 +47,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 	private CViewRenameAction renameAction;
 	private CViewMoveAction moveAction;
 	private TextActionHandler textActionHandler;
-	
+
 	public RefactorActionGroup(CView cview) {
 		super(cview);
 	}
@@ -66,8 +66,8 @@ public class RefactorActionGroup extends CViewActionGroup {
 		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
 
-		boolean anyResourceSelected = !selection.isEmpty()
-				&& SelectionConverter.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		boolean anyResourceSelected = !selection.isEmpty() && SelectionConverter.allResourcesAreOfType(selection,
+				IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
 		copyAction.selectionChanged(selection);
 		menu.add(copyAction);
@@ -91,14 +91,14 @@ public class RefactorActionGroup extends CViewActionGroup {
 		textActionHandler.setPasteAction(pasteAction);
 		textActionHandler.setDeleteAction(deleteAction);
 		renameAction.setTextActionHandler(textActionHandler);
-		
+
 		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
 	}
 
 	/**
- 	 * Handles a key pressed event by invoking the appropriate action.
- 	 */
+	 * Handles a key pressed event by invoking the appropriate action.
+	 */
 	@Override
 	public void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
@@ -112,7 +112,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 				renameAction.run();
 			}
 			// Swallow the event.
-			event.doit = false;			
+			event.doit = false;
 		}
 	}
 
@@ -122,7 +122,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 		final IWorkbenchPartSite site = getCView().getSite();
 		Shell shell = site.getShell();
 		clipboard = new Clipboard(shell.getDisplay());
-		
+
 		pasteAction = new PasteAction(shell, clipboard);
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
@@ -133,13 +133,13 @@ public class RefactorActionGroup extends CViewActionGroup {
 		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		
+
 		moveAction = new CViewMoveAction(site, treeViewer);
 		renameAction = new CViewRenameAction(site, treeViewer);
-		
+
 		deleteAction = new DeleteResourceAction(site);
 		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));		
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 	}
 

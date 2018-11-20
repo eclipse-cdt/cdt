@@ -85,8 +85,8 @@ public class ElementChangedEvent extends EventObject {
 	 * @see #getDelta()
 	 * @since 2.0
 	 */
-	public static final int 	POST_RECONCILE = 4;	
-	
+	public static final int POST_RECONCILE = 4;
+
 	/**
 	 * Event type constant indicating the following:
 	 *    Source text is changed somewhere in function body
@@ -98,8 +98,8 @@ public class ElementChangedEvent extends EventObject {
 	 *    
 	 * @see CShiftData
 	 */
-	public static final int     POST_SHIFT = 5;
-	
+	public static final int POST_SHIFT = 5;
+
 	/*
 	 * Event type indicating the nature of this event. 
 	 * It can be a combination either:
@@ -107,7 +107,8 @@ public class ElementChangedEvent extends EventObject {
 	 *  - PRE_AUTO_BUILD
 	 *  - POST_RECONCILE
 	 */
-	private int type; 
+	private int type;
+
 	/**
 	 * Creates an new element changed event (based on a <code>ICElementDelta</code>).
 	 *
@@ -117,6 +118,7 @@ public class ElementChangedEvent extends EventObject {
 		super(delta);
 		this.type = type;
 	}
+
 	/**
 	 * Returns the delta describing the change.
 	 *
@@ -124,6 +126,7 @@ public class ElementChangedEvent extends EventObject {
 	public ICElementDelta getDelta() {
 		return (ICElementDelta) source;
 	}
+
 	/**
 	 * Returns the type of event being reported.
 	 *

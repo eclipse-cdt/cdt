@@ -35,13 +35,13 @@ public interface IInclude extends ICElement, ISourceReference, ISourceManipulati
 	 * {@code #include "foobar.h"} returns {@code false}.
 	 */
 	public boolean isStandard();
-	
+
 	/**
 	 * The inverse of {@link #isStandard()}
 	 */
-	public boolean isLocal(); 
-	
-	public String getFullFileName(); 
+	public boolean isLocal();
+
+	public String getFullFileName();
 
 	/**
 	 * @return whether this include directive was resolved and followed.

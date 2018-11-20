@@ -36,13 +36,13 @@ public class ConsoleMessages extends NLS {
 
 	public static String ConsoleScrollLockAction_name;
 	public static String ConsoleScrollLockAction_description;
-	
+
 	public static String ConsoleCopyAction_name;
 	public static String ConsoleCopyAction_description;
-	
+
 	public static String ConsolePasteAction_name;
 	public static String ConsolePasteAction_description;
-	
+
 	public static String ConsoleSelectAllAction_name;
 	public static String ConsoleSelectAllAction_description;
 
@@ -50,12 +50,12 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleAutoTerminateAction_description;
 
 	public static String GdbConsolePreferences_name;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);
 	}
-	
+
 	private ConsoleMessages() {
 	}
 }

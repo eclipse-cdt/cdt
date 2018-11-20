@@ -66,7 +66,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 
-
 public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
 	public static CfgDiscoveredPathManager fInstance;
@@ -80,6 +79,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
 		public ContextInfo() {
 		}
+
 		CfgInfoContext fInitialContext;
 		CfgInfoContext fCacheContext;
 		CfgInfoContext fLoadContext;
@@ -88,34 +88,34 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		boolean fIsPerFileCache;
 	}
 
-	public static class PathInfoCache{
+	public static class PathInfoCache {
 		private PathInfo fPathInfo;
 		private String fProfileId;
 
-		public PathInfo getPathInfo(){
+		public PathInfo getPathInfo() {
 			return fPathInfo;
 		}
 
-		private PathInfoCache(String profileId, PathInfo pathInfo){
+		private PathInfoCache(String profileId, PathInfo pathInfo) {
 			this.fProfileId = profileId;
 			this.fPathInfo = pathInfo;
 		}
 	}
 
 	private CfgDiscoveredPathManager() {
-        fBaseMngr = MakeCorePlugin.getDefault().getDiscoveryManager();
+		fBaseMngr = MakeCorePlugin.getDefault().getDiscoveryManager();
 	}
 
-	public static CfgDiscoveredPathManager getInstance(){
-		if(fInstance == null){
+	public static CfgDiscoveredPathManager getInstance() {
+		if (fInstance == null) {
 			fInstance = new CfgDiscoveredPathManager();
 			fInstance.startup();
 		}
 		return fInstance;
 	}
 
-	public static void stop(){
-		if(fInstance != null)
+	public static void stop() {
+		if (fInstance != null)
 			fInstance.shutdown();
 	}
 
@@ -136,48 +136,46 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			IResource resource = event.getResource();
 
 			switch (event.getType()) {
-                case IResourceChangeEvent.POST_CHANGE :
-//                    DiscoveredScannerInfoStore.getInstance().updateScannerConfigStore(event.getDelta());
-                    break;
-				case IResourceChangeEvent.PRE_DELETE :
-				case IResourceChangeEvent.PRE_CLOSE :
-					if (resource.getType() == IResource.PROJECT) {
-//						fDiscoveredMap.remove(resource);
-					}
-					break;
+			case IResourceChangeEvent.POST_CHANGE:
+				//                    DiscoveredScannerInfoStore.getInstance().updateScannerConfigStore(event.getDelta());
+				break;
+			case IResourceChangeEvent.PRE_DELETE:
+			case IResourceChangeEvent.PRE_CLOSE:
+				if (resource.getType() == IResource.PROJECT) {
+					//						fDiscoveredMap.remove(resource);
+				}
+				break;
 			}
 		}
 	}
 
 	public void updateCoreSettings(final IProject project, final IConfiguration cfgs[]) {
-        try {
-        	IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-        		@Override
+		try {
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
-       				ManagedBuildManager.updateCoreSettings(project, cfgs, true);
-        		}
-        	};
-        	CoreModel.run(runnable, null);
-        }
-        catch (CoreException e) {
-        	ManagedBuilderCorePlugin.log(e);
-        }
+					ManagedBuildManager.updateCoreSettings(project, cfgs, true);
+				}
+			};
+			CoreModel.run(runnable, null);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
 	}
 
-
-	public PathInfo getDiscoveredInfo(IProject project,
-			CfgInfoContext context) throws CoreException {
+	public PathInfo getDiscoveredInfo(IProject project, CfgInfoContext context) throws CoreException {
 
 		ContextInfo cInfo = getContextInfo(context);
 
-        PathInfo info = getCachedPathInfo(cInfo);
+		PathInfo info = getCachedPathInfo(cInfo);
 		if (info == null) {
 			try {
 				lock.acquire();
 				info = getCachedPathInfo(cInfo);
 
-				if(info == null){
-					IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project, context.getConfiguration(), cInfo);
+				if (info == null) {
+					IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project,
+							context.getConfiguration(), cInfo);
 					info = resolveCacheBaseDiscoveredInfo(cInfo, baseInfo);
 				}
 			} finally {
@@ -187,21 +185,22 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		return info;
 	}
 
-//	private void adjustPerRcContextInfo(ContextInfo cInfo){
-//		cInfo.fIsFerFileCache = true;
-//		cInfo.fCacheContext = cInfo.fInitialContext;
-//		cInfo.fLoadContext = new CfgInfoContext(cInfo.fInitialContext.getConfiguration());
-//	}
+	//	private void adjustPerRcContextInfo(ContextInfo cInfo){
+	//		cInfo.fIsFerFileCache = true;
+	//		cInfo.fCacheContext = cInfo.fInitialContext;
+	//		cInfo.fLoadContext = new CfgInfoContext(cInfo.fInitialContext.getConfiguration());
+	//	}
 
-	private PathInfo resolveCacheBaseDiscoveredInfo(ContextInfo cInfo, IDiscoveredPathManager.IDiscoveredPathInfo baseInfo){
-		if(cInfo.fIsPerFileCache){
-			if(baseInfo instanceof IDiscoveredPathManager.IPerFileDiscoveredPathInfo2){
-				resolveCachePerFileInfo(cInfo, (IDiscoveredPathManager.IPerFileDiscoveredPathInfo2)baseInfo);
+	private PathInfo resolveCacheBaseDiscoveredInfo(ContextInfo cInfo,
+			IDiscoveredPathManager.IDiscoveredPathInfo baseInfo) {
+		if (cInfo.fIsPerFileCache) {
+			if (baseInfo instanceof IDiscoveredPathManager.IPerFileDiscoveredPathInfo2) {
+				resolveCachePerFileInfo(cInfo, (IDiscoveredPathManager.IPerFileDiscoveredPathInfo2) baseInfo);
 			}
 			return getCachedPathInfo(cInfo);
 		}
 
-		((FolderInfo)cInfo.fLoadContext.getConfiguration().getRootFolderInfo()).setContainsDiscoveredScannerInfo(true);
+		((FolderInfo) cInfo.fLoadContext.getConfiguration().getRootFolderInfo()).setContainsDiscoveredScannerInfo(true);
 		Map<String, String> map = baseInfo.getSymbols();
 		IPath paths[] = baseInfo.getIncludePaths();
 
@@ -210,18 +209,19 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		return info;
 	}
 
-	private void resolveCachePerFileInfo(ContextInfo cInfo, IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 info){
+	private void resolveCachePerFileInfo(ContextInfo cInfo, IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 info) {
 		CConfigurationData data = cInfo.fLoadContext.getConfiguration().getConfigurationData();
-		if(data == null)
+		if (data == null)
 			return;
 
 		PerFileSettingsCalculator calculator = new PerFileSettingsCalculator();
-		IRcSettingInfo[] rcInfos = calculator.getSettingInfos(cInfo.fLoadContext.getConfiguration().getOwner().getProject(), data, info, true);
+		IRcSettingInfo[] rcInfos = calculator
+				.getSettingInfos(cInfo.fLoadContext.getConfiguration().getOwner().getProject(), data, info, true);
 
 		CResourceData rcDatas[] = data.getResourceDatas();
 		Map<IPath, CResourceData> rcDataMap = new HashMap<IPath, CResourceData>();
 		CResourceData rcData;
-		for(int i = 0; i < rcDatas.length; i++){
+		for (int i = 0; i < rcDatas.length; i++) {
 			rcData = rcDatas[i];
 			rcDataMap.put(rcData.getPath(), rcData);
 		}
@@ -230,11 +230,11 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		IPath path;
 		boolean rootSettingFound = false;
 		boolean fileSettingFound = false;
-		for(int i = 0; i < rcInfos.length; i++){
+		for (int i = 0; i < rcInfos.length; i++) {
 			rcInfo = rcInfos[i];
 			rcData = rcInfo.getResourceData();
 			path = rcData.getPath();
-			if(path.segmentCount() != 0)
+			if (path.segmentCount() != 0)
 				fileSettingFound = true;
 			else
 				rootSettingFound = true;
@@ -243,15 +243,15 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			cache(cInfo, rcInfo);
 		}
 
-		if(rootSettingFound && fileSettingFound)
-			((BuildFolderData)data.getRootFolderData()).setContainsDiscoveredScannerInfo(false);
+		if (rootSettingFound && fileSettingFound)
+			((BuildFolderData) data.getRootFolderData()).setContainsDiscoveredScannerInfo(false);
 
-		if(!rcDataMap.isEmpty()){
+		if (!rcDataMap.isEmpty()) {
 			CResourceData tmpRcData;
-			for(Iterator<CResourceData> iter = rcDataMap.values().iterator(); iter.hasNext();){
+			for (Iterator<CResourceData> iter = rcDataMap.values().iterator(); iter.hasNext();) {
 				tmpRcData = iter.next();
-				if(tmpRcData.getPath().segmentCount() == 0 && tmpRcData.getType() == ICSettingBase.SETTING_FOLDER){
-					cache(cInfo, PerFileSettingsCalculator.createEmptyRcSettingInfo((CFolderData)tmpRcData));
+				if (tmpRcData.getPath().segmentCount() == 0 && tmpRcData.getType() == ICSettingBase.SETTING_FOLDER) {
+					cache(cInfo, PerFileSettingsCalculator.createEmptyRcSettingInfo((CFolderData) tmpRcData));
 				} else {
 					clearCache(tmpRcData);
 				}
@@ -259,77 +259,81 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
 	}
 
-	private void cache(ContextInfo cInfo, IRcSettingInfo rcSetting){
+	private void cache(ContextInfo cInfo, IRcSettingInfo rcSetting) {
 		CResourceData rcData = rcSetting.getResourceData();
 		clearCache(rcData);
 		ILangSettingInfo lInfos[] = rcSetting.getLangInfos();
-		for(int i = 0; i < lInfos.length; i++){
+		for (int i = 0; i < lInfos.length; i++) {
 			cache(cInfo, lInfos[i]);
 		}
 	}
 
-	private void cache(ContextInfo cInfo, ILangSettingInfo lInfo){
-		BuildLanguageData bld = (BuildLanguageData)lInfo.getLanguageData();
-		setCachedPathInfo(cInfo, (Configuration)bld.getConfiguration(), (Tool)bld.getTool(), bld.getInputType(), lInfo.getFilePathInfo());
+	private void cache(ContextInfo cInfo, ILangSettingInfo lInfo) {
+		BuildLanguageData bld = (BuildLanguageData) lInfo.getLanguageData();
+		setCachedPathInfo(cInfo, (Configuration) bld.getConfiguration(), (Tool) bld.getTool(), bld.getInputType(),
+				lInfo.getFilePathInfo());
 	}
 
-	private void clearCache(CResourceData rcData){
-		if(rcData.getType() == ICSettingBase.SETTING_FILE){
-			IFileInfo fiInfo = ((BuildFileData)rcData).getFileInfo();
+	private void clearCache(CResourceData rcData) {
+		if (rcData.getType() == ICSettingBase.SETTING_FILE) {
+			IFileInfo fiInfo = ((BuildFileData) rcData).getFileInfo();
 			ITool tools[] = fiInfo.getTools();
 			clearCache(tools);
 		} else {
-			IFolderInfo foInfo = ((BuildFolderData)rcData).getFolderInfo();
+			IFolderInfo foInfo = ((BuildFolderData) rcData).getFolderInfo();
 			ITool[] tools = foInfo.getTools();
 			clearCache(tools);
 		}
 	}
 
-	private void clearCache(ITool[] tools){
-		for(int i = 0; i < tools.length; i++){
-			((Tool)tools[i]).clearAllDiscoveredInfo();
+	private void clearCache(ITool[] tools) {
+		for (int i = 0; i < tools.length; i++) {
+			((Tool) tools[i]).clearAllDiscoveredInfo();
 		}
 	}
 
-	private IDiscoveredPathManager.IDiscoveredPathInfo loadPathInfo(IProject project, IConfiguration cfg, ContextInfo cInfo) throws CoreException{
-		IDiscoveredPathManager.IDiscoveredPathInfo info = fBaseMngr.getDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext(), false);
-		if(!DiscoveredScannerInfoStore.getInstance().hasInfo(project, cInfo.fLoadContext.toInfoContext(), info.getSerializable())){
-//			setCachedPathInfo(context, info);
+	private IDiscoveredPathManager.IDiscoveredPathInfo loadPathInfo(IProject project, IConfiguration cfg,
+			ContextInfo cInfo) throws CoreException {
+		IDiscoveredPathManager.IDiscoveredPathInfo info = fBaseMngr.getDiscoveredInfo(cfg.getOwner().getProject(),
+				cInfo.fLoadContext.toInfoContext(), false);
+		if (!DiscoveredScannerInfoStore.getInstance().hasInfo(project, cInfo.fLoadContext.toInfoContext(),
+				info.getSerializable())) {
+			//			setCachedPathInfo(context, info);
 			ICfgScannerConfigBuilderInfo2Set container = cInfo.fCfgInfo;
 			IScannerConfigBuilderInfo2 buildInfo = container.getInfo(cInfo.fLoadContext);
-			if(buildInfo != null){
-        		SCProfileInstance instance = ScannerConfigBuilder.build(cInfo.fLoadContext, buildInfo, 0, null, new NullProgressMonitor());
-        		if(instance != null){
+			if (buildInfo != null) {
+				SCProfileInstance instance = ScannerConfigBuilder.build(cInfo.fLoadContext, buildInfo, 0, null,
+						new NullProgressMonitor());
+				if (instance != null) {
 
-        			IScannerInfoCollector newC = instance.getScannerInfoCollector();
-        			if(newC instanceof IScannerInfoCollector2
-        					&& !(newC instanceof PerFileSICollector)){
-        				info = ((IScannerInfoCollector2)newC).createPathInfoObject();
-//        				setCachedPathInfo(context, info);
-        			}
-        		}
+					IScannerInfoCollector newC = instance.getScannerInfoCollector();
+					if (newC instanceof IScannerInfoCollector2 && !(newC instanceof PerFileSICollector)) {
+						info = ((IScannerInfoCollector2) newC).createPathInfoObject();
+						//        				setCachedPathInfo(context, info);
+					}
+				}
 			}
 		}
 		return info;
 	}
 
-	private PathInfo getCachedPathInfo(ContextInfo cInfo){
-        PathInfo info = getCachedPathInfo(cInfo, true, true, false);
-        return info;
+	private PathInfo getCachedPathInfo(ContextInfo cInfo) {
+		PathInfo info = getCachedPathInfo(cInfo, true, true, false);
+		return info;
 	}
 
-	private void removeCachedPathInfo(ContextInfo cInfo){
-//      ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
-		if(cInfo.fIsPerFileCache){
-			Configuration cfg = (Configuration)cInfo.fInitialContext.getConfiguration();
+	private void removeCachedPathInfo(ContextInfo cInfo) {
+		//      ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
+		if (cInfo.fIsPerFileCache) {
+			Configuration cfg = (Configuration) cInfo.fInitialContext.getConfiguration();
 			cfg.clearDiscoveredPathInfo();
 
 			IResourceInfo[] infos = cfg.getResourceInfos();
-			for(int i = 0; i < infos.length; i++){
+			for (int i = 0; i < infos.length; i++) {
 				IResourceInfo rcInfo = infos[i];
 				ITool[] tools = rcInfo.getTools();
-				for(int k = 0; k < tools.length; k++){
-					Tool tool = (Tool)tools[k];
+				for (int k = 0; k < tools.length; k++) {
+					Tool tool = (Tool) tools[k];
 					tool.clearAllDiscoveredPathInfo();
 				}
 			}
@@ -337,47 +341,52 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			setCachedPathInfo(cInfo, null);
 		}
 
-//      PathInfo info = getCachedPathInfo(cInfo, true, true, true);
+		//      PathInfo info = getCachedPathInfo(cInfo, true, true, true);
 	}
 
-	private PathInfo getCachedPathInfo(ContextInfo cInfo, boolean queryParent, boolean clearIfInvalid, boolean clear){
-		return getCachedPathInfo(cInfo, (Configuration)cInfo.fCacheContext.getConfiguration(), (Tool)cInfo.fCacheContext.getTool(), cInfo.fCacheContext.getInputType(), queryParent, clearIfInvalid, clear);
+	private PathInfo getCachedPathInfo(ContextInfo cInfo, boolean queryParent, boolean clearIfInvalid, boolean clear) {
+		return getCachedPathInfo(cInfo, (Configuration) cInfo.fCacheContext.getConfiguration(),
+				(Tool) cInfo.fCacheContext.getTool(), cInfo.fCacheContext.getInputType(), queryParent, clearIfInvalid,
+				clear);
 	}
 
-	private PathInfo getCachedPathInfo(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, boolean queryParent, boolean clearIfInvalid, boolean clear){
+	private PathInfo getCachedPathInfo(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType,
+			boolean queryParent, boolean clearIfInvalid, boolean clear) {
 		PathInfoCache infoCache = getPathInfoCache(cInfo, cfg, tool, inType, queryParent, clearIfInvalid, clear);
-		if(infoCache != null && isCacheValid(cInfo, infoCache))
+		if (infoCache != null && isCacheValid(cInfo, infoCache))
 			return infoCache.fPathInfo;
 		return null;
 	}
 
-	private PathInfoCache getPathInfoCache(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, boolean queryParent, boolean clearIfInvalid, boolean clear){
+	private PathInfoCache getPathInfoCache(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType,
+			boolean queryParent, boolean clearIfInvalid, boolean clear) {
 		PathInfoCache info = null;
-//		boolean queryCfg = false;
-		if(tool != null){
+		//		boolean queryCfg = false;
+		if (tool != null) {
 			info = tool.getDiscoveredPathInfo(inType);
-			if(info != null){
-				if(clear || (clearIfInvalid && !isCacheValid(cInfo, info))){
+			if (info != null) {
+				if (clear || (clearIfInvalid && !isCacheValid(cInfo, info))) {
 					tool.clearDiscoveredPathInfo(inType);
-//					fBaseMngr.removeDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
+					//					fBaseMngr.removeDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
 				}
-			} else if(queryParent){
-//				IResourceInfo rcInfo = tool.getParentResourceInfo();
+			} else if (queryParent) {
+				//				IResourceInfo rcInfo = tool.getParentResourceInfo();
 				ITool superTool = tool.getSuperClass();
-				if(superTool!=null && !superTool.isExtensionElement()){
-					if(inType != null){
+				if (superTool != null && !superTool.isExtensionElement()) {
+					if (inType != null) {
 						IInputType superInType = null;
 						String exts[] = inType.getSourceExtensions(tool);
-						for(int i = 0; i < exts.length; i++){
+						for (int i = 0; i < exts.length; i++) {
 							superInType = superTool.getInputType(exts[i]);
-							if(superInType != null)
+							if (superInType != null)
 								break;
 						}
-						if(superInType != null){
-							info = getPathInfoCache(cInfo, cfg, (Tool)superTool, superInType, true, clearIfInvalid, clear);
+						if (superInType != null) {
+							info = getPathInfoCache(cInfo, cfg, (Tool) superTool, superInType, true, clearIfInvalid,
+									clear);
 						}
 					} else {
-						info = getPathInfoCache(cInfo, cfg, (Tool)superTool, null, true, clearIfInvalid, clear);
+						info = getPathInfoCache(cInfo, cfg, (Tool) superTool, null, true, clearIfInvalid, clear);
 					}
 				} else {
 					info = getPathInfoCache(cInfo, cfg, null, null, true, clearIfInvalid, clear);
@@ -385,39 +394,39 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			}
 		} else {
 			info = cfg.getDiscoveredPathInfo();
-			if(clear || (clearIfInvalid && !isCacheValid(cInfo, info))){
+			if (clear || (clearIfInvalid && !isCacheValid(cInfo, info))) {
 				cfg.clearDiscoveredPathInfo();
-//				fBaseMngr.removeDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
+				//				fBaseMngr.removeDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
 			}
 		}
 
 		return info;
 	}
 
-	private boolean isCacheValid(ContextInfo cInfo, PathInfoCache cache){
-		if(cache == null)
+	private boolean isCacheValid(ContextInfo cInfo, PathInfoCache cache) {
+		if (cache == null)
 			return true;
 
-		if(cInfo.fInfo != null){
+		if (cInfo.fInfo != null) {
 			String id = cInfo.fInfo.getSelectedProfileId();
 			return id.equals(cache.fProfileId);
 		}
 		return false;
 	}
 
-	private ContextInfo getContextInfo(CfgInfoContext context){
+	private ContextInfo getContextInfo(CfgInfoContext context) {
 		return getContextInfo(context, null);
 	}
 
-	private ContextInfo getContextInfo(CfgInfoContext context, ICfgScannerConfigBuilderInfo2Set cfgInfo){
-		if(cfgInfo == null)
+	private ContextInfo getContextInfo(CfgInfoContext context, ICfgScannerConfigBuilderInfo2Set cfgInfo) {
+		if (cfgInfo == null)
 			cfgInfo = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(context.getConfiguration());
 
 		boolean isPerRcType = cfgInfo.isPerRcTypeDiscovery();
 		ContextInfo contextInfo = new ContextInfo();
 		contextInfo.fInitialContext = context;
 		contextInfo.fCfgInfo = cfgInfo;
-		if(isPerRcType){
+		if (isPerRcType) {
 			contextInfo.fLoadContext = CfgScannerConfigUtil.adjustPerRcTypeContext(contextInfo.fInitialContext);
 			contextInfo.fCacheContext = contextInfo.fLoadContext;
 			contextInfo.fIsPerFileCache = false;
@@ -425,41 +434,44 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		} else {
 			contextInfo.fLoadContext = new CfgInfoContext(context.getConfiguration());
 			contextInfo.fInfo = cfgInfo.getInfo(contextInfo.fLoadContext);
-			contextInfo.fIsPerFileCache = CfgScannerConfigProfileManager.isPerFileProfile(contextInfo.fInfo.getSelectedProfileId());
-			contextInfo.fCacheContext = contextInfo.fIsPerFileCache ? contextInfo.fInitialContext : contextInfo.fLoadContext;
+			contextInfo.fIsPerFileCache = CfgScannerConfigProfileManager
+					.isPerFileProfile(contextInfo.fInfo.getSelectedProfileId());
+			contextInfo.fCacheContext = contextInfo.fIsPerFileCache ? contextInfo.fInitialContext
+					: contextInfo.fLoadContext;
 		}
 
-        return contextInfo;
+		return contextInfo;
 	}
 
-	private PathInfo setCachedPathInfo(ContextInfo cInfo, PathInfo info){
+	private PathInfo setCachedPathInfo(ContextInfo cInfo, PathInfo info) {
 		CfgInfoContext cacheContext = cInfo.fCacheContext;
-		return setCachedPathInfo(cInfo, (Configuration)cacheContext.getConfiguration(), (Tool)cacheContext.getTool(), cacheContext.getInputType(), info);
+		return setCachedPathInfo(cInfo, (Configuration) cacheContext.getConfiguration(), (Tool) cacheContext.getTool(),
+				cacheContext.getInputType(), info);
 	}
 
-
-	private PathInfo setCachedPathInfo(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, PathInfo info){
+	private PathInfo setCachedPathInfo(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType,
+			PathInfo info) {
 		PathInfoCache oldInfo;
 		PathInfoCache cache;
-		if(info != null){
+		if (info != null) {
 			String id = cInfo.fInfo != null ? cInfo.fInfo.getSelectedProfileId() : null;
-			cache =  new PathInfoCache(id, info);
+			cache = new PathInfoCache(id, info);
 		} else {
 			cache = null;
 		}
 
-   		if(tool != null){
-   			if(info != null)
-   				oldInfo = tool.setDiscoveredPathInfo(inType, cache);
-   			else
-   				oldInfo = tool.clearDiscoveredPathInfo(inType);
-        } else {
-        	if(info != null)
-        		oldInfo = cfg.setDiscoveredPathInfo(cache);
-        	else
-        		oldInfo = cfg.clearDiscoveredPathInfo();
-        }
-        return oldInfo != null ? oldInfo.fPathInfo : null;
+		if (tool != null) {
+			if (info != null)
+				oldInfo = tool.setDiscoveredPathInfo(inType, cache);
+			else
+				oldInfo = tool.clearDiscoveredPathInfo(inType);
+		} else {
+			if (info != null)
+				oldInfo = cfg.setDiscoveredPathInfo(cache);
+			else
+				oldInfo = cfg.clearDiscoveredPathInfo();
+		}
+		return oldInfo != null ? oldInfo.fPathInfo : null;
 	}
 
 	public void removeDiscoveredInfo(IProject project, CfgInfoContext context) {
@@ -467,14 +479,14 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	}
 
 	public void removeDiscoveredInfo(IProject project, CfgInfoContext context, boolean removeBaseCache) {
-//        if(context == null)
-//        	context = ScannerConfigUtil.createContextForProject(project);
+		//        if(context == null)
+		//        	context = ScannerConfigUtil.createContextForProject(project);
 
 		ContextInfo cInfo = getContextInfo(context);
 
-        removeCachedPathInfo(cInfo);
+		removeCachedPathInfo(cInfo);
 
-        if(removeBaseCache)
-        	fBaseMngr.removeDiscoveredInfo(project, cInfo.fLoadContext.toInfoContext());
+		if (removeBaseCache)
+			fBaseMngr.removeDiscoveredInfo(project, cInfo.fLoadContext.toInfoContext());
 	}
 }

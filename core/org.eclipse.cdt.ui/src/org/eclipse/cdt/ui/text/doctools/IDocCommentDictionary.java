@@ -20,4 +20,5 @@ package org.eclipse.cdt.ui.text.doctools;
  * will be available in the future.
  * @since 5.0
  */
-public interface IDocCommentDictionary {}
+public interface IDocCommentDictionary {
+}

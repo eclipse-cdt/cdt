@@ -22,15 +22,14 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTAttributeOwner extends IASTNode {
 	/** @since 5.7 */
-	public static final ASTNodeProperty ATTRIBUTE_SPECIFIER = 
-			new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE_SPECIFIER"); //$NON-NLS-1$
+	public static final ASTNodeProperty ATTRIBUTE_SPECIFIER = new ASTNodeProperty(
+			"IASTAttributeOwner.ATTRIBUTE_SPECIFIER"); //$NON-NLS-1$
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public static final ASTNodeProperty ATTRIBUTE = 
-			new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE"); //$NON-NLS-1$
+	public static final ASTNodeProperty ATTRIBUTE = new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE"); //$NON-NLS-1$
 
 	/**
 	 * Returns an array of all the node's attribute specifiers.

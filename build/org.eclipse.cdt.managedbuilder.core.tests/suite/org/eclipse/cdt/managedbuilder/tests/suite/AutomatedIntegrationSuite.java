@@ -58,7 +58,8 @@ public class AutomatedIntegrationSuite {
 	}
 
 	public static Test suite() {
-		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER,
+				IPDOMManager.ID_FAST_INDEXER);
 
 		TestSuite suite = new TestSuite("Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$

@@ -24,11 +24,11 @@ public class XlcLRCSpecTests extends LRCSpecTests {
 	public static TestSuite suite() {
 		return suite(XlcLRCSpecTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

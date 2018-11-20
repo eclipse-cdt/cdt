@@ -26,7 +26,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(ReturnChecker.RET_NORET_ID,ReturnChecker.RET_ERR_VALUE_ID,ReturnChecker.RET_NO_VALUE_ID);
+		enableProblems(ReturnChecker.RET_NORET_ID, ReturnChecker.RET_ERR_VALUE_ID, ReturnChecker.RET_NO_VALUE_ID);
 	}
 
 	@Override
@@ -80,7 +80,6 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testTypedefReturnFunction() throws Exception {
 		checkSampleAbove();
 	}
-
 
 	//	typedef unsigned int uint8_t;
 	//
@@ -153,11 +152,12 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testLambda_Bug332285() throws Exception {
 		checkSampleAbove();
 	}
-//	void f()
-//	{
-//	    if ([](int r){return r == 0;}(0))
-//	        ;
-//	}
+
+	//	void f()
+	//	{
+	//	    if ([](int r){return r == 0;}(0))
+	//	        ;
+	//	}
 	public void testLambda2_Bug332285() throws Exception {
 		checkSampleAbove();
 	}
@@ -185,24 +185,24 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkSampleAboveCpp();
 	}
 
-//	int f() // error
-//	{
-//	    if (g())
-//	        h();
-//	    else
-//	        return 0;
-//	}
+	//	int f() // error
+	//	{
+	//	    if (g())
+	//	        h();
+	//	    else
+	//	        return 0;
+	//	}
 	public void testBranches_Bug342906() throws Exception {
 		checkSampleAbove();
 	}
 
-//	int f() // error
-//	{
-//	    switch (g()) {
-//	      case 1: h(); break;
-//	      case 2:
-//	        return 0;
-//	}
+	//	int f() // error
+	//	{
+	//	    switch (g()) {
+	//	      case 1: h(); break;
+	//	      case 2:
+	//	        return 0;
+	//	}
 	public void testSwitch() throws Exception {
 		checkSampleAbove();
 	}
@@ -230,27 +230,29 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-//	int f() // error
-//	{
-//	    switch (g()) {
-//	      case 1: return 1;
-//	      case 2: return 0;
-//      }
-//	}
+	//	int f() // error
+	//	{
+	//	    switch (g()) {
+	//	      case 1: return 1;
+	//	      case 2: return 0;
+	//      }
+	//	}
 	public void testBranchesSwitch_Bug343767a() throws Exception {
 		checkSampleAbove();
 	}
-//	int f()
-//	{
-//	    switch (g()) {
-//	      case 1: return 1;
-//	      case 2: return 0;
-//	      default: return -1;
-//      }
-//	}
+
+	//	int f()
+	//	{
+	//	    switch (g()) {
+	//	      case 1: return 1;
+	//	      case 2: return 0;
+	//	      default: return -1;
+	//      }
+	//	}
 	public void testBranchesSwitch_Bug343767b() throws Exception {
 		checkSampleAbove();
 	}
+
 	//int bar(int foo)
 	//{
 	//    if(foo)
@@ -262,6 +264,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testBranches2_Bug343767() throws Exception {
 		checkSampleAbove();
 	}
+
 	//int bar(int foo) // error
 	//{
 	//    while(foo) {
@@ -382,38 +385,38 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkSampleAboveCpp();
 	}
 
-//	bool func( int i )
-//	{
-//	    switch( i )
-//	    {
-//	    case 0:
-//	        return true;
-//	    default:
-//	        return false;
-//	        break;
-//	    }
-//	}
+	//	bool func( int i )
+	//	{
+	//	    switch( i )
+	//	    {
+	//	    case 0:
+	//	        return true;
+	//	    default:
+	//	        return false;
+	//	        break;
+	//	    }
+	//	}
 	public void testRetInDeadCodeCase() throws Exception {
 		// Bug 350168
 		checkSampleAboveCpp();
 	}
 
-//	int test1() {
-//	    do {
-//	        return 1;
-//	    } while (0);
-//	}
+	//	int test1() {
+	//	    do {
+	//	        return 1;
+	//	    } while (0);
+	//	}
 	public void testNoRetInfinitLoop() throws Exception {
 		// Bug 394521
 		checkSampleAbove();
 	}
 
-//	int test1_f()    // WARNING HERE: "No return, in function returning non-void"
-//	{
-//	    while (1)
-//	    {
-//	    }
-//	}
+	//	int test1_f()    // WARNING HERE: "No return, in function returning non-void"
+	//	{
+	//	    while (1)
+	//	    {
+	//	    }
+	//	}
 	public void testNoRetInfinitLoop2() throws Exception {
 		// Bug 394521
 		checkSampleAboveCpp();

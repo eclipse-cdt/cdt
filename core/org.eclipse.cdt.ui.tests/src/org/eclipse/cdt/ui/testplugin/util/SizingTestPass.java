@@ -29,6 +29,7 @@ class SizingTestPass implements IDialogTestPass {
 	public String title() {
 		return "Test Pass: Sizing and Display";
 	}
+
 	/**
 	 * @see IDialogTestPass#description()
 	 */
@@ -36,13 +37,15 @@ class SizingTestPass implements IDialogTestPass {
 	public String description() {
 		return "Verify the sizing and display of the dialogs and widgets.";
 	}
+
 	/**
 	 * @see IDialogTestPass#label()
 	 */
 	@Override
 	public String label() {
 		return "&Sizing and Display";
-	}	
+	}
+
 	/**
 	 * @see IDialogTestPass#checkListTexts()
 	 */
@@ -56,6 +59,7 @@ class SizingTestPass implements IDialogTestPass {
 		list.add("&5) all the widgets are viewable and not cut off.");
 		return list;
 	}
+
 	/**
 	 * @see IDialogTestPass#failureTexts()
 	 * Size of the return array must be the same size as the checkListTexts'
@@ -71,6 +75,7 @@ class SizingTestPass implements IDialogTestPass {
 		failureText[4] = "Some widgets are cut off.";
 		return failureText;
 	}
+
 	/**
 	 * @see IDialogTestPass#queryText()
 	 */
@@ -78,6 +83,7 @@ class SizingTestPass implements IDialogTestPass {
 	public String queryText() {
 		return "Is the sizing and display of the dialog correct?";
 	}
+
 	/**
 	 * @see IDialogTestPass#getID()
 	 */

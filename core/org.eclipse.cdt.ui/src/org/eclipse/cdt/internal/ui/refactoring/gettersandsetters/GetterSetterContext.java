@@ -65,7 +65,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		return getFieldDescriptors().toArray();
 	}
-	
+
 	@Override
 	public void dispose() {
 	}

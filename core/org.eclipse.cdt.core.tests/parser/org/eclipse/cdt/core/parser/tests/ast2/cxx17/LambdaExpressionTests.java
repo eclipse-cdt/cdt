@@ -25,7 +25,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	// 		[*this] { }();
 	// 	}
 	// };
-	public void testLambdaCaptures_535196_1()  throws Exception {
+	public void testLambdaCaptures_535196_1() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -36,7 +36,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	// 		[*this] { bar(); }();
 	// 	}
 	// };
-	public void testLambdaCaptures_535196_2()  throws Exception {
+	public void testLambdaCaptures_535196_2() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -47,7 +47,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	// 		[m = 3, *this] { bar(m); }();
 	// 	}
 	// };
-	public void testLambdaCaptures_535196_3()  throws Exception {
+	public void testLambdaCaptures_535196_3() throws Exception {
 		parseAndCheckBindings();
 	}
 }

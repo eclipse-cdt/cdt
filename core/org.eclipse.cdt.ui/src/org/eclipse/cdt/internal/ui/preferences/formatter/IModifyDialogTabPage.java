@@ -25,11 +25,11 @@ import org.eclipse.swt.widgets.Composite;
 public interface IModifyDialogTabPage {
 
 	public interface IModificationListener {
-	
+
 		void updateStatus(IStatus status);
-	
+
 		void valuesModified();
-	
+
 	}
 
 	/**

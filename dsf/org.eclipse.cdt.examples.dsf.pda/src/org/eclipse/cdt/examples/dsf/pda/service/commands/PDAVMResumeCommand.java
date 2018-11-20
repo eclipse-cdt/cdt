@@ -31,12 +31,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAVMResumeCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVMResumeCommand(PDAVirtualMachineDMContext context) {
-        super(context, "vmresume");
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAVMResumeCommand(PDAVirtualMachineDMContext context) {
+		super(context, "vmresume");
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

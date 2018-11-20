@@ -16,7 +16,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
-
 /**
  * Helper class to allow listeners of arbitrary events self-register/dispose.
  *

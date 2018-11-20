@@ -24,19 +24,33 @@ import org.eclipse.debug.core.model.IWatchExpressionResult;
  * 
  */
 public class WatchExpressionDelegate implements IWatchExpressionDelegate {
-    @Override
+	@Override
 	public void evaluateExpression(final String expression, IDebugElement context, IWatchExpressionListener listener) {
-        listener.watchEvaluationFinished(new IWatchExpressionResult() {
-            @Override
-			public String[] getErrorMessages() { return new String[0]; }
-            @Override
-			public DebugException getException() { return null; }
-            @Override
-			public String getExpressionText() { return expression; }
-            @Override
-			public IValue getValue() { return null; }
-            @Override
-			public boolean hasErrors() { return false; }
-        });
-    }
+		listener.watchEvaluationFinished(new IWatchExpressionResult() {
+			@Override
+			public String[] getErrorMessages() {
+				return new String[0];
+			}
+
+			@Override
+			public DebugException getException() {
+				return null;
+			}
+
+			@Override
+			public String getExpressionText() {
+				return expression;
+			}
+
+			@Override
+			public IValue getValue() {
+				return null;
+			}
+
+			@Override
+			public boolean hasErrors() {
+				return false;
+			}
+		});
+	}
 }

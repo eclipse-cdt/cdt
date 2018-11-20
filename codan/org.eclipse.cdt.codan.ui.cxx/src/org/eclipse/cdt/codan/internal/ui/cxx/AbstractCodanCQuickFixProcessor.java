@@ -43,13 +43,14 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 	}
 
 	@Override
-	public ICCompletionProposal[] getCorrections(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException {
+	public ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations)
+			throws CoreException {
 		if (locations == null || locations.length == 0)
 			return null;
 		IProblemLocation loc = locations[0];
 		IPath location = context.getTranslationUnit().getLocation();
-		IFile astFile = ResourceLookup.selectFileForLocation(location, context.getTranslationUnit().getCProject().getProject());
+		IFile astFile = ResourceLookup.selectFileForLocation(location,
+				context.getTranslationUnit().getCProject().getProject());
 		IMarker[] markers = astFile.findMarkers(loc.getMarkerType(), false, 1);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker m = markers[i];
@@ -78,6 +79,5 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 		return position;
 	}
 
-	public abstract ICCompletionProposal[] getCorrections(IInvocationContext context,
-			String problemId, IMarker marker);
+	public abstract ICCompletionProposal[] getCorrections(IInvocationContext context, String problemId, IMarker marker);
 }

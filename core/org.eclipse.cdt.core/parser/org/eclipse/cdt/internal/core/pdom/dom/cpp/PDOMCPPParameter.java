@@ -53,13 +53,13 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	public PDOMCPPParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
-		fType= type;
+		fType = type;
 	}
 
 	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
-		fType= null;	// This constructor is used for adding parameters to the database, only.
+		fType = null; // This constructor is used for adding parameters to the database, only.
 		fDefaultValue = param.getDefaultValue();
 
 		Database db = getDB();
@@ -102,12 +102,12 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public String[] getQualifiedName() {
-		return new String[] {getName()};
+		return new String[] { getName() };
 	}
 
 	@Override
 	public char[][] getQualifiedNameCharArray() throws DOMException {
-		return new char[][]{getNameCharArray()};
+		return new char[][] { getNameCharArray() };
 	}
 
 	@Override
@@ -121,10 +121,10 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isConstexpr() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public IType getType() {
@@ -149,7 +149,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public boolean isRegister() {
-		return false;  // We don't care whether the parameter has register storage class specifier or not.
+		return false; // We don't care whether the parameter has register storage class specifier or not.
 	}
 
 	@Override
@@ -187,7 +187,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	public boolean hasDefaultValue() {
 		return getDefaultValue() != null;
 	}
-	
+
 	@Override
 	public IValue getDefaultValue() {
 		if (fDefaultValue == IntegralValue.NOT_INITIALIZED) {
@@ -230,13 +230,13 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		PDOMCPPParameter p= this;
+		PDOMCPPParameter p = this;
 		for (;;) {
 			long rec = p.getNextPtr();
 			p.flatDelete(linkage);
 			if (rec == 0)
 				return;
-			p= new PDOMCPPParameter(linkage, rec, null);
+			p = new PDOMCPPParameter(linkage, rec, null);
 		}
 	}
 

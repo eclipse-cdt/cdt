@@ -98,12 +98,7 @@ import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 public class BuildConsolePage extends Page
-		implements
-			ISelectionListener,
-			IPropertyChangeListener,
-			IBuildConsoleListener,
-			ITextListener,
-			IAdaptable {
+		implements ISelectionListener, IPropertyChangeListener, IBuildConsoleListener, ITextListener, IAdaptable {
 
 	static final int POSITION_NEXT = -1;
 	static final int POSITION_PREV = -2;
@@ -144,8 +139,7 @@ public class BuildConsolePage extends Page
 	 * @param console
 	 * @param contextId
 	 */
-	public BuildConsolePage(IConsoleView view, BuildConsole console,
-			String contextId) {
+	public BuildConsolePage(IConsoleView view, BuildConsole console, String contextId) {
 		fConsole = console;
 		fConsoleView = view;
 		fContextMenuId = contextId;
@@ -173,7 +167,7 @@ public class BuildConsolePage extends Page
 			IConsole console = consoleManager.getProjectConsole(project);
 			getViewer().setDocument(document);
 			if (console instanceof BuildConsolePartitioner) {
-				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+				BuildConsolePartitioner par = (BuildConsolePartitioner) console;
 				// Show the error, but don't show it in the editor if we are viewing the global console.
 				// Prevents showing errors in the editor for projects other than the current project.
 				showError(par, fShowErrorAction.isChecked() && !(getConsole() instanceof GlobalBuildConsole));
@@ -184,7 +178,8 @@ public class BuildConsolePage extends Page
 
 	@Override
 	public void consoleChange(final IBuildConsoleEvent event) {
-		if (event.getType() == IBuildConsoleEvent.CONSOLE_START || event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE) {
+		if (event.getType() == IBuildConsoleEvent.CONSOLE_START
+				|| event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE) {
 			Control control = getControl();
 			if (control != null && !control.isDisposed()) {
 				Display display = control.getDisplay();
@@ -198,7 +193,8 @@ public class BuildConsolePage extends Page
 					@Override
 					public void run() {
 						if (isAvailable()) {
-							if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && getProject() != event.getProject()) {
+							if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE
+									&& getProject() != event.getProject()) {
 								return;
 							}
 							setProject(event.getProject());
@@ -246,7 +242,8 @@ public class BuildConsolePage extends Page
 
 		JFaceResources.getFontRegistry().addListener(this);
 		setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
-		setTabs(CUIPlugin.getDefault().getPreferenceStore().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
+		setTabs(CUIPlugin.getDefault().getPreferenceStore()
+				.getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 
 		getConsole().addPropertyChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -284,7 +281,7 @@ public class BuildConsolePage extends Page
 		final String property = event.getProperty();
 
 		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof IBuildConsoleStreamDecorator) {
-			IBuildConsoleStreamDecorator stream = (IBuildConsoleStreamDecorator)source;
+			IBuildConsoleStreamDecorator stream = (IBuildConsoleStreamDecorator) source;
 			if (stream.getConsole().equals(getConsole()) && getControl() != null) {
 				Display display = getControl().getDisplay();
 				display.asyncExec(new Runnable() {
@@ -298,7 +295,8 @@ public class BuildConsolePage extends Page
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
 			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
-			setTabs(CUIPlugin.getDefault().getPreferenceStore().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
+			setTabs(CUIPlugin.getDefault().getPreferenceStore()
+					.getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 		} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
 			fViewer.getTextWidget().setBackground(fConsole.getBackground());
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_WRAP_LINES)
@@ -324,17 +322,18 @@ public class BuildConsolePage extends Page
 		// each action
 		IActionBars actionBars = getSite().getActionBars();
 		TextViewerAction action = new TextViewerAction(getViewer(), ITextOperationTarget.COPY);
-		action.configureAction(ConsoleMessages.BuildConsolePage__Copy_Ctrl_C_6,
-				ConsoleMessages.BuildConsolePage_Copy_7, ConsoleMessages.BuildConsolePage_Copy_7);
-		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_COPY_DISABLED));
-		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		action.configureAction(ConsoleMessages.BuildConsolePage__Copy_Ctrl_C_6, ConsoleMessages.BuildConsolePage_Copy_7,
+				ConsoleMessages.BuildConsolePage_Copy_7);
+		action.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		action.setDisabledImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		action.setHoverImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action = new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.BuildConsolePage_Select__All_Ctrl_A_12,
-				ConsoleMessages.BuildConsolePage_Select_All,
-				ConsoleMessages.BuildConsolePage_Select_All);
+				ConsoleMessages.BuildConsolePage_Select_All, ConsoleMessages.BuildConsolePage_Select_All);
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		//XXX Still using "old" resource access
 		ResourceBundle bundle = ResourceBundle.getBundle(ConsoleMessages.BUNDLE_NAME);
@@ -357,7 +356,7 @@ public class BuildConsolePage extends Page
 	protected void updateAction(String actionId) {
 		IAction action = fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
-			((IUpdate)action).update();
+			((IUpdate) action).update();
 		}
 	}
 
@@ -412,16 +411,16 @@ public class BuildConsolePage extends Page
 
 	protected void setInitialSelection() {
 		// Use the selection, if any
-		IWorkbenchPage page= getSite().getPage();
-		ISelection selection= null;
+		IWorkbenchPage page = getSite().getPage();
+		ISelection selection = null;
 		if (page != null)
-			selection= page.getSelection();
+			selection = page.getSelection();
 
 		if (convertSelectionToProject(selection) == null) {
 			if (selection instanceof ITextSelection) {
-				Object part= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				Object part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (part instanceof IEditorPart) {
-					if (setSelectionFromEditor((IEditorPart)part) == true)
+					if (setSelectionFromEditor((IEditorPart) part) == true)
 						return;
 				}
 			}
@@ -435,14 +434,14 @@ public class BuildConsolePage extends Page
 	boolean setSelectionFromEditor(IEditorPart part) {
 		if (part == null)
 			return false;
-		IWorkbenchPartSite site= part.getSite();
+		IWorkbenchPartSite site = part.getSite();
 		if (site == null)
 			return false;
-		ISelectionProvider provider= site.getSelectionProvider();
-		if (provider != null ) {
-			IEditorInput ei= part.getEditorInput();
+		ISelectionProvider provider = site.getSelectionProvider();
+		if (provider != null) {
+			IEditorInput ei = part.getEditorInput();
 			if (ei instanceof IFileEditorInput) {
-				IFile file= ((IFileEditorInput)ei).getFile();
+				IFile file = ((IFileEditorInput) ei).getFile();
 				selectionChanged(part, new StructuredSelection(file));
 				return true;
 			}
@@ -463,16 +462,16 @@ public class BuildConsolePage extends Page
 
 	IProject convertSelectionToProject(ISelection selection) {
 		IProject project = null;
-		if (selection == null || ! (selection instanceof IStructuredSelection)) {
+		if (selection == null || !(selection instanceof IStructuredSelection)) {
 			return project;
 		}
-		IStructuredSelection ssel = (IStructuredSelection)selection;
+		IStructuredSelection ssel = (IStructuredSelection) selection;
 		Object element = ssel.getFirstElement();
 		if (element instanceof IAdaptable) {
-			IAdaptable input = (IAdaptable)element;
+			IAdaptable input = (IAdaptable) element;
 			IResource resource = null;
 			if (input instanceof IResource) {
-				resource = (IResource)input;
+				resource = (IResource) input;
 			} else {
 				resource = input.getAdapter(IResource.class);
 			}
@@ -549,12 +548,12 @@ public class BuildConsolePage extends Page
 		if (Widget.class.equals(required)) {
 			return (T) getViewer().getTextWidget();
 		}
-//		if (IShowInSource.class.equals(required)) {
-//			return this;
-//		}
-//		if (IShowInTargetList.class.equals(required)) {
-//			return this;
-//		}
+		//		if (IShowInSource.class.equals(required)) {
+		//			return this;
+		//		}
+		//		if (IShowInTargetList.class.equals(required)) {
+		//			return this;
+		//		}
 		return null;
 	}
 
@@ -566,7 +565,7 @@ public class BuildConsolePage extends Page
 	@Override
 	public void textChanged(TextEvent event) {
 		//		 update the find replace action if the document length is > 0
-		IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
+		IUpdate findReplace = (IUpdate) fGlobalActions.get(ActionFactory.FIND.getId());
 		if (findReplace != null) {
 			findReplace.update();
 		}
@@ -586,21 +585,22 @@ public class BuildConsolePage extends Page
 	 */
 	void moveToError(int position) {
 		IConsole console = getCurrentConsole();
-		if (console == null) return;
+		if (console == null)
+			return;
 		if (console instanceof BuildConsolePartitioner) {
-			BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+			BuildConsolePartitioner par = (BuildConsolePartitioner) console;
 
 			BuildConsolePartition oldPartition = par.fDocumentMarkerManager.getCurrentPartition();
 
 			// Move to specified line in the model (BuildConsolePartitioner)
-			if ( position == POSITION_NEXT ) {
+			if (position == POSITION_NEXT) {
 				par.fDocumentMarkerManager.moveToNextError();
-			} else if ( position == POSITION_PREV ) {
+			} else if (position == POSITION_PREV) {
 				par.fDocumentMarkerManager.moveToPreviousError();
-			} else if ( position == POSITION_FIST ) {
+			} else if (position == POSITION_FIST) {
 				par.fDocumentMarkerManager.moveToFirstError();
-			} else if ( position >= 0 ) {
-				if ( ! par.fDocumentMarkerManager.moveToErrorByOffset(position) ) {
+			} else if (position >= 0) {
+				if (!par.fDocumentMarkerManager.moveToErrorByOffset(position)) {
 					// we haven't moved, because offset points to non-error partition
 					return;
 				}
@@ -608,7 +608,7 @@ public class BuildConsolePage extends Page
 			if (oldPartition != null) {
 				getViewer().deselectPartition(par, oldPartition);
 			}
-			showError(par, position > 0 || fShowErrorAction.isChecked() );
+			showError(par, position > 0 || fShowErrorAction.isChecked());
 		}
 	}
 
@@ -618,12 +618,13 @@ public class BuildConsolePage extends Page
 	public void showError(BuildConsolePartitioner par, boolean openInEditor) {
 		// Highlight current error
 		BuildConsolePartition p = par.fDocumentMarkerManager.getCurrentPartition();
-		if ( p == null ) return;
+		if (p == null)
+			return;
 		getViewer().selectPartition(par, p);
 		// Show error in editor if necessary
 		// (always show when absolute positioning, otherwise depends
 		// on fShowErrorAction state)
-		if ( openInEditor ) {
+		if (openInEditor) {
 			openErrorInEditor(par.fDocumentMarkerManager.getCurrentErrorMarker());
 		}
 	}
@@ -634,10 +635,12 @@ public class BuildConsolePage extends Page
 	public static void openErrorInEditor(ProblemMarkerInfo marker) {
 		IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
 
-		if ( marker == null || marker.file == null || window == null )  return;
+		if (marker == null || marker.file == null || window == null)
+			return;
 
 		IWorkbenchPage page = window.getActivePage();
-		if (page == null) return;
+		if (page == null)
+			return;
 
 		IEditorPart editor = page.getActiveEditor();
 		if (editor != null) {
@@ -648,14 +651,15 @@ public class BuildConsolePage extends Page
 			}
 		}
 
-		if ( marker.file instanceof IFile ) {
+		if (marker.file instanceof IFile) {
 			try {
 				// Find IMarker corresponding to ProblemMarkerInfo
-				IMarker mrkrs[] = marker.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
-				for (IMarker m: mrkrs) {
-					if ( marker.lineNumber == ((Integer)m.getAttribute(IMarker.LINE_NUMBER)).intValue() &&
-								marker.description.equals(m.getAttribute(IMarker.MESSAGE)) &&
-								marker.severity == ((Integer)m.getAttribute(IMarker.SEVERITY)).intValue() ) {
+				IMarker mrkrs[] = marker.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
+						IResource.DEPTH_ONE);
+				for (IMarker m : mrkrs) {
+					if (marker.lineNumber == ((Integer) m.getAttribute(IMarker.LINE_NUMBER)).intValue()
+							&& marker.description.equals(m.getAttribute(IMarker.MESSAGE))
+							&& marker.severity == ((Integer) m.getAttribute(IMarker.SEVERITY)).intValue()) {
 						IDE.openEditor(page, m, OpenStrategy.activateOnOpen());
 						return;
 					}

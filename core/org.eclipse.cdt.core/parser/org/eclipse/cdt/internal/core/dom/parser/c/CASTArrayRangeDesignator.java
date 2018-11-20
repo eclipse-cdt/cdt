@@ -25,12 +25,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Implementation of array range designator.
  */
-public class CASTArrayRangeDesignator extends ASTNode
-		implements IGCCASTArrayRangeDesignator, IASTAmbiguityParent {
-    private IASTExpression floor;
-    private IASTExpression ceiling;
+public class CASTArrayRangeDesignator extends ASTNode implements IGCCASTArrayRangeDesignator, IASTAmbiguityParent {
+	private IASTExpression floor;
+	private IASTExpression ceiling;
 
-    public CASTArrayRangeDesignator() {
+	public CASTArrayRangeDesignator() {
 	}
 
 	public CASTArrayRangeDesignator(IASTExpression floor, IASTExpression ceiling) {
@@ -53,65 +52,68 @@ public class CASTArrayRangeDesignator extends ASTNode
 
 	@Override
 	public IASTExpression getRangeFloor() {
-        return this.floor;
-    }
+		return this.floor;
+	}
 
-    @Override
+	@Override
 	public void setRangeFloor(IASTExpression expression) {
-        assertNotFrozen();
-        floor = expression;
-        if (expression != null) {
-        	expression.setParent(this);
-        	expression.setPropertyInParent(SUBSCRIPT_FLOOR_EXPRESSION);
-        }
-    }
+		assertNotFrozen();
+		floor = expression;
+		if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(SUBSCRIPT_FLOOR_EXPRESSION);
+		}
+	}
 
-    @Override
+	@Override
 	public IASTExpression getRangeCeiling() {
-        return ceiling;
-    }
+		return ceiling;
+	}
 
-    @Override
+	@Override
 	public void setRangeCeiling(IASTExpression expression) {
-        assertNotFrozen();
-        ceiling = expression;
-        if (expression != null) {
-        	expression.setParent(this);
-        	expression.setPropertyInParent(SUBSCRIPT_CEILING_EXPRESSION);
-        }
-    }
+		assertNotFrozen();
+		ceiling = expression;
+		if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(SUBSCRIPT_CEILING_EXPRESSION);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDesignators) {
+		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		if (floor != null && !floor.accept(action))
 			return false;
 		if (ceiling != null && !ceiling.accept(action))
 			return false;
 
-        if (action.shouldVisitDesignators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
-        	return false;
+		if (action.shouldVisitDesignators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == floor) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            floor = (IASTExpression) other;
-        }
-        if (child == ceiling) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            ceiling = (IASTExpression) other;
-        }
-    }
+		if (child == floor) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			floor = (IASTExpression) other;
+		}
+		if (child == ceiling) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			ceiling = (IASTExpression) other;
+		}
+	}
 }

@@ -62,8 +62,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		// Set the configure parameters to be --enable-jeff via user-defined
 		// options
 		SWTBotShell shell = openProperties("Autotools", "Configure Settings");
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		SWTBotText text = bot.textWithLabel("Additional command-line options");
 		text.typeText("--enable-jeff");
 		bot.button("OK").click();
@@ -71,8 +70,7 @@ public class SetConfigurationParameter extends AbstractTest {
 
 		// Create new build configurations that will be used throughout tests
 		projectExplorer.bot().tree().select(projectName);
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Configurations", "Manage...");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Configurations", "Manage...");
 		shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
 		bot.button("New...").click();
@@ -80,8 +78,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		shell.activate();
 		SWTBotText t = bot.textWithLabel("Name:");
 		t.setText("debug");
-		AbstractTest.clickRadioButtonInGroup("Existing configuration",
-				"Copy settings from");
+		AbstractTest.clickRadioButtonInGroup("Existing configuration", "Copy settings from");
 		bot.button("OK").click();
 		shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
@@ -90,8 +87,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		shell.activate();
 		t = bot.textWithLabel("Name:");
 		t.setText("default");
-		AbstractTest.clickRadioButtonInGroup("Default configuration",
-				"Copy settings from");
+		AbstractTest.clickRadioButtonInGroup("Default configuration", "Copy settings from");
 		bot.button("OK").click();
 		shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
@@ -145,8 +141,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	@Test
 	public void t2canBuildWithConfigParm() throws Exception {
 		projectExplorer.bot().tree().select(projectName);
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Project");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Project");
 
 		// Wait until the project is built
 		SWTBotShell shell = bot.shell("Build Project");
@@ -192,8 +187,7 @@ public class SetConfigurationParameter extends AbstractTest {
 
 		String output = viewConsole("Configure").bot().styledText().getText();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(
-				".*WARNING:.*unrecognized.*--enable-jeff.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(".*WARNING:.*unrecognized.*--enable-jeff.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
 		assertTrue(m.matches());
 
@@ -201,8 +195,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		// Verifies fix for bug: #308261
 		long oldDate = f.lastModified();
 		projectExplorer.bot().tree().select(projectName);
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Project");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Project");
 		path = project.getLocation();
 		// We need to wait until the a.out file is created so
 		// sleep a bit and look for it...give up after 120 seconds
@@ -225,8 +218,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	@Test
 	public void t3newConfigCopiesParms() throws Exception {
 		projectExplorer.bot().tree().select(projectName);
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Configurations", "Manage...");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Configurations", "Manage...");
 		SWTBotShell shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
 		shell = bot.shell(projectName + ": Manage Configurations");
@@ -248,8 +240,7 @@ public class SetConfigurationParameter extends AbstractTest {
 			}
 		}
 		assertTrue(configs.getText().contains("debug"));
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		SWTBotText text = bot.textWithLabel("Additional command-line options");
 		String val = text.getText();
 		assertEquals("--enable-jeff", val);
@@ -266,16 +257,14 @@ public class SetConfigurationParameter extends AbstractTest {
 		bot.tree().expandNode("Autotools").select("Configure Settings");
 		configs = bot.comboBoxWithLabel("Configuration: ");
 		configs.setSelection("default");
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
 		val = text.getText();
 		assertEquals("", val);
 		bot.button("OK").click();
 		// Build the project again and verify we get a build-debug directory
 		projectExplorer.bot().tree().select(projectName);
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Project");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Project");
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		assertNotNull(workspace);
 		IWorkspaceRoot root = workspace.getRoot();
@@ -362,8 +351,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		}
 		assertEquals(2, foundUser);
 
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Build Configurations", "Manage...");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Build Configurations", "Manage...");
 		shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
 		table = bot.table();
@@ -392,15 +380,13 @@ public class SetConfigurationParameter extends AbstractTest {
 		SWTBotShell shell = bot.shell("Properties for " + projectName);
 		shell.activate();
 		configs = bot.comboBoxWithLabel("Configuration: ");
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		SWTBotText text = bot.textWithLabel("Additional command-line options");
 		String setting = text.getText();
 		assertEquals("--enable-jeff", setting);
 		configs.setFocus();
 		configs.setSelection("debug");
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
 		setting = text.getText();
 		assertEquals("", setting);
@@ -412,16 +398,14 @@ public class SetConfigurationParameter extends AbstractTest {
 		configs = bot.comboBoxWithLabel("Configuration: ");
 		configs.setSelection("debug");
 		assertTrue(configs.getText().contains("debug"));
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
 		setting = text.getText();
 		assertEquals("--enable-jeff", setting);
 		configs.setFocus();
 		configs.setSelection("default");
 		assertTrue(configs.getText().contains("default"));
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
 		setting = text.getText();
 		assertEquals("", setting);
@@ -455,16 +439,14 @@ public class SetConfigurationParameter extends AbstractTest {
 		configs = bot.comboBoxWithLabel("Configuration: ");
 		assertTrue(configs.getText().contains("release"));
 		assertTrue(configs.getText().contains("Active"));
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		SWTBotText text = bot.textWithLabel("Additional command-line options");
 		String setting = text.getText();
 		assertEquals("--enable-jeff", setting);
 		configs.setFocus();
 		configs.setSelection("debug");
 		assertTrue(configs.getText().contains("debug"));
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
 		setting = text.getText();
 		assertEquals("", setting);

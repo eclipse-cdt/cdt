@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views;
 
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -32,12 +31,12 @@ import org.eclipse.ui.PlatformUI;
  * Handles debug events, updating a view and viewer.
  */
 public abstract class AbstractDebugEventHandler implements IDebugEventSetListener {
-	
+
 	/**
 	 * This event handler's view
 	 */
 	private AbstractDebugView fView;
-	
+
 	/**
 	 * Constructs an event handler for the given view.
 	 * 
@@ -45,7 +44,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	public AbstractDebugEventHandler(AbstractDebugView view) {
 		setView(view);
-		DebugPlugin plugin= DebugPlugin.getDefault();
+		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.addDebugEventListener(this);
 	}
 
@@ -53,13 +52,13 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 * Returns the active workbench page or <code>null</code> if none.
 	 */
 	protected IWorkbenchPage getActivePage() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			return null;
 		}
 		return window.getActivePage();
 	}
-	
+
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
@@ -68,7 +67,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		if (!isAvailable()) {
 			return;
 		}
-		Runnable r= new Runnable() {
+		Runnable r = new Runnable() {
 			@Override
 			public void run() {
 				if (isAvailable()) {
@@ -81,7 +80,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		};
 		getView().asyncExec(r);
 	}
-	
+
 	/**
 	 * Updates this view for the given debug events. Unlike
 	 * doHandleDebugEvents(DebugEvent[]) which is only called if the view is
@@ -91,13 +90,13 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected void updateForDebugEvents(DebugEvent[] events) {
 	}
-	
+
 	/**
 	 * Implementation specific handling of debug events.
 	 * Subclasses should override.
 	 */
-	protected abstract void doHandleDebugEvents(DebugEvent[] events);	
-		
+	protected abstract void doHandleDebugEvents(DebugEvent[] events);
+
 	/**
 	 * Helper method for inserting the given element in the tree viewer - 
 	 * must be called in UI thread
@@ -105,7 +104,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected void insert(Object element) {
 		TreeViewer viewer = getTreeViewer();
 		if (isAvailable() && viewer != null) {
-			Object parent= ((ITreeContentProvider)viewer.getContentProvider()).getParent(element);
+			Object parent = ((ITreeContentProvider) viewer.getContentProvider()).getParent(element);
 			// a parent can be null for a debug target or process that has not yet been associated
 			// with a launch
 			if (parent != null) {
@@ -133,7 +132,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected void labelChanged(Object element) {
 		if (isAvailable()) {
 			getView().showViewer();
-			getStructuredViewer().update(element, new String[] {IBasicPropertyConstants.P_TEXT});
+			getStructuredViewer().update(element, new String[] { IBasicPropertyConstants.P_TEXT });
 		}
 	}
 
@@ -142,20 +141,20 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected void refresh(Object element) {
 		if (isAvailable()) {
-			 getView().showViewer();
-			 getStructuredViewer().refresh(element);
+			getView().showViewer();
+			getStructuredViewer().refresh(element);
 		}
 	}
-	
+
 	/**
 	 * Refresh the viewer - must be called in UI thread.
 	 */
 	public void refresh() {
 		if (isAvailable()) {
-			 getView().showViewer();
-			 getStructuredViewer().refresh();
+			getView().showViewer();
+			getStructuredViewer().refresh();
 		}
-	}	
+	}
 
 	/**
 	 * Helper method to select and reveal the given element - must be called in UI thread
@@ -165,15 +164,15 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 			getViewer().setSelection(new StructuredSelection(element), true);
 		}
 	}
-	
+
 	/**
 	 * De-registers this event handler from the debug model.
 	 */
 	public void dispose() {
-		DebugPlugin plugin= DebugPlugin.getDefault();
+		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.removeDebugEventListener(this);
 	}
-	
+
 	/**
 	 * Returns the view this event handler is
 	 * updating.
@@ -183,7 +182,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected AbstractDebugView getView() {
 		return this.fView;
 	}
-	
+
 	/**
 	 * Sets the view this event handler is updating.
 	 * 
@@ -198,11 +197,11 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 * updating.
 	 * 
 	 * @return viewer
-	 */	
+	 */
 	protected Viewer getViewer() {
 		return getView().getViewer();
 	}
-	
+
 	/**
 	 * Returns this event handler's viewer as a tree
 	 * viewer or <code>null</code> if none.
@@ -212,8 +211,8 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected TreeViewer getTreeViewer() {
 		if (getViewer() instanceof TreeViewer) {
-			return (TreeViewer)getViewer();
-		} 
+			return (TreeViewer) getViewer();
+		}
 		return null;
 	}
 
@@ -226,11 +225,11 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected StructuredViewer getStructuredViewer() {
 		if (getViewer() instanceof StructuredViewer) {
-			return (StructuredViewer)getViewer();
-		} 
+			return (StructuredViewer) getViewer();
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether this event handler's viewer is
 	 * currently available.
@@ -241,16 +240,16 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected boolean isAvailable() {
 		return getView().isAvailable();
 	}
-	
+
 	/**
 	 * Returns whether this event handler's view is currently visible.
 	 * 
 	 * @return whether this event handler's view is currently visible
 	 */
 	protected boolean isViewVisible() {
-		return getView().isVisible();	
-	}	
-	
+		return getView().isVisible();
+	}
+
 	/**
 	 * Called when this event handler's view becomes visible. Default behavior
 	 * is to refresh the view.
@@ -258,7 +257,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected void viewBecomesVisible() {
 		refresh();
 	}
-	
+
 	/**
 	 * Called when this event handler's view becomes hidden. Default behavior is
 	 * to do nothing. Subclasses may override.

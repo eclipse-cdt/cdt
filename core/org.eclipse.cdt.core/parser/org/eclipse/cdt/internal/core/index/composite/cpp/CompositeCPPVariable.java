@@ -25,7 +25,7 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 	public CompositeCPPVariable(ICompositesFactory cf, IVariable delegate) {
 		super(cf, delegate);
 	}
-	
+
 	@Override
 	public boolean isMutable() {
 		return ((ICPPVariable) rbinding).isMutable();

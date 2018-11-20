@@ -35,14 +35,8 @@ import org.eclipse.cdt.core.model.ICElement;
  */
 public class CElementAdapterFactory implements IAdapterFactory {
 
-	private static Class<?>[] PROPERTIES= new Class[] {
-		IPropertySource.class,
-		IResource.class,
-		IWorkbenchAdapter.class,
-		IPersistableElement.class,
-		IDeferredWorkbenchAdapter.class,
-		IActionFilter.class
-	};
+	private static Class<?>[] PROPERTIES = new Class[] { IPropertySource.class, IResource.class,
+			IWorkbenchAdapter.class, IPersistableElement.class, IDeferredWorkbenchAdapter.class, IActionFilter.class };
 
 	private static CWorkbenchAdapter fgCWorkbenchAdapter;
 	private static CActionFilter fgCActionFilter;
@@ -66,7 +60,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		if (IPropertySource.class.equals(key)) {
 			return getPropertySource(celem);
 		} else if (IResource.class.isAssignableFrom(key)) {
-			IResource resource= getResource(celem);
+			IResource resource = getResource(celem);
 			if (resource != null && key.isAssignableFrom(resource.getClass())) {
 				return resource;
 			}
@@ -84,12 +78,12 @@ public class CElementAdapterFactory implements IAdapterFactory {
 
 	private IPropertySource getPropertySource(ICElement celement) {
 		if (celement instanceof IBinary) {
-			return new BinaryPropertySource((IBinary)celement);
+			return new BinaryPropertySource((IBinary) celement);
 		}
 		IResource res = celement.getResource();
 		if (res != null) {
 			if (res instanceof IFile) {
-				return new FilePropertySource((IFile)res);
+				return new FilePropertySource((IFile) res);
 			}
 			return new ResourcePropertySource(res);
 		}

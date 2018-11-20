@@ -65,4 +65,3 @@ class ExtendedSymbolKindParsers
 		return new JsonPrimitive(src.getValue());
 	}
 }
-

@@ -23,8 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 public class ProjectConverter implements IConvertManagedBuildObject {
 
 	@Override
-	public IBuildObject convert(IBuildObject buildObj, String fromId,
-			String toId, boolean isConfirmed) {
+	public IBuildObject convert(IBuildObject buildObj, String fromId, String toId, boolean isConfirmed) {
 
 		String tmpDir = System.getProperty("java.io.tmpdir");
 
@@ -33,17 +32,16 @@ public class ProjectConverter implements IConvertManagedBuildObject {
 			FileWriter out = new FileWriter(outputFile);
 			out.write("---------- Start-------");
 			out.write("Converter for the build object : '" + buildObj.getName() + "' is invoked.");
-			out.write("From Id : " + fromId );
+			out.write("From Id : " + fromId);
 			out.write("To Id : " + toId);
 			out.write("---------- End-------");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-		//	e.printStackTrace();
+			//	e.printStackTrace();
 			System.out.println("Exception raised.");
 		}
 
-
-	return buildObj;
+		return buildObj;
 	}
 
 }

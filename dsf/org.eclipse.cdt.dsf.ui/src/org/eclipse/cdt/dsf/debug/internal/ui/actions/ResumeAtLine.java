@@ -41,11 +41,11 @@ import org.eclipse.debug.core.DebugException;
  */
 public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
 
-    private final IExecutionDMContext fContext;
+	private final IExecutionDMContext fContext;
 
-    public ResumeAtLine(IExecutionDMContext context) {
-        fContext = context;
-    }
+	public ResumeAtLine(IExecutionDMContext context) {
+		fContext = context;
+	}
 
 	@Override
 	public boolean canResumeAtLine(IFile file, final int lineNumber) {
@@ -54,151 +54,155 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
 
 	@Override
 	public boolean canResumeAtLine(final String fileName, final int lineNumber) {
-        DsfSession session = DsfSession.getSession(fContext.getSessionId());
-        if (session != null && session.isActive()) {
-            try {
-                Query<Boolean> query = new Query<Boolean>() {
-                    @Override
-                    protected void execute(DataRequestMonitor<Boolean> rm) {
-                        DsfServicesTracker tracker = 
-                            new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fContext.getSessionId());
-                        
-                        IRunControl2 runControl = tracker.getService(IRunControl2.class);
-                        if (runControl != null) {
-                            runControl.canMoveToLine(fContext, fileName, lineNumber, true, rm);
-                        } else {
-                            rm.setData(false);
-                            rm.done();
-                        }
-                        tracker.dispose();
-                    }
-                };
-                session.getExecutor().execute(query);
-                return query.get(IDsfActionsConstants.ACTION_ADAPTERS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            } catch (RejectedExecutionException e) {
-            } catch (InterruptedException e) {
-            } catch (ExecutionException e) {
-            } catch (TimeoutException e) {
-            }
-        }
-        return false;
-    }
-	
+		DsfSession session = DsfSession.getSession(fContext.getSessionId());
+		if (session != null && session.isActive()) {
+			try {
+				Query<Boolean> query = new Query<Boolean>() {
+					@Override
+					protected void execute(DataRequestMonitor<Boolean> rm) {
+						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+								fContext.getSessionId());
+
+						IRunControl2 runControl = tracker.getService(IRunControl2.class);
+						if (runControl != null) {
+							runControl.canMoveToLine(fContext, fileName, lineNumber, true, rm);
+						} else {
+							rm.setData(false);
+							rm.done();
+						}
+						tracker.dispose();
+					}
+				};
+				session.getExecutor().execute(query);
+				return query.get(IDsfActionsConstants.ACTION_ADAPTERS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+			} catch (RejectedExecutionException e) {
+			} catch (InterruptedException e) {
+			} catch (ExecutionException e) {
+			} catch (TimeoutException e) {
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void resumeAtLine(IFile file, int lineNumber) throws DebugException {
 		resumeAtLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
 	}
-	
+
 	@Override
 	public void resumeAtLine(final String fileName, final int lineNumber) throws DebugException {
-        DsfSession session = DsfSession.getSession(fContext.getSessionId());
-        if (session != null && session.isActive()) {
-            Throwable exception = null;
-            try {
-                Query<Object> query = new Query<Object>() {
-                    @Override
-                    protected void execute(final DataRequestMonitor<Object> rm) {
-                        DsfServicesTracker tracker = 
-                            new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fContext.getSessionId());
-                        
-                        IRunControl2 runControl = tracker.getService(IRunControl2.class);
-                        if (runControl != null) {
-                        	runControl.moveToLine(
-                                fContext, fileName, lineNumber, true, rm);
-                        } else {
-                            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
-                            rm.done();
-                        }
-                        tracker.dispose();
-                    }
-                };
-                session.getExecutor().execute(query);
-                query.get();
-            } catch (RejectedExecutionException e) {
-                exception = e;
-            } catch (InterruptedException e) {
-                exception = e;
-            } catch (ExecutionException e) {
-                exception = e;
-            }
-            if (exception != null) {
-                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing move to line", exception)); //$NON-NLS-1$
-            }
-        } else {
-            throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            
-        }
-    }
-	
+		DsfSession session = DsfSession.getSession(fContext.getSessionId());
+		if (session != null && session.isActive()) {
+			Throwable exception = null;
+			try {
+				Query<Object> query = new Query<Object>() {
+					@Override
+					protected void execute(final DataRequestMonitor<Object> rm) {
+						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+								fContext.getSessionId());
+
+						IRunControl2 runControl = tracker.getService(IRunControl2.class);
+						if (runControl != null) {
+							runControl.moveToLine(fContext, fileName, lineNumber, true, rm);
+						} else {
+							rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID,
+									IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
+							rm.done();
+						}
+						tracker.dispose();
+					}
+				};
+				session.getExecutor().execute(query);
+				query.get();
+			} catch (RejectedExecutionException e) {
+				exception = e;
+			} catch (InterruptedException e) {
+				exception = e;
+			} catch (ExecutionException e) {
+				exception = e;
+			}
+			if (exception != null) {
+				throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+						"Failed executing move to line", exception)); //$NON-NLS-1$
+			}
+		} else {
+			throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+					"Debug session is not active", null)); //$NON-NLS-1$            
+		}
+	}
+
 	@Override
 	public boolean canResumeAtAddress(final IAddress address) {
-        DsfSession session = DsfSession.getSession(fContext.getSessionId());
-        if (session != null && session.isActive()) {
-            try {
-                Query<Boolean> query = new Query<Boolean>() {
-                    @Override
-                    protected void execute(DataRequestMonitor<Boolean> rm) {
-                        DsfServicesTracker tracker = 
-                            new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fContext.getSessionId());
-                        
-                        IRunControl2 runControl = tracker.getService(IRunControl2.class);
-                        if (runControl != null) {
-                            runControl.canMoveToAddress(fContext, address, true, rm);
-                        } else {
-                            rm.setData(false);
-                            rm.done();
-                        }
-                        tracker.dispose();
-                    }
-                };
-                session.getExecutor().execute(query);
-                return query.get(IDsfActionsConstants.ACTION_ADAPTERS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            } catch (RejectedExecutionException e) {
-            } catch (InterruptedException e) {
-            } catch (ExecutionException e) {
-            } catch (TimeoutException e) {
-            }
-        }
-        return false;
-    }
+		DsfSession session = DsfSession.getSession(fContext.getSessionId());
+		if (session != null && session.isActive()) {
+			try {
+				Query<Boolean> query = new Query<Boolean>() {
+					@Override
+					protected void execute(DataRequestMonitor<Boolean> rm) {
+						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+								fContext.getSessionId());
+
+						IRunControl2 runControl = tracker.getService(IRunControl2.class);
+						if (runControl != null) {
+							runControl.canMoveToAddress(fContext, address, true, rm);
+						} else {
+							rm.setData(false);
+							rm.done();
+						}
+						tracker.dispose();
+					}
+				};
+				session.getExecutor().execute(query);
+				return query.get(IDsfActionsConstants.ACTION_ADAPTERS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+			} catch (RejectedExecutionException e) {
+			} catch (InterruptedException e) {
+			} catch (ExecutionException e) {
+			} catch (TimeoutException e) {
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public void resumeAtAddress(final IAddress address) throws DebugException {
-        DsfSession session = DsfSession.getSession(fContext.getSessionId());
-        if (session != null && session.isActive()) {
-            Throwable exception = null;
-            try {
-                Query<Object> query = new Query<Object>() {
-                    @Override
-                    protected void execute(final DataRequestMonitor<Object> rm) {
-                        DsfServicesTracker tracker = 
-                            new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fContext.getSessionId());
-                        
-                        IRunControl2 runControl = tracker.getService(IRunControl2.class);
-                        if (runControl != null) {
-                        	runControl.moveToAddress(
-                                fContext, address, true, rm);
-                        } else {
-                            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
-                            rm.done();
-                        }
-                        tracker.dispose();
-                    }
-                };
-                session.getExecutor().execute(query);
-                query.get();
-            } catch (RejectedExecutionException e) {
-                exception = e;
-            } catch (InterruptedException e) {
-                exception = e;
-            } catch (ExecutionException e) {
-                exception = e;
-            }
-            if (exception != null) {
-                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing move to line", exception)); //$NON-NLS-1$
-            }
-        } else {
-            throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            
-        }
-    }
- 
+		DsfSession session = DsfSession.getSession(fContext.getSessionId());
+		if (session != null && session.isActive()) {
+			Throwable exception = null;
+			try {
+				Query<Object> query = new Query<Object>() {
+					@Override
+					protected void execute(final DataRequestMonitor<Object> rm) {
+						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+								fContext.getSessionId());
+
+						IRunControl2 runControl = tracker.getService(IRunControl2.class);
+						if (runControl != null) {
+							runControl.moveToAddress(fContext, address, true, rm);
+						} else {
+							rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID,
+									IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
+							rm.done();
+						}
+						tracker.dispose();
+					}
+				};
+				session.getExecutor().execute(query);
+				query.get();
+			} catch (RejectedExecutionException e) {
+				exception = e;
+			} catch (InterruptedException e) {
+				exception = e;
+			} catch (ExecutionException e) {
+				exception = e;
+			}
+			if (exception != null) {
+				throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+						"Failed executing move to line", exception)); //$NON-NLS-1$
+			}
+		} else {
+			throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+					"Debug session is not active", null)); //$NON-NLS-1$            
+		}
+	}
+
 }

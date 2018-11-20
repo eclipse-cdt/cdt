@@ -75,8 +75,8 @@ public class ASTWriter {
 	 * @see ASTCommenter#getCommentedNodeMap(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 	 */
 	public String write(IASTNode rootNode, NodeCommentMap commentMap) throws ProblemRuntimeException {
-		ChangeGeneratorWriterVisitor writer = new ChangeGeneratorWriterVisitor(
-				modificationStore, null, commentMap, ConstPlacement.placeConstRight(rootNode));
+		ChangeGeneratorWriterVisitor writer = new ChangeGeneratorWriterVisitor(modificationStore, null, commentMap,
+				ConstPlacement.placeConstRight(rootNode));
 		if (rootNode != null) {
 			rootNode.accept(writer);
 		}
@@ -95,9 +95,8 @@ public class ASTWriter {
 		if (node instanceof ICPPASTTemplateDeclaration) {
 			node = ((ICPPASTTemplateDeclaration) node).getDeclaration();
 		}
-		return node instanceof IASTASMDeclaration ||
-				node instanceof IASTFunctionDefinition ||
-				node instanceof ICPPASTVisibilityLabel;
+		return node instanceof IASTASMDeclaration || node instanceof IASTFunctionDefinition
+				|| node instanceof ICPPASTVisibilityLabel;
 	}
 
 	/**
@@ -119,8 +118,7 @@ public class ASTWriter {
 			if (lastClause == null)
 				lastClause = statement.getThenClause();
 
-			if (!(lastClause instanceof IASTCompoundStatement) &&
-					!doNodesHaveSameOffset(lastClause, statement)) {
+			if (!(lastClause instanceof IASTCompoundStatement) && !doNodesHaveSameOffset(lastClause, statement)) {
 				return true;
 			}
 		}
@@ -170,8 +168,7 @@ public class ASTWriter {
 		if (suppressesTrailingBlankLine(node1)) {
 			return false;
 		}
-		if (node1 instanceof IASTPreprocessorIncludeStatement !=
-				node2 instanceof IASTPreprocessorIncludeStatement) {
+		if (node1 instanceof IASTPreprocessorIncludeStatement != node2 instanceof IASTPreprocessorIncludeStatement) {
 			return true;
 		}
 		if (isFunctionDeclaration(node1) != isFunctionDeclaration(node2)) {
@@ -203,7 +200,7 @@ public class ASTWriter {
 	private static boolean doNodesHaveSameOffset(IASTNode node1, IASTNode node2) {
 		IASTFileLocation fileLocation1 = node1.getFileLocation();
 		IASTFileLocation fileLocation2 = node2.getFileLocation();
-		return fileLocation1 != null && fileLocation2 != null &&
-				fileLocation1.getNodeOffset() == fileLocation2.getNodeOffset();
+		return fileLocation1 != null && fileLocation2 != null
+				&& fileLocation1.getNodeOffset() == fileLocation2.getNodeOffset();
 	}
 }

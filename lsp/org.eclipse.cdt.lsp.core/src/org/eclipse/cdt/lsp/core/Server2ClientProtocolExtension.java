@@ -61,13 +61,14 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
 				for (IWorkbenchWindow window : workbenchWindows) {
 					StatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
-					StatusLineContributionItem cqueryStatusField = (StatusLineContributionItem) statusLine.find(cqueryStatusFieldId);
+					StatusLineContributionItem cqueryStatusField = (StatusLineContributionItem) statusLine
+							.find(cqueryStatusFieldId);
 					if (cqueryStatusField == null) {
 						cqueryStatusField = new StatusLineContributionItem(cqueryStatusFieldId, width);
 						statusLine.add(cqueryStatusField);
 					}
 					String msg = stats.getTotalJobs() > 0 ? NLS.bind(Messages.CqueryStateBusy, stats.getTotalJobs())
-														  : Messages.CqueryStateIdle;
+							: Messages.CqueryStateIdle;
 					cqueryStatusField.setText(msg);
 				}
 			}
@@ -81,7 +82,7 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		IDocument doc = null;
 
 		// To get the document for the received URI.
-		for (PresentationReconcilerCPP eachReconciler: PresentationReconcilerCPP.presentationReconcilers) {
+		for (PresentationReconcilerCPP eachReconciler : PresentationReconcilerCPP.presentationReconcilers) {
 			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
 			URI currentReconcilerUri = getUri(currentReconcilerDoc);
 
@@ -119,7 +120,8 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 			Position inactivePosition = new Position(offset, length);
 			try {
-				doc.addPosition(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY, inactivePosition);
+				doc.addPosition(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY,
+						inactivePosition);
 			} catch (BadLocationException | BadPositionCategoryException e) {
 				Activator.log(e);
 			}
@@ -133,7 +135,7 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		// List of PresentationReconcilerCPP objects attached with same C++ source file.
 		List<PresentationReconcilerCPP> matchingReconcilers = new ArrayList<>();
 
-		for (PresentationReconcilerCPP eachReconciler: PresentationReconcilerCPP.presentationReconcilers) {
+		for (PresentationReconcilerCPP eachReconciler : PresentationReconcilerCPP.presentationReconcilers) {
 			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
 			URI currentReconcilerUri = getUri(currentReconcilerDoc);
 
@@ -165,24 +167,25 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 		for (HighlightSymbol highlight : highlights.getSymbols()) {
 
-			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(), highlight.getParentKind(), highlight.getStorage());
-			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(),
+					highlight.getParentKind(), highlight.getStorage());
+			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + highlightingName
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
 
 			boolean isEnabled = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
-			boolean isBold = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX);
+					+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
+			boolean isBold = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + highlightingName
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX);
 			boolean isItalic = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX);
+					+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX);
 			boolean isUnderline = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX);
+					+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX);
 			boolean isStrikethrough = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX);
+					+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX);
 
 			// TODO: Use IColorManager to cache Color objects so that only one object per color is created.
 			Color color = new Color(Display.getCurrent(),
-									PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
+					PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
 
 			List<Range> ranges = highlight.getRanges();
 			for (Range range : ranges) {
@@ -212,9 +215,11 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 				TextAttribute textAttribute = new TextAttribute(color, null, textStyle);
 				HighlightingStyle highlightingStyle = new HighlightingStyle(textAttribute, isEnabled);
-				HighlightedPosition highlightedPosition = new HighlightedPosition(offset, length, highlightingStyle, matchingReconcilers.get(0).getSemanticHighlightingPositionUpdater());
+				HighlightedPosition highlightedPosition = new HighlightedPosition(offset, length, highlightingStyle,
+						matchingReconcilers.get(0).getSemanticHighlightingPositionUpdater());
 				try {
-					doc.addPosition(PresentationReconcilerCPP.SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY, highlightedPosition);
+					doc.addPosition(PresentationReconcilerCPP.SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY,
+							highlightedPosition);
 				} catch (BadLocationException | BadPositionCategoryException e) {
 					Activator.log(e);
 				}
@@ -225,7 +230,8 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 			@Override
 			public void run() {
 				for (PresentationReconcilerCPP eachReconciler : matchingReconcilers) {
-					TextPresentation presentation = eachReconciler.createPresentation(new Region(0, doc.getLength()), doc);
+					TextPresentation presentation = eachReconciler.createPresentation(new Region(0, doc.getLength()),
+							doc);
 					eachReconciler.getTextViewer().changeTextPresentation(presentation, false);
 				}
 			}

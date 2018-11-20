@@ -19,7 +19,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 
-
 /**
  * Abstract implementation of <code>IStorageEditorInput</code>.
  */
@@ -96,7 +95,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 		}
 		try {
 			return object instanceof IStorageEditorInput
-				&& getStorage().equals(((IStorageEditorInput)object).getStorage());
+					&& getStorage().equals(((IStorageEditorInput) object).getStorage());
 		} catch (CoreException e) {
 		}
 		return false;

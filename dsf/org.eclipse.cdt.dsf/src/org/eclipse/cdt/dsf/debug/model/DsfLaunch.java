@@ -28,32 +28,32 @@ import org.eclipse.debug.core.model.ISourceLocator;
  */
 public class DsfLaunch extends Launch {
 
-    public DsfLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
-        super(launchConfiguration, mode, locator);
-        
-        // Just set this attribute to any value.  It's presence indicates that the
-        // "Show Full Path" action is supported in the debug view.
-        // see org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction
-        setAttribute(ICDebugInternalConstants.SHOW_FULL_PATHS_PREF_KEY, ""); //$NON-NLS-1$
-    }
-    
-    @Override
-    protected void fireChanged() {
-        DebugPlugin.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                DsfLaunch.super.fireChanged();
-            }
-        });
-    }
-    
-    @Override
-    protected void fireTerminate() {
-        DebugPlugin.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                DsfLaunch.super.fireTerminate();
-            }
-        });
-    }
+	public DsfLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
+		super(launchConfiguration, mode, locator);
+
+		// Just set this attribute to any value.  It's presence indicates that the
+		// "Show Full Path" action is supported in the debug view.
+		// see org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction
+		setAttribute(ICDebugInternalConstants.SHOW_FULL_PATHS_PREF_KEY, ""); //$NON-NLS-1$
+	}
+
+	@Override
+	protected void fireChanged() {
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				DsfLaunch.super.fireChanged();
+			}
+		});
+	}
+
+	@Override
+	protected void fireTerminate() {
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				DsfLaunch.super.fireTerminate();
+			}
+		});
+	}
 }

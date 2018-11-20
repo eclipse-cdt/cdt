@@ -79,7 +79,8 @@ public interface ICSettingsStorage {
 	 * @throws UnsupportedOperationException
 	 * @since 5.1
 	 */
-	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException;
+	public ICStorageElement importStorage(String id, ICStorageElement el)
+			throws UnsupportedOperationException, CoreException;
 
 	/**
 	 * Returns whether any non-persisted changes exist in this tree

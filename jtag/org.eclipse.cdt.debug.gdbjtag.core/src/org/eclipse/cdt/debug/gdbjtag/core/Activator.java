@@ -79,6 +79,7 @@ public class Activator extends Plugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+
 	/**
 	 * @since 7.0
 	 */

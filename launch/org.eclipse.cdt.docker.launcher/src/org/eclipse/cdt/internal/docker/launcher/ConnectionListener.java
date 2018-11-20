@@ -39,9 +39,7 @@ public class ConnectionListener implements ISelectionListener {
 		if (workbench != null) {
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 			if (window != null) {
-				window.getSelectionService()
-				.addSelectionListener(
-						"org.eclipse.linuxtools.docker.ui.dockerExplorerView", //$NON-NLS-1$
+				window.getSelectionService().addSelectionListener("org.eclipse.linuxtools.docker.ui.dockerExplorerView", //$NON-NLS-1$
 						this);
 			}
 		}
@@ -57,8 +55,7 @@ public class ConnectionListener implements ISelectionListener {
 		if (treeSelection.isEmpty()) {
 			return;
 		}
-		final Object firstSegment = treeSelection.getPaths()[0]
-				.getFirstSegment();
+		final Object firstSegment = treeSelection.getPaths()[0].getFirstSegment();
 		if (firstSegment instanceof IDockerConnection) {
 			currentConnection = (IDockerConnection) firstSegment;
 		}

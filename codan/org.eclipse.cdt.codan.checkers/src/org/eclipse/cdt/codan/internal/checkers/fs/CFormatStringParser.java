@@ -122,8 +122,8 @@ public class CFormatStringParser {
 			final boolean isVulnerable = vulnerabilityMatcher.find();
 			if (isVulnerable) {
 				final int argumentSize = parseArgumentSize(formatString);
-				final VulnerableFormatStringArgument vulnerableArgument = new VulnerableFormatStringArgument(indexOfCurrentArgument,
-						formatString, argumentSize);
+				final VulnerableFormatStringArgument vulnerableArgument = new VulnerableFormatStringArgument(
+						indexOfCurrentArgument, formatString, argumentSize);
 				this.vulnerableArguments.add(vulnerableArgument);
 			}
 			hasMore = this.argumentMatcher.find();

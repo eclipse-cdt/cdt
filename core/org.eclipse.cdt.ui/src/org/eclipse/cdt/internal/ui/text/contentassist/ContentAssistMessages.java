@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public final class ContentAssistMessages extends NLS {
 
-	private static final String BUNDLE_NAME= ContentAssistMessages.class.getName();
+	private static final String BUNDLE_NAME = ContentAssistMessages.class.getName();
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ContentAssistMessages.class);
@@ -37,7 +37,7 @@ public final class ContentAssistMessages extends NLS {
 	public static String ContentAssistProcessor_all_disabled_preference_link;
 	public static String ContentAssistProcessor_all_disabled_title;
 	public static String ContentAssistProcessor_no_completions;
-	
+
 	public static String ContentAssistProcessor_computing_proposals;
 	public static String ContentAssistProcessor_collecting_proposals;
 	public static String ContentAssistProcessor_sorting_proposals;

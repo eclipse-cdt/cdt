@@ -16,7 +16,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumerator;
 
-public class Enumerator extends SourceManipulation implements IEnumerator{
+public class Enumerator extends SourceManipulation implements IEnumerator {
 
 	String constantExpression = ""; //$NON-NLS-1$
 
@@ -25,7 +25,7 @@ public class Enumerator extends SourceManipulation implements IEnumerator{
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new SourceManipulationInfo(this);
 	}
 

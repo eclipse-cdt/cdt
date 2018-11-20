@@ -27,22 +27,22 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 @Immutable
 public class PDARegister {
 
-    final public String fName;
-    final public boolean fWritable;
-    final public PDABitField[] fBitFields;
-    
-    PDARegister(String regString) {
-        StringTokenizer st = new StringTokenizer(regString, "|");
-        
-        String regInfo = st.nextToken();
-        StringTokenizer regSt = new StringTokenizer(regInfo, " ");
-        fName = regSt.nextToken();
-        fWritable = Boolean.parseBoolean(regSt.nextToken());
-        
-        List<PDABitField> bitFieldsList = new ArrayList<PDABitField>();
-        while (st.hasMoreTokens()) {
-            bitFieldsList.add(new PDABitField(st.nextToken()));
-        }
-        fBitFields = bitFieldsList.toArray(new PDABitField[bitFieldsList.size()]);
-    }
+	final public String fName;
+	final public boolean fWritable;
+	final public PDABitField[] fBitFields;
+
+	PDARegister(String regString) {
+		StringTokenizer st = new StringTokenizer(regString, "|");
+
+		String regInfo = st.nextToken();
+		StringTokenizer regSt = new StringTokenizer(regInfo, " ");
+		fName = regSt.nextToken();
+		fWritable = Boolean.parseBoolean(regSt.nextToken());
+
+		List<PDABitField> bitFieldsList = new ArrayList<PDABitField>();
+		while (st.hasMoreTokens()) {
+			bitFieldsList.add(new PDABitField(st.nextToken()));
+		}
+		fBitFields = bitFieldsList.toArray(new PDABitField[bitFieldsList.size()]);
+	}
 }

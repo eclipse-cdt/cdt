@@ -19,9 +19,11 @@ import junit.framework.TestSuite;
 public class XlcExtensionsTestSuite extends TestSuite {
 
 	public static Test suite() {
-		return new TestSuite() {{
-			addTestSuite(VectorExtensionsTest.class);
-			addTestSuite(XlcExtensionsTest.class);
-		}};
+		return new TestSuite() {
+			{
+				addTestSuite(VectorExtensionsTest.class);
+				addTestSuite(XlcExtensionsTest.class);
+			}
+		};
 	}
 }

@@ -66,26 +66,26 @@ public abstract class ProfileConfigurationBlock {
 		@Override
 		public void update(Observable o, Object arg) {
 			try {
-				fPreferenceListenerEnabled= false;
-    			final int value= ((Integer)arg).intValue();
-    			switch (value) {
-    			case ProfileManager.PROFILE_DELETED_EVENT:
-    			case ProfileManager.PROFILE_RENAMED_EVENT:
-    			case ProfileManager.PROFILE_CREATED_EVENT:
-    			case ProfileManager.SETTINGS_CHANGED_EVENT:
-    				try {
-    					fProfileStore.writeProfiles(fProfileManager.getSortedProfiles(), fInstanceScope); // update profile store
-    					fProfileManager.commitChanges(fCurrContext); 
-    				} catch (CoreException x) {
-    					CUIPlugin.log(x);
-    				}
-    				break;
-    			case ProfileManager.SELECTION_CHANGED_EVENT:
-    				fProfileManager.commitChanges(fCurrContext);
-    				break;
-    			}
+				fPreferenceListenerEnabled = false;
+				final int value = ((Integer) arg).intValue();
+				switch (value) {
+				case ProfileManager.PROFILE_DELETED_EVENT:
+				case ProfileManager.PROFILE_RENAMED_EVENT:
+				case ProfileManager.PROFILE_CREATED_EVENT:
+				case ProfileManager.SETTINGS_CHANGED_EVENT:
+					try {
+						fProfileStore.writeProfiles(fProfileManager.getSortedProfiles(), fInstanceScope); // update profile store
+						fProfileManager.commitChanges(fCurrContext);
+					} catch (CoreException x) {
+						CUIPlugin.log(x);
+					}
+					break;
+				case ProfileManager.SELECTION_CHANGED_EVENT:
+					fProfileManager.commitChanges(fCurrContext);
+					break;
+				}
 			} finally {
-				fPreferenceListenerEnabled= true;
+				fPreferenceListenerEnabled = true;
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public abstract class ProfileConfigurationBlock {
 		private final List<Profile> fSortedProfiles;
 
 		public ProfileComboController() {
-			fSortedProfiles= fProfileManager.getSortedProfiles();
+			fSortedProfiles = fProfileManager.getSortedProfiles();
 			fProfileCombo.addSelectionListener(this);
 			fProfileManager.addObserver(this);
 			updateProfiles();
@@ -104,17 +104,19 @@ public abstract class ProfileConfigurationBlock {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			final int index= fProfileCombo.getSelectionIndex();
+			final int index = fProfileCombo.getSelectionIndex();
 			fProfileManager.setSelected(fSortedProfiles.get(index));
 		}
 
 		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {}
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
 
 		@Override
 		public void update(Observable o, Object arg) {
-			if (arg == null) return;
-			final int value= ((Integer)arg).intValue();
+			if (arg == null)
+				return;
+			final int value = ((Integer) arg).intValue();
 			switch (value) {
 			case ProfileManager.PROFILE_CREATED_EVENT:
 			case ProfileManager.PROFILE_DELETED_EVENT:
@@ -150,17 +152,17 @@ public abstract class ProfileConfigurationBlock {
 
 		@Override
 		public void update(Observable o, Object arg) {
-			Profile selected= ((ProfileManager)o).getSelected();
-			final boolean notBuiltIn= !selected.isBuiltInProfile(); 
+			Profile selected = ((ProfileManager) o).getSelected();
+			final boolean notBuiltIn = !selected.isBuiltInProfile();
 			fDeleteButton.setEnabled(notBuiltIn);
 		}
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			final Button button= (Button)e.widget;
+			final Button button = (Button) e.widget;
 			if (button == fEditButton)
 				modifyButtonPressed();
-			else if (button == fDeleteButton) 
+			else if (button == fDeleteButton)
 				deleteButtonPressed();
 			else if (button == fNewButton)
 				newButtonPressed();
@@ -173,72 +175,78 @@ public abstract class ProfileConfigurationBlock {
 		}
 
 		private void modifyButtonPressed() {
-			final StatusDialog modifyDialog= createModifyDialog(fComposite.getShell(), fProfileManager.getSelected(), fProfileManager, fProfileStore, false);
+			final StatusDialog modifyDialog = createModifyDialog(fComposite.getShell(), fProfileManager.getSelected(),
+					fProfileManager, fProfileStore, false);
 			modifyDialog.open();
 		}
 
 		private void deleteButtonPressed() {
-			if (MessageDialog.openQuestion(
-					fComposite.getShell(), 
-					FormatterMessages.CodingStyleConfigurationBlock_delete_confirmation_title, 
-					Messages.format(FormatterMessages.CodingStyleConfigurationBlock_delete_confirmation_question, fProfileManager.getSelected().getName()))) { 
+			if (MessageDialog.openQuestion(fComposite.getShell(),
+					FormatterMessages.CodingStyleConfigurationBlock_delete_confirmation_title,
+					Messages.format(FormatterMessages.CodingStyleConfigurationBlock_delete_confirmation_question,
+							fProfileManager.getSelected().getName()))) {
 				fProfileManager.deleteSelected();
 			}
 		}
 
 		private void newButtonPressed() {
-			final CreateProfileDialog p= new CreateProfileDialog(fComposite.getShell(), fProfileManager, fProfileVersioner);
-			if (p.open() != Window.OK) 
+			final CreateProfileDialog p = new CreateProfileDialog(fComposite.getShell(), fProfileManager,
+					fProfileVersioner);
+			if (p.open() != Window.OK)
 				return;
-			if (!p.openEditDialog()) 
+			if (!p.openEditDialog())
 				return;
-			final StatusDialog modifyDialog= createModifyDialog(fComposite.getShell(), p.getCreatedProfile(), fProfileManager, fProfileStore, true);
+			final StatusDialog modifyDialog = createModifyDialog(fComposite.getShell(), p.getCreatedProfile(),
+					fProfileManager, fProfileStore, true);
 			modifyDialog.open();
 		}
 
 		private void loadButtonPressed() {
-			final FileDialog dialog= new FileDialog(fComposite.getShell(), SWT.OPEN);
-			dialog.setText(FormatterMessages.CodingStyleConfigurationBlock_load_profile_dialog_title); 
-			dialog.setFilterExtensions(new String [] {"*.xml"}); //$NON-NLS-1$
-			final String lastPath= CUIPlugin.getDefault().getDialogSettings().get(fLastSaveLoadPathKey + ".loadpath"); //$NON-NLS-1$
+			final FileDialog dialog = new FileDialog(fComposite.getShell(), SWT.OPEN);
+			dialog.setText(FormatterMessages.CodingStyleConfigurationBlock_load_profile_dialog_title);
+			dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$
+			final String lastPath = CUIPlugin.getDefault().getDialogSettings().get(fLastSaveLoadPathKey + ".loadpath"); //$NON-NLS-1$
 			if (lastPath != null) {
 				dialog.setFilterPath(lastPath);
 			}
-			final String path= dialog.open();
-			if (path == null) 
+			final String path = dialog.open();
+			if (path == null)
 				return;
 			CUIPlugin.getDefault().getDialogSettings().put(fLastSaveLoadPathKey + ".loadpath", dialog.getFilterPath()); //$NON-NLS-1$
 
-			final File file= new File(path);
-			Collection<Profile> profiles= null;
+			final File file = new File(path);
+			Collection<Profile> profiles = null;
 			try {
-				profiles= fProfileStore.readProfilesFromFile(file);
+				profiles = fProfileStore.readProfilesFromFile(file);
 			} catch (CoreException e) {
-				final String title= FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_title; 
-				final String message= FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_message; 
+				final String title = FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_title;
+				final String message = FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_message;
 				ExceptionHandler.handle(e, fComposite.getShell(), title, message);
 			}
 			if (profiles == null || profiles.isEmpty())
 				return;
 
-			final CustomProfile profile= (CustomProfile)profiles.iterator().next();
-			
+			final CustomProfile profile = (CustomProfile) profiles.iterator().next();
+
 			if (!fProfileVersioner.getProfileKind().equals(profile.getKind())) {
-				final String title= FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_title; 
-				final String message= Messages.format(FormatterMessages.ProfileConfigurationBlock_load_profile_wrong_profile_message, new String[] {fProfileVersioner.getProfileKind(), profile.getKind()});
+				final String title = FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_title;
+				final String message = Messages.format(
+						FormatterMessages.ProfileConfigurationBlock_load_profile_wrong_profile_message,
+						new String[] { fProfileVersioner.getProfileKind(), profile.getKind() });
 				MessageDialog.openError(fComposite.getShell(), title, message);
 				return;
 			}
 
 			if (profile.getVersion() > fProfileVersioner.getCurrentVersion()) {
-				final String title= FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_too_new_title; 
-				final String message= FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_too_new_message; 
+				final String title = FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_too_new_title;
+				final String message = FormatterMessages.CodingStyleConfigurationBlock_load_profile_error_too_new_message;
 				MessageDialog.openWarning(fComposite.getShell(), title, message);
 			}
 
 			if (fProfileManager.containsName(profile.getName())) {
-				final AlreadyExistsDialog aeDialog= new AlreadyExistsDialog(fComposite.getShell(), profile, fProfileManager);
-				if (aeDialog.open() != Window.OK) 
+				final AlreadyExistsDialog aeDialog = new AlreadyExistsDialog(fComposite.getShell(), profile,
+						fProfileManager);
+				if (aeDialog.open() != Window.OK)
 					return;
 			}
 			fProfileVersioner.update(profile);
@@ -255,7 +263,7 @@ public abstract class ProfileConfigurationBlock {
 	private Button fDeleteButton;
 	private Button fNewButton;
 	private Button fLoadButton;
-	
+
 	private PixelConverter fPixConv;
 	/**
 	 * The ProfileManager, the model of this page.
@@ -272,34 +280,34 @@ public abstract class ProfileConfigurationBlock {
 
 	public ProfileConfigurationBlock(IProject project, final PreferencesAccess access, String lastSaveLoadPathKey) {
 
-		fPreferenceAccess= access;
-		fLastSaveLoadPathKey= lastSaveLoadPathKey;
+		fPreferenceAccess = access;
+		fLastSaveLoadPathKey = lastSaveLoadPathKey;
 
-		fProfileVersioner= createProfileVersioner();
-		fProfileStore= createProfileStore(fProfileVersioner);
-		fInstanceScope= access.getInstanceScope();
+		fProfileVersioner = createProfileVersioner();
+		fProfileStore = createProfileStore(fProfileVersioner);
+		fInstanceScope = access.getInstanceScope();
 		if (project != null) {
-			fCurrContext= access.getProjectScope(project);
+			fCurrContext = access.getProjectScope(project);
 		} else {
-			fCurrContext= fInstanceScope;
+			fCurrContext = fInstanceScope;
 		}
 
-		List<Profile> profiles= null;
-        try {
-            profiles= fProfileStore.readProfiles(fInstanceScope);
-        } catch (CoreException e) {
-        	CUIPlugin.log(e);
-        }
-        
-        if (profiles == null) 
-            profiles= new ArrayList<Profile>();
+		List<Profile> profiles = null;
+		try {
+			profiles = fProfileStore.readProfiles(fInstanceScope);
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+		}
 
-		fProfileManager= createProfileManager(profiles, fCurrContext, access, fProfileVersioner);
+		if (profiles == null)
+			profiles = new ArrayList<Profile>();
+
+		fProfileManager = createProfileManager(profiles, fCurrContext, access, fProfileVersioner);
 
 		new StoreUpdater();
-		
-		fPreferenceListenerEnabled= true;
-		fPreferenceListener= new IPreferenceChangeListener() {
+
+		fPreferenceListenerEnabled = true;
+		fPreferenceListener = new IPreferenceChangeListener() {
 			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				if (fPreferenceListenerEnabled) {
@@ -312,26 +320,28 @@ public abstract class ProfileConfigurationBlock {
 	}
 
 	protected void preferenceChanged(PreferenceChangeEvent event) {
-		
+
 	}
 
 	protected abstract IProfileVersioner createProfileVersioner();
-	
+
 	protected abstract ProfileStore createProfileStore(IProfileVersioner versioner);
-	
-	protected abstract ProfileManager createProfileManager(List<Profile> profiles, IScopeContext context, PreferencesAccess access, IProfileVersioner profileVersioner);
-	
-	protected abstract ModifyDialog createModifyDialog(Shell shell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile);
+
+	protected abstract ProfileManager createProfileManager(List<Profile> profiles, IScopeContext context,
+			PreferencesAccess access, IProfileVersioner profileVersioner);
+
+	protected abstract ModifyDialog createModifyDialog(Shell shell, Profile profile, ProfileManager profileManager,
+			ProfileStore profileStore, boolean newProfile);
 
 	protected abstract void configurePreview(Composite composite, int numColumns, ProfileManager profileManager);
 
 	private static Button createButton(Composite composite, String text, final int style) {
-		final Button button= new Button(composite, SWT.PUSH);
+		final Button button = new Button(composite, SWT.PUSH);
 		button.setFont(composite.getFont());
 		button.setText(text);
 
-		final GridData gd= new GridData(style);
-		gd.widthHint= SWTUtil.getButtonWidthHint(button);
+		final GridData gd = new GridData(style);
+		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
 		return button;
 	}
@@ -348,12 +358,16 @@ public abstract class ProfileConfigurationBlock {
 		fPixConv = new PixelConverter(parent);
 		fComposite = createComposite(parent, numColumns);
 
-		fProfileCombo= createProfileCombo(fComposite, 3, fPixConv.convertWidthInCharsToPixels(20));
-		fEditButton= createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_edit_button_desc, GridData.HORIZONTAL_ALIGN_BEGINNING);  
-		fDeleteButton= createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_remove_button_desc, GridData.HORIZONTAL_ALIGN_BEGINNING); 
+		fProfileCombo = createProfileCombo(fComposite, 3, fPixConv.convertWidthInCharsToPixels(20));
+		fEditButton = createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_edit_button_desc,
+				GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fDeleteButton = createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_remove_button_desc,
+				GridData.HORIZONTAL_ALIGN_BEGINNING);
 
-		fNewButton= createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_new_button_desc, GridData.HORIZONTAL_ALIGN_BEGINNING);
-		fLoadButton= createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_load_button_desc, GridData.HORIZONTAL_ALIGN_END);
+		fNewButton = createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_new_button_desc,
+				GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fLoadButton = createButton(fComposite, FormatterMessages.CodingStyleConfigurationBlock_load_button_desc,
+				GridData.HORIZONTAL_ALIGN_END);
 		createLabel(fComposite, "", 3); //$NON-NLS-1$
 
 		configurePreview(fComposite, numColumns, fProfileManager);
@@ -367,9 +381,9 @@ public abstract class ProfileConfigurationBlock {
 	private static Combo createProfileCombo(Composite composite, int span, int widthHint) {
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span;
-		gd.widthHint= widthHint;
+		gd.widthHint = widthHint;
 
-		final Combo combo= new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY );
+		final Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		combo.setFont(composite.getFont());
 		combo.setLayoutData(gd);
 		return combo;
@@ -378,13 +392,13 @@ public abstract class ProfileConfigurationBlock {
 	protected static Label createLabel(Composite composite, String text, int numColumns) {
 		final GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = numColumns;
-		gd.widthHint= 0;
+		gd.widthHint = 0;
 
 		final Label label = new Label(composite, SWT.WRAP);
 		label.setFont(composite.getFont());
 		label.setText(text);
 		label.setLayoutData(gd);
-		return label;		
+		return label;
 	}
 
 	private Composite createComposite(Composite parent, int numColumns) {
@@ -423,9 +437,9 @@ public abstract class ProfileConfigurationBlock {
 	}
 
 	public void performDefaults() {
-		Profile profile= fProfileManager.getDefaultProfile();
+		Profile profile = fProfileManager.getDefaultProfile();
 		if (profile != null) {
-			int defaultIndex= fProfileManager.getSortedProfiles().indexOf(profile);
+			int defaultIndex = fProfileManager.getSortedProfiles().indexOf(profile);
 			if (defaultIndex != -1) {
 				fProfileManager.setSelected(profile);
 			}
@@ -434,8 +448,9 @@ public abstract class ProfileConfigurationBlock {
 
 	public void dispose() {
 		if (fPreferenceListener != null) {
-			fPreferenceAccess.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID).removePreferenceChangeListener(fPreferenceListener);
-			fPreferenceListener= null;
+			fPreferenceAccess.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID)
+					.removePreferenceChangeListener(fPreferenceListener);
+			fPreferenceListener = null;
 		}
 	}
 

@@ -31,7 +31,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 public class TestProcesses extends BaseTestCase {
-	private static final String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toOSString();
+	private static final String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getRawLocation()
+			.toOSString();
 	private static final String PROJECT_NAME = "TemplateEngineTestsProject"; //$NON-NLS-1$
 	private static final String SOURCE_FOLDER = "Source"; //$NON-NLS-1$
 	private static final String FILE_NAME = "File"; //$NON-NLS-1$
@@ -46,7 +47,7 @@ public class TestProcesses extends BaseTestCase {
 		TemplateEngineTestsHelper.turnOffAutoBuild();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		IPath projectLocation = project.getRawLocation();
-		
+
 		if (project.exists()) {
 			project.delete(true, true, null);
 		}
@@ -61,9 +62,9 @@ public class TestProcesses extends BaseTestCase {
 		if (!project.isOpen()) {
 			project.open(null);
 		}
-		
+
 	}
-	
+
 	public void testAddFile() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AddFile"); //$NON-NLS-1$
 		Map<String, String> valueStore = template.getValueStore();
@@ -72,11 +73,11 @@ public class TestProcesses extends BaseTestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("baseName", FILE_NAME); //$NON-NLS-1$
-		
+
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		assertTrue(project.exists());
 		IFile file = project.getFile(FILE_NAME + CPP_EXT);
@@ -93,11 +94,11 @@ public class TestProcesses extends BaseTestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("baseName", FILE_NAME); //$NON-NLS-1$
-		
+
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		assertTrue(project.exists());
 		IFile file = project.getFile(FILE_NAME + CPP_EXT);
@@ -118,7 +119,7 @@ public class TestProcesses extends BaseTestCase {
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		try {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 			assertTrue(project.exists());
@@ -140,14 +141,16 @@ public class TestProcesses extends BaseTestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("baseName", FILE_NAME); //$NON-NLS-1$
-		
-		valueStore.put("targetSourceName", workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + CPP_EXT); //$NON-NLS-1$
-		valueStore.put("targetHeaderName", workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + H_EXT); //$NON-NLS-1$
-		
+
+		valueStore.put("targetSourceName", //$NON-NLS-1$
+				workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + CPP_EXT);
+		valueStore.put("targetHeaderName", //$NON-NLS-1$
+				workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + H_EXT);
+
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		try {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 			assertTrue(project.exists());
@@ -169,14 +172,14 @@ public class TestProcesses extends BaseTestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("baseName", FILE_NAME); //$NON-NLS-1$
-		
+
 		valueStore.put("targetSourceName", FILE_NAME + CPP_EXT); //$NON-NLS-1$
 		valueStore.put("targetHeaderName", FILE_NAME + H_EXT); //$NON-NLS-1$
-		
+
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		assertTrue(project.exists());
 		IFile file = project.getFile(FILE_NAME + CPP_EXT);
@@ -193,14 +196,16 @@ public class TestProcesses extends BaseTestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("baseName", FILE_NAME); //$NON-NLS-1$
-		
-		valueStore.put("targetSourceName", workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + CPP_EXT); //$NON-NLS-1$
-		valueStore.put("targetHeaderName", workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + H_EXT); //$NON-NLS-1$
-		
+
+		valueStore.put("targetSourceName", //$NON-NLS-1$
+				workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + CPP_EXT);
+		valueStore.put("targetHeaderName", //$NON-NLS-1$
+				workspaceLocation + File.separator + PROJECT_NAME + File.separator + FILE_NAME + H_EXT);
+
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		try {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 			assertTrue(project.exists());
@@ -215,7 +220,8 @@ public class TestProcesses extends BaseTestCase {
 	}
 
 	public void testCreateResourceIdentifier() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*CreateResourceIdentifier"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*CreateResourceIdentifier"); //$NON-NLS-1$
 		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
@@ -229,7 +235,7 @@ public class TestProcesses extends BaseTestCase {
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		assertTrue(project.exists());
 		IFile file = project.getFile("HELL" + CPP_EXT); //$NON-NLS-1$
@@ -239,7 +245,8 @@ public class TestProcesses extends BaseTestCase {
 	}
 
 	public void testCreateSourceFolder() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*CreateSourceFolder"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*CreateSourceFolder"); //$NON-NLS-1$
 		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
@@ -247,11 +254,11 @@ public class TestProcesses extends BaseTestCase {
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("sourceDir1", SOURCE_FOLDER + 1); //$NON-NLS-1$
 		valueStore.put("sourceDir2", SOURCE_FOLDER + 2); //$NON-NLS-1$
-		
+
 		if (TemplateEngineTestsHelper.failIfErrorStatus(template.executeTemplateProcesses(null, false))) {
 			return;
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		assertTrue(project.exists());
 		IFolder folder = project.getFolder(SOURCE_FOLDER + 1);
@@ -259,5 +266,5 @@ public class TestProcesses extends BaseTestCase {
 		folder = project.getFolder(SOURCE_FOLDER + 2);
 		assertTrue(folder.exists());
 	}
-		
+
 }

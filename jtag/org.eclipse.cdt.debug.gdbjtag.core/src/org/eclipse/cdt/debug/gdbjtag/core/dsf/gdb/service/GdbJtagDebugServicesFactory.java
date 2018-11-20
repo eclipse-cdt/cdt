@@ -29,7 +29,7 @@ public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 	/** @since 9.0 */
 	public GdbJtagDebugServicesFactory(String version, ILaunchConfiguration config) {
 		super(version, config);
-	}	
+	}
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {

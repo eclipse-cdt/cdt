@@ -27,33 +27,33 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class GdbBreakpointVMNode extends RawBreakpointVMNode {
 
-    public GdbBreakpointVMNode(BreakpointVMProvider provider) {
-        super(provider);
-    }
-    
-    @Override
-    public int getDeltaFlags(Object event) {
-        if (event instanceof PropertyChangeEvent) {
-        	String property = ((PropertyChangeEvent)event).getProperty();
-        	if (IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER.equals(property)) {
-        		return IModelDelta.CONTENT;
-        	}        	
-        }
-        
-        return super.getDeltaFlags(event);
-    }
-    
-    @Override
-    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
-    	if (event instanceof PropertyChangeEvent) {
-            String property = ((PropertyChangeEvent)event).getProperty();
-        	if (IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER.equals(property)) {
-        		parent.setFlags(parent.getFlags() | IModelDelta.CONTENT);
-                rm.done();                
-                return;
-            }
-    	}
-    	
-    	super.buildDelta(event, parent, nodeOffset, rm);
-    }
+	public GdbBreakpointVMNode(BreakpointVMProvider provider) {
+		super(provider);
+	}
+
+	@Override
+	public int getDeltaFlags(Object event) {
+		if (event instanceof PropertyChangeEvent) {
+			String property = ((PropertyChangeEvent) event).getProperty();
+			if (IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER.equals(property)) {
+				return IModelDelta.CONTENT;
+			}
+		}
+
+		return super.getDeltaFlags(event);
+	}
+
+	@Override
+	public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
+		if (event instanceof PropertyChangeEvent) {
+			String property = ((PropertyChangeEvent) event).getProperty();
+			if (IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER.equals(property)) {
+				parent.setFlags(parent.getFlags() | IModelDelta.CONTENT);
+				rm.done();
+				return;
+			}
+		}
+
+		super.buildDelta(event, parent, nodeOffset, rm);
+	}
 }

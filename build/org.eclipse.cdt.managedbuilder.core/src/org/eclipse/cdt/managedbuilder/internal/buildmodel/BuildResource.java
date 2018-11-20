@@ -40,13 +40,13 @@ public class BuildResource implements IBuildResource {
 	private BuildDescription fInfo;
 	private URI fLocationURI;
 
-	protected BuildResource(BuildDescription info, IResource rc){
+	protected BuildResource(BuildDescription info, IResource rc) {
 		this(info, info.calcResourceLocation(rc), rc.getLocationURI());
 	}
 
-	protected BuildResource(BuildDescription info, IPath fullWorkspacePath, URI locationURI){
+	protected BuildResource(BuildDescription info, IPath fullWorkspacePath, URI locationURI) {
 
-		if(locationURI == null)
+		if (locationURI == null)
 			throw new IllegalArgumentException(); // must point to somewhere!
 
 		fLocationURI = locationURI;
@@ -58,24 +58,25 @@ public class BuildResource implements IBuildResource {
 
 		info.resourceCreated(this);
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + fullWorkspacePath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
+		if (DbgUtil.DEBUG)
+			DbgUtil.trace("resource " + fullWorkspacePath + " created"); //$NON-NLS-1$	//$NON-NLS-2$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
 	 */
 	@Override
 	public IPath getLocation() {
-		if(fFullWorkspacePath == null) {
+		if (fFullWorkspacePath == null) {
 			return new Path(fLocationURI.getPath());
 		}
 
 		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(fFullWorkspacePath);
-		if(resource == null) {
+		if (resource == null) {
 			return new Path(fLocationURI.getPath());
 		}
 
-		if(resource.getLocation() != null)
+		if (resource.getLocation() != null)
 			return resource.getLocation();
 		else
 			return new Path(fLocationURI.getPath());
@@ -123,64 +124,65 @@ public class BuildResource implements IBuildResource {
 	}
 
 	public void setRemoved(boolean removed) {
-		if(DbgUtil.DEBUG){
-			if(removed)
+		if (DbgUtil.DEBUG) {
+			if (removed)
 				DbgUtil.trace("REMOVED state: resource " + DbgUtil.resourceName(this)); //$NON-NLS-1$
 		}
 		fIsRemoved = removed;
-		if(fIsRemoved)
+		if (fIsRemoved)
 			fNeedsRebuild = false;
 	}
 
-	public void setRebuildState(boolean rebuild){
+	public void setRebuildState(boolean rebuild) {
 		fNeedsRebuild = rebuild;
 	}
 
-	protected void addToArg(BuildIOType arg){
-		if(arg.isInput()){
+	protected void addToArg(BuildIOType arg) {
+		if (arg.isInput()) {
 			fDepArgs.add(arg);
 		} else {
-			if(fProducerArg == null){
+			if (fProducerArg == null) {
 				fProducerArg = arg;
-			} else if(fProducerArg.getStep() == fInfo.getInputStep()) {
-				BuildStep inStep = (BuildStep)fInfo.getInputStep();
+			} else if (fProducerArg.getStep() == fInfo.getInputStep()) {
+				BuildStep inStep = (BuildStep) fInfo.getInputStep();
 				inStep.removeResource(fProducerArg, this, true);
 				fProducerArg = arg;
 			} else {
 				// Bug 461628
 				// Check if this resource is an output produced by a Tool that support merging in which case
 				// a producer can already be defined by a previous step. This is supported.
-				
+
 				IBuildStep step = fProducerArg.getStep();
-				ITool tool = step instanceof BuildStep ? ((BuildStep)(step)).getTool() : null;
-				if(tool != null && !arg.isInput()) {
+				ITool tool = step instanceof BuildStep ? ((BuildStep) (step)).getTool() : null;
+				if (tool != null && !arg.isInput()) {
 					return;
 				}
-				String err = "ProducerArgument not null!!!\n";	//$NON-NLS-1$
+				String err = "ProducerArgument not null!!!\n"; //$NON-NLS-1$
 
 				String rcName = DbgUtil.resourceName(this);
 				String step1Name = DbgUtil.stepName(fProducerArg.getStep());
 				String step2Name = DbgUtil.stepName(arg.getStep());
-				String rcs[] = new String[]{rcName, step1Name, step2Name};
+				String rcs[] = new String[] { rcName, step1Name, step2Name };
 
 				String externalizedErr = BuildModelMessages.getFormattedString("BuildResource.0", rcs); //$NON-NLS-1$
 
-				if(DbgUtil.DEBUG){
-					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
+				if (DbgUtil.DEBUG) {
+					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) //$NON-NLS-1$
+							+ "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep()); //$NON-NLS-1$
 				}
 				throw new IllegalArgumentException(externalizedErr);
 			}
 		}
 	}
 
-	void removeFromArg(BuildIOType arg){
-		if(arg.isInput()){
+	void removeFromArg(BuildIOType arg) {
+		if (arg.isInput()) {
 			fDepArgs.remove(arg);
 		} else {
-			if(fProducerArg == arg){
+			if (fProducerArg == arg) {
 				fProducerArg = null;
-			}else
-				throw new IllegalArgumentException("Resource is not produced by this arg!!!");	//$NON-NLS-1$
+			} else
+				throw new IllegalArgumentException("Resource is not produced by this arg!!!"); //$NON-NLS-1$
 		}
 	}
 
@@ -189,27 +191,27 @@ public class BuildResource implements IBuildResource {
 		return fIsProjectRc;
 	}
 
-	BuildIOType[][] clear(){
+	BuildIOType[][] clear() {
 		BuildIOType types[][] = new BuildIOType[2][];
 		types[0] = new BuildIOType[1];
 		types[0][0] = fProducerArg;
-		BuildIOType outs[] = (BuildIOType[])getDependentIOTypes();
+		BuildIOType outs[] = (BuildIOType[]) getDependentIOTypes();
 		types[1] = outs;
 
-		if(fProducerArg != null)
+		if (fProducerArg != null)
 			fProducerArg.removeResource(this);
-		for(int i = 0; i < outs.length; i++){
+		for (int i = 0; i < outs.length; i++) {
 			outs[i].removeResource(this);
 		}
 
 		return types;
 	}
 
-	BuildIOType[][] remove(){
+	BuildIOType[][] remove() {
 		BuildIOType types[][] = clear();
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
+		if (DbgUtil.DEBUG)
+			DbgUtil.trace("resource " + DbgUtil.resourceName(this) + " removed"); //$NON-NLS-1$	//$NON-NLS-2$
 
 		fInfo.resourceRemoved(this);
 		fInfo = null;
@@ -218,14 +220,14 @@ public class BuildResource implements IBuildResource {
 	}
 
 	@Override
-	public IBuildDescription getBuildDescription(){
+	public IBuildDescription getBuildDescription() {
 		return fInfo;
 	}
 
 	@Override
 	public IBuildStep[] getDependentSteps() {
 		Set<IBuildStep> set = new HashSet<IBuildStep>();
-		for(Iterator<BuildIOType> iter = fDepArgs.iterator(); iter.hasNext();){
+		for (Iterator<BuildIOType> iter = fDepArgs.iterator(); iter.hasNext();) {
 			set.add(iter.next().getStep());
 		}
 		return set.toArray(new BuildStep[set.size()]);
@@ -233,7 +235,7 @@ public class BuildResource implements IBuildResource {
 
 	@Override
 	public IBuildStep getProducerStep() {
-		if(fProducerArg != null)
+		if (fProducerArg != null)
 			return fProducerArg.getStep();
 		return null;
 	}
@@ -243,7 +245,7 @@ public class BuildResource implements IBuildResource {
 		StringBuilder buf = new StringBuilder();
 		buf.append("BR "); //$NON-NLS-1$
 		IPath fullPath = getFullPath();
-		if(fullPath != null)
+		if (fullPath != null)
 			buf.append("WSP|").append(fullPath); //$NON-NLS-1$
 		else
 			buf.append("FS|").append(getLocation()); //$NON-NLS-1$

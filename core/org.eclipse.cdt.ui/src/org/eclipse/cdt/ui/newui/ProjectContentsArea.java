@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -103,8 +104,7 @@ public class ProjectContentsArea {
 
 				if (useDefaults) {
 					userPath = locationPathField.getText();
-					locationPathField.setText(TextProcessor
-							.process(getDefaultPathDisplayString()));
+					locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
 				} else {
 					locationPathField.setText(TextProcessor.process(userPath));
 				}
@@ -153,14 +153,12 @@ public class ProjectContentsArea {
 		});
 
 		if (defaultEnabled) {
-			locationPathField.setText(TextProcessor
-					.process(getDefaultPathDisplayString()));
+			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
 		} else {
 			if (existingProject == null) {
 				locationPathField.setText(AbstractPage.EMPTY_STR);
 			} else {
-				locationPathField.setText(TextProcessor.process(existingProject
-						.getLocation().toString()));
+				locationPathField.setText(TextProcessor.process(existingProject.getLocation().toString()));
 			}
 		}
 
@@ -224,7 +222,8 @@ public class ProjectContentsArea {
 
 		if (!dirName.equals(AbstractPage.EMPTY_STR)) {
 			File f = new Path(dirName).toFile();
-			if (!f.exists()) dirName = AbstractPage.EMPTY_STR;
+			if (!f.exists())
+				dirName = AbstractPage.EMPTY_STR;
 		}
 
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
@@ -268,7 +267,8 @@ public class ProjectContentsArea {
 	 */
 	private String checkValidLocation() {
 
-		if (isDefault()) return null;
+		if (isDefault())
+			return null;
 
 		String locationFieldContents = locationPathField.getText();
 
@@ -294,7 +294,8 @@ public class ProjectContentsArea {
 			boolean result = false;
 			try {
 				result = f.createNewFile();
-			} catch (IOException e) {}
+			} catch (IOException e) {
+			}
 
 			if (result)
 				f.delete();
@@ -355,9 +356,7 @@ public class ProjectContentsArea {
 	 * @return String
 	 */
 	public String getProjectLocation() {
-		return isDefault() ?
-			Platform.getLocation().toString():
-			locationPathField.getText();
+		return isDefault() ? Platform.getLocation().toString() : locationPathField.getText();
 	}
 
 	/**

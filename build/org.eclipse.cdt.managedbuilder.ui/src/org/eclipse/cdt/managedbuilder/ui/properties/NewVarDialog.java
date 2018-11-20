@@ -86,10 +86,11 @@ public class NewVarDialog extends Dialog {
 	private ICConfigurationDescription cfgd;
 	private ICdtVariable[] vars;
 
-	public NewVarDialog(Shell parentShell, ICdtVariable editedMacro, ICConfigurationDescription _cfgd, ICdtVariable[] _vars) {
+	public NewVarDialog(Shell parentShell, ICdtVariable editedMacro, ICConfigurationDescription _cfgd,
+			ICdtVariable[] _vars) {
 		super(parentShell);
 		cfgd = _cfgd;
-		if(editedMacro != null)
+		if (editedMacro != null)
 			fTitle = Messages.NewBuildMacroDialog_label_title_edit;
 		else
 			fTitle = Messages.NewBuildMacroDialog_label_title_new;
@@ -128,7 +129,7 @@ public class NewVarDialog extends Dialog {
 		fMacroNameEdit = new CCombo(comp, SWT.BORDER);
 		fMacroNameEdit.setItems(getMacroNames());
 		fMacroNameEdit.setFont(comp.getFont());
-		gd = new GridData();	// don't use GridData.FILL_HORIZONTAL; see bugzilla 229793
+		gd = new GridData(); // don't use GridData.FILL_HORIZONTAL; see bugzilla 229793
 		gd.horizontalSpan = 2;
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + 50;
 		fMacroNameEdit.setLayoutData(gd);
@@ -138,9 +139,9 @@ public class NewVarDialog extends Dialog {
 				handleMacroNameModified();
 			}
 		});
-		fMacroNameEdit.addSelectionListener(new SelectionAdapter(){
+		fMacroNameEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				handleMacroNameSelection();
 			}
 		});
@@ -151,10 +152,10 @@ public class NewVarDialog extends Dialog {
 			gd = new GridData(GridData.BEGINNING);
 			gd.horizontalSpan = 3;
 			c_all.setLayoutData(gd);
-			c_all.addSelectionListener(new SelectionAdapter(){
+			c_all.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e){
-					isForAllCfgs = ((Button)e.widget).getSelection();
+				public void widgetSelected(SelectionEvent e) {
+					isForAllCfgs = ((Button) e.widget).getSelection();
 				}
 			});
 		}
@@ -168,21 +169,17 @@ public class NewVarDialog extends Dialog {
 		fTypeSelector = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
-//		gd.widthHint = 100;
+		//		gd.widthHint = 100;
 		fTypeSelector.setLayoutData(gd);
-		fTypeSelector.setItems(new String[]{
-				Messages.NewBuildMacroDialog_label_type_text,
-				Messages.NewBuildMacroDialog_label_type_text_list,
-				Messages.NewBuildMacroDialog_label_type_path_file,
+		fTypeSelector.setItems(new String[] { Messages.NewBuildMacroDialog_label_type_text,
+				Messages.NewBuildMacroDialog_label_type_text_list, Messages.NewBuildMacroDialog_label_type_path_file,
 				Messages.NewBuildMacroDialog_label_type_path_file_list,
-				Messages.NewBuildMacroDialog_label_type_path_dir,
-				Messages.NewBuildMacroDialog_label_type_path_dir_list,
+				Messages.NewBuildMacroDialog_label_type_path_dir, Messages.NewBuildMacroDialog_label_type_path_dir_list,
 				Messages.NewBuildMacroDialog_label_type_path_any,
-				Messages.NewBuildMacroDialog_label_type_path_any_list
-		});
+				Messages.NewBuildMacroDialog_label_type_path_any_list });
 		setSelectedType(IBuildMacro.VALUE_TEXT);
 
-		fTypeSelector.addListener(SWT.Selection, new Listener () {
+		fTypeSelector.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				handleTypeModified();
@@ -209,12 +206,12 @@ public class NewVarDialog extends Dialog {
 			}
 		});
 
-		fBrowseButton = new Button(comp,SWT.PUSH);
+		fBrowseButton = new Button(comp, SWT.PUSH);
 		fBrowseButton.setFont(comp.getFont());
 		fBrowseButton.setText(Messages.NewBuildMacroDialog_label_browse);
-		fBrowseButton.addSelectionListener(new SelectionAdapter(){
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				handleBrowseButtonPressed();
 			}
 		});
@@ -224,20 +221,21 @@ public class NewVarDialog extends Dialog {
 		gd.horizontalSpan = 1;
 		fBrowseButton.setLayoutData(gd);
 
-		fListEditorContainier = new Composite(comp,0);
+		fListEditorContainier = new Composite(comp, 0);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		fListEditorContainier.setLayoutData(gd);
 		fListEditorContainier.setLayout(new GridLayout());
 
-		fListEditor = new FileListControl(fListEditorContainier, Messages.NewBuildMacroDialog_label_list_title, IOption.BROWSE_NONE);
+		fListEditor = new FileListControl(fListEditorContainier, Messages.NewBuildMacroDialog_label_list_title,
+				IOption.BROWSE_NONE);
 		/* Enable workspace support for list editor */
 		fListEditor.setWorkspaceSupport(true);
 
 		// TODO: getContextInfo
 		// fListEditor.setContext(fMacrosBlock.getContextInfo());
 
-		if(fEditedMacro != null){
+		if (fEditedMacro != null) {
 			loadVar(fEditedMacro);
 			fMacroNameEdit.setEnabled(false);
 		}
@@ -247,47 +245,47 @@ public class NewVarDialog extends Dialog {
 	/*
 	 * get the names to be displayed in the var Name combo.
 	 */
-	private String[] getMacroNames(){
+	private String[] getMacroNames() {
 		String names[] = null;
-		if(vars == null || vars.length == 0)
+		if (vars == null || vars.length == 0)
 			names = new String[0];
-		else{
+		else {
 			names = new String[vars.length];
-			for(int i = 0; i < vars.length; i++)
+			for (int i = 0; i < vars.length; i++)
 				names[i] = vars[i].getName();
 			final Collator collator = Collator.getInstance();
 			Arrays.sort(names, new Comparator<String>() {
-	            @Override
+				@Override
 				public int compare(final String a, final String b) {
 					final String strA = a.toUpperCase();
 					final String strB = b.toUpperCase();
-					return collator.compare(strA,strB);
-	            }
-	        });
+					return collator.compare(strA, strB);
+				}
+			});
 		}
 		return names;
 	}
 
-	private void handleBrowseButtonPressed(){
-		switch(getBrowseType(getSelectedType())){
+	private void handleBrowseButtonPressed() {
+		switch (getBrowseType(getSelectedType())) {
 		case IOption.BROWSE_FILE:
 			FileDialog fileDlg = new FileDialog(fBrowseButton.getShell());
 			String file = fileDlg.open();
-			if(file != null)
+			if (file != null)
 				fMacroValueEdit.setText(file);
 			break;
 		case IOption.BROWSE_DIR:
 			DirectoryDialog dirDlg = new DirectoryDialog(fBrowseButton.getShell());
 			String dir = dirDlg.open();
-			if(dir != null)
+			if (dir != null)
 				fMacroValueEdit.setText(dir);
 			break;
 		}
 	}
 
-	private int getBrowseType(int type){
+	private int getBrowseType(int type) {
 		int browseType = IOption.BROWSE_NONE;
-		switch(type){
+		switch (type) {
 		case IBuildMacro.VALUE_PATH_FILE:
 		case IBuildMacro.VALUE_PATH_FILE_LIST:
 			browseType = IOption.BROWSE_FILE;
@@ -310,7 +308,7 @@ public class NewVarDialog extends Dialog {
 	/*
 	 * called when the variable name is selected, loads all the dialog fields with the variable settings
 	 */
-	private void handleMacroNameSelection(){
+	private void handleMacroNameSelection() {
 		int index = fMacroNameEdit.getSelectionIndex();
 		if (index != -1)
 			loadVarSettings(fMacroNameEdit.getItem(index));
@@ -318,26 +316,26 @@ public class NewVarDialog extends Dialog {
 
 	private void loadVarSettings(String name) {
 		ICdtVariable v = null;
-		for (int i=0; i<vars.length; i++) {
+		for (int i = 0; i < vars.length; i++) {
 			if (vars[i].getName().equals(name)) {
 				v = vars[i];
 				break;
 			}
 		}
-		if(v != null)
+		if (v != null)
 			loadVar(v);
 		else
-			loadVar(name,IBuildMacro.VALUE_TEXT,EMPTY_STRING);
+			loadVar(name, IBuildMacro.VALUE_TEXT, EMPTY_STRING);
 	}
 
-	private void loadVar(String name, int type, String value[]){
+	private void loadVar(String name, int type, String value[]) {
 		setSelectedType(type);
 		setSelectedMacroName(notNull(name));
 		fListEditor.setList(value);
 		updateWidgetState();
 	}
 
-	private void loadVar(String name,	int type, String value){
+	private void loadVar(String name, int type, String value) {
 		setSelectedType(type);
 		setSelectedMacroName(notNull(name));
 		fMacroValueEdit.setText(notNull(value));
@@ -347,41 +345,42 @@ public class NewVarDialog extends Dialog {
 	/*
 	 * loads all the dialog fields with the variable settings
 	 */
-	private void loadVar(ICdtVariable var){
-		try{
-			if(CdtVariableResolver.isStringListVariable(var.getValueType()))
-				loadVar(var.getName(),var.getValueType(),var.getStringListValue());
+	private void loadVar(ICdtVariable var) {
+		try {
+			if (CdtVariableResolver.isStringListVariable(var.getValueType()))
+				loadVar(var.getName(), var.getValueType(), var.getStringListValue());
 			else
-				loadVar(var.getName(),var.getValueType(),var.getStringValue());
-		}catch(CdtVariableException e){}
+				loadVar(var.getName(), var.getValueType(), var.getStringValue());
+		} catch (CdtVariableException e) {
+		}
 	}
 
 	/*
 	 * returns an empty string in the case the string passed is null.
 	 * otherwise returns the string passed
 	 */
-	private String notNull(String str){
+	private String notNull(String str) {
 		return str == null ? EMPTY_STRING : str;
 	}
 
 	/*
 	 * returns the name typed in the dialog var name edit triming spaces
 	 */
-	private String getSelectedVarName(){
+	private String getSelectedVarName() {
 		return fMacroNameEdit.getText().trim();
 	}
 
 	/*
 	 * sets the variable name to the dialog "variable name" edit control
 	 */
-	private void setSelectedMacroName(String name){
-		if(!macroNamesEqual(fMacroNameEdit.getText(),name)){
+	private void setSelectedMacroName(String name) {
+		if (!macroNamesEqual(fMacroNameEdit.getText(), name)) {
 			fTypedName = name;
 			fMacroNameEdit.setText(notNull(name).trim());
 		}
 	}
 
-	private boolean macroNamesEqual(String name1, String name2){
+	private boolean macroNamesEqual(String name1, String name2) {
 		name1 = name1.trim();
 		name2 = name2.trim();
 		return name1.equalsIgnoreCase(name2);
@@ -390,33 +389,33 @@ public class NewVarDialog extends Dialog {
 	/*
 	 * returns the selected type
 	 */
-	private int getSelectedType(){
-		switch(fTypeSelector.getSelectionIndex()){
-			case 1:
-				return IBuildMacro.VALUE_TEXT_LIST;
-			case 2:
-				return IBuildMacro.VALUE_PATH_FILE;
-			case 3:
-				return IBuildMacro.VALUE_PATH_FILE_LIST;
-			case 4:
-				return IBuildMacro.VALUE_PATH_DIR;
-			case 5:
-				return IBuildMacro.VALUE_PATH_DIR_LIST;
-			case 6:
-				return IBuildMacro.VALUE_PATH_ANY;
-			case 7:
-				return IBuildMacro.VALUE_PATH_ANY_LIST;
-			case 0:
-			default:
-				return IBuildMacro.VALUE_TEXT;
+	private int getSelectedType() {
+		switch (fTypeSelector.getSelectionIndex()) {
+		case 1:
+			return IBuildMacro.VALUE_TEXT_LIST;
+		case 2:
+			return IBuildMacro.VALUE_PATH_FILE;
+		case 3:
+			return IBuildMacro.VALUE_PATH_FILE_LIST;
+		case 4:
+			return IBuildMacro.VALUE_PATH_DIR;
+		case 5:
+			return IBuildMacro.VALUE_PATH_DIR_LIST;
+		case 6:
+			return IBuildMacro.VALUE_PATH_ANY;
+		case 7:
+			return IBuildMacro.VALUE_PATH_ANY_LIST;
+		case 0:
+		default:
+			return IBuildMacro.VALUE_TEXT;
 		}
 	}
 
 	/*
 	 * sets the selected type
 	 */
-	private void setSelectedType(int type){
-		switch(type){
+	private void setSelectedType(int type) {
+		switch (type) {
 		case IBuildMacro.VALUE_TEXT_LIST:
 			fTypeSelector.select(1);
 			break;
@@ -449,14 +448,14 @@ public class NewVarDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		String name = getSelectedVarName();
-		if(name != null || !EMPTY_STRING.equals(name)){
+		if (name != null || !EMPTY_STRING.equals(name)) {
 			int type = getSelectedType();
-			if(CdtVariableResolver.isStringListVariable(type))
-				fResultingMacro = new BuildMacro(name,type,getSelectedStringListValue());
+			if (CdtVariableResolver.isStringListVariable(type))
+				fResultingMacro = new BuildMacro(name, type, getSelectedStringListValue());
 			else
-				fResultingMacro = new BuildMacro(name,type,getSelectedStringValue());
+				fResultingMacro = new BuildMacro(name, type, getSelectedStringValue());
 		}
 
 		super.okPressed();
@@ -466,7 +465,7 @@ public class NewVarDialog extends Dialog {
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	@Override
-	public int open(){
+	public int open() {
 		fResultingMacro = null;
 		return super.open();
 	}
@@ -474,11 +473,11 @@ public class NewVarDialog extends Dialog {
 	/*
 	 * returns the macro value that should be stored in the resulting variable
 	 */
-	private String getSelectedStringValue(){
+	private String getSelectedStringValue() {
 		return fMacroValueEdit.getText();
 	}
 
-	private String[] getSelectedStringListValue(){
+	private String[] getSelectedStringListValue() {
 		return fListEditor.getItems();
 	}
 
@@ -488,28 +487,29 @@ public class NewVarDialog extends Dialog {
 	 * if the variable was not created, e.g. because a user has pressed
 	 * the cancel button this method returns null
 	 */
-	public ICdtVariable getDefinedMacro(){
+	public ICdtVariable getDefinedMacro() {
 		return fResultingMacro;
 	}
 
 	/*
 	 * called when the variable name is modified
 	 */
-	private void handleMacroNameModified(){
+	private void handleMacroNameModified() {
 		String name = getSelectedVarName();
-		if(fTypedName == null || !fTypedName.equals(name)){
+		if (fTypedName == null || !fTypedName.equals(name)) {
 			loadVarSettings(name);
 		}
 	}
 
-	private void handleMacroValueModified(){}
+	private void handleMacroValueModified() {
+	}
 
 	/*
 	 * called when the operation is modified
 	 */
-	private void handleTypeModified(){
+	private void handleTypeModified() {
 		int type = getSelectedType();
-		if(fTypedType != -1 && fTypedType == type)
+		if (fTypedType != -1 && fTypedType == type)
 			return;
 
 		fTypedType = type;
@@ -517,13 +517,13 @@ public class NewVarDialog extends Dialog {
 		adjustLayout(type);
 	}
 
-	private void adjustLayout(int type){
-		GridData listGd = (GridData)fListEditorContainier.getLayoutData();
-		GridData labelGd = (GridData)fMacroValueLabel.getLayoutData();
-		GridData editGd = (GridData)fMacroValueEdit.getLayoutData();
-		GridData browseGd = (GridData)fBrowseButton.getLayoutData();
+	private void adjustLayout(int type) {
+		GridData listGd = (GridData) fListEditorContainier.getLayoutData();
+		GridData labelGd = (GridData) fMacroValueLabel.getLayoutData();
+		GridData editGd = (GridData) fMacroValueEdit.getLayoutData();
+		GridData browseGd = (GridData) fBrowseButton.getLayoutData();
 
-		if(CdtVariableResolver.isStringListVariable(type)){
+		if (CdtVariableResolver.isStringListVariable(type)) {
 			listGd.exclude = false;
 			labelGd.exclude = true;
 			editGd.exclude = true;
@@ -533,8 +533,7 @@ public class NewVarDialog extends Dialog {
 			fMacroValueLabel.setVisible(false);
 			fMacroValueEdit.setVisible(false);
 			fBrowseButton.setVisible(false);
-		} else
-		{
+		} else {
 			listGd.exclude = true;
 			labelGd.exclude = false;
 			editGd.exclude = false;
@@ -542,7 +541,7 @@ public class NewVarDialog extends Dialog {
 			fListEditorContainier.setVisible(false);
 			fMacroValueLabel.setVisible(true);
 			fMacroValueEdit.setVisible(true);
-			if(getBrowseType(type) != IOption.BROWSE_NONE){
+			if (getBrowseType(type) != IOption.BROWSE_NONE) {
 				browseGd.exclude = false;
 				editSpan = 1;
 				fBrowseButton.setVisible(true);
@@ -553,15 +552,14 @@ public class NewVarDialog extends Dialog {
 			}
 			editGd.horizontalSpan = editSpan;
 		}
-		fContainer.layout(true,true);
+		fContainer.layout(true, true);
 	}
-
 
 	/*
 	 * updates the state of the dialog controls
 	 */
-	private void updateWidgetState(){
-		if(!fTotalSizeCalculated)
+	private void updateWidgetState() {
+		if (!fTotalSizeCalculated)
 			return;
 		handleTypeModified();
 

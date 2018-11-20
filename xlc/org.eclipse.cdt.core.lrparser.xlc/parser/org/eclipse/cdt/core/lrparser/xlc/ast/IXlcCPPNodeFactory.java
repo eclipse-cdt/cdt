@@ -17,8 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 
 public interface IXlcCPPNodeFactory extends ICPPNodeFactory {
-	
+
 	public IXlcCPPASTVectorTypeSpecifier newVectorTypeSpecifier();
-	
+
 	public IXlcCPPASTModifiedArrayModifier newModifiedArrayModifier(IASTExpression expr);
 }

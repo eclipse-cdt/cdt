@@ -90,7 +90,7 @@ public interface IASTConditionalExpression extends IASTExpression {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setNegativeResultExpression(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

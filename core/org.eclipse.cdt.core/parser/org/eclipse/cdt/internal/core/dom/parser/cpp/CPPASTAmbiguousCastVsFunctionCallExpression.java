@@ -20,11 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousCastVsFunctionCallExpression;
 
-public class CPPASTAmbiguousCastVsFunctionCallExpression
-		extends	ASTAmbiguousCastVsFunctionCallExpression implements ICPPASTExpression {
+public class CPPASTAmbiguousCastVsFunctionCallExpression extends ASTAmbiguousCastVsFunctionCallExpression
+		implements ICPPASTExpression {
 
-    public CPPASTAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall) {
-    	super(castExpr, funcCall);
+	public CPPASTAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr,
+			IASTFunctionCallExpression funcCall) {
+		super(castExpr, funcCall);
 	}
 
 	@Override

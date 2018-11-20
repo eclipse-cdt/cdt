@@ -19,32 +19,32 @@ import org.eclipse.cdt.core.lrparser.tests.LRCompletionHangingTest;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 
-public class XlcCompletionHangingTest extends LRCompletionHangingTest{
+public class XlcCompletionHangingTest extends LRCompletionHangingTest {
 
-	
 	public static TestSuite suite() {
 		return new TestSuite(XlcCompletionHangingTest.class);
 	}
-	
-	
+
 	//TODO ??? overwrite some failed test cases
-	public void testCompletionTemplateClassForCPP() throws Exception {}
-	public void testCompletionGnuCPP() throws Exception {}
-	
-	
-	 protected XlcCLanguage getCLanguage() {
-	    	return XlcCLanguage.getDefault();
-	    }
-	    
-	protected XlcCPPLanguage getCPPLanguage() {
-	    	return XlcCPPLanguage.getDefault();
+	public void testCompletionTemplateClassForCPP() throws Exception {
 	}
-	
+
+	public void testCompletionGnuCPP() throws Exception {
+	}
+
+	protected XlcCLanguage getCLanguage() {
+		return XlcCLanguage.getDefault();
+	}
+
+	protected XlcCPPLanguage getCPPLanguage() {
+		return XlcCPPLanguage.getDefault();
+	}
+
 	public void testCompletionXlc() throws Exception {
 
-		String code = 
-			" __static_assert" + CONTENT_ASIST_CURSOR +"(a>" + CONTENT_ASIST_CURSOR +"b, \"no 64-bit support\"); \n"+
-			"   vector " + CONTENT_ASIST_CURSOR +"unsigned " + CONTENT_ASIST_CURSOR +"int d = ++a;        \n";
+		String code = " __static_assert" + CONTENT_ASIST_CURSOR + "(a>" + CONTENT_ASIST_CURSOR
+				+ "b, \"no 64-bit support\"); \n" + "   vector " + CONTENT_ASIST_CURSOR + "unsigned "
+				+ CONTENT_ASIST_CURSOR + "int d = ++a;        \n";
 		runTestCase(code, getCPPLanguage());
 	}
 }

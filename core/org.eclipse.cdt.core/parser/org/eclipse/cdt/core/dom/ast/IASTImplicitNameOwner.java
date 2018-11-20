@@ -20,8 +20,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTImplicitNameOwner extends IASTNode {
-	public static final ASTNodeProperty IMPLICIT_NAME = 
-			new ASTNodeProperty("ICPPASTImplicitNameOwner.IMPLICIT_NAME"); //$NON-NLS-1$
+	public static final ASTNodeProperty IMPLICIT_NAME = new ASTNodeProperty("ICPPASTImplicitNameOwner.IMPLICIT_NAME"); //$NON-NLS-1$
 
 	public IASTImplicitName[] getImplicitNames();
 }

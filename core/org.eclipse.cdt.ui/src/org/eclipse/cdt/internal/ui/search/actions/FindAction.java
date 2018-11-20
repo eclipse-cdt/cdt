@@ -35,25 +35,24 @@ import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
-
 public abstract class FindAction extends SelectionParseAction {
-	public FindAction(CEditor editor){
+	public FindAction(CEditor editor) {
 		super(editor);
 	}
-	
-	public FindAction(IWorkbenchSite site){
+
+	public FindAction(IWorkbenchSite site) {
 		super(site);
 	}
-	
+
 	@Override
 	public void run() {
 		ISearchQuery searchJob = null;
 
 		ISelection selection = getSelection();
-	 	if (selection instanceof IStructuredSelection) {
-	 		Object object = ((IStructuredSelection) selection).getFirstElement();
-	 		if (object instanceof ISourceReference)
-	 			searchJob = createQuery((ISourceReference) object);
+		if (selection instanceof IStructuredSelection) {
+			Object object = ((IStructuredSelection) selection).getFirstElement();
+			if (object instanceof ISourceReference)
+				searchJob = createQuery((ISourceReference) object);
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection selNode = (ITextSelection) selection;
 			ICElement element = fEditor.getTranslationUnit();
@@ -61,20 +60,20 @@ public abstract class FindAction extends SelectionParseAction {
 				element = element.getParent();
 			if (element != null) {
 				if (selNode.getLength() == 0) {
-					IDocument document= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-					IRegion reg= CWordFinder.findWord(document, selNode.getOffset());
+					IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+					IRegion reg = CWordFinder.findWord(document, selNode.getOffset());
 					selNode = new TextSelection(document, reg.getOffset(), reg.getLength());
 				}
 				searchJob = createQuery(element, selNode);
 			}
-		} 
+		}
 
-	 	if (searchJob == null) {
-	 		showStatusLineMessage(CSearchMessages.CSearchOperation_operationUnavailable_message);
-	 		return;
-	 	}
+		if (searchJob == null) {
+			showStatusLineMessage(CSearchMessages.CSearchOperation_operationUnavailable_message);
+			return;
+		}
 
-        clearStatusLine();
+		clearStatusLine();
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInBackground(searchJob);
 	}
@@ -84,13 +83,12 @@ public abstract class FindAction extends SelectionParseAction {
 	}
 
 	protected CSearchQuery createQuery(ICElement element, ITextSelection selNode) {
-		return new CSearchTextSelectionQuery(getScope(),
-				(ITranslationUnit) element, selNode, getLimitTo());
+		return new CSearchTextSelectionQuery(getScope(), (ITranslationUnit) element, selNode, getLimitTo());
 	}
-	
-    abstract protected String getScopeDescription(); 
+
+	abstract protected String getScopeDescription();
 
 	abstract protected ICElement[] getScope();
-	
+
 	abstract protected int getLimitTo();
 }

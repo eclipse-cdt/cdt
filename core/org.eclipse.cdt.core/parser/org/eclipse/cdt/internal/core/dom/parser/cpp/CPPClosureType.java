@@ -78,70 +78,73 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	private ICPPTemplateParameter[] fInventedTemplateParameters;
 
 	public CPPClosureType(ICPPASTLambdaExpression lambdaExpr) {
-		fLambdaExpression= lambdaExpr;
+		fLambdaExpression = lambdaExpr;
 	}
-	
-	private ICPPMethod[] createMethods() {
-		boolean needConversionOperator=
-			fLambdaExpression.getCaptureDefault() == CaptureDefault.UNSPECIFIED &&
-			fLambdaExpression.getCaptures().length == 0;
 
-		final ICPPClassScope scope= getCompositeScope();
-		ICPPMethod[] result= new ICPPMethod[needConversionOperator ? 6 : 5];
+	private ICPPMethod[] createMethods() {
+		boolean needConversionOperator = fLambdaExpression.getCaptureDefault() == CaptureDefault.UNSPECIFIED
+				&& fLambdaExpression.getCaptures().length == 0;
+
+		final ICPPClassScope scope = getCompositeScope();
+		ICPPMethod[] result = new ICPPMethod[needConversionOperator ? 6 : 5];
 
 		// Deleted default constructor: A()
-		CPPImplicitConstructor ctor=
-				new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY,
-						ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, fLambdaExpression);
+		CPPImplicitConstructor ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY,
+				ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, fLambdaExpression);
 		ctor.setDeleted(true);
-		result[0]= ctor;
+		result[0] = ctor;
 
 		// Copy constructor: A(const A &)
 		IType pType = new CPPReferenceType(SemanticUtil.constQualify(this), false);
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
 		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps, fLambdaExpression);
-		result[1]= ctor;
+		result[1] = ctor;
 
 		// Deleted copy assignment operator: A& operator = (const A &)
 		IType refType = new CPPReferenceType(this, false);
-		ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
+		ICPPFunctionType ft = CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
 		ICPPMethod m = new CPPImplicitMethod(scope, OverloadableOperator.ASSIGN.toCharArray(), ft, ps, false);
-		result[2]= m;
+		result[2] = m;
 
 		// Destructor: ~A()
-		ft= CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false, false);
-		m = new CPPImplicitMethod(scope, new char[] {'~'}, ft, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false);
-		result[3]= m;
+		ft = CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false,
+				false);
+		m = new CPPImplicitMethod(scope, new char[] { '~' }, ft, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false);
+		result[3] = m;
 
 		// Function call operator
-		final IType returnType= getReturnType();
-		final IType[] parameterTypes= getParameterTypes();
-		ft= new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false);
+		final IType returnType = getReturnType();
+		final IType[] parameterTypes = getParameterTypes();
+		ft = new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false);
 
 		ICPPParameter[] params = getParameters();
 		char[] operatorParensName = OverloadableOperator.PAREN.toCharArray();
 		if (isGeneric()) {
-			m = new CPPImplicitMethodTemplate(getInventedTemplateParameterList(), scope, operatorParensName,
-					ft, params, false) {
+			m = new CPPImplicitMethodTemplate(getInventedTemplateParameterList(), scope, operatorParensName, ft, params,
+					false) {
 				@Override
-				public boolean isImplicit() { return false; }
+				public boolean isImplicit() {
+					return false;
+				}
 			};
 		} else {
-			m= new CPPImplicitMethod(scope, operatorParensName, ft, params, false) {
+			m = new CPPImplicitMethod(scope, operatorParensName, ft, params, false) {
 				@Override
-				public boolean isImplicit() { return false; }
+				public boolean isImplicit() {
+					return false;
+				}
 			};
 		}
-		result[4]= m;
+		result[4] = m;
 
 		// Conversion operator
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
-			ft= new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
-            // Calling CPPASTConversionName.createName(IType) would try to stringize the type to
-            // construct a name, which is unnecessary work (not to mention prone to recursion with
-            // dependent types). Since the name doesn't matter anyways, just make one up.
-            char[] conversionOperatorName = CPPASTConversionName.createName("__fptr");  //$NON-NLS-1$
+			ft = new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
+			// Calling CPPASTConversionName.createName(IType) would try to stringize the type to
+			// construct a name, which is unnecessary work (not to mention prone to recursion with
+			// dependent types). Since the name doesn't matter anyways, just make one up.
+			char[] conversionOperatorName = CPPASTConversionName.createName("__fptr"); //$NON-NLS-1$
 			if (isGeneric()) {
 				ICPPTemplateParameter[] templateParams = getInventedTemplateParameterList();
 				// Clone the template parameters, since they are used by the function call operator,
@@ -150,18 +153,22 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 				for (int i = 0; i < templateParams.length; ++i) {
 					templateParamClones[i] = (ICPPTemplateParameter) ((IType) templateParams[i]).clone();
 				}
-				m = new CPPImplicitMethodTemplate(templateParamClones, scope, 
-						conversionOperatorName, ft, params, false) {
+				m = new CPPImplicitMethodTemplate(templateParamClones, scope, conversionOperatorName, ft, params,
+						false) {
 					@Override
-					public boolean isImplicit() { return false; }
+					public boolean isImplicit() {
+						return false;
+					}
 				};
 			} else {
-				m= new CPPImplicitMethod(scope, conversionOperatorName, ft, params, false) {
+				m = new CPPImplicitMethod(scope, conversionOperatorName, ft, params, false) {
 					@Override
-					public boolean isImplicit() { return false; }
+					public boolean isImplicit() {
+						return false;
+					}
 				};
 			}
-			result[5]= m;
+			result[5] = m;
 		}
 		return result;
 	}
@@ -200,8 +207,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 		IASTCompoundStatement body = fLambdaExpression.getBody();
 		if (body != null) {
-			return CPPVisitor.deduceReturnType(body, declSpecForDeduction, declaratorForDeduction, 
-					placeholder);
+			return CPPVisitor.deduceReturnType(body, declSpecForDeduction, declaratorForDeduction, placeholder);
 		}
 		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 	}
@@ -209,14 +215,14 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public boolean isGeneric() {
 		return getInventedTemplateParameterList().length > 0;
 	}
-	
+
 	public ICPPTemplateParameter[] getInventedTemplateParameterList() {
 		if (fInventedTemplateParameters == null) {
 			fInventedTemplateParameters = computeInventedTemplateParameterList();
 		}
 		return fInventedTemplateParameters;
 	}
-	
+
 	public ICPPTemplateParameter[] computeInventedTemplateParameterList() {
 		ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
 		ICPPTemplateParameter[] result = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
@@ -230,8 +236,8 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 				if (declSpec instanceof IASTSimpleDeclSpecifier) {
 					if (((IASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
 						boolean isPack = param.getDeclarator().declaresParameterPack();
-						result = ArrayUtil.append(result, new CPPImplicitTemplateTypeParameter(
-								fLambdaExpression, position, isPack));
+						result = ArrayUtil.append(result,
+								new CPPImplicitTemplateTypeParameter(fLambdaExpression, position, isPack));
 						position++;
 					}
 				}
@@ -239,7 +245,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 		return ArrayUtil.trim(result);
 	}
-	
+
 	private IType[] getParameterTypes() {
 		if (fParameterTypes == null) {
 			ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
@@ -251,10 +257,10 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 		return fParameterTypes;
 	}
-	
+
 	public ICPPParameter[] getParameters() {
 		if (fParameters == null) {
-			final IType[] parameterTypes= getParameterTypes();
+			final IType[] parameterTypes = getParameterTypes();
 			fParameters = new ICPPParameter[parameterTypes.length];
 			ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
 			if (lambdaDtor != null) {
@@ -287,7 +293,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	@Override
 	public ICPPClassScope getCompositeScope() {
 		if (fScope == null) {
-			fScope= new ClassScope();
+			fScope = new ClassScope();
 		}
 		return fScope;
 	}
@@ -346,7 +352,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	@Override
 	public ICPPMethod[] getMethods() {
 		if (fMethods == null) {
-			fMethods= createMethods();
+			fMethods = createMethods();
 		}
 		return fMethods;
 	}
@@ -363,14 +369,14 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		ICPPMethod[] methods= getMethods();
-		int i= 0;
+		ICPPMethod[] methods = getMethods();
+		int i = 0;
 		for (; i < methods.length; i++) {
 			if (!(methods[i] instanceof ICPPConstructor)) {
 				break;
 			}
 		}
-		ICPPConstructor[] result= new ICPPConstructor[i];
+		ICPPConstructor[] result = new ICPPConstructor[i];
 		System.arraycopy(methods, 0, result, 0, i);
 		return result;
 	}
@@ -384,7 +390,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
@@ -454,7 +460,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		throw new IllegalArgumentException(member.getName() + " is not a member of closure type '" //$NON-NLS-1$
 				+ fLambdaExpression.getRawSignature() + "'"); //$NON-NLS-1$
 	}
-	
+
 	// A lambda expression can appear in a dependent context, such as in the value of
 	// a variable template, so it needs to be instantiable.
 	public CPPClosureType instantiate(InstantiationContext context) {
@@ -487,15 +493,15 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 
 		private IBinding[] getBindings(char[] name) {
-			IBinding m= getBinding(name);
+			IBinding m = getBinding(name);
 			if (m != null) {
-				return new IBinding[] {m};
+				return new IBinding[] { m };
 			}
 			return IBinding.EMPTY_BINDING_ARRAY;
 		}
 
 		private IBinding[] getPrefixBindings(char[] name) {
-			List<IBinding> result= new ArrayList<>();
+			List<IBinding> result = new ArrayList<>();
 			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name);
 			for (ICPPMethod m : getMethods()) {
 				if (!(m instanceof ICPPConstructor)) {

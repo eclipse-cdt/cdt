@@ -33,7 +33,6 @@ public interface IOptionCategoryApplicability {
 	 * @return true if this option should be visible in the build options page,
 	 *         false otherwise
 	 */
-	public boolean isOptionCategoryVisible(
-			IBuildObject configuration, 
-            IHoldsOptions optHolder, IOptionCategory category);           
+	public boolean isOptionCategoryVisible(IBuildObject configuration, IHoldsOptions optHolder,
+			IOptionCategory category);
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -46,11 +46,11 @@ public class Checksums {
 	 * @since 4.0
 	 */
 	public static MessageDigest getAlgorithm(Map<?, ?> persistedMap) throws NoSuchAlgorithmException {
-		Object obj= persistedMap.get(KEY_ALGORITHM);
-		String alg= obj instanceof String ? (String) obj : DEFAULT_ALGORITHM;
-		return MessageDigest.getInstance(alg); 
+		Object obj = persistedMap.get(KEY_ALGORITHM);
+		String alg = obj instanceof String ? (String) obj : DEFAULT_ALGORITHM;
+		return MessageDigest.getInstance(alg);
 	}
-	
+
 	/**
 	 * Stores the algorithm in a map.
 	 * @since 4.0
@@ -58,25 +58,23 @@ public class Checksums {
 	public static void putAlgorithm(Map<String, Object> mapToPersist, MessageDigest md) {
 		mapToPersist.put(KEY_ALGORITHM, md.getAlgorithm());
 	}
-	
 
 	/**
 	 * Computes the checksum for a given file.
 	 */
 	public static byte[] computeChecksum(MessageDigest md, File file) throws IOException {
-        md.reset();
-        FileInputStream fi= new FileInputStream(file);
-        try {
-            int read;
-            byte[] buf= new byte[1024*64];
-            while( (read= fi.read(buf)) >= 0) {
-                md.update(buf, 0, read);
-            }
-            return md.digest();
-        }
-        finally {
-            fi.close();
-        }
+		md.reset();
+		FileInputStream fi = new FileInputStream(file);
+		try {
+			int read;
+			byte[] buf = new byte[1024 * 64];
+			while ((read = fi.read(buf)) >= 0) {
+				md.update(buf, 0, read);
+			}
+			return md.digest();
+		} finally {
+			fi.close();
+		}
 	}
 
 	/**
@@ -84,8 +82,8 @@ public class Checksums {
 	 * @since 4.0
 	 */
 	public static byte[] getChecksum(Map<?, ?> persistedMap, IFile file) {
-		IPath prjRel= file.getProjectRelativePath();
-		Object checksum= persistedMap.get(prjRel.toString());
+		IPath prjRel = file.getProjectRelativePath();
+		Object checksum = persistedMap.get(prjRel.toString());
 		if (checksum instanceof byte[])
 			return (byte[]) checksum;
 		return null;
@@ -96,7 +94,7 @@ public class Checksums {
 	 * @since 4.0
 	 */
 	public static void putChecksum(Map<String, Object> mapToPersist, IFile file, byte[] checksum) {
-		IPath prjRel= file.getProjectRelativePath();
+		IPath prjRel = file.getProjectRelativePath();
 		mapToPersist.put(prjRel.toString(), checksum);
 	}
 
@@ -105,9 +103,9 @@ public class Checksums {
 	 * @throws OperationCanceledException
 	 * @since 4.0
 	 */
-	public static Map<String, Object> createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm) 
+	public static Map<String, Object> createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm)
 			throws OperationCanceledException {
-		Map<String, Object> result= new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<String, Object>();
 		putAlgorithm(result, md);
 		pm.beginTask(Messages.Checksums_taskComputeChecksums, tus.length);
 		for (IFile file : tus) {
@@ -115,15 +113,14 @@ public class Checksums {
 				throw new OperationCanceledException();
 			}
 			if (file != null) {
-				IPath location= file.getLocation();
+				IPath location = file.getLocation();
 				if (location != null) {
-					File f= location.toFile();
+					File f = location.toFile();
 					if (f.isFile()) {
 						try {
-							byte[] checksum= computeChecksum(md, f);
+							byte[] checksum = computeChecksum(md, f);
 							putChecksum(result, file, checksum);
-						}
-						catch (IOException e) {
+						} catch (IOException e) {
 							CCorePlugin.log(e);
 						}
 					}

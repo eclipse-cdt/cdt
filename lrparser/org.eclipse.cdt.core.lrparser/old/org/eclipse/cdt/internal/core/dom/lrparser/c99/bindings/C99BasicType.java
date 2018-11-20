@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 public class C99BasicType implements ICBasicType {
 
 	/* Type flags given in IBasicType */
-	private int type; 
-	
+	private int type;
+
 	private boolean isLong;
 	private boolean isShort;
 	private boolean isSigned;
@@ -30,14 +30,13 @@ public class C99BasicType implements ICBasicType {
 	private boolean isImaginary;
 	private boolean isLongLong;
 
-
 	public C99BasicType() {
 	}
-	
+
 	public C99BasicType(int type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public int getType() {
 		return type;
@@ -115,25 +114,20 @@ public class C99BasicType implements ICBasicType {
 	public IASTExpression getValue() {
 		return null;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType t) {
-		if(t == this)
+		if (t == this)
 			return true;
-		if(!(t instanceof C99BasicType))
+		if (!(t instanceof C99BasicType))
 			return false;
-		
+
 		C99BasicType bt = (C99BasicType) t;
-		return bt.type == this.type &&
-		       bt.isLong == this.isLong &&
-		       bt.isShort == this.isShort &&
-		       bt.isSigned == this.isSigned &&
-		       bt.isUnsigned == this.isUnsigned &&
-		       bt.isComplex == this.isComplex &&
-		       bt.isImaginary == this.isImaginary &&
-		       bt.isLongLong == this.isLongLong;
+		return bt.type == this.type && bt.isLong == this.isLong && bt.isShort == this.isShort
+				&& bt.isSigned == this.isSigned && bt.isUnsigned == this.isUnsigned && bt.isComplex == this.isComplex
+				&& bt.isImaginary == this.isImaginary && bt.isLongLong == this.isLongLong;
 	}
-	
+
 	@Override
 	public C99BasicType clone() {
 		try {

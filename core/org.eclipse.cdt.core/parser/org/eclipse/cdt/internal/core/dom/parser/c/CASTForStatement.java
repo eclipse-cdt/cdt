@@ -29,21 +29,21 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTForStatement extends ASTAttributeOwner implements IASTForStatement, IASTAmbiguityParent {
-    private IScope scope;
-    private IASTExpression condition;
-    private IASTExpression iterationExpression;
-    private IASTStatement body;
-    private IASTStatement init;
+	private IScope scope;
+	private IASTExpression condition;
+	private IASTExpression iterationExpression;
+	private IASTStatement body;
+	private IASTStatement init;
 
-    public CASTForStatement() {
+	public CASTForStatement() {
 	}
 
-	public CASTForStatement(IASTStatement init, IASTExpression condition,
-			IASTExpression iterationExpression, IASTStatement body) {
-    	setInitializerStatement(init);
-    	setConditionExpression(condition);
-    	setIterationExpression(iterationExpression);
-    	setBody(body);
+	public CASTForStatement(IASTStatement init, IASTExpression condition, IASTExpression iterationExpression,
+			IASTStatement body) {
+		setInitializerStatement(init);
+		setConditionExpression(condition);
+		setIterationExpression(iterationExpression);
+		setBody(body);
 	}
 
 	@Override
@@ -60,125 +60,136 @@ public class CASTForStatement extends ASTAttributeOwner implements IASTForStatem
 	protected <T extends CASTForStatement> T copy(T copy, CopyStyle style) {
 		copy.setInitializerStatement(init == null ? null : init.copy(style));
 		copy.setConditionExpression(condition == null ? null : condition.copy(style));
-		copy.setIterationExpression(iterationExpression == null ?
-				null : iterationExpression.copy(style));
+		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
 		return super.copy(copy, style);
 	}
 
 	@Override
 	public IASTExpression getConditionExpression() {
-        return condition;
-    }
+		return condition;
+	}
 
-    @Override
+	@Override
 	public void setConditionExpression(IASTExpression condition) {
-        assertNotFrozen();
-        this.condition = condition;
-        if (condition != null) {
+		assertNotFrozen();
+		this.condition = condition;
+		if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getIterationExpression() {
-        return iterationExpression;
-    }
+		return iterationExpression;
+	}
 
-    @Override
+	@Override
 	public void setIterationExpression(IASTExpression iterator) {
-        assertNotFrozen();
-        this.iterationExpression = iterator;
-        if (iterator != null) {
+		assertNotFrozen();
+		this.iterationExpression = iterator;
+		if (iterator != null) {
 			iterator.setParent(this);
 			iterator.setPropertyInParent(ITERATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getInitializerStatement() {
-        return init;
-    }
+		return init;
+	}
 
-    @Override
+	@Override
 	public void setInitializerStatement(IASTStatement statement) {
-        assertNotFrozen();
-        init = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		init = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(INITIALIZER);
 		}
-    }
-    @Override
-	public IASTStatement getBody() {
-        return body;
-    }
+	}
 
-    @Override
+	@Override
+	public IASTStatement getBody() {
+		return body;
+	}
+
+	@Override
 	public void setBody(IASTStatement statement) {
-        assertNotFrozen();
-        body = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		body = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(BODY);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        if (scope == null)
-            scope = new CScope(this, EScopeKind.eLocal);
-        return scope;
-    }
+		if (scope == null)
+			scope = new CScope(this, EScopeKind.eLocal);
+		return scope;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (init != null && !init.accept(action)) return false;
-        if (condition != null && !condition.accept(action)) return false;
-        if (iterationExpression != null && !iterationExpression.accept(action)) return false;
-        if (body != null && !body.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (init != null && !init.accept(action))
+			return false;
+		if (condition != null && !condition.accept(action))
+			return false;
+		if (iterationExpression != null && !iterationExpression.accept(action))
+			return false;
+		if (body != null && !body.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (body == child) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            body = (IASTStatement) other;
-        }
-        if (child == init) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            init  = (IASTStatement) other;
-        }
-        if (child == iterationExpression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            iterationExpression = (IASTExpression) other;
-        }
-        if (child == condition) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            condition = (IASTExpression) other;
-        }
-    }
+		if (body == child) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			body = (IASTStatement) other;
+		}
+		if (child == init) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			init = (IASTStatement) other;
+		}
+		if (child == iterationExpression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			iterationExpression = (IASTExpression) other;
+		}
+		if (child == condition) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			condition = (IASTExpression) other;
+		}
+	}
 }

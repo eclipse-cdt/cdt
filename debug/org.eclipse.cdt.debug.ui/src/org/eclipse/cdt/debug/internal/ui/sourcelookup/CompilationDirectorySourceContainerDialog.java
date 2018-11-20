@@ -51,7 +51,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 
 	private String fDirectory;
 	private boolean fCompilationSubfolders;
-	
+
 	private Text fDirText;
 	private Button fSubfoldersButton;
 	private boolean fNewContainer;
@@ -83,7 +83,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 		fCompilationSubfolders = compilationSubfolders;
 		fNewContainer = false;
 	}
-	
+
 	/**
 	 * Returns the result of the dialog.open() operation
 	 * @return the dialog.open() result
@@ -106,9 +106,8 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Image image = fNewContainer ?
-				CDebugImages.get(IInternalCDebugUIConstants.IMG_ADD_COMP_DIR_WIZ) : 
-				CDebugImages.get(IInternalCDebugUIConstants.IMG_EDIT_COMP_DIR_WIZ);
+		Image image = fNewContainer ? CDebugImages.get(IInternalCDebugUIConstants.IMG_ADD_COMP_DIR_WIZ)
+				: CDebugImages.get(IInternalCDebugUIConstants.IMG_EDIT_COMP_DIR_WIZ);
 		setTitle(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_2);
 		setMessage(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_3);
 		setTitleImage(image);
@@ -124,54 +123,54 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(font);
 
-        Composite dirComposite = new Composite(composite, SWT.NONE);
-        layout = new GridLayout(2, false);
+		Composite dirComposite = new Composite(composite, SWT.NONE);
+		layout = new GridLayout(2, false);
 		dirComposite.setLayout(layout);
 		dirComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		dirComposite.setFont(font);
 
-        Label label = new Label(dirComposite, SWT.NONE);
-        label.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_4);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 2;
-        label.setLayoutData(data);
-        label.setFont(font);
-        
-        fDirText = new Text(dirComposite, SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 1;
-        fDirText.setLayoutData(data);
-        fDirText.setFont(font);
-        fDirText.addModifyListener(new ModifyListener() {
+		Label label = new Label(dirComposite, SWT.NONE);
+		label.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_4);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		label.setFont(font);
+
+		fDirText = new Text(dirComposite, SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 1;
+		fDirText.setLayoutData(data);
+		fDirText.setFont(font);
+		fDirText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
-			}        	
-        });
+			}
+		});
 
-        Button button = new Button(dirComposite, SWT.PUSH);
-        button.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_5);
-        data = new GridData();
-        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-        Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        data.widthHint = Math.max(widthHint, minSize.x);
-        button.setLayoutData(data);
-        button.setFont(JFaceResources.getDialogFont());
-        button.addSelectionListener(new SelectionAdapter() {
-            @Override
+		Button button = new Button(dirComposite, SWT.PUSH);
+		button.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_5);
+		data = new GridData();
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint = Math.max(widthHint, minSize.x);
+		button.setLayoutData(data);
+		button.setFont(JFaceResources.getDialogFont());
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-            	browse();
-            }
-        });
+				browse();
+			}
+		});
 
-        fSubfoldersButton = new Button(dirComposite, SWT.CHECK);
-        fSubfoldersButton.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_6);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.verticalIndent = layout.verticalSpacing;  // Extra vertical spacing
-        fSubfoldersButton.setLayoutData(data);
-        fSubfoldersButton.setFont(font);
+		fSubfoldersButton = new Button(dirComposite, SWT.CHECK);
+		fSubfoldersButton.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_6);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.verticalIndent = layout.verticalSpacing; // Extra vertical spacing
+		fSubfoldersButton.setLayoutData(data);
+		fSubfoldersButton.setFont(font);
 
-        return parentComposite;
+		return parentComposite;
 	}
 
 	/* (non-Javadoc)
@@ -198,7 +197,8 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 		fDirText.setText(fDirectory);
 		fSubfoldersButton.setSelection(fCompilationSubfolders);
 		validate();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(c, ICDebugHelpContextIds.COMPILATION_DIRECTORY_SOURCE_CONTAINER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(c,
+				ICDebugHelpContextIds.COMPILATION_DIRECTORY_SOURCE_CONTAINER_DIALOG);
 		return c;
 	}
 
@@ -210,7 +210,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 		fDirectory = fDirText.getText().trim();
 		fCompilationSubfolders = fSubfoldersButton.getSelection();
 		CDebugUIPlugin.getDefault().getDialogSettings().put(LAST_PATH_SETTING, fDirectory);
-		CDebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fCompilationSubfolders);	
+		CDebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fCompilationSubfolders);
 		super.okPressed();
 	}
 
@@ -220,11 +220,11 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 			last = CDebugUIPlugin.getDefault().getDialogSettings().get(LAST_PATH_SETTING);
 		}
 		if (last == null) {
-			last = "";  //$NON-NLS-1$
+			last = ""; //$NON-NLS-1$
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SINGLE);
-		dialog.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_0); 
-		dialog.setMessage(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_1); 
+		dialog.setText(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_0);
+		dialog.setMessage(SourceLookupUIMessages.CompilationDirectorySourceContainerDialog_1);
 		dialog.setFilterPath(last);
 		String result = dialog.open();
 		if (result == null) {

@@ -39,7 +39,7 @@ import org.eclipse.cdt.make.core.makefile.IMakefile;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkingCopyManager {
-	
+
 	/**
 	 * Connects the given editor input to this manager. After calling
 	 * this method, a working copy will be available for the compilation unit encoded
@@ -50,7 +50,7 @@ public interface IWorkingCopyManager {
 	 *    unit
 	 */
 	void connect(IEditorInput input) throws CoreException;
-	
+
 	/**
 	 * Disconnects the given editor input from this manager. After calling
 	 * this method, a working copy for the compilation unit encoded
@@ -61,7 +61,7 @@ public interface IWorkingCopyManager {
 	 * @param input the editor input
 	 */
 	void disconnect(IEditorInput input);
-	
+
 	/**
 	 * Returns the working copy remembered for the compilation unit encoded in the
 	 * given editor input.
@@ -72,7 +72,7 @@ public interface IWorkingCopyManager {
 	 *   copy for this compilation unit
 	 */
 	IMakefile getWorkingCopy(IEditorInput input);
-	
+
 	/**
 	 * Shuts down this working copy manager. All working copies still remembered
 	 * by this manager are destroyed.

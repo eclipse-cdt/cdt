@@ -24,11 +24,11 @@ public class XlcLRNodeSelectorTest extends LRNodeSelectorTest {
 	public static TestSuite suite() {
 		return suite(XlcLRNodeSelectorTest.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

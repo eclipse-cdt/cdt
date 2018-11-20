@@ -34,48 +34,64 @@ import org.eclipse.ui.IWorkbenchPart;
  * Ruler action to display breakpoint properties.
  */
 public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpointRulerAction {
-    
-    
+
 	private ICBreakpoint fBreakpoint;
 
 	protected BreakpointPropertiesRulerAction(IDisassemblyPart disassemblyPart, IVerticalRulerInfo rulerInfo) {
 		super(disassemblyPart, rulerInfo);
-		setText(DisassemblyMessages.Disassembly_action_BreakpointProperties_label + "\t" +  //$NON-NLS-1$
-            CDebugUIUtils.formatKeyBindingString(SWT.MOD1, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
+		setText(DisassemblyMessages.Disassembly_action_BreakpointProperties_label + "\t" + //$NON-NLS-1$
+				CDebugUIUtils.formatKeyBindingString(SWT.MOD1,
+						DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AbstractDisassemblyAction#run()
 	 */
 	@Override
 	public void run() {
-		if ( fBreakpoint != null ) {
-		    final ISelection debugContext = getDebugContext();
-		    
-            CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(
-                getDisassemblyPart().getSite(), 
-                new ISelectionProvider() {
-                    @Override
-                    public ISelection getSelection() {
-                        return new StructuredSelection( fBreakpoint );
-                    }
-                    @Override public void addSelectionChangedListener( ISelectionChangedListener listener ) {}
-                    @Override public void removeSelectionChangedListener( ISelectionChangedListener listener ) {}
-                    @Override public void setSelection( ISelection selection ) {}
-                }, 
-                new IDebugContextProvider() {
-                    @Override
-                    public ISelection getActiveContext() {
-                        return debugContext;
-                    }
-                    @Override public void addDebugContextListener(IDebugContextListener listener) {}
-                    @Override public void removeDebugContextListener(IDebugContextListener listener) {}
-                    @Override public IWorkbenchPart getPart() { return null; }
-                    
-                }
-                );
-            propertiesAction.run();
-            propertiesAction.dispose();
+		if (fBreakpoint != null) {
+			final ISelection debugContext = getDebugContext();
+
+			CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(
+					getDisassemblyPart().getSite(), new ISelectionProvider() {
+						@Override
+						public ISelection getSelection() {
+							return new StructuredSelection(fBreakpoint);
+						}
+
+						@Override
+						public void addSelectionChangedListener(ISelectionChangedListener listener) {
+						}
+
+						@Override
+						public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+						}
+
+						@Override
+						public void setSelection(ISelection selection) {
+						}
+					}, new IDebugContextProvider() {
+						@Override
+						public ISelection getActiveContext() {
+							return debugContext;
+						}
+
+						@Override
+						public void addDebugContextListener(IDebugContextListener listener) {
+						}
+
+						@Override
+						public void removeDebugContextListener(IDebugContextListener listener) {
+						}
+
+						@Override
+						public IWorkbenchPart getPart() {
+							return null;
+						}
+
+					});
+			propertiesAction.run();
+			propertiesAction.dispose();
 		}
 	}
 
@@ -84,18 +100,19 @@ public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpoi
 	 */
 	@Override
 	public void update() {
-	    IBreakpoint breakpoint= getBreakpoint();
-	    
-	    if (breakpoint instanceof ICBreakpoint) {
-	        fBreakpoint = (ICBreakpoint)breakpoint;
-	    } else {
-	        fBreakpoint = null;
-	    }
-		setEnabled( fBreakpoint != null );
+		IBreakpoint breakpoint = getBreakpoint();
+
+		if (breakpoint instanceof ICBreakpoint) {
+			fBreakpoint = (ICBreakpoint) breakpoint;
+		} else {
+			fBreakpoint = null;
+		}
+		setEnabled(fBreakpoint != null);
 	}
-	
+
 	private ISelection getDebugContext() {
-	    return DebugUITools.getDebugContextManager().getContextService(getDisassemblyPart().getSite().getWorkbenchWindow()).getActiveContext();
+		return DebugUITools.getDebugContextManager()
+				.getContextService(getDisassemblyPart().getSite().getWorkbenchWindow()).getActiveContext();
 	}
 
 }

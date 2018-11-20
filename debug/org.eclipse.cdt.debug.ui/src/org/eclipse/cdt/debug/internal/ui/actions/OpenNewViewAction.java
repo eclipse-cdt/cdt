@@ -36,7 +36,7 @@ public class OpenNewViewAction extends Action {
 
 	public OpenNewViewAction() {
 	}
-	
+
 	@Override
 	public String getText() {
 		return ActionMessages.getString("OpenNewViewActionText"); //$NON-NLS-1$
@@ -69,8 +69,9 @@ public class OpenNewViewAction extends Action {
 
 	@Override
 	public void run() {
-		if (fView == null) return;
-		
+		if (fView == null)
+			return;
+
 		IViewSite site = fView.getViewSite();
 		String viewId = site.getId();
 		IWorkbenchWindow ww = fView.getViewSite().getWorkbenchWindow();
@@ -92,13 +93,13 @@ public class OpenNewViewAction extends Action {
 			try {
 				ww.getActivePage().showView(viewId,
 						secondaryId != null ? PinCloneUtils.encodeClonedPartSecondaryId(secondaryId.toString()) : null,
-								IWorkbenchPage.VIEW_ACTIVATE);
+						IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException e) {
 				CDebugUIPlugin.log(e);
 			}
 		}
 	}
-	
+
 	/** Sets the view, that this action will open a new instance of */
 	public void init(IViewPart view) {
 		fView = view;

@@ -52,14 +52,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *   `body' field is an empty list.
  *
  */
-public class MIBreakList extends MICommand<MIBreakListInfo>
-{
-    public MIBreakList (IBreakpointsTargetDMContext ctx) {
-        super(ctx, "-break-list"); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIBreakListInfo getResult(MIOutput output) {
-        return new MIBreakListInfo(output);
-    }
+public class MIBreakList extends MICommand<MIBreakListInfo> {
+	public MIBreakList(IBreakpointsTargetDMContext ctx) {
+		super(ctx, "-break-list"); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIBreakListInfo getResult(MIOutput output) {
+		return new MIBreakListInfo(output);
+	}
 }

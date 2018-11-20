@@ -13,7 +13,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Karsten Thoms (itemis) - Bug 471103
  *******************************************************************************/
- package org.eclipse.cdt.internal.core.pdom.dom;
+package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,9 +47,9 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	}
 
 	public PDOMProjectIndexLocationConverter(IProject project, boolean ignoreWSExternal) {
-		fRoot= (IWorkspaceRoot) project.getParent();
-		fFullPathPrefix= project.getFullPath().toString() + IPath.SEPARATOR;
-		fIgnoreExternal= ignoreWSExternal;
+		fRoot = (IWorkspaceRoot) project.getParent();
+		fFullPathPrefix = project.getFullPath().toString() + IPath.SEPARATOR;
+		fIgnoreExternal = ignoreWSExternal;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 		}
 
 		String fullPath = null;
-		URI uri= null;
+		URI uri = null;
 		if (raw.startsWith(EXTERNAL)) {
 			try {
 				uri = new URI(raw.substring(EXTERNAL.length()));
@@ -69,13 +69,13 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 			}
 		} else {
 			if (raw.startsWith(WS)) {
-				fullPath= raw.substring(WS.length());
+				fullPath = raw.substring(WS.length());
 			} else {
-				fullPath= fFullPathPrefix + raw;
+				fullPath = fFullPathPrefix + raw;
 			}
-			final IPath path= new Path(fullPath);
+			final IPath path = new Path(fullPath);
 			if (path.segmentCount() > 1) {
-				IResource member= fRoot.getFile(path);
+				IResource member = fRoot.getFile(path);
 				uri = member.getLocationURI();
 			}
 		}
@@ -89,7 +89,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 
 	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
-		String fullPath= location.getFullPath();
+		String fullPath = location.getFullPath();
 		if (fullPath != null) {
 			if (fullPath.startsWith(fFullPathPrefix)) {
 				return fullPath.substring(fFullPathPrefix.length());

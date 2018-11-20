@@ -33,47 +33,49 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenUpdate {
 
-    final private DataRequestMonitor<Boolean> fHasElemsRequestMonitor;
-    
-    public VMHasChildrenUpdate(IViewerUpdate clientUpdate, DataRequestMonitor<Boolean> rm) {
-        super(clientUpdate, rm);
-        fHasElemsRequestMonitor = rm;
-    }
-    
-    public VMHasChildrenUpdate(IModelDelta delta, IPresentationContext presentationContext, DataRequestMonitor<Boolean> rm) {
-        super(delta, presentationContext, rm);
-        fHasElemsRequestMonitor = rm;
-    }
+	final private DataRequestMonitor<Boolean> fHasElemsRequestMonitor;
 
-    public VMHasChildrenUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext, DataRequestMonitor<Boolean> rm) {
-        super(elementPath, viewerInput, presentationContext, rm);
-        fHasElemsRequestMonitor = rm;        
-    }
+	public VMHasChildrenUpdate(IViewerUpdate clientUpdate, DataRequestMonitor<Boolean> rm) {
+		super(clientUpdate, rm);
+		fHasElemsRequestMonitor = rm;
+	}
 
-    @Override
+	public VMHasChildrenUpdate(IModelDelta delta, IPresentationContext presentationContext,
+			DataRequestMonitor<Boolean> rm) {
+		super(delta, presentationContext, rm);
+		fHasElemsRequestMonitor = rm;
+	}
+
+	public VMHasChildrenUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext,
+			DataRequestMonitor<Boolean> rm) {
+		super(elementPath, viewerInput, presentationContext, rm);
+		fHasElemsRequestMonitor = rm;
+	}
+
+	@Override
 	public void setHasChilren(boolean hasChildren) {
-        fHasElemsRequestMonitor.setData(hasChildren);
-    }
+		fHasElemsRequestMonitor.setData(hasChildren);
+	}
 
-    @Override
-    public String toString() {
-        return "VMHasChildrenUpdate: " + getElement(); //$NON-NLS-1$
-    }
-    
-    @Override
-    public void done() {
-        assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.isSuccess();
+	@Override
+	public String toString() {
+		return "VMHasChildrenUpdate: " + getElement(); //$NON-NLS-1$
+	}
 
-        // trace our result
-        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
-        	final Boolean data = fHasElemsRequestMonitor.getData();
+	@Override
+	public void done() {
+		assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.isSuccess();
+
+		// trace our result
+		if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled()
+				&& VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+			final Boolean data = fHasElemsRequestMonitor.getData();
 			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " //$NON-NLS-1$
 					+ LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$
-					+ LoggingUtils.toString(getElement())
-					+ "\n   has children = " //$NON-NLS-1$
-					+ (data != null ? data.toString() : "<unset>"));  //$NON-NLS-1$
-        }
+					+ LoggingUtils.toString(getElement()) + "\n   has children = " //$NON-NLS-1$
+					+ (data != null ? data.toString() : "<unset>")); //$NON-NLS-1$
+		}
 
-        super.done();            
-    }
+		super.done();
+	}
 }

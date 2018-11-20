@@ -62,11 +62,13 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
 		}
+
 		@Override
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			dialogChanged();
 		}
+
 		@Override
 		protected StructuredViewer createStructuredViewer(Composite parent, int style) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style);
@@ -123,14 +125,15 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		updateStatus(genStatus);
 	}
 
-
 	private IStatus validatePlugins() {
 		Object[] allModels = UpdateMakeProjectAction.getOldProjects();
 		if (allModels == null || allModels.length == 0) {
-			return createStatus(IStatus.ERROR, MakeUIPlugin.getResourceString("MakeWizardUpdatePage.status.noProjectsToUpdate")); //$NON-NLS-1$
+			return createStatus(IStatus.ERROR,
+					MakeUIPlugin.getResourceString("MakeWizardUpdatePage.status.noProjectsToUpdate")); //$NON-NLS-1$
 		}
 		if (tablePart.getSelectionCount() == 0) {
-			return createStatus(IStatus.ERROR, MakeUIPlugin.getResourceString("MakeWizardUpdatePage.status.noProjectsSelected")); //$NON-NLS-1$
+			return createStatus(IStatus.ERROR,
+					MakeUIPlugin.getResourceString("MakeWizardUpdatePage.status.noProjectsSelected")); //$NON-NLS-1$
 		}
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}

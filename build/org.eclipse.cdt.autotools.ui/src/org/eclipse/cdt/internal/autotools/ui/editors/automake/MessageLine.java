@@ -36,7 +36,7 @@ public class MessageLine {
 	private RGB fErrorRGB;
 	protected Color fErrorColor;
 
-	private static RGB fgErrorRGB= new RGB(200, 0, 0);
+	private static RGB fgErrorRGB = new RGB(200, 0, 0);
 
 	/**
 	 * Clears the currently displayed error message and redisplayes
@@ -45,12 +45,14 @@ public class MessageLine {
 	public void clearErrorMessage() {
 		setErrorMessage(null);
 	}
+
 	/**
 	 * Clears the currently displayed message.
 	 */
 	public void clearMessage() {
 		setMessage(null);
 	}
+
 	/**
 	 * Get the currently displayed error text.
 	 * @return The error message. If no error message is displayed <code>null</code> is returned.
@@ -58,6 +60,7 @@ public class MessageLine {
 	public String getErrorMessage() {
 		return fErrorText;
 	}
+
 	/**
 	 * Get the currently displayed message.
 	 * @return The message. If no message is displayed <code>null<code> is returned.
@@ -65,24 +68,27 @@ public class MessageLine {
 	public String getMessage() {
 		return fMessageText;
 	}
+
 	/**
 	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
 	 * Error message will be shown with in the given rgb color.
 	 */
 	public MessageLine(Composite parent, int style, RGB errorRGB) {
 		clabel = new CLabel(parent, style);
-		fDefaultColor= clabel.getForeground();
-		fErrorRGB= errorRGB;
+		fDefaultColor = clabel.getForeground();
+		fErrorRGB = errorRGB;
 	}
+
 	/**
 	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
 	 * Error message will be shown with in the rgb color 200,0,0.
 	 */
 	public MessageLine(Composite parent, int style) {
 		clabel = new CLabel(parent, style);
-		fDefaultColor= clabel.getForeground();
-		fErrorRGB= fgErrorRGB;
+		fDefaultColor = clabel.getForeground();
+		fErrorRGB = fgErrorRGB;
 	}
+
 	/**
 	 * Creates a new message line as a child of the given parent.
 	 * Error message will be shown with in the rgb color 200,0,0.
@@ -90,55 +96,58 @@ public class MessageLine {
 	public MessageLine(Composite parent) {
 		this(parent, SWT.LEFT);
 	}
+
 	/**
 	 * Sets the default error color used by all message lines.
 	 * Note: a call to this method only affects newly created MessageLines not existing ones. 
 	 */
 	public static void setErrorColor(RGB color) {
-		fgErrorRGB= color;
+		fgErrorRGB = color;
 	}
+
 	/**
 	     * Display the given error message. A currently displayed message
 	     * is saved and will be redisplayed when the error message is cleared.
 	     */
 	public void setErrorMessage(String message) {
-		fErrorText= message;
+		fErrorText = message;
 
 		if (message == null) {
 			setMessage(fMessageText);
 		} else {
 			if (fErrorColor == null) {
-				fErrorColor= new Color(clabel.getDisplay(), fErrorRGB);
+				fErrorColor = new Color(clabel.getDisplay(), fErrorRGB);
 				clabel.addDisposeListener(e -> fErrorColor.dispose());
 			}
 			clabel.setForeground(fErrorColor);
 			clabel.setText(message);
 		}
 	}
+
 	/**
 	     * Set the message text. If the message line currently displays an error,
 	     * the message is stored and will be shown after a call to clearErrorMessage
 	     */
 	public void setMessage(String message) {
-		fMessageText= message;
+		fMessageText = message;
 		if (message == null)
-			message= ""; //$NON-NLS-1$
+			message = ""; //$NON-NLS-1$
 		if (fErrorText == null) {
 			clabel.setForeground(fDefaultColor);
 			clabel.setText(message);
 		}
 	}
-	
+
 	public boolean isDisposed() {
 		return clabel.isDisposed();
 	}
-	
+
 	public void setAlignment(int left) {
 		clabel.setAlignment(left);
 	}
-	
+
 	public void setLayoutData(GridData gridData) {
 		clabel.setLayoutData(gridData);
 	}
-	
+
 }

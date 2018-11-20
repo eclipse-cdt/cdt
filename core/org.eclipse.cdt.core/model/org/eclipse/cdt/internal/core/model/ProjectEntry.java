@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.core.runtime.IPath;
 
-
 public class ProjectEntry extends PathEntry implements IProjectEntry {
 
 	public ProjectEntry(IPath path, boolean isExported) {
@@ -27,7 +26,7 @@ public class ProjectEntry extends PathEntry implements IProjectEntry {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IProjectEntry) {
-			IProjectEntry otherEntry = (IProjectEntry)obj;
+			IProjectEntry otherEntry = (IProjectEntry) obj;
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
@@ -38,7 +37,7 @@ public class ProjectEntry extends PathEntry implements IProjectEntry {
 			} else {
 				if (!path.toString().equals(otherEntry.getPath().toString())) {
 					return false;
-				} 
+				}
 			}
 			return true;
 		}

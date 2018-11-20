@@ -11,11 +11,11 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
- 
+
 /**
  * Adapter factory for CDT source containers.
  */
@@ -32,6 +32,6 @@ public class SourceContainerAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[]{ IWorkbenchAdapter.class };
+		return new Class[] { IWorkbenchAdapter.class };
 	}
 }

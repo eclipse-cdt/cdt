@@ -37,10 +37,11 @@ import org.eclipse.ui.help.IWorkbenchHelpSystem;
 @Deprecated
 public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 	private ICOptionContainer optionContainer;
+
 	public MakeProjectOptionBlock() {
 		super(true);
 	}
-	
+
 	public MakeProjectOptionBlock(ICOptionContainer parent) {
 		super(parent);
 		optionContainer = parent;
@@ -57,31 +58,48 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 
 	@Override
 	public void setOptionContainer(ICOptionContainer parent) {
-		super.setOptionContainer( parent );
+		super.setOptionContainer(parent);
 		optionContainer = parent;
 	}
+
 	@Override
 	public Control createContents(Composite parent) {
-		Control control = super.createContents( parent );
-		
+		Control control = super.createContents(parent);
+
 		List<ICOptionPage> optionPages = getOptionPages();
 		Iterator<ICOptionPage> iter = optionPages.iterator();
-		for( int i = 0; i < 4 && iter.hasNext(); i++ ){
+		for (int i = 0; i < 4 && iter.hasNext(); i++) {
 			ICOptionPage page = iter.next();
 			IWorkbenchHelpSystem helpSystem = MakeUIPlugin.getDefault().getWorkbench().getHelpSystem();
-			if( optionContainer != null && optionContainer instanceof MakePropertyPage )
-				switch( i ){
-					case 0 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BUILDER_SETTINGS); break;
-					case 1 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_ERROR_PARSER );    break;
-					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BINARY_PARSER );   break;
-					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_DISCOVERY );       break;
+			if (optionContainer != null && optionContainer instanceof MakePropertyPage)
+				switch (i) {
+				case 0:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BUILDER_SETTINGS);
+					break;
+				case 1:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_ERROR_PARSER);
+					break;
+				case 2:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BINARY_PARSER);
+					break;
+				case 3:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_DISCOVERY);
+					break;
 				}
-			else 
-				switch( i ){
-					case 0 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);             break;
-					case 1 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_ERROR_PARSER );           break;
-					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_BINARY_PARSER );          break;
-					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS ); break;
+			else
+				switch (i) {
+				case 0:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
+					break;
+				case 1:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_ERROR_PARSER);
+					break;
+				case 2:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_BINARY_PARSER);
+					break;
+				case 3:
+					helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS);
+					break;
 				}
 		}
 

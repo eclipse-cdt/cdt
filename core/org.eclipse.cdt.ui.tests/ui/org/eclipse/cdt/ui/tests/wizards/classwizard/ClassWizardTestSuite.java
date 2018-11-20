@@ -18,8 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ClassWizardNameTest.class,
+@Suite.SuiteClasses({ ClassWizardNameTest.class,
 
 })
 public class ClassWizardTestSuite {

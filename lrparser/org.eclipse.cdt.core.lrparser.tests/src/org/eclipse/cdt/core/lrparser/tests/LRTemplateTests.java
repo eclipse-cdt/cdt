@@ -26,114 +26,187 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 @SuppressWarnings("restriction")
 public class LRTemplateTests extends AST2TemplateTests {
 
-	
 	public static TestSuite suite() {
-    	return suite(LRTemplateTests.class);
-    }
-	
+		return suite(LRTemplateTests.class);
+	}
+
 	//override the test failed cases of 341747
 	@Override
-	public void testTemplateIDAmbiguity_341747a() throws Exception{}
+	public void testTemplateIDAmbiguity_341747a() throws Exception {
+	}
+
 	@Override
-	public void testTemplateIDAmbiguity_341747b() throws Exception{}
+	public void testTemplateIDAmbiguity_341747b() throws Exception {
+	}
+
 	@Override
-	public void testTemplateIDAmbiguity_341747c() throws Exception{}
+	public void testTemplateIDAmbiguity_341747c() throws Exception {
+	}
+
 	@Override
-	public void testTemplateIDAmbiguity_341747d() throws Exception{}
-	
+	public void testTemplateIDAmbiguity_341747d() throws Exception {
+	}
+
 	//override some failed test cases
 	@Override
-	public void testNestedArguments_246079() throws Throwable {}
+	public void testNestedArguments_246079() throws Throwable {
+	}
+
 	@Override
-	public void testTypeVsExpressionInArgsOfDependentTemplateID_257194() throws Exception {}
+	public void testTypeVsExpressionInArgsOfDependentTemplateID_257194() throws Exception {
+	}
+
 	@Override
-	public void testCtorWithTemplateID_259600() throws Exception {}
+	public void testCtorWithTemplateID_259600() throws Exception {
+	}
+
 	@Override
-	public void testClosingAngleBrackets1_261268() throws Exception {}
+	public void testClosingAngleBrackets1_261268() throws Exception {
+	}
+
 	@Override
-	public void testClosingAngleBracketsAmbiguity_261268() throws Exception {}
+	public void testClosingAngleBracketsAmbiguity_261268() throws Exception {
+	}
+
 	@Override
-	public void testFunctionParameterPacks_280909() throws Exception {}
+	public void testFunctionParameterPacks_280909() throws Exception {
+	}
+
 	@Override
-	public void testTemplateParameterPacks_280909() throws Exception {}
+	public void testTemplateParameterPacks_280909() throws Exception {
+	}
+
 	@Override
-	public void testParameterPackExpansions_280909() throws Exception {}
+	public void testParameterPackExpansions_280909() throws Exception {
+	}
+
 	@Override
-	public void testTemplateParameterPacksAmbiguity_280909() throws Exception {}
+	public void testTemplateParameterPacksAmbiguity_280909() throws Exception {
+	}
+
 	@Override
-	public void testNonTypeTemplateParameterPack_280909() throws Exception {}
-	
+	public void testNonTypeTemplateParameterPack_280909() throws Exception {
+	}
+
 	//the below test case are for C++0x features which are not included in XLC++ yet
 	@Override
-	public void testRValueReferences_294730() throws Exception {}	
+	public void testRValueReferences_294730() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909a() throws Exception {}
+	public void testVariadicTemplateExamples_280909a() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909b() throws Exception {}
+	public void testVariadicTemplateExamples_280909b() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909c() throws Exception {}
+	public void testVariadicTemplateExamples_280909c() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909d() throws Exception {}
+	public void testVariadicTemplateExamples_280909d() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909e() throws Exception {}
+	public void testVariadicTemplateExamples_280909e() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909f() throws Exception {}
+	public void testVariadicTemplateExamples_280909f() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909g() throws Exception {}
+	public void testVariadicTemplateExamples_280909g() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909i() throws Exception {}
+	public void testVariadicTemplateExamples_280909i() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909j() throws Exception {}
+	public void testVariadicTemplateExamples_280909j() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909k() throws Exception {}
+	public void testVariadicTemplateExamples_280909k() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909n() throws Exception {}
+	public void testVariadicTemplateExamples_280909n() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909p() throws Exception {}
+	public void testVariadicTemplateExamples_280909p() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909q() throws Exception {}
+	public void testVariadicTemplateExamples_280909q() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909r() throws Exception {}
+	public void testVariadicTemplateExamples_280909r() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909s() throws Exception {}
+	public void testVariadicTemplateExamples_280909s() throws Exception {
+	}
+
 	@Override
-	public void testExtendingVariadicTemplateTemplateParameters_302282() throws Exception {}
+	public void testExtendingVariadicTemplateTemplateParameters_302282() throws Exception {
+	}
+
 	@Override
-	public void testVariadicTemplateExamples_280909h() throws Exception {}
+	public void testVariadicTemplateExamples_280909h() throws Exception {
+	}
+
 	@Override
-	public void testInlineNamespaces_305980() throws Exception {}
+	public void testInlineNamespaces_305980() throws Exception {
+	}
+
 	@Override
-	public void testFunctionParameterPacksInNonFinalPosition_324096() throws Exception {}
+	public void testFunctionParameterPacksInNonFinalPosition_324096() throws Exception {
+	}
+
 	//decltype related
 	@Override
-	public void testFunctionCallOnDependentName_337686() throws Exception {}
+	public void testFunctionCallOnDependentName_337686() throws Exception {
+	}
+
 	//variadic template 
 	@Override
-	public void testVariadicFunctionTemplate_333389() throws Exception {}
+	public void testVariadicFunctionTemplate_333389() throws Exception {
+	}
+
 	//auto
-	@Override	
-	public void testRRefVsRef_351927() throws Exception {}
+	@Override
+	public void testRRefVsRef_351927() throws Exception {
+	}
+
 	//Variadic template arguments 
 	@Override
-	public void testTemplateTemplateParameterMatching_352859() throws Exception {}
-	
+	public void testTemplateTemplateParameterMatching_352859() throws Exception {
+	}
+
 	@Override
 	@SuppressWarnings("unused")
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang,  boolean useGNUExtensions, boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckSyntaxProblems(expectNoProblems);
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setLimitTrivialInitializers(limitTrivialInitializers);
-    	return ParseHelper.parse(code, language, options);
-    }
-    
-    protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-    
-    protected ILanguage getCPPLanguage() {
-    	return GPPLanguage.getDefault();
-    }
-    
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(expectNoProblems);
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setLimitTrivialInitializers(limitTrivialInitializers);
+		return ParseHelper.parse(code, language, options);
+	}
+
+	protected ILanguage getCLanguage() {
+		return GCCLanguage.getDefault();
+	}
+
+	protected ILanguage getCPPLanguage() {
+		return GPPLanguage.getDefault();
+	}
+
 }

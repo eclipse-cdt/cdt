@@ -14,11 +14,11 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
-
 /**
  * Mock of {@link ILanguageSettingsEditableProvider} for testing.
  */
-public class MockLanguageSettingsEditableProvider extends LanguageSettingsSerializableProvider implements ILanguageSettingsEditableProvider {
+public class MockLanguageSettingsEditableProvider extends LanguageSettingsSerializableProvider
+		implements ILanguageSettingsEditableProvider {
 	public MockLanguageSettingsEditableProvider() {
 		super();
 	}

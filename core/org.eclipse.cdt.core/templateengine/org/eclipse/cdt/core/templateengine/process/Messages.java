@@ -19,8 +19,7 @@ import java.util.ResourceBundle;
 import org.eclipse.osgi.util.NLS;
 
 class Messages extends NLS {
-	private static final ResourceBundle RESOURCE_BUNDLE =
-			ResourceBundle.getBundle(Messages.class.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Messages.class.getName());
 
 	public static String ProcessRunner_missingArg;
 

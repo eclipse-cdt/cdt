@@ -36,7 +36,7 @@ public class MakefileAnnotationHover implements IAnnotationHover {
 	 *
 	 */
 	public MakefileAnnotationHover(IEditorPart editor) {
-                fEditor = editor;
+		fEditor = editor;
 	}
 
 	/*

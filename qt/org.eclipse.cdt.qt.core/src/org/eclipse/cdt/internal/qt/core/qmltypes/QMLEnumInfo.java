@@ -72,7 +72,8 @@ public class QMLEnumInfo {
 									try {
 										value = QMLExpressionEvaluator.evaluateConstExpr(property.getValue());
 										if (value instanceof Number) {
-											constantList.add(new EnumConst(property.getType(), ((Number) value).intValue()));
+											constantList.add(
+													new EnumConst(property.getType(), ((Number) value).intValue()));
 										}
 									} catch (InvalidExpressionException e) {
 										builder.handleException(e);

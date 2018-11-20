@@ -53,9 +53,9 @@ import org.eclipse.core.runtime.Platform;
 public class SimpleMakefileGenerator extends ProcessRunner {
 
 	private static final String MAKEFILE = "Makefile"; //$NON-NLS-1$
+
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args,
-			String processId, IProgressMonitor monitor)
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
 			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 
@@ -64,50 +64,55 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 		try {
 			path = TemplateEngineHelper.getTemplateResourceURLRelativeToTemplate(template, MAKEFILE);
 			if (path == null) {
-				throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.0") + MAKEFILE)); //$NON-NLS-1$
+				throw new ProcessFailureException(
+						getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.0") + MAKEFILE)); //$NON-NLS-1$
 			}
 		} catch (IOException e1) {
-			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.1") + MAKEFILE)); //$NON-NLS-1$
+			throw new ProcessFailureException(
+					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.1") + MAKEFILE)); //$NON-NLS-1$
 		}
-		
+
 		InputStream contents = null;
 		String fileContents;
 		try {
 			fileContents = ProcessHelper.readFromFile(path);
 		} catch (IOException e) {
-			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.2") + MAKEFILE)); //$NON-NLS-1$
+			throw new ProcessFailureException(
+					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.2") + MAKEFILE)); //$NON-NLS-1$
 		}
-		
+
 		Map<String, String> macros = new HashMap<String, String>(template.getValueStore());
 		macros.put("exe", Platform.getOS().equals(Platform.OS_WIN32) ? ".exe" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
+
 		fileContents = replaceMacros(fileContents, macros);
 		contents = new ByteArrayInputStream(fileContents.getBytes());
 
 		try {
 			IFile iFile = projectHandle.getFile(MAKEFILE);
 			if (!iFile.getParent().exists()) {
-				ProcessHelper.mkdirs(projectHandle, projectHandle.getFolder(iFile.getParent().getProjectRelativePath()));
+				ProcessHelper.mkdirs(projectHandle,
+						projectHandle.getFolder(iFile.getParent().getProjectRelativePath()));
 			}
 			iFile.create(contents, true, null);
 			iFile.refreshLocal(IResource.DEPTH_ONE, null);
 			projectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
-			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.4") + e.getMessage()), e); //$NON-NLS-1$
+			throw new ProcessFailureException(
+					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.4") + e.getMessage()), e); //$NON-NLS-1$
 		}
 	}
 
 	private static final String START = "{{"; //$NON-NLS-1$
 	private static final String END = "}}"; //$NON-NLS-1$
-	
+
 	private String replaceMacros(String fileContents, Map<String, String> valueStore) {
 		StringBuilder buffer = new StringBuilder(fileContents);
 		for (String key : valueStore.keySet()) {
-			String pattern = START + key +END;
-			if (fileContents.indexOf(pattern)==-1)
+			String pattern = START + key + END;
+			if (fileContents.indexOf(pattern) == -1)
 				// Not used
 				continue;
-			
+
 			// replace
 			int len = pattern.length();
 			int pos = 0;

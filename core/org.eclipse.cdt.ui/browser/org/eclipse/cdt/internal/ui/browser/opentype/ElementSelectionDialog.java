@@ -86,27 +86,30 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		public char[] getCurrentPrefix() {
 			return fCurrentPrefix;
 		}
+
 		public void scheduleQuery(char[] prefix) {
-			fCurrentPrefix= prefix;
+			fCurrentPrefix = prefix;
 			int delay = fCurrentPrefix == null ? 0 : (fCurrentPrefix.length < 5 ? 400 : 200);
 			schedule(delay);
 		}
 
 		@Override
 		public IStatus run(final IProgressMonitor monitor) {
-			monitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
-			final ITypeInfo[] elements= getElementsByPrefix(fCurrentPrefix, monitor);
+			monitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress,
+					IProgressMonitor.UNKNOWN);
+			final ITypeInfo[] elements = getElementsByPrefix(fCurrentPrefix, monitor);
 			if (elements != null && !monitor.isCanceled()) {
-				final Shell shell= getShell();
+				final Shell shell = getShell();
 				if (shell != null && !shell.isDisposed()) {
-					Runnable update= new Runnable() {
+					Runnable update = new Runnable() {
 						@Override
 						public void run() {
 							if (!shell.isDisposed() && !monitor.isCanceled()) {
 								setListElements(elements);
 								updateOkState();
 							}
-						}};
+						}
+					};
 					shell.getDisplay().asyncExec(update);
 					monitor.done();
 					return Status.OK_STATUS;
@@ -124,15 +127,15 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		private IProgressMonitor fMonitor;
 
 		private UpdateJobListener(IProgressMonitor monitor) {
-			fMonitor= monitor;
+			fMonitor = monitor;
 		}
 
 		@Override
 		public void done(IJobChangeEvent event) {
-			fDone= true;
-			final Shell shell= getShell();
+			fDone = true;
+			final Shell shell = getShell();
 			if (shell != null && !shell.isDisposed()) {
-				Runnable update= new Runnable() {
+				Runnable update = new Runnable() {
 					@Override
 					public void run() {
 						if (!shell.isDisposed() && fDone) {
@@ -146,14 +149,15 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 		@Override
 		public void running(final IJobChangeEvent event) {
-			fDone= false;
-			final Shell shell= getShell();
+			fDone = false;
+			final Shell shell = getShell();
 			if (shell != null && !shell.isDisposed()) {
-				Runnable update= new Runnable() {
+				Runnable update = new Runnable() {
 					@Override
 					public void run() {
 						if (!shell.isDisposed() && !fDone) {
-							fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
+							fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress,
+									IProgressMonitor.UNKNOWN);
 						}
 					}
 				};
@@ -167,6 +171,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -174,8 +179,8 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	};
 
 	private UpdateElementsJob fUpdateJob;
-	private boolean fAllowEmptyPrefix= true;
-	private boolean fAllowEmptyString= true;
+	private boolean fAllowEmptyPrefix = true;
+	private boolean fAllowEmptyString = true;
 	private ProgressMonitorPart fProgressMonitorPart;
 
 	private String fHelpContextId;
@@ -189,7 +194,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		super(parent);
 		setHelpContextId(ICHelpContextIds.OPEN_ELEMENT_DIALOG);
 		setMatchEmptyString(false);
-		fUpdateJob= new UpdateElementsJob(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_name);
+		fUpdateJob = new UpdateElementsJob(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_name);
 		fUpdateJob.setRule(SINGLE_INSTANCE_RULE);
 	}
 
@@ -212,14 +217,14 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 * @param helpContextId
 	 */
 	public void setHelpContextId(String helpContextId) {
-		fHelpContextId= helpContextId;
+		fHelpContextId = helpContextId;
 		setHelpAvailable(fHelpContextId != null);
 	}
 
 	@Override
 	public void setMatchEmptyString(boolean matchEmptyString) {
 		super.setMatchEmptyString(matchEmptyString);
-		fAllowEmptyString= matchEmptyString;
+		fAllowEmptyString = matchEmptyString;
 		if (matchEmptyString) {
 			setAllowEmptyPrefix(true);
 		}
@@ -248,7 +253,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 	@Override
 	protected Table createLowerList(Composite parent) {
-		Table table= super.createLowerList(parent);
+		Table table = super.createLowerList(parent);
 		createProgressMonitorPart(parent);
 		return table;
 	}
@@ -257,16 +262,16 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 * Creates the control for progress reporting.
 	 */
 	private void createProgressMonitorPart(Composite parent) {
-		fProgressMonitorPart= new ProgressMonitorPart(parent, new GridLayout(2, false));
-		GridData gridData= new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalIndent= 0;
-        gridData.verticalAlignment= GridData.BEGINNING;
-        fProgressMonitorPart.setLayoutData(gridData);
-        
-		Label separator= new Label(parent.getParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+		fProgressMonitorPart = new ProgressMonitorPart(parent, new GridLayout(2, false));
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalIndent = 0;
+		gridData.verticalAlignment = GridData.BEGINNING;
+		fProgressMonitorPart.setLayoutData(gridData);
+
+		Label separator = new Label(parent.getParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        fUpdateJob.addJobChangeListener(new UpdateJobListener(fProgressMonitorPart));
+		fUpdateJob.addJobChangeListener(new UpdateJobListener(fProgressMonitorPart));
 	}
 
 	/**
@@ -278,7 +283,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		}
 		HashSet<IndexTypeInfo> types = new HashSet<>();
 		if (prefix != null) {
-			final IndexFilter filter= new IndexFilter() {
+			final IndexFilter filter = new IndexFilter() {
 				@Override
 				public boolean acceptBinding(IBinding binding) throws CoreException {
 					if (isVisibleType(IndexModelUtil.getElementType(binding))) {
@@ -288,21 +293,22 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				}
 			};
 			try {
-				IIndex index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects(), IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
+				IIndex index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects(),
+						IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
 				index.acquireReadLock();
 				try {
-					IIndexBinding[] bindings= index.findBindingsForPrefix(prefix, false, filter, monitor);
-					for (int i= 0; i < bindings.length; i++) {
+					IIndexBinding[] bindings = index.findBindingsForPrefix(prefix, false, filter, monitor);
+					for (int i = 0; i < bindings.length; i++) {
 						if (i % 0x1000 == 0 && monitor.isCanceled()) {
 							return null;
 						}
 						final IndexTypeInfo typeinfo = IndexTypeInfo.create(index, bindings[i]);
 						types.add(typeinfo);
 					}
-					
+
 					if (isVisibleType(ICElement.C_MACRO)) {
-						IIndexMacro[] macros= index.findMacrosForPrefix(prefix, IndexFilter.ALL_DECLARED, monitor);
-						for (int i= 0; i < macros.length; i++) {
+						IIndexMacro[] macros = index.findMacrosForPrefix(prefix, IndexFilter.ALL_DECLARED, monitor);
+						for (int i = 0; i < macros.length; i++) {
 							if (i % 0x1000 == 0 && monitor.isCanceled()) {
 								return null;
 							}
@@ -333,7 +339,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	protected void handleElementsChanged() {
 		updateOkState();
 	}
-	
+
 	@Override
 	protected void handleEmptyList() {
 		updateOkState();
@@ -343,26 +349,28 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	protected Text createFilterText(Composite parent) {
 		final Text result = super.createFilterText(parent);
 		Listener listener = new Listener() {
-            @Override
+			@Override
 			public void handleEvent(Event e) {
-                scheduleUpdate(result.getText());
-            }
-        };
-        result.addListener(SWT.Modify, listener);
-        return result;
+				scheduleUpdate(result.getText());
+			}
+		};
+		result.addListener(SWT.Modify, listener);
+		return result;
 	}
 
 	protected void scheduleUpdate(String filterText) {
-		filterText= CSearchUtil.adjustSearchStringForOperators(filterText);
-		char[] newPrefix= toPrefix(filterText);
-		final char[] currentPrefix= fUpdateJob.getCurrentPrefix();
-		final boolean equivalentPrefix= isEquivalentPrefix(currentPrefix, newPrefix);
-		boolean emptyQuery= newPrefix.length == 0 && !fAllowEmptyPrefix || filterText.length() == 0 && !fAllowEmptyString;
+		filterText = CSearchUtil.adjustSearchStringForOperators(filterText);
+		char[] newPrefix = toPrefix(filterText);
+		final char[] currentPrefix = fUpdateJob.getCurrentPrefix();
+		final boolean equivalentPrefix = isEquivalentPrefix(currentPrefix, newPrefix);
+		boolean emptyQuery = newPrefix.length == 0 && !fAllowEmptyPrefix
+				|| filterText.length() == 0 && !fAllowEmptyString;
 		final int jobState = fUpdateJob.getState();
-		boolean needQuery= !equivalentPrefix || (currentPrefix.length < newPrefix.length && currentPrefix.length < 5 && jobState == Job.RUNNING);
+		boolean needQuery = !equivalentPrefix
+				|| (currentPrefix.length < newPrefix.length && currentPrefix.length < 5 && jobState == Job.RUNNING);
 		if (emptyQuery) {
-			newPrefix= null;
-			needQuery= needQuery || currentPrefix != null;
+			newPrefix = null;
+			needQuery = needQuery || currentPrefix != null;
 		}
 		if (needQuery || jobState == Job.WAITING || jobState == Job.SLEEPING) {
 			fUpdateJob.cancel();
@@ -371,18 +379,17 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	private char[] toPrefix(String userFilter) {
-		QualifiedTypeName qualifiedName= new QualifiedTypeName(userFilter);
+		QualifiedTypeName qualifiedName = new QualifiedTypeName(userFilter);
 		if (qualifiedName.segmentCount() > 1) {
-			userFilter= qualifiedName.lastSegment();
+			userFilter = qualifiedName.lastSegment();
 		}
 		if (userFilter.endsWith("<")) { //$NON-NLS-1$
-			userFilter= userFilter.substring(0, userFilter.length() - 1);
+			userFilter = userFilter.substring(0, userFilter.length() - 1);
 		}
-		int asterisk= userFilter.indexOf("*"); //$NON-NLS-1$
-		int questionMark= userFilter.indexOf("?"); //$NON-NLS-1$
-		int prefixEnd = asterisk < 0 ? questionMark :
-				questionMark < 0 ? asterisk : Math.min(asterisk, questionMark);
-		return (prefixEnd == -1 ? userFilter : userFilter.substring(0, prefixEnd)).toCharArray();		
+		int asterisk = userFilter.indexOf("*"); //$NON-NLS-1$
+		int questionMark = userFilter.indexOf("?"); //$NON-NLS-1$
+		int prefixEnd = asterisk < 0 ? questionMark : questionMark < 0 ? asterisk : Math.min(asterisk, questionMark);
+		return (prefixEnd == -1 ? userFilter : userFilter.substring(0, prefixEnd)).toCharArray();
 	}
 
 	private boolean isEquivalentPrefix(char[] currentPrefix, char[] newPrefix) {

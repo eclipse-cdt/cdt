@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.model; 
+package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.model.IThread;
 

@@ -57,7 +57,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return buf.getSignature();
 	}
-	
+
 	public static IType getType(ICPPASTExpression expr) {
 		CPPSemantics.pushLookupPoint(expr);
 		try {
@@ -66,7 +66,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			CPPSemantics.popLookupPoint();
 		}
 	}
-	
+
 	public static ValueCategory getValueCategory(ICPPASTExpression expr) {
 		CPPSemantics.pushLookupPoint(expr);
 		try {
@@ -124,7 +124,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * Checks if all evaluations contained in the given array are constant expressions.
 	 *
 	 * @param evaluations the evaluations to check
-     */
+	 */
 	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations) {
 		return areAllConstantExpressions(evaluations, 0, evaluations.length);
 	}
@@ -133,9 +133,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * Checks if all evaluations contained in a range of the given array are constant expressions.
 	 *
 	 * @param evaluations the evaluations to check
-     * @param from the initial index of the range to be checked, inclusive
-     * @param to the final index of the range to be checked, exclusive
-     */
+	 * @param from the initial index of the range to be checked, inclusive
+	 * @param to the final index of the range to be checked, exclusive
+	 */
 	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, int from, int to) {
 		for (int i = from; i < to; i++) {
 			if (!evaluations[i].isConstantExpression()) {
@@ -178,17 +178,17 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		if (targetType == null) {
 			return argument;
 		}
-		
+
 		IType type = argument.getType();
-		
+
 		// Types match - don't bother to check for conversions.
 		if (targetType.isSameType(type)) {
 			return argument;
 		}
-		
+
 		try {
 			// Source type is class type - check for conversion operator.
-			IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+			IType uqType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 			ValueCategory valueCategory = argument.getValueCategory();
 			if (uqType instanceof ICPPClassType) {
 				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) uqType,
@@ -198,15 +198,15 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 					if (!conversion.isConstexpr()) {
 						return EvalFixed.INCOMPLETE;
 					}
-					ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, 
-							false, CPPSemantics.getCurrentLookupPoint());
+					ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, false,
+							CPPSemantics.getCurrentLookupPoint());
 					return new EvalFunctionCall(new ICPPEvaluation[] { eval }, null, (IBinding) null);
 				}
 			}
-			
+
 			// Source type is not a class type, or is but a conversion operator wasn't used.
 			// Check for standard conversions.
-			if (!Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN, 
+			if (!Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN,
 					Context.ORDINARY).converts()) {
 				return EvalFixed.INCOMPLETE;
 			}
@@ -215,14 +215,14 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return argument;
 	}
-	
+
 	protected static boolean areEquivalentOrNull(ICPPEvaluation a, ICPPEvaluation b) {
 		if (a == null) {
 			return (b == null);
 		}
 		return a.isEquivalentTo(b);
 	}
-	
+
 	protected static boolean areEquivalentEvaluations(ICPPEvaluation[] a, ICPPEvaluation[] b) {
 		if (a == null) {
 			return (b == null);
@@ -237,7 +237,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return true;
 	}
-	
+
 	protected static boolean areEquivalentArguments(ICPPTemplateArgument[] a, ICPPTemplateArgument[] b) {
 		if (a == null) {
 			return (b == null);
@@ -252,7 +252,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return true;
 	}
-	
+
 	protected static boolean areEquivalentTypes(IType[] a, IType[] b) {
 		if (a == null) {
 			return (b == null);
@@ -267,7 +267,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return true;
 	}
-	
+
 	protected static <T extends IBinding> boolean areEquivalentBindings(T[] a, T[] b) {
 		if (a == null) {
 			return (b == null);

@@ -27,5 +27,3 @@ class ThrowFlowInfo extends FlowInfo {
 		assignAccessMode(info);
 	}
 }
-
-

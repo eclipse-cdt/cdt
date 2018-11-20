@@ -50,7 +50,6 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 		fViewer = viewer;
 	}
 
-
 	/**
 	 * @return the {@link Transfer} type that this listener can accept a
 	 * drop operation for.
@@ -123,7 +122,8 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	@Override
 	public void dropToContainer(Object dropObject, IContainer dropContainer, int operation) {
 		if (dropObject instanceof IStructuredSelection && dropContainer != null) {
-			IMakeTarget[] makeTargets = prepareMakeTargetsFromSelection((IStructuredSelection)dropObject, dropContainer);
+			IMakeTarget[] makeTargets = prepareMakeTargetsFromSelection((IStructuredSelection) dropObject,
+					dropContainer);
 			MakeTargetDndUtil.copyTargets(makeTargets, dropContainer, operation, fViewer.getControl().getShell());
 		}
 	}
@@ -136,8 +136,8 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	 */
 	private static boolean isConvertibleToFile(Object element) {
 		if (element instanceof IAdaptable) {
-			IAdaptable a = (IAdaptable)element;
-			if (a.getAdapter(IFile.class)!=null) {
+			IAdaptable a = (IAdaptable) element;
+			if (a.getAdapter(IFile.class) != null) {
 				return true;
 			}
 		}
@@ -168,9 +168,9 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 			for (Object item : items) {
 				if (item instanceof IMakeTarget) {
 					// Looking for a target which is not being moving to itself
-					IContainer container = ((IMakeTarget)item).getContainer();
+					IContainer container = ((IMakeTarget) item).getContainer();
 					// dropContainer==null means disregard the container
-					if (dropContainer==null || !dropContainer.equals(container)) {
+					if (dropContainer == null || !dropContainer.equals(container)) {
 						if (bestOperation < DND.DROP_MOVE) {
 							bestOperation = DND.DROP_MOVE;
 						}
@@ -203,20 +203,21 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	 * @param dropContainer - container where make targets will belong to.
 	 * @return an array of {@code IMakeTarget}s.
 	 */
-	private static IMakeTarget[] prepareMakeTargetsFromSelection(IStructuredSelection selection, IContainer dropContainer) {
+	private static IMakeTarget[] prepareMakeTargetsFromSelection(IStructuredSelection selection,
+			IContainer dropContainer) {
 		List<?> elements = selection.toList();
-		List<IMakeTarget> makeTargetsList= new ArrayList<IMakeTarget>(elements.size());
+		List<IMakeTarget> makeTargetsList = new ArrayList<IMakeTarget>(elements.size());
 		for (Object element : elements) {
 			if (element instanceof IMakeTarget) {
-				makeTargetsList.add((IMakeTarget)element);
+				makeTargetsList.add((IMakeTarget) element);
 				continue;
 			} else if (isConvertibleToFile(element)) {
-				IAdaptable a = (IAdaptable)element;
+				IAdaptable a = (IAdaptable) element;
 				IFile file = a.getAdapter(IFile.class);
 				String fileName = file.getName();
 				String fileLocation = file.getLocation().toString();
 
-				if (fileName!=null) {
+				if (fileName != null) {
 					try {
 						String buildCommand = MakeTargetDndUtil.getProjectBuildCommand(dropContainer.getProject());
 						IMakeTarget makeTarget = MakeTargetDndUtil.createMakeTarget(fileName, fileLocation,
@@ -229,7 +230,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 				}
 			}
 		}
-		if (makeTargetsList.size()>0) {
+		if (makeTargetsList.size() > 0) {
 			return makeTargetsList.toArray(new IMakeTarget[makeTargetsList.size()]);
 		}
 		return null;

@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.ui.util.SelectionUtil;
  * Abstract handler for {@link org.eclipse.cdt.internal.ui.actions.AbstractUpdateIndexAction}
  */
 public abstract class AbstractUpdateIndexHandler extends AbstractHandler {
-	
+
 	abstract protected AbstractUpdateIndexAction getAction();
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -44,7 +44,7 @@ public abstract class AbstractUpdateIndexHandler extends AbstractHandler {
 	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
-    	ISelection selection = SelectionUtil.getActiveSelection();
-    	setBaseEnabled(getAction().isEnabledFor(selection));
+		ISelection selection = SelectionUtil.getActiveSelection();
+		setBaseEnabled(getAction().isEnabledFor(selection));
 	}
 }

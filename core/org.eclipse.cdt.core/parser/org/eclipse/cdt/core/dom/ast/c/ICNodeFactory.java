@@ -38,9 +38,9 @@ public interface ICNodeFactory extends INodeFactory {
 
 	@Override
 	public ICASTArrayModifier newArrayModifier(IASTExpression expr);
-	
+
 	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling);
-	
+
 	@Override
 	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 
@@ -51,13 +51,14 @@ public interface ICNodeFactory extends INodeFactory {
 
 	@Override
 	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
-	
+
 	@Override
 	public ICASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
 
 	public ICASTFieldDesignator newFieldDesignator(IASTName name);
 
-	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations);
+	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames,
+			IASTDeclaration[] parameterDeclarations);
 
 	@Override
 	public ICASTPointer newPointer();
@@ -69,18 +70,21 @@ public interface ICNodeFactory extends INodeFactory {
 	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name);
 
 	@Override
-	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
-	
+	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId,
+			IASTInitializer initializer);
+
 	/**
 	 * @deprecated Replaced by {@link #newDesignatedInitializer(IASTInitializerClause)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer rhs);
+
 	/**
 	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression);
+	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(
+			IASTExpression typeofExpression);
 }

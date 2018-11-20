@@ -45,7 +45,7 @@ public interface IMIExpressions extends IExpressions3 {
 	 * whether an expression has children or not.
 	 */
 	public static final int CHILD_COUNT_LIMIT_UNSPECIFIED = -1;
-	
+
 	/**
 	 * This method indicates whether the given expression can safely be asked
 	 * for all its sub-expressions.
@@ -72,8 +72,7 @@ public interface IMIExpressions extends IExpressions3 {
 	 *            Data Request monitor containing <code>true</code> if this expression can
 	 *            safely fetch all its sub-expressions. <code>false</false> otherwise.
 	 */
-	public void safeToAskForAllSubExpressions(IExpressionDMContext exprCtx,
-			DataRequestMonitor<Boolean> rm);
+	public void safeToAskForAllSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<Boolean> rm);
 
 	/**
 	 * This method is the same as
@@ -99,6 +98,5 @@ public interface IMIExpressions extends IExpressions3 {
 	 *            Request completion monitor containing the number of
 	 *            sub-expressions of the specified expression
 	 */
-	void getSubExpressionCount(IExpressionDMContext exprCtx,
-			int maxNumberOfChildren, DataRequestMonitor<Integer> rm);
+	void getSubExpressionCount(IExpressionDMContext exprCtx, int maxNumberOfChildren, DataRequestMonitor<Integer> rm);
 }

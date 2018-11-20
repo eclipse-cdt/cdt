@@ -31,7 +31,7 @@ public interface IBuildResource {
 	 * @return IPath
 	 */
 	IPath getLocation();
-	
+
 	/**
 	 * In case the resource is a workspace resource,
 	 * returns the full workspace path for the resource
@@ -40,7 +40,7 @@ public interface IBuildResource {
 	 * @return IPath
 	 */
 	IPath getFullPath();
-	
+
 	/**
 	 * Returns a URI that can be used by EFS to access the build resource.
 	 * 
@@ -48,7 +48,7 @@ public interface IBuildResource {
 	 * @since 6.0
 	 */
 	URI getLocationURI();
-	
+
 	/**
 	 * Returns the output io type of the step
 	 * that generates this resource.
@@ -60,14 +60,14 @@ public interface IBuildResource {
 	 * @return IBuildIOType
 	 */
 	IBuildIOType getProducerIOType();
-	
+
 	/**
 	 * Returns an array of io types where this resource is used as an input
 	 * 
 	 * @return IBuildIOType[]
 	 */
 	IBuildIOType[] getDependentIOTypes();
-	
+
 	/**
 	 * Returns the step that generates this resource.
 	 * In case the resource is the project source,
@@ -94,7 +94,7 @@ public interface IBuildResource {
 	 * @return boolean
 	 */
 	boolean needsRebuild();
-	
+
 	/**
 	 * Returns true if this resource belongs to the project
 	 * 
@@ -102,7 +102,7 @@ public interface IBuildResource {
 	 * 
 	 */
 	boolean isProjectResource();
-	
+
 	/**
 	 * Returns true if the resource was removed from the build
 	 * Note: the removed state represents is BUILD state rather than
@@ -119,7 +119,7 @@ public interface IBuildResource {
 	 * @return boolean
 	 */
 	boolean isRemoved();
-	
+
 	/**
 	 * returns a build description that holds this step
 	 * 

@@ -34,21 +34,18 @@ public class ProfAppCalculator implements IOptionApplicability {
 	}
 
 	@Override
-	public boolean isOptionEnabled(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
 	@Override
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 
-		if (! (configuration instanceof IConfiguration))
+		if (!(configuration instanceof IConfiguration))
 			return false; // not probable.
 
-		IConfiguration cfg = (IConfiguration)configuration;
-	outer:
-		for (ITool t : cfg.getFilteredTools()){
+		IConfiguration cfg = (IConfiguration) configuration;
+		outer: for (ITool t : cfg.getFilteredTools()) {
 			if (t.getId().indexOf(COMPILER_PATTERN) < 0)
 				continue;
 			for (IOption op : t.getOptions()) {
@@ -57,7 +54,8 @@ public class ProfAppCalculator implements IOptionApplicability {
 				try {
 					if (op.getBooleanValue() != option.getBooleanValue())
 						cfg.setOption(holder, option, op.getBooleanValue());
-				} catch (BuildException e) {}
+				} catch (BuildException e) {
+				}
 				break outer;
 			}
 		}
@@ -65,8 +63,7 @@ public class ProfAppCalculator implements IOptionApplicability {
 	}
 
 	@Override
-	public boolean isOptionVisible(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return false;
 	}
 

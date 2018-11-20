@@ -56,7 +56,7 @@ public class OptionStringListValueTests extends TestCase {
 	public static Test suite() {
 		return new TestSuite(OptionStringListValueTests.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 	}
@@ -65,69 +65,69 @@ public class OptionStringListValueTests extends TestCase {
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
 	}
-	
+
 	public void testCfgDesEntries() throws Exception {
 		String projName = PROJ_NAME_PREFIX + "1";
 		IProject project = BuildSystemTestHelper.createProject(projName, null, "cdt.managedbuild.target.gnu30.exe");
 		ResourceHelper.addResourceCreated(project);
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
-		
+
 		ICProjectDescription des = mngr.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
-		
+
 		ICFolderDescription fDes = cfgDes.getRootFolderDescription();
 		IFolderInfo fInfo = cfg.getRootFolderInfo();
-		
+
 		ICLanguageSetting ls = fDes.getLanguageSettingForFile("a.c");
 		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 		list.add(new CIncludePathEntry("a", 0));
 		list.add(new CIncludePathEntry("b", 0));
 		list.addAll(ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH));
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, list);
-		
+
 		List<ICLanguageSettingEntry> returned = ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
-		
+
 		mngr.setProjectDescription(project, des);
-		
+
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = wsp.getRoot(); 
+		IWorkspaceRoot root = wsp.getRoot();
 		project.delete(false, true, new NullProgressMonitor());
-		
+
 		project = root.getProject(projName);
 		des = mngr.getProjectDescription(project);
 		assertNull("project description is not null for removed project", des);
-		
+
 		project = BuildSystemTestHelper.createProject(projName);
 		des = mngr.getProjectDescription(project);
 		assertNotNull("project description is null for re-created project", des);
 		assertTrue("des should be valid for re-created project", des.isValid());
-		
+
 		cfgDes = des.getConfigurations()[0];
 		fDes = cfgDes.getRootFolderDescription();
 		ls = fDes.getLanguageSettingForFile("a.c");
-		
+
 		returned = ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
 	}
-	
+
 	public void testLibFiles() throws Exception {
 		String projName = PROJ_NAME_PREFIX + "2";
 		IProject project = BuildSystemTestHelper.createProject(projName, null, "lv.tests.ptype");
 		ResourceHelper.addResourceCreated(project);
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
-		
+
 		ICProjectDescription des = mngr.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
-		
+
 		ICFolderDescription fDes = cfgDes.getRootFolderDescription();
-		
+
 		ICLanguageSetting ls = fDes.getLanguageSettingForFile("a.c");
 		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 		list.add(new CLibraryFileEntry("usr_a", 0, new Path("ap"), new Path("arp"), new Path("apx")));
@@ -136,68 +136,68 @@ public class OptionStringListValueTests extends TestCase {
 		list.add(new CLibraryFileEntry("usr_d", 0, new Path("dp"), null, new Path("dpx")));
 		list.addAll(ls.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE));
 		ls.setSettingEntries(ICSettingEntry.LIBRARY_FILE, list);
-		
+
 		ICLanguageSettingEntry[] resolved = ls.getResolvedSettingEntries(ICSettingEntry.LIBRARY_FILE);
 		assertEquals(list.size(), resolved.length);
-		for(int i = 0; i < resolved.length; i++){
-			ICLibraryFileEntry other = (ICLibraryFileEntry)list.get(i);
-			ICLibraryFileEntry r = (ICLibraryFileEntry)resolved[i];
+		for (int i = 0; i < resolved.length; i++) {
+			ICLibraryFileEntry other = (ICLibraryFileEntry) list.get(i);
+			ICLibraryFileEntry r = (ICLibraryFileEntry) resolved[i];
 			assertEquals(other.getName(), r.getName());
 			assertEquals(other.getSourceAttachmentPath(), r.getSourceAttachmentPath());
 			assertEquals(other.getSourceAttachmentRootPath(), r.getSourceAttachmentRootPath());
 			assertEquals(other.getSourceAttachmentPrefixMapping(), r.getSourceAttachmentPrefixMapping());
 		}
-		
+
 		List<ICLanguageSettingEntry> returned = ls.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
-		
+
 		mngr.setProjectDescription(project, des);
-		
+
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = wsp.getRoot(); 
+		IWorkspaceRoot root = wsp.getRoot();
 		project.delete(false, true, new NullProgressMonitor());
-		
+
 		project = root.getProject(projName);
 		des = mngr.getProjectDescription(project);
 		assertNull("project description is not null for removed project", des);
-		
+
 		project = BuildSystemTestHelper.createProject(projName);
 		des = mngr.getProjectDescription(project);
 		assertNotNull("project description is null for re-created project", des);
 		assertTrue("des should be valid for re-created project", des.isValid());
-		
+
 		cfgDes = des.getConfigurations()[0];
 		fDes = cfgDes.getRootFolderDescription();
 		ls = fDes.getLanguageSettingForFile("a.c");
-		
+
 		returned = ls.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE);
 		checkEntriesMatch(list, returned);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
 	}
-	
-	private void checkEntriesMatch(List<ICLanguageSettingEntry> list1, List<ICLanguageSettingEntry> list2){
+
+	private void checkEntriesMatch(List<ICLanguageSettingEntry> list1, List<ICLanguageSettingEntry> list2) {
 		Set<ICLanguageSettingEntry> set1 = new LinkedHashSet<ICLanguageSettingEntry>(list1);
 		set1.removeAll(list2);
 		Set<ICLanguageSettingEntry> set2 = new LinkedHashSet<ICLanguageSettingEntry>(list2);
 		set2.removeAll(list1);
-		if(set1.size() != 0 || set2.size() != 0) {
+		if (set1.size() != 0 || set2.size() != 0) {
 			fail("entries diff");
 		}
 	}
-	
-	private static String[] toValues(OptionStringValue[] ves){
+
+	private static String[] toValues(OptionStringValue[] ves) {
 		String[] values = new String[ves.length];
-		for(int i = 0; i < ves.length; i++){
+		for (int i = 0; i < ves.length; i++) {
 			values[i] = ves[i].getValue();
 		}
 		return values;
 	}
-	
+
 	private static void checkOptionValues(IOption option) throws Exception {
 		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>)option.getValue();
+		List<String> list = (List<String>) option.getValue();
 		String values[] = list.toArray(new String[list.size()]);
 		String[] values2 = option.getBasicStringListValue();
 		OptionStringValue[] values3 = option.getBasicStringListValueElements();
@@ -211,31 +211,31 @@ public class OptionStringListValueTests extends TestCase {
 		ResourceHelper.addResourceCreated(project);
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
-		
+
 		ICProjectDescription des = mngr.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
-		
+
 		ICFolderDescription fDes = cfgDes.getRootFolderDescription();
 		IFolderInfo fInfo = cfg.getRootFolderInfo();
-		
+
 		ITool tool = fInfo.getToolsBySuperClassId("lv.tests.tool")[0];
 		IOption option = tool.getOptionBySuperClassId("lv.tests.libFiles.option");
-		
+
 		String[] builtins = option.getBuiltIns();
 		assertEquals(1, builtins.length);
-		String expectedBIs[] = new String[]{"lf_c"};
+		String expectedBIs[] = new String[] { "lf_c" };
 		assertTrue(Arrays.equals(expectedBIs, builtins));
-		
+
 		checkOptionValues(option);
-		
+
 		List<Object> list = new ArrayList<Object>();
 		list.add("usr_1");
 		list.add("usr_2");
 		list.addAll(Arrays.asList(option.getBasicStringListValue()));
 		String[] updated = list.toArray(new String[0]);
 		option = ManagedBuildManager.setOption(fInfo, tool, option, updated);
-		
+
 		assertTrue(Arrays.equals(updated, option.getBasicStringListValue()));
 		checkOptionValues(option);
 
@@ -246,45 +246,45 @@ public class OptionStringListValueTests extends TestCase {
 		list.add(new OptionStringValue("usr_6", false, "dp", null, "dpx"));
 		list.add(new OptionStringValue("usr_6", false, null, null, "epx"));
 		list.addAll(Arrays.asList(option.getBasicStringListValueElements()));
-		
+
 		OptionStringValue updatedves[] = list.toArray(new OptionStringValue[0]);
-		IOption updatedOption = ManagedBuildManager.setOption(fInfo, tool, option, updatedves); 
+		IOption updatedOption = ManagedBuildManager.setOption(fInfo, tool, option, updatedves);
 		assertTrue(option == updatedOption);
 		OptionStringValue[] ves = option.getBasicStringListValueElements();
 		assertEquals(updatedves.length, ves.length);
 		assertTrue(Arrays.equals(updatedves, ves));
 		checkOptionValues(option);
-		
+
 		mngr.setProjectDescription(project, des);
-		
+
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = wsp.getRoot(); 
+		IWorkspaceRoot root = wsp.getRoot();
 		project.delete(false, true, new NullProgressMonitor());
-		
+
 		project = root.getProject(projName);
 		des = mngr.getProjectDescription(project);
 		assertNull("project description is not null for removed project", des);
-		
+
 		project = BuildSystemTestHelper.createProject(projName);
 		des = mngr.getProjectDescription(project);
 		assertNotNull("project description is null for re-created project", des);
 		assertTrue("des should be valid for re-created project", des.isValid());
-		
+
 		cfgDes = des.getConfigurations()[0];
 		fDes = cfgDes.getRootFolderDescription();
-		
+
 		cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
-		
+
 		fInfo = cfg.getRootFolderInfo();
-		
+
 		tool = fInfo.getToolsBySuperClassId("lv.tests.tool")[0];
 		option = tool.getOptionBySuperClassId("lv.tests.libFiles.option");
-		
+
 		ves = option.getBasicStringListValueElements();
 		assertTrue(Arrays.equals(updatedves, ves));
 		checkOptionValues(option);
 	}
-	
+
 	public void testSetToEmptyList_bug531106() throws Exception {
 		String projName = PROJ_NAME_PREFIX + "_bug531106";
 		IProject project = BuildSystemTestHelper.createProject(projName, null, "bug531106.tests.ptype");
@@ -301,7 +301,7 @@ public class OptionStringListValueTests extends TestCase {
 
 		ITool tool = fInfo.getToolsBySuperClassId("bug531106.tests.tool")[0];
 		testSetToEmptyList_VerifyValueCount(fInfo, tool, 1);
-		
+
 		//Test clearing
 		IOption slOption = tool.getOptionBySuperClassId("bug531106.tests.option.stringList");
 		ManagedBuildManager.setOption(fInfo, tool, slOption, new OptionStringValue[0]);
@@ -326,7 +326,7 @@ public class OptionStringListValueTests extends TestCase {
 
 		mngr.setProjectDescription(project, des);
 		ManagedBuildManager.saveBuildInfo(project, true);
-		
+
 		//Close & re-open project
 		project.close(new NullProgressMonitor());
 		project.open(new NullProgressMonitor());
@@ -342,7 +342,7 @@ public class OptionStringListValueTests extends TestCase {
 		tool = fInfo.getToolsBySuperClassId("bug531106.tests.tool")[0];
 		testSetToEmptyList_VerifyValueCount(fInfo, tool, 0);
 	}
-	
+
 	private void testSetToEmptyList_VerifyValueCount(IFolderInfo fInfo, ITool tool, int count) throws BuildException {
 		IOption slOption = tool.getOptionBySuperClassId("bug531106.tests.option.stringList");
 		assertEquals(count, slOption.getBasicStringListValueElements().length);
@@ -363,5 +363,5 @@ public class OptionStringListValueTests extends TestCase {
 		IOption libFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.libFiles");
 		assertEquals(count, libFilesOption.getBasicStringListValueElements().length);
 	}
-	
+
 }

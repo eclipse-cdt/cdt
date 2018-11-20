@@ -36,21 +36,21 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.cdt.core.model.CoreModel;
 
 public class CFileTypeDialog extends Dialog {
-	
+
 	public CFileTypeDialog(Shell parentShell) {
 		super(parentShell);
 	}
 
-	private Text		fTextPattern;
-	private Combo		fComboType;
+	private Text fTextPattern;
+	private Combo fComboType;
 
-	private String		fPattern;
+	private String fPattern;
 	private IContentType fType;
-	
+
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(PreferencesMessages.CFileTypeDialog_title); 
+		newShell.setText(PreferencesMessages.CFileTypeDialog_title);
 	}
 
 	@Override
@@ -67,15 +67,15 @@ public class CFileTypeDialog extends Dialog {
 		((GridLayout) composite.getLayout()).numColumns = 2;
 
 		// Pattern row
-		
+
 		Label pattern = new Label(composite, SWT.NONE);
-				
-		pattern.setText(PreferencesMessages.CFileTypeDialog_patternLabel); 
+
+		pattern.setText(PreferencesMessages.CFileTypeDialog_patternLabel);
 
 		fTextPattern = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		
+
 		fTextPattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		if (null != fPattern) {
 			fTextPattern.setText(fPattern);
 		}
@@ -86,19 +86,19 @@ public class CFileTypeDialog extends Dialog {
 				getOkayButton().setEnabled(getPatternFromControl().length() > 0);
 			}
 		});
-		
+
 		// Type row
-		
+
 		Label type = new Label(composite, SWT.NONE);
-		
-		type.setText(PreferencesMessages.CFileTypeDialog_typeLabel); 
-		
+
+		type.setText(PreferencesMessages.CFileTypeDialog_typeLabel);
+
 		fComboType = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SINGLE);
 
 		fComboType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		populateTypesCombo();
-		
+
 		return composite;
 	}
 
@@ -109,14 +109,14 @@ public class CFileTypeDialog extends Dialog {
 	public String getPattern() {
 		return fPattern;
 	}
-	
+
 	public IContentType getContentType() {
 		return fType;
 	}
 
 	private void populateTypesCombo() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		String[]	ids = CoreModel.getRegistedContentTypeIds();
+		String[] ids = CoreModel.getRegistedContentTypeIds();
 		ArrayList<IContentType> list = new ArrayList<IContentType>(ids.length);
 		for (String id : ids) {
 			IContentType ctype = manager.getContentType(id);
@@ -127,12 +127,12 @@ public class CFileTypeDialog extends Dialog {
 
 		IContentType[] ctypes = new IContentType[list.size()];
 		list.toArray(ctypes);
-		int	index = -1;
+		int index = -1;
 
 		for (IContentType ctype : ctypes) {
 			fComboType.add(ctype.getName());
 		}
-		
+
 		fComboType.setData(ctypes);
 
 		if (null != fType) {
@@ -145,18 +145,18 @@ public class CFileTypeDialog extends Dialog {
 	Button getOkayButton() {
 		return getButton(IDialogConstants.OK_ID);
 	}
-	
+
 	String getPatternFromControl() {
 		return fTextPattern.getText().trim();
 	}
-	
+
 	private IContentType getTypeFromControl() {
-		IContentType type	= null;
-		int		index	= fComboType.getSelectionIndex();
-		
+		IContentType type = null;
+		int index = fComboType.getSelectionIndex();
+
 		if (-1 != index) {
-			String			name	= fComboType.getItem(index);
-			IContentType[]	types	= (IContentType[]) fComboType.getData();
+			String name = fComboType.getItem(index);
+			IContentType[] types = (IContentType[]) fComboType.getData();
 			for (IContentType type2 : types) {
 				if (name.equals(type2.getName())) {
 					type = type2;
@@ -165,14 +165,13 @@ public class CFileTypeDialog extends Dialog {
 		}
 		return type;
 	}
-	
+
 	@Override
 	protected void okPressed() {
-		fPattern 	=	getPatternFromControl();
-		fType		=	getTypeFromControl();
-		
+		fPattern = getPatternFromControl();
+		fType = getTypeFromControl();
+
 		super.okPressed();
 	}
 
-	
 }

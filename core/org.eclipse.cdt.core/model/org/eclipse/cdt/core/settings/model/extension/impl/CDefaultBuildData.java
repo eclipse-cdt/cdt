@@ -30,29 +30,28 @@ public class CDefaultBuildData extends CBuildData {
 	protected String fName;
 	protected String fId;
 	protected boolean fIsModified;
-//	protected CConfigurationData fCfg;
-//	private CDataFacroty fFactory;
+	//	protected CConfigurationData fCfg;
+	//	private CDataFacroty fFactory;
 
+	//	public CDefaultBuildData(CConfigurationData cfg, CDataFacroty factory) {
+	//		fCfg = cfg;
+	//		if(factory == null)
+	//			factory = new CDataFacroty();
+	//		fFactory = factory;
+	//	}
 
-//	public CDefaultBuildData(CConfigurationData cfg, CDataFacroty factory) {
-//		fCfg = cfg;
-//		if(factory == null)
-//			factory = new CDataFacroty();
-//		fFactory = factory;
-//	}
-	
-	public CDefaultBuildData(){
-		
+	public CDefaultBuildData() {
+
 	}
-	
+
 	public CDefaultBuildData(String id, CBuildData base) {
 		fId = id;
-		
+
 		copySettingsFrom(base);
 	}
-	
-	protected void copySettingsFrom(CBuildData data){
-		if(data != null){
+
+	protected void copySettingsFrom(CBuildData data) {
+		if (data != null) {
 			fName = data.getName();
 			fCWD = data.getBuilderCWD();
 			fErrorParserIDs = data.getErrorParserIDs();
@@ -67,49 +66,49 @@ public class CDefaultBuildData extends CBuildData {
 
 	@Override
 	public String[] getErrorParserIDs() {
-		if(fErrorParserIDs != null && fErrorParserIDs.length != 0)
+		if (fErrorParserIDs != null && fErrorParserIDs.length != 0)
 			return fErrorParserIDs.clone();
 		return EMPTY_STRING_ARRAY;
 	}
 
 	@Override
 	public ICOutputEntry[] getOutputDirectories() {
-		if(fOutputEntries != null && fOutputEntries.length != 0)
+		if (fOutputEntries != null && fOutputEntries.length != 0)
 			return fOutputEntries.clone();
 		return EMPTY_OUTPUT_ENTRIES_ARRAY;
 	}
 
 	@Override
 	public void setBuilderCWD(IPath path) {
-		if(CDataUtil.objectsEqual(path, fCWD))
+		if (CDataUtil.objectsEqual(path, fCWD))
 			return;
-		
+
 		fCWD = path;
-		
+
 		setModified(true);
 	}
 
 	@Override
 	public void setErrorParserIDs(String[] ids) {
-		if(Arrays.equals(ids, fErrorParserIDs))
+		if (Arrays.equals(ids, fErrorParserIDs))
 			return;
-		if(ids != null && ids.length != 0)
+		if (ids != null && ids.length != 0)
 			fErrorParserIDs = ids.clone();
 		else
 			fErrorParserIDs = ids;
-		
+
 		setModified(true);
 	}
 
 	@Override
 	public void setOutputDirectories(ICOutputEntry[] entries) {
-		if(Arrays.equals(entries, fOutputEntries))
+		if (Arrays.equals(entries, fOutputEntries))
 			return;
-		
-		if(entries != null && entries.length != 0)
+
+		if (entries != null && entries.length != 0)
 			fOutputEntries = entries.clone();
 		else
-			fOutputEntries = entries; 
+			fOutputEntries = entries;
 
 		setModified(true);
 	}
@@ -135,11 +134,11 @@ public class CDefaultBuildData extends CBuildData {
 		return null;
 	}
 
-	public boolean isModified(){
+	public boolean isModified() {
 		return fIsModified;
 	}
-	
-	public void setModified(boolean modified){
+
+	public void setModified(boolean modified) {
 		fIsModified = modified;
 	}
 }

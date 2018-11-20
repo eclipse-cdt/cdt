@@ -17,7 +17,6 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
-
 /**
  * Represents an empty tab group. Actual tabs are added via the
  * <code>org.eclipse.debug.ui.launchConfigurationTabs</code> extension point.
@@ -26,7 +25,7 @@ public class EmptyConfigurationTabGroup extends AbstractLaunchConfigurationTabGr
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-        setTabs(new ILaunchConfigurationTab[0]);
+		setTabs(new ILaunchConfigurationTab[0]);
 	}
-	
+
 }

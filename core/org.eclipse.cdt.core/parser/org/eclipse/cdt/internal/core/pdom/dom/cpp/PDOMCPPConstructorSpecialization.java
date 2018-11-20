@@ -29,19 +29,18 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization 
-		implements ICPPConstructorSpecialization {
+class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization implements ICPPConstructorSpecialization {
 	/** Offset of the constructor chain execution for constexpr constructors. */
 	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethodSpecialization.RECORD_SIZE + 0; // Database.EXECUTION_SIZE
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPConstructorSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 
-	public PDOMCPPConstructorSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, 
-			ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
+	public PDOMCPPConstructorSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor constructor,
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, constructor, specialized);
 		linkage.new ConfigureConstructorSpecialization(constructor, this);
 	}
@@ -49,7 +48,7 @@ class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization
 	public PDOMCPPConstructorSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	public void initConstructorData(ICPPExecution constructorChain) {
 		if (constructorChain == null)
 			return;
@@ -59,7 +58,7 @@ class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -69,13 +68,13 @@ class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_SPECIALIZATION;
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())

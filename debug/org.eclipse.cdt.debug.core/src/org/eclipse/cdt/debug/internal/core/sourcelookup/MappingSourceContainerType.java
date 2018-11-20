@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTyp
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
- 
+
 /**
  * The mapping container type.
  */
@@ -46,7 +46,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 			Element element = (Element) node;
 			if (ELEMENT_MAPPING.equals(element.getNodeName())) {
 				String name = element.getAttribute(ATTR_NAME);
-				if (name == null) 
+				if (name == null)
 					name = ""; //$NON-NLS-1$
 				String backendEnabled = element.getAttribute(ATTR_BACKEND_ENABLED);
 				// When upgrading source locator (See Bug 472765),
@@ -56,14 +56,16 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 				Node childNode = element.getFirstChild();
 				while (childNode != null) {
 					if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element child = (Element)childNode;
+						Element child = (Element) childNode;
 						if (ELEMENT_MAP_ENTRY.equals(child.getNodeName())) {
 							String childMemento = child.getAttribute(ATTR_MEMENTO);
 							if (childMemento == null || childMemento.length() == 0) {
 								abort(InternalSourceLookupMessages.MappingSourceContainerType_0, null);
 							}
-							ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(MapEntrySourceContainer.TYPE_ID);
-							MapEntrySourceContainer entry = (MapEntrySourceContainer) type.createSourceContainer(childMemento);
+							ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager()
+									.getSourceContainerType(MapEntrySourceContainer.TYPE_ID);
+							MapEntrySourceContainer entry = (MapEntrySourceContainer) type
+									.createSourceContainer(childMemento);
 							entries.add(entry);
 						}
 					}
@@ -79,7 +81,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 			abort(InternalSourceLookupMessages.MappingSourceContainerType_1, null);
 		}
 		abort(InternalSourceLookupMessages.MappingSourceContainerType_2, null);
-		return null;		
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -90,9 +92,9 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 		Document document = newDocument();
 		Element element = document.createElement(ELEMENT_MAPPING);
 		element.setAttribute(ATTR_NAME, container.getName());
-		boolean backendEnabled = ((MappingSourceContainer)container).isMappingWithBackendEnabled();
+		boolean backendEnabled = ((MappingSourceContainer) container).isMappingWithBackendEnabled();
 		element.setAttribute(ATTR_BACKEND_ENABLED, String.valueOf(backendEnabled));
-		ISourceContainer[] entries = ((MappingSourceContainer)container).getSourceContainers();
+		ISourceContainer[] entries = ((MappingSourceContainer) container).getSourceContainers();
 		for (int i = 0; i < entries.length; ++i) {
 			Element child = document.createElement(ELEMENT_MAP_ENTRY);
 			child.setAttribute(ATTR_MEMENTO, entries[i].getType().getMemento(entries[i]));

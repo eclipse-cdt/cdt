@@ -52,7 +52,8 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 	 */
 	@Override
 	protected String getCLILabel(ILaunchConfiguration config, String gdbVersion) throws CoreException {
-		return LLDBLaunch.getLLDBPath(config).toString().trim() + " (" + Messages.LLDBLaunchDelegate_mimicking_gdb + " gdb " + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return LLDBLaunch.getLLDBPath(config).toString().trim() + " (" + Messages.LLDBLaunchDelegate_mimicking_gdb //$NON-NLS-1$
+				+ " gdb " + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -60,7 +61,8 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 		return new LLDBServiceFactory(version, config);
 	}
 
-    protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
-    	return new LLDBLaunch(configuration, mode, locator);
-    }
+	protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator)
+			throws CoreException {
+		return new LLDBLaunch(configuration, mode, locator);
+	}
 }

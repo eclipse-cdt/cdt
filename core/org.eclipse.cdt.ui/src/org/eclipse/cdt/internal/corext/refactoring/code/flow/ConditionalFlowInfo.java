@@ -30,7 +30,7 @@ class ConditionalFlowInfo extends FlowInfo {
 		if (truePart == null && falsePart == null)
 			return;
 
-		GenericConditionalFlowInfo cond= new GenericConditionalFlowInfo();
+		GenericConditionalFlowInfo cond = new GenericConditionalFlowInfo();
 		if (truePart != null)
 			cond.mergeAccessMode(truePart, context);
 
@@ -43,5 +43,3 @@ class ConditionalFlowInfo extends FlowInfo {
 		mergeAccessModeSequential(cond, context);
 	}
 }
-
-

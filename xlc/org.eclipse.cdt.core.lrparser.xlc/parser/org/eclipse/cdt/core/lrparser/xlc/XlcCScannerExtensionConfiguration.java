@@ -18,12 +18,12 @@ import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 public class XlcCScannerExtensionConfiguration extends GCCScannerExtensionConfiguration {
 
 	private static XlcCScannerExtensionConfiguration instance;
-	
-	
-	private XlcCScannerExtensionConfiguration() {}
-	
+
+	private XlcCScannerExtensionConfiguration() {
+	}
+
 	public static synchronized XlcCScannerExtensionConfiguration getInstance() {
-		if(instance == null)
+		if (instance == null)
 			instance = new XlcCScannerExtensionConfiguration();
 		return instance;
 	}
@@ -35,6 +35,6 @@ public class XlcCScannerExtensionConfiguration extends GCCScannerExtensionConfig
 
 	@Override
 	public char[] supportAdditionalNumericLiteralSuffixes() {
-        return "dflij".toCharArray(); //$NON-NLS-1$
-    }
+		return "dflij".toCharArray(); //$NON-NLS-1$
+	}
 }

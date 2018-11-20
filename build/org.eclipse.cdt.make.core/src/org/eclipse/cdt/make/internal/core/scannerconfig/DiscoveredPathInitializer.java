@@ -27,29 +27,27 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-
 public class DiscoveredPathInitializer extends PathEntryContainerInitializer {
 
 	@Override
 	public void initialize(IPath containerPath, ICProject cProject) throws CoreException {
-        IProject project = cProject.getProject();
-        IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
-        String selectedProfileId = buildInfo.getSelectedProfileId();
-        if (ScannerConfigProfileManager.NULL_PROFILE_ID.equals(selectedProfileId))
-            return;
-        
-        ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
-                getSCProfileConfiguration(selectedProfileId).getProfileScope();
-        if (ScannerConfigScope.PROJECT_SCOPE.equals(profileScope)) {
-            CoreModel.setPathEntryContainer(new ICProject[]{cProject}, new DiscoveredPathContainer(project), null);
-        }
-        else if (ScannerConfigScope.FILE_SCOPE.equals(profileScope)) {
-            CoreModel.setPathEntryContainer(new ICProject[]{cProject}, new PerFileDiscoveredPathContainer(project), null);
-        }
-        else {
-            throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), 1,
-                    MakeMessages.getString("DiscoveredContainer.ScopeErrorMessage"), null));  //$NON-NLS-1$
-        }
+		IProject project = cProject.getProject();
+		IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
+		String selectedProfileId = buildInfo.getSelectedProfileId();
+		if (ScannerConfigProfileManager.NULL_PROFILE_ID.equals(selectedProfileId))
+			return;
+
+		ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance()
+				.getSCProfileConfiguration(selectedProfileId).getProfileScope();
+		if (ScannerConfigScope.PROJECT_SCOPE.equals(profileScope)) {
+			CoreModel.setPathEntryContainer(new ICProject[] { cProject }, new DiscoveredPathContainer(project), null);
+		} else if (ScannerConfigScope.FILE_SCOPE.equals(profileScope)) {
+			CoreModel.setPathEntryContainer(new ICProject[] { cProject }, new PerFileDiscoveredPathContainer(project),
+					null);
+		} else {
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), 1,
+					MakeMessages.getString("DiscoveredContainer.ScopeErrorMessage"), null)); //$NON-NLS-1$
+		}
 	}
 
 }

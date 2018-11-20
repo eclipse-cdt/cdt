@@ -49,50 +49,49 @@ import org.apache.tools.ant.util.FileUtils;
  * </p>
  */
 public class PreProcessor extends Task {
-	
+
 	private Vector<FileSet> fFileSets = new Vector<>();
 	private File fDestDir = null;
-	private Set<String> fSymbols = new HashSet<>(); 
+	private Set<String> fSymbols = new HashSet<>();
 	private FileUtils fUtils = FileUtils.getFileUtils();
-	
+
 	// possible states
 	private static final int STATE_OUTSIDE_CONDITION = 0;
 	private static final int STATE_TRUE_CONDITION = 1;
 	private static final int STATE_FALSE_CONDITION = 2;
 	private static final int STATE_POST_TRUE_CONDITION = 3;
-	
+
 	// matchers
 	private Matcher IF_DEF_MATCHER = Pattern.compile("#ifdef\\s+\\w+").matcher("");
 	private Matcher ELSE_IF_MATCHER = Pattern.compile("#elseif\\s+\\w+").matcher("");
 	private Matcher ELSE_MATCHER = Pattern.compile("#else$|#else\\W+").matcher("");
 	private Matcher END_MATCHER = Pattern.compile("#endif").matcher("");
 
-	
 	/**
 	 * Constructs a new preprocessor task
 	 */
 	public PreProcessor() {
 	}
-	
-    /**
-     * Adds a set of files to process.
-     * 
-     * @param set a set of files to process
-     */
-    public void addFileset(FileSet set) {
-        fFileSets.addElement(set);
-    }
-    
-    /**
-     * Sets the destination directory for processed files.
-     * 
-     * @param destDir destination directory for processed files
-     */
-    public void setDestdir(File destDir) {
-    	fDestDir = destDir;
-    }
-    
-    /**
+
+	/**
+	 * Adds a set of files to process.
+	 * 
+	 * @param set a set of files to process
+	 */
+	public void addFileset(FileSet set) {
+		fFileSets.addElement(set);
+	}
+
+	/**
+	 * Sets the destination directory for processed files.
+	 * 
+	 * @param destDir destination directory for processed files
+	 */
+	public void setDestdir(File destDir) {
+		fDestDir = destDir;
+	}
+
+	/**
 	 * Sets the symbols that are "on" for the preprocessing.
 	 * 
 	 * @param symbols symbols that are "on" for the preprocessing
@@ -123,12 +122,12 @@ public class PreProcessor extends Task {
 		for (int i = 0; i < symbols.length; i++) {
 			String symbol = symbols[i];
 			buf.append(symbol);
-			if(i < (symbols.length -1)) {
+			if (i < (symbols.length - 1)) {
 				buf.append(", ");
 			}
 		}
 		log(buf.toString());
-		
+
 		Iterator<FileSet> fileSets = fFileSets.iterator();
 		while (fileSets.hasNext()) {
 			FileSet fileSet = fileSets.next();
@@ -140,7 +139,7 @@ public class PreProcessor extends Task {
 				processFile(baseDir, fileName, fDestDir);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -179,7 +178,7 @@ public class PreProcessor extends Task {
 			} catch (IOException e) {
 				throw new BuildException(e);
 			}
-			
+
 		}
 	}
 
@@ -205,60 +204,61 @@ public class PreProcessor extends Task {
 				boolean commandLine = ifdef || elseif || elze || endif;
 				boolean written = false;
 				switch (state) {
-					case STATE_OUTSIDE_CONDITION:
-						if (ifdef) {
-							String condition = line.substring(IF_DEF_MATCHER.start(), IF_DEF_MATCHER.end());
-							String[] strings = condition.split("\\s+");
-							activeSymbol = strings[1].trim();
-							if (fSymbols.contains(activeSymbol)) {
-								state = STATE_TRUE_CONDITION;
-							} else {
-								state = STATE_FALSE_CONDITION;
-							}							
-						} else if (elseif) {
-							throw new BuildException("#elseif encountered without corresponding #ifdef");
-						} else if (elze) {
-							throw new BuildException("#else encountered without corresponding #ifdef (" + srcFile.getPath() + ")");
-						} else if (endif) {
-							throw new BuildException("#endif encountered without corresponding #ifdef");
-						}
-						break;
-					case STATE_TRUE_CONDITION:
-						if (elze || elseif) {
-							state = STATE_POST_TRUE_CONDITION;
-							break;
-						} else if (endif) {
-							state = STATE_OUTSIDE_CONDITION;
-							break;
-						} else if (ifdef) {
-							throw new BuildException("illegal nested #ifdef");
-						}
-					case STATE_FALSE_CONDITION:
-						if (elseif) {
-							String condition = line.substring(ELSE_IF_MATCHER.start(), ELSE_IF_MATCHER.end());
-							String[] strings = condition.split("\\s+");
-							activeSymbol = strings[1].trim();
-							if (fSymbols.contains(activeSymbol)) {
-								state = STATE_TRUE_CONDITION;
-							} else {
-								state = STATE_FALSE_CONDITION;
-							}
-						} else if (elze) {
+				case STATE_OUTSIDE_CONDITION:
+					if (ifdef) {
+						String condition = line.substring(IF_DEF_MATCHER.start(), IF_DEF_MATCHER.end());
+						String[] strings = condition.split("\\s+");
+						activeSymbol = strings[1].trim();
+						if (fSymbols.contains(activeSymbol)) {
 							state = STATE_TRUE_CONDITION;
-							break;
-						} else if (endif) {
-							state = STATE_OUTSIDE_CONDITION;
-							break;
-						} else if (ifdef) {
-							throw new BuildException("illegal nested #ifdef");
+						} else {
+							state = STATE_FALSE_CONDITION;
 						}
-					case STATE_POST_TRUE_CONDITION:
-						if (endif) {
-							state = STATE_OUTSIDE_CONDITION;
-							break;
-						} else if (ifdef) {
-							throw new BuildException("illegal nested #ifdef");
+					} else if (elseif) {
+						throw new BuildException("#elseif encountered without corresponding #ifdef");
+					} else if (elze) {
+						throw new BuildException(
+								"#else encountered without corresponding #ifdef (" + srcFile.getPath() + ")");
+					} else if (endif) {
+						throw new BuildException("#endif encountered without corresponding #ifdef");
+					}
+					break;
+				case STATE_TRUE_CONDITION:
+					if (elze || elseif) {
+						state = STATE_POST_TRUE_CONDITION;
+						break;
+					} else if (endif) {
+						state = STATE_OUTSIDE_CONDITION;
+						break;
+					} else if (ifdef) {
+						throw new BuildException("illegal nested #ifdef");
+					}
+				case STATE_FALSE_CONDITION:
+					if (elseif) {
+						String condition = line.substring(ELSE_IF_MATCHER.start(), ELSE_IF_MATCHER.end());
+						String[] strings = condition.split("\\s+");
+						activeSymbol = strings[1].trim();
+						if (fSymbols.contains(activeSymbol)) {
+							state = STATE_TRUE_CONDITION;
+						} else {
+							state = STATE_FALSE_CONDITION;
 						}
+					} else if (elze) {
+						state = STATE_TRUE_CONDITION;
+						break;
+					} else if (endif) {
+						state = STATE_OUTSIDE_CONDITION;
+						break;
+					} else if (ifdef) {
+						throw new BuildException("illegal nested #ifdef");
+					}
+				case STATE_POST_TRUE_CONDITION:
+					if (endif) {
+						state = STATE_OUTSIDE_CONDITION;
+						break;
+					} else if (ifdef) {
+						throw new BuildException("illegal nested #ifdef");
+					}
 				}
 				if (!commandLine) {
 					if (state == STATE_OUTSIDE_CONDITION || state == STATE_TRUE_CONDITION) {
@@ -271,8 +271,8 @@ public class PreProcessor extends Task {
 						buffer.append("\n");
 						written = true;
 					}
-				} 
-				changed = changed || !written;								
+				}
+				changed = changed || !written;
 				line = reader.readLine();
 			}
 			if (!changed) {
@@ -284,10 +284,12 @@ public class PreProcessor extends Task {
 		}
 	}
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 		PreProcessor processor = new PreProcessor();
 		processor.setSymbols("ex2");
-		String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"), "//#");
+		String string = processor.preProcessFile(new File(
+				"c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"),
+				"//#");
 		//String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\plugin.xml"), null);
 		System.out.println(string);
 	}

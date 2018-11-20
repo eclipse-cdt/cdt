@@ -49,7 +49,8 @@ public class CodanMarkerGenerator implements IMarkerGenerator {
 
 	@Override
 	public void addMarker(ProblemMarkerInfo info) {
-		reporter.reportProblem(getProblemId(info.severity), createProblemLocation(info), info.description, info.variableName);
+		reporter.reportProblem(getProblemId(info.severity), createProblemLocation(info), info.description,
+				info.variableName);
 	}
 
 	protected String getProblemId(int severity) {

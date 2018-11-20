@@ -42,9 +42,8 @@ public interface IDisassembly3 extends IDisassembly2 {
 	 * @param drm
 	 *            Disassembled code
 	 */
-	public void getInstructions(IDisassemblyDMContext context,
-			BigInteger startAddress, BigInteger endAddress, boolean opCodes,
-			DataRequestMonitor<IInstruction[]> drm);
+	public void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			boolean opCodes, DataRequestMonitor<IInstruction[]> drm);
 
 	/**
 	 * Gets a block of disassembled code given a filename, line number, and line
@@ -67,9 +66,8 @@ public interface IDisassembly3 extends IDisassembly2 {
 	 * @param drm
 	 *            Disassembled code
 	 */
-	public void getInstructions(IDisassemblyDMContext context, String filename,
-			int linenum, int instructionCount, boolean opCodes,
-			DataRequestMonitor<IInstruction[]> drm);
+	public void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int instructionCount,
+			boolean opCodes, DataRequestMonitor<IInstruction[]> drm);
 
 	/**
 	 * Gets a block of mixed disassembled code given an address range.
@@ -86,9 +84,8 @@ public interface IDisassembly3 extends IDisassembly2 {
 	 * @param drm
 	 *            Disassembled code
 	 */
-	public void getMixedInstructions(IDisassemblyDMContext context,
-			BigInteger startAddress, BigInteger endAddress, boolean opCodes,
-			DataRequestMonitor<IMixedInstruction[]> drm);
+	public void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			boolean opCodes, DataRequestMonitor<IMixedInstruction[]> drm);
 
 	/**
 	 * Gets a block of mixed disassembled code given a filename, line number,
@@ -110,8 +107,7 @@ public interface IDisassembly3 extends IDisassembly2 {
 	 * @param drm
 	 *            Disassembled code
 	 */
-	public void getMixedInstructions(IDisassemblyDMContext context,
-			String filename, int linenum, int instructionCount,
+	public void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int instructionCount,
 			boolean opCodes, DataRequestMonitor<IMixedInstruction[]> drm);
 
 }

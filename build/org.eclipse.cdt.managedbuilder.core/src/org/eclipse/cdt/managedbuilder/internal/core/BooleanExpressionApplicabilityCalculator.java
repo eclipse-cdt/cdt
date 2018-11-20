@@ -42,123 +42,112 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 
 	private Map<String, Set<String>> fRefPropsMap;
 
-	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement optionElement){
+	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement optionElement) {
 		this(optionElement.getChildren(OptionEnablementExpression.NAME));
 	}
 
-	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement enablementElements[]){
+	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement enablementElements[]) {
 		fExpressions = new OptionEnablementExpression[enablementElements.length];
 
-		for(int i = 0; i < enablementElements.length; i++){
+		for (int i = 0; i < enablementElements.length; i++) {
 			fExpressions[i] = new OptionEnablementExpression(enablementElements[i]);
 		}
 	}
 
 	@Override
-	public boolean isOptionVisible(IBuildObject configuration,
-            IHoldsOptions holder,
-            IOption option){
+	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		IResourceInfo rcInfo = rcInfoFromConfiguration(configuration);
-		if(rcInfo != null)
+		if (rcInfo != null)
 			return evaluate(rcInfo, holder, option, OptionEnablementExpression.FLAG_UI_VISIBILITY);
 		return true;
 	}
 
-	public static IResourceInfo rcInfoFromConfiguration(IBuildObject configuration){
-		if(configuration instanceof IFolderInfo)
-			return (IFolderInfo)configuration;
-		if(configuration instanceof IFileInfo)
-			return (IFileInfo)configuration;
-		if(configuration instanceof IConfiguration)
-			return ((IConfiguration)configuration).getRootFolderInfo();
+	public static IResourceInfo rcInfoFromConfiguration(IBuildObject configuration) {
+		if (configuration instanceof IFolderInfo)
+			return (IFolderInfo) configuration;
+		if (configuration instanceof IFileInfo)
+			return (IFileInfo) configuration;
+		if (configuration instanceof IConfiguration)
+			return ((IConfiguration) configuration).getRootFolderInfo();
 		return null;
 	}
 
-	public boolean isInputTypeEnabled(ITool tool, IInputType type){
+	public boolean isInputTypeEnabled(ITool tool, IInputType type) {
 		return evaluate(tool.getParentResourceInfo(), tool, null, OptionEnablementExpression.FLAG_CMD_USAGE);
 	}
 
-	public boolean isOutputTypeEnabled(ITool tool, IOutputType type){
+	public boolean isOutputTypeEnabled(ITool tool, IOutputType type) {
 		return evaluate(tool.getParentResourceInfo(), tool, null, OptionEnablementExpression.FLAG_CMD_USAGE);
 	}
 
-	public boolean isToolUsedInCommandLine(IResourceInfo rcInfo,
-			ITool tool){
+	public boolean isToolUsedInCommandLine(IResourceInfo rcInfo, ITool tool) {
 		return evaluate(rcInfo, tool, null, OptionEnablementExpression.FLAG_CMD_USAGE);
 	}
 
 	@Override
-	public boolean isOptionEnabled(IBuildObject configuration,
-            IHoldsOptions holder,
-            IOption option){
+	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		IResourceInfo rcInfo = rcInfoFromConfiguration(configuration);
-		if(rcInfo != null)
+		if (rcInfo != null)
 			return evaluate(rcInfo, holder, option, OptionEnablementExpression.FLAG_UI_ENABLEMENT);
 		return true;
 	}
 
 	@Override
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
-            IHoldsOptions holder,
-            IOption option){
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		IResourceInfo rcInfo = rcInfoFromConfiguration(configuration);
-		if(rcInfo != null)
+		if (rcInfo != null)
 			return evaluate(rcInfo, holder, option, OptionEnablementExpression.FLAG_CMD_USAGE);
 		return true;
 	}
 
-	public boolean evaluate(IResourceInfo rcInfo,
-			IHoldsOptions holder, IOption option, int flags){
-		for(int i = 0; i < fExpressions.length; i++){
-			if(!fExpressions[i].evaluate(rcInfo, holder, option, flags))
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, int flags) {
+		for (int i = 0; i < fExpressions.length; i++) {
+			if (!fExpressions[i].evaluate(rcInfo, holder, option, flags))
 				return false;
 		}
 		return true;
 	}
 
-/*	public boolean performAdjustment(IBuildObject configuration,
-			IHoldsOptions holder, IOption option, boolean extensionAdjustment){
-		boolean adjusted = false;
-		for(int i = 0; i < fExpressions.length; i++){
-			if(fExpressions[i].performAdjustment(configuration, holder, option, extensionAdjustment))
-				adjusted = true;
+	/*	public boolean performAdjustment(IBuildObject configuration,
+				IHoldsOptions holder, IOption option, boolean extensionAdjustment){
+			boolean adjusted = false;
+			for(int i = 0; i < fExpressions.length; i++){
+				if(fExpressions[i].performAdjustment(configuration, holder, option, extensionAdjustment))
+					adjusted = true;
+			}
+			return adjusted;
 		}
-		return adjusted;
-	}
-*/
-	public boolean adjustOption(IResourceInfo rcInfo,
-            IHoldsOptions holder,
-            IOption option,
-            boolean extensionAdjustment){
+	*/
+	public boolean adjustOption(IResourceInfo rcInfo, IHoldsOptions holder, IOption option,
+			boolean extensionAdjustment) {
 		boolean adjusted = false;
 		AdjustmentContext context = extensionAdjustment ? null : new AdjustmentContext();
-		for(int i = 0; i < fExpressions.length; i++){
-			if(fExpressions[i].adjustOption(rcInfo, holder, option, context, extensionAdjustment))
+		for (int i = 0; i < fExpressions.length; i++) {
+			if (fExpressions[i].adjustOption(rcInfo, holder, option, context, extensionAdjustment))
 				adjusted = true;
 		}
 
-		if(context != null){
+		if (context != null) {
 			String unadjusted[] = context.getUnadjusted();
-			for(int i = 0; i < unadjusted.length; i++){
-				OptionEnablementExpression.adjustOption(rcInfo, holder, option, unadjusted[i], null, extensionAdjustment);
+			for (int i = 0; i < unadjusted.length; i++) {
+				OptionEnablementExpression.adjustOption(rcInfo, holder, option, unadjusted[i], null,
+						extensionAdjustment);
 			}
 		}
 		return adjusted;
 	}
 
-	public boolean adjustToolChain(IFolderInfo info,
-            IToolChain tChain,
-            boolean extensionAdjustment){
+	public boolean adjustToolChain(IFolderInfo info, IToolChain tChain, boolean extensionAdjustment) {
 		boolean adjusted = false;
 		AdjustmentContext context = extensionAdjustment ? null : new AdjustmentContext();
-		for(int i = 0; i < fExpressions.length; i++){
-			if(fExpressions[i].adjustToolChain(info, tChain, context, extensionAdjustment))
+		for (int i = 0; i < fExpressions.length; i++) {
+			if (fExpressions[i].adjustToolChain(info, tChain, context, extensionAdjustment))
 				adjusted = true;
 		}
 
-		if(context != null){
+		if (context != null) {
 			String unadjusted[] = context.getUnadjusted();
-			for(int i = 0; i < unadjusted.length; i++){
+			for (int i = 0; i < unadjusted.length; i++) {
 				OptionEnablementExpression.adjustToolChain(info, tChain, unadjusted[i], null, extensionAdjustment);
 			}
 		}
@@ -166,19 +155,17 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return adjusted;
 	}
 
-	public boolean adjustTool(IResourceInfo info,
-            ITool tool,
-            boolean extensionAdjustment){
+	public boolean adjustTool(IResourceInfo info, ITool tool, boolean extensionAdjustment) {
 		boolean adjusted = false;
 		AdjustmentContext context = extensionAdjustment ? null : new AdjustmentContext();
-		for(int i = 0; i < fExpressions.length; i++){
-			if(fExpressions[i].adjustTool(info, tool, context, extensionAdjustment))
+		for (int i = 0; i < fExpressions.length; i++) {
+			if (fExpressions[i].adjustTool(info, tool, context, extensionAdjustment))
 				adjusted = true;
 		}
 
-		if(context != null){
+		if (context != null) {
 			String unadjusted[] = context.getUnadjusted();
-			for(int i = 0; i < unadjusted.length; i++){
+			for (int i = 0; i < unadjusted.length; i++) {
 				OptionEnablementExpression.adjustTool(info, tool, unadjusted[i], null, extensionAdjustment);
 			}
 		}
@@ -186,18 +173,17 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return adjusted;
 	}
 
-	public boolean adjustConfiguration(IConfiguration cfg,
-            boolean extensionAdjustment){
+	public boolean adjustConfiguration(IConfiguration cfg, boolean extensionAdjustment) {
 		boolean adjusted = false;
 		AdjustmentContext context = extensionAdjustment ? null : new AdjustmentContext();
-		for(int i = 0; i < fExpressions.length; i++){
-			if(fExpressions[i].adjustConfiguration(cfg, context, extensionAdjustment))
+		for (int i = 0; i < fExpressions.length; i++) {
+			if (fExpressions[i].adjustConfiguration(cfg, context, extensionAdjustment))
 				adjusted = true;
 		}
 
-		if(context != null){
+		if (context != null) {
 			String unadjusted[] = context.getUnadjusted();
-			for(int i = 0; i < unadjusted.length; i++){
+			for (int i = 0; i < unadjusted.length; i++) {
 				OptionEnablementExpression.adjustConfiguration(cfg, unadjusted[i], null, extensionAdjustment);
 			}
 		}
@@ -205,37 +191,37 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return adjusted;
 	}
 
-	private Map<String, Set<String>> getReferencedProperties(){
-		if(fRefPropsMap == null){
+	private Map<String, Set<String>> getReferencedProperties() {
+		if (fRefPropsMap == null) {
 			fRefPropsMap = new HashMap<String, Set<String>>();
 
-			for(int i = 0; i < fExpressions.length; i++){
+			for (int i = 0; i < fExpressions.length; i++) {
 				fExpressions[i].getReferencedProperties(fRefPropsMap);
 			}
 		}
 		return fRefPropsMap;
 	}
 
-	public boolean referesProperty(String id){
+	public boolean referesProperty(String id) {
 		Map<String, Set<String>> map = getReferencedProperties();
 
 		return map.containsKey(id);
 	}
 
-	public boolean referesPropertyValue(String propertyId, String valueId){
+	public boolean referesPropertyValue(String propertyId, String valueId) {
 		Map<String, Set<String>> map = getReferencedProperties();
 		Set<String> set = map.get(propertyId);
-		if(set != null)
+		if (set != null)
 			return set.contains(valueId);
 		return false;
 	}
 
-	public String[] getReferencedPropertyIds(){
+	public String[] getReferencedPropertyIds() {
 		Map<String, Set<String>> map = getReferencedProperties();
 		return map.keySet().toArray(new String[map.size()]);
 	}
 
-	public String[] getReferencedValueIds(String propertyId){
+	public String[] getReferencedValueIds(String propertyId) {
 		Map<String, Set<String>> map = getReferencedProperties();
 		Set<String> set = map.get(propertyId);
 		return set.toArray(new String[set.size()]);
@@ -248,11 +234,11 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 	}
 
 	private boolean evaluateCategory(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
-		for(int i = 0; i < fExpressions.length; i++){
-			if(!fExpressions[i].evaluate(rcInfo, holder, category))
+		for (int i = 0; i < fExpressions.length; i++) {
+			if (!fExpressions[i].evaluate(rcInfo, holder, category))
 				return false;
 		}
 		return true;
-}
+	}
 
 }

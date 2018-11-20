@@ -35,7 +35,7 @@ public class DummyUISession implements ITestingSession {
 	public int getTotalCounter() {
 		return 0;
 	}
-	
+
 	@Override
 	public int getCount(ITestItem.Status status) {
 		return 0;

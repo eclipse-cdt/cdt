@@ -15,11 +15,11 @@ package org.eclipse.cdt.core.settings.model;
 
 public interface ICExternalSetting {
 	String[] getCompatibleLanguageIds();
-	
+
 	String[] getCompatibleContentTypeIds();
-	
+
 	String[] getCompatibleExtensions();
-	
+
 	ICSettingEntry[] getEntries(int kind);
 
 	ICSettingEntry[] getEntries();

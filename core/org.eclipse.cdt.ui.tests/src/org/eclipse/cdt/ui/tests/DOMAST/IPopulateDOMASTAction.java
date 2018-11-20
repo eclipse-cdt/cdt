@@ -21,7 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
  */
 public interface IPopulateDOMASTAction {
 	public DOMASTNodeParent getTree();
+
 	public DOMASTNodeLeaf[] mergePreprocessorStatements(IASTPreprocessorStatement[] statements);
+
 	public void mergePreprocessorProblems(IASTProblem[] problems);
+
 	public void groupIncludes(DOMASTNodeLeaf[] statements);
 }

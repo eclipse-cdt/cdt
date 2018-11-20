@@ -32,8 +32,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGNUASTGotoStatement extends IASTStatement, IASTNameOwner {
-	public static final ASTNodeProperty LABEL_NAME =
-			new ASTNodeProperty("IASTGotoExpression.LABEL_NAME [IASTExpression]"); //$NON-NLS-1$
+	public static final ASTNodeProperty LABEL_NAME = new ASTNodeProperty(
+			"IASTGotoExpression.LABEL_NAME [IASTExpression]"); //$NON-NLS-1$
 
 	/**
 	 * Returns the label-name expression. The expression resolves to a ILabel binding.
@@ -49,7 +49,7 @@ public interface IGNUASTGotoStatement extends IASTStatement, IASTNameOwner {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setLabelNameExpression(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

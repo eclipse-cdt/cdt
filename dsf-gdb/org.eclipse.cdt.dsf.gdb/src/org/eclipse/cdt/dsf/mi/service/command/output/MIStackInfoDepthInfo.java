@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * -stack-info-depth [max-depth]
  * ^done,depth="12"
@@ -27,20 +26,20 @@ public class MIStackInfoDepthInfo extends MIInfo {
 
 	public MIStackInfoDepthInfo(MIOutput record) {
 		super(record);
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIValue value = rr.getField("depth"); //$NON-NLS-1$
-                if (value instanceof MIConst) {
-                    String str = ((MIConst)value).getString();
-                    try {
-                        depth = Integer.parseInt(str.trim());
-                    } catch (NumberFormatException e) {
-                    }
-                }
-            }
-        }
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIValue value = rr.getField("depth"); //$NON-NLS-1$
+				if (value instanceof MIConst) {
+					String str = ((MIConst) value).getString();
+					try {
+						depth = Integer.parseInt(str.trim());
+					} catch (NumberFormatException e) {
+					}
+				}
+			}
+		}
 	}
 
 	public int getDepth() {

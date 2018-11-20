@@ -41,8 +41,7 @@ import org.eclipse.core.resources.IProject;
 public class QtMethodReference extends ASTNameReference {
 
 	public static enum Type {
-		Signal("sender", "SIGNAL", "signal"),
-		Slot("receiver", "SLOT", "member");
+		Signal("sender", "SIGNAL", "signal"), Slot("receiver", "SLOT", "member");
 
 		public final String roleName;
 		public final String macroName;
@@ -80,7 +79,8 @@ public class QtMethodReference extends ASTNameReference {
 	private final ICPPClassType cls;
 	private final String expansionParam;
 
-	private QtMethodReference(Type type, ICPPClassType cls, IASTName macroRefName, String expansionParam, IASTFileLocation location) {
+	private QtMethodReference(Type type, ICPPClassType cls, IASTName macroRefName, String expansionParam,
+			IASTFileLocation location) {
 		super(macroRefName, location);
 
 		this.type = type;
@@ -109,7 +109,7 @@ public class QtMethodReference extends ASTNameReference {
 		// Look for a SIGNAL or SLOT expansion as this location.
 		Type type = null;
 		IASTName macroReferenceName = null;
-		for(IASTNodeLocation location : arg.getNodeLocations()) {
+		for (IASTNodeLocation location : arg.getNodeLocations()) {
 			if (!(location instanceof IASTMacroExpansionLocation))
 				continue;
 
@@ -138,8 +138,8 @@ public class QtMethodReference extends ASTNameReference {
 		// that use the SIGNAL macro.  For now I've implemented the simpler check of forcing the call to
 		// use the SIGNAL/SLOT macro directly.
 		String raw = arg.getRawSignature();
-		Matcher m = ASTUtil.Regex_MacroExpansion.matcher( raw );
-		if( ! m.matches() )
+		Matcher m = ASTUtil.Regex_MacroExpansion.matcher(raw);
+		if (!m.matches())
 			return null;
 
 		// Get the argument to the SIGNAL/SLOT macro and the offset/length of that argument within the
@@ -149,11 +149,12 @@ public class QtMethodReference extends ASTNameReference {
 		//		expansionArgs:  "signal(int)"
 		//		expansionOffset: 8
 		//		expansionLength: 11
-		String expansionArgs = m.group( 2 );
-		int expansionOffset = m.start( 2 );
-		int expansionLength = m.end( 2 ) - expansionOffset;
+		String expansionArgs = m.group(2);
+		int expansionOffset = m.start(2);
+		int expansionLength = m.end(2) - expansionOffset;
 
-		IASTFileLocation location = new QtASTImageLocation(macroReferenceName.getFileLocation(), expansionOffset, expansionLength);
+		IASTFileLocation location = new QtASTImageLocation(macroReferenceName.getFileLocation(), expansionOffset,
+				expansionLength);
 		return new QtMethodReference(type, cls, macroReferenceName, expansionArgs, location);
 	}
 
@@ -175,7 +176,7 @@ public class QtMethodReference extends ASTNameReference {
 		String[] qualName = null;
 		try {
 			qualName = cls.getQualifiedName();
-		} catch(DOMException e) {
+		} catch (DOMException e) {
 			Activator.log(e);
 		}
 
@@ -196,7 +197,7 @@ public class QtMethodReference extends ASTNameReference {
 			return null;
 
 		// Return the first matching method.
-		for(IQMethod method : ASTUtil.findMethods(qobj, this))
+		for (IQMethod method : ASTUtil.findMethods(qobj, this))
 			return method;
 
 		return null;

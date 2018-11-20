@@ -33,7 +33,7 @@ public interface IInvocationContext {
 	 * @return Returns the length of the current selection
 	 */
 	int getSelectionLength();
-	
+
 	/**
 	 * @return ITranslationUnit or null
 	 */

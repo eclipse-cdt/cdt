@@ -18,8 +18,10 @@ public class AutotoolsGeneralPropertyPage extends AbstractPage {
 	protected boolean isSingle() {
 		return false;
 	}
-	
+
 	@Override
-	protected boolean showsConfig() { return false;	}
+	protected boolean showsConfig() {
+		return false;
+	}
 
 }

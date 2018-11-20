@@ -27,9 +27,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * @since 4.0
  * 
  */
-public class MIGDBSetBreakpointPending extends MIGDBSet 
-{
-    public MIGDBSetBreakpointPending(ICommandControlDMContext ctx, boolean enable) {
-        super(ctx, new String[] {"breakpoint", "pending", enable ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
-    }
+public class MIGDBSetBreakpointPending extends MIGDBSet {
+	public MIGDBSetBreakpointPending(ICommandControlDMContext ctx, boolean enable) {
+		super(ctx, new String[] { "breakpoint", "pending", enable ? "on" : "off" });//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+	}
 }

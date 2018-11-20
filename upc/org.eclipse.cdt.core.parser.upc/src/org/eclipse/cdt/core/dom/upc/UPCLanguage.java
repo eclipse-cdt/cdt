@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 
-
 /**
  * Implementation of the ILanguage extension point, adds UPC as a language to CDT.
  *
@@ -43,14 +42,14 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 
 	public static final String UPC_CONTENT_TYPE_ID = "org.eclipse.cdt.core.parser.upc.upcSource"; //$NON-NLS-1$
 
-	private static final UPCLanguage myDefault  = new UPCLanguage();
+	private static final UPCLanguage myDefault = new UPCLanguage();
 
 	public static UPCLanguage getDefault() {
 		return myDefault;
 	}
 
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		return new UPCParser(scanner, new DOMToUPCTokenMap(), getBuiltinBindingsProvider(), index, properties);
 	}
 
@@ -64,13 +63,13 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return ILinkage.C_LINKAGE_ID;
 	}
 
-
-	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(ScannerExtensionConfiguration.createC());
+	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(
+			ScannerExtensionConfiguration.createC());
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
-		if(ICLanguageKeywords.class.equals(adapter))
+		if (ICLanguageKeywords.class.equals(adapter))
 			return upcKeywords;
 
 		return super.getAdapter(adapter);

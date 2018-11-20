@@ -94,11 +94,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 public class BuildDescription implements IBuildDescription {
-	private final static String DOT = ".";	//$NON-NLS-1$
-	private final static String WILDCARD = "%";	//$NON-NLS-1$
+	private final static String DOT = "."; //$NON-NLS-1$
+	private final static String WILDCARD = "%"; //$NON-NLS-1$
 	private final static String VAR_USER_OBJS = "USER_OBJS"; //$NON-NLS-1$
 	private final static String VAR_LIBS = "LIBS"; //$NON-NLS-1$
-
 
 	private Configuration fCfg;
 	private IResourceDelta fDelta;
@@ -132,7 +131,7 @@ public class BuildDescription implements IBuildDescription {
 
 	private ICSourceEntry[] fSourceEntries;
 
-//	private Map fExtToToolAndTypeListMap = new HashMap();
+	//	private Map fExtToToolAndTypeListMap = new HashMap();
 
 	private Map<String, String> fEnvironment;
 
@@ -147,34 +146,33 @@ public class BuildDescription implements IBuildDescription {
 		Map<String, BuildGroup> fInTypeToGroupMap = new HashMap<String, BuildGroup>();
 	}
 
-	class ToolAndType{
+	class ToolAndType {
 		ITool fTool;
 		IInputType fType;
 		String fExt;
 
-		ToolAndType(ITool tool, IInputType inputType, String ext){
+		ToolAndType(ITool tool, IInputType inputType, String ext) {
 			fTool = tool;
 			fType = inputType;
 			fExt = ext;
 		}
 	}
 
-	private class RcVisitor implements IResourceProxyVisitor,
-										IResourceDeltaVisitor{
+	private class RcVisitor implements IResourceProxyVisitor, IResourceDeltaVisitor {
 		private boolean fPostProcessMode;
 
-		RcVisitor(){
+		RcVisitor() {
 			setMode(false);
 		}
 
-		public void setMode(boolean postProcess){
+		public void setMode(boolean postProcess) {
 			fPostProcessMode = postProcess;
 		}
 
 		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
 			try {
-				if(proxy.getType() == IResource.FILE){
+				if (proxy.getType() == IResource.FILE) {
 					doVisitFile(proxy.requestResource());
 					return false;
 				}
@@ -184,36 +182,36 @@ public class BuildDescription implements IBuildDescription {
 				throw e;
 			} catch (Exception e) {
 				String msg = e.getLocalizedMessage();
-				if(msg == null)
+				if (msg == null)
 					msg = ""; //$NON-NLS-1$
 
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), msg, e));
+				throw new CoreException(
+						new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), msg, e));
 			}
 		}
 
-		protected boolean postProcessVisit(IResourceDelta delta){
+		protected boolean postProcessVisit(IResourceDelta delta) {
 			IResource rc = delta.getResource();
-			if(rc.getType() == IResource.FILE){
+			if (rc.getType() == IResource.FILE) {
 				IPath rcLocation = calcResourceLocation(rc);
-				BuildResource bRc = (BuildResource)getBuildResource(rcLocation);
-				if(bRc != null){
-					if(bRc.getProducerIOType() != null
-							&& bRc.getProducerIOType().getStep() == fInputStep){
-						if(delta.getKind() == IResourceDelta.REMOVED){
-							if(checkFlags(BuildDescriptionManager.REMOVED)){
+				BuildResource bRc = (BuildResource) getBuildResource(rcLocation);
+				if (bRc != null) {
+					if (bRc.getProducerIOType() != null && bRc.getProducerIOType().getStep() == fInputStep) {
+						if (delta.getKind() == IResourceDelta.REMOVED) {
+							if (checkFlags(BuildDescriptionManager.REMOVED)) {
 								bRc.setRemoved(true);
 							}
-						} else	{
-							if(checkFlags(BuildDescriptionManager.REBUILD)){
+						} else {
+							if (checkFlags(BuildDescriptionManager.REBUILD)) {
 								bRc.setRebuildState(true);
 							}
 						}
 					} else {
-						if(checkFlags(BuildDescriptionManager.REBUILD)){
+						if (checkFlags(BuildDescriptionManager.REBUILD)) {
 							bRc.setRebuildState(true);
 							IBuildIOType type = bRc.getProducerIOType();
-							if(type != null){
-								((BuildStep)type.getStep()).setRebuildState(true);
+							if (type != null) {
+								((BuildStep) type.getStep()).setRebuildState(true);
 							}
 						}
 					}
@@ -225,15 +223,14 @@ public class BuildDescription implements IBuildDescription {
 
 		public boolean removedCalcVisit(IResourceDelta delta) throws CoreException {
 			IResource rc = delta.getResource();
-			if(rc.getType() == IResource.FILE){
-				if(!isGenerated(rc.getFullPath())){
+			if (rc.getType() == IResource.FILE) {
+				if (!isGenerated(rc.getFullPath())) {
 					//this is a project source, check the removed state
-					if(delta.getKind() == IResourceDelta.REMOVED
-							&& checkFlags(BuildDescriptionManager.REMOVED)){
+					if (delta.getKind() == IResourceDelta.REMOVED && checkFlags(BuildDescriptionManager.REMOVED)) {
 						IPath rcLocation = calcResourceLocation(rc);
-						BuildResource bRc = (BuildResource)getBuildResource(rcLocation);
+						BuildResource bRc = (BuildResource) getBuildResource(rcLocation);
 
-						if(bRc == null){
+						if (bRc == null) {
 							doVisitFile(rc);
 						}
 					}
@@ -244,15 +241,14 @@ public class BuildDescription implements IBuildDescription {
 			return true;//!isGenerated(rc.getFullPath());
 		}
 
-
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			if(fPostProcessMode)
+			if (fPostProcessMode)
 				return postProcessVisit(delta);
 			return removedCalcVisit(delta);
 		}
 
-		private void doVisitFile(IResource res) throws CoreException{
+		private void doVisitFile(IResource res) throws CoreException {
 			BuildResource rc = createResource(res);
 
 			composeOutputs(fInputStep, null, rc);
@@ -261,88 +257,88 @@ public class BuildDescription implements IBuildDescription {
 
 	}
 
-	protected IPath calcResourceLocation(IResource rc){
+	protected IPath calcResourceLocation(IResource rc) {
 
-	//return rc.getFullPath();
+		//return rc.getFullPath();
 		IPath rcLocation = rc.getLocation();
-		if(rcLocation == null){
+		if (rcLocation == null) {
 			rcLocation = new Path(EFSExtensionManager.getDefault().getPathFromURI(rc.getLocationURI()));
 		}
 		return rcLocation;
 	}
 
-//	private class StepCollector implements IStepVisitor{
-//		private Set<IBuildStep> fStepSet = new HashSet<IBuildStep>();
-//
-//		public int visit(IBuildStep action) throws CoreException {
-//			if(DbgUtil.DEBUG){
-//				DbgUtil.trace("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
-//			}
-//			fStepSet.add(action);
-//			return VISIT_CONTINUE;
-//		}
-//
-//		public BuildStep[] getSteps(){
-//			return (BuildStep[])fStepSet.toArray(new BuildStep[fStepSet.size()]);
-//		}
-//
-//		public Set getStepSet(){
-//			return fStepSet;
-//		}
-//
-//		public void clear(){
-//			fStepSet.clear();
-//		}
-//	}
+	//	private class StepCollector implements IStepVisitor{
+	//		private Set<IBuildStep> fStepSet = new HashSet<IBuildStep>();
+	//
+	//		public int visit(IBuildStep action) throws CoreException {
+	//			if(DbgUtil.DEBUG){
+	//				DbgUtil.trace("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
+	//			}
+	//			fStepSet.add(action);
+	//			return VISIT_CONTINUE;
+	//		}
+	//
+	//		public BuildStep[] getSteps(){
+	//			return (BuildStep[])fStepSet.toArray(new BuildStep[fStepSet.size()]);
+	//		}
+	//
+	//		public Set getStepSet(){
+	//			return fStepSet;
+	//		}
+	//
+	//		public void clear(){
+	//			fStepSet.clear();
+	//		}
+	//	}
 
-	private class RebuildStateSynchronizer implements IStepVisitor{
+	private class RebuildStateSynchronizer implements IStepVisitor {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.builddescription.IStepVisitor#visit(org.eclipse.cdt.managedbuilder.builddescription.IBuildStep)
 		 */
 		@Override
 		public int visit(IBuildStep a) throws CoreException {
-			BuildStep action = (BuildStep)a;
-			BuildResource rcs[] = (BuildResource[])action.getInputResources();
+			BuildStep action = (BuildStep) a;
+			BuildResource rcs[] = (BuildResource[]) action.getInputResources();
 			boolean rebuild = action.needsRebuild();
 			boolean removed = action.isRemoved();
 
-			if(DbgUtil.DEBUG){
-				DbgUtil.trace(">>visiting step " + DbgUtil.stepName(a));	//$NON-NLS-1$
+			if (DbgUtil.DEBUG) {
+				DbgUtil.trace(">>visiting step " + DbgUtil.stepName(a)); //$NON-NLS-1$
 			}
 
-			if(!removed){
+			if (!removed) {
 				BuildIOType args[] = action.getPrimaryTypes(true);
 				int j = 0;
-				if(args.length > 0){
-					for(j = 0; j < args.length; j++){
-						BuildResource[] ress = (BuildResource[])args[j].getResources();
-						if(ress.length > 0){
+				if (args.length > 0) {
+					for (j = 0; j < args.length; j++) {
+						BuildResource[] ress = (BuildResource[]) args[j].getResources();
+						if (ress.length > 0) {
 							int k = 0;
-							for(k = 0; k < ress.length; k++){
-								if(!ress[k].isRemoved())
+							for (k = 0; k < ress.length; k++) {
+								if (!ress[k].isRemoved())
 									break;
 							}
-							if(k != ress.length)
+							if (k != ress.length)
 								break;
 						}
 					}
-					if(j == args.length)
+					if (j == args.length)
 						removed = true;
 				}
 
 			}
 
-			if(!removed){
+			if (!removed) {
 				for (BuildResource rc : rcs) {
-					if(rc.needsRebuild()){
-						if(DbgUtil.DEBUG)
-							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " needs rebuild");	//$NON-NLS-1$	//$NON-NLS-2$
+					if (rc.needsRebuild()) {
+						if (DbgUtil.DEBUG)
+							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " needs rebuild"); //$NON-NLS-1$	//$NON-NLS-2$
 						rebuild = true;
 					}
-					if(rc.isRemoved()){
-						if(DbgUtil.DEBUG)
-							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " is removed");	//$NON-NLS-1$ 	//$NON-NLS-2$
+					if (rc.isRemoved()) {
+						if (DbgUtil.DEBUG)
+							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " is removed"); //$NON-NLS-1$ 	//$NON-NLS-2$
 
 						// Remove the obsolete input resource from the action (Bug #366039)
 						for (BuildIOType type : action.getPrimaryTypes(true)) {
@@ -359,38 +355,40 @@ public class BuildDescription implements IBuildDescription {
 				}
 			}
 
-			if(removed){
-				if(DbgUtil.DEBUG)
-					DbgUtil.trace("action to be removed");	//$NON-NLS-1$
+			if (removed) {
+				if (DbgUtil.DEBUG)
+					DbgUtil.trace("action to be removed"); //$NON-NLS-1$
 
 				action.setRemoved();
 
 				for (IBuildResource outRc : action.getOutputResources()) {
-					if(DbgUtil.DEBUG)
-						DbgUtil.trace("setting remove state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
+					if (DbgUtil.DEBUG)
+						DbgUtil.trace(
+								"setting remove state for resource " + locationToRel(outRc.getLocation()).toString()); //$NON-NLS-1$
 
-					((BuildResource)outRc).setRemoved(true);
+					((BuildResource) outRc).setRemoved(true);
 
 					// Delete the obsolete output file (Bug #366039)
 					deleteResource(outRc);
 				}
 
-			} else if(rebuild){
-				if(DbgUtil.DEBUG)
-					DbgUtil.trace("action needs rebuild");	//$NON-NLS-1$
+			} else if (rebuild) {
+				if (DbgUtil.DEBUG)
+					DbgUtil.trace("action needs rebuild"); //$NON-NLS-1$
 
 				action.setRebuildState(true);
 
 				for (IBuildResource outRc : action.getOutputResources()) {
-					if(DbgUtil.DEBUG)
-						DbgUtil.trace("setting rebuild state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
+					if (DbgUtil.DEBUG)
+						DbgUtil.trace(
+								"setting rebuild state for resource " + locationToRel(outRc.getLocation()).toString()); //$NON-NLS-1$
 
-					((BuildResource)outRc).setRebuildState(true);
+					((BuildResource) outRc).setRebuildState(true);
 				}
 			}
 
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("<<leaving..");	//$NON-NLS-1$
+			if (DbgUtil.DEBUG)
+				DbgUtil.trace("<<leaving.."); //$NON-NLS-1$
 
 			return VISIT_CONTINUE;
 		}
@@ -406,8 +404,8 @@ public class BuildDescription implements IBuildDescription {
 				try {
 					resource.delete(false, null);
 				} catch (CoreException e) {
-					ManagedBuilderCorePlugin.log(new Status(IStatus.WARNING,
-							ManagedBuilderCorePlugin.PLUGIN_ID,	IStatus.OK, e.getMessage(), e));
+					ManagedBuilderCorePlugin.log(new Status(IStatus.WARNING, ManagedBuilderCorePlugin.PLUGIN_ID,
+							IStatus.OK, e.getMessage(), e));
 				}
 			}
 		}
@@ -418,71 +416,71 @@ public class BuildDescription implements IBuildDescription {
 		private ITool fDeps[];
 		private ITool fConsumers[];
 
-		private ToolOrderEstimation(ITool tool){
+		private ToolOrderEstimation(ITool tool) {
 			fTool = tool;
 		}
 
-//		ITool getTool(){
-//			return fTool;
-//		}
+		//		ITool getTool(){
+		//			return fTool;
+		//		}
 
-		ITool[] getDeps(){
-			if(fDeps == null)
+		ITool[] getDeps() {
+			if (fDeps == null)
 				fDeps = doCalcDeps(fTool);
 			return fDeps;
 		}
 
-		ITool[] getConsumers(){
-			if(fConsumers == null)
+		ITool[] getConsumers() {
+			if (fConsumers == null)
 				fConsumers = doCalcConsumers(fTool);
 			return fConsumers;
 		}
 
-//		boolean dependsOn(ITool tool){
-//			return indexOf(tool, getDeps()) != -1;
-//		}
-//
-//		boolean hasConsumer(ITool tool){
-//			return indexOf(tool, getConsumers()) != -1;
-//		}
+		//		boolean dependsOn(ITool tool){
+		//			return indexOf(tool, getDeps()) != -1;
+		//		}
+		//
+		//		boolean hasConsumer(ITool tool){
+		//			return indexOf(tool, getConsumers()) != -1;
+		//		}
 
 	}
 
-	protected BuildDescription(){
+	protected BuildDescription() {
 
 	}
 
-	public BuildDescription(IConfiguration cfg){
+	public BuildDescription(IConfiguration cfg) {
 		initBase(cfg, null, null, 0);
 	}
 
-	public void synchRebuildState() throws CoreException{
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("--->Synch started");	//$NON-NLS-1$
+	public void synchRebuildState() throws CoreException {
+		if (DbgUtil.DEBUG)
+			DbgUtil.trace("--->Synch started"); //$NON-NLS-1$
 
 		BuildDescriptionManager.accept(new RebuildStateSynchronizer(), this, true);
 
-		if(fOutputStep.needsRebuild())
+		if (fOutputStep.needsRebuild())
 			fInputStep.setRebuildState(true);//needed for the pre-build step invocation
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("<---Synch stopped");	//$NON-NLS-1$
+		if (DbgUtil.DEBUG)
+			DbgUtil.trace("<---Synch stopped"); //$NON-NLS-1$
 	}
 
-	private BuildIOType findTypeForExtension(BuildStep step, boolean input, String ext){
-		if(ext == null)
+	private BuildIOType findTypeForExtension(BuildStep step, boolean input, String ext) {
+		if (ext == null)
 			return null;
 
-		BuildIOType types[] = input ? (BuildIOType[])step.getInputIOTypes() : (BuildIOType[])step.getOutputIOTypes();
+		BuildIOType types[] = input ? (BuildIOType[]) step.getInputIOTypes() : (BuildIOType[]) step.getOutputIOTypes();
 
 		for (BuildIOType type : types) {
 			for (IBuildResource rc : type.getResources()) {
 				String e = rc.getLocation().getFileExtension();
-				if(e == null){
-					if(ext.length() == 0)
+				if (e == null) {
+					if (ext.length() == 0)
 						return type;
 				} else {
-					if(ext.equals(e))
+					if (ext.equals(e))
 						return type;
 				}
 			}
@@ -490,16 +488,16 @@ public class BuildDescription implements IBuildDescription {
 		return null;
 	}
 
-	private Map<String, List<ToolAndType>> initToolAndTypeMap(IFolderInfo foInfo){
+	private Map<String, List<ToolAndType>> initToolAndTypeMap(IFolderInfo foInfo) {
 		Map<String, List<ToolAndType>> extToToolAndTypeListMap = new HashMap<String, List<ToolAndType>>();
 		for (ITool tool : foInfo.getFilteredTools()) {
 			IInputType types[] = tool.getInputTypes();
-			if(types.length != 0){
+			if (types.length != 0) {
 				for (IInputType type : types) {
 					for (String ext : type.getSourceExtensions(tool)) {
-						if(tool.buildsFileType(ext)){
+						if (tool.buildsFileType(ext)) {
 							List<ToolAndType> list = extToToolAndTypeListMap.get(ext);
-							if(list == null){
+							if (list == null) {
 								list = new ArrayList<ToolAndType>();
 								extToToolAndTypeListMap.put(ext, list);
 							}
@@ -509,9 +507,9 @@ public class BuildDescription implements IBuildDescription {
 				}
 			} else {
 				for (String ext : tool.getAllInputExtensions()) {
-					if(tool.buildsFileType(ext)){
+					if (tool.buildsFileType(ext)) {
 						List<ToolAndType> list = extToToolAndTypeListMap.get(ext);
-						if(list == null){
+						if (list == null) {
 							list = new ArrayList<ToolAndType>();
 							extToToolAndTypeListMap.put(ext, list);
 						}
@@ -523,33 +521,33 @@ public class BuildDescription implements IBuildDescription {
 		return extToToolAndTypeListMap;
 	}
 
-	ToolAndType getToolAndType(BuildResource rc, boolean checkVar){
+	ToolAndType getToolAndType(BuildResource rc, boolean checkVar) {
 		ToolInfoHolder h = getToolInfo(rc);
 		return getToolAndType(h, rc, checkVar);
 	}
 
-	ToolAndType getToolAndType(ToolInfoHolder h, BuildResource rc, boolean checkVar){
+	ToolAndType getToolAndType(ToolInfoHolder h, BuildResource rc, boolean checkVar) {
 		String locString = rc.getLocation().toString();
-		BuildIOType arg = (BuildIOType)rc.getProducerIOType();
+		BuildIOType arg = (BuildIOType) rc.getProducerIOType();
 		String linkId = (checkVar && arg != null) ? arg.getLinkId() : null;
 
 		for (Entry<String, List<ToolAndType>> entry : h.fExtToToolAndTypeListMap.entrySet()) {
 			String ext = entry.getKey();
-			if(locString.endsWith("." + ext)){	//$NON-NLS-1$
+			if (locString.endsWith("." + ext)) { //$NON-NLS-1$
 				List<ToolAndType> list = entry.getValue();
 				for (ToolAndType tt : list) {
-					if(!checkVar)
+					if (!checkVar)
 						return tt;
 
 					IInputType type = tt.fType;
-					if(type == null)
+					if (type == null)
 						return tt;
 
 					String var = type.getBuildVariable();
-					if(var == null || var.length() == 0)
+					if (var == null || var.length() == 0)
 						return tt;
 
-					if(linkId != null && linkId.equals(var)){
+					if (linkId != null && linkId.equals(var)) {
 						return tt;
 					}
 				}
@@ -559,31 +557,30 @@ public class BuildDescription implements IBuildDescription {
 		return null;
 	}
 
-	protected boolean isSource(IPath path){
+	protected boolean isSource(IPath path) {
 		return !CDataUtil.isExcluded(path, fSourceEntries);
-//
-//		path = path.makeRelative();
-//		for(int i = 0; i < fSourcePaths.length; i++){
-//			if(fSourcePaths[i].isPrefixOf(path))
-//				return true;
-//		}
-//		return false;
+		//
+		//		path = path.makeRelative();
+		//		for(int i = 0; i < fSourcePaths.length; i++){
+		//			if(fSourcePaths[i].isPrefixOf(path))
+		//				return true;
+		//		}
+		//		return false;
 	}
 
-
-	private void composeOutputs(BuildStep inputAction, BuildIOType inputActionArg, BuildResource rc) throws CoreException{
+	private void composeOutputs(BuildStep inputAction, BuildIOType inputActionArg, BuildResource rc)
+			throws CoreException {
 
 		boolean isSource = inputActionArg == null;
-		if(isSource){
-			if(rc.isProjectResource()
-					&& !isSource(rc.getFullPath().removeFirstSegments(1).makeRelative()))
+		if (isSource) {
+			if (rc.isProjectResource() && !isSource(rc.getFullPath().removeFirstSegments(1).makeRelative()))
 				return;
 		} else {
-			if(inputAction != null && inputAction == fTargetStep){
-				BuildIOType arg = (BuildIOType)rc.getProducerIOType();
-				if(arg.isPrimary()){
-					BuildIOType oArg = findTypeForExtension(fOutputStep,true,rc.getLocation().getFileExtension());
-					if(oArg == null || !arg.isPrimary())
+			if (inputAction != null && inputAction == fTargetStep) {
+				BuildIOType arg = (BuildIOType) rc.getProducerIOType();
+				if (arg.isPrimary()) {
+					BuildIOType oArg = findTypeForExtension(fOutputStep, true, rc.getLocation().getFileExtension());
+					if (oArg == null || !arg.isPrimary())
 						oArg = fOutputStep.createIOType(true, true, null);
 					oArg.addResource(rc);
 				}
@@ -591,9 +588,9 @@ public class BuildDescription implements IBuildDescription {
 				return;
 			} else {
 				for (IOutputType secondaryOutput : fCfg.getToolChain().getSecondaryOutputs()) {
-					if(inputActionArg!=null && secondaryOutput==inputActionArg.getIoType()){
-						BuildIOType arg = findTypeForExtension(fOutputStep,true,rc.getLocation().getFileExtension());
-						if(arg == null || arg.isPrimary()){
+					if (inputActionArg != null && secondaryOutput == inputActionArg.getIoType()) {
+						BuildIOType arg = findTypeForExtension(fOutputStep, true, rc.getLocation().getFileExtension());
+						if (arg == null || arg.isPrimary()) {
 							arg = fOutputStep.createIOType(true, false, null);
 						}
 						arg.addResource(rc);
@@ -604,39 +601,38 @@ public class BuildDescription implements IBuildDescription {
 
 		IPath location = rc.getLocation();
 
-		IResourceInfo rcInfo = rc.isProjectResource() ?
-				fCfg.getResourceInfo(rc.getFullPath().removeFirstSegments(1), false) :
-					fCfg.getRootFolderInfo();
+		IResourceInfo rcInfo = rc.isProjectResource()
+				? fCfg.getResourceInfo(rc.getFullPath().removeFirstSegments(1), false)
+				: fCfg.getRootFolderInfo();
 		ITool tool = null;
 		IInputType inputType = null;
 		String ext = null;
 		boolean stepRemoved = false;
-		if(rcInfo.isExcluded()){
-			if(rcInfo.needsRebuild())
+		if (rcInfo.isExcluded()) {
+			if (rcInfo.needsRebuild())
 				stepRemoved = true;
 			else
 				return;
 		}
 
 		ToolInfoHolder h = null;
-		if(rcInfo instanceof IFileInfo){
-			IFileInfo fi = (IFileInfo)rcInfo;
+		if (rcInfo instanceof IFileInfo) {
+			IFileInfo fi = (IFileInfo) rcInfo;
 			ITool[] tools = fi.getToolsToInvoke();
-			if(tools.length > 0 )
-			{
-			    tool = fi.getToolsToInvoke()[0];
-			    String locString = location.toString();
-			    for (String e : tool.getAllInputExtensions()) {
-			        if(locString.endsWith(e)){
-			            inputType = tool.getInputType(e);
-			            ext = e;
-			        }
-			    }
+			if (tools.length > 0) {
+				tool = fi.getToolsToInvoke()[0];
+				String locString = location.toString();
+				for (String e : tool.getAllInputExtensions()) {
+					if (locString.endsWith(e)) {
+						inputType = tool.getInputType(e);
+						ext = e;
+					}
+				}
 			}
 		} else {
 			h = getToolInfo(rc);
 			ToolAndType tt = getToolAndType(h, rc, true);
-			if(tt != null){
+			if (tt != null) {
 				tool = tt.fTool;
 				inputType = tt.fType;
 				ext = tt.fExt;
@@ -644,35 +640,35 @@ public class BuildDescription implements IBuildDescription {
 
 		}
 
-		if(ext == null)
+		if (ext == null)
 			ext = location.getFileExtension();
 
-		if(tool != null) {
+		if (tool != null) {
 			//  Generate the step to build this source file
 			IInputType primaryInputType = tool.getPrimaryInputType();
-			if ((primaryInputType != null && !primaryInputType.getMultipleOfType()) ||
-				(inputType == null && tool != fCfg.calculateTargetTool())){
+			if ((primaryInputType != null && !primaryInputType.getMultipleOfType())
+					|| (inputType == null && tool != fCfg.calculateTargetTool())) {
 
 				BuildStep action = null;
 				BuildIOType argument = null;
 				BuildGroup group = null;
-				if(h != null)
+				if (h != null)
 					group = createGroup(h, inputType, ext);
 
 				action = createStep(tool, inputType);//new BuildStep(this, tool, inputType);
-				if(stepRemoved)
+				if (stepRemoved)
 					action.setRemoved();
-				if(group != null)
+				if (group != null)
 					group.addAction(action);
 				argument = action.createIOType(true, true, inputType);
 
 				argument.addResource(rc);
 
-				if(inputActionArg == null){
-					inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-					if(inputActionArg == null && inputAction!=null)
+				if (inputActionArg == null) {
+					inputActionArg = findTypeForExtension(inputAction, false, rc.getLocation().getFileExtension());
+					if (inputActionArg == null && inputAction != null)
 						inputActionArg = inputAction.createIOType(false, false, null);
-					if (inputActionArg!=null)
+					if (inputActionArg != null)
 						inputActionArg.addResource(rc);
 				}
 
@@ -680,31 +676,32 @@ public class BuildDescription implements IBuildDescription {
 
 				calculateOutputs(action, argument, rc);
 
-				BuildIOType outputs[] = (BuildIOType[])action.getOutputIOTypes();
+				BuildIOType outputs[] = (BuildIOType[]) action.getOutputIOTypes();
 
 				for (BuildIOType output : outputs) {
-					BuildResource rcs[] = (BuildResource[])output.getResources();
+					BuildResource rcs[] = (BuildResource[]) output.getResources();
 					for (BuildResource outputRc : rcs) {
 						composeOutputs(action, output, outputRc);
 					}
 				}
 			} else {
 
-				if(inputType != null ? inputType.getMultipleOfType() : tool == fCfg.calculateTargetTool()){
+				if (inputType != null ? inputType.getMultipleOfType() : tool == fCfg.calculateTargetTool()) {
 					BuildStep step = fToolToMultiStepMap.get(tool);
 
-					if(step != null){
+					if (step != null) {
 						BuildIOType argument = step.getIOTypeForType(inputType, true);
-						if(argument == null)
+						if (argument == null)
 							argument = step.createIOType(true, true, inputType);
 
 						argument.addResource(rc);
 
-						if(inputActionArg == null){
-							inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-							if(inputActionArg == null && inputAction!=null)
+						if (inputActionArg == null) {
+							inputActionArg = findTypeForExtension(inputAction, false,
+									rc.getLocation().getFileExtension());
+							if (inputActionArg == null && inputAction != null)
 								inputActionArg = inputAction.createIOType(false, false, null);
-							if (inputActionArg!=null)
+							if (inputActionArg != null)
 								inputActionArg.addResource(rc);
 						}
 					}
@@ -715,11 +712,10 @@ public class BuildDescription implements IBuildDescription {
 		}
 	}
 
-	private BuildGroup createGroup(ToolInfoHolder h, IInputType inType, String ext){
-		String key = inType != null ?
-				inType.getId() : "ext:"+ext;	//$NON-NLS-1$
+	private BuildGroup createGroup(ToolInfoHolder h, IInputType inType, String ext) {
+		String key = inType != null ? inType.getId() : "ext:" + ext; //$NON-NLS-1$
 		BuildGroup group = h.fInTypeToGroupMap.get(key);
-		if(group == null){
+		if (group == null) {
 			group = new BuildGroup();
 			h.fInTypeToGroupMap.put(key, group);
 		}
@@ -742,12 +738,12 @@ public class BuildDescription implements IBuildDescription {
 		return fOutputStep;
 	}
 
-	public boolean checkFlags(int flags){
+	public boolean checkFlags(int flags) {
 		return (fFlags & flags) == flags;
 	}
 
-	protected void initBase(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags){
-		fCfg = (Configuration)cfg;
+	protected void initBase(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags) {
+		fCfg = (Configuration) cfg;
 		fDelta = delta;
 		fBuildState = bs;
 		fProject = cfg.getOwner().getProject();
@@ -755,21 +751,22 @@ public class BuildDescription implements IBuildDescription {
 		fFlags = flags;
 
 		fSourceEntries = fCfg.getSourceEntries();
-		if(fSourceEntries.length == 0){
-			fSourceEntries = new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH)};
+		if (fSourceEntries.length == 0) {
+			fSourceEntries = new ICSourceEntry[] {
+					new CSourceEntry(Path.EMPTY, null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH) };
 		} else {
 			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 			fSourceEntries = CDataUtil.resolveEntries(fSourceEntries, cfgDes);
 		}
-		fInputStep = createStep(null,null);
-		fOutputStep = createStep(null,null);
+		fInputStep = createStep(null, null);
+		fOutputStep = createStep(null, null);
 	}
 
-	protected void initDescription() throws CoreException{
-		if(fCfg.needsFullRebuild())
+	protected void initDescription() throws CoreException {
+		if (fCfg.needsFullRebuild())
 			fInputStep.setRebuildState(true);
 
-		if(fBuildState != null && fBuildState.getState() == IRebuildState.NEED_REBUILD)
+		if (fBuildState != null && fBuildState.getState() == IRebuildState.NEED_REBUILD)
 			fInputStep.setRebuildState(true);
 
 		initToolInfos();
@@ -779,19 +776,16 @@ public class BuildDescription implements IBuildDescription {
 		RcVisitor visitor = new RcVisitor();
 		fProject.accept(visitor, IResource.NONE);
 
-
-		if(checkFlags(BuildDescriptionManager.REMOVED)
-				&& fDelta != null)
+		if (checkFlags(BuildDescriptionManager.REMOVED) && fDelta != null)
 			fDelta.accept(visitor);
 
 		handleMultiSteps();
 
 		visitor.setMode(true);
-		if((checkFlags(BuildDescriptionManager.REMOVED)
-				|| checkFlags(BuildDescriptionManager.REBUILD))){
-			if(fDelta != null)
+		if ((checkFlags(BuildDescriptionManager.REMOVED) || checkFlags(BuildDescriptionManager.REBUILD))) {
+			if (fDelta != null)
 				fDelta.accept(visitor);
-			if(fBuildState != null)
+			if (fBuildState != null)
 				processBuildState();
 		}
 
@@ -800,7 +794,7 @@ public class BuildDescription implements IBuildDescription {
 		//TODO: trim();
 	}
 
-	protected void processBuildState(){
+	protected void processBuildState() {
 		IPath paths[] = fBuildState.getFullPathsForState(IRebuildState.NEED_REBUILD);
 		processBuildState(IRebuildState.NEED_REBUILD, paths);
 
@@ -808,76 +802,75 @@ public class BuildDescription implements IBuildDescription {
 		processBuildState(IRebuildState.REMOVED, paths);
 	}
 
-	protected void processBuildState(int state, IPath fullPaths[]){
+	protected void processBuildState(int state, IPath fullPaths[]) {
 		for (IPath fullPath : fullPaths) {
 			processBuildState(state, fullPath);
 		}
 	}
 
-	protected void processBuildState(int state, IPath fullPath){
-		BuildResource bRc = (BuildResource)getBuildResourceForFullPath(fullPath);
-		if(bRc == null)
+	protected void processBuildState(int state, IPath fullPath) {
+		BuildResource bRc = (BuildResource) getBuildResourceForFullPath(fullPath);
+		if (bRc == null)
 			return;
 
-		if(bRc.getProducerIOType() != null
-				&& bRc.getProducerIOType().getStep() == fInputStep){
-			if(state == IRebuildState.REMOVED){
-				if(checkFlags(BuildDescriptionManager.REMOVED)){
+		if (bRc.getProducerIOType() != null && bRc.getProducerIOType().getStep() == fInputStep) {
+			if (state == IRebuildState.REMOVED) {
+				if (checkFlags(BuildDescriptionManager.REMOVED)) {
 					bRc.setRemoved(true);
 				}
-			} else if (state == IRebuildState.NEED_REBUILD){
-				if(checkFlags(BuildDescriptionManager.REBUILD)){
+			} else if (state == IRebuildState.NEED_REBUILD) {
+				if (checkFlags(BuildDescriptionManager.REBUILD)) {
 					bRc.setRebuildState(true);
 				}
 			}
 		} else {
-			if(state == IRebuildState.NEED_REBUILD
-					|| state == IRebuildState.REMOVED
-					|| checkFlags(BuildDescriptionManager.REBUILD)){
+			if (state == IRebuildState.NEED_REBUILD || state == IRebuildState.REMOVED
+					|| checkFlags(BuildDescriptionManager.REBUILD)) {
 				bRc.setRebuildState(true);
 				IBuildIOType type = bRc.getProducerIOType();
-				if(type != null){
-					((BuildStep)type.getStep()).setRebuildState(true);
+				if (type != null) {
+					((BuildStep) type.getStep()).setRebuildState(true);
 				}
 			}
 		}
 	}
 
-	protected void init(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags) throws CoreException {
+	protected void init(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags)
+			throws CoreException {
 		initBase(cfg, bs, delta, flags);
 
 		initDescription();
 	}
 
-	protected void stepRemoved(BuildStep step){
+	protected void stepRemoved(BuildStep step) {
 		fStepList.remove(step);
 
-		if(fTargetStep == step){
+		if (fTargetStep == step) {
 			fTargetStep = null;
 		}
 	}
 
-	public BuildResource[][] removeStep(BuildStep step){
+	public BuildResource[][] removeStep(BuildStep step) {
 		return step.remove();
 	}
 
-	public BuildIOType[][] removeResource(BuildResource rc){
+	public BuildIOType[][] removeResource(BuildResource rc) {
 		return rc.remove();
 	}
 
-	private void handleMultiSteps() throws CoreException{
+	private void handleMultiSteps() throws CoreException {
 		for (BuildStep action : fOrderedMultiActions) {
 			calculateInputs(action);
 
 			calculateOutputs(action, action.getPrimaryTypes(true)[0], null);
 
-			if(action.getOutputResources().length == 0){
+			if (action.getOutputResources().length == 0) {
 				removeStep(action);
 			}
-			BuildIOType args[] =  (BuildIOType[])action.getOutputIOTypes();
+			BuildIOType args[] = (BuildIOType[]) action.getOutputIOTypes();
 
 			for (BuildIOType arg : args) {
-				BuildResource rcs[] = (BuildResource[])arg.getResources();
+				BuildResource rcs[] = (BuildResource[]) arg.getResources();
 				for (BuildResource rc : rcs) {
 					composeOutputs(action, arg, rc);
 				}
@@ -885,14 +878,14 @@ public class BuildDescription implements IBuildDescription {
 		}
 	}
 
-	private void initMultiSteps(){
+	private void initMultiSteps() {
 		ITool targetTool = fCfg.calculateTargetTool();
 
 		for (ITool tool : fCfg.getFilteredTools()) {
 			IInputType type = tool.getPrimaryInputType();
 			BuildStep action = null;
-			if(type != null ? type.getMultipleOfType() : tool == targetTool){
-				action = createStep(tool,type);//new BuildStep(this, tool, type);
+			if (type != null ? type.getMultipleOfType() : tool == targetTool) {
+				action = createStep(tool, type);//new BuildStep(this, tool, type);
 				action.createIOType(true, true, type);
 				fToolToMultiStepMap.put(tool, action);
 			}
@@ -903,69 +896,65 @@ public class BuildDescription implements IBuildDescription {
 		int index = 0;
 		for (ITool orderedTool : getOrderedTools()) {
 			BuildStep action = fToolToMultiStepMap.get(orderedTool);
-			if(action != null)
+			if (action != null)
 				fOrderedMultiActions[index++] = action;
 		}
 	}
 
-
-
-	private void completeLinking() throws CoreException{
+	private void completeLinking() throws CoreException {
 		boolean foundUnused = false;
 
-		do{
-			BuildStep steps[] = (BuildStep[])getSteps();
+		do {
+			BuildStep steps[] = (BuildStep[]) getSteps();
 			foundUnused = false;
 			for (BuildStep step : steps) {
-				if(step == fOutputStep || step == fInputStep)
+				if (step == fOutputStep || step == fInputStep)
 					continue;
 
 				IBuildResource rcs[] = step.getResources(false);
 				int i;
-				for(i = 0; i < rcs.length; i++){
-					if(rcs[i].getDependentIOTypes().length != 0)
+				for (i = 0; i < rcs.length; i++) {
+					if (rcs[i].getDependentIOTypes().length != 0)
 						break;
 				}
-				if(i == rcs.length){
-					if(DbgUtil.DEBUG){
-						DbgUtil.trace("unused step found: " + DbgUtil.stepName(step));	//$NON-NLS-1$
+				if (i == rcs.length) {
+					if (DbgUtil.DEBUG) {
+						DbgUtil.trace("unused step found: " + DbgUtil.stepName(step)); //$NON-NLS-1$
 					}
 
 					foundUnused = true;
-					if(step.needsRebuild()
-							&& step.getTool() != null
-							&& step.getTool().getCustomBuildStep()){
-						if(DbgUtil.DEBUG){
-							DbgUtil.trace("unused step is an RCBS needing rebuild, settings input step rebuild state to true");	//$NON-NLS-1$
+					if (step.needsRebuild() && step.getTool() != null && step.getTool().getCustomBuildStep()) {
+						if (DbgUtil.DEBUG) {
+							DbgUtil.trace(
+									"unused step is an RCBS needing rebuild, settings input step rebuild state to true"); //$NON-NLS-1$
 						}
 						fInputStep.setRebuildState(true);
 					}
 					removeStep(step);
 				}
 			}
-		}while(foundUnused);
+		} while (foundUnused);
 
 		Set<Entry<URI, BuildResource>> set = fLocationToRcMap.entrySet();
 		List<BuildResource> list = new ArrayList<BuildResource>();
 		for (Entry<URI, BuildResource> entry : set) {
 			BuildResource rc = entry.getValue();
 			boolean doRemove = false;
-			BuildIOType producerArg = (BuildIOType)rc.getProducerIOType();
-			if(producerArg == null){
-				if(rc.getDependentIOTypes().length == 0)
+			BuildIOType producerArg = (BuildIOType) rc.getProducerIOType();
+			if (producerArg == null) {
+				if (rc.getDependentIOTypes().length == 0)
 					doRemove = true;
 				else {
-					producerArg = findTypeForExtension(fInputStep,false,rc.getLocation().getFileExtension());
-					if(producerArg == null)
+					producerArg = findTypeForExtension(fInputStep, false, rc.getLocation().getFileExtension());
+					if (producerArg == null)
 						producerArg = fInputStep.createIOType(false, false, null);
 					producerArg.addResource(rc);
 				}
-			} else if(producerArg.getStep() == fInputStep
-						&& rc.getDependentIOTypes().length == 0) {
-					doRemove = true;
+			} else if (producerArg.getStep() == fInputStep && rc.getDependentIOTypes().length == 0) {
+				doRemove = true;
 			}
 
-			if(doRemove)
+			if (doRemove)
 				list.add(rc);
 		}
 
@@ -973,52 +962,54 @@ public class BuildDescription implements IBuildDescription {
 			BuildIOType[][] types = removeResource(buildResource);
 
 			BuildIOType producer = types[0][0];
-			if(producer != null && producer.getResources().length == 0){
-				((BuildStep)producer.getStep()).removeIOType(producer);
+			if (producer != null && producer.getResources().length == 0) {
+				((BuildStep) producer.getStep()).removeIOType(producer);
 			}
 
 			BuildIOType deps[] = types[1];
 			for (BuildIOType dep : deps) {
-				if(dep.getResources().length == 0)
-					((BuildStep)dep.getStep()).removeIOType(dep);
+				if (dep.getResources().length == 0)
+					((BuildStep) dep.getStep()).removeIOType(dep);
 			}
 		}
 
 	}
 
-	protected void resourceRemoved(BuildResource rc){
+	protected void resourceRemoved(BuildResource rc) {
 		fLocationToRcMap.remove(rc.getLocationURI());
 	}
 
-	protected void resourceCreated(BuildResource rc){
+	protected void resourceCreated(BuildResource rc) {
 		fLocationToRcMap.put(rc.getLocationURI(), rc);
 	}
 
-	private IManagedBuilderMakefileGenerator getMakeGenInitialized(){
-		if(fMakeGen == null){
+	private IManagedBuilderMakefileGenerator getMakeGenInitialized() {
+		if (fMakeGen == null) {
 			fMakeGen = ManagedBuildManager.getBuildfileGenerator(fCfg);
-			if(fMakeGen instanceof IManagedBuilderMakefileGenerator2)
-				((IManagedBuilderMakefileGenerator2)fMakeGen).initialize(IncrementalProjectBuilder.FULL_BUILD, fCfg, fCfg.getEditableBuilder(), new NullProgressMonitor());
+			if (fMakeGen instanceof IManagedBuilderMakefileGenerator2)
+				((IManagedBuilderMakefileGenerator2) fMakeGen).initialize(IncrementalProjectBuilder.FULL_BUILD, fCfg,
+						fCfg.getEditableBuilder(), new NullProgressMonitor());
 			else
 				fMakeGen.initialize(fProject, fInfo, null);
 		}
 		return fMakeGen;
 	}
 
-	private IPath getTopBuildDirFullPath(){
-		if(fTopBuildDirFullPath == null)
-			fTopBuildDirFullPath = fProject.getFullPath().append(getMakeGenInitialized().getBuildWorkingDir()).addTrailingSeparator();
+	private IPath getTopBuildDirFullPath() {
+		if (fTopBuildDirFullPath == null)
+			fTopBuildDirFullPath = fProject.getFullPath().append(getMakeGenInitialized().getBuildWorkingDir())
+					.addTrailingSeparator();
 		return fTopBuildDirFullPath;
 	}
 
-	private IPath getTopBuildDirLocation(){
+	private IPath getTopBuildDirLocation() {
 		IPath projLocation = getProjectLocation();
 		return projLocation.append(getTopBuildDirFullPath().removeFirstSegments(1));
 	}
 
-	private URI getTopBuildDirLocationURI(){
-		return org.eclipse.core.runtime.URIUtil.makeAbsolute(URIUtil.toURI(getTopBuildDirFullPath().removeFirstSegments(1)),
-															fProject.getLocationURI());
+	private URI getTopBuildDirLocationURI() {
+		return org.eclipse.core.runtime.URIUtil.makeAbsolute(
+				URIUtil.toURI(getTopBuildDirFullPath().removeFirstSegments(1)), fProject.getLocationURI());
 	}
 
 	private IPath getProjectLocation() {
@@ -1026,8 +1017,8 @@ public class BuildDescription implements IBuildDescription {
 		return UNCPathConverter.toPath(uri);
 	}
 
-	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath){
-		if(paths != null){
+	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath) {
+		if (paths != null) {
 			List<BuildResource> list = new ArrayList<BuildResource>();
 			for (IPath path : paths) {
 				IPath outFullPath = path;
@@ -1035,16 +1026,15 @@ public class BuildDescription implements IBuildDescription {
 				IPath outProjPath;
 				IPath projLocation = getProjectLocation();
 
-				if(outFullPath.isAbsolute()){
+				if (outFullPath.isAbsolute()) {
 					outProjPath = outFullPath;
 
-					if(projLocation.isPrefixOf(outProjPath)) {
+					if (projLocation.isPrefixOf(outProjPath)) {
 						// absolute location really points to same place the project lives, so it IS a project file
 						outProjPath = outProjPath.removeFirstSegments(projLocation.segmentCount());
 						outFullPath = projLocation.append(outProjPath.removeFirstSegments(projLocation.segmentCount()));
 						outWorkspacePath = fProject.getFullPath().append(outProjPath);
-					}
-					else {
+					} else {
 						// absolute path to somewhere outside the workspace
 						outProjPath = null;
 						outWorkspacePath = null;
@@ -1055,13 +1045,15 @@ public class BuildDescription implements IBuildDescription {
 						outProjPath = outDirPath.removeFirstSegments(1).append(outWorkspacePath);
 						outWorkspacePath = fProject.getFullPath().append(outProjPath);
 					} else {
-						outProjPath = fProject.getFullPath().removeFirstSegments(1).append(outDirPath.removeFirstSegments(1).append(outWorkspacePath));
+						outProjPath = fProject.getFullPath().removeFirstSegments(1)
+								.append(outDirPath.removeFirstSegments(1).append(outWorkspacePath));
 
-						if(outDirPath.isPrefixOf(outFullPath)) {
+						if (outDirPath.isPrefixOf(outFullPath)) {
 							outFullPath.removeFirstSegments(outDirPath.segmentCount());
 						}
 
-						outFullPath = projLocation.append(outDirPath.removeFirstSegments(1).append(outFullPath.lastSegment()));
+						outFullPath = projLocation
+								.append(outDirPath.removeFirstSegments(1).append(outFullPath.lastSegment()));
 						outWorkspacePath = fProject.getFullPath().append(outProjPath);
 					}
 				}
@@ -1090,7 +1082,7 @@ public class BuildDescription implements IBuildDescription {
 		try {
 			IFileStore projStore = EFS.getStore(projURI);
 
-			if(projStore.toLocalFile(EFS.NONE, null) != null) {
+			if (projStore.toLocalFile(EFS.NONE, null) != null) {
 				// local file
 				return URIUtil.toURI(location);
 			}
@@ -1112,70 +1104,73 @@ public class BuildDescription implements IBuildDescription {
 
 		IPath resPath = null;
 
-		if(!isMultiAction){
+		if (!isMultiAction) {
 			resPath = buildRc.getFullPath();
-			if(resPath == null)
+			if (resPath == null)
 				resPath = buildRc.getLocation();
 		} else {
-			rcs = (BuildResource[])action.getPrimaryTypes(true)[0].getResources();
-			if(rcs.length == 0)
+			rcs = (BuildResource[]) action.getPrimaryTypes(true)[0].getResources();
+			if (rcs.length == 0)
 				return;
 		}
 
-		IPath outDirPath = isMultiAction ?
-				getTopBuildDirFullPath() :
-					buildRc.getProducerIOType().getStep() == fInputStep ?
-							getTopBuildDirFullPath().append(resPath.removeFirstSegments(1).removeLastSegments(1)).addTrailingSeparator() :
-								resPath.removeLastSegments(1).addTrailingSeparator();
-		IInputType inType = (IInputType)arg.getIoType();
+		IPath outDirPath = isMultiAction ? getTopBuildDirFullPath()
+				: buildRc.getProducerIOType().getStep() == fInputStep
+						? getTopBuildDirFullPath().append(resPath.removeFirstSegments(1).removeLastSegments(1))
+								.addTrailingSeparator()
+						: resPath.removeLastSegments(1).addTrailingSeparator();
+		IInputType inType = (IInputType) arg.getIoType();
 		String linkId = inType != null ? inType.getBuildVariable() : null;
-		if(linkId != null && linkId.length() == 0)
+		if (linkId != null && linkId.length() == 0)
 			linkId = null;
 
 		IOutputType[] outTypes = tool.getOutputTypes();
 		//  1.  If the tool is the build target and this is the primary output,
 		//      use artifact name & extension
-		if (fTargetStep == action){
+		if (fTargetStep == action) {
 			String artifactName = fCfg.getArtifactName();
-			if (artifactName != null && ! artifactName.trim().isEmpty()) {
+			if (artifactName != null && !artifactName.trim().isEmpty()) {
 				try {
-					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactName, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-					if((tmp = tmp.trim()).length() > 0)
+					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactName, "", " ", //$NON-NLS-1$//$NON-NLS-2$
+							IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);
+					if ((tmp = tmp.trim()).length() > 0)
 						artifactName = tmp;
-				} catch (BuildMacroException e){
+				} catch (BuildMacroException e) {
 				}
-	
+
 				String artifactExt = fCfg.getArtifactExtension();
 				try {
-					String tmp = ManagedBuildManager.getBuildMacroProvider()
-									.resolveValue(artifactExt, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-					if((tmp = tmp.trim()).length() > 0)
+					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactExt, "", " ", //$NON-NLS-1$//$NON-NLS-2$
+							IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);
+					if ((tmp = tmp.trim()).length() > 0)
 						artifactExt = tmp;
 				} catch (BuildMacroException e) {
 				}
-	
+
 				String artifactPrefix = tool.getOutputPrefix();
-				if(artifactPrefix != null && artifactPrefix.length() != 0){
+				if (artifactPrefix != null && artifactPrefix.length() != 0) {
 					try {
-						String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-						if((tmp = tmp.trim()).length() > 0)
+						String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", //$NON-NLS-1$//$NON-NLS-2$
+								IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);
+						if ((tmp = tmp.trim()).length() > 0)
 							artifactPrefix = tmp;
-					} catch (BuildMacroException e){
+					} catch (BuildMacroException e) {
 					}
 					artifactName = artifactPrefix + artifactName;
 				}
-	
+
 				IPath path = new Path(artifactName);
-				if(artifactExt != null && artifactExt.length() != 0)
+				if (artifactExt != null && artifactExt.length() != 0)
 					path = path.addFileExtension(artifactExt);
-	
+
 				IOutputType type = action.getTool().getPrimaryOutputType();
 				BuildIOType ioType = action.getIOTypeForType(type, false);
-				if(ioType == null)
+				if (ioType == null)
 					ioType = action.createIOType(false, true, type);
-				addOutputs(new IPath[]{path}, ioType, outDirPath);
+				addOutputs(new IPath[] { path }, ioType, outDirPath);
 			} else {
-				String msg = BuildModelMessages.getFormattedString("BuildDescription.MissingArtifact", new String[] {fProject.getName(), fCfg.getName()}); //$NON-NLS-1$
+				String msg = BuildModelMessages.getFormattedString("BuildDescription.MissingArtifact", //$NON-NLS-1$
+						new String[] { fProject.getName(), fCfg.getName() });
 				ManagedBuilderCorePlugin.log(new Status(IStatus.WARNING, ManagedBuilderCorePlugin.PLUGIN_ID, msg));
 			}
 		} else if (outTypes != null && outTypes.length > 0) {
@@ -1185,50 +1180,44 @@ public class BuildDescription implements IBuildDescription {
 				String[] pathStrings = null;
 				IPath[] paths = null;
 
-                // Resolve any macros in the outputPrefix
-                // Note that we cannot use file macros because if we do a clean
-                // we need to know the actual name of the file to clean, and
-                // cannot use any builder variables such as $@. Hence we use the
-                // next best thing, i.e. configuration context.
+				// Resolve any macros in the outputPrefix
+				// Note that we cannot use file macros because if we do a clean
+				// we need to know the actual name of the file to clean, and
+				// cannot use any builder variables such as $@. Hence we use the
+				// next best thing, i.e. configuration context.
 
-                // figure out the configuration we're using
-                IBuildObject toolParent = tool.getParent();
-                IConfiguration config = null;
-                // if the parent is a config then we're done
-                if (toolParent instanceof IConfiguration)
-                    config = (IConfiguration) toolParent;
-                else if (toolParent instanceof IToolChain) {
-                    // must be a toolchain
-                    config = ((IToolChain) toolParent).getParent();
-                }
+				// figure out the configuration we're using
+				IBuildObject toolParent = tool.getParent();
+				IConfiguration config = null;
+				// if the parent is a config then we're done
+				if (toolParent instanceof IConfiguration)
+					config = (IConfiguration) toolParent;
+				else if (toolParent instanceof IToolChain) {
+					// must be a toolchain
+					config = ((IToolChain) toolParent).getParent();
+				}
 
-                else if (toolParent instanceof IResourceConfiguration) {
-                    config = ((IResourceConfiguration) toolParent).getParent();
-                }
+				else if (toolParent instanceof IResourceConfiguration) {
+					config = ((IResourceConfiguration) toolParent).getParent();
+				}
 
-                else {
-                    // bad
-                    throw new AssertionError(
-                            "tool parent must be one of configuration, toolchain, or resource configuration");	//$NON-NLS-1$
-                }
+				else {
+					// bad
+					throw new AssertionError(
+							"tool parent must be one of configuration, toolchain, or resource configuration"); //$NON-NLS-1$
+				}
 
-                if (config != null) {
+				if (config != null) {
 
-                    try {
-//TODO
-                    		outputPrefix = ManagedBuildManager
-                            .getBuildMacroProvider()
-                            .resolveValue(
-                                    outputPrefix,
-                                    "", //$NON-NLS-1$
-                                    " ", //$NON-NLS-1$
-                                    IBuildMacroProvider.CONTEXT_CONFIGURATION,
-                                    config);
-                    }
-                    catch (BuildMacroException e) {
-                    }
+					try {
+						//TODO
+						outputPrefix = ManagedBuildManager.getBuildMacroProvider().resolveValue(outputPrefix, "", //$NON-NLS-1$
+								" ", //$NON-NLS-1$
+								IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+					} catch (BuildMacroException e) {
+					}
 
-                }
+				}
 
 				boolean multOfType = type.getMultipleOfType();
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
@@ -1236,75 +1225,56 @@ public class BuildDescription implements IBuildDescription {
 				String[] outputNames = type.getOutputNames();
 				BuildIOType buildArg = null;
 
-
 				//  2.  If an option is specified, use the value of the option
 
-					if (option != null) {
+				if (option != null) {
 					try {
 						int optType = option.getValueType();
 						if (optType == IOption.STRING) {
 							String val = option.getStringValue();
-							if(val != null && val.length() > 0){
+							if (val != null && val.length() > 0) {
 
 								// try to resolve the build macros in the output
 								// names
 								try {
 
-//TODO
-									val = ManagedBuildManager
-												.getBuildMacroProvider()
-												.resolveValue(
-														val,
-														"", //$NON-NLS-1$
-														" ", //$NON-NLS-1$
-														IBuildMacroProvider.CONTEXT_FILE,
-														new FileContextData(
-																resPath,
-																null, option, tool));
-								} catch (BuildMacroException e){
+									//TODO
+									val = ManagedBuildManager.getBuildMacroProvider().resolveValue(val, "", //$NON-NLS-1$
+											" ", //$NON-NLS-1$
+											IBuildMacroProvider.CONTEXT_FILE,
+											new FileContextData(resPath, null, option, tool));
+								} catch (BuildMacroException e) {
 								}
 
-								if((val = val.trim()).length() > 0){
-									pathStrings = new String[]{outputPrefix + val};
+								if ((val = val.trim()).length() > 0) {
+									pathStrings = new String[] { outputPrefix + val };
 								}
 							}
-						} else if (
-								optType == IOption.STRING_LIST ||
-								optType == IOption.LIBRARIES ||
-								optType == IOption.OBJECTS ||
-								optType == IOption.INCLUDE_FILES ||
-								optType == IOption.LIBRARY_PATHS ||
-								optType == IOption.LIBRARY_FILES ||
-								optType == IOption.MACRO_FILES ||
-								optType == IOption.UNDEF_INCLUDE_PATH ||
-								optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS ||
-								optType == IOption.UNDEF_INCLUDE_FILES ||
-								optType == IOption.UNDEF_LIBRARY_PATHS ||
-								optType == IOption.UNDEF_LIBRARY_FILES ||
-								optType == IOption.UNDEF_MACRO_FILES) {
-							List<String> outputList = (List<String>)option.getValue();
+						} else if (optType == IOption.STRING_LIST || optType == IOption.LIBRARIES
+								|| optType == IOption.OBJECTS || optType == IOption.INCLUDE_FILES
+								|| optType == IOption.LIBRARY_PATHS || optType == IOption.LIBRARY_FILES
+								|| optType == IOption.MACRO_FILES || optType == IOption.UNDEF_INCLUDE_PATH
+								|| optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS
+								|| optType == IOption.UNDEF_INCLUDE_FILES || optType == IOption.UNDEF_LIBRARY_PATHS
+								|| optType == IOption.UNDEF_LIBRARY_FILES || optType == IOption.UNDEF_MACRO_FILES) {
+							List<String> outputList = (List<String>) option.getValue();
 							// Add outputPrefix to each if necessary
-							if(outputList != null && outputList.size() > 0){
-//TODO
-							try{
-								pathStrings = ManagedBuildManager
-								.getBuildMacroProvider()
-								.resolveStringListValues(
-										outputList.toArray(new String[outputList.size()]),
-										"", //$NON-NLS-1$
-										" ", //$NON-NLS-1$
-										IBuildMacroProvider.CONTEXT_FILE,
-										new FileContextData(
-												resPath,
-												null, option, tool));
-							} catch (BuildMacroException e){
-							}
+							if (outputList != null && outputList.size() > 0) {
+								//TODO
+								try {
+									pathStrings = ManagedBuildManager.getBuildMacroProvider().resolveStringListValues(
+											outputList.toArray(new String[outputList.size()]), "", //$NON-NLS-1$
+											" ", //$NON-NLS-1$
+											IBuildMacroProvider.CONTEXT_FILE,
+											new FileContextData(resPath, null, option, tool));
+								} catch (BuildMacroException e) {
+								}
 							}
 
-
-							if(pathStrings != null && pathStrings.length > 0 && outputPrefix.length() > 0){
-								for (int j=0; j<pathStrings.length; j++) {
-									if(pathStrings[j] == null && (pathStrings[j] = pathStrings[j].trim()).length() == 0)
+							if (pathStrings != null && pathStrings.length > 0 && outputPrefix.length() > 0) {
+								for (int j = 0; j < pathStrings.length; j++) {
+									if (pathStrings[j] == null
+											&& (pathStrings[j] = pathStrings[j].trim()).length() == 0)
 										pathStrings[j] = null;
 									else
 										pathStrings[j] = outputPrefix + pathStrings[j];
@@ -1312,17 +1282,18 @@ public class BuildDescription implements IBuildDescription {
 							}
 
 						}
-					} catch( BuildException ex ) {}
+					} catch (BuildException ex) {
+					}
 				} else
 				//  3.  If a nameProvider is specified, call it
 				if (nameProvider != null) {
 					IPath[] inPaths;
-					if(buildRc != null){
+					if (buildRc != null) {
 						inPaths = new Path[1];
 						inPaths[0] = buildRc.getLocation();
 					} else {
 						inPaths = new Path[rcs.length];
-						for(int k = 0; k < inPaths.length; k++){
+						for (int k = 0; k < inPaths.length; k++) {
 							inPaths[k] = rcs[k].getLocation();
 						}
 					}
@@ -1330,24 +1301,18 @@ public class BuildDescription implements IBuildDescription {
 				} else
 				//  4.  If outputNames is specified, use it
 				if (outputNames != null) {
-					try{
-						pathStrings = ManagedBuildManager
-						.getBuildMacroProvider()
-						.resolveStringListValues(
-								outputNames,
+					try {
+						pathStrings = ManagedBuildManager.getBuildMacroProvider().resolveStringListValues(outputNames,
 								"", //$NON-NLS-1$
 								" ", //$NON-NLS-1$
-								IBuildMacroProvider.CONTEXT_FILE,
-								new FileContextData(
-										resPath,
-										null, option, tool));
-					} catch (BuildMacroException e){
+								IBuildMacroProvider.CONTEXT_FILE, new FileContextData(resPath, null, option, tool));
+					} catch (BuildMacroException e) {
 					}
 
 				} else {
-				//  5.  Use the name pattern to generate a transformation macro
-				//      so that the source names can be transformed into the target names
-				//      using the built-in string substitution functions of <code>make</code>.
+					//  5.  Use the name pattern to generate a transformation macro
+					//      so that the source names can be transformed into the target names
+					//      using the built-in string substitution functions of <code>make</code>.
 					if (multOfType || isMultiAction) {
 						// This case is not handled - a nameProvider or outputNames must be specified
 						// TODO - report error
@@ -1357,37 +1322,37 @@ public class BuildDescription implements IBuildDescription {
 						String inExt = resPath.getFileExtension();
 						String outExt = tool.getOutputExtension(inExt);
 						if (namePattern == null || namePattern.length() == 0) {
-							namePattern = /*outDirPath.toOSString() +*/ outputPrefix + IManagedBuilderMakefileGenerator.WILDCARD;
+							namePattern = /*outDirPath.toOSString() +*/ outputPrefix
+									+ IManagedBuilderMakefileGenerator.WILDCARD;
 							if (outExt != null && outExt.length() > 0) {
 								namePattern += DOT + outExt;
 							}
 							namePatternPath = Path.fromOSString(namePattern);
-						}
-						else {
+						} else {
 							if (outputPrefix.length() > 0) {
 								namePattern = outputPrefix + namePattern;
 							}
 							namePatternPath = Path.fromOSString(namePattern);
 							//  If only a file name is specified, add the relative path of this output directory
 							if (namePatternPath.segmentCount() == 1) {
-								namePatternPath = Path.fromOSString(/*outDirPath.toOSString() +*/ namePatternPath.toString());
+								namePatternPath = Path
+										.fromOSString(/*outDirPath.toOSString() +*/ namePatternPath.toString());
 							}
 						}
 
-						paths = new IPath[]{resolvePercent(namePatternPath, buildRc.getLocation())};
+						paths = new IPath[] { resolvePercent(namePatternPath, buildRc.getLocation()) };
 
 					}
 				}
 
-				if(paths == null && pathStrings != null){
+				if (paths == null && pathStrings != null) {
 					paths = new IPath[pathStrings.length];
-					for(int k = 0; k < pathStrings.length; k++){
+					for (int k = 0; k < pathStrings.length; k++) {
 						paths[k] = Path.fromOSString(pathStrings[k]);
 					}
 				}
 
-
-				if(paths != null){
+				if (paths != null) {
 					buildArg = action.createIOType(false, primaryOutput, type);
 					addOutputs(paths, buildArg, outDirPath);
 				}
@@ -1401,40 +1366,39 @@ public class BuildDescription implements IBuildDescription {
 			//     In this case, the output file name is the input file name with
 			//     the output extension.
 
-				String outPrefix = tool.getOutputPrefix();
-				IPath outFullPath = Path.fromOSString(outDirPath.toOSString() + outPrefix + WILDCARD);
-				IPath outLocation;
-				String inExt = resPath.getFileExtension();
-				String outExt = tool.getOutputExtension(inExt);
-				outFullPath = resolvePercent(outFullPath.addFileExtension(outExt), buildRc.getLocation());
+			String outPrefix = tool.getOutputPrefix();
+			IPath outFullPath = Path.fromOSString(outDirPath.toOSString() + outPrefix + WILDCARD);
+			IPath outLocation;
+			String inExt = resPath.getFileExtension();
+			String outExt = tool.getOutputExtension(inExt);
+			outFullPath = resolvePercent(outFullPath.addFileExtension(outExt), buildRc.getLocation());
 
-				outLocation = getProjectLocation().append(outFullPath.removeFirstSegments(1));
+			outLocation = getProjectLocation().append(outFullPath.removeFirstSegments(1));
 
-				BuildIOType buildArg = action.createIOType(false, true, null);
+			BuildIOType buildArg = action.createIOType(false, true, null);
 
-				BuildResource outRc = createResource(outFullPath, getURIForLocation(outLocation));
-				buildArg.addResource(outRc);
+			BuildResource outRc = createResource(outFullPath, getURIForLocation(outLocation));
+			buildArg.addResource(outRc);
 		}
 
-		if(checkFlags(BuildDescriptionManager.DEPFILES)){
-			if(buildRc != null){
+		if (checkFlags(BuildDescriptionManager.DEPFILES)) {
+			if (buildRc != null) {
 				IInputType type = action.getInputType();
 				String ext = null;
-				if(type != null){
+				if (type != null) {
 					String location = buildRc.getLocation().toOSString();
 					for (String srcExt : type.getSourceExtensions(tool)) {
-						if(location.endsWith(srcExt)){
+						if (location.endsWith(srcExt)) {
 							ext = srcExt;
 							break;
 						}
 					}
 				}
-				if(ext == null)
+				if (ext == null)
 					ext = buildRc.getLocation().getFileExtension();
 
 				if (ext != null) {
-					IManagedDependencyGeneratorType depGenType = tool
-							.getDependencyGeneratorForExtension(ext);
+					IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(ext);
 					if (depGenType != null) {
 						IPath depFiles[] = null;
 						if (depGenType instanceof IManagedDependencyGenerator2) {
@@ -1442,36 +1406,29 @@ public class BuildDescription implements IBuildDescription {
 							if (context instanceof IToolChain) {
 								context = ((IToolChain) context).getParent();
 							}
-							IPath path = buildRc.isProjectResource() ? buildRc
-									.getFullPath().removeFirstSegments(1)
+							IPath path = buildRc.isProjectResource() ? buildRc.getFullPath().removeFirstSegments(1)
 									: buildRc.getLocation();
 
-							IResource resource = buildRc.isProjectResource() ? fProject
-									.findMember(buildRc.getLocation())
+							IResource resource = buildRc.isProjectResource()
+									? fProject.findMember(buildRc.getLocation())
 									: null;
 
 							IManagedDependencyInfo info = ((IManagedDependencyGenerator2) depGenType)
-									.getDependencySourceInfo(path, resource,
-											context, tool,
+									.getDependencySourceInfo(path, resource, context, tool,
 											getDefaultBuildDirLocation());
 							if (info instanceof IManagedDependencyCommands) {
-								depFiles = ((IManagedDependencyCommands) info)
-										.getDependencyFiles();
+								depFiles = ((IManagedDependencyCommands) info).getDependencyFiles();
 							}
 						} else if (depGenType.getCalculatorType() == IManagedDependencyGeneratorType.TYPE_COMMAND
 								&& depGenType instanceof IManagedDependencyGenerator) {
 							depFiles = new IPath[1];
-							depFiles[0] = new Path(buildRc.getLocation()
-									.segment(
-											buildRc.getLocation()
-													.segmentCount() - 1))
-									.removeFileExtension()
-									.addFileExtension("d"); //$NON-NLS-1$
+							depFiles[0] = new Path(
+									buildRc.getLocation().segment(buildRc.getLocation().segmentCount() - 1))
+											.removeFileExtension().addFileExtension("d"); //$NON-NLS-1$
 						}
 
 						if (depFiles != null) {
-							BuildIOType depType = action.createIOType(false,
-									false, null);
+							BuildIOType depType = action.createIOType(false, false, null);
 							addOutputs(depFiles, depType, outDirPath);
 						}
 					}
@@ -1479,7 +1436,6 @@ public class BuildDescription implements IBuildDescription {
 			}
 		}
 	}
-
 
 	/* (non-Javadoc)
 	 * If the path contains a %, returns the path resolved using the resource name
@@ -1493,9 +1449,8 @@ public class BuildDescription implements IBuildDescription {
 		return Path.fromOSString(outName);
 	}
 
-
-	private IPath locationToRel(IPath location){
-		if(getProjectLocation().isPrefixOf(location))
+	private IPath locationToRel(IPath location) {
+		if (getProjectLocation().isPrefixOf(location))
 			return location.removeFirstSegments(getProjectLocation().segmentCount()).setDevice(null);
 		//TODO
 		return location;
@@ -1514,14 +1469,14 @@ public class BuildDescription implements IBuildDescription {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getResources()
 	 */
 	@Override
-	public IBuildResource[] getResources(){
+	public IBuildResource[] getResources() {
 		return fLocationToRcMap.values().toArray(new IBuildResource[0]);
 	}
 
-	public IBuildResource[] getResources(boolean generated){
+	public IBuildResource[] getResources(boolean generated) {
 		List<IBuildResource> list = new ArrayList<IBuildResource>();
 		for (IBuildResource rc : getResources()) {
-			if(generated == (rc.getProducerStep() != fInputStep))
+			if (generated == (rc.getProducerStep() != fInputStep))
 				list.add(rc);
 		}
 
@@ -1536,14 +1491,15 @@ public class BuildDescription implements IBuildDescription {
 		return fCfg;
 	}
 
-	public Map<String, String> getEnvironment(){
-		if(fEnvironment == null)
+	public Map<String, String> getEnvironment() {
+		if (fEnvironment == null)
 			fEnvironment = calculateEnvironment();
 		return fEnvironment;
 	}
 
-	protected Map<String, String> calculateEnvironment(){
-		IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,true,true);
+	protected Map<String, String> calculateEnvironment() {
+		IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,
+				true, true);
 		Map<String, String> map = new HashMap<String, String>();
 
 		for (IBuildEnvironmentVariable var : variables) {
@@ -1581,52 +1537,36 @@ public class BuildDescription implements IBuildDescription {
 						int optType = option.getValueType();
 						if (optType == IOption.STRING) {
 							inputs.add(option.getStringValue());
-						} else if (
-								optType == IOption.STRING_LIST ||
-								optType == IOption.LIBRARIES ||
-								optType == IOption.OBJECTS ||
-								optType == IOption.INCLUDE_FILES ||
-								optType == IOption.LIBRARY_PATHS ||
-								optType == IOption.LIBRARY_FILES ||
-								optType == IOption.MACRO_FILES ||
-								optType == IOption.UNDEF_INCLUDE_PATH ||
-								optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS ||
-								optType == IOption.UNDEF_INCLUDE_FILES ||
-								optType == IOption.UNDEF_LIBRARY_PATHS ||
-								optType == IOption.UNDEF_LIBRARY_FILES ||
-								optType == IOption.UNDEF_MACRO_FILES
-								) {
-							inputs = (List<String>)option.getValue();
+						} else if (optType == IOption.STRING_LIST || optType == IOption.LIBRARIES
+								|| optType == IOption.OBJECTS || optType == IOption.INCLUDE_FILES
+								|| optType == IOption.LIBRARY_PATHS || optType == IOption.LIBRARY_FILES
+								|| optType == IOption.MACRO_FILES || optType == IOption.UNDEF_INCLUDE_PATH
+								|| optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS
+								|| optType == IOption.UNDEF_INCLUDE_FILES || optType == IOption.UNDEF_LIBRARY_PATHS
+								|| optType == IOption.UNDEF_LIBRARY_FILES || optType == IOption.UNDEF_MACRO_FILES) {
+							inputs = (List<String>) option.getValue();
 						}
-						for (int j=0; j<inputs.size(); j++) {
+						for (int j = 0; j < inputs.size(); j++) {
 							String inputName = inputs.get(j).trim();
-
 
 							try {
 								String resolved = null;
 
-								resolved = ManagedBuildManager
-										.getBuildMacroProvider()
-										.resolveValue(
-												inputName,
-												"", //$NON-NLS-1$
-												" ", //$NON-NLS-1$
-												IBuildMacroProvider.CONTEXT_OPTION,
-												new OptionContextData(
-														option,
-														tool));
+								resolved = ManagedBuildManager.getBuildMacroProvider().resolveValue(inputName, "", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(option, tool));
 
 								if ((resolved = resolved.trim()).length() > 0)
 									inputName = resolved;
 							} catch (BuildMacroException e) {
 							}
 
-							if(arg == null)
+							if (arg == null)
 								arg = step.createIOType(true, primaryInput, type);
 
 							addInput(inputName, arg);
 						}
-					} catch( BuildException ex ) {
+					} catch (BuildException ex) {
 					}
 
 				}
@@ -1636,8 +1576,8 @@ public class BuildDescription implements IBuildDescription {
 				if (addlInputs != null) {
 					for (IAdditionalInput addlInput : addlInputs) {
 						int kind = addlInput.getKind();
-						if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT ||
-							kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
+						if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT
+								|| kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
 							String[] paths = addlInput.getPaths();
 							if (paths != null) {
 								for (String path : paths) {
@@ -1645,20 +1585,20 @@ public class BuildDescription implements IBuildDescription {
 
 									// Translate the path from project relative to
 									// build directory relative
-									if (!(strPath.startsWith("$("))) {		//$NON-NLS-1$
+									if (!(strPath.startsWith("$("))) { //$NON-NLS-1$
 
-										if(arg == null)
+										if (arg == null)
 											arg = step.createIOType(true, primaryInput, type);
 
 										addInput(strPath, arg);
 
-									} else if (strPath.endsWith(")")){	//$NON-NLS-1$
+									} else if (strPath.endsWith(")")) { //$NON-NLS-1$
 										String var = strPath.substring(2, strPath.length() - 1);
-										if((var = var.trim()).length() != 0){
-											if(VAR_USER_OBJS.equals(var)){
+										if ((var = var.trim()).length() != 0) {
+											if (VAR_USER_OBJS.equals(var)) {
 												String objs[] = getUserObjs(step);
-												if(objs != null && objs.length != 0){
-													if(arg == null)
+												if (objs != null && objs.length != 0) {
+													if (arg == null)
 														arg = step.createIOType(true, primaryInput, type);
 
 													for (String userObj : objs) {
@@ -1666,26 +1606,26 @@ public class BuildDescription implements IBuildDescription {
 													}
 												}
 												//TODO
-											} else if (VAR_LIBS.equals(var)){
+											} else if (VAR_LIBS.equals(var)) {
 												ITool libTool = fCfg.calculateTargetTool();
-												if(libTool == null)
+												if (libTool == null)
 													libTool = step.getTool();
 
 												step.setLibTool(libTool);
 											} else {
-												if(arg == null)
+												if (arg == null)
 													arg = step.createIOType(true, primaryInput, type);
 
 												Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
-												if(set == null){
+												if (set == null) {
 													set = new HashSet<BuildIOType>();
 													fVarToAddlInSetMap.put(var, set);
 												}
 
-												if(set.add(arg)){
+												if (set.add(arg)) {
 													for (BuildResource rc : fLocationToRcMap.values()) {
-														BuildIOType t = (BuildIOType)rc.getProducerIOType();
-														if(t != null && var.equals(t.getLinkId()))
+														BuildIOType t = (BuildIOType) rc.getProducerIOType();
+														if (t != null && var.equals(t.getLinkId()))
 															arg.addResource(rc);
 													}
 												}
@@ -1706,13 +1646,13 @@ public class BuildDescription implements IBuildDescription {
 		calculateDeps(step);
 	}
 
-	private void calculateDeps(BuildStep step){
-		BuildResource rcs[] = (BuildResource[])step.getInputResources();
+	private void calculateDeps(BuildStep step) {
+		BuildResource rcs[] = (BuildResource[]) step.getInputResources();
 		Set<IPath> depSet = new HashSet<IPath>();
 
 		for (BuildResource rc : rcs) {
 			IManagedDependencyCalculator depCalc = getDependencyCalculator(step, rc);
-			if(depCalc != null){
+			if (depCalc != null) {
 				IPath paths[] = depCalc.getDependencies();
 				for (IPath path : paths) {
 					depSet.add(path);
@@ -1720,7 +1660,7 @@ public class BuildDescription implements IBuildDescription {
 			}
 		}
 
-		if(depSet.size() > 0){
+		if (depSet.size() > 0) {
 			BuildIOType ioType = step.createIOType(true, false, null);
 
 			for (IPath path : depSet) {
@@ -1729,23 +1669,23 @@ public class BuildDescription implements IBuildDescription {
 		}
 	}
 
-	protected IManagedDependencyCalculator getDependencyCalculator(BuildStep step, BuildResource bRc){
-		if(!checkFlags(BuildDescriptionManager.DEPS))
+	protected IManagedDependencyCalculator getDependencyCalculator(BuildStep step, BuildResource bRc) {
+		if (!checkFlags(BuildDescriptionManager.DEPS))
 			return null;
 
 		final ITool tool = step.getTool();
-		if(tool == null)
+		if (tool == null)
 			return null;
 
 		IManagedDependencyCalculator depCalc = null;
 		String ext = bRc.getLocation().getFileExtension();
-		if(ext == null)
-			ext = ""; 	//$NON-NLS-1$
+		if (ext == null)
+			ext = ""; //$NON-NLS-1$
 		IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(ext);
 		IManagedDependencyGeneratorType depGen = null;
 
-		if(depGenType != null){
-			switch(depGenType.getCalculatorType()){
+		if (depGenType != null) {
+			switch (depGenType.getCalculatorType()) {
 			case IManagedDependencyGeneratorType.TYPE_NODEPS:
 			case IManagedDependencyGeneratorType.TYPE_NODEPENDENCIES:
 				//no dependencies
@@ -1768,32 +1708,28 @@ public class BuildDescription implements IBuildDescription {
 			depGen = getPDOMDependencyGenerator();
 		}
 
-		if(depGen != null){
+		if (depGen != null) {
 			final IResource rc = BuildDescriptionManager.findResourceForBuildResource(bRc);
 			IBuildObject bo = tool.getParent();
-			if(bo instanceof IToolChain)
-				bo = ((IToolChain)bo).getParent();
+			if (bo instanceof IToolChain)
+				bo = ((IToolChain) bo).getParent();
 
-			if(rc != null){
-				if(depGen instanceof IManagedDependencyGenerator2){
-					IManagedDependencyInfo srcInfo = ((IManagedDependencyGenerator2)depGen).getDependencySourceInfo(
-							rc.getLocation(),
-							rc,
-							bo,
-							tool,
-							getTopBuildDirLocation());
-					if(srcInfo instanceof IManagedDependencyCalculator)
-						depCalc = (IManagedDependencyCalculator)srcInfo;
+			if (rc != null) {
+				if (depGen instanceof IManagedDependencyGenerator2) {
+					IManagedDependencyInfo srcInfo = ((IManagedDependencyGenerator2) depGen)
+							.getDependencySourceInfo(rc.getLocation(), rc, bo, tool, getTopBuildDirLocation());
+					if (srcInfo instanceof IManagedDependencyCalculator)
+						depCalc = (IManagedDependencyCalculator) srcInfo;
 
-				} else if (depGen instanceof IManagedDependencyGenerator){
-					IResource rcs[] = ((IManagedDependencyGenerator)depGen).findDependencies(rc, fProject);
-					if(rcs != null && rcs.length > 0){
+				} else if (depGen instanceof IManagedDependencyGenerator) {
+					IResource rcs[] = ((IManagedDependencyGenerator) depGen).findDependencies(rc, fProject);
+					if (rcs != null && rcs.length > 0) {
 						final IPath paths[] = new IPath[rcs.length];
 						final IBuildObject bof = bo;
-						for(int i = 0; i < paths.length; i++){
+						for (int i = 0; i < paths.length; i++) {
 							paths[i] = rcs[i].getLocation();
 						}
-						depCalc = new IManagedDependencyCalculator(){
+						depCalc = new IManagedDependencyCalculator() {
 
 							@Override
 							public IPath[] getAdditionalTargets() {
@@ -1832,8 +1768,8 @@ public class BuildDescription implements IBuildDescription {
 		return depCalc;
 	}
 
-	protected PDOMDependencyGenerator getPDOMDependencyGenerator(){
-		if(fPdomDepGen == null)
+	protected PDOMDependencyGenerator getPDOMDependencyGenerator() {
+		if (fPdomDepGen == null)
 			fPdomDepGen = new PDOMDependencyGenerator();
 		return fPdomDepGen;
 	}
@@ -1842,7 +1778,7 @@ public class BuildDescription implements IBuildDescription {
 		Vector<String> libs = new Vector<String>();
 		ITool tool = step.getLibTool();
 
-		if(tool != null){
+		if (tool != null) {
 			// Look for the lib option type
 			for (IOption option : tool.getOptions()) {
 				try {
@@ -1856,15 +1792,14 @@ public class BuildDescription implements IBuildDescription {
 							String command = option.getCommand();
 							for (String lib : option.getLibraries()) {
 								try {
-									String resolved[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValueToMakefileFormat(
-											lib,
-											"", //$NON-NLS-1$
-											" ", //$NON-NLS-1$
-											IBuildMacroProvider.CONTEXT_OPTION,
-											new OptionContextData(option, tool));
-									if(resolved != null && resolved.length > 0){
+									String resolved[] = ManagedBuildManager.getBuildMacroProvider()
+											.resolveStringListValueToMakefileFormat(lib, "", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData(option, tool));
+									if (resolved != null && resolved.length > 0) {
 										for (String string : resolved) {
-											if(string.length() > 0)
+											if (string.length() > 0)
 												libs.add(command + string);
 										}
 									}
@@ -1888,48 +1823,47 @@ public class BuildDescription implements IBuildDescription {
 	public String[] getUserObjs(BuildStep step) {
 		Vector<String> objs = new Vector<String>();
 		ITool tool = fCfg.calculateTargetTool();
-		if(tool == null)
+		if (tool == null)
 			tool = step.getTool();
 
-		if(tool != null){
-				// Look for the user object option type
-				for (IOption option : tool.getOptions()) {
-					try {
-						if (option.getValueType() == IOption.OBJECTS) {
-							String unresolved[] = option.getUserObjects();
-							if(unresolved != null && unresolved.length > 0){
-								for (String unresolvedObj : unresolved) {
-									try {
-										String resolved[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValueToMakefileFormat(
-												unresolvedObj,
-												"", //$NON-NLS-1$
-												" ", //$NON-NLS-1$
-												IBuildMacroProvider.CONTEXT_OPTION,
-												new OptionContextData(option, tool));
-										if(resolved != null && resolved.length > 0)
-											objs.addAll(Arrays.asList(resolved));
-									} catch (BuildMacroException e) {
-										// TODO: report error
-										continue;
-									}
+		if (tool != null) {
+			// Look for the user object option type
+			for (IOption option : tool.getOptions()) {
+				try {
+					if (option.getValueType() == IOption.OBJECTS) {
+						String unresolved[] = option.getUserObjects();
+						if (unresolved != null && unresolved.length > 0) {
+							for (String unresolvedObj : unresolved) {
+								try {
+									String resolved[] = ManagedBuildManager.getBuildMacroProvider()
+											.resolveStringListValueToMakefileFormat(unresolvedObj, "", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData(option, tool));
+									if (resolved != null && resolved.length > 0)
+										objs.addAll(Arrays.asList(resolved));
+								} catch (BuildMacroException e) {
+									// TODO: report error
+									continue;
 								}
 							}
 						}
-					} catch (BuildException e) {
-						// TODO: report error
-						continue;
 					}
+				} catch (BuildException e) {
+					// TODO: report error
+					continue;
 				}
+			}
 		}
 		return objs.toArray(new String[objs.size()]);
 	}
 
-	private BuildResource addInput(String path, BuildIOType buildArg){
-		if(path.length() > 0){
-			if(path.length() >= 2){
+	private BuildResource addInput(String path, BuildIOType buildArg) {
+		if (path.length() > 0) {
+			if (path.length() >= 2) {
 				// Unquote path potentially quoted by FileListControl.getNewInputObject()
-				if(path.charAt(0) == '"' && path.charAt(path.length() -1) == '"') {
-					path = path.substring(1, path.length() -1);
+				if (path.charAt(0) == '"' && path.charAt(path.length() - 1) == '"') {
+					path = path.substring(1, path.length() - 1);
 				}
 			}
 			IPath pPath = Path.fromOSString(path);
@@ -1944,7 +1878,7 @@ public class BuildDescription implements IBuildDescription {
 	 * @param buildArg builds setps BuildIOType to which the input resource is added
 	 * @return BuildResource
 	 */
-	private BuildResource addInput(final IPath path, BuildIOType buildArg){
+	private BuildResource addInput(final IPath path, BuildIOType buildArg) {
 		BuildResource rc;
 
 		// Is path a location, or project relative?
@@ -1953,7 +1887,7 @@ public class BuildDescription implements IBuildDescription {
 			IPath inFullPath = null;
 
 			// If this is a location, check whether we've already created the BuildResource
-			rc = (BuildResource)getBuildResource(uri);
+			rc = (BuildResource) getBuildResource(uri);
 			if (rc == null) {
 				IFile files[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri);
 				for (IFile file : files) {
@@ -1962,10 +1896,11 @@ public class BuildDescription implements IBuildDescription {
 						break;
 					}
 				}
-				if(inFullPath == null && files.length > 0)
+				if (inFullPath == null && files.length > 0)
 					inFullPath = files[0].getFullPath();
-				if(inFullPath == null && getProjectLocation().isPrefixOf(path))
-					inFullPath = fProject.getFullPath().append(path.removeFirstSegments(getProjectLocation().segmentCount()));
+				if (inFullPath == null && getProjectLocation().isPrefixOf(path))
+					inFullPath = fProject.getFullPath()
+							.append(path.removeFirstSegments(getProjectLocation().segmentCount()));
 				rc = createResource(inFullPath, uri);
 			}
 		} else {
@@ -1979,16 +1914,15 @@ public class BuildDescription implements IBuildDescription {
 		return rc;
 	}
 
-
-	void typeCreated(BuildIOType arg){
+	void typeCreated(BuildIOType arg) {
 	}
 
-	public BuildResource createResource(String projPath){
+	public BuildResource createResource(String projPath) {
 		Path path = new Path(projPath);
 		return createResource(path);
 	}
 
-	public BuildResource createResource(IPath projPath){
+	public BuildResource createResource(IPath projPath) {
 		return createResource(fProject.getFullPath().append(projPath), createProjectRelativeURI(projPath));
 	}
 
@@ -2002,14 +1936,14 @@ public class BuildDescription implements IBuildDescription {
 			e.printStackTrace();
 		}
 
-		if(projStore == null)
+		if (projStore == null)
 			return null;
 
 		IFileStore childStore = projStore.getFileStore(projPath);
 		return childStore.toURI();
 	}
 
-	public BuildResource createResource(IResource rc){
+	public BuildResource createResource(IResource rc) {
 		return createResource(rc.getFullPath(), rc.getLocationURI());
 	}
 
@@ -2020,8 +1954,8 @@ public class BuildDescription implements IBuildDescription {
 	 * @param locationURI URI of the resource (must be unique)
 	 * @return BuildResource
 	 */
-	public BuildResource createResource(IPath fullWorkspacePath, URI locationURI){
-		BuildResource rc = (BuildResource)getBuildResource(locationURI);
+	public BuildResource createResource(IPath fullWorkspacePath, URI locationURI) {
+		BuildResource rc = (BuildResource) getBuildResource(locationURI);
 		if (rc == null)
 			// Creating the BuildResource implicitly adds it to fLocationToRcMap.
 			rc = new BuildResource(this, fullWorkspacePath, locationURI);
@@ -2029,30 +1963,30 @@ public class BuildDescription implements IBuildDescription {
 		return rc;
 	}
 
-	public IResourceDelta getDelta(){
+	public IResourceDelta getDelta() {
 		return fDelta;
 	}
 
-	private ITool[] getOrderedTools(){
-		if(fOrderedTools == null){
+	private ITool[] getOrderedTools() {
+		if (fOrderedTools == null) {
 			ITool tools[] = fCfg.getFilteredTools();
-			for(int i = 0; i < tools.length; i++){
-				for(int j = i; j < tools.length; j++){
+			for (int i = 0; i < tools.length; i++) {
+				for (int j = i; j < tools.length; j++) {
 					ITool tool = tools[j];
 					ToolOrderEstimation order = getToolOrder(tool);
 					ITool deps[] = order.getDeps();
 					boolean put = deps.length == 0;
-					if(!put && deps.length <= i){
+					if (!put && deps.length <= i) {
 						put = true;
 						for (ITool dep : deps) {
-							if(indexOf(dep, tools, 0, i) == -1){
+							if (indexOf(dep, tools, 0, i) == -1) {
 								put = false;
 								break;
 							}
 						}
 					}
-					if(put){
-						if(i != j){
+					if (put) {
+						if (i != j) {
 							ITool tmp = tools[i];
 							tools[i] = tools[j];
 							tools[j] = tmp;
@@ -2066,39 +2000,39 @@ public class BuildDescription implements IBuildDescription {
 		return fOrderedTools;
 	}
 
-//	private int indexOf(Object obj, Object array[]){
-//		return indexOf(obj, array, 0, -1);
-//	}
+	//	private int indexOf(Object obj, Object array[]){
+	//		return indexOf(obj, array, 0, -1);
+	//	}
 
-	private int indexOf(Object obj, Object array[], int start, int stop){
-		if(start < 0)
+	private int indexOf(Object obj, Object array[], int start, int stop) {
+		if (start < 0)
 			start = 0;
-		if(stop == -1)
+		if (stop == -1)
 			stop = array.length;
 
-		if(start < stop){
-			for(int i = start; i < stop; i++){
-				if(obj == array[i])
+		if (start < stop) {
+			for (int i = start; i < stop; i++) {
+				if (obj == array[i])
 					return i;
 			}
 		}
 		return -1;
 	}
 
-	private ToolOrderEstimation getToolOrder(ITool tool){
+	private ToolOrderEstimation getToolOrder(ITool tool) {
 		ToolOrderEstimation order = fToolOrderMap.get(tool.getId());
-		if(order == null){
+		if (order == null) {
 			order = new ToolOrderEstimation(tool);
 			fToolOrderMap.put(tool.getId(), order);
 		}
 		return order;
 	}
 
-	private ITool[] doCalcDeps(ITool tool){
-		if(!fToolInProcesSet.add(tool)){
+	private ITool[] doCalcDeps(ITool tool) {
+		if (!fToolInProcesSet.add(tool)) {
 			//TODO throw error?
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
+			if (DbgUtil.DEBUG)
+				DbgUtil.trace("loop dependency for tool" + tool.getName()); //$NON-NLS-1$
 			return new ITool[0];
 		}
 
@@ -2106,25 +2040,24 @@ public class BuildDescription implements IBuildDescription {
 
 		Set<ITool> set = new HashSet<ITool>();
 		for (ITool t : fCfg.getFilteredTools()) {
-			if(t == tool)
+			if (t == tool)
 				continue;
 
 			for (String e : exts) {
-				if(t.producesFileType(e)){
+				if (t.producesFileType(e)) {
 					IInputType inType = tool.getInputType(e);
 					IOutputType outType = t.getOutputType(e);
-					if((inType == null && outType == null)
-							|| (inType != null && outType != null
-									&& inType.getBuildVariable().equals(outType.getBuildVariable()))){
+					if ((inType == null && outType == null) || (inType != null && outType != null
+							&& inType.getBuildVariable().equals(outType.getBuildVariable()))) {
 
 						set.add(t);
 						ToolOrderEstimation est = getToolOrder(t);
 						for (ITool dep : est.getDeps()) {
-							if(dep != tool)
+							if (dep != tool)
 								set.add(dep);
-							else{
-								if(DbgUtil.DEBUG)
-									DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
+							else {
+								if (DbgUtil.DEBUG)
+									DbgUtil.trace("loop dependency for tool" + tool.getName()); //$NON-NLS-1$
 								//TODO throw error
 							}
 						}
@@ -2137,11 +2070,11 @@ public class BuildDescription implements IBuildDescription {
 		return set.toArray(new ITool[set.size()]);
 	}
 
-	private ITool[] doCalcConsumers(ITool tool){
-		if(!fToolInProcesSet.add(tool)){
+	private ITool[] doCalcConsumers(ITool tool) {
+		if (!fToolInProcesSet.add(tool)) {
 			//TODO throw error?
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
+			if (DbgUtil.DEBUG)
+				DbgUtil.trace("loop dependency for tool" + tool.getName()); //$NON-NLS-1$
 			return new ITool[0];
 		}
 
@@ -2149,25 +2082,24 @@ public class BuildDescription implements IBuildDescription {
 
 		Set<ITool> set = new HashSet<ITool>();
 		for (ITool t : fCfg.getFilteredTools()) {
-			if(t == tool)
+			if (t == tool)
 				continue;
 
 			for (String e : exts) {
-				if(t.buildsFileType(e)){
+				if (t.buildsFileType(e)) {
 					IOutputType inType = tool.getOutputType(e);
 					IInputType outType = t.getInputType(e);
-					if((inType == null && outType == null)
-							|| (inType != null && outType != null
-									&& inType.getBuildVariable().equals(outType.getBuildVariable()))){
+					if ((inType == null && outType == null) || (inType != null && outType != null
+							&& inType.getBuildVariable().equals(outType.getBuildVariable()))) {
 
 						set.add(t);
 						ToolOrderEstimation est = getToolOrder(t);
 						for (ITool consumer : est.getConsumers()) {
-							if(consumer != tool)
+							if (consumer != tool)
 								set.add(consumer);
-							else{
-								if(DbgUtil.DEBUG)
-									DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
+							else {
+								if (DbgUtil.DEBUG)
+									DbgUtil.trace("loop dependency for tool" + tool.getName()); //$NON-NLS-1$
 								//TODO throw error
 							}
 						}
@@ -2180,46 +2112,45 @@ public class BuildDescription implements IBuildDescription {
 		return set.toArray(new ITool[set.size()]);
 	}
 
-	private IPath[] getGeneratedPaths(){
-		if(fGeneratedPaths == null){
+	private IPath[] getGeneratedPaths() {
+		if (fGeneratedPaths == null) {
 			IConfiguration cfgs[] = fCfg.getManagedProject().getConfigurations();
 			fGeneratedPaths = new IPath[cfgs.length];
 			//TODO: this is a temporary hack for obtaining the top generated dirs
 			//for all configurations. We can not use the buildfile generator here
 			//since it can only be used for the default configuration
-			for(int i = 0; i < cfgs.length; i++){
+			for (int i = 0; i < cfgs.length; i++) {
 				fGeneratedPaths[i] = fProject.getFullPath().append(cfgs[i].getName());
 			}
 		}
 		return fGeneratedPaths;
 	}
 
-	protected boolean isGenerated(IPath path){
+	protected boolean isGenerated(IPath path) {
 		for (IPath genPath : getGeneratedPaths()) {
-			if(genPath.isPrefixOf(path))
+			if (genPath.isPrefixOf(path))
 				return true;
 		}
 
 		return getTopBuildDirFullPath().isPrefixOf(path);
 	}
 
-	protected void stepCreated(BuildStep step){
+	protected void stepCreated(BuildStep step) {
 		fStepList.add(step);
 		ITool tool = step.getTool();
-		if(tool != null
-				&& tool == fCfg.calculateTargetTool()
-	//			&& (prym == null || step.getInputType() == prym)
-				){
-			if(fTargetStep != null){
+		if (tool != null && tool == fCfg.calculateTargetTool()
+		//			&& (prym == null || step.getInputType() == prym)
+		) {
+			if (fTargetStep != null) {
 				//TODO: this is an error case, log or perform some special handling
-				if(DbgUtil.DEBUG)
-					DbgUtil.trace("ERROR: target action already created");	//$NON-NLS-1$
+				if (DbgUtil.DEBUG)
+					DbgUtil.trace("ERROR: target action already created"); //$NON-NLS-1$
 			}
 			fTargetStep = step;
 		}
 	}
 
-	public BuildStep createStep(ITool tool, IInputType type){
+	public BuildStep createStep(ITool tool, IInputType type) {
 		return new BuildStep(this, tool, type);
 	}
 
@@ -2241,14 +2172,14 @@ public class BuildDescription implements IBuildDescription {
 		return getTopBuildDirFullPath();
 	}
 
-	protected void resourceAddedToType(BuildIOType type, BuildResource rc){
-		if(!type.isInput()){
+	protected void resourceAddedToType(BuildIOType type, BuildResource rc) {
+		if (!type.isInput()) {
 			String var = type.getLinkId();
-			if(var == null)
+			if (var == null)
 				var = ""; //$NON-NLS-1$
 
 			Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
-			if(set != null){
+			if (set != null) {
 				for (BuildIOType t : set) {
 					t.addResource(rc);
 				}
@@ -2256,7 +2187,7 @@ public class BuildDescription implements IBuildDescription {
 		}
 	}
 
-	protected void resourceRemovedFromType(BuildIOType type, BuildResource rc){
+	protected void resourceRemovedFromType(BuildIOType type, BuildResource rc) {
 
 	}
 
@@ -2272,20 +2203,20 @@ public class BuildDescription implements IBuildDescription {
 	 * @see org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription#findBuildResource(org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	public IBuildResource getBuildResource(IResource resource){
+	public IBuildResource getBuildResource(IResource resource) {
 		return getBuildResource(calcResourceLocation(resource));
 	}
 
-	public IBuildResource getBuildResourceForFullPath(IPath fullPath){
+	public IBuildResource getBuildResourceForFullPath(IPath fullPath) {
 		IPath location = calcLocationForFullPath(fullPath);
 		return getBuildResource(location);
 	}
 
-	protected IPath calcLocationForFullPath(IPath fullPath){
+	protected IPath calcLocationForFullPath(IPath fullPath) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject proj = root.getProject(fullPath.segment(0));
 		IPath rcLocation = proj.getLocation();
-		if(rcLocation != null){
+		if (rcLocation != null) {
 			rcLocation = rcLocation.append(fullPath.removeFirstSegments(1));
 		} else {
 			rcLocation = root.getLocation().append(fullPath);
@@ -2293,38 +2224,36 @@ public class BuildDescription implements IBuildDescription {
 		return rcLocation;
 	}
 
-	private void initToolInfos(){
+	private void initToolInfos() {
 		fToolInfos = PathSettingsContainer.createRootContainer();
 
 		for (IResourceInfo rcInfo : fCfg.getResourceInfos()) {
-//			if(rcInfo.isExcluded())
-//				continue;
+			//			if(rcInfo.isExcluded())
+			//				continue;
 
 			ToolInfoHolder h = getToolInfo(rcInfo.getPath(), true);
-			if(rcInfo instanceof IFolderInfo){
-				IFolderInfo fo = (IFolderInfo)rcInfo;
+			if (rcInfo instanceof IFolderInfo) {
+				IFolderInfo fo = (IFolderInfo) rcInfo;
 				h.fExtToToolAndTypeListMap = initToolAndTypeMap(fo);
 			}
 		}
 	}
 
-	private ToolInfoHolder getToolInfo(BuildResource rc){
-		IPath path = rc.isProjectResource() ?
-				rc.getFullPath().removeFirstSegments(1).makeRelative() :
-					Path.EMPTY;
+	private ToolInfoHolder getToolInfo(BuildResource rc) {
+		IPath path = rc.isProjectResource() ? rc.getFullPath().removeFirstSegments(1).makeRelative() : Path.EMPTY;
 		return getToolInfo(path);
 	}
 
-	private ToolInfoHolder getToolInfo(IPath path){
+	private ToolInfoHolder getToolInfo(IPath path) {
 		return getToolInfo(path, false);
 	}
 
-	private ToolInfoHolder getToolInfo(IPath path, boolean create){
+	private ToolInfoHolder getToolInfo(IPath path, boolean create) {
 		PathSettingsContainer child = fToolInfos.getChildContainer(path, create, create);
 		ToolInfoHolder h = null;
-		if(child != null){
-			h = (ToolInfoHolder)child.getValue();
-			if(h == null && create){
+		if (child != null) {
+			h = (ToolInfoHolder) child.getValue();
+			if (h == null && create) {
 				h = new ToolInfoHolder();
 				child.setValue(h);
 			}
@@ -2332,8 +2261,8 @@ public class BuildDescription implements IBuildDescription {
 		return h;
 	}
 
-	public IBuildStep getCleanStep(){
-		if(fCleanStep == null){
+	public IBuildStep getCleanStep() {
+		if (fCleanStep == null) {
 			fCleanStep = new BuildStep(this, null, null);
 		}
 		return fCleanStep;

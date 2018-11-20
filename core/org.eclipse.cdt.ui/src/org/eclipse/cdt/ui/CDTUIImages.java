@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-
 
 /**
  * Images for {@link org.eclipse.cdt.utils.ui.controls.FileListControl}.
@@ -31,14 +29,14 @@ import org.eclipse.swt.graphics.Image;
  */
 @Deprecated
 public class CDTUIImages {
-	private static final String ICONS= "icons/"; //$NON-NLS-1$
+	private static final String ICONS = "icons/"; //$NON-NLS-1$
 	/** Converter from CPluginImages key to CDTSharedImages key */
 	private static Map<String, String> fPathMap = new HashMap<String, String>();
 
-	private static final String NAME_PREFIX= CUIPlugin.PLUGIN_ID + '.';
-	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-	public static final String T_LIST= "elcl16/"; //$NON-NLS-1$
-	
+	private static final String NAME_PREFIX = CUIPlugin.PLUGIN_ID + '.';
+	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
+	public static final String T_LIST = "elcl16/"; //$NON-NLS-1$
+
 	// Image for file list control
 	public static final String IMG_FILELIST_ADD = NAME_PREFIX + "list-add.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILELIST_ADD = createManaged(T_LIST, IMG_FILELIST_ADD);
@@ -50,7 +48,7 @@ public class CDTUIImages {
 	public static final ImageDescriptor DESC_FILELIST_MOVEUP = createManaged(T_LIST, IMG_FILELIST_MOVEUP);
 	public static final String IMG_FILELIST_MOVEDOWN = NAME_PREFIX + "list-movedown.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILELIST_MOVEDOWN = createManaged(T_LIST, IMG_FILELIST_MOVEDOWN);
-	
+
 	/**
 	 * Creates an image descriptor which is managed by internal registry in CDTSharedImages.
 	 * {@code name} is assumed to start with "org.eclipse.cdt.ui."
@@ -65,7 +63,7 @@ public class CDTUIImages {
 		}
 		return ImageDescriptor.getMissingImageDescriptor();
 	}
-	
+
 	/**
 	 * Get an image from internal image registry. The image is managed by the registry and
 	 * must not be disposed by the caller.

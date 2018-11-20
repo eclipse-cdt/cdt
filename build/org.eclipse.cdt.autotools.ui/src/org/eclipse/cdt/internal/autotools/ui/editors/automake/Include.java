@@ -58,7 +58,7 @@ public class Include extends Parent implements IInclude {
 			if (!filenames[i].startsWith(GNUAutomakefile.FILE_SEPARATOR) && dirs != null) {
 				for (int j = 0; j < dirs.length; j++) {
 					try {
-						String filename =  dirs[j] + GNUAutomakefile.FILE_SEPARATOR + filenames[i];
+						String filename = dirs[j] + GNUAutomakefile.FILE_SEPARATOR + filenames[i];
 						gnu = new GNUAutomakefile();
 						gnu.parse(filename);
 						addDirective(gnu);

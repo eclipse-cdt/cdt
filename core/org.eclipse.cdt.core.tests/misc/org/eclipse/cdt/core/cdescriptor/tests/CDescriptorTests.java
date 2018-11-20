@@ -102,7 +102,8 @@ public class CDescriptorTests extends BaseTestCase {
 		fProject.delete(true, true, null);
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor)
+			throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
@@ -143,10 +144,10 @@ public class CDescriptorTests extends BaseTestCase {
 	// Disabled this test because it fails every now and then and it tests deprecated API
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=340123
 	public void _testConcurrentDescriptorCreation() throws Exception {
-		for (int i = 0; i < 100 ; i++) {
+		for (int i = 0; i < 100; i++) {
 			fProject.close(null);
 			fProject.open(null);
-			Thread t= new Thread() {
+			Thread t = new Thread() {
 				@Override
 				public void run() {
 					try {
@@ -168,7 +169,7 @@ public class CDescriptorTests extends BaseTestCase {
 			desc.saveProjectData();
 			fLastEvent = null;
 		}
- 	}
+	}
 
 	/*
 	 * This tests concurrent descriptor modification inside of a ICDescriptor operation run
@@ -180,38 +181,41 @@ public class CDescriptorTests extends BaseTestCase {
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
 	public void testConcurrentDescriptorModification() throws Exception {
 		int lastLength = 0;
-		for (int i= 0; i < 100; ++i) {
+		for (int i = 0; i < 100; ++i) {
 			final int indexi = i;
-			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
+			PDOMManager pdomMgr = (PDOMManager) CCorePlugin.getIndexManager();
 			pdomMgr.shutdown();
 			fProject.close(null);
 			fProject.open(null);
 			pdomMgr.startup().schedule();
-			final ICDescriptor fdesc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			final ICDescriptor fdesc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			if (lastLength == 0)
 				lastLength = fdesc.getProjectStorageElement("testElement").getChildren().length;
-			final Throwable[] exception= new Throwable[10];
-			Thread[] threads= new Thread[10];
+			final Throwable[] exception = new Throwable[10];
+			Thread[] threads = new Thread[10];
 			for (int j = 0; j < 10; j++) {
 				final int indexj = j;
-				Thread t= new Thread() {
+				Thread t = new Thread() {
 					@Override
 					public void run() {
 						try {
-							ICDescriptorOperation operation= new ICDescriptorOperation() {
+							ICDescriptorOperation operation = new ICDescriptorOperation() {
 								@Override
-								public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-//									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
+								public void execute(ICDescriptor descriptor, IProgressMonitor monitor)
+										throws CoreException {
+									//									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
 									ICStorageElement data = fdesc.getProjectStorageElement("testElement");
-									String test = "test"+(indexi*10 + indexj);
+									String test = "test" + (indexi * 10 + indexj);
 									data.createChild(test);
-//									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
+									//									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
 									descriptor.saveProjectData();
-//									System.out.println("Saved " + test);
-								}};
-								CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation, null);
+									//									System.out.println("Saved " + test);
+								}
+							};
+							CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation,
+									null);
 						} catch (Throwable exc) {
-							exception[indexj]= exc;
+							exception[indexj] = exc;
 							exc.printStackTrace();
 						}
 					}
@@ -226,9 +230,9 @@ public class CDescriptorTests extends BaseTestCase {
 					} catch (InterruptedException e) {
 					}
 				}
-				assertNull("Exception occurred: "+exception[j], exception[j]);
+				assertNull("Exception occurred: " + exception[j], exception[j]);
 			}
-			ICDescriptor desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			int lengthAfter = desc.getProjectStorageElement("testElement").getChildren().length;
 			lastLength += threads.length; // Update last lengths to what we expect
 			assertEquals("Iteration count: " + i, lastLength, lengthAfter);
@@ -242,8 +246,8 @@ public class CDescriptorTests extends BaseTestCase {
 	 * (outside of an operation) should be safe.
 	 */
 	public void testConcurrentDifferentStorageElementModification() throws Exception {
-		for (int i= 0; i < 100; ++i) {
-			Thread t= new Thread() {
+		for (int i = 0; i < 100; ++i) {
+			Thread t = new Thread() {
 				@Override
 				public void run() {
 					try {
@@ -269,16 +273,18 @@ public class CDescriptorTests extends BaseTestCase {
 
 			fLastEvent = null;
 		}
-		Assert.assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false).getProjectStorageElement("testElement4").getChildren().length);
-		Assert.assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false).getProjectStorageElement("testElement5").getChildren().length);
- 	}
+		Assert.assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
+				.getProjectStorageElement("testElement4").getChildren().length);
+		Assert.assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
+				.getProjectStorageElement("testElement5").getChildren().length);
+	}
 
 	/*
 	 * Tests that (non-structural) changes to the storage element tree work as expected.
 	 */
 	public void testConcurrentSameStorageElementModification() throws Exception {
-		for (int i= 0; i < 100; ++i) {
-			Thread t= new Thread() {
+		for (int i = 0; i < 100; ++i) {
+			Thread t = new Thread() {
 				@Override
 				public void run() {
 					try {
@@ -304,17 +310,18 @@ public class CDescriptorTests extends BaseTestCase {
 
 			fLastEvent = null;
 		}
-		Assert.assertEquals(200, CCorePlugin.getDefault().getCProjectDescription(fProject, false).getProjectStorageElement("testElement6").getChildren().length);
- 	}
+		Assert.assertEquals(200, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
+				.getProjectStorageElement("testElement6").getChildren().length);
+	}
 
 	/*
 	 * Tests deadlock when accessing c project description concurrently from two threads
 	 */
 	public void testDeadlockDuringProjectCreation() throws Exception {
-		for (int i= 0; i < 10; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			tearDown();
 			setUp();
-			Thread t= new Thread() {
+			Thread t = new Thread() {
 				@Override
 				public void run() {
 					try {
@@ -339,7 +346,7 @@ public class CDescriptorTests extends BaseTestCase {
 
 			fLastEvent = null;
 		}
- 	}
+	}
 
 	public void testDescriptorConversion() {
 	}
@@ -431,7 +438,7 @@ public class CDescriptorTests extends BaseTestCase {
 	}
 
 	public void testCProjectDescriptionDescriptorInteraction() throws Exception {
-		for (int i = 1; i < 100 ; i++) {
+		for (int i = 1; i < 100; i++) {
 			// Create a descriptor with some test data
 			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			ICStorageElement data = desc.getProjectStorageElement("descDescInteraction");

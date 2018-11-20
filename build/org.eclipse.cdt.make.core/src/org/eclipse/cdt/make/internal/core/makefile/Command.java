@@ -84,7 +84,7 @@ public class Command extends Directive implements ICommand {
 	@Override
 	public String toString() {
 		StringBuilder cmd = new StringBuilder();
-		cmd.append( '\t');
+		cmd.append('\t');
 		if (getPrefix() != 0) {
 			cmd.append(getPrefix());
 		}
@@ -116,7 +116,7 @@ public class Command extends Directive implements ICommand {
 	 */
 	@Override
 	public Process execute(String shell, String[] envp, File dir) throws IOException {
-		String[] cmdArray = new String[] { shell, "-c", command}; //$NON-NLS-1$
+		String[] cmdArray = new String[] { shell, "-c", command }; //$NON-NLS-1$
 		return Runtime.getRuntime().exec(cmdArray, envp, dir);
 	}
 

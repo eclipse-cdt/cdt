@@ -43,7 +43,7 @@ public interface IExpressions2 extends IExpressions {
 			this.arrayStart = arrayStart;
 			this.arrayCount = arrayCount;
 		}
-		
+
 		/**
 		 * Create an instance of casting information for casting to type (only)
 		 * @param typeString must be non-<code>null</code>; the C/C++ type to which to cast the expression (e.g. "char**")
@@ -54,8 +54,7 @@ public interface IExpressions2 extends IExpressions {
 			this.typeString = typeString;
 			this.arrayStart = this.arrayCount = 0;
 		}
-		
-		
+
 		/**
 		 * Create an instance of casting information for showing as an array (only)
 		 * @param arrayStart the start index for viewing contents of the expression as an array
@@ -78,8 +77,7 @@ public interface IExpressions2 extends IExpressions {
 			int result = 1;
 			result = prime * result + arrayCount;
 			result = prime * result + arrayStart;
-			result = prime * result
-					+ ((typeString == null) ? 0 : typeString.hashCode());
+			result = prime * result + ((typeString == null) ? 0 : typeString.hashCode());
 			return result;
 		}
 
@@ -115,34 +113,34 @@ public interface IExpressions2 extends IExpressions {
 		public String getTypeString() {
 			return typeString;
 		}
-		
+
 		/**
 		 * Get the start index for viewing children as an array.  (Only effective if #getCount() > 0)
 		 * @return the index of the first element of the array. 0 means that 
 		 * the original element is the first member of the array. This may be negative, too.
 		 */
-		public int getArrayStartIndex(){
+		public int getArrayStartIndex() {
 			return arrayStart;
 		}
-		
+
 		/**
 		 * Get the number of elements to show when viewing children as an array.
 		 * @return the array size, or <= 0 if not viewing as an array
 		 */
-		public int getArrayCount(){
+		public int getArrayCount() {
 			return arrayCount;
 		}
 	}
-	
+
 	/**
 	 * This context identifies a casted expression.  Its parent is the original
 	 * {@link IExpressionDMContext}.
 	 */
 	public interface ICastedExpressionDMContext extends IExpressionDMContext {
 		CastInfo getCastInfo();
-		
+
 	}
-	
+
 	/**
 	 * Create a variant of the expression which is casted with the given casting info.
 	 * <p>
@@ -169,14 +167,12 @@ public interface IExpressions2 extends IExpressions {
 	 * @param context an existing expression
 	 * @param castInfo the casting information
 	 * @return a casted expression data model context object that must be passed to the appropriate
-     *          data retrieval routine to obtain the value of the expression.  The object must
-     *          report the casted type (if any) via {@link #getExpressionData(IExpressionDMContext, DataRequestMonitor)}
-     *          and report alternate children according to the array casting context via 
-     *          {@link #getSubExpressionCount(IExpressionDMContext, DataRequestMonitor)}
-     *          and {@link #getSubExpressions}.
+	 *          data retrieval routine to obtain the value of the expression.  The object must
+	 *          report the casted type (if any) via {@link #getExpressionData(IExpressionDMContext, DataRequestMonitor)}
+	 *          and report alternate children according to the array casting context via 
+	 *          {@link #getSubExpressionCount(IExpressionDMContext, DataRequestMonitor)}
+	 *          and {@link #getSubExpressions}.
 	 */
-	ICastedExpressionDMContext createCastedExpression(IExpressionDMContext context, 
-			CastInfo castInfo);
-
+	ICastedExpressionDMContext createCastedExpression(IExpressionDMContext context, CastInfo castInfo);
 
 }

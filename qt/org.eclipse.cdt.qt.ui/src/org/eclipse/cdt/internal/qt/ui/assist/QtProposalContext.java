@@ -47,8 +47,7 @@ public class QtProposalContext extends CContext {
 		ITextViewer viewer = context.getViewer();
 		if (viewer != null) {
 			Point selection = viewer.getSelectedRange();
-			if (selection != null
-			 && selection.y > 0)
+			if (selection != null && selection.y > 0)
 				length += selection.y;
 		}
 
@@ -71,10 +70,10 @@ public class QtProposalContext extends CContext {
 		// whether or not characters are selected.
 
 		try {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 
-			int start= getCompletionOffset();
-			int end= getCompletionOffset() + getCompletionLength();
+			int start = getCompletionOffset();
+			int end = getCompletionOffset() + getCompletionLength();
 
 			while (start != 0 && isUnicodeIdentifierPartOrPoundSign(document.getChar(start - 1)))
 				start--;
@@ -83,7 +82,7 @@ public class QtProposalContext extends CContext {
 				start++;
 
 			if (start == end)
-				start= getCompletionOffset();
+				start = getCompletionOffset();
 
 			return start;
 		} catch (BadLocationException e) {

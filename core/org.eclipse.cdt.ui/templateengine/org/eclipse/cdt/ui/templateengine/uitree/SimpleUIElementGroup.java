@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
-
 /**
  * This is a PAGES_ONLY implementation for UIElement group. It uses the method
  * implementation for UIElement provided by GenericUIElementGroup.

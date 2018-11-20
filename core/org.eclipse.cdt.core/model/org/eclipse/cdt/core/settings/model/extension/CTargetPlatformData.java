@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 
 public abstract class CTargetPlatformData extends CDataObject {
 	@Override
-	public final int getType(){
+	public final int getType() {
 		return ICSettingBase.SETTING_TARGET_PLATFORM;
 	}
 

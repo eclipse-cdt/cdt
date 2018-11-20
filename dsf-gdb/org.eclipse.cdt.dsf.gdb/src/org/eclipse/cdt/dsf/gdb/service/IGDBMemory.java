@@ -28,7 +28,7 @@ public interface IGDBMemory extends IMemory {
 	 * memory related API is not asynchronous, so the data can not be acquired on demand.
 	 */
 	public void initializeMemoryData(IMemoryDMContext ctx, RequestMonitor rm);
-	
+
 	/**
 	 * Returns the address size (in octets) of the memory specified by the given context.
 	 */

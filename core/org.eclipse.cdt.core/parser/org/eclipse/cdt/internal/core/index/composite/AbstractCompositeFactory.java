@@ -32,33 +32,29 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Commonality between composite factories
  */
-public abstract class AbstractCompositeFactory implements ICompositesFactory {	
+public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	protected IIndex index;
 	private final Comparator<IIndexFragmentBinding> fragmentComparator;
-	
+
 	public AbstractCompositeFactory(IIndex index) {
-		this.index= index;
-		this.fragmentComparator= new FragmentBindingComparator( 
-			new IIndexFragmentBindingComparator[] {
-					new PDOMFragmentBindingComparator(), 
-					new DefaultFragmentBindingComparator()
-			}
-		);
+		this.index = index;
+		this.fragmentComparator = new FragmentBindingComparator(new IIndexFragmentBindingComparator[] {
+				new PDOMFragmentBindingComparator(), new DefaultFragmentBindingComparator() });
 	}
-	
+
 	protected final IType[] getCompositeTypes(IType[] types) {
 		// Don't create a new array until it's really needed.
 		IType[] result = types;
 		for (int i = 0; i < types.length; i++) {
 			IType type = getCompositeType(types[i]);
 			if (result != types) {
-				result[i]= type;
+				result[i] = type;
 			} else if (type != types[i]) {
 				result = new IType[types.length];
 				if (i > 0) {
 					System.arraycopy(types, 0, result, 0, i);
 				}
-				result[i]= type;
+				result[i] = type;
 			}
 		}
 		return result;
@@ -81,7 +77,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 
 	@Override
 	public final IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) {
-		CIndex cindex= (CIndex) index;
+		CIndex cindex = (CIndex) index;
 		try {
 			return cindex.findEquivalentBindings(binding);
 		} catch (CoreException e) {
@@ -89,7 +85,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 		}
 	}
- 
+
 	/**
 	 * Convenience method for taking a group of binding arrays, and returning a single array
 	 * with the each binding appearing once
@@ -107,12 +103,12 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		}
 		return ts.toArray(new IIndexFragmentBinding[ts.size()]);
 	}
-	
+
 	/**
 	 * Convenience method for finding a binding with a definition (in the specified index
 	 * context) which is equivalent to the specified binding. If no definition is found,
-     * a declaration is returned if <code>allowDeclaration</code> is set, otherwise an
-     * arbitrary binding is returned if available.
+	 * a declaration is returned if <code>allowDeclaration</code> is set, otherwise an
+	 * arbitrary binding is returned if available.
 	 * @param binding the binding to find a representative for
 	 * @param allowDeclaration whether declarations should be considered when a definition is
 	 * unavailable
@@ -120,14 +116,14 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 */
 	protected IIndexFragmentBinding findOneBinding(IBinding binding, boolean allowDeclaration) {
 		try {
-			IIndexFragmentBinding[] ibs= findEquivalentBindings(binding);
-			IIndexFragmentBinding def= null;
-			IIndexFragmentBinding dec= ibs.length > 0 ? ibs[0] : null;
+			IIndexFragmentBinding[] ibs = findEquivalentBindings(binding);
+			IIndexFragmentBinding def = null;
+			IIndexFragmentBinding dec = ibs.length > 0 ? ibs[0] : null;
 			for (IIndexFragmentBinding ib : ibs) {
 				if (ib.hasDefinition()) {
-					def= ib;
+					def = ib;
 				} else if (allowDeclaration && ib.hasDeclaration()) {
-					dec= ib;
+					dec = ib;
 				}
 			}
 			return def == null ? dec : def;
@@ -136,18 +132,18 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		}
 		throw new CompositingNotImplementedError();
 	}
-	
+
 	private static class FragmentBindingComparator implements Comparator<IIndexFragmentBinding> {
 		private final IIndexFragmentBindingComparator[] comparators;
-		
+
 		FragmentBindingComparator(IIndexFragmentBindingComparator[] comparators) {
-			this.comparators= comparators;
+			this.comparators = comparators;
 		}
-		
+
 		@Override
 		public int compare(IIndexFragmentBinding f1, IIndexFragmentBinding f2) {
 			for (IIndexFragmentBindingComparator comparator : comparators) {
-				int cmp= comparator.compare(f1, f2);
+				int cmp = comparator.compare(f1, f2);
 				if (cmp != Integer.MIN_VALUE) {
 					return cmp;
 				}

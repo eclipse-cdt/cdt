@@ -24,12 +24,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MIInterpreterExecConsole<V extends MIInfo> extends MIInterpreterExec<V> {
 
-    /**
-     * @param interpreter
-     * @param cmd
-     */
-    public MIInterpreterExecConsole(IDMContext ctx, String cmd) {
-        super(ctx, "console", cmd); //$NON-NLS-1$
-    }
+	/**
+	 * @param interpreter
+	 * @param cmd
+	 */
+	public MIInterpreterExecConsole(IDMContext ctx, String cmd) {
+		super(ctx, "console", cmd); //$NON-NLS-1$
+	}
 
 }

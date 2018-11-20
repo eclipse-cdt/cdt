@@ -36,31 +36,31 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * Represents any MI command.
  */
 public class MICommand<V extends MIInfo> implements ICommand<V> {
-    private static final String[] empty = {};
+	private static final String[] empty = {};
 
-    List<Adjustable> fOptions = new ArrayList<>();
-    List<Adjustable> fParameters = new ArrayList<>();
-    String fOperation = ""; //$NON-NLS-1$
-    Function<String, Adjustable> fParamToAdjustable;
-    IDMContext fCtx;
+	List<Adjustable> fOptions = new ArrayList<>();
+	List<Adjustable> fParameters = new ArrayList<>();
+	String fOperation = ""; //$NON-NLS-1$
+	Function<String, Adjustable> fParamToAdjustable;
+	IDMContext fCtx;
 
-    /*
-     * Constructors.
-     */
+	/*
+	 * Constructors.
+	 */
 
-    public MICommand(IDMContext ctx, String operation) {
-        this(ctx, operation, empty, empty);
-    }
+	public MICommand(IDMContext ctx, String operation) {
+		this(ctx, operation, empty, empty);
+	}
 
-    public MICommand(IDMContext ctx, String operation, String[] params) {
-        this(ctx, operation, empty, params);
-    }
+	public MICommand(IDMContext ctx, String operation, String[] params) {
+		this(ctx, operation, empty, params);
+	}
 
-    public MICommand(IDMContext ctx, String operation, String[] options, String[] params) {
-    	this(ctx, operation, options, params, null);
-    }
+	public MICommand(IDMContext ctx, String operation, String[] options, String[] params) {
+		this(ctx, operation, options, params, null);
+	}
 
-    /**
+	/**
 	 * @since 5.2
 	 */
 	public MICommand(IDMContext ctx, String operation, String[] options, String[] params,
@@ -88,133 +88,132 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 				: Collections.emptyList();
 	}
 
-    public String getCommandControlFilter() {
-        MIControlDMContext controlDmc = DMContexts.getAncestorOfType(getContext(), MIControlDMContext.class);
-        return controlDmc.getCommandControlFilter();
-    }
+	public String getCommandControlFilter() {
+		MIControlDMContext controlDmc = DMContexts.getAncestorOfType(getContext(), MIControlDMContext.class);
+		return controlDmc.getCommandControlFilter();
+	}
 
-    /**
-     * Returns the operation of this command.
-     */
-    public String getOperation() {
-        return fOperation;
-    }
+	/**
+	 * Returns the operation of this command.
+	 */
+	public String getOperation() {
+		return fOperation;
+	}
 
-    /**
-     * Returns an array of command's options. An empty collection is
-     * returned if there are no options.
-     */
-    public String[] getOptions() {
+	/**
+	 * Returns an array of command's options. An empty collection is
+	 * returned if there are no options.
+	 */
+	public String[] getOptions() {
 		List<String> result = new ArrayList<>();
 		for (Adjustable option : fOptions) {
 			result.add(option.getValue());
 		}
 		return result.toArray(new String[fOptions.size()]);
-    }
+	}
 
-    public void setOptions(String[] options) {
-    	fOptions = optionsToAdjustables(options);
-    }
+	public void setOptions(String[] options) {
+		fOptions = optionsToAdjustables(options);
+	}
 
-    /**
-     * Returns an array of command's parameters. An empty collection is
-     * returned if there are no parameters.
-     */
-    public String[] getParameters() {
+	/**
+	 * Returns an array of command's parameters. An empty collection is
+	 * returned if there are no parameters.
+	 */
+	public String[] getParameters() {
 		List<String> result = new ArrayList<>();
 		for (Adjustable parameter : fParameters) {
 			result.add(parameter.getValue());
 		}
 		return result.toArray(new String[fParameters.size()]);
-    }
+	}
 
-    public void setParameters(String[] params) {
+	public void setParameters(String[] params) {
 		fParameters = parametersToAdjustables(params);
-    }
+	}
 
 	public void setParameters(Adjustable... params) {
 		fParameters = Arrays.asList(params);
 	}
 
-    /**
-     * Returns the constructed command without using the --thread/--frame options.
-     */
-    public String constructCommand() {
-    	return constructCommand(null, -1);
-    }
+	/**
+	 * Returns the constructed command without using the --thread/--frame options.
+	 */
+	public String constructCommand() {
+		return constructCommand(null, -1);
+	}
 
-    /**
-     * Returns the constructed command potentially using the --thread/--frame options.
-     *
-     * @since 1.1
-     */
-    public String constructCommand(String threadId, int frameId) {
-    	return constructCommand(null, threadId, frameId);
-    }
+	/**
+	 * Returns the constructed command potentially using the --thread/--frame options.
+	 *
+	 * @since 1.1
+	 */
+	public String constructCommand(String threadId, int frameId) {
+		return constructCommand(null, threadId, frameId);
+	}
 
-    /**
-     * With GDB 7.1 the --thread-group option is used to support multiple processes.
-     *
-     * @since 4.0
-     */
-    public String constructCommand(String groupId, String threadId, int frameId) {
-        StringBuilder command = new StringBuilder(getOperation());
+	/**
+	 * With GDB 7.1 the --thread-group option is used to support multiple processes.
+	 *
+	 * @since 4.0
+	 */
+	public String constructCommand(String groupId, String threadId, int frameId) {
+		StringBuilder command = new StringBuilder(getOperation());
 
-        // Add the --thread option
-        if (supportsThreadAndFrameOptions() && threadId != null && !threadId.trim().isEmpty()) {
-        	command.append(" --thread ").append(threadId); //$NON-NLS-1$
+		// Add the --thread option
+		if (supportsThreadAndFrameOptions() && threadId != null && !threadId.trim().isEmpty()) {
+			command.append(" --thread ").append(threadId); //$NON-NLS-1$
 
-        	// Add the --frame option, but only if we are using the --thread option
-        	if (frameId >= 0) {
-        		command.append(" --frame ").append(frameId); //$NON-NLS-1$
-        	}
-        } else if (supportsThreadGroupOption() && groupId != null && !groupId.trim().isEmpty()) {
-        	// The --thread-group option is only allowed if we are not using the --thread option
-        	command.append(" --thread-group ").append(groupId); //$NON-NLS-1$
-        }
+			// Add the --frame option, but only if we are using the --thread option
+			if (frameId >= 0) {
+				command.append(" --frame ").append(frameId); //$NON-NLS-1$
+			}
+		} else if (supportsThreadGroupOption() && groupId != null && !groupId.trim().isEmpty()) {
+			// The --thread-group option is only allowed if we are not using the --thread option
+			command.append(" --thread-group ").append(groupId); //$NON-NLS-1$
+		}
 
-        String opt = optionsToString();
-        if (!opt.isEmpty()) {
-            command.append(' ').append(opt);
-        }
-        String p = parametersToString();
-        if (!p.isEmpty()) {
-            command.append(' ').append(p);
-        }
-        command.append('\n');
-        return command.toString();
-    }
+		String opt = optionsToString();
+		if (!opt.isEmpty()) {
+			command.append(' ').append(opt);
+		}
+		String p = parametersToString();
+		if (!p.isEmpty()) {
+			command.append(' ').append(p);
+		}
+		command.append('\n');
+		return command.toString();
+	}
 
-//    /*
-//     * Checks to see if the current command can be coalesced with the
-//     * supplied command.
-//     */
-//    public boolean canCoalesce(ICommand<? extends ICommandResult> command) {
-//        return false;
-//    }
-
-	@Override
-    public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
-        return null;
-    }
-
+	//    /*
+	//     * Checks to see if the current command can be coalesced with the
+	//     * supplied command.
+	//     */
+	//    public boolean canCoalesce(ICommand<? extends ICommandResult> command) {
+	//        return false;
+	//    }
 
 	@Override
-    public IDMContext getContext() {
-    	return fCtx;
-    }
+	public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
+		return null;
+	}
 
-    /**
-     * Produces the corresponding ICommandResult result for this
-     * command.
-     *
-     * @return result for this command
-     */
-    public MIInfo getResult(MIOutput MIresult) {
-        return new MIInfo(MIresult);
-    }
+	@Override
+	public IDMContext getContext() {
+		return fCtx;
+	}
 
-    protected String optionsToString() {
+	/**
+	 * Produces the corresponding ICommandResult result for this
+	 * command.
+	 *
+	 * @return result for this command
+	 */
+	public MIInfo getResult(MIOutput MIresult) {
+		return new MIInfo(MIresult);
+	}
+
+	protected String optionsToString() {
 		StringBuilder sb = new StringBuilder();
 		if (fOptions != null && !fOptions.isEmpty()) {
 			for (Adjustable option : fOptions) {
@@ -222,9 +221,9 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			}
 		}
 		return sb.toString().trim();
-    }
+	}
 
-    protected String parametersToString() {
+	protected String parametersToString() {
 		String[] options = getOptions();
 		StringBuilder buffer = new StringBuilder();
 		if (fParameters != null && !fParameters.isEmpty()) {
@@ -244,54 +243,54 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			}
 		}
 		return buffer.toString().trim();
-    }
+	}
 
-    protected static boolean containsWhitespace(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (Character.isWhitespace(s.charAt(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
+	protected static boolean containsWhitespace(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (Character.isWhitespace(s.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    /**
-     * @since 1.1
-     */
-    public boolean supportsThreadAndFrameOptions() {
-    	return true;
-    }
+	/**
+	 * @since 1.1
+	 */
+	public boolean supportsThreadAndFrameOptions() {
+		return true;
+	}
 
-    /**
-     * @since 4.0
-     */
-    public boolean supportsThreadGroupOption() {
-    	return true;
-    }
+	/**
+	 * @since 4.0
+	 */
+	public boolean supportsThreadGroupOption() {
+		return true;
+	}
 
-    /**
-     * Compares commands based on the MI command string that they generate,
-     * without the token.
-     */
-    @Override
-    public boolean equals(Object obj) {
-    	if (obj instanceof MICommand<?>) {
-    	    MICommand<?> otherCmd = (MICommand<?>) obj;
-        	return ((fCtx == null && otherCmd.fCtx == null) || (fCtx != null && fCtx.equals(otherCmd.fCtx))) &&
-        	       constructCommand().equals(otherCmd.constructCommand());
-    	}
-    	return false;
-    }
+	/**
+	 * Compares commands based on the MI command string that they generate,
+	 * without the token.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MICommand<?>) {
+			MICommand<?> otherCmd = (MICommand<?>) obj;
+			return ((fCtx == null && otherCmd.fCtx == null) || (fCtx != null && fCtx.equals(otherCmd.fCtx)))
+					&& constructCommand().equals(otherCmd.constructCommand());
+		}
+		return false;
+	}
 
-    @Override
-    public int hashCode() {
-        return constructCommand().hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return constructCommand().hashCode();
+	}
 
-    @Override
-    public String toString() {
-        return constructCommand();
-    }
+	@Override
+	public String toString() {
+		return constructCommand();
+	}
 
 	public static class MIStandardOptionAdjustable extends MICommandAdjustable {
 
@@ -327,8 +326,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 		}
 	}
 
-	public static class MIStandardParameterAdjustable extends
-			MICommandAdjustable {
+	public static class MIStandardParameterAdjustable extends MICommandAdjustable {
 		public MIStandardParameterAdjustable(String parameter) {
 			super(parameter);
 		}
@@ -351,15 +349,15 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 				builder.append('"');
 			}
 
-// Although this change makes sense, it could have impacts on many
-// different commands we send to GDB.  The risk outweighs the benefits,
-// so we comment it out.  See bugs 412471 and 414959 for details.
-//
-//			// an empty parameter can be passed with two single quotes
-//			if (builder.length() == 0) {
-//				builder.append("''"); //$NON-NLS-1$
-//			}
-//
+			// Although this change makes sense, it could have impacts on many
+			// different commands we send to GDB.  The risk outweighs the benefits,
+			// so we comment it out.  See bugs 412471 and 414959 for details.
+			//
+			//			// an empty parameter can be passed with two single quotes
+			//			if (builder.length() == 0) {
+			//				builder.append("''"); //$NON-NLS-1$
+			//			}
+			//
 			return builder.toString();
 		}
 	}

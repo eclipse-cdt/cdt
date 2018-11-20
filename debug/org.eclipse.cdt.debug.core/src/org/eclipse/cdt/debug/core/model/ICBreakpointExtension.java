@@ -32,17 +32,17 @@ import org.eclipse.core.runtime.CoreException;
  * @see ICBreakpoint#getExtension(String, Class)
  */
 public interface ICBreakpointExtension {
-   
-    /**
-     * Initializes the extension with the given breakpoint instance.
-     * The breakpoint extension may initialize its data using attributes
-     * stored in the breakpoint marker.
-     * 
-     * @param breakpoint Breakpoint instance that this extension belongs to.
-     * @throws CoreException Thrown in case of errors reading the breakpoint 
-     * marker.
-     */
-    public void initialize(ICBreakpoint breakpoint) throws CoreException;
+
+	/**
+	 * Initializes the extension with the given breakpoint instance.
+	 * The breakpoint extension may initialize its data using attributes
+	 * stored in the breakpoint marker.
+	 * 
+	 * @param breakpoint Breakpoint instance that this extension belongs to.
+	 * @throws CoreException Thrown in case of errors reading the breakpoint 
+	 * marker.
+	 */
+	public void initialize(ICBreakpoint breakpoint) throws CoreException;
 
 	/**
 	 * Return the message associated with this breakpoint extension. This

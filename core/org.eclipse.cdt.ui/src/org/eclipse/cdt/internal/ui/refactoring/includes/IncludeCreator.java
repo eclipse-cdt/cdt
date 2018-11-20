@@ -108,8 +108,7 @@ public class IncludeCreator {
 		fContext = new IncludeCreationContext(tu, index);
 	}
 
-	public MultiTextEdit createInclude(IASTTranslationUnit ast, ITextSelection selection)
-			throws CoreException {
+	public MultiTextEdit createInclude(IASTTranslationUnit ast, ITextSelection selection) throws CoreException {
 		try {
 			CPPSemantics.enablePromiscuousBindingResolution();
 			return createIncludeImpl(ast, selection);
@@ -117,9 +116,8 @@ public class IncludeCreator {
 			CPPSemantics.disablePromiscuousBindingResolution();
 		}
 	}
-	
-	private MultiTextEdit createIncludeImpl(IASTTranslationUnit ast, ITextSelection selection)
-			throws CoreException {
+
+	private MultiTextEdit createIncludeImpl(IASTTranslationUnit ast, ITextSelection selection) throws CoreException {
 		MultiTextEdit rootEdit = new MultiTextEdit();
 		ITranslationUnit tu = fContext.getTranslationUnit();
 		IASTNodeSelector selector = ast.getNodeSelector(tu.getLocation().toOSString());
@@ -143,7 +141,7 @@ public class IncludeCreator {
 			return rootEdit;
 		}
 
-		final Map<String, IncludeCandidate> candidatesMap= new HashMap<>();
+		final Map<String, IncludeCandidate> candidatesMap = new HashMap<>();
 		final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
 
 		final List<IncludeInfo> requiredIncludes = new ArrayList<>();
@@ -152,13 +150,13 @@ public class IncludeCreator {
 		List<IIndexBinding> bindings = new ArrayList<>();
 		try {
 			IIndex index = fContext.getIndex();
-			IIndexBinding adaptedBinding= index.adaptBinding(binding);
+			IIndexBinding adaptedBinding = index.adaptBinding(binding);
 			if (adaptedBinding == null) {
 				bindings.addAll(Arrays.asList(index.findBindings(nameChars, false, filter, new NullProgressMonitor())));
 			} else {
 				bindings.add(adaptedBinding);
 				while (adaptedBinding instanceof ICPPSpecialization) {
-					adaptedBinding= index.adaptBinding(((ICPPSpecialization) adaptedBinding).getSpecializedBinding());
+					adaptedBinding = index.adaptBinding(((ICPPSpecialization) adaptedBinding).getSpecializedBinding());
 					if (adaptedBinding != null) {
 						bindings.add(adaptedBinding);
 					}
@@ -172,18 +170,17 @@ public class IncludeCreator {
 				if (indexBinding instanceof ICPPConstructor) {
 					indexBinding = indexBinding.getOwner();
 				}
-				IIndexName[] definitions= null;
+				IIndexName[] definitions = null;
 				// class, struct, union, enum-type, enum-item
 				if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration
 						|| indexBinding instanceof IEnumerator) {
-					definitions= index.findDefinitions(indexBinding);
+					definitions = index.findDefinitions(indexBinding);
 				} else if (indexBinding instanceof ITypedef || indexBinding instanceof IFunction) {
 					definitions = index.findDeclarations(indexBinding);
 				}
 				if (definitions != null) {
 					for (IIndexName definition : definitions) {
-						considerForInclusion(ast, definition, indexBinding, index, headerSubstitutor,
-								candidatesMap);
+						considerForInclusion(ast, definition, indexBinding, index, headerSubstitutor, candidatesMap);
 					}
 					if (definitions.length > 0 && adaptedBinding != null)
 						break;
@@ -302,7 +299,7 @@ public class IncludeCreator {
 		for (IncludeCandidate candidate : candidates) {
 			if (SemanticUtil.isSameNamespace(sourceNamespace, getContainingNamespace(candidate.binding))) {
 				if (winner != null) {
-					return null;  // ambiguous between 'winner' and 'candidate'
+					return null; // ambiguous between 'winner' and 'candidate'
 				}
 				winner = candidate;
 			}
@@ -310,13 +307,11 @@ public class IncludeCreator {
 		return winner;
 	}
 
-	private MultiTextEdit createEdit(List<IncludeInfo> includes,
-			List<UsingDeclaration> usingDeclarations, IASTTranslationUnit ast,
-			ITextSelection selection) {
+	private MultiTextEdit createEdit(List<IncludeInfo> includes, List<UsingDeclaration> usingDeclarations,
+			IASTTranslationUnit ast, ITextSelection selection) {
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
 		String contents = fContext.getSourceContents();
-		IRegion includeRegion =
-				IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
+		IRegion includeRegion = IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
 
 		IncludePreferences preferences = fContext.getPreferences();
 
@@ -337,8 +332,7 @@ public class IncludeCreator {
 		}
 		Collections.sort(styledIncludes, preferences);
 
-		List<StyledInclude> mergedIncludes =
-				IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion, fContext);
+		List<StyledInclude> mergedIncludes = IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion, fContext);
 
 		if (preferences.allowReordering) {
 			// Since the order of existing include statements may not match the include order
@@ -346,7 +340,8 @@ public class IncludeCreator {
 			// from the bottom of the include insertion region.
 			for (StyledInclude include : styledIncludes) {
 				int i = mergedIncludes.size();
-				while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {}
+				while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {
+				}
 				mergedIncludes.add(i + 1, include);
 			}
 		} else {
@@ -367,7 +362,8 @@ public class IncludeCreator {
 						if (contents.charAt(offset - 1) != '\n')
 							text.append(fContext.getLineDelimiter());
 					}
-					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles)) {
+					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(),
+							preferences.includeStyles)) {
 						if (TextUtil.isLineBlank(contents, offset)) {
 							offset = TextUtil.skipToNextLine(contents, offset);
 						} else {
@@ -378,17 +374,18 @@ public class IncludeCreator {
 				text.append(include.getIncludeInfo().composeIncludeStatement());
 				text.append(fContext.getLineDelimiter());
 			} else {
-				if (previousInclude != null && previousInclude.getExistingInclude() == null &&
-						include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles) &&
-						!TextUtil.isPreviousLineBlank(contents, ASTNodes.offset(existingInclude))) {
+				if (previousInclude != null && previousInclude.getExistingInclude() == null
+						&& include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(),
+								preferences.includeStyles)
+						&& !TextUtil.isPreviousLineBlank(contents, ASTNodes.offset(existingInclude))) {
 					text.append(fContext.getLineDelimiter());
 				}
 				flushEditBuffer(offset, text, rootEdit);
 			}
 			previousInclude = include;
 		}
-		if (includeRegion.getLength() == 0 && !TextUtil.isLineBlank(contents, includeRegion.getOffset()) &&
-				!includes.isEmpty()) {
+		if (includeRegion.getLength() == 0 && !TextUtil.isLineBlank(contents, includeRegion.getOffset())
+				&& !includes.isEmpty()) {
 			text.append(fContext.getLineDelimiter());
 		}
 		flushEditBuffer(offset, text, rootEdit);
@@ -408,8 +405,8 @@ public class IncludeCreator {
 		List<UsingDeclaration> temp = null;
 		for (Iterator<UsingDeclaration> iter = mergedUsingDeclarations.iterator(); iter.hasNext();) {
 			UsingDeclaration usingDeclaration = iter.next();
-			if (usingDeclaration.existingDeclaration.isPartOfTranslationUnitFile() &&
-					ASTNodes.endOffset(usingDeclaration.existingDeclaration) <= selection.getOffset()) {
+			if (usingDeclaration.existingDeclaration.isPartOfTranslationUnitFile()
+					&& ASTNodes.endOffset(usingDeclaration.existingDeclaration) <= selection.getOffset()) {
 				if (temp == null)
 					temp = new ArrayList<>();
 				temp.add(usingDeclaration);
@@ -425,7 +422,7 @@ public class IncludeCreator {
 
 		if (mergedUsingDeclarations.isEmpty()) {
 			offset = includeRegion.getOffset() + includeRegion.getLength();
-			text.append(fContext.getLineDelimiter());  // Blank line between includes and using declarations.
+			text.append(fContext.getLineDelimiter()); // Blank line between includes and using declarations.
 		} else {
 			offset = commentedNodeMap.getOffsetIncludingComments(mergedUsingDeclarations.get(0).existingDeclaration);
 		}
@@ -435,7 +432,8 @@ public class IncludeCreator {
 		// the using declaration list.
 		for (UsingDeclaration using : usingDeclarations) {
 			int i = mergedUsingDeclarations.size();
-			while (--i >= 0 && using.compareTo(mergedUsingDeclarations.get(i)) < 0) {}
+			while (--i >= 0 && using.compareTo(mergedUsingDeclarations.get(i)) < 0) {
+			}
 			mergedUsingDeclarations.add(i + 1, using);
 		}
 
@@ -483,7 +481,7 @@ public class IncludeCreator {
 
 	/**
 	 * Adds an include candidate to the {@code candidates} map if the file containing the definition
-     * is suitable for inclusion.
+	 * is suitable for inclusion.
 	 */
 	private void considerForInclusion(IASTTranslationUnit ast, IIndexName definition, IIndexBinding binding,
 			IIndex index, HeaderSubstitutor headerSubstitutor, Map<String, IncludeCandidate> candidates)
@@ -500,8 +498,8 @@ public class IncludeCreator {
 			header = headerSubstitutor.getPreferredRepresentativeHeader(header);
 			if (fContext.getPreferences().heuristicHeaderSubstitution) {
 				boolean reachable = ast.getIndexFileSet().contains(file);
-				InclusionRequest request =
-						new InclusionRequest(binding, Collections.singletonMap(file, header), reachable);
+				InclusionRequest request = new InclusionRequest(binding, Collections.singletonMap(file, header),
+						reachable);
 				header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request, header);
 			}
 			IncludeGroupStyle style = fContext.getIncludeStyle(header);
@@ -516,18 +514,17 @@ public class IncludeCreator {
 		}
 	}
 
-	private UsingDeclaration deduceUsingDeclaration(IBinding source, IBinding target,
-			IASTTranslationUnit ast) {
+	private UsingDeclaration deduceUsingDeclaration(IBinding source, IBinding target, IASTTranslationUnit ast) {
 		if (source.equals(target)) {
-			return null;  // No using declaration is needed.
+			return null; // No using declaration is needed.
 		}
 		ArrayList<String> targetChain = getUsingChain(target);
 		if (targetChain.size() <= 1) {
-			return null;  // Target is not in a namespace.
+			return null; // Target is not in a namespace.
 		}
 
 		// Check if any of the existing using declarations and directives matches the target.
-		final IASTDeclaration[] declarations= ast.getDeclarations(false);
+		final IASTDeclaration[] declarations = ast.getDeclarations(false);
 		for (IASTDeclaration declaration : declarations) {
 			if (declaration.isPartOfTranslationUnitFile()) {
 				IASTName name = null;
@@ -554,7 +551,7 @@ public class IncludeCreator {
 				}
 			}
 			if (j <= 0) {
-				return null;  // Source is in the target's namespace
+				return null; // Source is in the target's namespace
 			}
 		}
 		StringBuilder buf = new StringBuilder();
@@ -679,14 +676,14 @@ public class IncludeCreator {
 	 * @throws CoreException
 	 */
 	private static String getBindingQualifiedName(IIndexBinding binding) throws CoreException {
-		String[] qname= CPPVisitor.getQualifiedName(binding);
+		String[] qname = CPPVisitor.getQualifiedName(binding);
 		StringBuilder result = new StringBuilder();
-		boolean needSep= false;
+		boolean needSep = false;
 		for (String element : qname) {
 			if (needSep)
 				result.append(Keywords.cpCOLONCOLON);
 			result.append(element);
-			needSep= true;
+			needSep = true;
 		}
 		return result.toString();
 	}

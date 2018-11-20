@@ -26,7 +26,7 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	 * @return the name of the file
 	 */
 	public String getFileName();
-    
+
 	/**
 	 * Returns the offset within the file where this location starts.
 	 */
@@ -39,21 +39,21 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	@Override
 	public int getNodeLength();
 
-    /**
-     * Returns the starting line number. Locations obtained via the index do not have line numbers
-     * and return {@code 0}.
-     * 
-     * @return the 1-based line number, or {@code 0} if not applicable
-     */
-    public int getStartingLineNumber();
-    
-    /**
-     * Returns the ending line number. Locations obtained via the index do not have line numbers
-     * and return {@code 0}.
-     * 
-     * @return the 1-based line number, or {@code 0} if not applicable
-     */
-    public int getEndingLineNumber();
+	/**
+	 * Returns the starting line number. Locations obtained via the index do not have line numbers
+	 * and return {@code 0}.
+	 * 
+	 * @return the 1-based line number, or {@code 0} if not applicable
+	 */
+	public int getStartingLineNumber();
+
+	/**
+	 * Returns the ending line number. Locations obtained via the index do not have line numbers
+	 * and return {@code 0}.
+	 * 
+	 * @return the 1-based line number, or {@code 0} if not applicable
+	 */
+	public int getEndingLineNumber();
 
 	/**
 	 * Returns the inclusion statement that included this file, or {@code null} for

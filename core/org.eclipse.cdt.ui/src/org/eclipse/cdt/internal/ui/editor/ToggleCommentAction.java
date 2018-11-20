@@ -77,7 +77,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 		if (fOperationTarget == null || fDocumentPartitioning == null || fPrefixesMap == null)
 			return;
 
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor == null)
 			return;
 
@@ -86,11 +86,11 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		final int operationCode;
 		if (isSelectionCommented(editor.getSelectionProvider().getSelection()))
-			operationCode= ITextOperationTarget.STRIP_PREFIX;
+			operationCode = ITextOperationTarget.STRIP_PREFIX;
 		else
-			operationCode= ITextOperationTarget.PREFIX;
+			operationCode = ITextOperationTarget.PREFIX;
 
-		Shell shell= editor.getSite().getShell();
+		Shell shell = editor.getSite().getShell();
 		if (!fOperationTarget.canDoOperation(operationCode)) {
 			if (shell != null) {
 				MessageDialog.openError(shell, CEditorMessages.ToggleComment_error_title,
@@ -99,9 +99,9 @@ public final class ToggleCommentAction extends TextEditorAction {
 			return;
 		}
 
-		Display display= null;
+		Display display = null;
 		if (shell != null && !shell.isDisposed())
-			display= shell.getDisplay();
+			display = shell.getDisplay();
 
 		BusyIndicator.showWhile(display, new Runnable() {
 			@Override
@@ -121,34 +121,34 @@ public final class ToggleCommentAction extends TextEditorAction {
 		if (!(selection instanceof ITextSelection))
 			return false;
 
-		ITextSelection textSelection= (ITextSelection) selection;
+		ITextSelection textSelection = (ITextSelection) selection;
 		if (textSelection.getStartLine() < 0 || textSelection.getEndLine() < 0)
 			return false;
 
-		IDocument document= getTextEditor().getDocumentProvider().getDocument(getTextEditor().getEditorInput());
+		IDocument document = getTextEditor().getDocumentProvider().getDocument(getTextEditor().getEditorInput());
 
 		try {
-			IRegion block= getTextBlockFromSelection(textSelection, document);
-			ITypedRegion[] regions= TextUtilities.computePartitioning(document, fDocumentPartitioning,
+			IRegion block = getTextBlockFromSelection(textSelection, document);
+			ITypedRegion[] regions = TextUtilities.computePartitioning(document, fDocumentPartitioning,
 					block.getOffset(), block.getLength(), false);
 
-			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
+			int[] lines = new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
 
 			// For each partition in the text selection, figure out the startline and endline.
 			// Count the number of lines that are selected.
-			for (int i = 0, j = 0; i < regions.length; i++, j+= 2) {
+			for (int i = 0, j = 0; i < regions.length; i++, j += 2) {
 				// Start line of region
-				lines[j]= getFirstCompleteLineOfRegion(regions[i], document);
+				lines[j] = getFirstCompleteLineOfRegion(regions[i], document);
 				// End line of region
-				int length= regions[i].getLength();
-				int offset= regions[i].getOffset() + length;
+				int length = regions[i].getLength();
+				int offset = regions[i].getOffset() + length;
 				if (length > 0)
 					offset--;
 
 				// If there is no startline for this region (startline = -1),
 				// then there is no endline,
 				// otherwise, get the line number of the endline and store it in the array.
-				lines[j + 1]= (lines[j] == -1 ? -1 : document.getLineOfOffset(offset));
+				lines[j + 1] = (lines[j] == -1 ? -1 : document.getLineOfOffset(offset));
 
 				// We could count the number of lines that are selected in this region
 				// lineCount += lines[j + 1] - lines[j] + 1;
@@ -158,12 +158,12 @@ public final class ToggleCommentAction extends TextEditorAction {
 			}
 
 			// Perform the check
-			boolean hasComment= false;
+			boolean hasComment = false;
 			for (int i = 0, j = 0; i < regions.length; i++, j += 2) {
-				String[] prefixes= fPrefixesMap.get(regions[i].getType());
+				String[] prefixes = fPrefixesMap.get(regions[i].getType());
 				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
 					if (isBlockCommented(lines[j], lines[j + 1], prefixes, document)) {
-						hasComment= true;
+						hasComment = true;
 					} else if (!isBlockEmpty(lines[j], lines[j + 1], document)) {
 						return false;
 					}
@@ -171,7 +171,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 			}
 			return hasComment;
 		} catch (BadLocationException e) {
-			CUIPlugin.log(e);  // Should not happen
+			CUIPlugin.log(e); // Should not happen
 		}
 
 		return false;
@@ -188,14 +188,15 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * @return the region describing the text block comprising the given selection
 	 * @throws BadLocationException
 	 */
-	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) throws BadLocationException {
-		int start= document.getLineOffset(selection.getStartLine());
+	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document)
+			throws BadLocationException {
+		int start = document.getLineOffset(selection.getStartLine());
 		int end;
-		int endLine= selection.getEndLine();
-		if (document.getNumberOfLines() > endLine+1) {
-			end= document.getLineOffset(endLine+1);
+		int endLine = selection.getEndLine();
+		if (document.getNumberOfLines() > endLine + 1) {
+			end = document.getLineOffset(endLine + 1);
 		} else {
-			end= document.getLength();
+			end = document.getLength();
 		}
 		return new Region(start, end - start);
 	}
@@ -209,16 +210,16 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 */
 	private int getFirstCompleteLineOfRegion(IRegion region, IDocument document) {
 		try {
-			int startLine= document.getLineOfOffset(region.getOffset());
+			int startLine = document.getLineOfOffset(region.getOffset());
 
-			int offset= document.getLineOffset(startLine);
+			int offset = document.getLineOffset(startLine);
 			if (offset >= region.getOffset())
 				return startLine;
 
-			offset= document.getLineOffset(startLine + 1);
+			offset = document.getLineOffset(startLine + 1);
 			return (offset > region.getOffset() + region.getLength() ? -1 : startLine + 1);
 		} catch (BadLocationException e) {
-			CUIPlugin.log(e);  // Should not happen
+			CUIPlugin.log(e); // Should not happen
 		}
 
 		return -1;
@@ -240,23 +241,23 @@ public final class ToggleCommentAction extends TextEditorAction {
 		try {
 			// Check for occurrences of prefixes in the given lines
 			boolean hasComment = false;
-			for (int i= startLine; i <= endLine; i++) {
-				IRegion line= document.getLineInformation(i);
-				String text= document.get(line.getOffset(), line.getLength());
+			for (int i = startLine; i <= endLine; i++) {
+				IRegion line = document.getLineInformation(i);
+				String text = document.get(line.getOffset(), line.getLength());
 
 				boolean isEmptyLine = text.trim().length() == 0;
-				if(isEmptyLine) {
+				if (isEmptyLine) {
 					continue;
 				}
-				
-				int[] found= TextUtilities.indexOf(prefixes, text, 0);
+
+				int[] found = TextUtilities.indexOf(prefixes, text, 0);
 
 				if (found[0] == -1) {
 					// Found a line which is not commented
 					return false;
 				}
-				String s= document.get(line.getOffset(), found[0]);
-				s= s.trim();
+				String s = document.get(line.getOffset(), found[0]);
+				s = s.trim();
 				if (s.length() != 0) {
 					// Found a line which is not commented
 					return false;
@@ -265,7 +266,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 			}
 			return hasComment;
 		} catch (BadLocationException e) {
-			CUIPlugin.log(e);  // Should not happen
+			CUIPlugin.log(e); // Should not happen
 		}
 
 		return false;
@@ -282,20 +283,20 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 */
 	private boolean isBlockEmpty(int startLine, int endLine, IDocument document) {
 		try {
-			for (int i= startLine; i <= endLine; i++) {
-				IRegion line= document.getLineInformation(i);
-				String text= document.get(line.getOffset(), line.getLength());
-	
+			for (int i = startLine; i <= endLine; i++) {
+				IRegion line = document.getLineInformation(i);
+				String text = document.get(line.getOffset(), line.getLength());
+
 				boolean isEmptyLine = text.trim().length() == 0;
-				if(!isEmptyLine) {
+				if (!isEmptyLine) {
 					return false;
 				}
 			}
 			return true;
 		} catch (BadLocationException e) {
-			CUIPlugin.log(e);  // Should not happen
+			CUIPlugin.log(e); // Should not happen
 		}
-	
+
 		return false;
 	}
 
@@ -314,12 +315,12 @@ public final class ToggleCommentAction extends TextEditorAction {
 			return;
 		}
 
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (fOperationTarget == null && editor != null)
-			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
+			fOperationTarget = editor.getAdapter(ITextOperationTarget.class);
 
-		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(ITextOperationTarget.PREFIX) &&
-				fOperationTarget.canDoOperation(ITextOperationTarget.STRIP_PREFIX));
+		boolean isEnabled = (fOperationTarget != null && fOperationTarget.canDoOperation(ITextOperationTarget.PREFIX)
+				&& fOperationTarget.canDoOperation(ITextOperationTarget.STRIP_PREFIX));
 		setEnabled(isEnabled);
 	}
 
@@ -329,7 +330,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 	@Override
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
-		fOperationTarget= null;
+		fOperationTarget = null;
 	}
 
 	/**
@@ -338,35 +339,35 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * @param configuration
 	 */
 	public void configure(ISourceViewer sourceViewer, SourceViewerConfiguration configuration) {
-		fPrefixesMap= null;
+		fPrefixesMap = null;
 
-		String[] types= configuration.getConfiguredContentTypes(sourceViewer);
-		Map<String, String[]> prefixesMap= new HashMap<String, String[]>(types.length);
+		String[] types = configuration.getConfiguredContentTypes(sourceViewer);
+		Map<String, String[]> prefixesMap = new HashMap<String, String[]>(types.length);
 		for (String type : types) {
-			String[] prefixes= configuration.getDefaultPrefixes(sourceViewer, type);
+			String[] prefixes = configuration.getDefaultPrefixes(sourceViewer, type);
 			if (prefixes != null && prefixes.length > 0) {
-				int emptyPrefixes= 0;
+				int emptyPrefixes = 0;
 				for (String prefixe : prefixes) {
 					if (prefixe.length() == 0)
 						emptyPrefixes++;
 				}
 
 				if (emptyPrefixes > 0) {
-					String[] nonemptyPrefixes= new String[prefixes.length - emptyPrefixes];
-					for (int j= 0, k= 0; j < prefixes.length; j++) {
-						String prefix= prefixes[j];
+					String[] nonemptyPrefixes = new String[prefixes.length - emptyPrefixes];
+					for (int j = 0, k = 0; j < prefixes.length; j++) {
+						String prefix = prefixes[j];
 						if (prefix.length() != 0) {
-							nonemptyPrefixes[k]= prefix;
+							nonemptyPrefixes[k] = prefix;
 							k++;
 						}
 					}
-					prefixes= nonemptyPrefixes;
+					prefixes = nonemptyPrefixes;
 				}
 
 				prefixesMap.put(type, prefixes);
 			}
 		}
-		fDocumentPartitioning= configuration.getConfiguredDocumentPartitioning(sourceViewer);
-		fPrefixesMap= prefixesMap;
+		fDocumentPartitioning = configuration.getConfiguredDocumentPartitioning(sourceViewer);
+		fPrefixesMap = prefixesMap;
 	}
 }

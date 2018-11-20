@@ -16,14 +16,11 @@ package org.eclipse.cdt.managedbuilder.xlupc.ui;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-
 public class Activator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.xlupc.ui"; //$NON-NLS-1$
 
-
 	private static Activator plugin;
-
 
 	public Activator() {
 	}

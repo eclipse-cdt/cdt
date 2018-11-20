@@ -24,21 +24,20 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 public class AutoconfContentProvider implements ITreeContentProvider {
 
 	private IDocumentProvider documentProvider;
 	private AutoconfEditor editor;
 	protected final static String SECTION_POSITIONS = "section_positions";
 	protected IPositionUpdater positionUpdater = new DefaultPositionUpdater(SECTION_POSITIONS);
-	
+
 	public AutoconfContentProvider(ITextEditor editor) {
 		if (editor instanceof AutoconfEditor) {
 			this.editor = (AutoconfEditor) editor;
 		}
 		this.documentProvider = editor.getDocumentProvider();
 	}
-	
+
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
@@ -47,27 +46,20 @@ public class AutoconfContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (oldInput != null)
-		{
+		if (oldInput != null) {
 			IDocument document = documentProvider.getDocument(oldInput);
-			if (document != null)
-			{
-				try
-				{
+			if (document != null) {
+				try {
 					document.removePositionCategory(SECTION_POSITIONS);
-				}
-				catch (BadPositionCategoryException x)
-				{
+				} catch (BadPositionCategoryException x) {
 				}
 				document.removePositionUpdater(positionUpdater);
 			}
 		}
 
-		if (newInput != null)
-		{
+		if (newInput != null) {
 			IDocument document = documentProvider.getDocument(newInput);
-			if (document != null)
-			{
+			if (document != null) {
 				document.addPositionCategory(SECTION_POSITIONS);
 				document.addPositionUpdater(positionUpdater);
 			}
@@ -77,7 +69,7 @@ public class AutoconfContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof AutoconfElement) {
-			AutoconfElement element = (AutoconfElement)parentElement;
+			AutoconfElement element = (AutoconfElement) parentElement;
 			return element.getChildren();
 		}
 		return new Object[0];
@@ -91,8 +83,8 @@ public class AutoconfContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof AutoconfElement) {
-			return ((AutoconfElement)element).hasChildren();
-		} 
+			return ((AutoconfElement) element).hasChildren();
+		}
 		return false;
 	}
 

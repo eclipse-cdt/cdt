@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-
 // ----------------------------------------------------------------------------
 // CDTVisualizerUIPlugin
 // ----------------------------------------------------------------------------
@@ -35,17 +34,15 @@ import org.osgi.framework.BundleContext;
  * 
  * This plugin contains the UI components of the visualizer framework.
  */
-public class CDTVisualizerUIPlugin extends AbstractUIPlugin
-{
+public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
 	// --- constants ---
-	
-    /** Feature ID (used as prefix for extension points, etc). */
-    public static final String FEATURE_ID = "org.eclipse.cdt.visualizer.ui"; //$NON-NLS-1$
-	
+
+	/** Feature ID (used as prefix for extension points, etc). */
+	public static final String FEATURE_ID = "org.eclipse.cdt.visualizer.ui"; //$NON-NLS-1$
+
 	/** The plug-in ID */
 	public static final String PLUGIN_ID = "org.eclipse.cdt.visualizer.ui"; //$NON-NLS-1$
 
-	
 	// --- static members ---
 
 	/** Singleton instance */
@@ -59,27 +56,25 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin
 	/** Resource manager */
 	protected static UIResourceManager s_resources = null;
 
-	
 	// --- constructors/destructors ---
-	
+
 	/**
 	 * Constructor
 	 */
 	public CDTVisualizerUIPlugin() {
 	}
 
-	
 	// --- plugin startup/shutdown methods ---
 
 	/** Invoked when plugin is loaded. */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		s_plugin = this;
-		
+
 		// touch activator classes of any plugins we depend on,
 		// to ensure their start() methods are called first
 		// (None for now.)
-		
+
 		// initialize resource management (strings, images, fonts, colors, etc.)
 		getPluginResources();
 	}
@@ -88,28 +83,25 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin
 	public void stop(BundleContext context) throws Exception {
 		// clean up resource management
 		cleanupPluginResources();
-		
+
 		s_plugin = null;
 		super.stop(context);
 	}
-	
-	
+
 	// --- logging ---
-	
+
 	/** 
 	 * Writes message to Eclipse log.
 	 * Severity can be one of:
 	 * Status.OK, Status.ERROR, Status.INFO, Status.WARNING, Status.CANCEL
 	 */
-	public static void log(int severity, String text)
-	{
+	public static void log(int severity, String text) {
 		Status status = new Status(severity, PLUGIN_ID, text);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
-	
 	// --- resource management ---
-	
+
 	/** Returns resource manager for this plugin */
 	public UIResourceManager getPluginResources() {
 		if (s_resources == null) {
@@ -119,42 +111,45 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin
 			// initialize Colors class, now that UIResources object is available.
 			Colors.initialize(s_resources);
 		}
-		
+
 		return s_resources;
 	}
-	
+
 	/** Releases resource manager for this plugin. */
 	public void cleanupPluginResources() {
 		s_resources.dispose();
 	}
-	
+
 	/** Convenience method for getting plugin resource manager */
 	public static UIResourceManager getResources() {
 		return getDefault().getPluginResources();
 	}
-	
+
 	/** Convenience method for looking up string resources */
 	public static String getString(String key) {
 		return getDefault().getPluginResources().getString(key);
 	}
+
 	/** Convenience method for looking up string resources */
 	public static String getString(String key, Object... arguments) {
 		return getDefault().getPluginResources().getString(key, arguments);
 	}
-	
+
 	/** Convenience method for looking up image resources */
 	public static Image getImage(String key) {
 		return getDefault().getPluginResources().getImage(key);
 	}
+
 	/** Convenience method for looking up image resources */
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getDefault().getPluginResources().getImageDescriptor(key);
 	}
-	
+
 	/** Convenience method for looking up font resources */
 	public static Font getFont(String fontName, int height) {
 		return getDefault().getPluginResources().getFont(fontName, height);
 	}
+
 	/** Convenience method for looking up font resources */
 	public static Font getFont(String fontName, int height, int style) {
 		return getDefault().getPluginResources().getFont(fontName, height, style);

@@ -37,13 +37,13 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 
 	protected MethodDeclarationHandle(ICElement parent, int type, ICPPMethod method) {
 		super(parent, type, method.getName());
-		fParameterTypes= extractParameterTypes(method);
-		fReturnType= ASTTypeUtil.getType(method.getType().getReturnType(), false);
-		fVisibility= getVisibility(method);
-		fIsStatic= method.isStatic();
-		fIsConstructor= method instanceof ICPPConstructor;
+		fParameterTypes = extractParameterTypes(method);
+		fReturnType = ASTTypeUtil.getType(method.getType().getReturnType(), false);
+		fVisibility = getVisibility(method);
+		fIsStatic = method.isStatic();
+		fIsConstructor = method instanceof ICPPConstructor;
 		if (!fIsConstructor)
-			fIsDestructor= method.isDestructor();
+			fIsDestructor = method.isDestructor();
 	}
 
 	@Override

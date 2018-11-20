@@ -28,12 +28,12 @@ import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 public final class CFoldingStructureProviderDescriptor {
 
 	/* extension point attribute names */
-	
-	private static final String PREFERENCES_CLASS= "preferencesClass"; //$NON-NLS-1$
-	private static final String CLASS= "class"; //$NON-NLS-1$
-	private static final String NAME= "name"; //$NON-NLS-1$
-	private static final String ID= "id"; //$NON-NLS-1$
-	
+
+	private static final String PREFERENCES_CLASS = "preferencesClass"; //$NON-NLS-1$
+	private static final String CLASS = "class"; //$NON-NLS-1$
+	private static final String NAME = "name"; //$NON-NLS-1$
+	private static final String ID = "id"; //$NON-NLS-1$
+
 	/** The identifier of the extension. */
 	private String fId;
 	/** The name of the extension. */
@@ -47,30 +47,30 @@ public final class CFoldingStructureProviderDescriptor {
 	private boolean fHasPreferences;
 	/** The configuration element of this extension. */
 	private IConfigurationElement fElement;
-	
+
 	/**
 	 * Creates a new descriptor.
 	 * 
 	 * @param element the configuration element to read
 	 */
 	CFoldingStructureProviderDescriptor(IConfigurationElement element) {
-		fElement= element;
-		fId= element.getAttribute(ID);
+		fElement = element;
+		fId = element.getAttribute(ID);
 		Assert.isLegal(fId != null);
-		
-		fName= element.getAttribute(NAME);
+
+		fName = element.getAttribute(NAME);
 		if (fName == null)
-			fName= fId;
-		
-		fClass= element.getAttribute(CLASS);
+			fName = fId;
+
+		fClass = element.getAttribute(CLASS);
 		Assert.isLegal(fClass != null);
-		
+
 		if (element.getAttribute(PREFERENCES_CLASS) == null)
-			fHasPreferences= false;
+			fHasPreferences = false;
 		else
-			fHasPreferences= true;
+			fHasPreferences = true;
 	}
-	
+
 	/**
 	 * Creates a folding provider as described in the extension's xml.
 	 * 
@@ -79,7 +79,7 @@ public final class CFoldingStructureProviderDescriptor {
 	 * @throws CoreException if creation fails
 	 */
 	public ICFoldingStructureProvider createProvider() throws CoreException {
-		ICFoldingStructureProvider prov= (ICFoldingStructureProvider) fElement.createExecutableExtension(CLASS);
+		ICFoldingStructureProvider prov = (ICFoldingStructureProvider) fElement.createExecutableExtension(CLASS);
 		return prov;
 	}
 
@@ -92,12 +92,13 @@ public final class CFoldingStructureProviderDescriptor {
 	 */
 	public ICFoldingPreferenceBlock createPreferences() throws CoreException {
 		if (fHasPreferences) {
-			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) fElement.createExecutableExtension(PREFERENCES_CLASS);
+			ICFoldingPreferenceBlock prefs = (ICFoldingPreferenceBlock) fElement
+					.createExecutableExtension(PREFERENCES_CLASS);
 			return prefs;
 		}
 		return new EmptyCFoldingPreferenceBlock();
 	}
-	
+
 	/**
 	 * Returns the identifier of the described extension.
 	 * 
@@ -106,7 +107,7 @@ public final class CFoldingStructureProviderDescriptor {
 	public String getId() {
 		return fId;
 	}
-	
+
 	/**
 	 * Returns the name of the described extension.
 	 * 

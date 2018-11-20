@@ -23,33 +23,51 @@ public interface IQualifiedTypeName extends Comparable<IQualifiedTypeName> {
 	public String getName();
 
 	public String getFullyQualifiedName();
+
 	public IQualifiedTypeName getEnclosingTypeName();
+
 	public String[] getEnclosingNames();
 
 	public boolean isQualified();
+
 	public boolean isEmpty();
+
 	public boolean isGlobal();
-	
+
 	public IQualifiedTypeName append(String qualifiedName);
+
 	public IQualifiedTypeName append(String[] names);
+
 	public IQualifiedTypeName append(IQualifiedTypeName typeName);
 
 	public String[] segments();
+
 	public String segment(int index);
+
 	public int segmentCount();
+
 	public String lastSegment();
+
 	public int matchingFirstSegments(IQualifiedTypeName typeName);
+
 	public IQualifiedTypeName removeFirstSegments(int count);
+
 	public IQualifiedTypeName removeLastSegments(int count);
+
 	public boolean isPrefixOf(IQualifiedTypeName typeName);
 
 	public boolean isLowLevel();
+
 	public boolean isValidSegment(String segment);
+
 	public boolean isValid();
-	
+
 	public boolean equals(IQualifiedTypeName typeName);
+
 	public boolean equalsIgnoreCase(IQualifiedTypeName typeName);
+
 	@Override
 	public int compareTo(IQualifiedTypeName typeName);
+
 	public int compareToIgnoreCase(IQualifiedTypeName typeName);
 }

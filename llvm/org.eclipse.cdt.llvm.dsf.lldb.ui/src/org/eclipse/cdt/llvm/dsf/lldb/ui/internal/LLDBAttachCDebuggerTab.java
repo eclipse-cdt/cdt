@@ -22,7 +22,7 @@ public class LLDBAttachCDebuggerTab extends LLDBLocalApplicationCDebuggerTab {
 	 */
 	@SuppressWarnings("restriction")
 	public LLDBAttachCDebuggerTab() {
-        super();
-        fAttachMode = true;
-    }
+		super();
+		fAttachMode = true;
+	}
 }

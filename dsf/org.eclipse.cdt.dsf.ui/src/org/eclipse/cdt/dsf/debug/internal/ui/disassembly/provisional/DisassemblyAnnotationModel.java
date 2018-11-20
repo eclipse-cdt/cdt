@@ -49,7 +49,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 
 	protected Position createPositionFromAddress(BigInteger address) {
 		if (address != null) {
-			AddressRangePosition p= getDisassemblyDocument().getDisassemblyPosition(address);
+			AddressRangePosition p = getDisassemblyDocument().getDisassemblyPosition(address);
 			if (p != null && p.fValid) {
 				return new Position(p.offset, p.length);
 			}

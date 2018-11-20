@@ -74,21 +74,21 @@ public interface IOption extends IBuildObject {
 
 	// Browse type
 	public static final int BROWSE_NONE = 0;
-	public static final String NONE = "none";	//$NON-NLS-1$
+	public static final String NONE = "none"; //$NON-NLS-1$
 	public static final int BROWSE_FILE = 1;
-	public static final String FILE = "file";	//$NON-NLS-1$
+	public static final String FILE = "file"; //$NON-NLS-1$
 	public static final int BROWSE_DIR = 2;
-	public static final String DIR = "directory";	//$NON-NLS-1$
+	public static final String DIR = "directory"; //$NON-NLS-1$
 
 	// Resource Filter type
 	public static final int FILTER_ALL = 0;
-	public static final String ALL = "all";	//$NON-NLS-1$
+	public static final String ALL = "all"; //$NON-NLS-1$
 	public static final int FILTER_FILE = 1;
 	public static final int FILTER_PROJECT = 2;
-	public static final String PROJECT = "project";	//$NON-NLS-1$
+	public static final String PROJECT = "project"; //$NON-NLS-1$
 
 	// Schema attribute names for option elements
-	public static final String BROWSE_TYPE = "browseType";	//$NON-NLS-1$
+	public static final String BROWSE_TYPE = "browseType"; //$NON-NLS-1$
 	/** @since 7.0 */
 	public static final String BROWSE_FILTER_PATH = "browseFilterPath"; //$NON-NLS-1$
 	/** @since 7.0 */
@@ -210,7 +210,7 @@ public interface IOption extends IBuildObject {
 	 *
 	 * If this option is not defined as an enumeration, it returns <code>null</code>.
 	 */
-	public String [] getApplicableValues();
+	public String[] getApplicableValues();
 
 	/**
 	 * @return the value for a boolean option.
@@ -367,7 +367,7 @@ public interface IOption extends IBuildObject {
 	 * manifest defined that as -g, then the return value would be the
 	 * String "-g"
 	 */
-	public String getEnumCommand (String id) throws BuildException;
+	public String getEnumCommand(String id) throws BuildException;
 
 	/**
 	 * Returns the command associated with the child of this option
@@ -384,13 +384,13 @@ public interface IOption extends IBuildObject {
 	 * @throws BuildException if this option is not of type {@link #TREE} or {@link #ENUMERATED}
 	 * @since 8.1
 	 */
-	public String getCommand (String id) throws BuildException;
+	public String getCommand(String id) throws BuildException;
 
 	/**
 	 * @param id - enumeration id
 	 * @return the "name" associated with the enumeration id.
 	 */
-	public String getEnumName (String id) throws BuildException;
+	public String getEnumName(String id) throws BuildException;
 
 	/**
 	 * Returns the name associated with the child of this option
@@ -432,7 +432,7 @@ public interface IOption extends IBuildObject {
 	 * @return an array or <code>String</code>s containing the libraries
 	 * that must be linked into the project.
 	 */
-	public String[] getLibraries() throws BuildException ;
+	public String[] getLibraries() throws BuildException;
 
 	/**
 	 * @return an array or <code>String</code>s containing the library files
@@ -460,12 +460,12 @@ public interface IOption extends IBuildObject {
 	 *
 	 * @throws BuildException if the option type is not an enumeration
 	 */
-	public String getSelectedEnum () throws BuildException;
+	public String getSelectedEnum() throws BuildException;
 
 	/**
 	 * @return the current value for this option if it is a List of Strings.
 	 */
-	public String [] getStringListValue() throws BuildException;
+	public String[] getStringListValue() throws BuildException;
 
 	/**
 	 * @return the current value for this option if it is a String
@@ -476,7 +476,7 @@ public interface IOption extends IBuildObject {
 	 * @return all of the user-defined object files that must be linked with
 	 * the final build target.
 	 */
-	public String [] getUserObjects() throws BuildException;
+	public String[] getUserObjects() throws BuildException;
 
 	/**
 	 * @return the raw value of this option which is the Object that contains the raw value of the option.
@@ -518,7 +518,7 @@ public interface IOption extends IBuildObject {
 	 *
 	 * @param value An array of strings to place in the option reference.
 	 */
-	public void setValue(String [] value) throws BuildException;
+	public void setValue(String[] value) throws BuildException;
 
 	/**
 	 * Sets the raw value of this option.
@@ -611,7 +611,7 @@ public interface IOption extends IBuildObject {
 	 *    {@link IOption#OBJECTS}, {@link IOption#INCLUDE_FILES}, {@link IOption#LIBRARY_PATHS},
 	 *    {@link IOption#LIBRARY_FILES}, {@link IOption#MACRO_FILES}
 	 */
-	int getBasicValueType() throws BuildException ;
+	int getBasicValueType() throws BuildException;
 
 	/**
 	 * @return in case the option basic value type is STRING_LIST, returns the String list value,
@@ -698,8 +698,11 @@ public interface IOption extends IBuildObject {
 		public static final int DEFAULT_ORDER = 1000;
 
 		String getName();
+
 		String getID();
+
 		String getDescription();
+
 		/**
 		 * The order that determines UI appearance of the tree node,
 		 * not necessarily its position in {@link #getChildren()}
@@ -708,12 +711,17 @@ public interface IOption extends IBuildObject {
 		 * @see #DEFAULT_ORDER
 		 */
 		int getOrder();
+
 		void setOrder(int order);
 
 		ITreeOption[] getChildren();
+
 		ITreeOption getParent();
+
 		boolean isContainer();
+
 		String getCommand();
+
 		ITreeOption getChild(String name);
 
 		/**
@@ -723,7 +731,9 @@ public interface IOption extends IBuildObject {
 		 * @return The added child.
 		 */
 		ITreeOption addChild(String id, String name);
+
 		void remove();
+
 		String getIcon();
 	}
 }

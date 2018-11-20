@@ -95,8 +95,8 @@ public interface ICBuildConfigurationManager {
 	 * @since 6.2
 	 */
 	@Deprecated
-	ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties,
-			String launchMode, IProgressMonitor monitor) throws CoreException;
+	ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties, String launchMode,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Called by providers to add new build configurations as they are created.

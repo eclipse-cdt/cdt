@@ -51,7 +51,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
  */
 
 public interface IManagedDependencyGenerator2 extends IManagedDependencyGeneratorType {
-	
+
 	/**
 	 * Returns an instance of IManagedDependencyInfo for this source file.
 	 * IManagedDependencyCalculator, IManagedDependencyCommands
@@ -59,25 +59,21 @@ public interface IManagedDependencyGenerator2 extends IManagedDependencyGenerato
 	 * IManagedDependencyInfo, and any one of the three can be returned.
 	 * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS, 
 	 * TYPE_CUSTOM or TYPE_PREBUILD_COMMANDS.
-     *
-     * @param source  The source file for which dependencies should be calculated
-     *    The IPath can be either relative to the project directory, or absolute in the file system.
-     * @param resource The IResource corresponding to the source file, or null if the file
-     * is not a workspace resource.
-     * @param buildContext  The IConfiguration or IResourceConfiguration that
-     *   contains the context in which the source file will be built
-     * @param tool  The tool associated with the source file
-     * @param topBuildDirectory  The top build directory of the configuration.  This is
-     *   the working directory for the tool.  This IPath is relative to the project directory.
+	 *
+	 * @param source  The source file for which dependencies should be calculated
+	 *    The IPath can be either relative to the project directory, or absolute in the file system.
+	 * @param resource The IResource corresponding to the source file, or null if the file
+	 * is not a workspace resource.
+	 * @param buildContext  The IConfiguration or IResourceConfiguration that
+	 *   contains the context in which the source file will be built
+	 * @param tool  The tool associated with the source file
+	 * @param topBuildDirectory  The top build directory of the configuration.  This is
+	 *   the working directory for the tool.  This IPath is relative to the project directory.
 	 * @return IManagedDependencyInfo    
 	 */
-	public IManagedDependencyInfo getDependencySourceInfo(
-		IPath source,
-		IResource resource,
-		IBuildObject buildContext,
-		ITool tool,
-		IPath topBuildDirectory);
-	
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext,
+			ITool tool, IPath topBuildDirectory);
+
 	/**
 	 * Returns an instance of IManagedDependencyInfo for this source file.
 	 * IManagedDependencyCalculator, IManagedDependencyCommands
@@ -85,21 +81,18 @@ public interface IManagedDependencyGenerator2 extends IManagedDependencyGenerato
 	 * IManagedDependencyInfo, and any one of the three can be returned.
 	 * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS, 
 	 * TYPE_CUSTOM or TYPE_PREBUILD_COMMANDS.
-     *
-     * @param source  The source file for which dependencies should be calculated
-     *    The IPath can be either relative to the project directory, or absolute in the file system.
-     * @param buildContext  The IConfiguration or IResourceConfiguration that
-     *   contains the context in which the source file will be built
-     * @param tool  The tool associated with the source file
-     * @param topBuildDirectory  The top build directory of the configuration.  This is
-     *   the working directory for the tool.  This IPath is relative to the project directory.
+	 *
+	 * @param source  The source file for which dependencies should be calculated
+	 *    The IPath can be either relative to the project directory, or absolute in the file system.
+	 * @param buildContext  The IConfiguration or IResourceConfiguration that
+	 *   contains the context in which the source file will be built
+	 * @param tool  The tool associated with the source file
+	 * @param topBuildDirectory  The top build directory of the configuration.  This is
+	 *   the working directory for the tool.  This IPath is relative to the project directory.
 	 * @return IManagedDependencyInfo    
 	 */
-	public IManagedDependencyInfo getDependencySourceInfo(
-		IPath source,
-		IBuildObject buildContext,
-		ITool tool,
-		IPath topBuildDirectory);
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory);
 
 	/**
 	 * Returns the file extension used by dependency files created
@@ -107,14 +100,12 @@ public interface IManagedDependencyGenerator2 extends IManagedDependencyGenerato
 	 * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS or 
 	 * TYPE_PREBUILD_COMMANDS.
 	 *    
-     * @param buildContext  The IConfiguration that contains the context of the build
-     * @param tool  The tool associated with the dependency generator. 
-     *
+	 * @param buildContext  The IConfiguration that contains the context of the build
+	 * @param tool  The tool associated with the dependency generator. 
+	 *
 	 * @return String
 	 */
-	public String getDependencyFileExtension(
-		IConfiguration buildContext,
-		ITool tool);
+	public String getDependencyFileExtension(IConfiguration buildContext, ITool tool);
 
 	/**
 	 * Called to allow the dependency calculator to post-process dependency files.
@@ -126,19 +117,16 @@ public interface IManagedDependencyGenerator2 extends IManagedDependencyGenerato
 	 * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS or 
 	 * TYPE_PREBUILD_COMMANDS.
 	 *    
-     * @param dependencyFile  The dependency file  
-     *    The IPath can be either relative to the top build directory, or absolute in the file system.
-     * @param buildContext  The IConfiguration that contains the context of the build
-     * @param tool  The tool associated with the dependency generator.  Note that this is
-     *    not necessarily the tool that created the dependency file
-     * @param topBuildDirectory  The top build directory of the project.  This is
-     *   the working directory for the tool.
-     *
+	 * @param dependencyFile  The dependency file  
+	 *    The IPath can be either relative to the top build directory, or absolute in the file system.
+	 * @param buildContext  The IConfiguration that contains the context of the build
+	 * @param tool  The tool associated with the dependency generator.  Note that this is
+	 *    not necessarily the tool that created the dependency file
+	 * @param topBuildDirectory  The top build directory of the project.  This is
+	 *   the working directory for the tool.
+	 *
 	 * @return boolean  True if the method modified the dependency (e.g., .d) file
 	 */
-	public boolean postProcessDependencyFile(
-		IPath dependencyFile,
-		IConfiguration buildContext,
-		ITool tool,
-		IPath topBuildDirectory);
+	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool,
+			IPath topBuildDirectory);
 }

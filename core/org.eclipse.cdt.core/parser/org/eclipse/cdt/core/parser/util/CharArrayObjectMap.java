@@ -33,18 +33,22 @@ public class CharArrayObjectMap<T> extends CharTable {
 	/**
 	 * An empty immutable {@code CharArrayObjectMap}.
 	 */
-    public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
-        @Override
-		public Object clone() { return this; }
+	public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
+		@Override
+		public Object clone() {
+			return this;
+		}
 
-        @Override
-		public List<char[]> toList() { return Collections.emptyList(); }
+		@Override
+		public List<char[]> toList() {
+			return Collections.emptyList();
+		}
 
-        @Override
+		@Override
 		public Object put(char[] key, int start, int length, Object value) {
-        	throw new UnsupportedOperationException();
-        }
-    };
+			throw new UnsupportedOperationException();
+		}
+	};
 
 	/**
 	 * @since 5.4
@@ -54,14 +58,13 @@ public class CharArrayObjectMap<T> extends CharTable {
 		return (CharArrayObjectMap<T>) EMPTY_MAP;
 	}
 
-
 	private Object[] valueTable;
 
 	public CharArrayObjectMap(int initialSize) {
 		super(initialSize);
 		valueTable = new Object[capacity()];
 	}
-	
+
 	public T put(char[] key, int start, int length, T value) {
 		int i = addIndex(key, start, length);
 		@SuppressWarnings("unchecked")
@@ -73,7 +76,7 @@ public class CharArrayObjectMap<T> extends CharTable {
 	final public T put(char[] key, T value) {
 		return put(key, 0, key.length, value);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	final public T get(char[] key, int start, int length) {
 		int i = lookup(key, start, length);
@@ -81,18 +84,18 @@ public class CharArrayObjectMap<T> extends CharTable {
 			return (T) valueTable[i];
 		return null;
 	}
-	
+
 	final public T get(char[] key) {
 		return get(key, 0, key.length);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	final public T getAt(int i) {
-	    if (i < 0 || i > currEntry)
-	        return null;
-	    return (T) valueTable[i];
+		if (i < 0 || i > currEntry)
+			return null;
+		return (T) valueTable[i];
 	}
-	
+
 	final public T remove(char[] key, int start, int length) {
 		int i = lookup(key, start, length);
 		if (i < 0)
@@ -101,26 +104,26 @@ public class CharArrayObjectMap<T> extends CharTable {
 		@SuppressWarnings("unchecked")
 		T value = (T) valueTable[i];
 
-	    if (i < currEntry)
+		if (i < currEntry)
 			System.arraycopy(valueTable, i + 1, valueTable, i, currEntry - i);
-		
-	    valueTable[currEntry] = null;
-		
+
+		valueTable[currEntry] = null;
+
 		removeEntry(i);
-		
+
 		return value;
 	}
-	
+
 	@Override
 	public Object clone() {
-        @SuppressWarnings("unchecked")
+		@SuppressWarnings("unchecked")
 		CharArrayObjectMap<T> newTable = (CharArrayObjectMap<T>) super.clone();
-        newTable.valueTable = new Object[capacity()];
-	    System.arraycopy(valueTable, 0, newTable.valueTable, 0, valueTable.length);
+		newTable.valueTable = new Object[capacity()];
+		System.arraycopy(valueTable, 0, newTable.valueTable, 0, valueTable.length);
 
-	    return newTable;
+		return newTable;
 	}
-	
+
 	@Override
 	protected void resize(int size) {
 		Object[] oldValueTable = valueTable;
@@ -128,7 +131,7 @@ public class CharArrayObjectMap<T> extends CharTable {
 		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);
 		super.resize(size);
 	}
-    
+
 	@Override
 	public void clear() {
 		super.clear();
@@ -136,125 +139,125 @@ public class CharArrayObjectMap<T> extends CharTable {
 			valueTable[i] = null;
 	}
 
-    @Override
+	@Override
 	protected int partition(Comparator<Object> c, int p, int r) {
-        char[] x = keyTable[p];
-        Object temp = null;
-        int i = p;
-        int j = r;
-        
-        while (true) {
-            while (c.compare(keyTable[j], x) > 0) {
-            	j--;
-            }
-            if (i < j) {
-                while (c.compare(keyTable[i], x) < 0) {
-                	i++;
-                }
-            }
-            
-            if (i < j) {
-                temp = keyTable[j];
-                keyTable[j] = keyTable[i];
-                keyTable[i] = (char[]) temp;
-                
-                temp = valueTable[j];
-                valueTable[j] = valueTable[i];
-                valueTable[i] = temp;
-            } else {
-                return j;
-            }
-        }
-    }
-    
-    public Object[] valueArray() {
-	    Object[] values = new Object[size()];
-	    System.arraycopy(valueTable, 0, values, 0, values.length);
-	    return values;
+		char[] x = keyTable[p];
+		Object temp = null;
+		int i = p;
+		int j = r;
+
+		while (true) {
+			while (c.compare(keyTable[j], x) > 0) {
+				j--;
+			}
+			if (i < j) {
+				while (c.compare(keyTable[i], x) < 0) {
+					i++;
+				}
+			}
+
+			if (i < j) {
+				temp = keyTable[j];
+				keyTable[j] = keyTable[i];
+				keyTable[i] = (char[]) temp;
+
+				temp = valueTable[j];
+				valueTable[j] = valueTable[i];
+				valueTable[i] = temp;
+			} else {
+				return j;
+			}
+		}
 	}
 
-    public Object[] valueArray(Class<?> clazz) {
-	    Object[] values= (Object[]) Array.newInstance(clazz, size());
-	    System.arraycopy(valueTable, 0, values, 0, values.length);
-	    return values;
+	public Object[] valueArray() {
+		Object[] values = new Object[size()];
+		System.arraycopy(valueTable, 0, values, 0, values.length);
+		return values;
 	}
 
-    /**
-     * Returns a {@link Collection} view of the values contained in this map.
-     * The collection is backed by the map, so changes to the map are reflected
-     * in the collection, and vice-versa.
-     *
-	 * @since 6.0
-	 */
-    public Collection<T> values() {
-    	return new Values();
-    }
+	public Object[] valueArray(Class<?> clazz) {
+		Object[] values = (Object[]) Array.newInstance(clazz, size());
+		System.arraycopy(valueTable, 0, values, 0, values.length);
+		return values;
+	}
 
-    /**
-     * Checks if the map values contain the given object.
+	/**
+	 * Returns a {@link Collection} view of the values contained in this map.
+	 * The collection is backed by the map, so changes to the map are reflected
+	 * in the collection, and vice-versa.
 	 *
 	 * @since 6.0
 	 */
-    public boolean containsValue(Object v) {
-    	int n = size();
+	public Collection<T> values() {
+		return new Values();
+	}
+
+	/**
+	 * Checks if the map values contain the given object.
+	 *
+	 * @since 6.0
+	 */
+	public boolean containsValue(Object v) {
+		int n = size();
 		for (int i = 0; i < n; i++) {
 			if (Objects.equals(valueTable[i], v)) {
 				return true;
 			}
 		}
 		return false;
-    }
+	}
 
-    @Override
+	@Override
 	public String toString() {
-    	StringBuilder buf = new StringBuilder();
-    	buf.append('{');
-    	for (int i = 0; i < size(); i++) {
-    		char[] key = keyAt(i);
-    		if (key != null) {
-    			if (i != 0)
-    				buf.append(", "); //$NON-NLS-1$
-    			buf.append(key);
-    			buf.append("="); //$NON-NLS-1$
-    			buf.append(getAt(i));
-    		}
-    	}
-    	buf.append('}');
-    	return buf.toString();
-    }
+		StringBuilder buf = new StringBuilder();
+		buf.append('{');
+		for (int i = 0; i < size(); i++) {
+			char[] key = keyAt(i);
+			if (key != null) {
+				if (i != 0)
+					buf.append(", "); //$NON-NLS-1$
+				buf.append(key);
+				buf.append("="); //$NON-NLS-1$
+				buf.append(getAt(i));
+			}
+		}
+		buf.append('}');
+		return buf.toString();
+	}
 
-    private class Values extends AbstractCollection<T> {
-        @Override
+	private class Values extends AbstractCollection<T> {
+		@Override
 		public final int size() {
-        	return CharArrayObjectMap.this.size();
-        }
-
-        @Override
-		public final void clear() {
-        	CharArrayObjectMap.this.clear();
-        }
-
-        @Override
-		public final boolean contains(Object v) {
-        	return containsValue(v);
-        }
-
-        @Override
-		public final Iterator<T> iterator() {
-        	return new ValueIterator();
-        }
+			return CharArrayObjectMap.this.size();
+		}
 
 		@Override
-        @SuppressWarnings("unchecked")
-		public final void forEach(Consumer<? super T> action) {
-        	for (int i = 0; i < size(); i++) {
-        		action.accept((T) valueTable[i]);
-        	}
-        }
-    }
+		public final void clear() {
+			CharArrayObjectMap.this.clear();
+		}
 
-    private final class ValueIterator implements Iterator<T> {
-    	int index;
+		@Override
+		public final boolean contains(Object v) {
+			return containsValue(v);
+		}
+
+		@Override
+		public final Iterator<T> iterator() {
+			return new ValueIterator();
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public final void forEach(Consumer<? super T> action) {
+			for (int i = 0; i < size(); i++) {
+				action.accept((T) valueTable[i]);
+			}
+		}
+	}
+
+	private final class ValueIterator implements Iterator<T> {
+		int index;
 
 		@Override
 		public boolean hasNext() {
@@ -268,5 +271,5 @@ public class CharArrayObjectMap<T> extends CharTable {
 				throw new NoSuchElementException();
 			return (T) valueTable[index++];
 		}
-    }
+	}
 }

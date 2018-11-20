@@ -85,7 +85,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			if (element instanceof IMakefile) {
 				return fInput;
 			} else if (element instanceof IDirective) {
-				return ((IDirective)element).getParent();
+				return ((IDirective) element).getParent();
 			}
 			return fInput;
 		}
@@ -110,12 +110,12 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			if (inputElement == fInput) {
 				directives = makefile.getDirectives();
 			} else if (inputElement instanceof IRule) {
-				directives = ((IRule)inputElement).getCommands();
+				directives = ((IRule) inputElement).getCommands();
 			} else if (inputElement instanceof IParent) {
 				if (inputElement instanceof IInclude && !showIncludeChildren) {
 					directives = new IDirective[0];
 				} else {
-					directives = ((IParent)inputElement).getDirectives();
+					directives = ((IParent) inputElement).getDirectives();
 				}
 			} else {
 				directives = new IDirective[0];
@@ -129,9 +129,8 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 				} else if (showTargetRule && directive instanceof ITargetRule) {
 					list.add(directive);
 				} else {
-					boolean irrelevant = (directive instanceof IComment ||
-							directive instanceof IEmptyLine ||
-							directive instanceof ITerminal);
+					boolean irrelevant = (directive instanceof IComment || directive instanceof IEmptyLine
+							|| directive instanceof ITerminal);
 					if (!irrelevant) {
 						list.add(directive);
 					}
@@ -151,8 +150,8 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			}
 
 			if (newInput != null) {
-				IWorkingCopyManager manager= MakeUIPlugin.getDefault().getWorkingCopyManager();
-				makefile = manager.getWorkingCopy((IEditorInput)newInput);
+				IWorkingCopyManager manager = MakeUIPlugin.getDefault().getWorkingCopyManager();
+				makefile = manager.getWorkingCopy((IEditorInput) newInput);
 				if (makefile == null) {
 					makefile = nullMakefile;
 				}
@@ -223,7 +222,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			viewer.setInput(fInput);
 		}
 
-		MenuManager manager= new MenuManager("#MakefileOutlinerContext"); //$NON-NLS-1$
+		MenuManager manager = new MenuManager("#MakefileOutlinerContext"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			@Override
@@ -244,7 +243,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			}
 		});
 
-		IPageSite site= getSite();
+		IPageSite site = getSite();
 		site.registerContextMenu(MakeUIPlugin.getPluginId() + ".outline", manager, viewer); //$NON-NLS-1$
 		site.setSelectionProvider(viewer);
 	}
@@ -260,7 +259,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			menu.add(fAddBuildTargetAction);
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));//$NON-NLS-1$
 	}
 
 	/**
@@ -302,9 +301,9 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 	@Override
 	public void setActionBars(IActionBars actionBars) {
 		super.setActionBars(actionBars);
-		IToolBarManager toolBarManager= actionBars.getToolBarManager();
+		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 
-		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
+		LexicalSortingAction action = new LexicalSortingAction(getTreeViewer());
 		toolBarManager.add(action);
 	}
 

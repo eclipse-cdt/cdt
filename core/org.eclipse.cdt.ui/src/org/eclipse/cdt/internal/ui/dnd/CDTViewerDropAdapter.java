@@ -38,39 +38,39 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	 * to the target object.  This means the mouse is not positioned
 	 * over or near any valid target.
 	 */
-	public static final int LOCATION_NONE= DND.FEEDBACK_NONE;
-	
+	public static final int LOCATION_NONE = DND.FEEDBACK_NONE;
+
 	/**
 	 * Constant describing the position of the mouse cursor relative 
 	 * to the target object.  This means the mouse is positioned
 	 * directly on the target.
 	 */
-	public static final int LOCATION_ON= DND.FEEDBACK_SELECT;
-	
+	public static final int LOCATION_ON = DND.FEEDBACK_SELECT;
+
 	/**
 	 * Constant describing the position of the mouse cursor relative 
 	 * to the target object.  This means the mouse is positioned
 	 * slightly before the target.
 	 */
-	public static final int LOCATION_BEFORE= DND.FEEDBACK_INSERT_BEFORE;
-	
+	public static final int LOCATION_BEFORE = DND.FEEDBACK_INSERT_BEFORE;
+
 	/**
 	 * Constant describing the position of the mouse cursor relative 
 	 * to the target object.  This means the mouse is positioned
 	 * slightly after the target.
 	 */
-	public static final int LOCATION_AFTER= DND.FEEDBACK_INSERT_AFTER;
-	
+	public static final int LOCATION_AFTER = DND.FEEDBACK_INSERT_AFTER;
+
 	/**
 	 * The threshold used to determine if the mouse is before or after
 	 * an item.
 	 */
-	private static final int LOCATION_EPSILON= 5; 
-	
+	private static final int LOCATION_EPSILON = 5;
+
 	/**
 	 * Style to enable location feedback.
 	 */
-	public static final int INSERTION_FEEDBACK= 1 << 1; 
+	public static final int INSERTION_FEEDBACK = 1 << 1;
 
 	private StructuredViewer fViewer;
 	private int fFeedback;
@@ -82,9 +82,9 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 
 	public CDTViewerDropAdapter(StructuredViewer viewer, int feedback) {
 		Assert.isNotNull(viewer);
-		fViewer= viewer;
-		fFeedback= feedback;
-		fLastOperation= -1;
+		fViewer = viewer;
+		fFeedback = feedback;
+		fLastOperation = -1;
 	}
 
 	/**
@@ -94,36 +94,36 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	 *	to show insertion feedback. Otherwise <code>false</code>
 	 */
 	public void showInsertionFeedback(boolean showInsertionFeedback) {
-		fShowInsertionFeedback= showInsertionFeedback;
+		fShowInsertionFeedback = showInsertionFeedback;
 	}
-	
+
 	/**
 	 * Returns the viewer this adapter is working on.
 	 */
 	protected StructuredViewer getViewer() {
 		return fViewer;
-	} 
-	
+	}
+
 	//---- Hooks to override -----------------------------------------------------
-	
+
 	/**
 	 * The actual drop has occurred. Calls <code>drop(Object target, DropTargetEvent event)
 	 * </code>.
 	 * @see DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
-	 */	 
+	 */
 	@Override
 	public void drop(DropTargetEvent event) {
 		drop(fTarget, event);
 	}
-	
+
 	/**
 	 * The actual drop has occurred.
 	 * @param target the drop target in form of a domain element.
 	 * @param event the drop traget event
-	 */	 
+	 */
 	public void drop(Object target, DropTargetEvent event) {
 	}
-	
+
 	/**
 	 * Checks if the drop is valid. The method calls <code>validateDrop
 	 * (Object target, DropTargetEvent event). Implementors can alter the 
@@ -133,7 +133,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	public void validateDrop(DropTargetEvent event) {
 		validateDrop(fTarget, event, fRequestedOperation);
 	}
-	
+
 	/**
 	 * Checks if the drop on the current target is valid. The method
 	 * can alter the <code>currentDataType</code> field and the <code>
@@ -144,52 +144,52 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	 */
 	public void validateDrop(Object target, DropTargetEvent event, int operation) {
 	}
-	
+
 	@Override
 	public void dragEnter(DropTargetEvent event) {
 		dragOperationChanged(event);
 	}
-	
+
 	@Override
 	public void dragLeave(DropTargetEvent event) {
-		fTarget= null;
-		fLocation= LOCATION_NONE;
+		fTarget = null;
+		fLocation = LOCATION_NONE;
 	}
-	
+
 	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
-		fRequestedOperation= event.detail;
-		fTarget= computeTarget(event);
-		fLocation= computeLocation(event);
+		fRequestedOperation = event.detail;
+		fTarget = computeTarget(event);
+		fLocation = computeLocation(event);
 		validateDrop(event);
-		fLastOperation= event.detail;
+		fLastOperation = event.detail;
 		computeFeedback(event);
 	}
-	
+
 	@Override
 	public void dragOver(DropTargetEvent event) {
-		Object oldTarget= fTarget;
-		fTarget= computeTarget(event);
-		
+		Object oldTarget = fTarget;
+		fTarget = computeTarget(event);
+
 		//set the location feedback
-		int oldLocation= fLocation;
-		fLocation= computeLocation(event);
+		int oldLocation = fLocation;
+		fLocation = computeLocation(event);
 		if (oldLocation != fLocation || oldTarget != fTarget || fLastOperation != event.detail) {
 			validateDrop(event);
-			fLastOperation= event.detail;
+			fLastOperation = event.detail;
 		} else {
-			event.detail= fLastOperation;
+			event.detail = fLastOperation;
 		}
 		computeFeedback(event);
 	}
-	
+
 	@Override
 	public void dropAccept(DropTargetEvent event) {
-		fTarget= computeTarget(event);
+		fTarget = computeTarget(event);
 		validateDrop(event);
-		fLastOperation= event.detail;
+		fLastOperation = event.detail;
 	}
-	
+
 	/**
 	 * Returns the data held by <code>event.item</code>. Inside a viewer
 	 * this corresponds to the items data model element.
@@ -197,7 +197,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	protected Object computeTarget(DropTargetEvent event) {
 		return event.item == null ? null : event.item.getData();
 	}
-	
+
 	/**
 	 * Returns the position of the given coordinates relative to the given target.
 	 * The position is determined to be before, after, or on the item, based on 
@@ -207,10 +207,10 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	final protected int computeLocation(DropTargetEvent event) {
 		if (!(event.item instanceof Item))
 			return LOCATION_NONE;
-		
-		Item item= (Item) event.item;
-		Point coordinates= fViewer.getControl().toControl(new Point(event.x, event.y));
-		Rectangle bounds= getBounds(item);
+
+		Item item = (Item) event.item;
+		Point coordinates = fViewer.getControl().toControl(new Point(event.x, event.y));
+		Rectangle bounds = getBounds(item);
 		if (bounds == null) {
 			return LOCATION_NONE;
 		}
@@ -230,10 +230,10 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	private Rectangle getBounds(Item item) {
 		if (item instanceof TreeItem)
 			return ((TreeItem) item).getBounds();
-			
+
 		if (item instanceof TableItem)
 			return ((TableItem) item).getBounds(0);
-			
+
 		return null;
 	}
 
@@ -243,35 +243,35 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	 */
 	protected void computeFeedback(DropTargetEvent event) {
 		if (!fShowInsertionFeedback && fLocation != LOCATION_NONE) {
-			event.feedback= DND.FEEDBACK_SELECT;
+			event.feedback = DND.FEEDBACK_SELECT;
 		} else {
-			event.feedback= fLocation;
+			event.feedback = fLocation;
 		}
-		event.feedback|= fFeedback;
+		event.feedback |= fFeedback;
 	}
-	
+
 	/**
 	 * Sets the drop operation to </code>DROP_NODE<code>.
 	 */
 	protected void clearDropOperation(DropTargetEvent event) {
-		event.detail= DND.DROP_NONE;
+		event.detail = DND.DROP_NONE;
 	}
-	
+
 	/**
 	 * Returns the requested drop operation.
 	 */
 	protected int getRequestedOperation() {
 		return fRequestedOperation;
-	} 
-	
-	protected void setDefaultFeedback(int feedback) {
-		fFeedback= feedback;
 	}
-	
+
+	protected void setDefaultFeedback(int feedback) {
+		fFeedback = feedback;
+	}
+
 	//---- helper methods to test DnD 
-	
+
 	public void internalTestSetLocation(int location) {
-		fLocation= location;
+		fLocation = location;
 	}
 
 }

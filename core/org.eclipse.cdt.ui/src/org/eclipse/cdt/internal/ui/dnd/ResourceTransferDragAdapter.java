@@ -83,8 +83,8 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 			DragSource dragSource = (DragSource) event.widget;
 			Control control = dragSource.getControl();
 			Shell shell = control.getShell();
-			String title = CUIMessages.Drag_move_problem_title; 
-			String message = CUIMessages.Drag_move_problem_message; 
+			String title = CUIMessages.Drag_move_problem_title;
+			String message = CUIMessages.Drag_move_problem_message;
 
 			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(shell, title, message);
 
@@ -114,7 +114,7 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 				Object element = iterator.next();
 				IResource resource = null;
 				if (element instanceof IResource) {
-					resource = (IResource)element;
+					resource = (IResource) element;
 				} else if (element instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) element;
 					resource = adaptable.getAdapter(IResource.class);

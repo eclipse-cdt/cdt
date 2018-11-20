@@ -91,7 +91,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 				fStartAddress = null;
 			}
 		}
-		
+
 		try {
 			Position labelPosition = document.getPosition(DisassemblyDocument.CATEGORY_LABELS, offset, true);
 			if (labelPosition != null) {
@@ -103,7 +103,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 			fLabel = null;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 	 */
@@ -203,7 +203,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	public IAddress getStartAddress() {
 		return fStartAddress;
 	}
-	
+
 	/**
 	 * @since 2.2
 	 */

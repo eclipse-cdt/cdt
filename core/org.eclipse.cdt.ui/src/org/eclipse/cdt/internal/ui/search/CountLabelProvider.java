@@ -38,10 +38,10 @@ public class CountLabelProvider extends LabelProvider {
 	private AbstractTextSearchViewPage fPage;
 
 	public CountLabelProvider(AbstractTextSearchViewPage page, ILabelProvider inner) {
-		fPage= page;
-		fLabelProvider= inner;
+		fPage = page;
+		fLabelProvider = inner;
 	}
-	
+
 	public ILabelProvider getLabelProvider() {
 		return fLabelProvider;
 	}
@@ -54,12 +54,13 @@ public class CountLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
 		int c = fPage.getInput().getMatchCount(element);
-		
-		String text= fLabelProvider.getText(element);
+
+		String text = fLabelProvider.getText(element);
 		if (c == 0)
 			return text;
-		Integer matchCount= c;
-		return fLabelProvider.getText(element) + " "+ Messages.format(CSearchMessages.CSearchResultCollector_matches, matchCount);  //$NON-NLS-1$
+		Integer matchCount = c;
+		return fLabelProvider.getText(element) + " " //$NON-NLS-1$
+				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, matchCount);
 	}
 
 	@Override
@@ -67,6 +68,5 @@ public class CountLabelProvider extends LabelProvider {
 		fLabelProvider.dispose();
 		super.dispose();
 	}
-	
 
 }

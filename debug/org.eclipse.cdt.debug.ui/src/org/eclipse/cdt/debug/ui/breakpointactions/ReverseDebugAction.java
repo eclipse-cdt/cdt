@@ -41,20 +41,19 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * Implements the reverse debug breakpoint action
  *   
  *@since 7.3
  */
-public class ReverseDebugAction extends AbstractBreakpointAction{
+public class ReverseDebugAction extends AbstractBreakpointAction {
 	/**
 	 * The available reverse debug action modes: enable, disable and toggle.
 	 */
-	public static enum REVERSE_DEBUG_ACTIONS_ENUM { 
-		
+	public static enum REVERSE_DEBUG_ACTIONS_ENUM {
+
 		ENABLE, DISABLE, TOGGLE;
-			
+
 		/**
 		 * @param index
 		 * @return the enum value for the given index
@@ -63,8 +62,9 @@ public class ReverseDebugAction extends AbstractBreakpointAction{
 			return REVERSE_DEBUG_ACTIONS_ENUM.values()[index];
 		}
 	};
+
 	private REVERSE_DEBUG_ACTIONS_ENUM fOperation;
-	
+
 	/**
 	 * @return the currently configured reverse debug mode, for this BP action
 	 */
@@ -83,7 +83,7 @@ public class ReverseDebugAction extends AbstractBreakpointAction{
 	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
-		
+
 		IReverseDebugEnabler enabler = context.getAdapter(IReverseDebugEnabler.class);
 		if (enabler != null) {
 			try {
@@ -98,18 +98,20 @@ public class ReverseDebugAction extends AbstractBreakpointAction{
 					enabler.disable();
 					break;
 				}
-				
+
 			} catch (Exception e) {
-				errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e );
+				errorStatus = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+						ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e);
 			}
-		}
-		else
-			errorStatus = new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),  IInternalCDebugUIConstants.INTERNAL_ERROR, Messages.getString("ReverseDebugAction.error.0"), null ); //$NON-NLS-1$
+		} else
+			errorStatus = new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
+					IInternalCDebugUIConstants.INTERNAL_ERROR, Messages.getString("ReverseDebugAction.error.0"), null); //$NON-NLS-1$
 
 		if (errorStatus != null) {
-			MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, Messages.getString("ReverseDebugAction.error.1"), null ); //$NON-NLS-1$
-			ms.add( errorStatus);
-			errorStatus = ms;			
+			MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+					ICDebugInternalConstants.STATUS_CODE_ERROR, Messages.getString("ReverseDebugAction.error.1"), null); //$NON-NLS-1$
+			ms.add(errorStatus);
+			errorStatus = ms;
 		} else {
 			errorStatus = monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 		}
@@ -172,14 +174,14 @@ public class ReverseDebugAction extends AbstractBreakpointAction{
 
 	@Override
 	public String getDefaultName() {
-		return Messages.getString("ReverseDebugAction.UntitledName");  //$NON-NLS-1$
+		return Messages.getString("ReverseDebugAction.UntitledName"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getSummary() {
 		// get translated operation
-		String operation = Messages.getString("ReverseDebugAction."+fOperation.toString().toLowerCase()); //$NON-NLS-1$
-		
+		String operation = Messages.getString("ReverseDebugAction." + fOperation.toString().toLowerCase()); //$NON-NLS-1$
+
 		return operation + " " + Messages.getString("ReverseDebugAction.Summary"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

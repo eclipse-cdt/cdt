@@ -34,7 +34,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 
 	public CPPClassTemplatePartialSpecialization(ICPPASTTemplateId name, ICPPTemplateArgument[] arguments) {
 		super(name);
-		this.arguments= arguments;
+		this.arguments = arguments;
 	}
 
 	@Override
@@ -61,16 +61,15 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 		return false;
 	}
 
-	public static boolean isSamePartialClassSpecialization(
-			ICPPClassTemplatePartialSpecialization lhs,
+	public static boolean isSamePartialClassSpecialization(ICPPClassTemplatePartialSpecialization lhs,
 			ICPPClassTemplatePartialSpecialization rhs) {
-		ICPPClassType ct1= lhs.getPrimaryClassTemplate();
-		ICPPClassType ct2= rhs.getPrimaryClassTemplate();
+		ICPPClassType ct1 = lhs.getPrimaryClassTemplate();
+		ICPPClassType ct2 = rhs.getPrimaryClassTemplate();
 		if (!ct1.isSameType(ct2))
 			return false;
 
-		ICPPTemplateArgument[] args1= lhs.getTemplateArguments();
-		ICPPTemplateArgument[] args2= rhs.getTemplateArguments();
+		ICPPTemplateArgument[] args1 = lhs.getTemplateArguments();
+		ICPPTemplateArgument[] args2 = rhs.getTemplateArguments();
 		if (args1.length != args2.length)
 			return false;
 

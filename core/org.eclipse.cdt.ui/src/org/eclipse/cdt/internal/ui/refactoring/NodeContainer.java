@@ -117,8 +117,7 @@ public class NodeContainer {
 									names.add(nameInfo);
 								}
 							} catch (DOMException e) {
-								IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-										e.getMessage(), e);
+								IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, e.getMessage(), e);
 								CUIPlugin.log(status);
 							}
 						} else if (binding instanceof IVariable) {
@@ -189,8 +188,8 @@ public class NodeContainer {
 									}
 								}
 							}
-							if (nameInfo.isWriteAccess() &&
-									externalReads.contains(nameInfo.getName().resolveBinding())) {
+							if (nameInfo.isWriteAccess()
+									&& externalReads.contains(nameInfo.getName().resolveBinding())) {
 								nameInfo.setOutput(true);
 							}
 						}
@@ -208,17 +207,17 @@ public class NodeContainer {
 			return Collections.emptySet();
 
 		IASTNode firstNode = nodes.get(0);
-		IASTFunctionDefinition enclosingFunction =
-				ASTQueries.findAncestorWithType(firstNode, IASTFunctionDefinition.class);
-		FlowContext flowContext= new FlowContext(enclosingFunction);
+		IASTFunctionDefinition enclosingFunction = ASTQueries.findAncestorWithType(firstNode,
+				IASTFunctionDefinition.class);
+		FlowContext flowContext = new FlowContext(enclosingFunction);
 		flowContext.setConsiderAccessMode(true);
 		flowContext.setComputeMode(FlowContext.ARGUMENTS);
 		// Compute a selection that exactly covers the selected nodes
-		Selection selection= Selection.createFromStartEnd(ASTNodes.offset(firstNode),
+		Selection selection = Selection.createFromStartEnd(ASTNodes.offset(firstNode),
 				ASTNodes.endOffset(nodes.get(nodes.size() - 1)));
 
 		InputFlowAnalyzer analyzer = new InputFlowAnalyzer(flowContext, selection, true);
-		FlowInfo argInfo= analyzer.perform(enclosingFunction);
+		FlowInfo argInfo = analyzer.perform(enclosingFunction);
 		Set<IVariable> variables = argInfo.get(flowContext, FlowInfo.READ | FlowInfo.READ_POTENTIAL | FlowInfo.UNKNOWN);
 
 		// Remove variables with scopes limited to the selection.
@@ -308,7 +307,7 @@ public class NodeContainer {
 					} else {
 						nodeOffset = node.getFileLocation().getNodeOffset();
 					}
-					if (nodeOffset <  nodeStart) {
+					if (nodeOffset < nodeStart) {
 						nodeStart = nodeOffset;
 					}
 				}

@@ -44,9 +44,11 @@ import org.eclipse.core.variables.VariablesPlugin;
 /**
  * Implementation of language settings provider for CDT Managed Build System.
  */
-public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsBroadcastingProvider {
+public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
+		implements ILanguageSettingsBroadcastingProvider {
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId) {
 		if (cfgDescription == null || rc == null) {
 			return null;
 		}
@@ -75,7 +77,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 					String id = langSetting.getLanguageId();
 					if (id == languageId || (id != null && id.equals(languageId))) {
 						int kindsBits = langSetting.getSupportedEntryKinds();
-						for (int kind=1; kind <= kindsBits; kind <<= 1) {
+						for (int kind = 1; kind <= kindsBits; kind <<= 1) {
 							if ((kindsBits & kind) != 0) {
 								List<ICLanguageSettingEntry> additions = langSetting.getSettingEntriesList(kind);
 								for (ICLanguageSettingEntry entry : additions) {
@@ -86,17 +88,25 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 											// We need to add project-rooted entry for relative path as MBS counts it this way in some UI
 											// The relative entry below also should be added for indexer to resolve from source file locations
 
-											ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+											ICdtVariableManager varManager = CCorePlugin.getDefault()
+													.getCdtVariableManager();
 											try {
 												// Substitute build/environment variables
-												String location = varManager.resolveValue(pathStr, "", null, cfgDescription); //$NON-NLS-1$
+												String location = varManager.resolveValue(pathStr, "", null, //$NON-NLS-1$
+														cfgDescription);
 												if (!new Path(location).isAbsolute()) {
-													IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-													String projectRootedPath = mngr.generateVariableExpression("workspace_loc", rc.getProject().getName()) + Path.SEPARATOR + pathStr; //$NON-NLS-1$
+													IStringVariableManager mngr = VariablesPlugin.getDefault()
+															.getStringVariableManager();
+													String projectRootedPath = mngr.generateVariableExpression(
+															"workspace_loc", rc.getProject().getName()) + Path.SEPARATOR //$NON-NLS-1$
+															+ pathStr;
 													// clear "RESOLVED" flag
-													int flags = entry.getFlags() & ~(ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH);
-													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, flags);
-													if (! list.contains(projectRootedEntry)) {
+													int flags = entry.getFlags() & ~(ICSettingEntry.RESOLVED
+															| ICSettingEntry.VALUE_WORKSPACE_PATH);
+													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil
+															.createEntry(kind, projectRootedPath, projectRootedPath,
+																	null, flags);
+													if (!list.contains(projectRootedEntry)) {
 														list.add(projectRootedEntry);
 													}
 												}
@@ -104,10 +114,10 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 												// Swallow exceptions but also log them
 												ManagedBuilderCorePlugin.log(e);
 											}
-											
+
 										}
 									}
-									if (! list.contains(entry)) {
+									if (!list.contains(entry)) {
 										list.add(entry);
 									}
 								}
@@ -129,11 +139,11 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		case ICSettingBase.SETTING_PROJECT:
 		case ICSettingBase.SETTING_CONFIGURATION:
 		case ICSettingBase.SETTING_FOLDER:
-			ICFolderDescription foDes = (ICFolderDescription)rcDescription;
+			ICFolderDescription foDes = (ICFolderDescription) rcDescription;
 			array = foDes.getLanguageSettings();
 			break;
 		case ICSettingBase.SETTING_FILE:
-			ICFileDescription fiDes = (ICFileDescription)rcDescription;
+			ICFileDescription fiDes = (ICFileDescription) rcDescription;
 			ICLanguageSetting ls = fiDes.getLanguageSetting();
 			if (ls != null) {
 				array = new ICLanguageSetting[] { ls };
@@ -152,10 +162,12 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			public boolean isEmpty() {
 				return false;
 			}
+
 			@Override
 			public LanguageSettingsStorage clone() throws CloneNotSupportedException {
 				return this;
 			}
+
 			@Override
 			public boolean equals(Object obj) {
 				// Note that this always triggers change event even if nothing changed in MBS

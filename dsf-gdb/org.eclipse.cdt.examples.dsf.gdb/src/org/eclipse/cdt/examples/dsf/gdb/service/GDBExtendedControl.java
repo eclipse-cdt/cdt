@@ -38,12 +38,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  *
  */
 public class GDBExtendedControl extends GDBControl_HEAD {
-    public GDBExtendedControl(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, config, factory);
-    }
+	public GDBExtendedControl(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+		super(session, config, factory);
+	}
 
-    @Override
-	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	@Override
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new GdbExtendedFinalLaunchSequence(getSession(), attributes, rm);
 	}
 }

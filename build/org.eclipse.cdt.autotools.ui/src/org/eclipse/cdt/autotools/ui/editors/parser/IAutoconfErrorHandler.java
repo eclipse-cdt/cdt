@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
-
 /**
  * Clients implement this interface to handle errors encountered while parsing.
  * @author eswartz

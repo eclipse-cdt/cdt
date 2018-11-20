@@ -29,7 +29,7 @@ class Messages extends NLS {
 	public static String MIExpressions_ReturnValueAlias;
 	public static String MIRegisters_General_Registers;
 	public static String MIRegisters_General_Registers_description;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

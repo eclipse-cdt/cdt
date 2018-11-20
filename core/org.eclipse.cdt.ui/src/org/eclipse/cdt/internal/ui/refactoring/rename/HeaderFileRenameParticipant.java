@@ -80,14 +80,14 @@ public class HeaderFileRenameParticipant extends RenameParticipant implements IS
 				if (renamedResource.isLinked())
 					continue;
 				String newName = args.getNewName();
-		
+
 				if (renamedResource instanceof IContainer) {
 					IContainer container = (IContainer) renamedResource;
 					final IPath oldPath = container.getFullPath();
 					final IPath newPath = oldPath.removeLastSegments(1).append(newName);
 					final IWorkspaceRoot workspaceRoot = container.getWorkspace().getRoot();
-					IContainer newContainer = container.getType() == IResource.FOLDER ?
-							workspaceRoot.getFolder(newPath) : workspaceRoot.getProject(newName);
+					IContainer newContainer = container.getType() == IResource.FOLDER ? workspaceRoot.getFolder(newPath)
+							: workspaceRoot.getProject(newName);
 					renamedContainers.put(container, newContainer);
 					container.accept(new IResourceProxyVisitor() {
 						@Override
@@ -108,8 +108,8 @@ public class HeaderFileRenameParticipant extends RenameParticipant implements IS
 					movedFiles.put(file, file.getParent().getFile(new Path(newName)));
 				}
 			}
-			HeaderFileReferenceAdjuster includeAdjuster =
-					new HeaderFileReferenceAdjuster(movedFiles, renamedContainers, getProcessor());
+			HeaderFileReferenceAdjuster includeAdjuster = new HeaderFileReferenceAdjuster(movedFiles, renamedContainers,
+					getProcessor());
 			change = includeAdjuster.createChange(context, pm);
 		} catch (CoreException e) {
 			return RefactoringStatus.create(e.getStatus());

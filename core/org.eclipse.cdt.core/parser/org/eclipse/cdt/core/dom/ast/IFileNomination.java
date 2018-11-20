@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -34,7 +34,7 @@ public interface IFileNomination {
 	 * @throws CoreException 
 	 */
 	public ISignificantMacros getSignificantMacros() throws CoreException;
-	
+
 	/**
 	 * Returns whether pragma once semantics has been detected when parsing the translation unit.
 	 */

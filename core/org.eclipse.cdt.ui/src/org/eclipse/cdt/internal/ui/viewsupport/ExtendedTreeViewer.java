@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -19,38 +19,38 @@ import org.eclipse.swt.widgets.Composite;
 
 public class ExtendedTreeViewer extends TreeViewer {
 
-    private boolean fPreservingSelection= false;
+	private boolean fPreservingSelection = false;
 
-    public ExtendedTreeViewer(Composite parent) {
-        super(parent);
-    }
+	public ExtendedTreeViewer(Composite parent) {
+		super(parent);
+	}
 
-    public ExtendedTreeViewer(Composite parent, int style) {
-        super(parent, style);
-    }
+	public ExtendedTreeViewer(Composite parent, int style) {
+		super(parent, style);
+	}
 
-    public void refresh(final Object[] elements) {
-        preservingSelection(new Runnable() {
-            @Override
+	public void refresh(final Object[] elements) {
+		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
-                for (int i = 0; i < elements.length; i++) {
-                    refresh(elements[i]);
-                }
-            }
-        });
-    }
+				for (int i = 0; i < elements.length; i++) {
+					refresh(elements[i]);
+				}
+			}
+		});
+	}
 
-    @Override
+	@Override
 	protected void preservingSelection(Runnable updateCode) {
-        if (fPreservingSelection) {
-            updateCode.run();
-        } else {
-            fPreservingSelection= true;
-            try {
-                super.preservingSelection(updateCode);
-            } finally {
-                fPreservingSelection= false;
-            }
-        }
-    }
+		if (fPreservingSelection) {
+			updateCode.run();
+		} else {
+			fPreservingSelection = true;
+			try {
+				super.preservingSelection(updateCode);
+			} finally {
+				fPreservingSelection = false;
+			}
+		}
+	}
 }

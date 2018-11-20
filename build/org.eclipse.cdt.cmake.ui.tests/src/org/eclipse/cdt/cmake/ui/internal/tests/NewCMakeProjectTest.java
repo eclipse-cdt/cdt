@@ -80,7 +80,7 @@ public class NewCMakeProjectTest {
 		String projectName = "CMakeTestProj";
 		bot.textWithLabel("Project name:").setText(projectName);
 		bot.button("Finish").click();
-		
+
 		// Make sure it shows up in Project Explorer
 		bot.viewByPartName("Project Explorer").show();
 		bot.tree().getTreeItem(projectName);

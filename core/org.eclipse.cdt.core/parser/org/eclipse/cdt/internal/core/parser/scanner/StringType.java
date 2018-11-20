@@ -22,11 +22,8 @@ import org.eclipse.cdt.core.parser.IToken;
 @SuppressWarnings("nls")
 public enum StringType {
 	// Listed in order of "wideness"
-	NARROW("", IToken.tSTRING),
-	WIDE("L",  IToken.tLSTRING),
-	UTF16("u", IToken.tUTF16STRING),
+	NARROW("", IToken.tSTRING), WIDE("L", IToken.tLSTRING), UTF16("u", IToken.tUTF16STRING),
 	UTF32("U", IToken.tUTF32STRING);
-
 
 	private char[] prefix;
 	private int tokenVal;
@@ -64,12 +61,16 @@ public enum StringType {
 	 */
 	public static StringType fromToken(int tokenVal) {
 		switch (tokenVal) {
-		case IToken.tSTRING:      return NARROW;
-    	case IToken.tLSTRING:     return WIDE;
-        case IToken.tUTF16STRING: return UTF16;
-        case IToken.tUTF32STRING: return UTF32;
-        default:
-        	throw new IllegalArgumentException(tokenVal + " is not a string token");
+		case IToken.tSTRING:
+			return NARROW;
+		case IToken.tLSTRING:
+			return WIDE;
+		case IToken.tUTF16STRING:
+			return UTF16;
+		case IToken.tUTF32STRING:
+			return UTF32;
+		default:
+			throw new IllegalArgumentException(tokenVal + " is not a string token");
 		}
 	}
 
@@ -80,25 +81,32 @@ public enum StringType {
 	 */
 	public static StringType fromToken(IToken token) {
 		switch (token.getType()) {
-		case IToken.tSTRING:      return NARROW;
-		case IToken.tLSTRING:     return WIDE;
-		case IToken.tUTF16STRING: return UTF16;
-		case IToken.tUTF32STRING: return UTF32;
+		case IToken.tSTRING:
+			return NARROW;
+		case IToken.tLSTRING:
+			return WIDE;
+		case IToken.tUTF16STRING:
+			return UTF16;
+		case IToken.tUTF32STRING:
+			return UTF32;
 		case IToken.tUSER_DEFINED_STRING_LITERAL: {
 			char[] image = token.getCharImage();
 			switch (image[0]) {
 			case 'R':
-			case '"': return NARROW;
-			case 'L': return WIDE;
+			case '"':
+				return NARROW;
+			case 'L':
+				return WIDE;
 			case 'u':
 				if (image.length > 3 && image[1] == '8') {
 					return NARROW;
 				}
 				return UTF16;
-			case 'U': return UTF32;
+			case 'U':
+				return UTF32;
 			}
 		}
-			//$FALL-THROUGH$
+		//$FALL-THROUGH$
 		default:
 			throw new IllegalArgumentException(token.getType() + " is not a string token");
 		}

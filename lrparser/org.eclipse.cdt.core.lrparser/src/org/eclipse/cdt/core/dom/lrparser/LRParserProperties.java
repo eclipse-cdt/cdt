@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-
 @SuppressWarnings("nls")
 public final class LRParserProperties {
 
@@ -27,7 +26,7 @@ public final class LRParserProperties {
 	 * Possible values: "true", null
 	 */
 	public static final String SKIP_FUNCTION_BODIES = "org.eclipse.cdt.core.dom.lrparser.skipFunctionBodies";
-		
+
 	/**
 	 * Instructs the parser not to create AST nodes for expressions 
 	 * within aggregate initializers when they do not contain names.
@@ -42,5 +41,5 @@ public final class LRParserProperties {
 	 * The location of the translation unit as given by the CodeReader.
 	 */
 	public static final String TRANSLATION_UNIT_PATH = "org.eclipse.cdt.core.dom.lrparser.translationUnitPath";
-	
+
 }

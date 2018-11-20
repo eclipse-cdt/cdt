@@ -49,20 +49,20 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	private ResourceInfoContainer rcInfo;
 	private CResourceData resourceData;
 
-	ResourceInfo(IConfiguration cfg, IManagedConfigElement element, boolean hasBody){
-		config = (Configuration)cfg;
-		if(hasBody)
+	ResourceInfo(IConfiguration cfg, IManagedConfigElement element, boolean hasBody) {
+		config = (Configuration) cfg;
+		if (hasBody)
 			loadFromManifest(element);
 	}
 
 	ResourceInfo(IConfiguration cfg, ResourceInfo base, String id) {
-		config = (Configuration)cfg;
+		config = (Configuration) cfg;
 		path = normalizePath(base.path);
 
 		setId(id);
 		setName(base.getName());
 
-		if(id.equals(base.getId())){
+		if (id.equals(base.getId())) {
 			isDirty = base.isDirty;
 			needsRebuild = base.needsRebuild;
 		} else {
@@ -71,12 +71,12 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 	}
 
-	public boolean isRoot(){
+	public boolean isRoot() {
 		return path.segmentCount() == 0;
 	}
 
 	ResourceInfo(IConfiguration cfg, IPath path, String id, String name) {
-		config = (Configuration)cfg;
+		config = (Configuration) cfg;
 		path = normalizePath(path);
 		this.path = path;
 
@@ -85,7 +85,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	ResourceInfo(IFileInfo base, IPath path, String id, String name) {
-		config = (Configuration)base.getParent();
+		config = (Configuration) base.getParent();
 
 		setId(id);
 		setName(name);
@@ -97,7 +97,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	ResourceInfo(FolderInfo base, IPath path, String id, String name) {
-		config = (Configuration)base.getParent();
+		config = (Configuration) base.getParent();
 
 		setId(id);
 		setName(name);
@@ -108,9 +108,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		isDirty = true;
 	}
 
-	ResourceInfo(IConfiguration cfg, ICStorageElement element, boolean hasBody){
-		config = (Configuration)cfg;
-		if(hasBody)
+	ResourceInfo(IConfiguration cfg, ICStorageElement element, boolean hasBody) {
+		config = (Configuration) cfg;
+		if (hasBody)
 			loadFromProject(element);
 	}
 
@@ -124,22 +124,23 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 		// resourcePath
 		String tmp = element.getAttribute(RESOURCE_PATH);
-		if(tmp != null){
+		if (tmp != null) {
 			path = new Path(tmp);
-			if(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME.equals(element.getName())){
+			if (IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME.equals(element.getName())) {
 				path = path.removeFirstSegments(1);
 			}
 			path = normalizePath(path);
 		} else {
-			Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "ResourceInfo.loadFromManifest() : resourcePath=NULL", null); //$NON-NLS-1$
+			Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+					"ResourceInfo.loadFromManifest() : resourcePath=NULL", null); //$NON-NLS-1$
 			ManagedBuilderCorePlugin.log(status);
 		}
 
 		// exclude
-        String excludeStr = element.getAttribute(EXCLUDE);
-        if (excludeStr != null){
-    		config.setExcluded(getPath(), isFolderInfo(), (Boolean.parseBoolean(excludeStr)));
-        }
+		String excludeStr = element.getAttribute(EXCLUDE);
+		if (excludeStr != null) {
+			config.setExcluded(getPath(), isFolderInfo(), (Boolean.parseBoolean(excludeStr)));
+		}
 	}
 
 	private void loadFromProject(ICStorageElement element) {
@@ -155,14 +156,15 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// resourcePath
 		if (element.getAttribute(RESOURCE_PATH) != null) {
 			String tmp = element.getAttribute(RESOURCE_PATH);
-			if(tmp != null){
+			if (tmp != null) {
 				path = new Path(tmp);
-				if(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME.equals(element.getName())){
+				if (IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME.equals(element.getName())) {
 					path = path.removeFirstSegments(1);
 				}
 				path = normalizePath(path);
 			} else {
-				Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "ResourceInfo.loadFromProject() : resourcePath=NULL", null); //$NON-NLS-1$
+				Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+						"ResourceInfo.loadFromProject() : resourcePath=NULL", null); //$NON-NLS-1$
 				ManagedBuilderCorePlugin.log(status);
 			}
 		}
@@ -170,12 +172,11 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// exclude
 		if (element.getAttribute(EXCLUDE) != null) {
 			String excludeStr = element.getAttribute(EXCLUDE);
-			if (excludeStr != null){
-	    		config.setExcluded(getPath(), isFolderInfo(), (Boolean.parseBoolean(excludeStr)));
+			if (excludeStr != null) {
+				config.setExcluded(getPath(), isFolderInfo(), (Boolean.parseBoolean(excludeStr)));
 			}
 		}
 	}
-
 
 	@Override
 	public IConfiguration getParent() {
@@ -209,7 +210,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	@Override
 	public void setExclude(boolean excluded) {
-		if(isExcluded() == excluded)
+		if (isExcluded() == excluded)
 			return;
 
 		config.setExcluded(getPath(), isFolderInfo(), excluded);
@@ -228,7 +229,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	@Override
 	public void setPath(IPath p) {
 		p = normalizePath(p);
-		if(path == null)
+		if (path == null)
 			path = p;
 		else if (!p.equals(normalizePath(this.path))) {
 			ResourceInfoContainer info = getRcInfo();
@@ -240,8 +241,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	}
 
-	private ResourceInfoContainer getRcInfo(){
-		if(rcInfo == null)
+	private ResourceInfoContainer getRcInfo() {
+		if (rcInfo == null)
 			rcInfo = (config).getRcInfoContainer(this);
 		return rcInfo;
 	}
@@ -251,7 +252,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		needsRebuild = rebuild;
 	}
 
-	void serialize(ICStorageElement element){
+	void serialize(ICStorageElement element) {
 		element.setAttribute(IBuildObject.ID, id);
 
 		if (name != null) {
@@ -263,30 +264,31 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 	}
 
-	void resolveReferences() {}
+	void resolveReferences() {
+	}
 
 	@Override
-	public CResourceData getResourceData(){
+	public CResourceData getResourceData() {
 		return resourceData;
 	}
 
-	protected void setResourceData(CResourceData data){
+	protected void setResourceData(CResourceData data) {
 		resourceData = data;
 	}
 
-	void removed(){
+	void removed() {
 		config = null;
 	}
 
 	@Override
-	public boolean isValid(){
+	public boolean isValid() {
 		return config != null;
 	}
 
 	private void propagate(IHoldsOptions parent, IOption option, Object oldValue, Object value) {
-		if (! (parent instanceof ITool))
+		if (!(parent instanceof ITool))
 			return;
-		ITool tool = (ITool)parent;
+		ITool tool = (ITool) parent;
 		String sup = option.getId();
 		IOption op = option;
 		while (op.getSuperClass() != null) {
@@ -302,31 +304,30 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 					continue;
 				try {
 					if (value instanceof Boolean) {
-						boolean b = ((Boolean)oldValue).booleanValue();
-						if (b == op.getBooleanValue() && b != ((Boolean)value).booleanValue())
-							ri.setOption(t, op, ((Boolean)value).booleanValue());
+						boolean b = ((Boolean) oldValue).booleanValue();
+						if (b == op.getBooleanValue() && b != ((Boolean) value).booleanValue())
+							ri.setOption(t, op, ((Boolean) value).booleanValue());
 					} else if (value instanceof String) {
-						String s = (String)oldValue;
-						if (s.equals(op.getStringValue()) && ! s.equals(value))
-							ri.setOption(t, op, (String)value);
+						String s = (String) oldValue;
+						if (s.equals(op.getStringValue()) && !s.equals(value))
+							ri.setOption(t, op, (String) value);
 					} else if (value instanceof String[]) {
-						String[] s = (String[])oldValue;
-						if (Arrays.equals(s, op.getStringListValue()) &&
-								! Arrays.equals(s, (String[])value))
-							ri.setOption(t, op, (String[])value);
+						String[] s = (String[]) oldValue;
+						if (Arrays.equals(s, op.getStringListValue()) && !Arrays.equals(s, (String[]) value))
+							ri.setOption(t, op, (String[]) value);
 					} else if (value instanceof OptionStringValue[]) {
-						OptionStringValue[] s = (OptionStringValue[])oldValue;
-						if (Arrays.equals(s, op.getBasicStringListValueElements()) &&
-								! Arrays.equals(s, (OptionStringValue[])value))
-							ri.setOption(t, op, (OptionStringValue[])value);
+						OptionStringValue[] s = (OptionStringValue[]) oldValue;
+						if (Arrays.equals(s, op.getBasicStringListValueElements())
+								&& !Arrays.equals(s, (OptionStringValue[]) value))
+							ri.setOption(t, op, (OptionStringValue[]) value);
 					}
 					break;
-				} catch (BuildException e) {}
+				} catch (BuildException e) {
+				}
 			}
 		}
 
 	}
-
 
 	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
@@ -336,9 +337,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (oldVal != value) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
-			propagate(parent, option,
-					(oldVal ? Boolean.TRUE : Boolean.FALSE),
-					(value  ? Boolean.TRUE : Boolean.FALSE));
+			propagate(parent, option, (oldVal ? Boolean.TRUE : Boolean.FALSE), (value ? Boolean.TRUE : Boolean.FALSE));
 			NotificationManager.getInstance().optionChanged(this, parent, option, Boolean.valueOf(oldVal));
 		}
 		return retOpt;
@@ -364,14 +363,14 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// Is there a change?
 		String[] oldValue;
 		switch (option.getBasicValueType()) {
-			case IOption.STRING_LIST :
-				oldValue = option.getBasicStringListValue();
-				break;
-			default :
-				oldValue = new String[0];
-				break;
+		case IOption.STRING_LIST:
+			oldValue = option.getBasicStringListValue();
+			break;
+		default:
+			oldValue = new String[0];
+			break;
 		}
-		if(!Arrays.equals(value, oldValue)) {
+		if (!Arrays.equals(value, oldValue)) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
 			propagate(parent, option, oldValue, value);
@@ -386,30 +385,29 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// Is there a change?
 		OptionStringValue[] oldValue;
 		switch (option.getBasicValueType()) {
-			case IOption.STRING_LIST :
-				oldValue = ((Option)option).getBasicStringListValueElements();
-				break;
-			default :
-				oldValue = new OptionStringValue[0];
-				break;
+		case IOption.STRING_LIST:
+			oldValue = ((Option) option).getBasicStringListValueElements();
+			break;
+		default:
+			oldValue = new OptionStringValue[0];
+			break;
 		}
-		if(!Arrays.equals(value, oldValue)) {
+		if (!Arrays.equals(value, oldValue)) {
 			retOpt = parent.getOptionToSet(option, false);
-			((Option)retOpt).setValue(value);
+			((Option) retOpt).setValue(value);
 			propagate(parent, option, oldValue, value);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
 		}
 		return retOpt;
 	}
 
-
-	public void propertiesChanged(){
-		if(isExtensionElement())
+	public void propertiesChanged() {
+		if (isExtensionElement())
 			return;
 
 		ITool tools[] = getTools();
 		for (ITool tool : tools) {
-			((Tool)tool).propertiesChanged();
+			((Tool) tool).propertiesChanged();
 		}
 	}
 
@@ -418,58 +416,58 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	public abstract Set<String> contributeErrorParsers(Set<String> set);
 
-	protected Set<String> contributeErrorParsers(ITool[] tools, Set<String> set){
+	protected Set<String> contributeErrorParsers(ITool[] tools, Set<String> set) {
 		for (ITool tool : tools) {
-			set = ((Tool)tool).contributeErrorParsers(set);
+			set = ((Tool) tool).contributeErrorParsers(set);
 		}
 		return set;
 	}
 
 	public abstract void resetErrorParsers();
 
-	protected void resetErrorParsers(ITool tools[]){
+	protected void resetErrorParsers(ITool tools[]) {
 		for (ITool tool : tools) {
-			((Tool)tool).resetErrorParsers();
+			((Tool) tool).resetErrorParsers();
 		}
 	}
 
 	abstract void removeErrorParsers(Set<String> set);
 
-	protected void removeErrorParsers(ITool tools[], Set<String> set){
+	protected void removeErrorParsers(ITool tools[], Set<String> set) {
 		for (ITool tool : tools) {
-			((Tool)tool).removeErrorParsers(set);
+			((Tool) tool).removeErrorParsers(set);
 		}
 	}
 
 	public ITool getToolById(String id) {
 		ITool[] tools = getTools();
 		for (ITool tool : tools) {
-			if(id.equals(tool.getId()))
+			if (id.equals(tool.getId()))
 				return tool;
 		}
 		return null;
 	}
 
-	public static IPath normalizePath(IPath path){
+	public static IPath normalizePath(IPath path) {
 		return path.makeRelative();
 	}
 
-	public ResourceInfo getParentResourceInfo(){
-		if(isRoot())
+	public ResourceInfo getParentResourceInfo() {
+		if (isRoot())
 			return null;
 
 		IPath path = getPath();
 		path = path.removeLastSegments(1);
-		return (ResourceInfo)getParent().getResourceInfo(path, false);
+		return (ResourceInfo) getParent().getResourceInfo(path, false);
 	}
 
-	public IFolderInfo getParentFolderInfo(){
+	public IFolderInfo getParentFolderInfo() {
 		ResourceInfo parentRc = getParentResourceInfo();
-		for(; parentRc != null && !parentRc.isFolderInfo(); parentRc = parentRc.getParentResourceInfo()) {
+		for (; parentRc != null && !parentRc.isFolderInfo(); parentRc = parentRc.getParentResourceInfo()) {
 			// empty body, loop is to find parent only
 		}
 
-		return (IFolderInfo)parentRc;
+		return (IFolderInfo) parentRc;
 	}
 
 	abstract void resolveProjectReferences(boolean onLoad);
@@ -481,12 +479,12 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return ToolChainModificationHelper.getModificationInfo(this, curTools, tools);
 	}
 
-	static ITool[][] getRealPairs(ITool[] tools){
+	static ITool[][] getRealPairs(ITool[] tools) {
 		ITool[][] pairs = new ITool[tools.length][];
-		for(int i = 0; i < tools.length; i++){
+		for (int i = 0; i < tools.length; i++) {
 			ITool[] pair = new ITool[2];
 			pair[0] = ManagedBuildManager.getRealTool(tools[i]);
-			if(pair[0] == null)
+			if (pair[0] == null)
 				pair[0] = tools[i];
 			pair[1] = tools[i];
 			pairs[i] = pair;
@@ -496,7 +494,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	abstract void applyToolsInternal(ITool[] resultingTools, ToolListModificationInfo info);
 
-	void doApply(ToolListModificationInfo info){
+	void doApply(ToolListModificationInfo info) {
 		ITool[] resulting = info.getResultingTools();
 
 		ITool[] removed = info.getRemovedTools();
@@ -508,21 +506,21 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		performPostModificationAdjustments(info);
 	}
 
-	void performPostModificationAdjustments(ToolListModificationInfo info){
+	void performPostModificationAdjustments(ToolListModificationInfo info) {
 		propertiesChanged();
 	}
 
-	public IResourceInfo[] getDirectChildResourceInfos(){
+	public IResourceInfo[] getDirectChildResourceInfos() {
 		ResourceInfoContainer cr = getRcInfo();
 		return cr.getDirectChildResourceInfos();
 	}
 
-	public IResourceInfo[] getChildResourceInfos(){
+	public IResourceInfo[] getChildResourceInfos() {
 		ResourceInfoContainer cr = getRcInfo();
 		return cr.getResourceInfos();
 	}
 
-	public List<IResourceInfo> getChildResourceInfoList(boolean includeCurrent){
+	public List<IResourceInfo> getChildResourceInfoList(boolean includeCurrent) {
 		return getRcInfo().getRcInfoList(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER, includeCurrent);
 	}
 

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -29,13 +29,13 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 
 	/** Offset of the constructor chain execution for constexpr constructors. */
 	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethod.RECORD_SIZE; // Database.EXECUTION_SIZE
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPConstructor record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
-	
+
 	public PDOMCPPConstructor(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method)
 			throws CoreException, DOMException {
 		super(linkage, parent, method);
@@ -45,7 +45,7 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 	public PDOMCPPConstructor(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -55,12 +55,12 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR;
 	}
-	
+
 	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		return 0;
 	}
-	
+
 	public void initData(ICPPExecution constructorChain) {
 		try {
 			getLinkage().storeExecution(record + CONSTRUCTOR_CHAIN, constructorChain);
@@ -68,13 +68,13 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())

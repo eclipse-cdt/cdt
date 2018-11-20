@@ -20,16 +20,15 @@ public class PropertyPageMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.propertypages.PropertyPageMessages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private PropertyPageMessages() {
 	}
 
-	public static String getString( String key ) {
+	public static String getString(String key) {
 		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
 	}

@@ -46,60 +46,61 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  */
 public final class CompletionProposalCategory {
 	/** The extension schema name of the icon attribute. */
-	private static final String ICON= "icon"; //$NON-NLS-1$
+	private static final String ICON = "icon"; //$NON-NLS-1$
 
 	private final String fId;
 	private final String fName;
 	private final IConfigurationElement fElement;
 	/** The image descriptor for this category, or {@code null} if none specified. */
 	private final ImageDescriptor fImage;
-	
-	private boolean fIsSeparateCommand= true;
-	private boolean fIsEnabled= true;
-	private boolean fIsIncluded= true;
+
+	private boolean fIsSeparateCommand = true;
+	private boolean fIsEnabled = true;
+	private boolean fIsIncluded = true;
 	private final CompletionProposalComputerRegistry fRegistry;
-	
-	private int fSortOrder= 0x10000;
+
+	private int fSortOrder = 0x10000;
 	private String fLastError;
 
-	CompletionProposalCategory(IConfigurationElement element, CompletionProposalComputerRegistry registry) throws CoreException {
-		fElement= element;
-		fRegistry= registry;
-		IExtension parent= (IExtension) element.getParent();
-		fId= parent.getUniqueIdentifier();
+	CompletionProposalCategory(IConfigurationElement element, CompletionProposalComputerRegistry registry)
+			throws CoreException {
+		fElement = element;
+		fRegistry = registry;
+		IExtension parent = (IExtension) element.getParent();
+		fId = parent.getUniqueIdentifier();
 		checkNotNull(fId, "id"); //$NON-NLS-1$
-		String name= parent.getLabel();
+		String name = parent.getLabel();
 		if (name == null) {
-			fName= fId;
+			fName = fId;
 		} else {
-			fName= name;
+			fName = name;
 		}
-		
-		String icon= element.getAttribute(ICON);
-		ImageDescriptor img= null;
+
+		String icon = element.getAttribute(ICON);
+		ImageDescriptor img = null;
 		if (icon != null) {
-			Bundle bundle= getBundle();
+			Bundle bundle = getBundle();
 			if (bundle != null) {
-				Path path= new Path(icon);
-				URL url= FileLocator.find(bundle, path, null);
-				img= ImageDescriptor.createFromURL(url);
+				Path path = new Path(icon);
+				URL url = FileLocator.find(bundle, path, null);
+				img = ImageDescriptor.createFromURL(url);
 			}
 		}
-		fImage= img;
+		fImage = img;
 
 	}
 
 	CompletionProposalCategory(String id, String name, CompletionProposalComputerRegistry registry) {
-		fRegistry= registry;
-		fId= id;
-		fName= name;
-		fElement= null;
-		fImage= null;
+		fRegistry = registry;
+		fId = id;
+		fName = name;
+		fElement = null;
+		fImage = null;
 	}
 
 	private Bundle getBundle() {
-		String namespace= fElement.getDeclaringExtension().getContributor().getName();
-		Bundle bundle= Platform.getBundle(namespace);
+		String namespace = fElement.getDeclaringExtension().getContributor().getName();
+		Bundle bundle = Platform.getBundle(namespace);
 		return bundle;
 	}
 
@@ -112,9 +113,10 @@ public final class CompletionProposalCategory {
 	 */
 	private void checkNotNull(Object obj, String attribute) throws CoreException {
 		if (obj == null) {
-			Object[] args= { getId(), fElement.getContributor().getName(), attribute };
-			String message= Messages.format(ContentAssistMessages.CompletionProposalComputerDescriptor_illegal_attribute_message, args);
-			IStatus status= new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null);
+			Object[] args = { getId(), fElement.getContributor().getName(), attribute };
+			String message = Messages
+					.format(ContentAssistMessages.CompletionProposalComputerDescriptor_illegal_attribute_message, args);
+			IStatus status = new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null);
 			CUIPlugin.log(status);
 			throw new CoreException(status);
 		}
@@ -137,7 +139,7 @@ public final class CompletionProposalCategory {
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * Returns the name of the described extension
 	 * without mnemonic hint in order to be displayed
@@ -148,7 +150,7 @@ public final class CompletionProposalCategory {
 	public String getDisplayName() {
 		return LegacyActionTools.removeMnemonics(fName);
 	}
-	
+
 	/**
 	 * Returns the image descriptor of the described category.
 	 * 
@@ -157,16 +159,16 @@ public final class CompletionProposalCategory {
 	public ImageDescriptor getImageDescriptor() {
 		return fImage;
 	}
-	
+
 	/**
 	 * Sets the separate command state of the category.
 	 * 
 	 * @param enabled the new enabled state.
 	 */
 	public void setSeparateCommand(boolean enabled) {
-		fIsSeparateCommand= enabled;
+		fIsSeparateCommand = enabled;
 	}
-	
+
 	/**
 	 * Returns the enablement state of the category.
 	 * 
@@ -175,14 +177,14 @@ public final class CompletionProposalCategory {
 	public boolean isSeparateCommand() {
 		return fIsSeparateCommand;
 	}
-	
+
 	/**
 	 * @param included the included
 	 */
 	public void setIncluded(boolean included) {
-		fIsIncluded= included;
+		fIsIncluded = included;
 	}
-	
+
 	/**
 	 * @return included
 	 */
@@ -195,7 +197,7 @@ public final class CompletionProposalCategory {
 	}
 
 	public void setEnabled(boolean isEnabled) {
-		fIsEnabled= isEnabled;
+		fIsEnabled = isEnabled;
 	}
 
 	/**
@@ -206,14 +208,14 @@ public final class CompletionProposalCategory {
 	 *         otherwise
 	 */
 	public boolean hasComputers() {
-		List<CompletionProposalComputerDescriptor> descriptors= fRegistry.getProposalComputerDescriptors();
+		List<CompletionProposalComputerDescriptor> descriptors = fRegistry.getProposalComputerDescriptors();
 		for (CompletionProposalComputerDescriptor desc : descriptors) {
 			if (desc.getCategory() == this)
 				return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns {@code true} if the category contains any computers in the given partition,
 	 * {@code false} otherwise.
@@ -222,26 +224,26 @@ public final class CompletionProposalCategory {
 	 * @return {@code true} if the category contains any computers, {@code false} otherwise
 	 */
 	public boolean hasComputers(String partition) {
-		List<CompletionProposalComputerDescriptor> descriptors= fRegistry.getProposalComputerDescriptors(partition);
+		List<CompletionProposalComputerDescriptor> descriptors = fRegistry.getProposalComputerDescriptors(partition);
 		for (CompletionProposalComputerDescriptor desc : descriptors) {
 			if (desc.getCategory() == this)
 				return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return sortOrder
 	 */
 	public int getSortOrder() {
 		return fSortOrder;
 	}
-	
+
 	/**
 	 * @param sortOrder the sortOrder
 	 */
 	public void setSortOrder(int sortOrder) {
-		fSortOrder= sortOrder;
+		fSortOrder = sortOrder;
 	}
 
 	/**
@@ -257,14 +259,15 @@ public final class CompletionProposalCategory {
 	 */
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
 			String partition, IProgressMonitor monitor) {
-		fLastError= null;
-		List<ICompletionProposal> result= new ArrayList<>();
-		List<CompletionProposalComputerDescriptor> descriptors= new ArrayList<>(fRegistry.getProposalComputerDescriptors(partition));
+		fLastError = null;
+		List<ICompletionProposal> result = new ArrayList<>();
+		List<CompletionProposalComputerDescriptor> descriptors = new ArrayList<>(
+				fRegistry.getProposalComputerDescriptors(partition));
 		for (CompletionProposalComputerDescriptor desc : descriptors) {
 			if (desc.getCategory() == this)
 				result.addAll(desc.computeCompletionProposals(context, monitor));
 			if (fLastError == null)
-				fLastError= desc.getErrorMessage();
+				fLastError = desc.getErrorMessage();
 		}
 		return result;
 	}
@@ -280,17 +283,17 @@ public final class CompletionProposalCategory {
 	 * @return the list of computed context information objects (element type:
 	 *         {@link org.eclipse.jface.text.contentassist.IContextInformation})
 	 */
-	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
-			String partition, IProgressMonitor monitor) {
-		fLastError= null;
-		List<IContextInformation> result= new ArrayList<>();
-		List<CompletionProposalComputerDescriptor> descriptors=
-				new ArrayList<>(fRegistry.getProposalComputerDescriptors(partition));
-	 	for (CompletionProposalComputerDescriptor desc : descriptors) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, String partition,
+			IProgressMonitor monitor) {
+		fLastError = null;
+		List<IContextInformation> result = new ArrayList<>();
+		List<CompletionProposalComputerDescriptor> descriptors = new ArrayList<>(
+				fRegistry.getProposalComputerDescriptors(partition));
+		for (CompletionProposalComputerDescriptor desc : descriptors) {
 			if (desc.getCategory() == this)
 				result.addAll(desc.computeContextInformation(context, monitor));
 			if (fLastError == null)
-				fLastError= desc.getErrorMessage();
+				fLastError = desc.getErrorMessage();
 		}
 		return result;
 	}
@@ -308,25 +311,27 @@ public final class CompletionProposalCategory {
 	 * Notifies the computers in this category of a proposal computation session start.
 	 */
 	public void sessionStarted() {
-		List<CompletionProposalComputerDescriptor> descriptors= new ArrayList<>(fRegistry.getProposalComputerDescriptors());
+		List<CompletionProposalComputerDescriptor> descriptors = new ArrayList<>(
+				fRegistry.getProposalComputerDescriptors());
 		for (CompletionProposalComputerDescriptor desc : descriptors) {
 			if (desc.getCategory() == this)
 				desc.sessionStarted();
 			if (fLastError == null)
-				fLastError= desc.getErrorMessage();
+				fLastError = desc.getErrorMessage();
 		}
 	}
-	
+
 	/**
 	 * Notifies the computers in this category of a proposal computation session end.
 	 */
 	public void sessionEnded() {
-		List<CompletionProposalComputerDescriptor> descriptors= new ArrayList<>(fRegistry.getProposalComputerDescriptors());
+		List<CompletionProposalComputerDescriptor> descriptors = new ArrayList<>(
+				fRegistry.getProposalComputerDescriptors());
 		for (CompletionProposalComputerDescriptor desc : descriptors) {
 			if (desc.getCategory() == this)
 				desc.sessionEnded();
 			if (fLastError == null)
-				fLastError= desc.getErrorMessage();
+				fLastError = desc.getErrorMessage();
 		}
 	}
 }

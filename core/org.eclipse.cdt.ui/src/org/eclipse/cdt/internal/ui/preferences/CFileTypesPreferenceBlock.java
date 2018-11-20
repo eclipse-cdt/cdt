@@ -61,19 +61,19 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
  * for displaying/editing CDT file type associations
  */
 public class CFileTypesPreferenceBlock {
-	private static final int 	COL_PATTERN		= 0;
-	private static final int 	COL_DESCRIPTION	= 1;
-	private static final int 	COL_STATUS	= 2;
-	
-	private ArrayList<CFileTypeAssociation>	fAddAssoc;
-	private ArrayList<CFileTypeAssociation>	fRemoveAssoc;
-	private boolean		fDirty = false;
-	private IProject	fInput;
+	private static final int COL_PATTERN = 0;
+	private static final int COL_DESCRIPTION = 1;
+	private static final int COL_STATUS = 2;
+
+	private ArrayList<CFileTypeAssociation> fAddAssoc;
+	private ArrayList<CFileTypeAssociation> fRemoveAssoc;
+	private boolean fDirty = false;
+	private IProject fInput;
 	private IContentType[] fContentTypes;
 
-	private TableViewer 		fAssocViewer;
-	private Button				fBtnNew;
-	private Button				fBtnRemove;
+	private TableViewer fAssocViewer;
+	private Button fBtnNew;
+	private Button fBtnRemove;
 
 	private class AssocSorter extends ViewerSorter {
 		@Override
@@ -88,10 +88,10 @@ public class CFileTypesPreferenceBlock {
 			return 30;
 		}
 	}
-	
+
 	private class AssocContentProvider implements IStructuredContentProvider {
 		CFileTypeAssociation[] assocs;
-		
+
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return assocs;
@@ -104,15 +104,15 @@ public class CFileTypesPreferenceBlock {
 
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput instanceof CFileTypeAssociation[]) {	
+			if (newInput instanceof CFileTypeAssociation[]) {
 				assocs = (CFileTypeAssociation[]) newInput;
 			}
 		}
 	}
-	
+
 	private class AssocLabelProvider implements ILabelProvider, ITableLabelProvider {
 		private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
-		
+
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (element instanceof CFileTypeAssociation) {
@@ -128,19 +128,19 @@ public class CFileTypesPreferenceBlock {
 			if (element instanceof CFileTypeAssociation) {
 				CFileTypeAssociation assoc = (CFileTypeAssociation) element;
 				switch (columnIndex) {
-					case COL_PATTERN:
-						return assoc.getPattern();
-					
-					case COL_DESCRIPTION:
-						return assoc.getDescription();
-						
-					case COL_STATUS:
-						if (assoc.isUserDefined()) {
-							return PreferencesMessages.CFileTypesPreferencePage_userDefined; 
-						} else if (assoc.isPredefined()) {
-							return PreferencesMessages.CFileTypesPreferencePage_preDefined; 
-						}
-						return ""; //$NON-NLS-1$
+				case COL_PATTERN:
+					return assoc.getPattern();
+
+				case COL_DESCRIPTION:
+					return assoc.getDescription();
+
+				case COL_STATUS:
+					if (assoc.isUserDefined()) {
+						return PreferencesMessages.CFileTypesPreferencePage_userDefined;
+					} else if (assoc.isPredefined()) {
+						return PreferencesMessages.CFileTypesPreferencePage_preDefined;
+					}
+					return ""; //$NON-NLS-1$
 				}
 			}
 			return element.toString();
@@ -190,102 +190,102 @@ public class CFileTypesPreferenceBlock {
 	}
 
 	public Control createControl(Composite parent) {
-		Composite 	control 		= new Composite(parent, SWT.NONE);
-		GridLayout	controlLayout 	= new GridLayout(2, false);
+		Composite control = new Composite(parent, SWT.NONE);
+		GridLayout controlLayout = new GridLayout(2, false);
 
 		controlLayout.marginHeight = 0;
-		controlLayout.marginWidth  = 0;
+		controlLayout.marginWidth = 0;
 
 		control.setLayout(controlLayout);
 		control.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
-		
+
 		// Create the table viewer for file associations
-		
-		Composite 	tablePane 		= new Composite(control, SWT.NONE);
-		GridLayout	tablePaneLayout = new GridLayout();
-		GridData	gridData		= new GridData(GridData.FILL_BOTH);
-		
+
+		Composite tablePane = new Composite(control, SWT.NONE);
+		GridLayout tablePaneLayout = new GridLayout();
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+
 		tablePaneLayout.marginHeight = 0;
-		tablePaneLayout.marginWidth  = 0;
-		
+		tablePaneLayout.marginWidth = 0;
+
 		tablePane.setLayout(tablePaneLayout);
 		tablePane.setLayoutData(gridData);
 
 		Table table = new Table(tablePane, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		
-		TableLayout 	tblLayout	= new TableLayout();
-		TableColumn 	col			= null;
-		
+
+		TableLayout tblLayout = new TableLayout();
+		TableColumn col = null;
+
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.heightHint = SWTUtil.getTableHeightHint(table, 15);
 		gridData.widthHint = new PixelConverter(parent).convertWidthInCharsToPixels(60);
-		
+
 		tblLayout.addColumnData(new ColumnWeightData(20));
 		tblLayout.addColumnData(new ColumnWeightData(60));
 		tblLayout.addColumnData(new ColumnWeightData(20));
-		
+
 		table.setLayout(tblLayout);
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
-		table.setLinesVisible(true);		
-		
+		table.setLinesVisible(true);
+
 		col = new TableColumn(table, SWT.LEFT);
-		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitlePattern); 
-		
+		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitlePattern);
+
 		col = new TableColumn(table, SWT.LEFT);
-		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitleDescription); 
-		
+		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitleDescription);
+
 		col = new TableColumn(table, SWT.LEFT);
-		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitleStatus); 
+		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitleStatus);
 
 		// Create the button pane
 
-		Composite	buttonPane			= new Composite(control, SWT.NONE);
-		GridLayout	buttonPaneLayout	= new GridLayout();
-		
+		Composite buttonPane = new Composite(control, SWT.NONE);
+		GridLayout buttonPaneLayout = new GridLayout();
+
 		buttonPaneLayout.marginHeight = 0;
-		buttonPaneLayout.marginWidth  = 0;
-		
+		buttonPaneLayout.marginWidth = 0;
+
 		buttonPane.setLayout(buttonPaneLayout);
 		buttonPane.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		// New button
-		
-		fBtnNew		= new Button(buttonPane, SWT.PUSH);
-		fBtnNew.setText(PreferencesMessages.CFileTypesPreferenceBlock_New___);  
-		
-		gridData	= new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnNew);
+
+		fBtnNew = new Button(buttonPane, SWT.PUSH);
+		fBtnNew.setText(PreferencesMessages.CFileTypesPreferenceBlock_New___);
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = SWTUtil.getButtonWidthHint(fBtnNew);
 		fBtnNew.setLayoutData(gridData);
-		
+
 		fBtnNew.addListener(SWT.Selection, e -> handleAdd());
 
 		// Remove button
-		
-		fBtnRemove 	= new Button(buttonPane, SWT.PUSH);
-		fBtnRemove.setText(PreferencesMessages.CFileTypesPreferenceBlock_Remove);  
-		
-		gridData	= new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnRemove);
+
+		fBtnRemove = new Button(buttonPane, SWT.PUSH);
+		fBtnRemove.setText(PreferencesMessages.CFileTypesPreferenceBlock_Remove);
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = SWTUtil.getButtonWidthHint(fBtnRemove);
 		fBtnRemove.setLayoutData(gridData);
-		
+
 		fBtnRemove.addListener(SWT.Selection, e -> handleRemove());
 
 		// Hook up the viewer
-		
+
 		fAssocViewer = new TableViewer(table);
-		
+
 		fAssocViewer.setSorter(new AssocSorter());
 		fAssocViewer.setContentProvider(new AssocContentProvider());
 		fAssocViewer.setLabelProvider(new AssocLabelProvider());
 		fAssocViewer.setInput(getCFileTypeAssociations());
 
 		fAssocViewer.addSelectionChangedListener(event -> handleSelectionChanged());
-		
+
 		handleSelectionChanged();
-		
+
 		return control;
 	}
 
@@ -295,7 +295,7 @@ public class CFileTypesPreferenceBlock {
 		fBtnRemove.setEnabled(enabled);
 		setDirty(enabled);
 	}
-	
+
 	public void setInput(IProject input) {
 		fAddAssoc.clear();
 		fRemoveAssoc.clear();
@@ -309,25 +309,25 @@ public class CFileTypesPreferenceBlock {
 	private void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
-	
+
 	public boolean performOk() {
 		boolean changed = fDirty;
-		
+
 		if (fDirty) {
 			CFileTypeAssociation[] add = fAddAssoc.toArray(new CFileTypeAssociation[fAddAssoc.size()]);
 			CFileTypeAssociation[] rem = fRemoveAssoc.toArray(new CFileTypeAssociation[fRemoveAssoc.size()]);
-			
+
 			changed = add.length > 0 || rem.length > 0;
 			adjustAssociations(add, rem);
-	
+
 			fAddAssoc.clear();
 			fRemoveAssoc.clear();
 
 			setDirty(false);
-		}		
+		}
 		return changed;
 	}
-	
+
 	private CFileTypeAssociation[] getCFileTypeAssociations() {
 		ArrayList<CFileTypeAssociation> list = new ArrayList<CFileTypeAssociation>();
 		if (fInput == null) {
@@ -358,7 +358,7 @@ public class CFileTypesPreferenceBlock {
 			int type = IContentType.FILE_NAME_SPEC;
 			if (assoc.isExtSpec()) {
 				type = IContentType.FILE_EXTENSION_SPEC;
-			}			
+			}
 			addAssociation(context, contentType, spec, type);
 		}
 	}
@@ -409,24 +409,31 @@ public class CFileTypesPreferenceBlock {
 
 	private void fillWithUserDefinedCFileTypeAssociations(ArrayList<CFileTypeAssociation> list) {
 		IContentType[] ctypes = getRegistedContentTypes();
-		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
-		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_NAME_SPEC, list);
+		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_EXTENSION_SPEC,
+				list);
+		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_NAME_SPEC,
+				list);
 	}
 
 	private void fillWithPredefinedCFileTypeAssociations(ArrayList<CFileTypeAssociation> list) {
 		IContentType[] ctypes = getRegistedContentTypes();
-		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
-		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC, list);
+		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC,
+				list);
+		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC,
+				list);
 	}
 
 	private void fillWithProjectCFileTypeAssociations(ArrayList<CFileTypeAssociation> list, IProject project) {
 		IContentType[] ctypes = getRegistedContentTypes();
 		IScopeContext context = new ProjectScope(project);
-		fillWithCFileTypeAssociations(ctypes, context, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
-		fillWithCFileTypeAssociations(ctypes, context, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_NAME_SPEC, list);
+		fillWithCFileTypeAssociations(ctypes, context,
+				IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
+		fillWithCFileTypeAssociations(ctypes, context, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_NAME_SPEC,
+				list);
 	}
 
-	private void fillWithCFileTypeAssociations(IContentType[] ctypes, IScopeContext context, int type, ArrayList<CFileTypeAssociation> list) {
+	private void fillWithCFileTypeAssociations(IContentType[] ctypes, IScopeContext context, int type,
+			ArrayList<CFileTypeAssociation> list) {
 		for (IContentType ctype : ctypes) {
 			try {
 				IContentTypeSettings setting = ctype.getSettings(context);
@@ -470,7 +477,7 @@ public class CFileTypesPreferenceBlock {
 		CFileTypeAssociation assoc = null;
 
 		CFileTypeDialog dlg = new CFileTypeDialog(fBtnNew.getParent().getShell());
-		
+
 		if (Window.OK == dlg.open()) {
 			assoc = createAssociation(dlg.getPattern(), dlg.getContentType());
 			if (handleAdd(assoc)) {
@@ -479,13 +486,13 @@ public class CFileTypesPreferenceBlock {
 			}
 		}
 	}
-	
+
 	private boolean handleAdd(CFileTypeAssociation assoc) {
 		// assoc is marked to be added.
 		if (containsIgnoreCaseOfSpec(fAddAssoc, assoc)) {
 			reportDuplicateAssociation(assoc);
 			return false;
-		}			
+		}
 		// assoc exists, but is marked to be removed.
 		if (containsIgnoreCaseOfSpec(fRemoveAssoc, assoc)) {
 			if (!fRemoveAssoc.remove(assoc)) {
@@ -497,29 +504,28 @@ public class CFileTypesPreferenceBlock {
 		// analyze current settings
 		IContentTypeSettings settings;
 		if (fInput == null) {
-			settings= assoc.getContentType();
+			settings = assoc.getContentType();
 		} else {
 			try {
-				settings= assoc.getContentType().getSettings(new ProjectScope(fInput));
+				settings = assoc.getContentType().getSettings(new ProjectScope(fInput));
 			} catch (CoreException e) {
 				ErrorDialog.openError(fBtnNew.getParent().getShell(),
-						PreferencesMessages.CFileTypesPreferenceBlock_addAssociationError_title, 
-						null, e.getStatus());
+						PreferencesMessages.CFileTypesPreferenceBlock_addAssociationError_title, null, e.getStatus());
 				return false;
 			}
 		}
-		String newSpec= assoc.getSpec();
-		String[] specs= settings.getFileSpecs(assoc.getFileSpecType());
+		String newSpec = assoc.getSpec();
+		String[] specs = settings.getFileSpecs(assoc.getFileSpecType());
 		for (String spec : specs) {
 			if (spec.equalsIgnoreCase(newSpec)) {
 				reportDuplicateAssociation(assoc);
 				return false;
-			}				
+			}
 		}
 		fAddAssoc.add(assoc);
 		return true;
-	}	
-	
+	}
+
 	private boolean containsIgnoreCaseOfSpec(Collection<CFileTypeAssociation> collection, CFileTypeAssociation assoc) {
 		for (CFileTypeAssociation existing : collection) {
 			if (assoc.equalsIgnoreCaseOfSpec(existing)) {
@@ -531,8 +537,8 @@ public class CFileTypesPreferenceBlock {
 
 	private void reportDuplicateAssociation(CFileTypeAssociation assoc) {
 		MessageDialog.openError(fBtnNew.getParent().getShell(),
-				PreferencesMessages.CFileTypesPreferenceBlock_addAssociationError_title, 
-				Messages.format(PreferencesMessages.CFileTypesPreferenceBlock_addAssociationErrorMessage,  
+				PreferencesMessages.CFileTypesPreferenceBlock_addAssociationError_title,
+				Messages.format(PreferencesMessages.CFileTypesPreferenceBlock_addAssociationErrorMessage,
 						assoc.getPattern(), assoc.getContentType().getName()));
 	}
 

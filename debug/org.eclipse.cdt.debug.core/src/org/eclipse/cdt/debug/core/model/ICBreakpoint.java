@@ -29,22 +29,22 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface ICBreakpoint extends IBreakpoint {
 
-    /** 
-     * Breakpoint marker type for this breakpoint type.
-     * @since 7.2
-     */
-    public static final String C_BREAKPOINT_MARKER = "org.eclipse.cdt.debug.core.cBreakpointMarker"; //$NON-NLS-1$
-    
-    /**
-     * This debug model identifier can be returned by a debug implementation 
-     * to indicate that a given debugger integration is using C Breakpoints.
-     * This model ID will allow toggle breakpoint actions to configure their 
-     * default selection. 
-     * 
-     * @since 7.0
-     */
-    public static final String C_BREAKPOINTS_DEBUG_MODEL_ID = CDIDebugModel.getPluginIdentifier() + ".cbreakpoints"; //$NON-NLS-1$
-    
+	/** 
+	 * Breakpoint marker type for this breakpoint type.
+	 * @since 7.2
+	 */
+	public static final String C_BREAKPOINT_MARKER = "org.eclipse.cdt.debug.core.cBreakpointMarker"; //$NON-NLS-1$
+
+	/**
+	 * This debug model identifier can be returned by a debug implementation 
+	 * to indicate that a given debugger integration is using C Breakpoints.
+	 * This model ID will allow toggle breakpoint actions to configure their 
+	 * default selection. 
+	 * 
+	 * @since 7.0
+	 */
+	public static final String C_BREAKPOINTS_DEBUG_MODEL_ID = CDIDebugModel.getPluginIdentifier() + ".cbreakpoints"; //$NON-NLS-1$
+
 	/**
 	 * Breakpoint attribute storing the number of debug targets a breakpoint is
 	 * installed in (value
@@ -135,7 +135,7 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
 	 */
-	public void setCondition( String condition ) throws CoreException;
+	public void setCondition(String condition) throws CoreException;
 
 	/**
 	 * Returns the ignore count used by this breakpoint.
@@ -153,7 +153,7 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
 	 */
-	public void setIgnoreCount( int ignoreCount ) throws CoreException;
+	public void setIgnoreCount(int ignoreCount) throws CoreException;
 
 	/**
 	 * Returns the identifier of the thread this breakpoint is restricted in.
@@ -172,7 +172,7 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
 	 */
-	public void setThreadId( String threadId ) throws CoreException;
+	public void setThreadId(String threadId) throws CoreException;
 
 	/**
 	 * Returns the module name this breakpoint is set in.
@@ -190,7 +190,7 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
 	 */
-	public void setModule( String module ) throws CoreException;
+	public void setModule(String module) throws CoreException;
 
 	/**
 	 * Returns the source handle this breakpoint is set in.
@@ -208,7 +208,7 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
 	 */
-	public void setSourceHandle( String sourceHandle ) throws CoreException;
+	public void setSourceHandle(String sourceHandle) throws CoreException;
 
 	/**
 	 * Increments the install count of this breakpoint
@@ -245,5 +245,6 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @return Extension instance.
 	 * @throws CoreException Throws exception in case the extension doesn't exist or cannot be initialized.
 	 */
-    public <V extends ICBreakpointExtension> V getExtension(String debugModelId, Class<V> extensionType) throws CoreException;
+	public <V extends ICBreakpointExtension> V getExtension(String debugModelId, Class<V> extensionType)
+			throws CoreException;
 }

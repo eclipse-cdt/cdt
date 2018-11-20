@@ -29,7 +29,7 @@ public interface IToolListModification extends IApplicableModification {
 	 * For applying the settings the {@link IApplicableModification#apply()} method should be called
 	 */
 	void changeProjectTools(ITool removeTools, ITool addTool);
-	
+
 	/**
 	 * returns the list of tools assigned to the given resource info
 	 * on the ToolListModificatrion creation the tool-list is the one
@@ -38,7 +38,7 @@ public interface IToolListModification extends IApplicableModification {
 	 */
 	ITool[] getProjectTools();
 
-//	ITool[] getSystemTools();
+	//	ITool[] getSystemTools();
 
 	/**
 	 * returns a list of tool modifications for all project tools contained 
@@ -60,6 +60,6 @@ public interface IToolListModification extends IApplicableModification {
 	 * given system tool
 	 */
 	IToolModification getToolModification(ITool tool);
-	
+
 	void restoreDefaults();
 }

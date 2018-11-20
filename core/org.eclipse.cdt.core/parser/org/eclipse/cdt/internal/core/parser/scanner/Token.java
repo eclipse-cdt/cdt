@@ -36,10 +36,10 @@ public class Token implements IToken, Cloneable {
 
 	Token(int kind, Object source, int offset, int endOffset) {
 		tokenCounter.inc();
-		fKind= kind;
-		fOffset= offset;
-		fEndOffset= endOffset;
-		fSource= source;
+		fKind = kind;
+		fOffset = offset;
+		fEndOffset = endOffset;
+		fSource = source;
 	}
 
 	@Override
@@ -69,17 +69,17 @@ public class Token implements IToken, Cloneable {
 
 	@Override
 	final public void setType(int kind) {
-		fKind= kind;
+		fKind = kind;
 	}
 
 	@Override
 	final public void setNext(IToken t) {
-		fNextToken= t;
+		fNextToken = t;
 	}
 
 	public void setOffset(int offset, int endOffset) {
-		fOffset= offset;
-		fEndOffset= endOffset;
+		fOffset = offset;
+		fEndOffset = endOffset;
 	}
 
 	public void shiftOffset(int shift) {
@@ -160,8 +160,7 @@ public class Token implements IToken, Cloneable {
 		}
 
 		public void inc() throws ParseError {
-			if (limit > 0
-			 && ++count > limit)
+			if (limit > 0 && ++count > limit)
 				throw new ParseError(Integer.toString(count) + " tokens", ParseError.ParseErrorKind.TOO_MANY_TOKENS);//$NON-NLS-1$
 		}
 	}

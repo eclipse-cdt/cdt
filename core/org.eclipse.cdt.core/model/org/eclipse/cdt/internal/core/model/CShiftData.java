@@ -33,7 +33,7 @@ public class CShiftData implements ICElementDelta {
 	public CShiftData(ICElement element, int offset, int size, int lines) {
 		this.element = element;
 		this.offset = offset;
-		this.size  = size;
+		this.size = size;
 		this.lines = lines;
 	}
 
@@ -131,6 +131,6 @@ public class CShiftData implements ICElementDelta {
 
 	@Override
 	public String toString() {
-		return ("CShiftData: offset=" + offset + ", size=" + size + ", lines=" + lines);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return ("CShiftData: offset=" + offset + ", size=" + size + ", lines=" + lines); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 }

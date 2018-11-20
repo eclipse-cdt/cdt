@@ -39,15 +39,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * @author dsteffle
  */
 public class AST2FileBasePluginTestCase extends TestCase {
-    static NullProgressMonitor		monitor;
-    static IWorkspace 				workspace;
-    static IProject 				project;
-    static FileManager 				fileManager;
-    static int						numProjects;
-    static Class					className;
+	static NullProgressMonitor monitor;
+	static IWorkspace workspace;
+	static IProject project;
+	static FileManager fileManager;
+	static int numProjects;
+	static Class className;
 	static ICProject cPrj;
 
-    public AST2FileBasePluginTestCase() {
+	public AST2FileBasePluginTestCase() {
 	}
 
 	public AST2FileBasePluginTestCase(String name) {
@@ -55,88 +55,88 @@ public class AST2FileBasePluginTestCase extends TestCase {
 	}
 
 	private void initialize(Class aClassName) {
-        if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null) {
+		if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null) {
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();
 
 			workspace = ResourcesPlugin.getWorkspace();
 
-	        try {
-	        	cPrj = CProjectHelper.createCCProject("AST2BasedProjectMofo", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
+			try {
+				cPrj = CProjectHelper.createCCProject("AST2BasedProjectMofo", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 
-	            project = cPrj.getProject();
+				project = cPrj.getProject();
 
-	            // ugly
-	            if (className == null || !className.equals(aClassName)) {
-	            	className = aClassName;
-	            	numProjects++;
-	            }
-	        } catch (CoreException e) {
-	            // Ignore
-	        }
+				// ugly
+				if (className == null || !className.equals(aClassName)) {
+					className = aClassName;
+					numProjects++;
+				}
+			} catch (CoreException e) {
+				// Ignore
+			}
 			if (project == null)
 				throw new NullPointerException("Unable to create project"); //$NON-NLS-1$
 
 			// Create file manager
 			fileManager = new FileManager();
-        }
-    }
-
-    public AST2FileBasePluginTestCase(String name, Class className) {
-    	super(name);
-    	initialize(className);
-    }
-
-    public void cleanupProject() throws Exception {
-    	numProjects--;
-
-    	try {
-    		if (numProjects == 0) {
-    			project.delete(true, false, monitor);
-    			project = null;
-    		}
-	    } catch (Throwable e) {
-	        // Ignore
-	    }
-    }
-
-    @Override
-	protected void tearDown() throws Exception {
-        if (project == null || !project.exists())
-            return;
-
-        IResource[] members = project.members();
-        for (int i = 0; i < members.length; i++) {
-            if (members[i].getName().equals(".project") || members[i].getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
-                continue;
-            if (members[i].getName().equals(".settings"))
-            	continue;
-            try {
-                members[i].delete(false, monitor);
-            } catch (Throwable e) {
-                // Ignore
-            }
-        }
+		}
 	}
 
-    protected IFolder importFolder(String folderName) throws Exception {
-    	IFolder folder = project.getProject().getFolder(folderName);
+	public AST2FileBasePluginTestCase(String name, Class className) {
+		super(name);
+		initialize(className);
+	}
+
+	public void cleanupProject() throws Exception {
+		numProjects--;
+
+		try {
+			if (numProjects == 0) {
+				project.delete(true, false, monitor);
+				project = null;
+			}
+		} catch (Throwable e) {
+			// Ignore
+		}
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		if (project == null || !project.exists())
+			return;
+
+		IResource[] members = project.members();
+		for (int i = 0; i < members.length; i++) {
+			if (members[i].getName().equals(".project") || members[i].getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			if (members[i].getName().equals(".settings"))
+				continue;
+			try {
+				members[i].delete(false, monitor);
+			} catch (Throwable e) {
+				// Ignore
+			}
+		}
+	}
+
+	protected IFolder importFolder(String folderName) throws Exception {
+		IFolder folder = project.getProject().getFolder(folderName);
 
 		// Create file input stream
 		if (!folder.exists())
 			folder.create(false, false, monitor);
 
 		return folder;
-    }
+	}
 
-    public IFile importFile(String fileName, String contents) throws Exception {
+	public IFile importFile(String fileName, String contents) throws Exception {
 		// Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 
 		InputStream stream = new ByteArrayInputStream(contents.getBytes());
 		// Create file input stream
 		if (file.exists()) {
-		    file.setContents(stream, false, false, monitor);
+			file.setContents(stream, false, false, monitor);
 		} else {
 			file.create(stream, false, monitor);
 		}
@@ -147,7 +147,7 @@ public class AST2FileBasePluginTestCase extends TestCase {
 	}
 
 	protected StringBuilder[] getContents(int sections) throws IOException {
-		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(),
+				getName(), sections);
 	}
 }

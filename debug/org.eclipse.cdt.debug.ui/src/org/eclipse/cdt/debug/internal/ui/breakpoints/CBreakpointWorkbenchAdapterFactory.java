@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.breakpoints; 
+package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -28,26 +28,26 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAdapter( Object adaptableObject, Class<T> adapterType ) {
-		if ( adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof ICBreakpoint) ) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof ICBreakpoint)) {
 			return null;
 		}
 		return (T) new WorkbenchAdapter() {
 			@Override
-			public String getLabel( Object o ) {
+			public String getLabel(Object o) {
 				// for now
-				if ( o instanceof ICLineBreakpoint ) {
-					return CDebugUIMessages.getString( "CBreakpointWorkbenchAdapterFactory.0" ); //$NON-NLS-1$
+				if (o instanceof ICLineBreakpoint) {
+					return CDebugUIMessages.getString("CBreakpointWorkbenchAdapterFactory.0"); //$NON-NLS-1$
 				}
-				if ( o instanceof ICWatchpoint ) {
-					return CDebugUIMessages.getString( "CBreakpointWorkbenchAdapterFactory.1" ); //$NON-NLS-1$
+				if (o instanceof ICWatchpoint) {
+					return CDebugUIMessages.getString("CBreakpointWorkbenchAdapterFactory.1"); //$NON-NLS-1$
 				}
-				return super.getLabel( o ); 
+				return super.getLabel(o);
 			}
 		};
 	}
 
-    @Override
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class };
 	}

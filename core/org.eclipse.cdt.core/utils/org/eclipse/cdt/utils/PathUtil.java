@@ -62,7 +62,7 @@ public class PathUtil {
 		if (!fullPath.isAbsolute())
 			return fullPath;
 
-	    File file = fullPath.toFile();
+		File file = fullPath.toFile();
 		try {
 			String canonPath = file.getCanonicalPath();
 			IPath canonicalPath = new Path(canonPath);
@@ -128,70 +128,55 @@ public class PathUtil {
 		return wsRelativePath;
 	}
 
-    public static IPath makeRelativePath(IPath path, IPath relativeTo) {
-        int segments = matchingFirstSegments(relativeTo, path);
-        if (segments > 0) {
-            IPath prefix = relativeTo.removeFirstSegments(segments);
-            IPath suffix = path.removeFirstSegments(segments);
-            IPath relativePath = new Path(""); //$NON-NLS-1$
-            for (int i = 0; i < prefix.segmentCount(); ++i) {
-                relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
-            }
-            return relativePath.append(suffix);
-        }
-        return null;
-    }
+	public static IPath makeRelativePath(IPath path, IPath relativeTo) {
+		int segments = matchingFirstSegments(relativeTo, path);
+		if (segments > 0) {
+			IPath prefix = relativeTo.removeFirstSegments(segments);
+			IPath suffix = path.removeFirstSegments(segments);
+			IPath relativePath = new Path(""); //$NON-NLS-1$
+			for (int i = 0; i < prefix.segmentCount(); ++i) {
+				relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
+			}
+			return relativePath.append(suffix);
+		}
+		return null;
+	}
 
-    public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-        if (provider != null) {
-            IScannerInfo info = provider.getScannerInformation(project);
-            if (info != null) {
-                return makeRelativePathToIncludes(fullPath, info.getIncludePaths());
-            }
-        }
-        return null;
-    }
+	public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+		if (provider != null) {
+			IScannerInfo info = provider.getScannerInformation(project);
+			if (info != null) {
+				return makeRelativePathToIncludes(fullPath, info.getIncludePaths());
+			}
+		}
+		return null;
+	}
 
-    public static IPath makeRelativePathToIncludes(IPath fullPath, String[] includePaths) {
-        IPath relativePath = null;
-        int mostSegments = 0;
-        for (int i = 0; i < includePaths.length; ++i) {
-            IPath includePath = new Path(includePaths[i]);
-            if (isPrefix(includePath, fullPath)) {
-                int segments = includePath.segmentCount();
-                if (segments > mostSegments) {
-                    relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
-                    mostSegments = segments;
-                }
-            }
-        }
-        return relativePath;
-    }
+	public static IPath makeRelativePathToIncludes(IPath fullPath, String[] includePaths) {
+		IPath relativePath = null;
+		int mostSegments = 0;
+		for (int i = 0; i < includePaths.length; ++i) {
+			IPath includePath = new Path(includePaths[i]);
+			if (isPrefix(includePath, fullPath)) {
+				int segments = includePath.segmentCount();
+				if (segments > mostSegments) {
+					relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
+					mostSegments = segments;
+				}
+			}
+		}
+		return relativePath;
+	}
 
-    public static IProject getEnclosingProject(IPath fullPath) {
+	public static IProject getEnclosingProject(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
 			IPath path = getWorkspaceRelativePath(fullPath);
 			while (path.segmentCount() > 0) {
 				IResource res = root.findMember(path);
 				if (res != null)
-				    return res.getProject();
-
-				path = path.removeLastSegments(1);
-			}
-		}
-		return null;
-    }
-
-    public static IPath getValidEnclosingFolder(IPath fullPath) {
-		IWorkspaceRoot root = getWorkspaceRoot();
-		if (root != null) {
-			IPath path = getWorkspaceRelativePath(fullPath);
-			while (path.segmentCount() > 0) {
-				IResource res = root.findMember(path);
-				if (res != null && res.exists() && (res.getType() == IResource.PROJECT || res.getType() == IResource.FOLDER))
-				    return path;
+					return res.getProject();
 
 				path = path.removeLastSegments(1);
 			}
@@ -199,17 +184,33 @@ public class PathUtil {
 		return null;
 	}
 
-    /**
+	public static IPath getValidEnclosingFolder(IPath fullPath) {
+		IWorkspaceRoot root = getWorkspaceRoot();
+		if (root != null) {
+			IPath path = getWorkspaceRelativePath(fullPath);
+			while (path.segmentCount() > 0) {
+				IResource res = root.findMember(path);
+				if (res != null && res.exists()
+						&& (res.getType() == IResource.PROJECT || res.getType() == IResource.FOLDER))
+					return path;
+
+				path = path.removeLastSegments(1);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Checks whether path1 is the same as path2.
 	 * <p>
-     * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
-     * into account.
-     * 
+	 * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
+	 * into account.
+	 * 
 	 * @return {@code true} if path1 is the same as path2, and {@code false} otherwise
-     *
-     * @since 5.1
-     * @deprecated Use {@link #equalPath(IPath, IPath)} instead.
-     */
+	 *
+	 * @since 5.1
+	 * @deprecated Use {@link #equalPath(IPath, IPath)} instead.
+	 */
 	@Deprecated
 	public boolean equal(IPath path1, IPath path2) {
 		// Check leading separators
@@ -233,15 +234,15 @@ public class PathUtil {
 		}
 	}
 
-    /**
+	/**
 	 * Checks whether path1 is the same as path2.
 	 * <p>
-     * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
-     * into account.
+	 * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
+	 * into account.
 	 *
 	 * @return {@code true} if path1 is the same as path2, and {@code false} otherwise
-     * @since 5.3
-     */
+	 * @since 5.3
+	 */
 	public static boolean equalPath(IPath path1, IPath path2) {
 		// Check leading separators
 		if (path1.isAbsolute() != path2.isAbsolute() || path1.isUNC() != path2.isUNC()) {
@@ -254,9 +255,8 @@ public class PathUtil {
 		// Check segments in reverse order - later segments more likely to differ
 		boolean caseSensitive = !isWindowsFileSystem();
 		while (--i >= 0) {
-			if (!(caseSensitive ?
-					path1.segment(i).equals(path2.segment(i)) :
-					path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
+			if (!(caseSensitive ? path1.segment(i).equals(path2.segment(i))
+					: path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
 				return false;
 			}
 		}
@@ -268,19 +268,19 @@ public class PathUtil {
 		}
 	}
 
-    /**
+	/**
 	 * Checks whether path1 is a prefix of path2. To be a prefix, path1's segments
 	 * must appear in path1 in the same order, and their device ids must match.
 	 * <p>
 	 * An empty path is a prefix of all paths with the same device; a root path is a prefix of
 	 * all absolute paths with the same device.
 	 * <p>
-     * Similar to IPath.isPrefixOf(IPath anotherPath), but takes case sensitivity of the file system
-     * into account.
+	 * Similar to IPath.isPrefixOf(IPath anotherPath), but takes case sensitivity of the file system
+	 * into account.
 	 *
 	 * @return {@code true} if path1 is a prefix of path2, and {@code false} otherwise
-     * @since 5.1
-     */
+	 * @since 5.1
+	 */
 	public static boolean isPrefix(IPath path1, IPath path2) {
 		if (path1.getDevice() == null) {
 			if (path2.getDevice() != null) {
@@ -300,9 +300,8 @@ public class PathUtil {
 		}
 		boolean caseSensitive = !isWindowsFileSystem();
 		for (int i = 0; i < len1; i++) {
-			if (!(caseSensitive ?
-					path1.segment(i).equals(path2.segment(i)) :
-					path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
+			if (!(caseSensitive ? path1.segment(i).equals(path2.segment(i))
+					: path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
 				return false;
 			}
 		}
@@ -317,7 +316,7 @@ public class PathUtil {
 	 * of the file system into account.
 	 *
 	 * @return the number of matching segments
-     * @since 5.1
+	 * @since 5.1
 	 */
 	public static int matchingFirstSegments(IPath path1, IPath path2) {
 		Assert.isNotNull(path1);
@@ -328,9 +327,8 @@ public class PathUtil {
 		int count = 0;
 		boolean caseSensitive = !isWindowsFileSystem();
 		for (int i = 0; i < max; i++) {
-			if (!(caseSensitive ?
-					path1.segment(i).equals(path2.segment(i)) :
-					path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
+			if (!(caseSensitive ? path1.segment(i).equals(path2.segment(i))
+					: path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
 				return count;
 			}
 			count++;

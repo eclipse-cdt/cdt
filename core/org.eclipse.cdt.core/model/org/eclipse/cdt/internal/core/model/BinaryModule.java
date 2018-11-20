@@ -65,7 +65,7 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 */
 	@Override
 	public IBinary getBinary() {
-		return (IBinary)getParent();
+		return (IBinary) getParent();
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +73,7 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 */
 	@Override
 	public IResource getResource() {
-		IWorkspaceRoot root =  getCModel().getWorkspace().getRoot();
+		IWorkspaceRoot root = getCModel().getWorkspace().getRoot();
 		IPath path = getPath();
 		if (path != null) {
 			return root.getFileForLocation(fPath);
@@ -109,7 +109,8 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) throws CModelException {
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor)
+			throws CModelException {
 		newElements.put(this, info);
 	}
 

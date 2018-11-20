@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.ui.actions.AbstractUpdateIndexHandler;
 public class FindUnresolvedIncludesHandler extends AbstractUpdateIndexHandler {
 
 	private final FindUnresolvedIncludesProjectAction findUnresolvedIncludesAction = new FindUnresolvedIncludesProjectAction();
-	
+
 	@Override
 	public AbstractUpdateIndexAction getAction() {
 		return findUnresolvedIncludesAction;

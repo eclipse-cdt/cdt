@@ -29,10 +29,10 @@ import org.eclipse.cdt.internal.corext.util.Strings;
  */
 public class BasicElementLabels {
 	// TextProcessor delimiters
-	private static final String CODE_DELIMITERS= TextProcessor.getDefaultDelimiters() + "<>()?,{}+-*!%=^|&;[]~"; //$NON-NLS-1$
-	private static final String FILE_PATTERN_DELIMITERS= TextProcessor.getDefaultDelimiters() + "*.?"; //$NON-NLS-1$
-	private static final String URL_DELIMITERS= TextProcessor.getDefaultDelimiters() + ":@?-"; //$NON-NLS-1$
-	
+	private static final String CODE_DELIMITERS = TextProcessor.getDefaultDelimiters() + "<>()?,{}+-*!%=^|&;[]~"; //$NON-NLS-1$
+	private static final String FILE_PATTERN_DELIMITERS = TextProcessor.getDefaultDelimiters() + "*.?"; //$NON-NLS-1$
+	private static final String URL_DELIMITERS = TextProcessor.getDefaultDelimiters() + ":@?-"; //$NON-NLS-1$
+
 	/**
 	 * Returns the label of a path.
 	 *
@@ -43,9 +43,9 @@ public class BasicElementLabels {
 	public static String getPathLabel(IPath path, boolean isOSPath) {
 		String label;
 		if (isOSPath) {
-			label= path.toOSString();
+			label = path.toOSString();
 		} else {
-			label= path.makeRelative().toString();
+			label = path.makeRelative().toString();
 		}
 		return Strings.markLTR(label);
 	}

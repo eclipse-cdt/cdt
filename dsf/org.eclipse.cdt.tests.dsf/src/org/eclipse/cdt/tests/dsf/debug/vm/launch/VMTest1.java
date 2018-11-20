@@ -47,100 +47,101 @@ import org.junit.Test;
  */
 public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstants {
 
-    @Override
-    protected String getProgramPath() {
-        File programFile = PDAPlugin.getFileInPlugin(new Path("samples/example.pda"));
-        return programFile.getPath();
-    }
+	@Override
+	protected String getProgramPath() {
+		File programFile = PDAPlugin.getFileInPlugin(new Path("samples/example.pda"));
+		return programFile.getPath();
+	}
 
-    @Test
-    public void testRun() throws Throwable {
-        
-        Display display = Display.getDefault();
-        
-        final VirtualTreeModelViewer dv = new VirtualTreeModelViewer(
-            display, 0, new PresentationContext(IDebugUIConstants.ID_DEBUG_VIEW));
-        
-        TestModelUpdatesListener listener = new TestModelUpdatesListener(dv, false, false);
+	@Test
+	public void testRun() throws Throwable {
 
-        // Wait for container expand delta, sent by the model upon DV install event.
-        final boolean[] containerExpandReceived = new boolean[1];
-        containerExpandReceived[0] = false;
-        dv.addModelChangedListener(new IModelChangedListener() {
-            @Override
-	    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-                delta.accept(new IModelDeltaVisitor() {
-                    @Override
-		    public boolean visit(IModelDelta delta, int depth) {
-                        if (delta.getElement() instanceof IDMVMContext &&
-                            ((IDMVMContext)delta.getElement()).getDMContext() instanceof IContainerDMContext &&
-                            (delta.getFlags() & IModelDelta.EXPAND) != 0) 
-                        {
-                            containerExpandReceived[0] = true;
-                            return false;
-                        }
-                        return true;
-                    }
-                });
-            }
-        });
-        
-        dv.setInput(DebugPlugin.getDefault().getLaunchManager());
-        
-        while(!containerExpandReceived[0]) {
-            if (!display.readAndDispatch()) display.sleep();
-        }
-        
-        listener.reset();
-        
-        // TODO: need to wait for the install delta for the launch to be processed
-        while (!listener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-            if (!display.readAndDispatch()) display.sleep();
-        }
-        
-        // Find our launch
-        int launchIdx = dv.findElementIndex(TreePath.EMPTY, getLaunch());
-        Assert.assertTrue(-1 != launchIdx);
-        
-        // Find the debug container
-        TreePath launchPath = TreePath.EMPTY.createChildPath(getLaunch());
-        int launchChildCount = dv.getChildCount(launchPath);
-        IDMVMContext _containerVMC = null;
-        for (int i = 0; i < launchChildCount; i++) {
-            Object launchChild = dv.getChildElement(launchPath, i);
-            if (launchChild instanceof IDMVMContext && 
-                ((IDMVMContext)launchChild).getDMContext() instanceof IContainerDMContext) 
-            {
-                _containerVMC = (IDMVMContext)launchChild;
-            }
-        }
-        Assert.assertNotNull(_containerVMC);
-        final IDMVMContext containerVMC = _containerVMC;
-        final TreePath containerPath = launchPath.createChildPath(containerVMC);
-        final IElementPropertiesProvider containerPropProvider = 
-            containerVMC.getAdapter(IElementPropertiesProvider.class);
-        Assert.assertNotNull(containerPropProvider);
-        
-        // Check if container is suspended.
-        Query<Map<String,Object>> suspendedQuery = new Query<Map<String,Object>>() {
-            @Override
-            protected void execute(DataRequestMonitor<Map<String, Object>> rm) {
-                Set<String> properties = new HashSet<String>();
-                properties.add(ILaunchVMConstants.PROP_IS_SUSPENDED);
-                
-                containerPropProvider.update( new VMPropertiesUpdate[] {
-                    new VMPropertiesUpdate(properties, containerPath, dv.getInput(), dv.getPresentationContext(), rm) });
-            }
-        };
-        suspendedQuery.run();
+		Display display = Display.getDefault();
 
-        // Wait for the properties update to complete
-        while (!suspendedQuery.isDone()) {
-            if (!display.readAndDispatch()) display.sleep();
-        }
-        
-        Map<String,Object> properties = suspendedQuery.get();
-        Assert.assertEquals(Boolean.TRUE, properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-        
-    }
+		final VirtualTreeModelViewer dv = new VirtualTreeModelViewer(display, 0,
+				new PresentationContext(IDebugUIConstants.ID_DEBUG_VIEW));
+
+		TestModelUpdatesListener listener = new TestModelUpdatesListener(dv, false, false);
+
+		// Wait for container expand delta, sent by the model upon DV install event.
+		final boolean[] containerExpandReceived = new boolean[1];
+		containerExpandReceived[0] = false;
+		dv.addModelChangedListener(new IModelChangedListener() {
+			@Override
+			public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+				delta.accept(new IModelDeltaVisitor() {
+					@Override
+					public boolean visit(IModelDelta delta, int depth) {
+						if (delta.getElement() instanceof IDMVMContext
+								&& ((IDMVMContext) delta.getElement()).getDMContext() instanceof IContainerDMContext
+								&& (delta.getFlags() & IModelDelta.EXPAND) != 0) {
+							containerExpandReceived[0] = true;
+							return false;
+						}
+						return true;
+					}
+				});
+			}
+		});
+
+		dv.setInput(DebugPlugin.getDefault().getLaunchManager());
+
+		while (!containerExpandReceived[0]) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+
+		listener.reset();
+
+		// TODO: need to wait for the install delta for the launch to be processed
+		while (!listener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+
+		// Find our launch
+		int launchIdx = dv.findElementIndex(TreePath.EMPTY, getLaunch());
+		Assert.assertTrue(-1 != launchIdx);
+
+		// Find the debug container
+		TreePath launchPath = TreePath.EMPTY.createChildPath(getLaunch());
+		int launchChildCount = dv.getChildCount(launchPath);
+		IDMVMContext _containerVMC = null;
+		for (int i = 0; i < launchChildCount; i++) {
+			Object launchChild = dv.getChildElement(launchPath, i);
+			if (launchChild instanceof IDMVMContext
+					&& ((IDMVMContext) launchChild).getDMContext() instanceof IContainerDMContext) {
+				_containerVMC = (IDMVMContext) launchChild;
+			}
+		}
+		Assert.assertNotNull(_containerVMC);
+		final IDMVMContext containerVMC = _containerVMC;
+		final TreePath containerPath = launchPath.createChildPath(containerVMC);
+		final IElementPropertiesProvider containerPropProvider = containerVMC
+				.getAdapter(IElementPropertiesProvider.class);
+		Assert.assertNotNull(containerPropProvider);
+
+		// Check if container is suspended.
+		Query<Map<String, Object>> suspendedQuery = new Query<Map<String, Object>>() {
+			@Override
+			protected void execute(DataRequestMonitor<Map<String, Object>> rm) {
+				Set<String> properties = new HashSet<String>();
+				properties.add(ILaunchVMConstants.PROP_IS_SUSPENDED);
+
+				containerPropProvider.update(new VMPropertiesUpdate[] { new VMPropertiesUpdate(properties,
+						containerPath, dv.getInput(), dv.getPresentationContext(), rm) });
+			}
+		};
+		suspendedQuery.run();
+
+		// Wait for the properties update to complete
+		while (!suspendedQuery.isDone()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+
+		Map<String, Object> properties = suspendedQuery.get();
+		Assert.assertEquals(Boolean.TRUE, properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
+
+	}
 }

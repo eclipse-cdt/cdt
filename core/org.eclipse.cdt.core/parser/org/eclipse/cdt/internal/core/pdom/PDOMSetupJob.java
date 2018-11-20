@@ -35,24 +35,24 @@ public class PDOMSetupJob extends Job {
 
 	PDOMSetupJob(PDOMManager manager) {
 		super(Messages.PDOMManager_StartJob_name);
-		fManager= manager;
+		fManager = manager;
 	}
-	
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		while (true) {
-			ICProject cproject= fManager.getNextProject();
+			ICProject cproject = fManager.getNextProject();
 			if (cproject == null)
 				return Status.OK_STATUS;
-			
-			final IProject project= cproject.getProject();
+
+			final IProject project = cproject.getProject();
 			monitor.setTaskName(project.getName());
 			if (!project.isOpen()) {
-				if (fManager.fTraceIndexerSetup) 
+				if (fManager.fTraceIndexerSetup)
 					System.out.println("Indexer: Project is not open: " + project.getName()); //$NON-NLS-1$
 			} else if (fManager.postponeSetup(cproject)) {
-				if (fManager.fTraceIndexerSetup) 
+				if (fManager.fTraceIndexerSetup)
 					System.out.println("Indexer: Setup is postponed: " + project.getName()); //$NON-NLS-1$
 			} else {
 				syncronizeProjectSettings(project, progress.newChild(1));
@@ -63,7 +63,7 @@ public class PDOMSetupJob extends Job {
 						Thread.currentThread().interrupt();
 						return Status.CANCEL_STATUS;
 					}
-				} else if (fManager.fTraceIndexerSetup) { 
+				} else if (fManager.fTraceIndexerSetup) {
 					System.out.println("Indexer: No action, indexer already exists: " + project.getName()); //$NON-NLS-1$
 				}
 			}
@@ -72,7 +72,7 @@ public class PDOMSetupJob extends Job {
 
 	private void syncronizeProjectSettings(IProject project, IProgressMonitor monitor) {
 		try {
-			IFolder settings= project.getFolder(SETTINGS_FOLDER_NAME);  
+			IFolder settings = project.getFolder(SETTINGS_FOLDER_NAME);
 			settings.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

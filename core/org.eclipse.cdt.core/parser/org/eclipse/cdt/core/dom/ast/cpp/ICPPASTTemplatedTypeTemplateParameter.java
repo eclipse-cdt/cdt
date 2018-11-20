@@ -80,7 +80,6 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 	 */
 	public IASTExpression getDefaultValue();
 
-	
 	/**
 	 * @since 5.1
 	 */

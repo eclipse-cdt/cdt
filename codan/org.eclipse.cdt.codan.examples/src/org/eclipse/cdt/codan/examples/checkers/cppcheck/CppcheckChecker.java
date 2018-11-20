@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
  * saved.
  */
 public class CppcheckChecker extends AbstractExternalToolBasedChecker {
-	private static final String TOOL_NAME = Messages.CppcheckChecker_toolName; 
+	private static final String TOOL_NAME = Messages.CppcheckChecker_toolName;
 	private static final String EXECUTABLE_NAME = "cppcheck"; //$NON-NLS-1$
 	private static final String DEFAULT_ARGS = "--enable=all"; //$NON-NLS-1$
 

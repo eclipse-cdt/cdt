@@ -32,107 +32,103 @@ import org.eclipse.swt.widgets.ScrollBar;
  */
 public class VirtualSourceViewer extends SourceViewer {
 
-    private SelectionListener fScrollSelectionListener;
+	private SelectionListener fScrollSelectionListener;
 
-    public VirtualSourceViewer( Composite parent, IVerticalRuler ruler, int styles ) {
-        this( parent, ruler, null, false, styles );
-    }
+	public VirtualSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		this(parent, ruler, null, false, styles);
+	}
 
-    public VirtualSourceViewer( Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, boolean showAnnotationsOverview, int styles ) {
-        super( parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles );
-        initScrollBarListener();
-        initControlListener();
-    }
+	public VirtualSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
+			boolean showAnnotationsOverview, int styles) {
+		super(parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles);
+		initScrollBarListener();
+		initControlListener();
+	}
 
-    public VirtualDocument getVirtualDocument() {
-        return (VirtualDocument)getDocument();
-    }
+	public VirtualDocument getVirtualDocument() {
+		return (VirtualDocument) getDocument();
+	}
 
-    private void initControlListener() {
-        getTextWidget().addControlListener( new ControlListener() {
+	private void initControlListener() {
+		getTextWidget().addControlListener(new ControlListener() {
 
-            @Override
-			public void controlMoved( ControlEvent e ) {
-            }
-            
-            @Override
-			public void controlResized( ControlEvent e ) {
-                handleControlResized();
-            }
-        } );
-    }
+			@Override
+			public void controlMoved(ControlEvent e) {
+			}
 
-    private void initScrollBarListener() {
-        ScrollBar scroll = getTextWidget().getVerticalBar();
-        fScrollSelectionListener = new SelectionAdapter() {
-            
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            @Override
-            public void widgetSelected( SelectionEvent e ) {
-                handleScrollBarSelection( e );
-            }
-        };
-        scroll.addSelectionListener( fScrollSelectionListener );
-    }
+			@Override
+			public void controlResized(ControlEvent e) {
+				handleControlResized();
+			}
+		});
+	}
 
-    public int getNumberOfVisibleLines() {
-        StyledText widget = getTextWidget();
-        if ( widget != null ) {
-            Rectangle clArea = widget.getClientArea();
-            if ( !clArea.isEmpty() ) {
-                return (clArea.height / widget.getLineHeight()) + 1;
-            }
-        }
-        return 0;
-    }
-    
-    protected void handleScrollBarSelection( SelectionEvent e ) {
-        int offset = getVirtualDocument().getCurrentOffset();
-        int lines = getNumberOfVisibleLines();
-        if ( e.detail == SWT.ARROW_UP ) {
-            --offset;
-        }
-        else if ( e.detail == SWT.ARROW_DOWN ) {
-            ++offset;
-        }
-        else if ( e.detail == SWT.PAGE_UP ) {
-            offset -= lines;
-        }
-        else if ( e.detail == SWT.PAGE_DOWN ) {
-            offset += lines;
-        }
-        else if ( e.detail == SWT.HOME ) {
-        }
-        else if ( e.detail == SWT.END ) {
-        }
-        getVirtualDocument().updateContent( lines, offset, false );
-    }
+	private void initScrollBarListener() {
+		ScrollBar scroll = getTextWidget().getVerticalBar();
+		fScrollSelectionListener = new SelectionAdapter() {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.TextViewer#refresh()
-     */
-    @Override
-    public void refresh() {
-        refresh( false );
-    }
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleScrollBarSelection(e);
+			}
+		};
+		scroll.addSelectionListener(fScrollSelectionListener);
+	}
 
-    public void refresh( boolean revealInput ) {
-        VirtualDocument document = getVirtualDocument();
-        document.updateContent( getNumberOfVisibleLines(), getVirtualDocument().getCurrentOffset(), revealInput );
-    }
+	public int getNumberOfVisibleLines() {
+		StyledText widget = getTextWidget();
+		if (widget != null) {
+			Rectangle clArea = widget.getClientArea();
+			if (!clArea.isEmpty()) {
+				return (clArea.height / widget.getLineHeight()) + 1;
+			}
+		}
+		return 0;
+	}
 
-    protected void handleControlResized() {
-        getVirtualDocument().updateContent( getNumberOfVisibleLines(), getVirtualDocument().getCurrentOffset(), false );
-    }
+	protected void handleScrollBarSelection(SelectionEvent e) {
+		int offset = getVirtualDocument().getCurrentOffset();
+		int lines = getNumberOfVisibleLines();
+		if (e.detail == SWT.ARROW_UP) {
+			--offset;
+		} else if (e.detail == SWT.ARROW_DOWN) {
+			++offset;
+		} else if (e.detail == SWT.PAGE_UP) {
+			offset -= lines;
+		} else if (e.detail == SWT.PAGE_DOWN) {
+			offset += lines;
+		} else if (e.detail == SWT.HOME) {
+		} else if (e.detail == SWT.END) {
+		}
+		getVirtualDocument().updateContent(lines, offset, false);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewer#handleDispose()
-     */
-    @Override
-    protected void handleDispose() {
-        getVirtualDocument().dispose();
-        super.handleDispose();
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.TextViewer#refresh()
+	 */
+	@Override
+	public void refresh() {
+		refresh(false);
+	}
+
+	public void refresh(boolean revealInput) {
+		VirtualDocument document = getVirtualDocument();
+		document.updateContent(getNumberOfVisibleLines(), getVirtualDocument().getCurrentOffset(), revealInput);
+	}
+
+	protected void handleControlResized() {
+		getVirtualDocument().updateContent(getNumberOfVisibleLines(), getVirtualDocument().getCurrentOffset(), false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewer#handleDispose()
+	 */
+	@Override
+	protected void handleDispose() {
+		getVirtualDocument().dispose();
+		super.handleDispose();
+	}
 }

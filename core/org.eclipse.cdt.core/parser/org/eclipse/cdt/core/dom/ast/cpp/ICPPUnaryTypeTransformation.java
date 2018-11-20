@@ -33,14 +33,14 @@ public interface ICPPUnaryTypeTransformation extends IType {
 	 * Identifies the type transformation operator being applied.
 	 */
 	public enum Operator {
-		underlying_type  // the integer type underlying an enumeration type 
+		underlying_type // the integer type underlying an enumeration type 
 	}
 
 	/**
 	 * Returns the type transformation operator being applied.
 	 */
 	Operator getOperator();
-	
+
 	/**
 	 * Returns the type to which the type transformation operator is being applied.
 	 */

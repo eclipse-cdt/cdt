@@ -31,7 +31,8 @@ public class PDOMFastIndexer extends AbstractPDOMIndexer {
 	}
 
 	@Override
-	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed) {
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
 		return new PDOMFastIndexerTask(this, added, changed, removed);
 	}
 }

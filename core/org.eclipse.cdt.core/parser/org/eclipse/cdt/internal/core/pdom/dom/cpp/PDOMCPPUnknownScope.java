@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -27,22 +27,22 @@ public class PDOMCPPUnknownScope extends CPPUnknownTypeScope implements IIndexSc
 	public PDOMCPPUnknownScope(IIndexFragmentBinding binding, IASTName name) {
 		super((IType) binding, name);
 	}
-		
+
 	@Override
 	public IIndexName getScopeName() {
 		return null;
 	}
-	
+
 	@Override
 	public IIndexScope getParent() {
 		return getScopeBinding().getScope();
 	}
-	
+
 	@Override
 	public IIndexFragmentBinding getScopeBinding() {
 		return (IIndexFragmentBinding) super.getScopeType();
 	}
-	
+
 	@Override
 	// Needs to be thread-safe.
 	protected synchronized IBinding getOrCreateBinding(char[] name, int idx) {

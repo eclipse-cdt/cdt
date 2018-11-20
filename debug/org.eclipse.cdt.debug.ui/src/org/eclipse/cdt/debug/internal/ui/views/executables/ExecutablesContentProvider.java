@@ -34,7 +34,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 import com.ibm.icu.text.DateFormat;
 
-class ExecutablesContentProvider extends ColumnLabelProvider implements IStructuredContentProvider, ITreeContentProvider, IExecutablesChangeListener {
+class ExecutablesContentProvider extends ColumnLabelProvider
+		implements IStructuredContentProvider, ITreeContentProvider, IExecutablesChangeListener {
 
 	final private TreeViewer viewer;
 
@@ -98,7 +99,8 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 				IPath path = exe.getPath();
 				if (path != null && path.toFile().exists()) {
 					long modified = path.toFile().lastModified();
-					cellText = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date(modified));
+					cellText = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+							.format(new Date(modified));
 				}
 				cell.setImage(null);
 			} else if (cell.getColumnIndex() == 5) {
@@ -134,7 +136,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				viewer.refresh(null);
 				if (viewer instanceof BaseViewer) {
-					((BaseViewer)viewer).packColumns();						
+					((BaseViewer) viewer).packColumns();
 				}
 				return Status.OK_STATUS;
 			}

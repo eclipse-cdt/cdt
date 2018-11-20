@@ -18,8 +18,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public abstract class AbstractConfigurePropertyOptionsPage extends
-		FieldEditorPreferencePage {
+public abstract class AbstractConfigurePropertyOptionsPage extends FieldEditorPreferencePage {
 
 	private boolean dirty = false;
 	private String name;
@@ -28,16 +27,16 @@ public abstract class AbstractConfigurePropertyOptionsPage extends
 		this(GRID);
 		this.name = name;
 	}
-	
+
 	protected String getName() {
 		return name;
 	}
-	
+
 	protected AbstractConfigurePropertyOptionsPage(int style) {
 		super(style);
 		noDefaultAndApplyButton();
 	}
-	
+
 	@Override
 	protected void createFieldEditors() {
 		// Get the preference store for the build settings
@@ -50,17 +49,26 @@ public abstract class AbstractConfigurePropertyOptionsPage extends
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-	    super.propertyChange(event);
+		super.propertyChange(event);
 		if (event.getProperty().equals(FieldEditor.VALUE)) {
-		    setDirty(true);
+			setDirty(true);
 		}
 	}
 
-	public void setDirty(boolean b) {  dirty = b; }
-	public boolean isDirty() { return dirty; }
-	public void storeSettings() { super.performOk(); }
+	public void setDirty(boolean b) {
+		dirty = b;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void storeSettings() {
+		super.performOk();
+	}
 
 	public abstract void updateFields();
+
 	public abstract void setValues();
 
 }

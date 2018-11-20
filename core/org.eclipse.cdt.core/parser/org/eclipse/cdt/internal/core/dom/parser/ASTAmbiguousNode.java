@@ -33,9 +33,9 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * Base implementation for all ambiguous nodes.
  */
-public abstract class ASTAmbiguousNode extends ASTNode  {
+public abstract class ASTAmbiguousNode extends ASTNode {
 
-    public static class NameCollector extends ASTVisitor {
+	public static class NameCollector extends ASTVisitor {
 		private IASTName[] names = new IASTName[2];
 		private int namesPos = -1;
 
@@ -60,19 +60,19 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 
 	private IASTNode fResolution;
 
-    /**
-     * Return the alternative nodes for this ambiguity.
-     */
-    public abstract IASTNode[] getNodes();
+	/**
+	 * Return the alternative nodes for this ambiguity.
+	 */
+	public abstract IASTNode[] getNodes();
 
-    @Override
+	@Override
 	public final boolean accept(ASTVisitor visitor) {
-    	if (visitor.shouldVisitAmbiguousNodes && visitor.visit(this) == ASTVisitor.PROCESS_ABORT)
-    		return false;
+		if (visitor.shouldVisitAmbiguousNodes && visitor.visit(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
-    	// Alternatives are not visited on purpose.
-    	return true;
-    }
+		// Alternatives are not visited on purpose.
+		return true;
+	}
 
 	protected void beforeResolution() {
 	}
@@ -84,16 +84,16 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	}
 
 	public IASTNode resolveAmbiguity(ASTVisitor resolver) {
-		return fResolution= doResolveAmbiguity(resolver);
+		return fResolution = doResolveAmbiguity(resolver);
 	}
 
-    protected IASTNode doResolveAmbiguity(ASTVisitor resolver) {
-    	beforeResolution();
-		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
-		IASTNode nodeToReplace= this;
+	protected IASTNode doResolveAmbiguity(ASTVisitor resolver) {
+		beforeResolution();
+		final IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+		IASTNode nodeToReplace = this;
 
-		final IASTNode[] alternatives= getNodes();
-		IASTNode bestAlternative= null;
+		final IASTNode[] alternatives = getNodes();
+		IASTNode bestAlternative = null;
 
 		int minIssues = Integer.MAX_VALUE;
 		for (IASTNode alternative : alternatives) {
@@ -103,16 +103,16 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 			beforeAlternative(alternative);
 
 			// Handle nested ambiguities
-			alternative= resolveNestedAmbiguities(alternative, resolver);
-			nodeToReplace= alternative;
+			alternative = resolveNestedAmbiguities(alternative, resolver);
+			nodeToReplace = alternative;
 
 			// Find nested names
-			final NameCollector nameCollector= new NameCollector();
+			final NameCollector nameCollector = new NameCollector();
 			alternative.accept(nameCollector);
-			final IASTName[] names= nameCollector.getNames();
+			final IASTName[] names = nameCollector.getNames();
 
 			// Resolve names and count issues
-			int issues= 0;
+			int issues = 0;
 			for (IASTName name : names) {
 				try {
 					// Avoid resolution of parameters (can always be resolved),
@@ -120,14 +120,14 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 					// while the declarator is still ambiguous. Could be solved by introducing an
 					// intermediate binding for parameters, similar to template parameters.
 					if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME) {
-						IASTNode parent= name.getParent();
+						IASTNode parent = name.getParent();
 						if (parent instanceof IASTDeclarator) {
-							parent= ASTQueries.findOutermostDeclarator((IASTDeclarator) parent);
+							parent = ASTQueries.findOutermostDeclarator((IASTDeclarator) parent);
 							if (parent.getPropertyInParent() == IASTParameterDeclaration.DECLARATOR)
 								continue;
 						}
 					}
-					IBinding b= name.resolvePreBinding();
+					IBinding b = name.resolvePreBinding();
 					if (b instanceof IProblemBinding) {
 						issues++;
 					}
@@ -139,8 +139,8 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 				}
 			}
 			if (issues < minIssues) {
-				minIssues= issues;
-				bestAlternative= alternative;
+				minIssues = issues;
+				bestAlternative = alternative;
 				if (issues == 0) {
 					break;
 				}
@@ -165,24 +165,24 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	public final IType getExpressionType() {
 		logAmbiguousNodeError();
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
-    }
+	}
 
 	public final ValueCategory getValueCategory() {
 		logAmbiguousNodeError();
 		return ValueCategory.PRVALUE;
-    }
+	}
 
-    public final boolean isLValue() {
+	public final boolean isLValue() {
 		logAmbiguousNodeError();
 		return false;
-    }
+	}
 
-    public final ICPPEvaluation getEvaluation() {
+	public final ICPPEvaluation getEvaluation() {
 		logAmbiguousNodeError();
 		return EvalFixed.INCOMPLETE;
 	}
 
-    public final ICPPExecution getExecution() {
+	public final ICPPExecution getExecution() {
 		logAmbiguousNodeError();
 		return null;
 	}

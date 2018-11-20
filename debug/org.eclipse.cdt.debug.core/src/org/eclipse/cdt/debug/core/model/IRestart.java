@@ -16,6 +16,7 @@
 package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.DebugException;
+
 /**
  * Provides the ability to restart a debug target.  
  * <p>
@@ -29,8 +30,7 @@ import org.eclipse.debug.core.DebugException;
  * 
  * @see org.eclipse.debug.core.commands.IRestartHandler
  */
-public interface IRestart 
-{
+public interface IRestart {
 	/**
 	 * Returns whether this element can currently be restarted.
 	 *
@@ -45,4 +45,3 @@ public interface IRestart
 	 */
 	public void restart() throws DebugException;
 }
-

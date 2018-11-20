@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -35,18 +34,18 @@ public class CPPFilt {
 	public CPPFilt(String command, String[] params) throws IOException {
 		init(command, params);
 	}
-	
+
 	public CPPFilt(String command) throws IOException {
 		this(command, new String[0]);
 	}
-	
+
 	public CPPFilt() throws IOException {
 		this("c++filt"); //$NON-NLS-1$
 	}
 
 	protected void init(String command, String[] params) throws IOException {
 		if (params == null || params.length == 0) {
-			args = new String[] {command};
+			args = new String[] { command };
 		} else {
 			args = new String[params.length + 1];
 			args[0] = command;
@@ -54,14 +53,14 @@ public class CPPFilt {
 		}
 		cppfilt = ProcessFactory.getFactory().exec(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(cppfilt.getOutputStream()));
-		stdout = new BufferedReader(new InputStreamReader(cppfilt.getInputStream()));			
+		stdout = new BufferedReader(new InputStreamReader(cppfilt.getInputStream()));
 	}
 
 	public String getFunction(String symbol) throws IOException {
 		stdin.write(symbol + "\n"); //$NON-NLS-1$
 		stdin.flush();
 		String str = stdout.readLine();
-		if ( str != null ) {
+		if (str != null) {
 			return str.trim();
 		}
 		throw new IOException();
@@ -72,9 +71,8 @@ public class CPPFilt {
 			//stdin.write(-1);
 			stdout.close();
 			stdin.close();
-			cppfilt.getErrorStream().close();		
-		}
-		catch (IOException e) {
+			cppfilt.getErrorStream().close();
+		} catch (IOException e) {
 		}
 		cppfilt.destroy();
 		//isDisposed = true;

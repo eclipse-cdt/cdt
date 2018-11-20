@@ -39,6 +39,6 @@ public class MIExpressionsNonStopTest extends MIExpressionsTest {
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
 
-    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, true);
+		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, true);
 	}
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -27,16 +27,16 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 	PDOMMacroDefinitionName(PDOMMacro macro) {
 		fMacro = macro;
 	}
-	
+
 	public PDOMMacro getMacro() {
 		return fMacro;
 	}
-	
+
 	@Override
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isPotentialMatch() throws CoreException {
 		return false;
@@ -61,6 +61,7 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 	public int getNodeLength() {
 		return fMacro.getNodeLength();
 	}
+
 	@Override
 	public int getNodeOffset() {
 		return fMacro.getNodeOffset();
@@ -116,7 +117,7 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 	public String toString() {
 		return new String(getSimpleID());
 	}
-	
+
 	@Override
 	public char[] getSimpleID() {
 		return fMacro.getNameCharArray();

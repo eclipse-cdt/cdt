@@ -69,18 +69,15 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 
 		// Add the configuration selection page
 		projectConfigurationPage = new CProjectPlatformPage(PREFIX);
-		projectConfigurationPage.setTitle(AutotoolsUIPlugin
-				.getResourceString(CONF_TITLE));
-		projectConfigurationPage.setDescription(AutotoolsUIPlugin
-				.getResourceString(CONF_DESC));
+		projectConfigurationPage.setTitle(AutotoolsUIPlugin.getResourceString(CONF_TITLE));
+		projectConfigurationPage.setDescription(AutotoolsUIPlugin.getResourceString(CONF_DESC));
 		addPage(projectConfigurationPage);
 
 		// add custom pages
 		MBSCustomPageManager.init();
 
 		// add stock pages
-		MBSCustomPageManager.addStockPage(projectConfigurationPage,
-				CProjectPlatformPage.PAGE_ID);
+		MBSCustomPageManager.addStockPage(projectConfigurationPage, CProjectPlatformPage.PAGE_ID);
 
 	}
 
@@ -107,21 +104,16 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 				// Create Project
 				try {
 					IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					IProject project = workspace.getRoot().getProject(
-							projectName);
+					IProject project = workspace.getRoot().getProject(projectName);
 
-					IProjectDescription description = workspace
-							.newProjectDescription(projectName);
-					IPath defaultLocation = workspace.getRoot().getLocation()
-							.append(projectName);
+					IProjectDescription description = workspace.newProjectDescription(projectName);
+					IPath defaultLocation = workspace.getRoot().getLocation().append(projectName);
 					Path location = new Path(locationStr);
-					if (!location.isEmpty()
-							&& !location.equals(defaultLocation)) {
+					if (!location.isEmpty() && !location.equals(defaultLocation)) {
 						description.setLocation(location);
 					}
 
-					CCorePlugin.getDefault().createCDTProject(description,
-							project, monitor);
+					CCorePlugin.getDefault().createCDTProject(description, project, monitor);
 
 					// C++ natures
 					if (isCPP) {
@@ -129,34 +121,27 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 					}
 
 					// Set up build information
-					ICProjectDescriptionManager pdMgr = CoreModel.getDefault()
-							.getProjectDescriptionManager();
-					ICProjectDescription projDesc = pdMgr
-							.createProjectDescription(project, false);
-					ManagedBuildInfo info = ManagedBuildManager
-							.createBuildInfo(project);
+					ICProjectDescriptionManager pdMgr = CoreModel.getDefault().getProjectDescriptionManager();
+					ICProjectDescription projDesc = pdMgr.createProjectDescription(project, false);
+					ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 					ManagedProject mProj = new ManagedProject(projDesc);
 					info.setManagedProject(mProj);
 					monitor.worked(1);
 
 					CfgHolder cfgHolder = new CfgHolder(toolChain, null);
 					String s = toolChain == null ? "0" : ((ToolChain) toolChain).getId(); //$NON-NLS-1$
-					Configuration config = new Configuration(mProj,
-							(ToolChain) toolChain,
-							ManagedBuildManager.calculateChildId(s, null),
-							cfgHolder.getName());
+					Configuration config = new Configuration(mProj, (ToolChain) toolChain,
+							ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
 					IBuilder builder = config.getEditableBuilder();
 					builder.setManagedBuildOn(false);
 					CConfigurationData data = config.getConfigurationData();
-					projDesc.createConfiguration(
-							ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+					projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 					monitor.worked(1);
 
 					pdMgr.setProjectDescription(project, projDesc);
 
 					// Convert the created project to an Autotools project
-					page.convertProject(
-							project, monitor, projectName);
+					page.convertProject(project, monitor, projectName);
 				} catch (Throwable e) {
 				}
 				monitor.done();

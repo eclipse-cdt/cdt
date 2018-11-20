@@ -28,11 +28,10 @@ import org.eclipse.jface.viewers.TreePath;
  * Extending classes can override {@link #supportFormat(IVMContext)} to return false
  * if they do not want to support individual element formatting.
  */
-abstract public class AbstractElementVMProvider extends AbstractDMVMProvider implements IElementFormatProvider
-{
+abstract public class AbstractElementVMProvider extends AbstractDMVMProvider implements IElementFormatProvider {
 	private final IElementFormatProvider fElementFormatProvider;
-	
-	public AbstractElementVMProvider(AbstractVMAdapter adapter,  IPresentationContext context, DsfSession session) {
+
+	public AbstractElementVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
 		super(adapter, context, session);
 		fElementFormatProvider = createElementNumberFormatProvider(this, getSession());
 	}
@@ -40,10 +39,11 @@ abstract public class AbstractElementVMProvider extends AbstractDMVMProvider imp
 	@Override
 	public void dispose() {
 		if (fElementFormatProvider instanceof ElementNumberFormatProvider) {
-			((ElementNumberFormatProvider)fElementFormatProvider).dispose();
+			((ElementNumberFormatProvider) fElementFormatProvider).dispose();
 		}
 		super.dispose();
 	}
+
 	protected IElementFormatProvider createElementNumberFormatProvider(IVMProvider provider, DsfSession session) {
 		return new ElementNumberFormatProvider(provider, session);
 	}
@@ -55,12 +55,13 @@ abstract public class AbstractElementVMProvider extends AbstractDMVMProvider imp
 
 	@Override
 	public void getActiveFormat(IPresentationContext context, IVMNode node, Object viewerInput, TreePath elementPath,
-			                    DataRequestMonitor<String> rm) {
+			DataRequestMonitor<String> rm) {
 		fElementFormatProvider.getActiveFormat(context, node, viewerInput, elementPath, rm);
 	}
 
 	@Override
-	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput, TreePath[] elementPaths, String format) {
+	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput,
+			TreePath[] elementPaths, String format) {
 		fElementFormatProvider.setActiveFormat(context, node, viewerInput, elementPaths, format);
 	}
 }

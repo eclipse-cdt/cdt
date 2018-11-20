@@ -49,82 +49,82 @@ import org.eclipse.swt.widgets.Text;
  * </p>
  */
 public class CArgumentsTab extends CLaunchConfigurationTab {
-    /**
-     * Tab identifier used for ordering of tabs added using the 
-     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
-     * extension point.
-     *   
-     * @since 2.0
-     */
-    public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.argumentsTab"; //$NON-NLS-1$
-        
+	/**
+	 * Tab identifier used for ordering of tabs added using the 
+	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+	 * extension point.
+	 *   
+	 * @since 2.0
+	 */
+	public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.argumentsTab"; //$NON-NLS-1$
+
 	// Program arguments UI widgets
 	protected Label fPrgmArgumentsLabel;
 	protected Text fPrgmArgumentsText;
 	protected Button fArgumentVariablesButton;
-	
+
 	// Working directory
 	protected WorkingDirectoryBlock fWorkingDirectoryBlock = new WorkingDirectoryBlock();
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
-	    Font font = parent.getFont();
-	    Composite comp = new Composite(parent, SWT.NONE);
-	    GridLayout layout = new GridLayout(1, true);
-	    comp.setLayout(layout);
-	    comp.setFont(font);
-	
-	    GridData gd = new GridData(GridData.FILL_BOTH);
-	    comp.setLayoutData(gd);
-	    setControl(comp);
-    
-		GdbUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
-		
+		Font font = parent.getFont();
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(1, true);
+		comp.setLayout(layout);
+		comp.setFont(font);
+
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		comp.setLayoutData(gd);
+		setControl(comp);
+
+		GdbUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
+
 		createArgumentComponent(comp, 1);
 
 		fWorkingDirectoryBlock.createControl(comp);
 	}
 
-    protected void createArgumentComponent(Composite comp, int horizontalSpan) {
-    	Font font = comp.getFont();
-    	Group group = new Group(comp, SWT.NONE);
-    	group.setFont(font);
-    	group.setLayout(new GridLayout());
-    	GridData gd = new GridData(GridData.FILL_BOTH);
-    	gd.horizontalSpan = horizontalSpan;
-    	group.setLayoutData(gd);
+	protected void createArgumentComponent(Composite comp, int horizontalSpan) {
+		Font font = comp.getFont();
+		Group group = new Group(comp, SWT.NONE);
+		group.setFont(font);
+		group.setLayout(new GridLayout());
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = horizontalSpan;
+		group.setLayoutData(gd);
 
-    	group.setText(LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
-    	fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-    	fPrgmArgumentsText.getAccessible().addAccessibleListener(
-    			new AccessibleAdapter() {                       
-    				@Override
-    				public void getName(AccessibleEvent e) {
-    					e.result = LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments"); //$NON-NLS-1$
-    				}
-    			});
-    	gd = new GridData(GridData.FILL_BOTH);
-    	gd.heightHint = 40;
-    	gd.widthHint = 100;
-    	fPrgmArgumentsText.setLayoutData(gd);
-    	fPrgmArgumentsText.setFont(font);
-    	fPrgmArgumentsText.addModifyListener(new ModifyListener() {
-    		@Override
-    		public void modifyText(ModifyEvent evt) {
-    			updateLaunchConfigurationDialog();
-    		}
-    	});
-    	fArgumentVariablesButton= createPushButton(group, LaunchMessages.getString("CArgumentsTab.Variables"), null); //$NON-NLS-1$
-    	gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-    	fArgumentVariablesButton.setLayoutData(gd);
-    	fArgumentVariablesButton.addSelectionListener(new SelectionAdapter() {
-    		@Override
-    		public void widgetSelected(SelectionEvent arg0) {
-    			handleVariablesButtonSelected(fPrgmArgumentsText);
-    		}
-    	});
-    	addControlAccessibleListener(fArgumentVariablesButton, fArgumentVariablesButton.getText()); // need to strip the mnemonic from buttons
-    }
+		group.setText(LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
+		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		fPrgmArgumentsText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments"); //$NON-NLS-1$
+			}
+		});
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 40;
+		gd.widthHint = 100;
+		fPrgmArgumentsText.setLayoutData(gd);
+		fPrgmArgumentsText.setFont(font);
+		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		fArgumentVariablesButton = createPushButton(group, LaunchMessages.getString("CArgumentsTab.Variables"), null); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		fArgumentVariablesButton.setLayoutData(gd);
+		fArgumentVariablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				handleVariablesButtonSelected(fPrgmArgumentsText);
+			}
+		});
+		addControlAccessibleListener(fArgumentVariablesButton, fArgumentVariablesButton.getText()); // need to strip the mnemonic from buttons
+	}
 
 	/**
 	 * A variable entry button has been pressed for the given text
@@ -147,7 +147,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		dialog.open();
 		return dialog.getVariableExpression();
 	}
-	
+
 	public void addControlAccessibleListener(Control control, String controlName) {
 		// Strip mnemonic (&)
 		String[] strs = controlName.split("&"); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		}
 		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(stripped.toString()));
 	}
-	
+
 	private class ControlAccessibleListener extends AccessibleAdapter {
 		private String controlName;
 
@@ -170,35 +170,35 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 			e.result = controlName;
 		}
 	}
-	
+
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
 	}
 
-    @Override
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 	}
 
-    @Override
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fPrgmArgumentsText.setText(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
+			fPrgmArgumentsText
+					.setText(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
 			fWorkingDirectoryBlock.initializeFrom(configuration);
-		}
-		catch (CoreException e) {
-			setErrorMessage(LaunchMessages.getFormattedString("Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
+		} catch (CoreException e) {
+			setErrorMessage(LaunchMessages.getFormattedString(
+					"Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
 			GdbUIPlugin.log(e);
 		}
 	}
 
-    @Override
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(
-			ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-			getAttributeValueFrom(fPrgmArgumentsText));
+		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+				getAttributeValueFrom(fPrgmArgumentsText));
 		fWorkingDirectoryBlock.performApply(configuration);
 	}
 
@@ -210,19 +210,19 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	protected String getAttributeValueFrom(Text text) {
 		String content = text.getText().trim();
 		// Bug #131513 - eliminate Windows \r line delimiter
-		content = content.replaceAll("\r\n", "\n");  //$NON-NLS-1$//$NON-NLS-2$
+		content = content.replaceAll("\r\n", "\n"); //$NON-NLS-1$//$NON-NLS-2$
 		if (!content.isEmpty()) {
 			return content;
 		}
 		return null;
 	}
 
-    @Override
-    public String getId() {
-        return TAB_ID;
-    }
-    
-    @Override
+	@Override
+	public String getId() {
+		return TAB_ID;
+	}
+
+	@Override
 	public String getName() {
 		return LaunchMessages.getString("CArgumentsTab.Arguments"); //$NON-NLS-1$
 	}

@@ -23,15 +23,15 @@ import org.eclipse.jface.viewers.TreePath;
  * @since 3.0
  */
 public class FetchMoreChildrenEvent extends AbstractDMEvent<IExpressionDMContext> {
-    
+
 	private TreePath path;
-	
-    public FetchMoreChildrenEvent(IExpressionDMContext exprCtx, TreePath path) {
-        super(exprCtx);
-        this.path = path;
-    }
-    
-    public TreePath getPath() {
-    	return path;
-    }
+
+	public FetchMoreChildrenEvent(IExpressionDMContext exprCtx, TreePath path) {
+		super(exprCtx);
+		this.path = path;
+	}
+
+	public TreePath getPath() {
+		return path;
+	}
 }

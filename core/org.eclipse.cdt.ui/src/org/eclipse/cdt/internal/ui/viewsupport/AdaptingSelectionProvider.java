@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -38,18 +38,18 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 	private ISelectionProvider fProvider;
 
 	public AdaptingSelectionProvider(Class<?> targetType, ISelectionProvider provider) {
-		fProvider= provider;
-		fTargetType= targetType;
-		fListenerList= new ListenerList<>();
+		fProvider = provider;
+		fTargetType = targetType;
+		fListenerList = new ListenerList<>();
 	}
-	
+
 	private ISelection convertSelection(ISelection selection) {
 		if (selection != null) {
 			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss= (IStructuredSelection) selection;
-				ArrayList<Object> adapted= new ArrayList<Object>();
-				for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
-					Object elem= adaptElem(iter.next());
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				ArrayList<Object> adapted = new ArrayList<Object>();
+				for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
+					Object elem = adaptElem(iter.next());
 					if (elem != null) {
 						adapted.add(elem);
 					}
@@ -98,7 +98,7 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-		SelectionChangedEvent event2= new SelectionChangedEvent(this, convertSelection(event.getSelection()));
+		SelectionChangedEvent event2 = new SelectionChangedEvent(this, convertSelection(event.getSelection()));
 		for (ISelectionChangedListener l : fListenerList) {
 			l.selectionChanged(event2);
 		}

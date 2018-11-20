@@ -109,14 +109,9 @@ public class ErrorParserManagerTest extends TestCase {
 				errorList.add(problemMarkerInfo);
 			}
 		};
-		String[] errorParsersIds = {
-			"org.eclipse.cdt.core.CWDLocator",
-			"org.eclipse.cdt.core.GCCErrorParser",
-			"org.eclipse.cdt.core.GASErrorParser",
-			"org.eclipse.cdt.core.GLDErrorParser",
-			"org.eclipse.cdt.core.VCErrorParser",
-			"org.eclipse.cdt.core.GmakeErrorParser",
-		};
+		String[] errorParsersIds = { "org.eclipse.cdt.core.CWDLocator", "org.eclipse.cdt.core.GCCErrorParser",
+				"org.eclipse.cdt.core.GASErrorParser", "org.eclipse.cdt.core.GLDErrorParser",
+				"org.eclipse.cdt.core.VCErrorParser", "org.eclipse.cdt.core.GmakeErrorParser", };
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, errorParsersIds);
 	}
 
@@ -161,25 +156,25 @@ public class ErrorParserManagerTest extends TestCase {
 		output("catchpoints.cpp:12: warning: no return statement in function returning non-void\n");
 		end();
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("no return statement in function returning non-void",problemMarkerInfo.description);
-		assertEquals(new Path("catchpoints.cpp"),problemMarkerInfo.externalPath);
+		assertEquals("no return statement in function returning non-void", problemMarkerInfo.description);
+		assertEquals(new Path("catchpoints.cpp"), problemMarkerInfo.externalPath);
 	}
 
 	public void testParsersSanityTrimmed() throws CoreException, IOException {
 		output("   catchpoints.cpp:12: warning: no return statement in function returning non-void   \n");
 		end();
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("no return statement in function returning non-void",problemMarkerInfo.description);
-		assertEquals(new Path("catchpoints.cpp"),problemMarkerInfo.externalPath);
+		assertEquals("no return statement in function returning non-void", problemMarkerInfo.description);
+		assertEquals(new Path("catchpoints.cpp"), problemMarkerInfo.externalPath);
 	}
 
 	public void testOutput() throws IOException {
-		try (FileInputStream fileInputStream = new FileInputStream(CTestPlugin.getDefault().getFileInPlugin(
-				new Path("resources/errortests/output-1")))) {
+		try (FileInputStream fileInputStream = new FileInputStream(
+				CTestPlugin.getDefault().getFileInPlugin(new Path("resources/errortests/output-1")))) {
 			byte b[] = new byte[1024];
 			while (true) {
 				int k = fileInputStream.read(b);
@@ -209,6 +204,7 @@ public class ErrorParserManagerTest extends TestCase {
 
 	public static class TestParser1 implements IErrorParser2 {
 		String last = null;
+
 		@Override
 		public int getProcessLineBehaviour() {
 			return KEEP_UNTRIMMED;
@@ -216,8 +212,8 @@ public class ErrorParserManagerTest extends TestCase {
 
 		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
-			if (line.startsWith(" ") && last!=null) {
-				eoParser.generateExternalMarker(null, 1, last+line, 1, "", null);
+			if (line.startsWith(" ") && last != null) {
+				eoParser.generateExternalMarker(null, 1, last + line, 1, "", null);
 				return true;
 			}
 			if (line.startsWith("bug:")) {
@@ -230,18 +226,19 @@ public class ErrorParserManagerTest extends TestCase {
 			return false;
 		}
 	}
+
 	public void testNoTrimParser() throws IOException {
 		String id = addErrorParserExtension("test1", TestParser1.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
-		
+
 		output("bug: start\n");
 		output(" end");
 		end();
 		assertEquals(1, errorList.size());
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("bug: start end",problemMarkerInfo.description);
+		assertEquals("bug: start end", problemMarkerInfo.description);
 	}
-	
+
 	public static class TestParser2 implements IErrorParser2 {
 		@Override
 		public int getProcessLineBehaviour() {
@@ -262,7 +259,7 @@ public class ErrorParserManagerTest extends TestCase {
 	public void testLongLinesParser() throws IOException {
 		String id = addErrorParserExtension("test2", TestParser2.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
-		
+
 		StringBuilder buf = new StringBuilder("errorT: ");
 		for (int i = 0; i < 100; i++) {
 			buf.append("la la la la la ").append(i).append(' ');
@@ -273,10 +270,10 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals(1, errorList.size());
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		int l = problemMarkerInfo.description.length();
-		assertTrue(l>1000);
-		String end = problemMarkerInfo.description.substring(l-10,l);
+		assertTrue(l > 1000);
+		String end = problemMarkerInfo.description.substring(l - 10, l);
 		// check - line trimmed but long
-		assertEquals("a la la 99",end);
+		assertEquals("a la la 99", end);
 	}
 
 	public static class TestParser3 implements IErrorParser2 {
@@ -299,7 +296,7 @@ public class ErrorParserManagerTest extends TestCase {
 	public void testLongLinesUntrimmedParser() throws IOException {
 		String id = addErrorParserExtension("test3", TestParser3.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
-		
+
 		StringBuilder buf = new StringBuilder("errorT: ");
 		for (int i = 0; i < 100; i++) {
 			buf.append("la la la la la ").append(i).append(' ');
@@ -310,17 +307,17 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals(1, errorList.size());
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		int l = problemMarkerInfo.description.length();
-		assertTrue(l>1000);
-		String end = problemMarkerInfo.description.substring(l-10,l);
+		assertTrue(l > 1000);
+		String end = problemMarkerInfo.description.substring(l - 10, l);
 		// check - line trimmed but long
-		assertEquals(" la la 99 ",end);
+		assertEquals(" la la 99 ", end);
 	}
 
 	public static class TestParser4 implements IErrorParser {
 		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
-			ProblemMarkerInfo problemMarkerInfo =
-					new ProblemMarkerInfo(null, 0, "Workspace level marker", IMarker.SEVERITY_INFO, null);
+			ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(null, 0, "Workspace level marker",
+					IMarker.SEVERITY_INFO, null);
 			eoParser.addProblemMarker(problemMarkerInfo);
 			return true;
 		}
@@ -329,9 +326,9 @@ public class ErrorParserManagerTest extends TestCase {
 	public void testWorkspaceLevelError() throws IOException {
 		String id = addErrorParserExtension("test4", TestParser4.class);
 		epManager = new ErrorParserManager(null, markerGenerator, new String[] { id });
-		
+
 		StringBuilder buf = new StringBuilder("errorT: ");
-		output(buf.toString()+"\n");
+		output(buf.toString() + "\n");
 		end();
 		assertEquals(1, errorList.size());
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);

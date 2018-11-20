@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Represents a container of all the IBinary's found in the project
  * while inspecting the project.

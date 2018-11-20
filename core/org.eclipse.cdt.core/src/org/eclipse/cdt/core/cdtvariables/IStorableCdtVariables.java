@@ -21,14 +21,24 @@ package org.eclipse.cdt.core.cdtvariables;
  */
 public interface IStorableCdtVariables {
 	ICdtVariable getMacro(String name);
+
 	ICdtVariable[] getMacros();
+
 	boolean deleteAll();
+
 	boolean contains(ICdtVariable var);
+
 	ICdtVariable deleteMacro(String name);
+
 	boolean isChanged();
+
 	ICdtVariable createMacro(ICdtVariable copy);
+
 	ICdtVariable createMacro(String name, int type, String value);
+
 	ICdtVariable createMacro(String name, int type, String value[]);
+
 	void createMacros(ICdtVariable macros[]);
+
 	boolean isEmpty();
 }

@@ -27,42 +27,45 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class LRDOMLocationMacroTests extends DOMLocationMacroTests {
 
 	public static TestSuite suite() {
-    	return suite(LRDOMLocationMacroTests.class);
-    }
-	
-    public LRDOMLocationMacroTests() {}
-	public LRDOMLocationMacroTests(String name) { super(name); }
+		return suite(LRDOMLocationMacroTests.class);
+	}
 
+	public LRDOMLocationMacroTests() {
+	}
+
+	public LRDOMLocationMacroTests(String name) {
+		super(name);
+	}
 
 	@Override
-	@SuppressWarnings("unused") 
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
+	@SuppressWarnings("unused")
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-		ParseHelper.Options options = new ParseHelper.Options().setCheckSyntaxProblems(expectNoProblems).setCheckPreprocessorProblems(expectNoProblems);
-   		return ParseHelper.parse(code, language, options);
-    }
-    
-    
+		ParseHelper.Options options = new ParseHelper.Options().setCheckSyntaxProblems(expectNoProblems)
+				.setCheckPreprocessorProblems(expectNoProblems);
+		return ParseHelper.parse(code, language, options);
+	}
+
 	protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-	
+		return GCCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
-    
-    
-    /**
-     * Tests GCC specific stuff, not applicable at this point
-     */
-    
-//	@Override
-//	public void testStdioBug() throws ParserException {
-//    	try {
-//    		super.testStdioBug();
-//    		fail();
-//    	}
-//    	catch(Throwable e) { }
-//    }
-    
+
+	/**
+	 * Tests GCC specific stuff, not applicable at this point
+	 */
+
+	//	@Override
+	//	public void testStdioBug() throws ParserException {
+	//    	try {
+	//    		super.testStdioBug();
+	//    		fail();
+	//    	}
+	//    	catch(Throwable e) { }
+	//    }
+
 }

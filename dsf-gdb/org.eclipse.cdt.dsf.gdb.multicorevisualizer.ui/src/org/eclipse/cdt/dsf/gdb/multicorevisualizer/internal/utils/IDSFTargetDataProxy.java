@@ -36,21 +36,25 @@ public interface IDSFTargetDataProxy {
 	public void getCores(DSFSessionState sessionState, DataRequestMonitor<ICoreDMContext[]> rm);
 
 	/** Requests list of Cores */
-	public void getCores(DSFSessionState sessionState, ICPUDMContext cpuContext, DataRequestMonitor<ICoreDMContext[]> rm);
+	public void getCores(DSFSessionState sessionState, ICPUDMContext cpuContext,
+			DataRequestMonitor<ICoreDMContext[]> rm);
 
 	/** Requests list of Threads Related to the specified CPU and Core */
-	public void getThreads(DSFSessionState sessionState, ICPUDMContext cpuContext, ICoreDMContext coreContext, DataRequestMonitor<IDMContext[]> rm);
+	public void getThreads(DSFSessionState sessionState, ICPUDMContext cpuContext, ICoreDMContext coreContext,
+			DataRequestMonitor<IDMContext[]> rm);
 
 	/** Requests data for the thread associated to the give execution context */
-	public void getThreadData(DSFSessionState sessionState, ICPUDMContext cpuContext, ICoreDMContext coreContext, IMIExecutionDMContext execContext,
-			DataRequestMonitor<IThreadDMData> rm);
+	public void getThreadData(DSFSessionState sessionState, ICPUDMContext cpuContext, ICoreDMContext coreContext,
+			IMIExecutionDMContext execContext, DataRequestMonitor<IThreadDMData> rm);
 
 	/** Requests frame data for a given thread */
-	public void getTopFrameData(DSFSessionState sessionState, IMIExecutionDMContext execContext, DataRequestMonitor<IFrameDMData> rm);
+	public void getTopFrameData(DSFSessionState sessionState, IMIExecutionDMContext execContext,
+			DataRequestMonitor<IFrameDMData> rm);
 
 	/** Requests execution state of a thread. */
-	public void getThreadExecutionState(DSFSessionState sessionState, ICPUDMContext cpuContext, ICoreDMContext coreContext,
-			IMIExecutionDMContext execContext, IThreadDMData threadData, DataRequestMonitor<VisualizerExecutionState> rm);
+	public void getThreadExecutionState(DSFSessionState sessionState, ICPUDMContext cpuContext,
+			ICoreDMContext coreContext, IMIExecutionDMContext execContext, IThreadDMData threadData,
+			DataRequestMonitor<VisualizerExecutionState> rm);
 
 	/** Request load information for a single CPU or core */
 	public void getLoad(DSFSessionState sessionState, IDMContext context, DataRequestMonitor<ILoadInfo> rm);

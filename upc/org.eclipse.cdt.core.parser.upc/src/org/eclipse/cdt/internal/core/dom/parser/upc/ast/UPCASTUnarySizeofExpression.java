@@ -23,7 +23,6 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 
 	private int upcSizeofOperator;
 
-
 	public UPCASTUnarySizeofExpression() {
 		this(null);
 	}

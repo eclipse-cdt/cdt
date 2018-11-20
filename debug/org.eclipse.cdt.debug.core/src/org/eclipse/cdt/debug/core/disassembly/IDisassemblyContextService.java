@@ -30,37 +30,37 @@ package org.eclipse.cdt.debug.core.disassembly;
  */
 public interface IDisassemblyContextService {
 
-    /**
-     * Adds the given listener to the collection of registered listeners.
-     * Has no effect if an identical listener is already registered.
-     *
-     * @param listener the listener to add
-     */
-    public void addDisassemblyContextListener( IDisassemblyContextListener listener );
+	/**
+	 * Adds the given listener to the collection of registered listeners.
+	 * Has no effect if an identical listener is already registered.
+	 *
+	 * @param listener the listener to add
+	 */
+	public void addDisassemblyContextListener(IDisassemblyContextListener listener);
 
-    /**
-     * Removes the given listener from the collection of registered listeners.
-     * Has no effect if an identical listener is not already registered.
-     *
-     * @param listener the listener to remove   
-     */
-    public void removeDisassemblyContextListener( IDisassemblyContextListener listener );
+	/**
+	 * Removes the given listener from the collection of registered listeners.
+	 * Has no effect if an identical listener is not already registered.
+	 *
+	 * @param listener the listener to remove   
+	 */
+	public void removeDisassemblyContextListener(IDisassemblyContextListener listener);
 
-    /**
-     * Registers the given context with this service. 
-     * Has no effect if an identical context has already been registered. 
-     * The corresponding notifications will be sent to all registered listeners.
-     *  
-     * @param disassemblyContext the context to register.
-     */
-    public void register( Object disassemblyContext );
+	/**
+	 * Registers the given context with this service. 
+	 * Has no effect if an identical context has already been registered. 
+	 * The corresponding notifications will be sent to all registered listeners.
+	 *  
+	 * @param disassemblyContext the context to register.
+	 */
+	public void register(Object disassemblyContext);
 
-    /**
-     * Unregisters the given context with this service. 
-     * Has no effect if an identical context has not been registered. 
-     * The corresponding notifications will be sent to all registered listeners.
-     *  
-     * @param disassemblyContext the context to unregister.
-     */
-    public void unregister( Object disassemblyContext );
+	/**
+	 * Unregisters the given context with this service. 
+	 * Has no effect if an identical context has not been registered. 
+	 * The corresponding notifications will be sent to all registered listeners.
+	 *  
+	 * @param disassemblyContext the context to unregister.
+	 */
+	public void unregister(Object disassemblyContext);
 }

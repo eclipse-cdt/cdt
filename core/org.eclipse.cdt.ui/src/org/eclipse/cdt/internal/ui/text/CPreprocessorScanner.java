@@ -35,24 +35,19 @@ import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
  * @since 4.0
  */
 public class CPreprocessorScanner extends AbstractCScanner {
-    /** Properties for tokens. */
-	private static String[] fgTokenProperties= {
-		ICColorConstants.C_KEYWORD,
-		ICColorConstants.PP_DIRECTIVE,
-		ICColorConstants.PP_DEFAULT,
-		ICColorConstants.C_TYPE,
-		ICColorConstants.C_STRING,
-        ICColorConstants.PP_HEADER
-	};
+	/** Properties for tokens. */
+	private static String[] fgTokenProperties = { ICColorConstants.C_KEYWORD, ICColorConstants.PP_DIRECTIVE,
+			ICColorConstants.PP_DEFAULT, ICColorConstants.C_TYPE, ICColorConstants.C_STRING,
+			ICColorConstants.PP_HEADER };
 	private ICLanguageKeywords fKeywords;
-	
+
 	/**
 	 * Creates a C/C++ preprocessor scanner.
-     * @param keywords  the keywords defined by the language dialect
+	 * @param keywords  the keywords defined by the language dialect
 	 */
 	public CPreprocessorScanner(ITokenStoreFactory factory, ICLanguageKeywords keywords) {
 		super(factory.createTokenStore(fgTokenProperties));
-		fKeywords= keywords;
+		fKeywords = keywords;
 		setRules(createRules());
 	}
 
@@ -60,17 +55,17 @@ public class CPreprocessorScanner extends AbstractCScanner {
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCScanner#createRules()
 	 */
 	protected List<IRule> createRules() {
-		IToken defaultToken= getToken(ICColorConstants.PP_DEFAULT);
+		IToken defaultToken = getToken(ICColorConstants.PP_DEFAULT);
 
-		List<IRule> rules= new ArrayList<IRule>();		
+		List<IRule> rules = new ArrayList<IRule>();
 		IToken token;
-		
+
 		// Add generic white space rule.
 		rules.add(new CWhitespaceRule(defaultToken));
-		
-		token= getToken(ICColorConstants.PP_DIRECTIVE);
+
+		token = getToken(ICColorConstants.PP_DIRECTIVE);
 		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), defaultToken);
-		String[] ppKeywords= fKeywords.getPreprocessorKeywords();
+		String[] ppKeywords = fKeywords.getPreprocessorKeywords();
 		for (int i = 0; i < ppKeywords.length; i++) {
 			preprocessorRule.addWord(ppKeywords[i], token);
 		}
@@ -80,33 +75,33 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		rules.add(preprocessorRule);
 
 		// Add word rule for keywords, types, and constants.
-		WordRule wordRule= new WordRule(new CWordDetector(), defaultToken);
-		
-		token= getToken(ICColorConstants.C_KEYWORD);
-		String[] keywords= fKeywords.getKeywords();
+		WordRule wordRule = new WordRule(new CWordDetector(), defaultToken);
+
+		token = getToken(ICColorConstants.C_KEYWORD);
+		String[] keywords = fKeywords.getKeywords();
 		for (int i = 0; i < keywords.length; i++) {
 			wordRule.addWord(keywords[i], token);
 		}
-        token= getToken(ICColorConstants.C_TYPE);
-		String[] types= fKeywords.getBuiltinTypes();
+		token = getToken(ICColorConstants.C_TYPE);
+		String[] types = fKeywords.getBuiltinTypes();
 		for (int i = 0; i < types.length; i++) {
 			wordRule.addWord(types[i], token);
 		}
-        rules.add(wordRule);
-		
-        token = getToken(ICColorConstants.PP_HEADER);
-        CHeaderRule headerRule = new CHeaderRule(token);
-        rules.add(headerRule);
+		rules.add(wordRule);
 
-        token = getToken(ICColorConstants.C_STRING);
-        IRule stringRule = new PatternRule("\"", "\"", token, '\\', true, true, true); //$NON-NLS-1$ //$NON-NLS-2$
-        rules.add(stringRule);
+		token = getToken(ICColorConstants.PP_HEADER);
+		CHeaderRule headerRule = new CHeaderRule(token);
+		rules.add(headerRule);
 
-        token = getToken(ICColorConstants.C_STRING);
-        IRule charRule = new PatternRule("'", "'", token, '\\', true, true, true); //$NON-NLS-1$ //$NON-NLS-2$
-        rules.add(charRule);
+		token = getToken(ICColorConstants.C_STRING);
+		IRule stringRule = new PatternRule("\"", "\"", token, '\\', true, true, true); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(stringRule);
 
-        setDefaultReturnToken(defaultToken);
+		token = getToken(ICColorConstants.C_STRING);
+		IRule charRule = new PatternRule("'", "'", token, '\\', true, true, true); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(charRule);
+
+		setDefaultReturnToken(defaultToken);
 		return rules;
 	}
 }

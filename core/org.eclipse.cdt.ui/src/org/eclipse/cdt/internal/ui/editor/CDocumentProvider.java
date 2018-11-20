@@ -112,7 +112,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * Annotation representing an {@code IProblem}.
 	 */
 	public static class ProblemAnnotation extends Annotation implements ICAnnotation {
-		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
+		private static final String INDEXER_ANNOTATION_TYPE = "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
 
 		private final ITranslationUnit fTranslationUnit;
 		private final int fId;
@@ -122,17 +122,16 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private List<ICAnnotation> fOverlaids;
 
 		public ProblemAnnotation(IProblem problem, ITranslationUnit tu) {
-			fTranslationUnit= tu;
+			fTranslationUnit = tu;
 			setText(problem.getMessage());
-			fId= problem.getID();
-			fIsProblem= problem.isError() || problem.isWarning();
-			fArguments= isProblem() ? problem.getArguments() : null;
-            setType(problem instanceof CoreSpellingProblem ?
-            		SpellingAnnotation.TYPE : INDEXER_ANNOTATION_TYPE);
+			fId = problem.getID();
+			fIsProblem = problem.isError() || problem.isWarning();
+			fArguments = isProblem() ? problem.getArguments() : null;
+			setType(problem instanceof CoreSpellingProblem ? SpellingAnnotation.TYPE : INDEXER_ANNOTATION_TYPE);
 			if (problem instanceof IPersistableProblem) {
-				fMarkerType= ((IPersistableProblem) problem).getMarkerType();
+				fMarkerType = ((IPersistableProblem) problem).getMarkerType();
 			} else {
-				fMarkerType= null;
+				fMarkerType = null;
 			}
 		}
 
@@ -164,7 +163,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		@Override
 		public void addOverlaid(ICAnnotation annotation) {
 			if (fOverlaids == null)
-				fOverlaids= new ArrayList<>(1);
+				fOverlaids = new ArrayList<>(1);
 			fOverlaids.add(annotation);
 		}
 
@@ -173,7 +172,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			if (fOverlaids != null) {
 				fOverlaids.remove(annotation);
 				if (fOverlaids.size() == 0)
-					fOverlaids= null;
+					fOverlaids = null;
 			}
 		}
 
@@ -207,7 +206,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			Object fValue;
 		}
 
-		private List<Entry> fList= new ArrayList<>(2);
+		private List<Entry> fList = new ArrayList<>(2);
 		private int fAnchor;
 
 		public ReverseMap() {
@@ -217,20 +216,20 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			Entry entry;
 
 			// behind anchor
-			int length= fList.size();
-			for (int i= fAnchor; i < length; i++) {
-				entry= fList.get(i);
+			int length = fList.size();
+			for (int i = fAnchor; i < length; i++) {
+				entry = fList.get(i);
 				if (entry.fPosition.equals(position)) {
-					fAnchor= i;
+					fAnchor = i;
 					return entry.fValue;
 				}
 			}
 
 			// before anchor
-			for (int i= 0; i < fAnchor; i++) {
-				entry= fList.get(i);
+			for (int i = 0; i < fAnchor; i++) {
+				entry = fList.get(i);
 				if (entry.fPosition.equals(position)) {
-					fAnchor= i;
+					fAnchor = i;
 					return entry.fValue;
 				}
 			}
@@ -240,37 +239,37 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		private int getIndex(Position position) {
 			Entry entry;
-			int length= fList.size();
-			for (int i= 0; i < length; i++) {
-				entry= fList.get(i);
+			int length = fList.size();
+			for (int i = 0; i < length; i++) {
+				entry = fList.get(i);
 				if (entry.fPosition.equals(position))
 					return i;
 			}
 			return -1;
 		}
 
-		public void put(Position position,  Object value) {
-			int index= getIndex(position);
+		public void put(Position position, Object value) {
+			int index = getIndex(position);
 			if (index == -1) {
-				Entry entry= new Entry();
-				entry.fPosition= position;
-				entry.fValue= value;
+				Entry entry = new Entry();
+				entry.fPosition = position;
+				entry.fValue = value;
 				fList.add(entry);
 			} else {
-				Entry entry= fList.get(index);
-				entry.fValue= value;
+				Entry entry = fList.get(index);
+				entry.fValue = value;
 			}
 		}
 
 		public void remove(Position position) {
-			int index= getIndex(position);
+			int index = getIndex(position);
 			if (index > -1)
 				fList.remove(index);
 		}
 
 		public void clear() {
 			fList.clear();
-			fAnchor= 0;
+			fAnchor = 0;
 		}
 	}
 
@@ -319,7 +318,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			List<IProblem> fReportedProblems;
 		}
 
-		private final ThreadLocal<ProblemRequestorState> fProblemRequestorState= new ThreadLocal<>();
+		private final ThreadLocal<ProblemRequestorState> fProblemRequestorState = new ThreadLocal<>();
 		private int fStateCount;
 
 		private ITranslationUnit fTranslationUnit;
@@ -327,21 +326,21 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private IProgressMonitor fProgressMonitor;
 		private boolean fIsActive;
 
-		private final ReverseMap fReverseMap= new ReverseMap();
+		private final ReverseMap fReverseMap = new ReverseMap();
 		private List<CMarkerAnnotation> fPreviouslyOverlaid;
-		private List<CMarkerAnnotation> fCurrentlyOverlaid= new ArrayList<>();
+		private List<CMarkerAnnotation> fCurrentlyOverlaid = new ArrayList<>();
 
 		public TranslationUnitAnnotationModel(IResource resource) {
 			super(resource);
 		}
 
-		public void setTranslationUnit(ITranslationUnit unit)  {
-			fTranslationUnit= unit;
+		public void setTranslationUnit(ITranslationUnit unit) {
+			fTranslationUnit = unit;
 		}
 
 		@Override
 		protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
-			String markerType= MarkerUtilities.getMarkerType(marker);
+			String markerType = MarkerUtilities.getMarkerType(marker);
 			if (markerType != null && markerType.startsWith(CMarkerAnnotation.C_MARKER_TYPE_PREFIX)) {
 				return new CMarkerAnnotation(marker);
 			}
@@ -350,23 +349,23 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		protected Position createPositionFromMarker(IMarker marker) {
-			int start= MarkerUtilities.getCharStart(marker);
-			int end= MarkerUtilities.getCharEnd(marker);
+			int start = MarkerUtilities.getCharStart(marker);
+			int end = MarkerUtilities.getCharEnd(marker);
 
 			if (start > end) {
-				end= start + end;
-				start= end - start;
-				end= end - start;
+				end = start + end;
+				start = end - start;
+				end = end - start;
 			}
 
 			if (start == -1 && end == -1) {
 				// marker line number is 1-based
-				int line= MarkerUtilities.getLineNumber(marker);
+				int line = MarkerUtilities.getLineNumber(marker);
 				if (line > 0 && fDocument != null) {
 					try {
-						IRegion lineRegion= fDocument.getLineInformation(line - 1);
-						start= lineRegion.getOffset();
-						end= start + lineRegion.getLength();
+						IRegion lineRegion = fDocument.getLineInformation(line - 1);
+						start = lineRegion.getOffset();
+						end = start + lineRegion.getLength();
 						if (marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER)) {
 							// strip leading whitespace
 							while (start < end && Character.isWhitespace(fDocument.getChar(start))) {
@@ -391,11 +390,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 
 		protected Position createPositionFromProblem(IProblem problem) {
-			int start= problem.getSourceStart();
+			int start = problem.getSourceStart();
 			if (start < 0)
 				return null;
 
-			int length= problem.getSourceEnd() - problem.getSourceStart() + 1;
+			int length = problem.getSourceEnd() - problem.getSourceStart() + 1;
 			if (length < 0)
 				return null;
 			return new Position(start, length);
@@ -403,14 +402,14 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		public void beginReporting() {
-			ProblemRequestorState state= fProblemRequestorState.get();
+			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state == null)
 				internalBeginReporting(false);
 		}
 
 		@Override
 		public void beginReportingSequence() {
-			ProblemRequestorState state= fProblemRequestorState.get();
+			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state == null)
 				internalBeginReporting(true);
 		}
@@ -423,9 +422,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		private void internalBeginReporting(boolean insideReportingSequence) {
 			if (fTranslationUnit != null) {
-				ProblemRequestorState state= new ProblemRequestorState();
-				state.fInsideReportingSequence= insideReportingSequence;
-				state.fReportedProblems= new ArrayList<>();
+				ProblemRequestorState state = new ProblemRequestorState();
+				state.fInsideReportingSequence = insideReportingSequence;
+				state.fReportedProblems = new ArrayList<>();
 				synchronized (getLockObject()) {
 					fProblemRequestorState.set(state);
 					++fStateCount;
@@ -436,7 +435,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		@Override
 		public void acceptProblem(IProblem problem) {
 			if (isActive()) {
-				ProblemRequestorState state= fProblemRequestorState.get();
+				ProblemRequestorState state = fProblemRequestorState.get();
 				if (state != null && isReliable(problem)) {
 					state.fReportedProblems.add(problem);
 				}
@@ -455,23 +454,23 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		public void endReporting() {
-			ProblemRequestorState state= fProblemRequestorState.get();
+			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state != null && !state.fInsideReportingSequence)
 				internalEndReporting(state);
 		}
 
 		@Override
 		public void endReportingSequence() {
-			ProblemRequestorState state= fProblemRequestorState.get();
+			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state != null && state.fInsideReportingSequence)
 				internalEndReporting(state);
 		}
 
 		private void internalEndReporting(ProblemRequestorState state) {
-			int stateCount= 0;
+			int stateCount = 0;
 			synchronized (getLockObject()) {
 				--fStateCount;
-				stateCount= fStateCount;
+				stateCount = fStateCount;
 				fProblemRequestorState.set(null);
 			}
 
@@ -486,16 +485,16 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			if (fProgressMonitor != null && fProgressMonitor.isCanceled())
 				return;
 
-			boolean temporaryProblemsChanged= false;
+			boolean temporaryProblemsChanged = false;
 
 			synchronized (getLockObject()) {
-				boolean isCanceled= false;
+				boolean isCanceled = false;
 
-				fPreviouslyOverlaid= fCurrentlyOverlaid;
-				fCurrentlyOverlaid= new ArrayList<>();
+				fPreviouslyOverlaid = fCurrentlyOverlaid;
+				fCurrentlyOverlaid = new ArrayList<>();
 
 				if (fGeneratedAnnotations.size() > 0) {
-					temporaryProblemsChanged= true;
+					temporaryProblemsChanged = true;
 					removeAnnotations(fGeneratedAnnotations, false, true);
 					fGeneratedAnnotations.clear();
 				}
@@ -503,19 +502,19 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				if (reportedProblems != null) {
 					for (IProblem problem : reportedProblems) {
 						if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
-							isCanceled= true;
+							isCanceled = true;
 							break;
 						}
 
-						Position position= createPositionFromProblem(problem);
+						Position position = createPositionFromProblem(problem);
 						if (position != null) {
 							try {
-								ProblemAnnotation annotation= new ProblemAnnotation(problem, fTranslationUnit);
+								ProblemAnnotation annotation = new ProblemAnnotation(problem, fTranslationUnit);
 								overlayMarkers(position, annotation);
 								addAnnotation(annotation, position, false);
 								fGeneratedAnnotations.add(annotation);
 
-								temporaryProblemsChanged= true;
+								temporaryProblemsChanged = true;
 							} catch (BadLocationException x) {
 								// Ignore invalid position
 							}
@@ -524,7 +523,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 
 				removeMarkerOverlays(isCanceled);
-				fPreviouslyOverlaid= null;
+				fPreviouslyOverlaid = null;
 			}
 
 			if (temporaryProblemsChanged)
@@ -535,9 +534,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			if (isCanceled) {
 				fCurrentlyOverlaid.addAll(fPreviouslyOverlaid);
 			} else if (fPreviouslyOverlaid != null) {
-				Iterator<CMarkerAnnotation> e= fPreviouslyOverlaid.iterator();
+				Iterator<CMarkerAnnotation> e = fPreviouslyOverlaid.iterator();
 				while (e.hasNext()) {
-					CMarkerAnnotation annotation= e.next();
+					CMarkerAnnotation annotation = e.next();
 					annotation.setOverlay(null);
 				}
 			}
@@ -549,9 +548,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		private void setOverlay(Object value, ProblemAnnotation problemAnnotation) {
 			if (value instanceof CMarkerAnnotation) {
-				CMarkerAnnotation annotation= (CMarkerAnnotation) value;
-				if (annotation.isProblem()
-						&& (!annotation.isQuickFixableStateSet() || !annotation.isQuickFixable())) {
+				CMarkerAnnotation annotation = (CMarkerAnnotation) value;
+				if (annotation.isProblem() && (!annotation.isQuickFixableStateSet() || !annotation.isQuickFixable())) {
 					annotation.setOverlay(problemAnnotation);
 					fPreviouslyOverlaid.remove(annotation);
 					fCurrentlyOverlaid.add(annotation);
@@ -560,9 +558,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 
 		private void overlayMarkers(Position position, ProblemAnnotation problemAnnotation) {
-			Object value= getAnnotations(position);
+			Object value = getAnnotations(position);
 			if (value instanceof List<?>) {
-				List<?> list= (List<?>) value;
+				List<?> list = (List<?>) value;
 				for (Object element : list) {
 					setOverlay(element, problemAnnotation);
 				}
@@ -575,7 +573,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * Tells this annotation model to collect temporary problems from now on.
 		 */
 		private void startCollectingProblems() {
-			fGeneratedAnnotations= new ArrayList<>();
+			fGeneratedAnnotations = new ArrayList<>();
 		}
 
 		/**
@@ -584,7 +582,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private void stopCollectingProblems() {
 			if (fGeneratedAnnotations != null)
 				removeAnnotations(fGeneratedAnnotations, true, true);
-			fGeneratedAnnotations= null;
+			fGeneratedAnnotations = null;
 		}
 
 		@Override
@@ -594,13 +592,13 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		public void setProgressMonitor(IProgressMonitor monitor) {
-			fProgressMonitor= monitor;
+			fProgressMonitor = monitor;
 		}
 
 		@Override
 		public void setIsActive(boolean isActive) {
 			if (fIsActive != isActive) {
-				fIsActive= isActive;
+				fIsActive = isActive;
 				if (fIsActive)
 					startCollectingProblems();
 				else
@@ -616,18 +614,19 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		@SuppressWarnings({ "unchecked" })
-		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
+		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged)
+				throws BadLocationException {
 			super.addAnnotation(annotation, position, fireModelChanged);
 
 			synchronized (getLockObject()) {
-				Object cached= fReverseMap.get(position);
+				Object cached = fReverseMap.get(position);
 				if (cached == null) {
 					fReverseMap.put(position, annotation);
 				} else if (cached instanceof List) {
-					List<Annotation> list= (List<Annotation>) cached;
+					List<Annotation> list = (List<Annotation>) cached;
 					list.add(annotation);
 				} else if (cached instanceof Annotation) {
-					List<Object> list= new ArrayList<>(2);
+					List<Object> list = new ArrayList<>(2);
 					list.add(cached);
 					list.add(annotation);
 					fReverseMap.put(position, list);
@@ -645,11 +644,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
-			Position position= getPosition(annotation);
+			Position position = getPosition(annotation);
 			synchronized (getLockObject()) {
-				Object cached= fReverseMap.get(position);
+				Object cached = fReverseMap.get(position);
 				if (cached instanceof List<?>) {
-					List<?> list= (List<?>) cached;
+					List<?> list = (List<?>) cached;
 					list.remove(annotation);
 					if (list.size() == 1) {
 						fReverseMap.put(position, list.get(0));
@@ -663,16 +662,17 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 	}
 
-	protected static class GlobalAnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
+	protected static class GlobalAnnotationModelListener
+			implements IAnnotationModelListener, IAnnotationModelListenerExtension {
 		private ListenerList<IAnnotationModelListener> fListenerList;
 
 		public GlobalAnnotationModelListener() {
-			fListenerList= new ListenerList<IAnnotationModelListener>(ListenerList.IDENTITY);
+			fListenerList = new ListenerList<IAnnotationModelListener>(ListenerList.IDENTITY);
 		}
 
 		@Override
 		public void modelChanged(IAnnotationModel model) {
-			Object[] listeners= fListenerList.getListeners();
+			Object[] listeners = fListenerList.getListeners();
 			for (Object listener : listeners) {
 				((IAnnotationModelListener) listener).modelChanged(model);
 			}
@@ -680,7 +680,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		@Override
 		public void modelChanged(AnnotationModelEvent event) {
-			Object[] listeners= fListenerList.getListeners();
+			Object[] listeners = fListenerList.getListeners();
 			for (Object curr : listeners) {
 				if (curr instanceof IAnnotationModelListenerExtension) {
 					((IAnnotationModelListenerExtension) curr).modelChanged(event);
@@ -698,7 +698,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/** Preference key for temporary problems */
-	private static final String HANDLE_TEMPORARY_PROBLEMS= PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS;
+	private static final String HANDLE_TEMPORARY_PROBLEMS = PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS;
 
 	/** Internal property changed listener */
 	private IPropertyChangeListener fPropertyListener;
@@ -707,11 +707,12 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 	public CDocumentProvider() {
 		super();
-		IDocumentProvider parentProvider= new ExternalSearchDocumentProvider();
-		parentProvider= new ForwardingDocumentProvider(ICPartitions.C_PARTITIONING, new CDocumentSetupParticipant(), parentProvider);
+		IDocumentProvider parentProvider = new ExternalSearchDocumentProvider();
+		parentProvider = new ForwardingDocumentProvider(ICPartitions.C_PARTITIONING, new CDocumentSetupParticipant(),
+				parentProvider);
 		setParentDocumentProvider(parentProvider);
-		fGlobalAnnotationModelListener= new GlobalAnnotationModelListener();
-		fPropertyListener= new IPropertyChangeListener() {
+		fGlobalAnnotationModelListener = new GlobalAnnotationModelListener();
+		fPropertyListener = new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (HANDLE_TEMPORARY_PROBLEMS.equals(event.getProperty()))
@@ -724,9 +725,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	@Override
 	public void connect(Object element) throws CoreException {
 		super.connect(element);
-		IDocument document= getDocument(element);
+		IDocument document = getDocument(element);
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension= (IDocumentExtension3) document;
+			IDocumentExtension3 extension = (IDocumentExtension3) document;
 			if (extension.getDocumentPartitioner(ICPartitions.C_PARTITIONING) == null)
 				new CDocumentSetupParticipant().setup(document);
 		}
@@ -744,9 +745,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		if (element == null) {
 			// Not in a source folder?
-			ICProject cproject= CoreModel.getDefault().create(file.getProject());
+			ICProject cproject = CoreModel.getDefault().create(file.getProject());
 			if (cproject != null) {
-				String contentTypeId= CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+				String contentTypeId = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
 				if (contentTypeId != null) {
 					return new TranslationUnit(cproject, file, contentTypeId);
 				}
@@ -775,15 +776,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			ITranslationUnitEditorInput input = (ITranslationUnitEditorInput) element;
 			original = input.getTranslationUnit();
 		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) element;
-			ILocationProvider locationProvider= adaptable.getAdapter(ILocationProvider.class);
+			IAdaptable adaptable = (IAdaptable) element;
+			ILocationProvider locationProvider = adaptable.getAdapter(ILocationProvider.class);
 			if (locationProvider instanceof ILocationProviderExtension) {
-				URI uri= ((ILocationProviderExtension) locationProvider).getURI(element);
-				original= createTranslationUnit(uri);
+				URI uri = ((ILocationProviderExtension) locationProvider).getURI(element);
+				original = createTranslationUnit(uri);
 			}
 			if (original == null && locationProvider != null) {
-				IPath location= locationProvider.getPath(element);
-				original= createTranslationUnit(location);
+				IPath location = locationProvider.getPath(element);
+				original = createTranslationUnit(location);
 			}
 		}
 
@@ -797,21 +798,23 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		TranslationUnitInfo tuInfo = (TranslationUnitInfo) info;
 		setUpSynchronization(tuInfo);
 
-		IProblemRequestor requestor= tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel : null;
-		tuInfo.fCopy = CDTUITools.getWorkingCopyManager().getSharedWorkingCopy(original, requestor, getProgressMonitor());
+		IProblemRequestor requestor = tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel
+				: null;
+		tuInfo.fCopy = CDTUITools.getWorkingCopyManager().getSharedWorkingCopy(original, requestor,
+				getProgressMonitor());
 
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
-			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;
+			TranslationUnitAnnotationModel model = (TranslationUnitAnnotationModel) tuInfo.fModel;
 			model.setTranslationUnit(tuInfo.fCopy);
 		} else {
 			IPath location = original.getLocation();
 			if (location != null) {
 				IResource markerResource = CUIPlugin.getWorkspace().getRoot();
 				IAnnotationModel originalModel = tuInfo.fModel;
-				ExternalSearchAnnotationModel externalSearchModel =
-						new ExternalSearchAnnotationModel(markerResource, location, IResource.DEPTH_ONE);
-				tuInfo.fModel= externalSearchModel;
-				IAnnotationModel fileBufferModel= tuInfo.fTextFileBuffer.getAnnotationModel();
+				ExternalSearchAnnotationModel externalSearchModel = new ExternalSearchAnnotationModel(markerResource,
+						location, IResource.DEPTH_ONE);
+				tuInfo.fModel = externalSearchModel;
+				IAnnotationModel fileBufferModel = tuInfo.fTextFileBuffer.getAnnotationModel();
 				if (fileBufferModel != null) {
 					externalSearchModel.addAnnotationModel("fileBufferModel", fileBufferModel); //$NON-NLS-1$
 				}
@@ -823,7 +826,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		if (tuInfo.fModel != null)
 			tuInfo.fModel.addAnnotationModelListener(fGlobalAnnotationModelListener);
 		if (requestor instanceof IProblemRequestorExtension) {
-			IProblemRequestorExtension extension= (IProblemRequestorExtension) requestor;
+			IProblemRequestorExtension extension = (IProblemRequestorExtension) requestor;
 			extension.setIsActive(isHandlingTemporaryProblems());
 		}
 		return tuInfo;
@@ -838,7 +841,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		if (location == null) {
 			return null;
 		}
-		IEditorInput input= EditorUtility.getEditorInputForLocation(location, null);
+		IEditorInput input = EditorUtility.getEditorInputForLocation(location, null);
 		if (input instanceof ITranslationUnitEditorInput) {
 			return ((ITranslationUnitEditorInput) input).getTranslationUnit();
 		}
@@ -854,7 +857,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		if (uri == null) {
 			return null;
 		}
-		IEditorInput input= EditorUtility.getEditorInputForLocation(uri, null);
+		IEditorInput input = EditorUtility.getEditorInputForLocation(uri, null);
 		if (input instanceof ITranslationUnitEditorInput) {
 			return ((ITranslationUnitEditorInput) input).getTranslationUnit();
 		}
@@ -877,8 +880,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 
 		try {
-			IDocument document= info.fTextFileBuffer.getDocument();
-			IResource resource= info.fCopy.getResource();
+			IDocument document = info.fTextFileBuffer.getDocument();
+			IResource resource = info.fCopy.getResource();
 
 			if (resource instanceof IFile && !resource.exists()) {
 				// The underlying resource has been deleted, just recreate the file, ignore the rest
@@ -887,7 +890,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			}
 
 			try {
-				CoreException saveActionException= null;
+				CoreException saveActionException = null;
 				try {
 					performSaveActions(info.fCopy, info.fTextFileBuffer, progress.split(20));
 				} catch (CoreException e) {
@@ -916,7 +919,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	@Override
 	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document,
 			final boolean overwrite) throws CoreException {
-		final FileInfo info= getFileInfo(element);
+		final FileInfo info = getFileInfo(element);
 		if (info instanceof TranslationUnitInfo) {
 			return new DocumentProviderOperation() {
 				@Override
@@ -927,7 +930,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				@Override
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
-						IFile file= ((IFileEditorInput) info.fElement).getFile();
+						IFile file = ((IFileEditorInput) info.fElement).getFile();
 						return computeSchedulingRule(file);
 					}
 					return null;
@@ -942,8 +945,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		TextEdit rootEdit = null;
 
 		ICProject cProject = tu.getCProject();
-        Map<String, Object> options = new HashMap<String, Object>(cProject.getOptions(true));
-        options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
+		Map<String, Object> options = new HashMap<String, Object>(cProject.getOptions(true));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 		String code = document.get();
 		TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code, changedRegions,
@@ -968,11 +971,13 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	private void performSaveActions(ITranslationUnit tu, ITextFileBuffer buffer, IProgressMonitor monitor)
 			throws CoreException {
-		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldFormatCode() || shouldAlignAllConst()) {
+		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldFormatCode()
+				|| shouldAlignAllConst()) {
 			SubMonitor progress = SubMonitor.convert(monitor, 3);
-			IDocumentUndoManager undoManager= null;
-			IRegion[] changedRegions= needsChangedRegions() ?
-					EditorUtility.calculateChangedLineRegions(buffer, progress.split(1)) : null;
+			IDocumentUndoManager undoManager = null;
+			IRegion[] changedRegions = needsChangedRegions()
+					? EditorUtility.calculateChangedLineRegions(buffer, progress.split(1))
+					: null;
 			IDocument document = buffer.getDocument();
 			try {
 				if (shouldFormatCode() && tu != null) {
@@ -982,7 +987,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 					}
 					TextEdit edit = formatCode(tu, document, changedRegions, progress.split(1));
 					if (edit != null) {
-						undoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+						undoManager = DocumentUndoManagerRegistry.getDocumentUndoManager(document);
 						undoManager.beginCompoundChange();
 						edit.apply(document);
 					}
@@ -991,7 +996,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				TextEdit edit = createTrailingWhitespaceEdit(document, changedRegions);
 				if (edit != null) {
 					if (undoManager == null) {
-						undoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+						undoManager = DocumentUndoManagerRegistry.getDocumentUndoManager(document);
 						undoManager.beginCompoundChange();
 					}
 					edit.apply(document);
@@ -1002,9 +1007,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 
 			} catch (MalformedTreeException | BadLocationException e) {
-				String message= e.getMessage();
+				String message = e.getMessage();
 				if (message == null)
-					message= e.getClass().getSimpleName();
+					message = e.getClass().getSimpleName();
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
 			} finally {
 				if (undoManager != null)
@@ -1018,28 +1023,25 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	private static boolean isLimitedFormatCode() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES);
+		return PreferenceConstants.getPreferenceStore()
+				.getBoolean(PreferenceConstants.FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES);
 	}
 
 	private static boolean shouldAddNewlineAtEof() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.ENSURE_NEWLINE_AT_EOF);
+		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.ENSURE_NEWLINE_AT_EOF);
 	}
 
 	private static boolean shouldRemoveTrailingWhitespace() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
+		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
 	}
 
 	private static boolean isLimitedRemoveTrailingWhitespace() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES);
+		return PreferenceConstants.getPreferenceStore()
+				.getBoolean(PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES);
 	}
 
 	private static boolean shouldAlignAllConst() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.ALIGN_ALL_CONST);
+		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.ALIGN_ALL_CONST);
 	}
 
 	private static boolean needsChangedRegions() {
@@ -1080,9 +1082,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 						charPos++;
 						if (charPos < lineEnd) {
 							// check partition - don't remove whitespace inside strings
-							ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, charPos, false);
+							ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING,
+									charPos, false);
 							if (!ICPartitions.C_STRING.equals(partition.getType())) {
-								lastWhitespaceEdit= new DeleteEdit(charPos, lineEnd - charPos);
+								lastWhitespaceEdit = new DeleteEdit(charPos, lineEnd - charPos);
 								if (rootEdit == null) {
 									rootEdit = new MultiTextEdit();
 								}
@@ -1098,10 +1101,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				IRegion lastLineRegion = document.getLineInformationOfOffset(endOffset);
 				// Insert newline at the end of the document if the last line is not empty and
 				// will not become empty after removal of trailing whitespace.
-				if (lastLineRegion.getLength() != 0 &&
-						(lastWhitespaceEdit == null ||
-						lastWhitespaceEdit.getOffset() != lastLineRegion.getOffset() ||
-						lastWhitespaceEdit.getLength() != lastLineRegion.getLength())) {
+				if (lastLineRegion.getLength() != 0
+						&& (lastWhitespaceEdit == null || lastWhitespaceEdit.getOffset() != lastLineRegion.getOffset()
+								|| lastWhitespaceEdit.getLength() != lastLineRegion.getLength())) {
 					TextEdit edit = new InsertEdit(endOffset, TextUtilities.getDefaultLineDelimiter(document));
 					if (rootEdit == null) {
 						rootEdit = edit;
@@ -1116,21 +1118,21 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		return rootEdit;
 	}
 
-//	private static boolean isWhitespaceRegion(IDocument document, IRegion region) throws BadLocationException {
-//		int end = region.getOffset() + region.getLength();
-//		for (int i = region.getOffset(); i < end; i++) {
-//			if (!Character.isWhitespace(document.getChar(i))) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
+	//	private static boolean isWhitespaceRegion(IDocument document, IRegion region) throws BadLocationException {
+	//		int end = region.getOffset() + region.getLength();
+	//		for (int i = region.getOffset(); i < end; i++) {
+	//			if (!Character.isWhitespace(document.getChar(i))) {
+	//				return false;
+	//			}
+	//		}
+	//		return true;
+	//	}
 
 	/**
 	 * Returns the preference whether handling temporary problems is enabled.
 	 */
 	protected boolean isHandlingTemporaryProblems() {
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(HANDLE_TEMPORARY_PROBLEMS);
 	}
 
@@ -1138,11 +1140,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * Switches the state of problem acceptance according to the value in the preference store.
 	 */
 	protected void enableHandlingTemporaryProblems() {
-		boolean enable= isHandlingTemporaryProblems();
-		for (Iterator<?> iter= getFileInfosIterator(); iter.hasNext();) {
-			FileInfo info= (FileInfo) iter.next();
+		boolean enable = isHandlingTemporaryProblems();
+		for (Iterator<?> iter = getFileInfosIterator(); iter.hasNext();) {
+			FileInfo info = (FileInfo) iter.next();
 			if (info.fModel instanceof IProblemRequestorExtension) {
-				IProblemRequestorExtension  extension= (IProblemRequestorExtension) info.fModel;
+				IProblemRequestorExtension extension = (IProblemRequestorExtension) info.fModel;
 				extension.setIsActive(enable);
 			}
 		}
@@ -1166,7 +1168,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	public void shutdown() {
-//		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
+		//		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
 		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());

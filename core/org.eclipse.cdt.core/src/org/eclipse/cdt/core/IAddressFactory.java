@@ -21,8 +21,7 @@ import java.math.BigInteger;
  * 
  * Please see Addr32Factory and Addr64Factory to see how it can be implemented.
  */
-public interface IAddressFactory 
-{
+public interface IAddressFactory {
 	/**
 	 * Returns zero address, i.e. minimal possible address
 	 */
@@ -72,7 +71,7 @@ public interface IAddressFactory
 	 * @param radix
 	 */
 	IAddress createAddress(String addr, int radix);
-	
+
 	/**
 	 * Create address from a BigInteger
 	 * 

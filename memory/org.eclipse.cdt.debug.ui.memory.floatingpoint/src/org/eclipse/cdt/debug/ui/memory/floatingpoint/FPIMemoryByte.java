@@ -15,8 +15,8 @@
 
 package org.eclipse.cdt.debug.ui.memory.floatingpoint;
 
-public interface FPIMemoryByte
-{
-    public boolean isEdited();
-    public void setEdited(boolean edited);
+public interface FPIMemoryByte {
+	public boolean isEdited();
+
+	public void setEdited(boolean edited);
 }

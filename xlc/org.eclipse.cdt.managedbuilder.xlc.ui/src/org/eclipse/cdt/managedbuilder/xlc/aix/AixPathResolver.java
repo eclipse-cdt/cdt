@@ -24,8 +24,8 @@ public class AixPathResolver implements IBuildPathResolver {
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildPathResolver#resolveBuildPaths(int, java.lang.String, java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration)
 	 */
 	@Override
-	public String[] resolveBuildPaths(int pathType, String variableName,
-			String variableValue, IConfiguration configuration) {
+	public String[] resolveBuildPaths(int pathType, String variableName, String variableValue,
+			IConfiguration configuration) {
 		return variableValue.split(DELIMITER_AIX);
 	}
 }

@@ -38,28 +38,28 @@ public class CCoreInternals {
 	 * @since 4.0
 	 */
 	public static void savePreferences(final IProject project, final boolean saveSharedPrefs) {
-    	Job job= new Job(CCorePlugin.getResourceString("CCoreInternals.savePreferencesJob")) { //$NON-NLS-1$
-        	@Override
+		Job job = new Job(CCorePlugin.getResourceString("CCoreInternals.savePreferencesJob")) { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-        		try {
-        			if (project != null) {
-    					new LocalProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
-    					if (saveSharedPrefs && project.isOpen()) {
-    						new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
-    					}
-        			}
-        			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).flush();
+				try {
+					if (project != null) {
+						new LocalProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
+						if (saveSharedPrefs && project.isOpen()) {
+							new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
+						}
+					}
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).flush();
 				} catch (BackingStoreException e) {
 					CCorePlugin.log(e);
 				}
-       	    	return Status.OK_STATUS;
-        	}
-    	};
-    	job.setSystem(true);
-    	if (project != null) {
-    		// using workspace rule, see bug 240888
-    		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
-    	}
-    	job.schedule();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		if (project != null) {
+			// using workspace rule, see bug 240888
+			job.setRule(ResourcesPlugin.getWorkspace().getRoot());
+		}
+		job.schedule();
 	}
 }

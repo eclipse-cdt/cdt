@@ -36,7 +36,7 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
  * @since 2.1
  */
 public class CHelpProviderDescriptor {
-	private static final String CLASS= "class"; //$NON-NLS-1$
+	private static final String CLASS = "class"; //$NON-NLS-1$
 
 	final private static String ELEMENT_PROVIDER = "provider"; //$NON-NLS-1$
 	final private static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -48,139 +48,139 @@ public class CHelpProviderDescriptor {
 	private CHelpBookDescriptor fHelpBookDescriptors[] = null;
 	private IProject fProject;
 
-	public CHelpProviderDescriptor(IProject project, IConfigurationElement element){
-		this(project,element,null);
+	public CHelpProviderDescriptor(IProject project, IConfigurationElement element) {
+		this(project, element, null);
 	}
-	
-	public CHelpProviderDescriptor(IProject project, IConfigurationElement configElement, Element parentElement){
+
+	public CHelpProviderDescriptor(IProject project, IConfigurationElement configElement, Element parentElement) {
 		fConfigElement = configElement;
 		fProject = project;
-		
-		if(parentElement == null)
+
+		if (parentElement == null)
 			return;
 
 		Element projectElement = getDescriptorElement(parentElement);
-			
-		if(projectElement == null)
+
+		if (projectElement == null)
 			return;
-		
+
 		getCHelpBookDescriptors(projectElement);
 	}
-	
-	private Element getDescriptorElement(Element parentElement){
+
+	private Element getDescriptorElement(Element parentElement) {
 		String id = getConfigurationElement().getAttribute(ATTRIBUTE_ID);
-		if(id == null || id.isEmpty())
+		if (id == null || id.isEmpty())
 			return null;
 
 		NodeList nodes = parentElement.getElementsByTagName(ELEMENT_PROVIDER);
-		for(int i = 0; i < nodes.getLength(); i++){
-			Element descriptorEl = (Element)nodes.item(i);
-			if(id.equals(descriptorEl.getAttribute(ATTRIBUTE_ID))){
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element descriptorEl = (Element) nodes.item(i);
+			if (id.equals(descriptorEl.getAttribute(ATTRIBUTE_ID))) {
 				return descriptorEl;
 			}
 		}
 		return null;
 	}
 
-	private static Map<String, ICHelpProvider> getProvidersMap(){
-		if(fProvidersMap == null){
+	private static Map<String, ICHelpProvider> getProvidersMap() {
+		if (fProvidersMap == null) {
 			fProvidersMap = new HashMap<String, ICHelpProvider>();
 		}
 		return fProvidersMap;
 	}
-	
-	private static ICHelpProvider getCHelpProvider(IConfigurationElement element){
+
+	private static ICHelpProvider getCHelpProvider(IConfigurationElement element) {
 		String id = element.getAttribute(ATTRIBUTE_ID);
-		if(id == null || id.isEmpty())
+		if (id == null || id.isEmpty())
 			return null;
 
 		Map<String, ICHelpProvider> providersMap = getProvidersMap();
-		try{
+		try {
 			ICHelpProvider provider = providersMap.get(id);
-			if(provider == null){
-				provider = (ICHelpProvider)element.createExecutableExtension(CLASS);
-				providersMap.put(id,provider);
+			if (provider == null) {
+				provider = (ICHelpProvider) element.createExecutableExtension(CLASS);
+				providersMap.put(id, provider);
 
-			final ICHelpProvider c = provider;
-			// Run the initialiser the class
-			ISafeRunnable runnable = new ISafeRunnable() {
-				@Override
-				public void run() throws Exception {
-					// Initialize
-					c.initialize();
-				}
-				@Override
-				public void handleException(Throwable exception) {
-				}
-			};
-			SafeRunner.run(runnable);
+				final ICHelpProvider c = provider;
+				// Run the initialiser the class
+				ISafeRunnable runnable = new ISafeRunnable() {
+					@Override
+					public void run() throws Exception {
+						// Initialize
+						c.initialize();
+					}
+
+					@Override
+					public void handleException(Throwable exception) {
+					}
+				};
+				SafeRunner.run(runnable);
 			}
 			return provider;
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			return null;
 		}
 	}
-	
-	public IConfigurationElement getConfigurationElement(){
+
+	public IConfigurationElement getConfigurationElement() {
 		return fConfigElement;
 	}
 
-	public ICHelpProvider getCHelpProvider(){
-		if(fHelpProvider == null)
+	public ICHelpProvider getCHelpProvider() {
+		if (fHelpProvider == null)
 			fHelpProvider = getCHelpProvider(fConfigElement);
 		return fHelpProvider;
 	}
-	
-	public CHelpBookDescriptor [] getCHelpBookDescriptors(Element projectElement){
-		if (fHelpBookDescriptors == null || projectElement != null){
+
+	public CHelpBookDescriptor[] getCHelpBookDescriptors(Element projectElement) {
+		if (fHelpBookDescriptors == null || projectElement != null) {
 			ICHelpProvider provider = getCHelpProvider();
 			if (provider != null && fProject != null) {
 				ICHelpBook books[] = provider.getCHelpBooks();
-				if(books != null){
+				if (books != null) {
 					List<CHelpBookDescriptor> descriptorList = new ArrayList<CHelpBookDescriptor>();
-					for(int i = 0; i < books.length; i++){
-						CHelpBookDescriptor des = new CHelpBookDescriptor(books[i],projectElement);
-						if(des.matches(fProject))
+					for (int i = 0; i < books.length; i++) {
+						CHelpBookDescriptor des = new CHelpBookDescriptor(books[i], projectElement);
+						if (des.matches(fProject))
 							descriptorList.add(des);
 					}
 					fHelpBookDescriptors = descriptorList.toArray(new CHelpBookDescriptor[descriptorList.size()]);
 				}
 			}
-			if(fHelpBookDescriptors == null)
+			if (fHelpBookDescriptors == null)
 				fHelpBookDescriptors = new CHelpBookDescriptor[0];
 		}
 		return fHelpBookDescriptors;
 	}
 
-	public CHelpBookDescriptor [] getCHelpBookDescriptors(){
+	public CHelpBookDescriptor[] getCHelpBookDescriptors() {
 		return getCHelpBookDescriptors(null);
 	}
 
-	ICHelpBook[] getEnabledMatchedCHelpBooks(ICHelpInvocationContext context){
+	ICHelpBook[] getEnabledMatchedCHelpBooks(ICHelpInvocationContext context) {
 		CHelpBookDescriptor bookDescriptors[] = getCHelpBookDescriptors();
-		if(bookDescriptors.length == 0)
+		if (bookDescriptors.length == 0)
 			return null;
 		List<ICHelpBook> bookList = new ArrayList<ICHelpBook>();
-		for(int i = 0; i < bookDescriptors.length; i++){
-			if(bookDescriptors[i].isEnabled() && bookDescriptors[i].matches(context))
+		for (int i = 0; i < bookDescriptors.length; i++) {
+			if (bookDescriptors[i].isEnabled() && bookDescriptors[i].matches(context))
 				bookList.add(bookDescriptors[i].getCHelpBook());
 		}
 		return bookList.toArray(new ICHelpBook[bookList.size()]);
 	}
-	
-	public void serialize(Document doc, Element parentElement){
+
+	public void serialize(Document doc, Element parentElement) {
 		String id = getConfigurationElement().getAttribute(ATTRIBUTE_ID);
-		if(id == null || id.isEmpty())
+		if (id == null || id.isEmpty())
 			return;
 
 		CHelpBookDescriptor bookDescriptors[] = getCHelpBookDescriptors();
 		Element providerElement = doc.createElement(ELEMENT_PROVIDER);
-		providerElement.setAttribute(ATTRIBUTE_ID,id);
+		providerElement.setAttribute(ATTRIBUTE_ID, id);
 		parentElement.appendChild(providerElement);
-		
-		for(int i = 0; i < bookDescriptors.length; i++){
-			bookDescriptors[i].serialize(doc,providerElement);
+
+		for (int i = 0; i < bookDescriptors.length; i++) {
+			bookDescriptors[i].serialize(doc, providerElement);
 		}
 	}
 }

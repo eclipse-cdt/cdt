@@ -32,22 +32,21 @@ public class QPropertyCompletion {
 
 	private static final String CONTEXT_ID = Activator.PLUGIN_ID + ".proposal.Q_PROPERTY";
 
-	private static final Template QPropertyTemplate
-		= new Template("Q_PROPERTY", "Q_PROPERTY declaration", CONTEXT_ID, "Q_PROPERTY( ${type} ${name} READ ${accessor} ${cursor} )", true);
+	private static final Template QPropertyTemplate = new Template("Q_PROPERTY", "Q_PROPERTY declaration", CONTEXT_ID,
+			"Q_PROPERTY( ${type} ${name} READ ${accessor} ${cursor} )", true);
 
-	public static Collection<ICompletionProposal> getAttributeProposals(ICEditorContentAssistInvocationContext context) {
+	public static Collection<ICompletionProposal> getAttributeProposals(
+			ICEditorContentAssistInvocationContext context) {
 		QPropertyExpansion expansion = QPropertyExpansion.create(context);
-		return expansion == null
-					? Collections.<ICompletionProposal>emptyList()
-					: expansion.getProposals(CONTEXT_ID, context);
+		return expansion == null ? Collections.<ICompletionProposal>emptyList()
+				: expansion.getProposals(CONTEXT_ID, context);
 	}
 
-	public static Collection<ICompletionProposal> getProposals(
-			ICEditorContentAssistInvocationContext context, IASTName name, IASTCompletionContext astContext, IASTNode astNode) {
+	public static Collection<ICompletionProposal> getProposals(ICEditorContentAssistInvocationContext context,
+			IASTName name, IASTCompletionContext astContext, IASTNode astNode) {
 
 		String token = name.getLastName().toString();
-		if (token.isEmpty()
-		 || !QtKeywords.Q_PROPERTY.startsWith(token))
+		if (token.isEmpty() || !QtKeywords.Q_PROPERTY.startsWith(token))
 			return Collections.emptyList();
 
 		TemplateContextType ctxType = new CContextType();
@@ -56,6 +55,7 @@ public class QPropertyCompletion {
 		QtProposalContext templateCtx = new QtProposalContext(context, ctxType);
 		Region region = new Region(templateCtx.getCompletionOffset(), templateCtx.getCompletionLength());
 
-		return Collections.<ICompletionProposal>singletonList(new QtTemplateProposal(QPropertyTemplate, templateCtx, region));
+		return Collections
+				.<ICompletionProposal>singletonList(new QtTemplateProposal(QPropertyTemplate, templateCtx, region));
 	}
 }

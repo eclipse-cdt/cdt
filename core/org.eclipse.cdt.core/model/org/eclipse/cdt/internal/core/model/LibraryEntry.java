@@ -37,8 +37,9 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 * @param sourceAttachmentPrefixMapping
 	 * @param isExported
 	 */
-	public LibraryEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath libraryPath, IPath sourceAttachmentPath,
-		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
+	public LibraryEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath libraryPath,
+			IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping,
+			boolean isExported) {
 		super(IPathEntry.CDT_LIBRARY, basePath, baseRef, resourcePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
 		this.libraryPath = (libraryPath == null) ? Path.EMPTY : libraryPath;
 		this.sourceAttachmentPath = sourceAttachmentPath;
@@ -102,15 +103,14 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		int result = super.hashCode();
 		result = prime * result + ((libraryPath == null) ? 0 : libraryPath.hashCode());
 		result = prime * result + ((sourceAttachmentPath == null) ? 0 : sourceAttachmentPath.hashCode());
-		result = prime * result
-				+ ((sourceAttachmentRootPath == null) ? 0 : sourceAttachmentRootPath.hashCode());
+		result = prime * result + ((sourceAttachmentRootPath == null) ? 0 : sourceAttachmentRootPath.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ILibraryEntry) {
-			ILibraryEntry otherEntry = (ILibraryEntry)obj;
+			ILibraryEntry otherEntry = (ILibraryEntry) obj;
 			if (!super.equals(obj)) {
 				return false;
 			}

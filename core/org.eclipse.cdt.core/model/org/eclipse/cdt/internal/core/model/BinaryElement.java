@@ -55,7 +55,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 */
 	@Override
 	public void copy(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
-		throws CModelException {
+			throws CModelException {
 		throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 	}
 
@@ -72,7 +72,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 */
 	@Override
 	public void move(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
-		throws CModelException {
+			throws CModelException {
 		throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 	}
 
@@ -94,9 +94,8 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 			try {
 				IResource res = tu.getResource();
 				if (res != null && res instanceof IFile) {
-					StringBuffer buffer = Util.getContent((IFile)res);
-					return  buffer.substring(getStartPos(),
-							getStartPos() + getLength());
+					StringBuffer buffer = Util.getContent((IFile) res);
+					return buffer.substring(getStartPos(), getStartPos() + getLength());
 				}
 			} catch (IOException e) {
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
@@ -110,19 +109,15 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 */
 	@Override
 	public ISourceRange getSourceRange() throws CModelException {
-		return new SourceRange(getStartPos(),
-						getLength(),
-						getIdStartPos(),
-						getIdLength(),
-						getStartLine(),
-						getEndLine());
+		return new SourceRange(getStartPos(), getLength(), getIdStartPos(), getIdLength(), getStartLine(),
+				getEndLine());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceReference#getTranslationUnit()
 	 */
 	@Override
-	public ITranslationUnit getTranslationUnit()  {
+	public ITranslationUnit getTranslationUnit() {
 		if (fSourceTU == null) {
 			ITranslationUnit tu = null;
 			CModelManager mgr = CModelManager.getDefault();
@@ -134,7 +129,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 					if (res != null && res.exists() && res.getType() == IResource.FILE) {
 						ICElement e = CModelManager.getDefault().create(res, null);
 						if (e instanceof ITranslationUnit) {
-							tu = (ITranslationUnit)e;
+							tu = (ITranslationUnit) e;
 						}
 					}
 					// do not give up yet in C++ the methods may be inline in the headers
@@ -219,7 +214,6 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 		return 0;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getBinary()
 	 */
@@ -238,7 +232,8 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) throws CModelException {
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor)
+			throws CModelException {
 	}
 
 	@Override

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -42,7 +42,7 @@ public interface ICPPASTFunctionWithTryBlock extends ICPPASTFunctionDefinition {
 	 * Returns an array of catch handlers.
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * Represents a sequence of code tokens.
  */
 public class ASTTokenList extends ASTNode implements IASTTokenList {
-    private IASTToken[] tokens = IASTToken.EMPTY_TOKEN_ARRAY;
+	private IASTToken[] tokens = IASTToken.EMPTY_TOKEN_ARRAY;
 
 	public ASTTokenList() {
 	}
@@ -68,23 +68,27 @@ public class ASTTokenList extends ASTNode implements IASTTokenList {
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitTokens) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitTokens) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		for (IASTToken token : tokens) {
 			if (token == null)
 				break;
-			if (!token.accept(action)) return false;
+			if (!token.accept(action))
+				return false;
 		}
 
-        if (action.shouldVisitTokens && action.leave(this) == ASTVisitor.PROCESS_ABORT)
-        	return false;
+		if (action.shouldVisitTokens && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 }

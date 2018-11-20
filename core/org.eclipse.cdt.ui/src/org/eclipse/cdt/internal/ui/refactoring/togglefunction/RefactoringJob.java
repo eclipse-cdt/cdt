@@ -34,18 +34,18 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 class RefactoringJob extends Job {
 	public final static Object FAMILY_TOGGLE_DEFINITION = new Object();
 	private final ToggleRefactoring refactoring;
-	
+
 	RefactoringJob(ToggleRefactoring refactoring) {
 		super("Toggle Function Definition code automation"); //$NON-NLS-1$
 		this.refactoring = refactoring;
 		setPriority(Job.SHORT);
 	}
-	
+
 	@Override
 	public boolean belongsTo(Object family) {
 		return family == FAMILY_TOGGLE_DEFINITION;
 	}
-	
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		CRefactoringContext context = new CRefactoringContext(refactoring);
@@ -56,7 +56,8 @@ class RefactoringJob extends Job {
 		try {
 			RefactoringStatus status = refactoring.checkAllConditions(monitor);
 			if (status.hasFatalError())
-				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, status.getMessageMatchingSeverity(RefactoringStatus.ERROR));
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+						status.getMessageMatchingSeverity(RefactoringStatus.ERROR));
 			change = refactoring.createChange(monitor);
 			change.initializeValidationData(monitor);
 			if (!change.isValid(monitor).isOK()) {

@@ -29,19 +29,19 @@ public class QuestionStatusHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	@Override
-	public Object handleStatus( IStatus status, Object source ) throws CoreException {
+	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		final boolean result[] = new boolean[1];
-		if ( status != null && source != null && source instanceof IDebugTarget ) {
-			final String title = ((IDebugTarget)source).getName();
+		if (status != null && source != null && source instanceof IDebugTarget) {
+			final String title = ((IDebugTarget) source).getName();
 			final String message = status.getMessage();
-			CDebugUIPlugin.getStandardDisplay().syncExec( new Runnable() {
+			CDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 
 				@Override
 				public void run() {
-					result[0] = MessageDialog.openQuestion( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
+					result[0] = MessageDialog.openQuestion(CDebugUIPlugin.getActiveWorkbenchShell(), title, message);
 				}
-			} );
+			});
 		}
-		return Boolean.valueOf( result[0] );
+		return Boolean.valueOf(result[0]);
 	}
 }

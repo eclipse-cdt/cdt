@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  */
 public class CommentContextType extends TranslationUnitContextType {
 
-	public static final String ID= "org.eclipse.cdt.ui.text.templates.comment"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.ui.text.templates.comment"; //$NON-NLS-1$
 
 	/**
 	 * Creates a comment context type.
@@ -34,13 +34,13 @@ public class CommentContextType extends TranslationUnitContextType {
 	public CommentContextType() {
 		super();
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType#createContext(org.eclipse.jface.text.IDocument, int, int, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
 	@Override
-	public TranslationUnitContext createContext(IDocument document, int offset,
-			int length, ITranslationUnit translationUnit) {
+	public TranslationUnitContext createContext(IDocument document, int offset, int length,
+			ITranslationUnit translationUnit) {
 		return new CommentContext(this, document, offset, length, translationUnit);
 	}
 
@@ -48,8 +48,8 @@ public class CommentContextType extends TranslationUnitContextType {
 	 * @see org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType#createContext(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
 	@Override
-	public TranslationUnitContext createContext(IDocument document,
-			Position position, ITranslationUnit translationUnit) {
+	public TranslationUnitContext createContext(IDocument document, Position position,
+			ITranslationUnit translationUnit) {
 		return new CommentContext(this, document, position, translationUnit);
 	}
 

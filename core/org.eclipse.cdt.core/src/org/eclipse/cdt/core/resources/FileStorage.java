@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -40,8 +39,7 @@ public class FileStorage extends PlatformObject implements IStorage {
 			try {
 				return new FileInputStream(path.toFile());
 			} catch (FileNotFoundException e) {
-				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-						e.toString(), e));
+				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, e.toString(), e));
 			}
 		}
 		return in;
@@ -71,11 +69,11 @@ public class FileStorage extends PlatformObject implements IStorage {
 		return true;
 	}
 
-	public FileStorage(IPath path){
+	public FileStorage(IPath path) {
 		this.path = path;
 	}
 
-	public FileStorage(InputStream in, IPath path){
+	public FileStorage(InputStream in, IPath path) {
 		this.path = path;
 		this.in = in;
 	}
@@ -93,8 +91,8 @@ public class FileStorage extends PlatformObject implements IStorage {
 		if (this == obj)
 			return true;
 		if (obj instanceof IStorage) {
-			IPath p= getFullPath();
-			IPath objPath= ((IStorage)obj).getFullPath();
+			IPath p = getFullPath();
+			IPath objPath = ((IStorage) obj).getFullPath();
 			if (p != null && objPath != null)
 				return p.equals(objPath);
 		}

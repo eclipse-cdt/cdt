@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The preference page for configuring Organize Includes command.
  */
 public class OrganizeIncludesPreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.OrganizeIncludesPreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.OrganizeIncludesPreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.OrganizeIncludesPreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.OrganizeIncludesPreferencePage"; //$NON-NLS-1$
 
 	public OrganizeIncludesPreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// Only used when the page is shown programmatically.
-		setTitle(PreferencesMessages.OrganizeIncludesPreferencePage_title);		 
+		setTitle(PreferencesMessages.OrganizeIncludesPreferencePage_title);
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class OrganizeIncludesPreferencePage extends ConfigurationBlockPropertyAn
 	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
-//		return PROP_ID;
+		//		return PROP_ID;
 	}
 }

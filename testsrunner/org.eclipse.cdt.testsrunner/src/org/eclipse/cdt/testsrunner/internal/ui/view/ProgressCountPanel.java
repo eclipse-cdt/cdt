@@ -27,7 +27,7 @@ public class ProgressCountPanel extends Composite {
 
 	/** Child widget: counter panel. */
 	private CounterPanel counterPanel;
-	
+
 	/** Child widget: red/green progress bar */
 	private ProgressBar progressBar;
 
@@ -38,7 +38,6 @@ public class ProgressCountPanel extends Composite {
 	 */
 	private DummyUISession dummyUISession = new DummyUISession();
 
-	
 	public ProgressCountPanel(Composite parent, ResultsView.Orientation currOrientation) {
 		super(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -46,16 +45,14 @@ public class ProgressCountPanel extends Composite {
 		setPanelOrientation(currOrientation);
 
 		counterPanel = new CounterPanel(this, dummyUISession);
-		counterPanel.setLayoutData(
-			new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		counterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		progressBar = new ProgressBar(this, dummyUISession);
-		progressBar.setLayoutData(
-				new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		progressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
 		// Data for parent (view's) layout
 		setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 	}
-	
+
 	/**
 	 * Sets the testing session to show information about.
 	 * 
@@ -67,7 +64,7 @@ public class ProgressCountPanel extends Composite {
 		counterPanel.setTestingSession(newSession);
 		progressBar.setTestingSession(newSession);
 	}
-	
+
 	/**
 	 * Updates the information on the panel from the currently set testing
 	 * session.
@@ -84,7 +81,7 @@ public class ProgressCountPanel extends Composite {
 	 * is not supported)
 	 */
 	public void setPanelOrientation(ResultsView.Orientation orientation) {
-		((GridLayout)getLayout()).numColumns = (orientation == ResultsView.Orientation.Horizontal) ? 2 : 1;
+		((GridLayout) getLayout()).numColumns = (orientation == ResultsView.Orientation.Horizontal) ? 2 : 1;
 	}
-	
+
 }

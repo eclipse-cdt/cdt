@@ -40,20 +40,21 @@ import org.eclipse.osgi.util.NLS;
  */
 public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 
-	private static final Pattern RESOURCE_VARIABLE_PATTERN= Pattern.compile("(project|resource|container)_(loc|path|name)"); //$NON-NLS-1$
+	private static final Pattern RESOURCE_VARIABLE_PATTERN = Pattern
+			.compile("(project|resource|container)_(loc|path|name)"); //$NON-NLS-1$
 
 	//	private static final String VAR_PREFIX = "${";  //$NON-NLS-1$
-//	private static final char VAR_SUFFIX = '}';
+	//	private static final char VAR_SUFFIX = '}';
 	private static final char COLON = ':';
 
 	private static EclipseVariablesVariableSupplier fInstance;
 
-	private EclipseVariablesVariableSupplier(){
+	private EclipseVariablesVariableSupplier() {
 
 	}
 
-	public static EclipseVariablesVariableSupplier getInstance(){
-		if(fInstance == null)
+	public static EclipseVariablesVariableSupplier getInstance() {
+		if (fInstance == null)
 			fInstance = new EclipseVariablesVariableSupplier();
 		return fInstance;
 	}
@@ -63,15 +64,15 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		private String fArgument;
 		private boolean fInitialized;
 
-		private EclipseVarMacro(IStringVariable var){
-			this(var,null);
+		private EclipseVarMacro(IStringVariable var) {
+			this(var, null);
 		}
 
-		private EclipseVarMacro(IStringVariable var, String argument){
+		private EclipseVarMacro(IStringVariable var, String argument) {
 			fVariable = var;
 			fType = VALUE_TEXT;
 			fName = var.getName();
-			if(argument != null)
+			if (argument != null)
 				fName += COLON + argument;
 			fArgument = argument;
 		}
@@ -81,13 +82,12 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		 */
 		@Override
 		public String getStringValue() throws CdtVariableException {
-			if(!fInitialized){
+			if (!fInitialized) {
 				try {
 					if (!canExpandVariable(fVariable.getName(), fArgument)) {
-						final String expression= "${"+fName+"}";  //$NON-NLS-1$//$NON-NLS-2$
+						final String expression = "${" + fName + "}"; //$NON-NLS-1$//$NON-NLS-2$
 						throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_REFERENCE_INCORRECT,
-								NLS.bind(Messages.EclipseVariablesVariableSupplier_illegal_variable, expression),
-								null,
+								NLS.bind(Messages.EclipseVariablesVariableSupplier_illegal_variable, expression), null,
 								fVariable.getName(), expression, null);
 					}
 					loadValue(fVariable);
@@ -99,27 +99,27 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		}
 
 		private void loadValue(IStringVariable var) throws CdtVariableException {
-			if(var instanceof IDynamicVariable){
-				IDynamicVariable dynamicVar = (IDynamicVariable)var;
-				if(fArgument == null || dynamicVar.supportsArgument()){
-					try{
+			if (var instanceof IDynamicVariable) {
+				IDynamicVariable dynamicVar = (IDynamicVariable) var;
+				if (fArgument == null || dynamicVar.supportsArgument()) {
+					try {
 						fStringValue = dynamicVar.getValue(fArgument);
-					}catch(CoreException e){
+					} catch (CoreException e) {
 						fStringValue = null;
 					}
-				}else
+				} else
 					fStringValue = null;
 
-			}else if(var instanceof IValueVariable){
-				if(fArgument == null)
-					fStringValue = ((IValueVariable)var).getValue();
+			} else if (var instanceof IValueVariable) {
+				if (fArgument == null)
+					fStringValue = ((IValueVariable) var).getValue();
 				else
 					fStringValue = null;
 			}
 
 		}
 
-		public IStringVariable getVariable(){
+		public IStringVariable getVariable() {
 			return fVariable;
 		}
 	}
@@ -134,31 +134,31 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 
 	public ICdtVariable getVariable(String macroName) {
 
-//		if(contextType != DefaultMacroContextInfo.CONTEXT_WORKSPACE)
-//			return null;
-		if(macroName == null || macroName.isEmpty())
+		//		if(contextType != DefaultMacroContextInfo.CONTEXT_WORKSPACE)
+		//			return null;
+		if (macroName == null || macroName.isEmpty())
 			return null;
 
 		String varName = null;
 		String param = null;
 		IStringVariable var = null;
 		int index = macroName.indexOf(COLON);
-		if(index == -1)
+		if (index == -1)
 			varName = macroName;
-		else if(index > 0){
-			varName = macroName.substring(0,index);
-			param = macroName.substring(index+1);
+		else if (index > 0) {
+			varName = macroName.substring(0, index);
+			param = macroName.substring(index + 1);
 		}
 
-		if(varName != null){
+		if (varName != null) {
 			IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 			var = mngr.getValueVariable(varName);
-			if(var == null)
+			if (var == null)
 				var = mngr.getDynamicVariable(varName);
 		}
 
-		if(var != null)
-			return new EclipseVarMacro(var,param);
+		if (var != null)
+			return new EclipseVarMacro(var, param);
 		return null;
 	}
 
@@ -171,27 +171,27 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 	}
 
 	public ICdtVariable[] getVariables() {
-//		if(contextType != DefaultMacroContextInfo.CONTEXT_WORKSPACE)
-//			return null;
+		//		if(contextType != DefaultMacroContextInfo.CONTEXT_WORKSPACE)
+		//			return null;
 
 		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 		IDynamicVariable vars[] = mngr.getDynamicVariables();
 		Map<String, IStringVariable> map = new HashMap<String, IStringVariable>();
 		for (IDynamicVariable var : vars) {
-			final String name= var.getName();
+			final String name = var.getName();
 			if (!isDeadlockProneVariable(name)) {
-				map.put(name,var);
+				map.put(name, var);
 			}
 		}
 
 		IValueVariable valVars[] = mngr.getValueVariables();
 		for (IValueVariable valVar : valVars)
-			map.put(valVar.getName(),valVar);
+			map.put(valVar.getName(), valVar);
 
 		Collection<IStringVariable> collection = map.values();
 		EclipseVarMacro macros[] = new EclipseVarMacro[collection.size()];
 		Iterator<IStringVariable> iter = collection.iterator();
-		for(int i = 0; i < macros.length ; i++)
+		for (int i = 0; i < macros.length; i++)
 			macros[i] = new EclipseVarMacro(iter.next());
 
 		return macros;
@@ -203,27 +203,26 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 	 * @return whether the variable is prone to deadlocks
 	 */
 	private static boolean isDeadlockProneVariable(String name) {
-		return RESOURCE_VARIABLE_PATTERN.matcher(name).matches()
-		|| name.endsWith("_prompt") //$NON-NLS-1$
-		|| name.equals("selected_text"); //$NON-NLS-1$
+		return RESOURCE_VARIABLE_PATTERN.matcher(name).matches() || name.endsWith("_prompt") //$NON-NLS-1$
+				|| name.equals("selected_text"); //$NON-NLS-1$
 	}
 
 	private static boolean canExpandVariable(String name, String argument) {
 		if (argument == null && RESOURCE_VARIABLE_PATTERN.matcher(name).matches()) {
 			return false;
 		}
-		if (name.endsWith("_prompt") || name.equals("selected_text")) {  //$NON-NLS-1$//$NON-NLS-2$
+		if (name.endsWith("_prompt") || name.equals("selected_text")) { //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		return true;
 	}
-//	private String getMacroValue(String name){
-//		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-//		try{
-//			return mngr.performStringSubstitution(VAR_PREFIX + name + VAR_SUFFIX);
-//		}catch (CoreException e){
-//		}
-//
-//		return null;
-//	}
+	//	private String getMacroValue(String name){
+	//		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+	//		try{
+	//			return mngr.performStringSubstitution(VAR_PREFIX + name + VAR_SUFFIX);
+	//		}catch (CoreException e){
+	//		}
+	//
+	//		return null;
+	//	}
 }

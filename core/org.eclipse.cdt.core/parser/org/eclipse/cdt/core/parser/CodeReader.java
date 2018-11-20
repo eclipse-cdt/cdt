@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CodeReader {
 	public static final String SYSTEM_DEFAULT_ENCODING = System.getProperty("file.encoding"); //$NON-NLS-1$
 
-	private static final int MB = 1024*1024;
+	private static final int MB = 1024 * 1024;
 	private static final String NF = "<text>"; //$NON-NLS-1$
 	private static final char[] NOFILE = NF.toCharArray();
 	private static final int MAX_FILE_SIZE;
@@ -113,15 +113,14 @@ public class CodeReader {
 		final long lsize = channel.size();
 		final int isize = (int) lsize;
 		if (lsize > MAX_FILE_SIZE) {
-			throw new IOException(
-					"File '" + getPath() + "' is larger than " + MAX_FILE_SIZE / 1024 / 1024 + "mb"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			throw new IOException("File '" + getPath() + "' is larger than " + MAX_FILE_SIZE / 1024 / 1024 + "mb"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		CharBuffer charBuffer;
 		if (isize < MB) {
-			charBuffer= decodeSmallFile(channel, isize, encoding);
+			charBuffer = decodeSmallFile(channel, isize, encoding);
 		} else {
-			charBuffer= decodeLargeFile(channel, isize, encoding);
+			charBuffer = decodeLargeFile(channel, isize, encoding);
 		}
 		if (charBuffer.hasArray() && charBuffer.arrayOffset() == 0) {
 			char[] buff = charBuffer.array();
@@ -160,9 +159,9 @@ public class CodeReader {
 			CoderResult cr = decoder.decode(in, out, offset >= isize);
 			final int remainingBytes = in.remaining();
 			if (cr.isOverflow()) {
-				int totalRemainingBytes= isize-offset + remainingBytes;
+				int totalRemainingBytes = isize - offset + remainingBytes;
 				if (totalRemainingBytes > 0) {
-					n+= (int) (totalRemainingBytes * (double) decoder.maxCharsPerByte()); // avoid rounding errors.
+					n += (int) (totalRemainingBytes * (double) decoder.maxCharsPerByte()); // avoid rounding errors.
 					CharBuffer o = CharBuffer.allocate(n);
 					out.flip();
 					o.put(out);

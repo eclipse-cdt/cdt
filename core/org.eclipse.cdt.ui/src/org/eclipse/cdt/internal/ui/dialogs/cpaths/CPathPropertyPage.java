@@ -51,7 +51,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * {@code org.eclipse.cdt.make.core.makeNature} project (3.X style).
  */
 @Deprecated
-public class CPathPropertyPage extends PropertyPage implements IStatusChangeListener{
+public class CPathPropertyPage extends PropertyPage implements IStatusChangeListener {
 
 	private static final String PAGE_SETTINGS = "CPathsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
@@ -101,7 +101,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	 */
 	private Control createWithoutCProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(CPathEntryMessages.CPathsPropertyPage_no_C_project_message); 
+		label.setText(CPathEntryMessages.CPathsPropertyPage_no_C_project_message);
 
 		fCPathsBlock = null;
 		setValid(true);
@@ -113,7 +113,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	 */
 	private Control createForClosedProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(CPathEntryMessages.CPathsPropertyPage_closed_project_message); 
+		label.setText(CPathEntryMessages.CPathsPropertyPage_closed_project_message);
 
 		fCPathsBlock = null;
 		setValid(true);
@@ -125,12 +125,11 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		if (fCPathsBlock != null) {
 			if (!visible) {
 				if (fCPathsBlock.hasChangesInDialog()) {
-					String title = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_title; 
-					String message = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_message; 
-					String[] buttonLabels = new String[]{
-							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_save, 
-							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_discard, 
-					};
+					String title = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_title;
+					String message = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_message;
+					String[] buttonLabels = new String[] {
+							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_save,
+							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_discard, };
 					MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
 							buttonLabels, 0);
 					int res = dialog.open();
@@ -154,7 +153,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		if (adaptable != null) {
 			ICElement elem = adaptable.getAdapter(ICElement.class);
 			if (elem instanceof ICProject) {
-				return ((ICProject)elem).getProject();
+				return ((ICProject) elem).getProject();
 			}
 		}
 		return null;
@@ -193,8 +192,8 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 			try {
 				new ProgressMonitorDialog(shell).run(true, true, op);
 			} catch (InvocationTargetException e) {
-				String title = CPathEntryMessages.CPathsPropertyPage_error_title; 
-				String message = CPathEntryMessages.CPathsPropertyPage_error_message; 
+				String title = CPathEntryMessages.CPathsPropertyPage_error_title;
+				String message = CPathEntryMessages.CPathsPropertyPage_error_message;
 				ExceptionHandler.handle(e, shell, title, message);
 				return false;
 			} catch (InterruptedException e) {

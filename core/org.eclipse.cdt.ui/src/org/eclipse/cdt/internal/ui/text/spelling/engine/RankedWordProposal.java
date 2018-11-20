@@ -32,8 +32,8 @@ public class RankedWordProposal implements Comparable<RankedWordProposal> {
 	 * @param rank       The rank of this proposal
 	 */
 	public RankedWordProposal(final String text, final int rank) {
-		fText= text;
-		fRank= rank;
+		fText = text;
+		fRank = rank;
 	}
 
 	/*
@@ -42,7 +42,7 @@ public class RankedWordProposal implements Comparable<RankedWordProposal> {
 	@Override
 	public final int compareTo(RankedWordProposal word) {
 
-		final int rank= word.getRank();
+		final int rank = word.getRank();
 
 		if (fRank < rank)
 			return -1;
@@ -96,6 +96,6 @@ public class RankedWordProposal implements Comparable<RankedWordProposal> {
 	 * @param rank       The rank to set
 	 */
 	public final void setRank(final int rank) {
-		fRank= rank;
+		fRank = rank;
 	}
 }

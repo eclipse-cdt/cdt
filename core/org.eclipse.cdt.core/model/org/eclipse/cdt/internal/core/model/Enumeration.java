@@ -14,23 +14,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumeration;
 
-public class Enumeration extends SourceManipulation implements IEnumeration{
+public class Enumeration extends SourceManipulation implements IEnumeration {
 
 	public Enumeration(ICElement parent, String name) {
 		super(parent, name, ICElement.C_ENUMERATION);
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new EnumerationInfo(this);
 	}
 
-	private EnumerationInfo getEnumerationInfo() throws CModelException{
+	private EnumerationInfo getEnumerationInfo() throws CModelException {
 		return (EnumerationInfo) getElementInfo();
 	}
 
@@ -86,7 +85,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @param isStatic The isStatic to set
 	 */
 	public void setStatic(boolean isStatic) throws CModelException {
-		getEnumerationInfo().setStatic( isStatic);
+		getEnumerationInfo().setStatic(isStatic);
 	}
 
 	/**

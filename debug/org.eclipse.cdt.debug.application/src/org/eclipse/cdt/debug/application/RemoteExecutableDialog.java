@@ -40,27 +40,28 @@ import org.eclipse.swt.widgets.Text;
 public class RemoteExecutableDialog extends TitleAreaDialog {
 
 	private RemoteExecutableInfo fInfo = null;
-	
+
 	private Text fHostBinaryText;
 	private Label fBinaryLabel;
 	private Text fBuildLogText;
 	private Text fAddressText;
 	private Text fPortText;
 	private Button fAttachButton;
-	
+
 	private final String fHostBinary;
 	private final String fBuildLog;
 	private final String fAddress;
 	private final String fPort;
 	private final boolean fAttach;
 
-	public RemoteExecutableDialog (Shell parentShell) {
+	public RemoteExecutableDialog(Shell parentShell) {
 		this(parentShell, null, null, null, null, false);
 	}
 
-	public RemoteExecutableDialog( Shell parentShell, String hostBinary, String buildLog, String address, String port, boolean attach) {
-		super( parentShell );
-		setShellStyle( getShellStyle() | SWT.RESIZE );
+	public RemoteExecutableDialog(Shell parentShell, String hostBinary, String buildLog, String address, String port,
+			boolean attach) {
+		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fHostBinary = hostBinary;
 		fBuildLog = buildLog;
 		fAddress = address;
@@ -69,116 +70,114 @@ public class RemoteExecutableDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected Control createContents( Composite parent ) {
-		Control control = super.createContents( parent );
+	protected Control createContents(Composite parent) {
+		Control control = super.createContents(parent);
 		validate();
 		return control;
 	}
 
 	@Override
-	protected Control createDialogArea( Composite parent ) {
+	protected Control createDialogArea(Composite parent) {
 
-		getShell().setText( Messages.GdbDebugRemoteExecutableCommand_Debug_Remote_Executable ); 
-		setTitle( Messages.GdbDebugRemoteExecutableCommand_Select_Remote_Options );
+		getShell().setText(Messages.GdbDebugRemoteExecutableCommand_Debug_Remote_Executable);
+		setTitle(Messages.GdbDebugRemoteExecutableCommand_Select_Remote_Options);
 		String message = Messages.GdbDebugRemoteExecutableCommand_Select_Remote_Options;
-		setMessage( message );
+		setMessage(message);
 
-		Composite control = (Composite)super.createDialogArea( parent );
-		Composite comp = new Composite( control, SWT.NONE );
-		GridData gd = new GridData( SWT.FILL, SWT.FILL, true, true );
-		GridLayout layout = new GridLayout( 3, false );
-		comp.setLayout( layout );
-		comp.setLayoutData( gd );
-		
-		fBinaryLabel = new Label( comp, SWT.None );
-		fBinaryLabel.setText(fAttach ? Messages.GdbDebugExecutableCommand_Binary_Optional :
-			                           Messages.GdbDebugExecutableCommand_Binary );
-		fHostBinaryText = new Text( comp, SWT.BORDER );
+		Composite control = (Composite) super.createDialogArea(parent);
+		Composite comp = new Composite(control, SWT.NONE);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridLayout layout = new GridLayout(3, false);
+		comp.setLayout(layout);
+		comp.setLayoutData(gd);
+
+		fBinaryLabel = new Label(comp, SWT.None);
+		fBinaryLabel.setText(fAttach ? Messages.GdbDebugExecutableCommand_Binary_Optional
+				: Messages.GdbDebugExecutableCommand_Binary);
+		fHostBinaryText = new Text(comp, SWT.BORDER);
 		if (fHostBinary != null)
 			fHostBinaryText.setText(fHostBinary);
-		fHostBinaryText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-		fHostBinaryText.addModifyListener( new ModifyListener() {
-			
-			@Override
-			public void modifyText( ModifyEvent e ) {
-				validate();
-			}
-		} );
-		Button browseButton = new Button( comp, SWT.PUSH );
-		browseButton.setText( Messages.GdbDebugExecutableCommand_Browse );
-		browseButton.setFont( JFaceResources.getDialogFont() );
-		setButtonLayoutData( browseButton );
-		browseButton.addSelectionListener( new SelectionAdapter() {
+		fHostBinaryText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fHostBinaryText.addModifyListener(new ModifyListener() {
 
 			@Override
-			public void widgetSelected( SelectionEvent e ) {
-				FileDialog dialog = new FileDialog( getShell() );
-				dialog.setFileName( fHostBinaryText.getText() );
-				String result = dialog.open();
-				if ( result != null ) {
-					fHostBinaryText.setText( result );
-				}
-			}
-		} );
-		
-		new Label( comp, SWT.None ).setText( Messages.GdbDebugExecutableCommand_BuildLog );
-		fBuildLogText = new Text( comp, SWT.BORDER );
-		if (fBuildLog != null)
-			fBuildLogText.setText(fBuildLog);
-		fBuildLogText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
-		fBuildLogText.addModifyListener( new ModifyListener() {
-			
-			@Override
-			public void modifyText( ModifyEvent e ) {
+			public void modifyText(ModifyEvent e) {
 				validate();
 			}
-		} );
+		});
+		Button browseButton = new Button(comp, SWT.PUSH);
+		browseButton.setText(Messages.GdbDebugExecutableCommand_Browse);
+		browseButton.setFont(JFaceResources.getDialogFont());
+		setButtonLayoutData(browseButton);
+		browseButton.addSelectionListener(new SelectionAdapter() {
 
-		new Label( comp, SWT.None ).setText( Messages.GdbDebugRemoteExecutableCommand_Host_name_or_ip_address );
-		fAddressText = new Text( comp, SWT.BORDER );
-		if (fAddress != null)
-			fAddressText.setText(fAddress);
-		fAddressText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
-		fAddressText.addModifyListener( new ModifyListener() {
-			
-			@Override
-			public void modifyText( ModifyEvent e ) {
-				validate();
-			}
-		} );
-
-		new Label( comp, SWT.None ).setText( Messages.GdbDebugRemoteExecutableCommand_Port_number );
-		fPortText = new Text( comp, SWT.BORDER );
-		if (fPort != null)
-			fPortText.setText(fPort);
-		fPortText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
-		fPortText.addModifyListener( new ModifyListener() {
-			
-			@Override
-			public void modifyText( ModifyEvent e ) {
-				validate();
-			}
-		} );
-
-		fAttachButton = new Button( comp, SWT.CHECK);
-		fAttachButton.setText( Messages.GdbDebugRemoteExecutableCommand_Attach);
-		fAttachButton.setSelection(fAttach);
-		fAttachButton.addSelectionListener(new SelectionListener() {
-			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fBinaryLabel.setText(fAttachButton.getSelection() ? 
-						Messages.GdbDebugExecutableCommand_Binary_Optional :
-                        Messages.GdbDebugExecutableCommand_Binary );
+				FileDialog dialog = new FileDialog(getShell());
+				dialog.setFileName(fHostBinaryText.getText());
+				String result = dialog.open();
+				if (result != null) {
+					fHostBinaryText.setText(result);
+				}
+			}
+		});
+
+		new Label(comp, SWT.None).setText(Messages.GdbDebugExecutableCommand_BuildLog);
+		fBuildLogText = new Text(comp, SWT.BORDER);
+		if (fBuildLog != null)
+			fBuildLogText.setText(fBuildLog);
+		fBuildLogText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		fBuildLogText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+		});
+
+		new Label(comp, SWT.None).setText(Messages.GdbDebugRemoteExecutableCommand_Host_name_or_ip_address);
+		fAddressText = new Text(comp, SWT.BORDER);
+		if (fAddress != null)
+			fAddressText.setText(fAddress);
+		fAddressText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		fAddressText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+		});
+
+		new Label(comp, SWT.None).setText(Messages.GdbDebugRemoteExecutableCommand_Port_number);
+		fPortText = new Text(comp, SWT.BORDER);
+		if (fPort != null)
+			fPortText.setText(fPort);
+		fPortText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		fPortText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+		});
+
+		fAttachButton = new Button(comp, SWT.CHECK);
+		fAttachButton.setText(Messages.GdbDebugRemoteExecutableCommand_Attach);
+		fAttachButton.setSelection(fAttach);
+		fAttachButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fBinaryLabel.setText(fAttachButton.getSelection() ? Messages.GdbDebugExecutableCommand_Binary_Optional
+						: Messages.GdbDebugExecutableCommand_Binary);
 
 				validate();
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				fBinaryLabel.setText(fAttachButton.getSelection() ? 
-						Messages.GdbDebugExecutableCommand_Binary_Optional :
-                        Messages.GdbDebugExecutableCommand_Binary );
+				fBinaryLabel.setText(fAttachButton.getSelection() ? Messages.GdbDebugExecutableCommand_Binary_Optional
+						: Messages.GdbDebugExecutableCommand_Binary);
 
 				validate();
 			}
@@ -189,11 +188,8 @@ public class RemoteExecutableDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		fInfo = new RemoteExecutableInfo( fHostBinaryText.getText().trim(), 
-				                          fBuildLogText.getText().trim(),
-				                          fAddressText.getText().trim(),
-				                          fPortText.getText().trim(),
-				                          fAttachButton.getSelection() );
+		fInfo = new RemoteExecutableInfo(fHostBinaryText.getText().trim(), fBuildLogText.getText().trim(),
+				fAddressText.getText().trim(), fPortText.getText().trim(), fAttachButton.getSelection());
 		super.okPressed();
 	}
 
@@ -203,29 +199,27 @@ public class RemoteExecutableDialog extends TitleAreaDialog {
 
 	private void validate() {
 		String error = null;
-		
+
 		String hostBinary = fHostBinaryText.getText().trim();
 		if (hostBinary.isEmpty()) {
 			boolean attach = fAttachButton.getSelection();
-			if (!attach) error = Messages.GdbDebugNewExecutableCommand_Binary_must_be_specified;
-		}
-		else {
+			if (!attach)
+				error = Messages.GdbDebugNewExecutableCommand_Binary_must_be_specified;
+		} else {
 			File file = new File(hostBinary);
-			if (!file.exists() ) {
+			if (!file.exists()) {
 				error = Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist;
-			}
-			else if (file.isDirectory()) {
+			} else if (file.isDirectory()) {
 				error = Messages.GdbDebugNewExecutableCommand_Invalid_binary;
 			}
 		}
-		
+
 		String buildLog = fBuildLogText.getText();
 		if (error == null && !buildLog.isEmpty()) {
 			File file = new File(buildLog);
 			if (!file.exists()) {
 				error = Messages.GdbDebugNewExecutableCommand_BuildLog_file_does_not_exist;
-			}
-			else if (file.isDirectory()) {
+			} else if (file.isDirectory()) {
 				error = Messages.GdbDebugNewExecutableCommand_Invalid_buildLog;
 			}
 		}
@@ -248,7 +242,7 @@ public class RemoteExecutableDialog extends TitleAreaDialog {
 			}
 		}
 
-		setErrorMessage((error != null ) ? error : null);
+		setErrorMessage((error != null) ? error : null);
 		getButton(IDialogConstants.OK_ID).setEnabled(getErrorMessage() == null);
 	}
 }

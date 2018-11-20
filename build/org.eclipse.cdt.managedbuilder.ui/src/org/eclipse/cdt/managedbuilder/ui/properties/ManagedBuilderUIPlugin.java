@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -26,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-
 public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ManagedBuilderUIPlugin plugin;
@@ -37,10 +35,9 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public ManagedBuilderUIPlugin() {
-//		super();
+		//		super();
 		plugin = this;
 	}
-
 
 	/**
 	 * @return
@@ -108,7 +105,6 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 		ErrorDialog.openError(shell, title, message, status);
 	}
 
-
 	/**
 	 * @return
 	 */
@@ -129,6 +125,5 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 			return windows[0].getShell();
 		}
 	}
-
 
 }

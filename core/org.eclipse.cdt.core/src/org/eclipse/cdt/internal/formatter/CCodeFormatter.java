@@ -81,22 +81,22 @@ public class CCodeFormatter extends CodeFormatter {
 			throw new IllegalArgumentException();
 		}
 
-		int tabs= 0;
-		int spaces= 0;
+		int tabs = 0;
+		int spaces = 0;
 		switch (preferences.tab_char) {
 		case DefaultCodeFormatterOptions.SPACE:
-			spaces= indentationLevel * preferences.tab_size;
+			spaces = indentationLevel * preferences.tab_size;
 			break;
 
 		case DefaultCodeFormatterOptions.TAB:
-			tabs= indentationLevel;
+			tabs = indentationLevel;
 			break;
 
 		case DefaultCodeFormatterOptions.MIXED:
-			int tabSize= preferences.tab_size;
-			int spaceEquivalents= indentationLevel * preferences.indentation_size;
-			tabs= spaceEquivalents / tabSize;
-			spaces= spaceEquivalents % tabSize;
+			int tabSize = preferences.tab_size;
+			int spaceEquivalents = indentationLevel * preferences.indentation_size;
+			tabs = spaceEquivalents / tabSize;
+			spaces = spaceEquivalents % tabSize;
 			break;
 
 		default:
@@ -106,11 +106,11 @@ public class CCodeFormatter extends CodeFormatter {
 		if (tabs == 0 && spaces == 0) {
 			return EMPTY_STRING;
 		}
-		StringBuilder buffer= new StringBuilder(tabs + spaces);
-		for (int i= 0; i < tabs; i++) {
+		StringBuilder buffer = new StringBuilder(tabs + spaces);
+		for (int i = 0; i < tabs; i++) {
 			buffer.append('\t');
 		}
-		for (int i= 0; i < spaces; i++) {
+		for (int i = 0; i < spaces; i++) {
 			buffer.append(' ');
 		}
 		return buffer.toString();
@@ -119,18 +119,18 @@ public class CCodeFormatter extends CodeFormatter {
 	@Override
 	public void setOptions(Map<String, ?> options) {
 		if (options != null) {
-			this.options= options;
-			Map<String, String> formatterPrefs= new HashMap<String, String>(options.size());
+			this.options = options;
+			Map<String, String> formatterPrefs = new HashMap<String, String>(options.size());
 			for (String key : options.keySet()) {
-				Object value= options.get(key);
+				Object value = options.get(key);
 				if (value instanceof String) {
 					formatterPrefs.put(key, (String) value);
 				}
 			}
-			preferences= new DefaultCodeFormatterOptions(formatterPrefs);
+			preferences = new DefaultCodeFormatterOptions(formatterPrefs);
 		} else {
-			this.options= CCorePlugin.getOptions();
-			preferences= DefaultCodeFormatterOptions.getDefaultSettings();
+			this.options = CCorePlugin.getOptions();
+			preferences = DefaultCodeFormatterOptions.getDefaultSettings();
 		}
 	}
 
@@ -143,7 +143,7 @@ public class CCodeFormatter extends CodeFormatter {
 
 	@Override
 	public TextEdit[] format(int kind, String source, IRegion[] regions, String lineSeparator) {
-		TextEdit[] edits= new TextEdit[regions.length];
+		TextEdit[] edits = new TextEdit[regions.length];
 		if (lineSeparator != null) {
 			preferences.line_separator = lineSeparator;
 		} else {
@@ -164,12 +164,12 @@ public class CCodeFormatter extends CodeFormatter {
 			IASTTranslationUnit ast;
 			try {
 				try {
-					ast= tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+					ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 				} catch (CoreException e) {
 					throw new AbortFormatting(e);
 				}
 				if (ast == null) {
-					throw new AbortFormatting("AST is null");  //$NON-NLS-1$
+					throw new AbortFormatting("AST is null"); //$NON-NLS-1$
 				}
 				formatRegions(source, regions, edits, ast);
 			} finally {
@@ -179,14 +179,14 @@ public class CCodeFormatter extends CodeFormatter {
 			IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getSavedFilesProvider();
 			IScannerInfo scanInfo = new ScannerInfo();
 			FileContent content = FileContent.create("<text>", source.toCharArray()); //$NON-NLS-1$
-			
-			ILanguage language= (ILanguage) options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
+
+			ILanguage language = (ILanguage) options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
 			if (language == null) {
-				language= GPPLanguage.getDefault();
+				language = GPPLanguage.getDefault();
 			}
 			IASTTranslationUnit ast;
 			try {
-				ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0,
+				ast = language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0,
 						ParserUtil.getParserLogService());
 				formatRegions(source, regions, edits, ast);
 			} catch (CoreException e) {
@@ -196,8 +196,7 @@ public class CCodeFormatter extends CodeFormatter {
 		return edits;
 	}
 
-	private void formatRegions(String source, IRegion[] regions, TextEdit[] edits,
-			IASTTranslationUnit ast) {
+	private void formatRegions(String source, IRegion[] regions, TextEdit[] edits, IASTTranslationUnit ast) {
 		for (int i = 0; i < regions.length; i++) {
 			IRegion region = regions[i];
 			if (shouldFormatWholeStatements()) {
@@ -205,10 +204,10 @@ public class CCodeFormatter extends CodeFormatter {
 				// the offset and all statements overlapping with that line.
 				region = getLineOrStatementRegion(source, region, ast);
 			}
-			CodeFormatterVisitor codeFormatter =
-					new CodeFormatterVisitor(preferences, region.getOffset(), region.getLength());
+			CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(preferences, region.getOffset(),
+					region.getLength());
 			edits[i] = codeFormatter.format(source, ast);
-			IStatus status= codeFormatter.getStatus();
+			IStatus status = codeFormatter.getStatus();
 			if (!status.isOK()) {
 				CCorePlugin.log(status);
 			}
@@ -260,7 +259,7 @@ public class CCodeFormatter extends CodeFormatter {
 				end = nodeEnd;
 			pos = nodeEnd;
 		}
-		
+
 		return new Region(start, end - start);
 	}
 
@@ -289,11 +288,11 @@ public class CCodeFormatter extends CodeFormatter {
 	}
 
 	private ITranslationUnit getTranslationUnit(String source) {
-		ITranslationUnit tu= (ITranslationUnit) options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);
+		ITranslationUnit tu = (ITranslationUnit) options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);
 		if (tu == null) {
-			IFile file= (IFile) options.get(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE);
+			IFile file = (IFile) options.get(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE);
 			if (file != null) {
-				tu= (ITranslationUnit) CoreModel.getDefault().create(file);
+				tu = (ITranslationUnit) CoreModel.getDefault().create(file);
 			}
 		}
 		if (tu != null && source != null) {

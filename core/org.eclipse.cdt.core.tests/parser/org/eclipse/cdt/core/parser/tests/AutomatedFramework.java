@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.core.parser.tests;
 
 import java.io.File;
@@ -43,72 +43,72 @@ public abstract class AutomatedFramework extends TestCase {
 		super(name);
 	}
 
-	protected abstract AutomatedFramework newTest( String name );
-	protected abstract void loadProperties() throws Exception;
-	public	  abstract void doFile() throws Throwable;
+	protected abstract AutomatedFramework newTest(String name);
 
-	private void fillSuite( TestSuite suite, File path ){
+	protected abstract void loadProperties() throws Exception;
+
+	public abstract void doFile() throws Throwable;
+
+	private void fillSuite(TestSuite suite, File path) {
 		File files[] = null;
-		if( path.isFile() ){
-			files = new File[ 1 ];
+		if (path.isFile()) {
+			files = new File[1];
 			files[0] = path;
-		}
-		else
+		} else
 			files = path.listFiles();
-	
+
 		File file = null;
 		String filePath = null;
 		int i = 0;
-		try{
-			file = files[ i++ ];
-			while( file != null )
-			{
-				if( file.isDirectory() )
-					fillSuite( suite, file );
-				else if( file.isFile() && nameFilter.accept( file.getParentFile(), file.getName() ) ){
-					try{
+		try {
+			file = files[i++];
+			while (file != null) {
+				if (file.isDirectory())
+					fillSuite(suite, file);
+				else if (file.isFile() && nameFilter.accept(file.getParentFile(), file.getName())) {
+					try {
 						filePath = file.getCanonicalPath();
-					} catch ( Exception e ){
+					} catch (Exception e) {
 						continue;
 					}
-					
-					if(	filePath.endsWith(".cpp") || filePath.endsWith(".hpp") ||  //$NON-NLS-1$ //$NON-NLS-2$
-						filePath.endsWith(".cc") || filePath.endsWith(".CC") || //$NON-NLS-1$ //$NON-NLS-2$
-						filePath.endsWith(".C") || //$NON-NLS-1$
-						filePath.endsWith(".hxx") || filePath.endsWith(".hh") ) //$NON-NLS-1$ //$NON-NLS-2$
+
+					if (filePath.endsWith(".cpp") || filePath.endsWith(".hpp") || //$NON-NLS-1$ //$NON-NLS-2$
+							filePath.endsWith(".cc") || filePath.endsWith(".CC") || //$NON-NLS-1$ //$NON-NLS-2$
+							filePath.endsWith(".C") || //$NON-NLS-1$
+							filePath.endsWith(".hxx") || filePath.endsWith(".hh")) //$NON-NLS-1$ //$NON-NLS-2$
 					{
-						AutomatedFramework.natures.put( filePath, "cpp" ); //$NON-NLS-1$
-					} else if( filePath.endsWith(".c") ){  //$NON-NLS-1$
-						AutomatedFramework.natures.put( filePath, "c" ); //$NON-NLS-1$
+						AutomatedFramework.natures.put(filePath, "cpp"); //$NON-NLS-1$
+					} else if (filePath.endsWith(".c")) { //$NON-NLS-1$
+						AutomatedFramework.natures.put(filePath, "c"); //$NON-NLS-1$
 					} else {
-						AutomatedFramework.natures.put( filePath, AutomatedFramework.defaultNature );
+						AutomatedFramework.natures.put(filePath, AutomatedFramework.defaultNature);
 					}
-					
-					AutomatedFramework.fileList.add( file );
-					suite.addTest( newTest( file.getName().replace(',', '_') ) );
-				}				
-				file = files[ i++ ];
+
+					AutomatedFramework.fileList.add(file);
+					suite.addTest(newTest(file.getName().replace(',', '_')));
+				}
+				file = files[i++];
 			}
-		} catch( ArrayIndexOutOfBoundsException e ){
+		} catch (ArrayIndexOutOfBoundsException e) {
 			//done
 		}
 	}
 
 	public void reportFailed() {
-		fail( "Unable to open " + outputFile + "for output of results." ); //$NON-NLS-1$ //$NON-NLS-2$
+		fail("Unable to open " + outputFile + "for output of results."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void propertiesFailed() {
-		fail( "Unable to load properties file." ); //$NON-NLS-1$
+		fail("Unable to load properties file."); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	protected void runTest() throws Throwable {
 		String name = getName();
-		
-		if( name.equals("propertiesFailed") ) //$NON-NLS-1$
+
+		if (name.equals("propertiesFailed")) //$NON-NLS-1$
 			propertiesFailed();
-		else if ( name.equals("reportFailed") ) //$NON-NLS-1$
+		else if (name.equals("reportFailed")) //$NON-NLS-1$
 			reportFailed();
 		else
 			doFile();
@@ -116,45 +116,44 @@ public abstract class AutomatedFramework extends TestCase {
 
 	public Test createSuite() {
 		TestSuite suite = new TestSuite();
-		
-		try{
+
+		try {
 			loadProperties();
-		} catch( Exception e ){
-			suite.addTest( newTest( "propertiesFailed") ); //$NON-NLS-1$
+		} catch (Exception e) {
+			suite.addTest(newTest("propertiesFailed")); //$NON-NLS-1$
 		}
-		
-		if( outputFile != null && !outputFile.isEmpty() ){
-			try{
-				
-				File output = new File( outputFile );
-				
-				if( output.exists() ){
+
+		if (outputFile != null && !outputFile.isEmpty()) {
+			try {
+
+				File output = new File(outputFile);
+
+				if (output.exists()) {
 					output.delete();
 				}
-				
+
 				output.createNewFile();
-			
-				report = new FileOutputStream( output );
-			
-			} catch( Exception e ) {
-				suite.addTest( newTest( "reportFailed" ) ); //$NON-NLS-1$
+
+				report = new FileOutputStream(output);
+
+			} catch (Exception e) {
+				suite.addTest(newTest("reportFailed")); //$NON-NLS-1$
 			}
 		}
-		
+
 		Set keys = testSources.keySet();
 		Iterator iter = keys.iterator();
 		int size = keys.size();
 		String item = null;
-		for( int i = size; i > 0; i-- )
-		{
+		for (int i = size; i > 0; i--) {
 			item = (String) iter.next();
-			File file = new File( item );
-			if( file.exists() ){
-				defaultNature = (String) testSources.get( item );
-				fillSuite( suite, file );		
+			File file = new File(item);
+			if (file.exists()) {
+				defaultNature = (String) testSources.get(item);
+				fillSuite(suite, file);
 			}
 		}
-	
+
 		return suite;
 	}
 
@@ -166,24 +165,22 @@ public abstract class AutomatedFramework extends TestCase {
 	protected static LinkedList fileList = new LinkedList();
 	private static FilenameFilter nameFilter = new Filter();
 	protected static FileOutputStream report = null;
-	
-	static private class Filter implements FilenameFilter
-	{
+
+	static private class Filter implements FilenameFilter {
 		@Override
 		public boolean accept(File dir, String name) {
-			if( name.endsWith(".cpp") 	||  //$NON-NLS-1$
-				name.endsWith(".c") 	||  //$NON-NLS-1$
-				name.endsWith(".cc") 	|| //$NON-NLS-1$
-				name.endsWith(".CC") 	|| //$NON-NLS-1$
-				name.endsWith(".C") 	||  //$NON-NLS-1$
-				name.endsWith(".h") 	|| //$NON-NLS-1$
-				name.endsWith(".hh")	|| //$NON-NLS-1$
-				name.endsWith(".hpp")	|| //$NON-NLS-1$
-				name.endsWith(".hxx")) //$NON-NLS-1$
+			if (name.endsWith(".cpp") || //$NON-NLS-1$
+					name.endsWith(".c") || //$NON-NLS-1$
+					name.endsWith(".cc") || //$NON-NLS-1$
+					name.endsWith(".CC") || //$NON-NLS-1$
+					name.endsWith(".C") || //$NON-NLS-1$
+					name.endsWith(".h") || //$NON-NLS-1$
+					name.endsWith(".hh") || //$NON-NLS-1$
+					name.endsWith(".hpp") || //$NON-NLS-1$
+					name.endsWith(".hxx")) //$NON-NLS-1$
 			{
 				return true;
-			}
-			else
+			} else
 				return false;
 		}
 	}

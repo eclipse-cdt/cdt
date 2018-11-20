@@ -18,7 +18,6 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 /**
  * Represents GNUmakefile built-in internal functions.
  */

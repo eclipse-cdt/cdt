@@ -40,17 +40,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallColl
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
 	private int fOperator;
-    private ICPPASTExpression fOperand1;
-    private ICPPASTInitializerClause fOperand2;
+	private ICPPASTExpression fOperand1;
+	private ICPPASTInitializerClause fOperand2;
 
-    private ICPPEvaluation fEvaluation;
-    private IASTImplicitName[] fImplicitNames;
-    private IASTImplicitDestructorName[] fImplicitDestructorNames;
+	private ICPPEvaluation fEvaluation;
+	private IASTImplicitName[] fImplicitNames;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTBinaryExpression() {
+	public CPPASTBinaryExpression() {
 	}
 
 	public CPPASTBinaryExpression(int op, IASTExpression operand1, IASTInitializerClause operand2) {
@@ -67,67 +66,66 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	@Override
 	public CPPASTBinaryExpression copy(CopyStyle style) {
 		CPPASTBinaryExpression copy = new CPPASTBinaryExpression(fOperator,
-				fOperand1 == null ? null : fOperand1.copy(style),
-				fOperand2 == null ? null : fOperand2.copy(style));
+				fOperand1 == null ? null : fOperand1.copy(style), fOperand2 == null ? null : fOperand2.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getOperator() {
-        return fOperator;
-    }
+		return fOperator;
+	}
 
-    @Override
+	@Override
 	public IASTExpression getOperand1() {
-        return fOperand1;
-    }
+		return fOperand1;
+	}
 
-    @Override
+	@Override
 	public IASTInitializerClause getInitOperand2() {
-    	return fOperand2;
-    }
+		return fOperand2;
+	}
 
-    @Override
+	@Override
 	public IASTExpression getOperand2() {
-    	if (fOperand2 instanceof IASTExpression)
-    		return (IASTExpression) fOperand2;
-    	return null;
-    }
+		if (fOperand2 instanceof IASTExpression)
+			return (IASTExpression) fOperand2;
+		return null;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int op) {
-        assertNotFrozen();
-        this.fOperator = op;
-    }
+		assertNotFrozen();
+		this.fOperator = op;
+	}
 
-    @Override
+	@Override
 	public void setOperand1(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression != null) {
-        	if (!(expression instanceof ICPPASTExpression))
-        		throw new IllegalArgumentException(expression.getClass().getName());
+		assertNotFrozen();
+		if (expression != null) {
+			if (!(expression instanceof ICPPASTExpression))
+				throw new IllegalArgumentException(expression.getClass().getName());
 
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND_ONE);
 		}
-        fOperand1 = (ICPPASTExpression) expression;
-    }
+		fOperand1 = (ICPPASTExpression) expression;
+	}
 
-    public void setInitOperand2(IASTInitializerClause operand) {
-        assertNotFrozen();
-        if (operand != null) {
-        	if (!(operand instanceof ICPPASTInitializerClause))
-        		throw new IllegalArgumentException(operand.getClass().getName());
-        	operand.setParent(this);
-        	operand.setPropertyInParent(OPERAND_TWO);
+	public void setInitOperand2(IASTInitializerClause operand) {
+		assertNotFrozen();
+		if (operand != null) {
+			if (!(operand instanceof ICPPASTInitializerClause))
+				throw new IllegalArgumentException(operand.getClass().getName());
+			operand.setParent(this);
+			operand.setPropertyInParent(OPERAND_TWO);
 		}
-        fOperand2 = (ICPPASTInitializerClause) operand;
-    }
+		fOperand2 = (ICPPASTInitializerClause) operand;
+	}
 
-    @Override
+	@Override
 	public void setOperand2(IASTExpression expression) {
-    	setInitOperand2(expression);
-    }
+		setInitOperand2(expression);
+	}
 
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
@@ -156,18 +154,21 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	if (fOperand1 instanceof IASTBinaryExpression || fOperand2 instanceof IASTBinaryExpression) {
-    		return acceptWithoutRecursion(this, action);
-    	}
+		if (fOperand1 instanceof IASTBinaryExpression || fOperand2 instanceof IASTBinaryExpression) {
+			return acceptWithoutRecursion(this, action);
+		}
 
 		if (action.shouldVisitExpressions) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (fOperand1 != null && !fOperand1.accept(action))
@@ -186,9 +187,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			return false;
 
 		return true;
-    }
+	}
 
-    private static class N {
+	private static class N {
 		final IASTBinaryExpression fExpression;
 		int fState;
 		N fNext;
@@ -199,42 +200,42 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	}
 
 	private static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
-		N stack= new N(bexpr);
+		N stack = new N(bexpr);
 		while (stack != null) {
-			IASTBinaryExpression expr= stack.fExpression;
+			IASTBinaryExpression expr = stack.fExpression;
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
 					switch (action.visit(expr)) {
 					case ASTVisitor.PROCESS_ABORT:
 						return false;
 					case ASTVisitor.PROCESS_SKIP:
-						stack= stack.fNext;
+						stack = stack.fNext;
 						continue;
 					}
 				}
-				stack.fState= 1;
+				stack.fState = 1;
 				IASTExpression op1 = expr.getOperand1();
 				if (op1 instanceof IASTBinaryExpression) {
-					N n= new N((IASTBinaryExpression) op1);
-					n.fNext= stack;
-					stack= n;
+					N n = new N((IASTBinaryExpression) op1);
+					n.fNext = stack;
+					stack = n;
 					continue;
 				}
 				if (op1 != null && !op1.accept(action))
 					return false;
 			}
 			if (stack.fState == 1) {
-				if (action.shouldVisitImplicitNames &&
-						!acceptByNodes(((IASTImplicitNameOwner) expr).getImplicitNames(), action)) {
+				if (action.shouldVisitImplicitNames
+						&& !acceptByNodes(((IASTImplicitNameOwner) expr).getImplicitNames(), action)) {
 					return false;
 				}
-				stack.fState= 2;
+				stack.fState = 2;
 
 				IASTInitializerClause op2 = expr.getInitOperand2();
 				if (op2 instanceof IASTBinaryExpression) {
-					N n= new N((IASTBinaryExpression) op2);
-					n.fNext= stack;
-					stack= n;
+					N n = new N((IASTBinaryExpression) op2);
+					n.fNext = stack;
+					stack = n;
 					continue;
 				}
 				if (op2 != null && !op2.accept(action))
@@ -244,7 +245,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT)
 				return false;
 
-			stack= stack.fNext;
+			stack = stack.fNext;
 		}
 
 		return true;
@@ -264,8 +265,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		}
 	}
 
-
-    @Override
+	@Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
 		if (eval instanceof EvalBinary) {
@@ -277,12 +277,12 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			}
 		}
 		return null;
-    }
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
-			fEvaluation= computeEvaluation();
+			fEvaluation = computeEvaluation();
 
 		return fEvaluation;
 	}
@@ -296,10 +296,10 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return new EvalBinary(fOperator, eval1, eval2, this);
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {

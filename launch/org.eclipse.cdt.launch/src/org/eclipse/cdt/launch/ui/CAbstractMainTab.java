@@ -207,7 +207,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {
-				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource(), false);
+				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource(),
+						false);
 				if (cdesciptor != null) {
 					String projectPlatform = cdesciptor.getPlatform();
 					if (filterPlatform.equals("*") //$NON-NLS-1$
@@ -385,11 +386,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fWorkpsaceSettingsLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(
-						parent.getShell(),
-						LAUNCHING_PREFERENCE_PAGE_ID,
-						null,
-						null).open();
+				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), LAUNCHING_PREFERENCE_PAGE_ID, null, null)
+						.open();
 			}
 		});
 	}
@@ -419,14 +417,14 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		}
 		updateComboTooltip();
 		if (fDisableBuildButton != null)
-			fDisableBuildButton
-					.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
+			fDisableBuildButton.setSelection(
+					buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
 		if (fEnableBuildButton != null)
-			fEnableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
+			fEnableBuildButton.setSelection(
+					buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
 		if (fWorkspaceSettingsButton != null)
-			fWorkspaceSettingsButton
-					.setSelection(
-							buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+			fWorkspaceSettingsButton.setSelection(
+					buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
 	}
 
 	/**
@@ -538,7 +536,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (fBuildConfigCombo != null) {
-			String configId = (String) fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
+			String configId = (String) fBuildConfigCombo
+					.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
 			boolean auto = false;
 			if (configId.equals(AUTO_CONFIG)) {
 				auto = true;
@@ -629,7 +628,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected void updateComboTooltip() {
 		if (fBuildConfigCombo != null) {
 			// fBuildConfigCombo might not be loaded when controls are created
-			String configId = (String) fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
+			String configId = (String) fBuildConfigCombo
+					.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
 			String tooltip = EMPTY_STRING;
 			if (configId != null) {
 				if (configId.equals(AUTO_CONFIG)) {

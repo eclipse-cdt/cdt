@@ -212,6 +212,7 @@ public class ProcessClosure {
 		}
 		return false;
 	}
+
 	/**
 	 * Forces the termination the launched process
 	 */

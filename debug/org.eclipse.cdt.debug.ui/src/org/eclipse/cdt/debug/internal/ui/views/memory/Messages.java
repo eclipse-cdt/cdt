@@ -21,7 +21,7 @@ public class Messages extends NLS {
 	public static String AddMemBlockDlg_enterExpression;
 	public static String AddMemBlockDlg_or;
 	public static String AddMemBlockDlg_MonitorMemory;
-	
+
 	public static String AddMemBlocks_title;
 	public static String AddMemBlocks_noMemoryBlock;
 	public static String AddMemBlocks_failed;

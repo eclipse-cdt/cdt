@@ -39,15 +39,16 @@ import org.eclipse.core.runtime.IPath;
 public class XlcErrorParserTester {
 	public static final String XLC_ERROR_PARSER_ID = "org.eclipse.cdt.errorparsers.xlc.XlcErrorParser";
 
-	static private int counter=0;
-	IProject fTempProject = ResourcesPlugin.getWorkspace().getRoot().getProject("XlcErrorParserTester.temp." + counter++);
+	static private int counter = 0;
+	IProject fTempProject = ResourcesPlugin.getWorkspace().getRoot()
+			.getProject("XlcErrorParserTester.temp." + counter++);
 
 	XlcErrorParserTester() {
 		try {
 			fTempProject.create(null);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Exception creating temporary project "+fTempProject.getName()+": "+e);
+			fail("Exception creating temporary project " + fTempProject.getName() + ": " + e);
 		}
 	}
 
@@ -57,7 +58,7 @@ public class XlcErrorParserTester {
 		private int severity;
 		private String message;
 	}
-	
+
 	private List<MarkerData> markerDataList = new ArrayList<MarkerData>();
 
 	/*
@@ -66,8 +67,7 @@ public class XlcErrorParserTester {
 	 */
 	private class MockMarkerGenerator implements IMarkerGenerator {
 
-		public void addMarker(IResource file, int lineNumber, String errorDesc,
-				int severity, String errorVar) {
+		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 			// dummy
 		}
 
@@ -97,7 +97,7 @@ public class XlcErrorParserTester {
 		 */
 		@Override
 		public IFile findFileName(String fileName) {
-			if (fileName!=null && fileName.trim().length()>0)
+			if (fileName != null && fileName.trim().length() > 0)
 				return fTempProject.getFile(fileName);
 			return null;
 		}
@@ -106,18 +106,19 @@ public class XlcErrorParserTester {
 		 * Called by ErrorPattern.RecordError() for external problem markers
 		 */
 		@Override
-		public void generateExternalMarker(IResource rc, int lineNumb, String desc, int sev, String varName, IPath externalPath) {
+		public void generateExternalMarker(IResource rc, int lineNumb, String desc, int sev, String varName,
+				IPath externalPath) {
 			// if rc is this project it means that file was not found
 			MarkerData markerData = new MarkerData();
-			if (rc!=null && rc!=fTempProject) {
+			if (rc != null && rc != fTempProject) {
 				markerData.fileName = rc.getName();
 			} else {
-				markerData.fileName="";
+				markerData.fileName = "";
 			}
 			markerData.lineNumber = lineNumb;
 			markerData.message = desc;
 			markerData.severity = sev;
-			
+
 			markerDataList.add(markerData);
 		}
 	}

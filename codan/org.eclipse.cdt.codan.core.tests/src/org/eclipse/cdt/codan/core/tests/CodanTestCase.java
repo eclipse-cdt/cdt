@@ -90,7 +90,8 @@ public class CodanTestCase extends BaseTestCase {
 	public void tearDown() throws Exception {
 		if (cproject != null) {
 			try {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			} catch (CoreException e) {
 				throw e;
 			}
@@ -126,7 +127,8 @@ public class CodanTestCase extends BaseTestCase {
 			workspace.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create the cproject
-					ICProject cproject = cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
+					ICProject cproject = cpp
+							? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
 							: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
 					cprojects[0] = cproject;
 				}
@@ -182,7 +184,8 @@ public class CodanTestCase extends BaseTestCase {
 
 	protected StringBuilder[] getContents(int sections) {
 		try {
-			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(), getClass(), getName(), sections);
+			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(), getClass(),
+					getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;
@@ -243,6 +246,7 @@ public class CodanTestCase extends BaseTestCase {
 			return null;
 		}
 	}
+
 	private static Pattern COMMENT_TAG_PATTERN = Pattern.compile("//\\s*(err|ERR|ERROR|error)\\b");
 
 	private void loadErrorComments(String trim) {

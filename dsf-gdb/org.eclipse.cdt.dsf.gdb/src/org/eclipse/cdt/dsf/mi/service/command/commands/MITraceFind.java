@@ -57,9 +57,9 @@ public class MITraceFind extends MICommand<MITraceFindInfo> {
 	public MITraceFind(ITraceTargetDMContext ctx, String[] params) {
 		super(ctx, "-trace-find", null, params); //$NON-NLS-1$
 	}
-	
-    @Override
-    public MITraceFindInfo getResult(MIOutput out) {
-        return new MITraceFindInfo(out);
-    }
+
+	@Override
+	public MITraceFindInfo getResult(MIOutput out) {
+		return new MITraceFindInfo(out);
+	}
 }

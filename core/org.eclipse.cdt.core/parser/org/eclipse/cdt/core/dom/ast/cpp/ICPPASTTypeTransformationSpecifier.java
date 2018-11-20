@@ -30,13 +30,14 @@ public interface ICPPASTTypeTransformationSpecifier extends ICPPASTDeclSpecifier
 	 * <code>OPERAND</code> represents the relationship between an <code>ICPPASTTypeTransformationSpecifier</code> and
 	 * its nested <code>IASTTypeId</code>.
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("ICPPASTTypeTransformationSpecifier.OPERAND - type operand for ICPPASTTypeTransformationSpecifier"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+			"ICPPASTTypeTransformationSpecifier.OPERAND - type operand for ICPPASTTypeTransformationSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Returns the type transformation operator being applied.
 	 */
 	Operator getOperator();
-	
+
 	/**
 	 * Returns the type-id to which the type transformation operator is being applied.
 	 */

@@ -11,7 +11,7 @@
  * Contributors: 
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.util.Collection;
@@ -30,62 +30,61 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
-
 /**
  * Rename processor, setting up input page for a local rename.
  */
 public class CRenameLocalProcessor extends CRenameProcessorDelegate {
-    private IScope fScope;
+	private IScope fScope;
 
-    public CRenameLocalProcessor(CRenameProcessor input, String kind, IScope scope) {
-        super(input, kind);
-        fScope= scope;
-        setAvailableOptions(0);
-        setOptionsForcingPreview(0);
-    }
-    
-    @Override
+	public CRenameLocalProcessor(CRenameProcessor input, String kind, IScope scope) {
+		super(input, kind);
+		fScope = scope;
+		setAvailableOptions(0);
+		setOptionsForcingPreview(0);
+	}
+
+	@Override
 	protected int getAcceptedLocations(int selectedOptions) {
-        return CRefactory.OPTION_IN_CODE_REFERENCES | CRefactory.OPTION_IN_MACRO_DEFINITION | selectedOptions;
-    }
-    
-    @Override
+		return CRefactory.OPTION_IN_CODE_REFERENCES | CRefactory.OPTION_IN_MACRO_DEFINITION | selectedOptions;
+	}
+
+	@Override
 	protected int getSearchScope() {
-        return TextSearchWrapper.SCOPE_FILE;
-    }
-    
+		return TextSearchWrapper.SCOPE_FILE;
+	}
+
 	@Override
 	protected void analyzeTextMatches(IBinding[] renameBindings, Collection<CRefactoringMatch> matches,
 			IProgressMonitor monitor, RefactoringStatus status) {
-    	super.analyzeTextMatches(renameBindings, matches, monitor, status);
-        if (fScope != null) {
-            CRefactoringArgument argument = getArgument();
-            int[] result= new int[] {0, Integer.MAX_VALUE};
-            IScope scope= argument.getScope();
-            IASTNode node= null;
-            node = ASTInternal.getPhysicalNodeOfScope(scope);
+		super.analyzeTextMatches(renameBindings, matches, monitor, status);
+		if (fScope != null) {
+			CRefactoringArgument argument = getArgument();
+			int[] result = new int[] { 0, Integer.MAX_VALUE };
+			IScope scope = argument.getScope();
+			IASTNode node = null;
+			node = ASTInternal.getPhysicalNodeOfScope(scope);
 			if (argument.getBinding() instanceof IParameter) {
-			    node= node.getParent();
+				node = node.getParent();
 			}
-            if (node != null) {
-                IASTFileLocation loc= ASTManager.getLocationInTranslationUnit(node);
-                if (loc != null) {
-                    result[0]= loc.getNodeOffset();
-                    result[1]= result[0] + loc.getNodeLength();
-                }
-            }
-            int[] range= result;
-            for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
-                CRefactoringMatch m = iter.next();
-                if (m.getAstInformation() != CRefactoringMatch.AST_REFERENCE) {
-                	int off= m.getOffset();
-                	if (off < range[0] || off > range[1]) {
-                		iter.remove();
-                	}
-                }
-            }
-        }
-    }
+			if (node != null) {
+				IASTFileLocation loc = ASTManager.getLocationInTranslationUnit(node);
+				if (loc != null) {
+					result[0] = loc.getNodeOffset();
+					result[1] = result[0] + loc.getNodeLength();
+				}
+			}
+			int[] range = result;
+			for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
+				CRefactoringMatch m = iter.next();
+				if (m.getAstInformation() != CRefactoringMatch.AST_REFERENCE) {
+					int off = m.getOffset();
+					if (off < range[0] || off > range[1]) {
+						iter.remove();
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public int getSaveMode() {

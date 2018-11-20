@@ -98,7 +98,7 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 	 *            boolean
 	 */
 	public void setVariableSized(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

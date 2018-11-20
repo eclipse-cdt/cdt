@@ -105,12 +105,12 @@ public class LLDBDebugPreferencePage extends FieldEditorPreferencePage implement
 	 * suppress warning on the whole class.
 	 */
 	@SuppressWarnings("restriction")
-	private static org.eclipse.cdt.dsf.debug.internal.ui.preferences.StringWithBooleanFieldEditor createStopAtMainEditor(final Group group1) {
+	private static org.eclipse.cdt.dsf.debug.internal.ui.preferences.StringWithBooleanFieldEditor createStopAtMainEditor(
+			final Group group1) {
 		return new org.eclipse.cdt.dsf.debug.internal.ui.preferences.StringWithBooleanFieldEditor(
 				ILLDBDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
 				ILLDBDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
-				Messages.LLDBDebugPreferencePage_Stop_on_startup_at,
-				group1);
+				Messages.LLDBDebugPreferencePage_Stop_on_startup_at, group1);
 	}
 
 	private Control createLinkToGdb(Composite parent) {

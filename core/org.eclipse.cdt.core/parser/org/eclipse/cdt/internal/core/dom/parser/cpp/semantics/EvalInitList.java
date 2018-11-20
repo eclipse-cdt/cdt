@@ -45,7 +45,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	public EvalInitList(ICPPEvaluation[] clauses, IBinding templateDefinition) {
 		super(templateDefinition);
-		fClauses= clauses;
+		fClauses = clauses;
 	}
 
 	public ICPPEvaluation[] getClauses() {
@@ -97,7 +97,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 		EvalInitList o = (EvalInitList) other;
 		return areEquivalentEvaluations(fClauses, o.fClauses);
 	}
-	
+
 	@Override
 	public IType getType() {
 		return new InitializerListType(this);
@@ -127,12 +127,12 @@ public class EvalInitList extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		int len= buffer.getInt();
+		int len = buffer.getInt();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= buffer.unmarshalEvaluation();
+			args[i] = buffer.unmarshalEvaluation();
 		}
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalInitList(args, templateDefinition);
 	}
 

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -37,12 +37,12 @@ public class CompositeCPPUnknownMethod extends CPPUnknownMethod implements IInde
 	public IIndexFile getLocalToFile() throws CoreException {
 		return null;
 	}
-	
+
 	@Override
 	public IIndexFragmentBinding getOwner() {
 		return (IIndexFragmentBinding) super.getOwner();
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {

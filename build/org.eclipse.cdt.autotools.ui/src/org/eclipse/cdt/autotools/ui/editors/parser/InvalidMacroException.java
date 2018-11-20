@@ -14,8 +14,8 @@
 
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
-public class InvalidMacroException extends Exception {    
-	
+public class InvalidMacroException extends Exception {
+
 	private static final long serialVersionUID = 1L;
 	private AutoconfElement badElement;
 

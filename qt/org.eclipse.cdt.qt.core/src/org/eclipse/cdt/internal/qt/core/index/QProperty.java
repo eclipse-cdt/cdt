@@ -22,7 +22,7 @@ public class QProperty extends AbstractQField implements IQProperty {
 	}
 
 	public void setAttribute(IQProperty.Attribute attr, String value) {
-		values[attr.ordinal()] = ( value == null ? "" : value );
+		values[attr.ordinal()] = (value == null ? "" : value);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class QProperty extends AbstractQField implements IQProperty {
 		if (revision != null)
 			try {
 				return Long.valueOf(revision);
-			} catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				// This is a problem with the user's C++ code, there is no need to log this exception,
 				// just ignore the value.
 			}

@@ -39,7 +39,7 @@ import junit.framework.TestSuite;
  * Test the IndentAction.
  */
 public class IndentActionTest extends TestCase {
-	private static final String PROJECT= "IndentTests";
+	private static final String PROJECT = "IndentTests";
 
 	private static final class EmptyBundle extends ListResourceBundle {
 		@Override
@@ -59,12 +59,12 @@ public class IndentActionTest extends TestCase {
 		protected void setUp() throws Exception {
 			super.setUp();
 
-			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/indentation");
+			fCProject = EditorTestHelper.createCProject(PROJECT, "resources/indentation");
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		}
 
 		@Override
-		protected void tearDown () throws Exception {
+		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
 
@@ -82,10 +82,10 @@ public class IndentActionTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		String filename= createFileName("Before");
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
-		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		fDocument= fSourceViewer.getDocument();
+		String filename = createFileName("Before");
+		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
+		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
+		fDocument = fSourceViewer.getDocument();
 	}
 
 	@Override
@@ -94,8 +94,8 @@ public class IndentActionTest extends TestCase {
 	}
 
 	private void assertIndentResult(boolean isTabAction) throws Exception {
-		String afterFile= createFileName("After");
-		String expected= ResourceTestHelper.read(afterFile).toString();
+		String afterFile = createFileName("After");
+		String expected = ResourceTestHelper.read(afterFile).toString();
 
 		new IndentAction(new EmptyBundle(), "prefix", fEditor, isTabAction).run();
 
@@ -103,8 +103,8 @@ public class IndentActionTest extends TestCase {
 	}
 
 	private String createFileName(String qualifier) {
-		String name= getName();
-		name= name.substring(4, 5).toLowerCase() + name.substring(5);
+		String name = getName();
+		name = name.substring(4, 5).toLowerCase() + name.substring(5);
 		return "/" + PROJECT + "/src/" + name + "/" + qualifier + ".cpp";
 	}
 

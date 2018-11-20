@@ -40,7 +40,7 @@ public class MachOHelper {
 	private MachO.Section[] sections;
 	private MachO.DyLib[] needed;
 	private MachO.DyLib[] sonames;
-	
+
 	public void dispose() {
 		if (macho != null) {
 			macho.dispose();
@@ -53,6 +53,7 @@ public class MachOHelper {
 		public long data;
 		public long bss;
 		public long total;
+
 		public Sizes(long t, long d, long b) {
 			text = t;
 			data = d;
@@ -69,12 +70,11 @@ public class MachOHelper {
 			sections = macho.getSections();
 			needed = macho.getDyLibs(MachO.LoadCommand.LC_LOAD_DYLIB);
 			sonames = macho.getDyLibs(MachO.LoadCommand.LC_ID_DYLIB);
-				
+
 			if (dynsyms == null)
 				dynsyms = symbols;
 		}
 	}
-
 
 	/**
 	 * Create a new <code>MachOHelper</code> using an existing <code>MachO</code>
@@ -108,7 +108,6 @@ public class MachOHelper {
 		macho = new MachO(filename, offset);
 	}
 
-
 	public MachOHelper(String filename, boolean filton) throws IOException {
 		macho = new MachO(filename, filton);
 	}
@@ -124,8 +123,7 @@ public class MachOHelper {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((sym.n_type_mask(MachO.Symbol.N_PEXT) 
-					|| sym.n_type_mask(MachO.Symbol.N_EXT))
+			if ((sym.n_type_mask(MachO.Symbol.N_PEXT) || sym.n_type_mask(MachO.Symbol.N_EXT))
 					&& sym.n_desc(MachO.Symbol.REFERENCE_FLAG_UNDEFINED_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -143,8 +141,7 @@ public class MachOHelper {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((sym.n_type_mask(MachO.Symbol.N_PEXT) 
-					|| sym.n_type_mask(MachO.Symbol.N_EXT))
+			if ((sym.n_type_mask(MachO.Symbol.N_PEXT) || sym.n_type_mask(MachO.Symbol.N_EXT))
 					&& sym.n_desc(MachO.Symbol.REFERENCE_FLAG_UNDEFINED_NON_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -179,8 +176,7 @@ public class MachOHelper {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((!sym.n_type_mask(MachO.Symbol.N_PEXT) 
-					&& !sym.n_type_mask(MachO.Symbol.N_EXT))
+			if ((!sym.n_type_mask(MachO.Symbol.N_PEXT) && !sym.n_type_mask(MachO.Symbol.N_EXT))
 					&& sym.n_desc(MachO.Symbol.REFERENCE_FLAG_PRIVATE_UNDEFINED_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -201,8 +197,7 @@ public class MachOHelper {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((!sym.n_type_mask(MachO.Symbol.N_PEXT) 
-					&& !sym.n_type_mask(MachO.Symbol.N_EXT))
+			if ((!sym.n_type_mask(MachO.Symbol.N_PEXT) && !sym.n_type_mask(MachO.Symbol.N_EXT))
 					&& sym.n_desc(MachO.Symbol.REFERENCE_FLAG_PRIVATE_UNDEFINED_NON_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -221,9 +216,7 @@ public class MachOHelper {
 
 		for (int i = 0; i < dynsyms.length; i++) {
 			MachO.Symbol sym = dynsyms[i];
-			if (sym.n_type_mask(MachO.Symbol.N_EXT) 
-					&& sym.n_type(MachO.Symbol.N_UNDF)
-					&& sym.n_value != 0) {
+			if (sym.n_type_mask(MachO.Symbol.N_EXT) && sym.n_type(MachO.Symbol.N_UNDF) && sym.n_value != 0) {
 				v.add(symbols[i]);
 			}
 		}
@@ -254,41 +247,41 @@ public class MachOHelper {
 		return soname;
 	}
 
-//	private String getSubUsage(String full, String name) {
-//		int start, end;
-//		//boolean has_names = false;
-//		//boolean has_languages = false;
-//		start = 0;
-//		end = 0;
-//
-//		for (int i = 0; i < full.length(); i++) {
-//			if (full.charAt(i) == '%') {
-//				if (full.charAt(i + 1) == '-') {
-//					if (start == 0) {
-//						int eol = full.indexOf('\n', i + 2);
-//						String temp = full.substring(i + 2, eol);
-//						if (temp.compareTo(name) == 0)
-//							start = eol;
-//
-//						//has_names = true;
-//					} else if (end == 0) {
-//						end = i - 1;
-//					}
-//				}
-//
-//				//if( full.charAt( i+1 ) == '=' )
-//				//has_languages = true;
-//			}
-//		}
-//
-//		if (end == 0)
-//			end = full.length();
-//
-//		if (start == 0)
-//			return full;
-//
-//		return full.substring(start, end);
-//	}
+	//	private String getSubUsage(String full, String name) {
+	//		int start, end;
+	//		//boolean has_names = false;
+	//		//boolean has_languages = false;
+	//		start = 0;
+	//		end = 0;
+	//
+	//		for (int i = 0; i < full.length(); i++) {
+	//			if (full.charAt(i) == '%') {
+	//				if (full.charAt(i + 1) == '-') {
+	//					if (start == 0) {
+	//						int eol = full.indexOf('\n', i + 2);
+	//						String temp = full.substring(i + 2, eol);
+	//						if (temp.compareTo(name) == 0)
+	//							start = eol;
+	//
+	//						//has_names = true;
+	//					} else if (end == 0) {
+	//						end = i - 1;
+	//					}
+	//				}
+	//
+	//				//if( full.charAt( i+1 ) == '=' )
+	//				//has_languages = true;
+	//			}
+	//		}
+	//
+	//		if (end == 0)
+	//			end = full.length();
+	//
+	//		if (start == 0)
+	//			return full;
+	//
+	//		return full.substring(start, end);
+	//	}
 
 	public String getQnxUsage() throws IOException {
 		return ""; //$NON-NLS-1$

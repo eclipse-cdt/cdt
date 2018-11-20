@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -63,80 +63,82 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	private static final String RESOURCE_PREFIX = "res-"; //$NON-NLS-1$
 	private static final String CDT_PREFIX = "cdt-"; //$NON-NLS-1$
 	private static final String RESOURCE_SNAP_EXTENSION = "snap.zip"; //$NON-NLS-1$
-	
-	private ICProject fProject; 
+
+	private ICProject fProject;
 	private String fTargetLocation;
 	private File fTargetLocationFile;
 	private MessageDigest fMessageDigest;
 	private int fOptions;
-	
+
 	public TeamPDOMExportOperation(ICProject project) {
-		fProject= project;
+		fProject = project;
 	}
 
 	public void setTargetLocation(String location) {
-		fTargetLocation= location;
+		fTargetLocation = location;
 	}
 
 	public void setOptions(int options) {
 		fOptions = options;
 	}
-	
+
 	public void setAlgorithm(MessageDigest md) {
-		fMessageDigest= md;
+		fMessageDigest = md;
 	}
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		getMessageDigest();
 		getTargetLocation();
-	
-		File tmpPDOM= null;
-		File tmpChecksums= null;
+
+		File tmpPDOM = null;
+		File tmpChecksums = null;
 		try {
-			tmpPDOM = File.createTempFile("tmp", ".pdom");  //$NON-NLS-1$//$NON-NLS-2$
-			tmpChecksums= File.createTempFile("checksums", ".dat"); //$NON-NLS-1$ //$NON-NLS-2$
+			tmpPDOM = File.createTempFile("tmp", ".pdom"); //$NON-NLS-1$//$NON-NLS-2$
+			tmpChecksums = File.createTempFile("checksums", ".dat"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
-			throw new CoreException(CCorePlugin.createStatus(Messages.TeamPDOMExportOperation_errorCreatingTempFile, e));
+			throw new CoreException(
+					CCorePlugin.createStatus(Messages.TeamPDOMExportOperation_errorCreatingTempFile, e));
 		}
-	
+
 		try {
-			PDOMManager pdomManager= CCoreInternals.getPDOMManager();
-	
+			PDOMManager pdomManager = CCoreInternals.getPDOMManager();
+
 			// Wait for indexer.
 			SubMonitor progress = SubMonitor.convert(monitor, 100);
 			pdomManager.joinIndexer(Integer.MAX_VALUE, progress.split(1));
-	
+
 			// Create index.
-			IIndexLocationConverter converter= new PDOMProjectIndexLocationConverter(fProject.getProject(), true);
+			IIndexLocationConverter converter = new PDOMProjectIndexLocationConverter(fProject.getProject(), true);
 			pdomManager.exportProjectPDOM(fProject, tmpPDOM, converter, progress.split(50));
 			monitor.worked(5);
 
 			// Create checksums.
-			PDOM pdom= new PDOM(tmpPDOM, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+			PDOM pdom = new PDOM(tmpPDOM, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			pdom.acquireReadLock();
 			try {
 				progress.setTaskName(Messages.Checksums_taskComputeChecksums);
 				createChecksums(fProject, pdom, tmpChecksums, progress.split(49));
-				pdom.db.setExclusiveLock();	// The tmpPDOM is all ours.
+				pdom.db.setExclusiveLock(); // The tmpPDOM is all ours.
 				pdom.close();
 			} finally {
 				pdom.releaseReadLock();
 			}
-			
+
 			// Create archive.
 			createArchive(tmpPDOM, tmpChecksums);
-			
+
 			// Store preferences.
 			progress.setTaskName(Messages.TeamPDOMExportOperation_taskExportIndex);
 			IndexerPreferences.setIndexImportLocation(fProject.getProject(), fTargetLocation.toString());
-			
+
 			// store resource snapshot
 			if ((fOptions & EXPORT_OPTION_RESOURCE_SNAPSHOT) != 0) {
-	        	IPath p = Path.fromOSString(fTargetLocationFile.getAbsolutePath());
-	        	p = computeSnapshotPath(p); 
-	        	URI snapURI = URIUtil.toURI(p);
-				fProject.getProject().saveSnapshot(IProject.SNAPSHOT_TREE | /*Project.SNAPSHOT_SET_AUTOLOAD*/2, snapURI, null);
+				IPath p = Path.fromOSString(fTargetLocationFile.getAbsolutePath());
+				p = computeSnapshotPath(p);
+				URI snapURI = URIUtil.toURI(p);
+				fProject.getProject().saveSnapshot(IProject.SNAPSHOT_TREE | /*Project.SNAPSHOT_SET_AUTOLOAD*/2, snapURI,
+						null);
 			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -159,31 +161,31 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	}
 
 	private void getTargetLocation() throws CoreException {
-		fTargetLocationFile= TeamPDOMImportOperation.expandLocation(fProject.getProject(), fTargetLocation);
+		fTargetLocationFile = TeamPDOMImportOperation.expandLocation(fProject.getProject(), fTargetLocation);
 	}
 
 	private void getMessageDigest() throws CoreException {
 		if (fMessageDigest == null) {
 			try {
-				fMessageDigest= Checksums.getDefaultAlgorithm();
-			}
-			catch (NoSuchAlgorithmException e) {
+				fMessageDigest = Checksums.getDefaultAlgorithm();
+			} catch (NoSuchAlgorithmException e) {
 				throw new CoreException(CCorePlugin.createStatus(e.getMessage(), e));
 			}
 		}
 	}
 
-	private void createChecksums(ICProject cproject, PDOM pdom, File target, IProgressMonitor monitor) throws CoreException {
-		HashSet<String> fullPaths= new HashSet<String>();
+	private void createChecksums(ICProject cproject, PDOM pdom, File target, IProgressMonitor monitor)
+			throws CoreException {
+		HashSet<String> fullPaths = new HashSet<String>();
 		try {
 			pdom.acquireReadLock();
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		}
 		try {
-			IIndexFile[] ifiles= pdom.getAllFiles();
+			IIndexFile[] ifiles = pdom.getAllFiles();
 			for (IIndexFile ifile : ifiles) {
-				String fullPath= ifile.getLocation().getFullPath();
+				String fullPath = ifile.getLocation().getFullPath();
 				if (fullPath != null) {
 					fullPaths.add(fullPath);
 				}
@@ -191,20 +193,20 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		} finally {
 			pdom.releaseReadLock();
 		}
-		int i=0;
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files= new IFile[fullPaths.size()];
+		int i = 0;
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IFile[] files = new IFile[fullPaths.size()];
 		for (String fullPath : fullPaths) {
-			files[i++]= root.getFile(new Path(fullPath));
- 		}
-		Map<String, Object> map= Checksums.createChecksumMap(files, fMessageDigest, monitor);
+			files[i++] = root.getFile(new Path(fullPath));
+		}
+		Map<String, Object> map = Checksums.createChecksumMap(files, fMessageDigest, monitor);
 		writeChecksums(map, target);
 	}
 
 	private void writeChecksums(Map<?, ?> map, File target) throws CoreException {
-		ObjectOutputStream out= null;
+		ObjectOutputStream out = null;
 		try {
-			out= new ObjectOutputStream(new FileOutputStream(target));
+			out = new ObjectOutputStream(new FileOutputStream(target));
 			out.writeObject(map);
 		} catch (IOException e) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.TeamPDOMExportOperation_errorWriteTempFile, e));
@@ -215,13 +217,13 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 
 	private void close(InputStream in) {
 		try {
-			if (in != null) { 
+			if (in != null) {
 				in.close();
 			}
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}
-	} 
+	}
 
 	private void close(OutputStream out) {
 		try {
@@ -231,14 +233,14 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}
-	} 
+	}
 
 	private void createArchive(File tmpPDOM, File tmpChecksums) throws CoreException {
 		fTargetLocationFile.delete();
-		ZipOutputStream out= null;
+		ZipOutputStream out = null;
 		try {
 			fTargetLocationFile.getParentFile().mkdirs();
-			out= new ZipOutputStream(new FileOutputStream(fTargetLocationFile));
+			out = new ZipOutputStream(new FileOutputStream(fTargetLocationFile));
 			out.setLevel(Deflater.BEST_COMPRESSION);
 			writeEntry(out, TeamPDOMImportOperation.INDEX_NAME, tmpPDOM);
 			writeEntry(out, TeamPDOMImportOperation.CHECKSUMS_NAME, tmpChecksums);
@@ -247,25 +249,24 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		} finally {
 			close(out);
 		}
-		IFile[] wsResource= ResourceLookup.findFilesForLocation(new Path(fTargetLocationFile.getAbsolutePath()));
+		IFile[] wsResource = ResourceLookup.findFilesForLocation(new Path(fTargetLocationFile.getAbsolutePath()));
 		for (IFile file : wsResource) {
 			file.refreshLocal(0, new NullProgressMonitor());
 		}
 	}
 
 	private void writeEntry(ZipOutputStream out, String name, File input) throws IOException {
-		ZipEntry e= new ZipEntry(name);
+		ZipEntry e = new ZipEntry(name);
 		out.putNextEntry(e);
-		int read= 0;
-		byte[] buffer= new byte[4096];
-		InputStream in= new FileInputStream(input);
+		int read = 0;
+		byte[] buffer = new byte[4096];
+		InputStream in = new FileInputStream(input);
 		try {
-			while ((read= in.read(buffer)) >= 0) {
+			while ((read = in.read(buffer)) >= 0) {
 				out.write(buffer, 0, read);
 			}
 			out.closeEntry();
-		}
-		finally {
+		} finally {
 			close(in);
 		}
 	}

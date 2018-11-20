@@ -34,14 +34,14 @@ class CodeReaderCacheEntry implements ILRUCacheable {
 
 	public CodeReaderCacheEntry(CodeReader value) {
 		this.reader = value;
-		size = (int)Math.ceil(reader.buffer.length / CHAR_TO_KB_FACTOR); // get the size of the file in terms of KB 
+		size = (int) Math.ceil(reader.buffer.length / CHAR_TO_KB_FACTOR); // get the size of the file in terms of KB 
 	}
 
 	@Override
 	public int getCacheFootprint() {
 		return size;
 	}
-	
+
 	public CodeReader getCodeReader() {
 		return reader;
 	}

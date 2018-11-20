@@ -42,10 +42,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMLinkage extends PDOMLinkage {
 
 	private static int offsetInitializer = PDOMLinkage.RECORD_SIZE;
+
 	private static enum Field {
-		Version(Database.INT_SIZE, 0),
-		QmlRegistrationIndex(Database.PTR_SIZE, 3),
-		Last(0, 0);
+		Version(Database.INT_SIZE, 0), QmlRegistrationIndex(Database.PTR_SIZE, 3), Last(0, 0);
 
 		private final int offset;
 		public final int version;
@@ -128,8 +127,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 
 		// If a binding has already been persisted for this instance then return it now.
 		QtPDOMBinding pdomBinding = (QtPDOMBinding) binding.getAdapter(QtPDOMBinding.class);
-		if (pdomBinding != null
-		 && pdomBinding.getLinkage() == this)
+		if (pdomBinding != null && pdomBinding.getLinkage() == this)
 			return pdomBinding;
 
 		// If a PDOMBinding was created, then add it to the linkage before returning it.
@@ -155,8 +153,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		if (pdomBinding == null)
 			return 0;
 
-		if (pdomBinding.getLinkage() == null
-		 || pdomBinding.getLinkage().getLinkageID() != ILinkage.CPP_LINKAGE_ID)
+		if (pdomBinding.getLinkage() == null || pdomBinding.getLinkage().getLinkageID() != ILinkage.CPP_LINKAGE_ID)
 			return 0;
 
 		return pdomBinding.getRecord();
@@ -217,8 +214,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		// have a linkage with a different id.
 		PDOMLinkage pdomLinkage = this;
 		ILinkage linkage = binding.getLinkage();
-		if (linkage != null
-		 && linkage.getLinkageID() != getLinkageID())
+		if (linkage != null && linkage.getLinkageID() != getLinkageID())
 			pdomLinkage = getPDOM().getLinkage(linkage.getLinkageID());
 
 		// Handle bindings in unknown linkages as though the name is to be added to this linkage.

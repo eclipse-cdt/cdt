@@ -61,7 +61,8 @@ public class CDebugImageDescriptorRegistry {
 		Image result = fRegistry.get(descriptor);
 		if (result != null)
 			return result;
-		Assert.isTrue(fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIMessages.getString("CDebugImageDescriptorRegistry.0")); //$NON-NLS-1$
+		Assert.isTrue(fDisplay == CDebugUIPlugin.getStandardDisplay(),
+				CDebugUIMessages.getString("CDebugImageDescriptorRegistry.0")); //$NON-NLS-1$
 		result = descriptor.createImage();
 		if (result != null)
 			fRegistry.put(descriptor, result);

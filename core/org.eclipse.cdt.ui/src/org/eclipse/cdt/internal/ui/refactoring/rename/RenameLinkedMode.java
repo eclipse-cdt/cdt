@@ -94,8 +94,8 @@ public class RenameLinkedMode {
 				return true;
 			}
 
-			Shell editorShell= fEditor.getSite().getShell();
-			Shell activeShell= editorShell.getDisplay().getActiveShell();
+			Shell editorShell = fEditor.getSite().getShell();
+			Shell activeShell = editorShell.getDisplay().getActiveShell();
 			if (editorShell == activeShell)
 				return true;
 			return false;
@@ -132,17 +132,16 @@ public class RenameLinkedMode {
 
 		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
-			fShowPreview= (event.stateMask & SWT.CTRL) != 0
-							&& (event.character == SWT.CR || event.character == SWT.LF);
+			fShowPreview = (event.stateMask & SWT.CTRL) != 0
+					&& (event.character == SWT.CR || event.character == SWT.LF);
 			return super.doExit(model, event, offset, length);
 		}
 	}
 
-
 	private static RenameLinkedMode fgActiveLinkedMode;
 
 	private final CEditor fEditor;
-	
+
 	private RenameInformationPopup fInfoPopup;
 
 	private Point fOriginalSelection;
@@ -163,21 +162,21 @@ public class RenameLinkedMode {
 
 	public RenameLinkedMode(CEditor editor) {
 		Assert.isNotNull(editor);
-		fEditor= editor;
-		fFocusEditingSupport= new FocusEditingSupport();
+		fEditor = editor;
+		fFocusEditingSupport = new FocusEditingSupport();
 	}
 
 	public static RenameLinkedMode getActiveLinkedMode() {
 		if (fgActiveLinkedMode != null) {
-			ISourceViewer viewer= fgActiveLinkedMode.fEditor.getViewer();
+			ISourceViewer viewer = fgActiveLinkedMode.fEditor.getViewer();
 			if (viewer != null) {
-				StyledText textWidget= viewer.getTextWidget();
+				StyledText textWidget = viewer.getTextWidget();
 				if (textWidget != null && !textWidget.isDisposed()) {
 					return fgActiveLinkedMode;
 				}
 			}
 			// Make sure we don't hold onto the active linked mode if anything went wrong with canceling.
-			fgActiveLinkedMode= null;
+			fgActiveLinkedMode = null;
 		}
 		return null;
 	}
@@ -189,45 +188,45 @@ public class RenameLinkedMode {
 			return;
 		}
 
-		ISourceViewer viewer= fEditor.getViewer();
-		fOriginalSelection= viewer.getSelectedRange();
-		final int offset= fOriginalSelection.x;
+		ISourceViewer viewer = fEditor.getViewer();
+		fOriginalSelection = viewer.getSelectedRange();
+		final int offset = fOriginalSelection.x;
 
 		try {
 			fLocations = null;
-			Point selection= viewer.getSelectedRange();
+			Point selection = viewer.getSelectedRange();
 			final int secectionOffset = selection.x;
 			final int selectionLength = selection.y;
-			final IDocument document= viewer.getDocument();
+			final IDocument document = viewer.getDocument();
 
 			ASTProvider.getASTProvider().runOnAST(fEditor.getInputCElement(), ASTProvider.WAIT_ACTIVE_ONLY,
 					new NullProgressMonitor(), new ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-					if (astRoot == null)
-						return Status.CANCEL_STATUS;
-					
-					IASTNodeSelector selector= astRoot.getNodeSelector(null);
-					IASTName name= selector.findEnclosingName(secectionOffset, selectionLength);
-					if (name != null) {
-						fOriginalName = name.toString();
-						fLocations = LinkedNamesFinder.findByName(astRoot, name);
-					}
-					return Status.OK_STATUS;
-				}
-			});
+						@Override
+						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+							if (astRoot == null)
+								return Status.CANCEL_STATUS;
+
+							IASTNodeSelector selector = astRoot.getNodeSelector(null);
+							IASTName name = selector.findEnclosingName(secectionOffset, selectionLength);
+							if (name != null) {
+								fOriginalName = name.toString();
+								fLocations = LinkedNamesFinder.findByName(astRoot, name);
+							}
+							return Status.OK_STATUS;
+						}
+					});
 
 			if (fLocations == null || fLocations.length == 0) {
 				return;
 			}
 
 			if (viewer instanceof ITextViewerExtension6) {
-				IUndoManager undoManager= ((ITextViewerExtension6) viewer).getUndoManager();
+				IUndoManager undoManager = ((ITextViewerExtension6) viewer).getUndoManager();
 				if (undoManager instanceof IUndoManagerExtension) {
-					IUndoManagerExtension undoManagerExtension= (IUndoManagerExtension) undoManager;
-					IUndoContext undoContext= undoManagerExtension.getUndoContext();
-					IOperationHistory operationHistory= OperationHistoryFactory.getOperationHistory();
-					fStartingUndoOperation= operationHistory.getUndoOperation(undoContext);
+					IUndoManagerExtension undoManagerExtension = (IUndoManagerExtension) undoManager;
+					IUndoContext undoContext = undoManagerExtension.getUndoContext();
+					IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory();
+					fStartingUndoOperation = operationHistory.getUndoOperation(undoContext);
 				}
 			}
 
@@ -246,31 +245,31 @@ public class RenameLinkedMode {
 				 * @return the rank of the location with respect to the invocation offset
 				 */
 				private int rank(IRegion location) {
-					int relativeRank= location.getOffset() + location.getLength() - offset;
+					int relativeRank = location.getOffset() + location.getLength() - offset;
 					if (relativeRank < 0)
 						return Integer.MAX_VALUE + relativeRank;
 					else
 						return relativeRank;
 				}
 			});
-			
-			fLinkedPositionGroup= new LinkedPositionGroup();
-			for (int i= 0; i < fLocations.length; i++) {
-				IRegion item= fLocations[i];
+
+			fLinkedPositionGroup = new LinkedPositionGroup();
+			for (int i = 0; i < fLocations.length; i++) {
+				IRegion item = fLocations[i];
 				LinkedPosition linkedPosition = new LinkedPosition(document, item.getOffset(), item.getLength(), i);
 				if (i == 0) {
-					fNamePosition= linkedPosition;
+					fNamePosition = linkedPosition;
 				}
 				fLinkedPositionGroup.addPosition(linkedPosition);
 			}
 
-			fLinkedModeModel= new LinkedModeModel();
+			fLinkedModeModel = new LinkedModeModel();
 			fLinkedModeModel.addGroup(fLinkedPositionGroup);
 			fLinkedModeModel.forceInstall();
 			fLinkedModeModel.addLinkingListener(new EditorHighlightingSynchronizer(fEditor));
 			fLinkedModeModel.addLinkingListener(new EditorSynchronizer());
-			
-			LinkedModeUI ui= new EditorLinkedModeUI(fLinkedModeModel, viewer);
+
+			LinkedModeUI ui = new EditorLinkedModeUI(fLinkedModeModel, viewer);
 			ui.setExitPolicy(new ExitPolicy(document));
 			ui.setExitPosition(viewer, offset, 0, LinkedPositionGroup.NO_STOP);
 			ui.enter();
@@ -279,12 +278,12 @@ public class RenameLinkedMode {
 			viewer.setSelectedRange(selection.x, selection.y);
 
 			if (viewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) viewer;
+				IEditingSupportRegistry registry = (IEditingSupportRegistry) viewer;
 				registry.register(fFocusEditingSupport);
 			}
 
 			openSecondaryPopup();
-			fgActiveLinkedMode= this;
+			fgActiveLinkedMode = this;
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 		}
@@ -293,56 +292,56 @@ public class RenameLinkedMode {
 	void doRename(boolean showPreview) {
 		cancel();
 
-		Image image= null;
-		Label label= null;
+		Image image = null;
+		Label label = null;
 
-		fShowPreview|= showPreview;
+		fShowPreview |= showPreview;
 		try {
-			ISourceViewer viewer= fEditor.getViewer();
+			ISourceViewer viewer = fEditor.getViewer();
 			if (viewer instanceof SourceViewer) {
-				SourceViewer sourceViewer= (SourceViewer) viewer;
-				Control viewerControl= sourceViewer.getControl();
+				SourceViewer sourceViewer = (SourceViewer) viewer;
+				Control viewerControl = sourceViewer.getControl();
 				if (viewerControl instanceof Composite) {
-					Composite composite= (Composite) viewerControl;
-					Display display= composite.getDisplay();
+					Composite composite = (Composite) viewerControl;
+					Display display = composite.getDisplay();
 
 					// Flush pending redraw requests:
 					while (!display.isDisposed() && display.readAndDispatch()) {
 					}
 
 					// Copy editor area:
-					GC gc= new GC(composite);
+					GC gc = new GC(composite);
 					Point size;
 					try {
-						size= composite.getSize();
-						image= new Image(gc.getDevice(), size.x, size.y);
+						size = composite.getSize();
+						image = new Image(gc.getDevice(), size.x, size.y);
 						gc.copyArea(image, 0, 0);
 					} finally {
 						gc.dispose();
-						gc= null;
+						gc = null;
 					}
 
 					// Persist editor area while executing refactoring:
-					label= new Label(composite, SWT.NONE);
+					label = new Label(composite, SWT.NONE);
 					label.setImage(image);
 					label.setBounds(0, 0, size.x, size.y);
 					label.moveAbove(null);
 				}
 			}
 
-			String newName= fNamePosition.getContent();
+			String newName = fNamePosition.getContent();
 			if (fOriginalName.equals(newName))
 				return;
-			RenameSupport renameSupport= undoAndCreateRenameSupport(newName);
+			RenameSupport renameSupport = undoAndCreateRenameSupport(newName);
 			if (renameSupport == null)
 				return;
 
-			Shell shell= fEditor.getSite().getShell();
+			Shell shell = fEditor.getSite().getShell();
 			boolean executed;
 			if (fShowPreview) { // could have been updated by undoAndCreateRenameSupport(..)
-				executed= renameSupport.openDialog(shell, true);
+				executed = renameSupport.openDialog(shell, true);
 			} else {
-				executed= renameSupport.perform(shell, fEditor.getSite().getWorkbenchWindow());
+				executed = renameSupport.perform(shell, fEditor.getSite().getWorkbenchWindow());
 			}
 			if (executed) {
 				restoreFullSelection();
@@ -373,10 +372,10 @@ public class RenameLinkedMode {
 
 	private void restoreFullSelection() {
 		if (fOriginalSelection.y != 0) {
-			int originalOffset= fOriginalSelection.x;
-			LinkedPosition[] positions= fLinkedPositionGroup.getPositions();
-			for (int i= 0; i < positions.length; i++) {
-				LinkedPosition position= positions[i];
+			int originalOffset = fOriginalSelection.x;
+			LinkedPosition[] positions = fLinkedPositionGroup.getPositions();
+			for (int i = 0; i < positions.length; i++) {
+				LinkedPosition position = positions[i];
 				if (!position.isDeleted() && position.includes(originalOffset)) {
 					fEditor.getViewer().setSelectedRange(position.offset, position.length);
 					return;
@@ -387,7 +386,7 @@ public class RenameLinkedMode {
 
 	private RenameSupport undoAndCreateRenameSupport(String newName) throws CoreException {
 		// Assumption: the linked mode model should be shut down by now.
-		final ISourceViewer viewer= fEditor.getViewer();
+		final ISourceViewer viewer = fEditor.getViewer();
 
 		try {
 			if (!fOriginalName.equals(newName)) {
@@ -395,14 +394,14 @@ public class RenameLinkedMode {
 					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						if (viewer instanceof ITextViewerExtension6) {
-							IUndoManager undoManager= ((ITextViewerExtension6) viewer).getUndoManager();
+							IUndoManager undoManager = ((ITextViewerExtension6) viewer).getUndoManager();
 							if (undoManager instanceof IUndoManagerExtension) {
-								IUndoManagerExtension undoManagerExtension= (IUndoManagerExtension) undoManager;
-								IUndoContext undoContext= undoManagerExtension.getUndoContext();
-								IOperationHistory operationHistory= OperationHistoryFactory.getOperationHistory();
+								IUndoManagerExtension undoManagerExtension = (IUndoManagerExtension) undoManager;
+								IUndoContext undoContext = undoManagerExtension.getUndoContext();
+								IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory();
 								while (undoManager.undoable()) {
-									if (fStartingUndoOperation != null &&
-											fStartingUndoOperation.equals(operationHistory.getUndoOperation(undoContext)))
+									if (fStartingUndoOperation != null && fStartingUndoOperation
+											.equals(operationHistory.getUndoOperation(undoContext)))
 										return;
 									undoManager.undo();
 								}
@@ -427,18 +426,18 @@ public class RenameLinkedMode {
 			return null;
 
 		IWorkingCopy workingCopy = getWorkingCopy();
-        IResource resource= workingCopy.getResource();
-        if (!(resource instanceof IFile)) {
-        	return null;
-        }
-    	CRefactoringArgument arg=
-    		new CRefactoringArgument((IFile) resource, fOriginalSelection.x, fOriginalSelection.y);
-        CRenameProcessor processor= new CRenameProcessor(CRefactory.getInstance(), arg);
-        processor.setReplacementText(newName);
-        CRenameRefactoringPreferences preferences = new CRenameRefactoringPreferences();
-        processor.setSelectedOptions(preferences.getOptions());
-        processor.setExhaustiveSearchScope(preferences.getScope());
-        processor.setWorkingSetName(preferences.getWorkingSet());
+		IResource resource = workingCopy.getResource();
+		if (!(resource instanceof IFile)) {
+			return null;
+		}
+		CRefactoringArgument arg = new CRefactoringArgument((IFile) resource, fOriginalSelection.x,
+				fOriginalSelection.y);
+		CRenameProcessor processor = new CRenameProcessor(CRefactory.getInstance(), arg);
+		processor.setReplacementText(newName);
+		CRenameRefactoringPreferences preferences = new CRenameRefactoringPreferences();
+		processor.setSelectedOptions(preferences.getOptions());
+		processor.setExhaustiveSearchScope(preferences.getScope());
+		processor.setWorkingSetName(preferences.getWorkingSet());
 		return RenameSupport.create(processor);
 	}
 
@@ -459,8 +458,8 @@ public class RenameLinkedMode {
 		cancel();
 
 		try {
-			String newName= fNamePosition.getContent();
-			RenameSupport renameSupport= undoAndCreateRenameSupport(newName);
+			String newName = fNamePosition.getContent();
+			RenameSupport renameSupport = undoAndCreateRenameSupport(newName);
 			if (renameSupport != null)
 				renameSupport.openDialog(fEditor.getSite().getShell());
 		} catch (CoreException e) {
@@ -471,20 +470,20 @@ public class RenameLinkedMode {
 	}
 
 	private void linkedModeLeft() {
-		fgActiveLinkedMode= null;
+		fgActiveLinkedMode = null;
 		if (fInfoPopup != null) {
 			fInfoPopup.close();
 		}
 
-		ISourceViewer viewer= fEditor.getViewer();
+		ISourceViewer viewer = fEditor.getViewer();
 		if (viewer instanceof IEditingSupportRegistry) {
-			IEditingSupportRegistry registry= (IEditingSupportRegistry) viewer;
+			IEditingSupportRegistry registry = (IEditingSupportRegistry) viewer;
 			registry.unregister(fFocusEditingSupport);
 		}
 	}
 
 	private void openSecondaryPopup() {
-		fInfoPopup= new RenameInformationPopup(fEditor, this);
+		fInfoPopup = new RenameInformationPopup(fEditor, this);
 		fInfoPopup.open();
 	}
 
@@ -493,12 +492,12 @@ public class RenameLinkedMode {
 	}
 
 	public LinkedPosition getCurrentLinkedPosition() {
-		Point selection= fEditor.getViewer().getSelectedRange();
-		int start= selection.x;
-		int end= start + selection.y;
-		LinkedPosition[] positions= fLinkedPositionGroup.getPositions();
-		for (int i= 0; i < positions.length; i++) {
-			LinkedPosition position= positions[i];
+		Point selection = fEditor.getViewer().getSelectedRange();
+		int start = selection.x;
+		int end = start + selection.y;
+		LinkedPosition[] positions = fLinkedPositionGroup.getPositions();
+		for (int i = 0; i < positions.length; i++) {
+			LinkedPosition position = positions[i];
 			if (position.includes(start) && position.includes(end))
 				return position;
 		}
@@ -507,7 +506,7 @@ public class RenameLinkedMode {
 
 	public boolean isEnabled() {
 		try {
-			String newName= fNamePosition.getContent();
+			String newName = fNamePosition.getContent();
 			if (fOriginalName.equals(newName))
 				return false;
 			return CConventions.validateIdentifier(newName, getLanguage()).isOK();
@@ -528,10 +527,10 @@ public class RenameLinkedMode {
 		}
 		return GPPLanguage.getDefault();
 	}
-	
+
 	public boolean isOriginalName() {
 		try {
-			String newName= fNamePosition.getContent();
+			String newName = fNamePosition.getContent();
 			return fOriginalName.equals(newName);
 		} catch (BadLocationException e) {
 			return false;

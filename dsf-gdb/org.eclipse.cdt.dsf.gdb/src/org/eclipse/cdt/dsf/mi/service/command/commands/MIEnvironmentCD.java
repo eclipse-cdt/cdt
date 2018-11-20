@@ -24,9 +24,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * @since 1.1
  * 
  */
-public class MIEnvironmentCD extends MICommand <MIInfo> 
-{
+public class MIEnvironmentCD extends MICommand<MIInfo> {
 	public MIEnvironmentCD(ICommandControlDMContext ctx, String path) {
-		super(ctx, "-environment-cd", new String[]{path}); //$NON-NLS-1$
+		super(ctx, "-environment-cd", new String[] { path }); //$NON-NLS-1$
 	}
 }

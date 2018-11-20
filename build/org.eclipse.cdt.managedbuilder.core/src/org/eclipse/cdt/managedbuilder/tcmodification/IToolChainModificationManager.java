@@ -27,7 +27,7 @@ public interface IToolChainModificationManager {
 	int OBJECT_TOOLCHAIN = IRealBuildObjectAssociation.OBJECT_TOOLCHAIN;
 	int OBJECT_TOOL = IRealBuildObjectAssociation.OBJECT_TOOL;
 	int OBJECT_BUILDER = IRealBuildObjectAssociation.OBJECT_BUILDER;
-	
+
 	/**
 	 * returns the modification info calculator for the given folder info
 	 * if the folder info is a root folder info,
@@ -39,8 +39,10 @@ public interface IToolChainModificationManager {
 	 * returns the modification info calculator for the given file info
 	 */
 	IFileInfoModification createModification(IFileInfo rcInfo);
-	
-	IFolderInfoModification createModification(IConfiguration cfg, IFolderInfoModification base) throws IllegalArgumentException;
 
-	IFileInfoModification createModification(IConfiguration cfg, IFileInfoModification base) throws IllegalArgumentException;
+	IFolderInfoModification createModification(IConfiguration cfg, IFolderInfoModification base)
+			throws IllegalArgumentException;
+
+	IFileInfoModification createModification(IConfiguration cfg, IFileInfoModification base)
+			throws IllegalArgumentException;
 }

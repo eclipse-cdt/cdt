@@ -20,14 +20,14 @@ import org.eclipse.ui.console.IConsoleListener;
  * and <code>dispose()</code>.
  */
 public class GdbConsoleLifecycleListener implements IConsoleListener {
-	
+
 	private final AbstractConsole fConsole;
-	
+
 	public GdbConsoleLifecycleListener(AbstractConsole console) {
 		fConsole = console;
 		CDebugUIPlugin.getDebuggerConsoleManager().addConsoleListener(this);
 	}
-	
+
 	@Override
 	public void consolesAdded(IConsole[] consoles) {
 		for (IConsole console : consoles) {

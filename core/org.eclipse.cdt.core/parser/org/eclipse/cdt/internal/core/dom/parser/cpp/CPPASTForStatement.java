@@ -34,35 +34,35 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclarat
  * For statement in C++
  */
 public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTForStatement, ICPPExecutionOwner {
-    private IScope fScope;
+	private IScope fScope;
 
-    private IASTStatement fInit;
-    private IASTExpression fCondition;
-    private IASTDeclaration fCondDeclaration;
-    private IASTExpression fIterationExpression;
-    private IASTStatement fBody;
+	private IASTStatement fInit;
+	private IASTExpression fCondition;
+	private IASTDeclaration fCondDeclaration;
+	private IASTExpression fIterationExpression;
+	private IASTStatement fBody;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTForStatement() {
+	public CPPASTForStatement() {
 	}
 
-	public CPPASTForStatement(IASTStatement init,  IASTDeclaration condDeclaration,
-			IASTExpression iterationExpression, IASTStatement body) {
-    	setInitializerStatement(init);
-    	setConditionDeclaration(condDeclaration);
-    	setIterationExpression(iterationExpression);
-    	setBody(body);
+	public CPPASTForStatement(IASTStatement init, IASTDeclaration condDeclaration, IASTExpression iterationExpression,
+			IASTStatement body) {
+		setInitializerStatement(init);
+		setConditionDeclaration(condDeclaration);
+		setIterationExpression(iterationExpression);
+		setBody(body);
 	}
 
-    public CPPASTForStatement(IASTStatement init, IASTExpression condition,
-			IASTExpression iterationExpression, IASTStatement body) {
-    	setInitializerStatement(init);
-    	setConditionExpression(condition);
-    	setIterationExpression(iterationExpression);
-    	setBody(body);
+	public CPPASTForStatement(IASTStatement init, IASTExpression condition, IASTExpression iterationExpression,
+			IASTStatement body) {
+		setInitializerStatement(init);
+		setConditionExpression(condition);
+		setIterationExpression(iterationExpression);
+		setBody(body);
 	}
 
-    @Override
+	@Override
 	public CPPASTForStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -73,64 +73,63 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 		copy.setInitializerStatement(fInit == null ? null : fInit.copy(style));
 		copy.setConditionDeclaration(fCondDeclaration == null ? null : fCondDeclaration.copy(style));
 		copy.setConditionExpression(fCondition == null ? null : fCondition.copy(style));
-		copy.setIterationExpression(fIterationExpression == null ?
-				null : fIterationExpression.copy(style));
+		copy.setIterationExpression(fIterationExpression == null ? null : fIterationExpression.copy(style));
 		copy.setBody(fBody == null ? null : fBody.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTExpression getConditionExpression() {
-        return fCondition;
-    }
+		return fCondition;
+	}
 
-    @Override
+	@Override
 	public void setConditionExpression(IASTExpression condition) {
-        assertNotFrozen();
-        this.fCondition = condition;
-        if (condition != null) {
+		assertNotFrozen();
+		this.fCondition = condition;
+		if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITION);
-			fCondDeclaration= null;
+			fCondDeclaration = null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getIterationExpression() {
-        return fIterationExpression;
-    }
+		return fIterationExpression;
+	}
 
-    @Override
+	@Override
 	public void setIterationExpression(IASTExpression iterator) {
-        assertNotFrozen();
-        this.fIterationExpression = iterator;
-        if (iterator != null) {
+		assertNotFrozen();
+		this.fIterationExpression = iterator;
+		if (iterator != null) {
 			iterator.setParent(this);
 			iterator.setPropertyInParent(ITERATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getBody() {
-        return fBody;
-    }
+		return fBody;
+	}
 
-    @Override
+	@Override
 	public void setBody(IASTStatement statement) {
-        assertNotFrozen();
-        fBody = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		fBody = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(BODY);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        if (fScope == null)
-            fScope = new CPPBlockScope(this);
-        return fScope;
-    }
+		if (fScope == null)
+			fScope = new CPPBlockScope(this);
+		return fScope;
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -141,35 +140,47 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (fInit != null && !fInit.accept(action)) return false;
-        if (fCondition != null && !fCondition.accept(action)) return false;
-        if (fCondDeclaration != null && !fCondDeclaration.accept(action)) return false;
-        if (fIterationExpression != null && !fIterationExpression.accept(action)) return false;
-        if (fBody != null && !fBody.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (fInit != null && !fInit.accept(action))
+			return false;
+		if (fCondition != null && !fCondition.accept(action))
+			return false;
+		if (fCondDeclaration != null && !fCondDeclaration.accept(action))
+			return false;
+		if (fIterationExpression != null && !fIterationExpression.accept(action))
+			return false;
+		if (fBody != null && !fBody.accept(action))
+			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -199,36 +210,36 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 		super.replace(child, other);
 	}
 
-    @Override
+	@Override
 	public IASTStatement getInitializerStatement() {
-        return fInit;
-    }
+		return fInit;
+	}
 
-    @Override
+	@Override
 	public void setInitializerStatement(IASTStatement statement) {
-        assertNotFrozen();
-        fInit = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		fInit = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(INITIALIZER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void setConditionDeclaration(IASTDeclaration d) {
-        assertNotFrozen();
-        fCondDeclaration = d;
-        if (d != null) {
+		assertNotFrozen();
+		fCondDeclaration = d;
+		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(CONDITION_DECLARATION);
-			fCondition= null;
+			fCondition = null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTDeclaration getConditionDeclaration() {
-        return fCondDeclaration;
-    }
+		return fCondDeclaration;
+	}
 
 	@Override
 	public ICPPExecution getExecution() {
@@ -236,7 +247,9 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 		ICPPASTExpression conditionExpr = (ICPPASTExpression) getConditionExpression();
 		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
 		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
-		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null
+				? (ExecSimpleDeclaration) conditionDecl.getExecution()
+				: null;
 		ICPPASTExpression iterationExpr = (ICPPASTExpression) getIterationExpression();
 		ICPPEvaluation iterationEval = iterationExpr != null ? iterationExpr.getEvaluation() : null;
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());

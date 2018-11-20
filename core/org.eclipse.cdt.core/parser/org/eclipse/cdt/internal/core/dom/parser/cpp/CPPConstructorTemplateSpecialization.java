@@ -28,8 +28,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpecialization
 		implements ICPPConstructorSpecialization {
 
-	public CPPConstructorTemplateSpecialization(ICPPConstructor original,
-			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpmap, ICPPFunctionType type, IType[] exceptionSpecs) {
+	public CPPConstructorTemplateSpecialization(ICPPConstructor original, ICPPClassSpecialization owner,
+			ICPPTemplateParameterMap tpmap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(original, owner, tpmap, type, exceptionSpecs);
 	}
 

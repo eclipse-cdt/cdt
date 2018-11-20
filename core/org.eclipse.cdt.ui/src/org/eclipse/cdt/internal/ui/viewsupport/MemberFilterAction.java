@@ -26,30 +26,31 @@ public class MemberFilterAction extends Action {
 
 	private int fFilterProperty;
 	private MemberFilterActionGroup fFilterActionGroup;
-	
-	public MemberFilterAction(MemberFilterActionGroup actionGroup, String title, int property, String contextHelpId, boolean initValue) {
+
+	public MemberFilterAction(MemberFilterActionGroup actionGroup, String title, int property, String contextHelpId,
+			boolean initValue) {
 		super(title);
-		fFilterActionGroup= actionGroup;
-		fFilterProperty= property;
-		
+		fFilterActionGroup = actionGroup;
+		fFilterProperty = property;
+
 		if (contextHelpId != null) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, contextHelpId);
 		}
 		setChecked(initValue);
 	}
-	
+
 	/**
 	 * Returns this action's filter property.
 	 */
 	public int getFilterProperty() {
 		return fFilterProperty;
 	}
-	
+
 	/*
 	 * @see Action#actionPerformed
 	 */
 	@Override
-	public void run() {	
+	public void run() {
 		fFilterActionGroup.setMemberFilter(fFilterProperty, isChecked());
 	}
 

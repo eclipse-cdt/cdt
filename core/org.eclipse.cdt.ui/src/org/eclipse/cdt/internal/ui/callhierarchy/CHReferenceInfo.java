@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.Comparator;
@@ -27,8 +27,8 @@ public class CHReferenceInfo {
 	private int fLength;
 
 	public CHReferenceInfo(int offset, int length) {
-		fOffset= offset;
-		fLength= length;
+		fOffset = offset;
+		fLength = length;
 	}
 
 	public int getOffset() {

@@ -30,24 +30,20 @@ public class BasicCompletionTest extends CompletionTestBase {
 		assertEquals(1, names.length);
 		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
-		IVariable var = (IVariable)bindings[0];
+		IVariable var = (IVariable) bindings[0];
 		assertEquals("blah", var.getName());
 	}
-	
+
 	public void testVar() throws Exception {
-		String code = 
-			"int blah = 4;" +
-			"int two = bl";
-		
+		String code = "int blah = 4;" + "int two = bl";
+
 		testVar(getGPPCompletionNode(code));
 		testVar(getGCCCompletionNode(code));
 	}
 
 	public void testFunction() throws Exception {
-		String code =
-			"void func(int x) { }" +
-			"void func2() { fu";
-		
+		String code = "void func(int x) { }" + "void func2() { fu";
+
 		// C++
 		IASTCompletionNode node = getGPPCompletionNode(code);
 		IASTName[] names = node.getNames();
@@ -57,8 +53,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
-		assertEquals("func", ((IFunction)bindings[0]).getName());
-		assertEquals("func2", ((IFunction)bindings[1]).getName());
+		assertEquals("func", ((IFunction) bindings[0]).getName());
+		assertEquals("func2", ((IFunction) bindings[1]).getName());
 		// The other names shouldn't be hooked up
 		for (int i = 1; i < names.length; i++) {
 			assertNull(names[i].getTranslationUnit());
@@ -73,8 +69,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		bindings = sortBindings(names[0].getCompletionContext().findBindings(names[0], true));
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
-		assertEquals("func", ((IFunction)bindings[0]).getName());
-		assertEquals("func2", ((IFunction)bindings[1]).getName());
+		assertEquals("func", ((IFunction) bindings[0]).getName());
+		assertEquals("func2", ((IFunction) bindings[1]).getName());
 		// The other names shouldn't be hooked up
 		for (int i = 1; i < names.length; i++) {
 			assertNull(names[i].getTranslationUnit());
@@ -82,10 +78,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 	}
 
 	public void testTypedef() throws Exception {
-		String code = 
-			"void test() {typedef int blah;" +
-			"bl";
-		
+		String code = "void test() {typedef int blah;" + "bl";
+
 		// C++
 		IASTCompletionNode node = getGPPCompletionNode(code);
 		IASTName[] names = node.getNames();
@@ -93,43 +87,39 @@ public class BasicCompletionTest extends CompletionTestBase {
 		assertNull(names[1].getTranslationUnit());
 		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
-		assertEquals("blah", ((ITypedef)bindings[0]).getName());
-		
+		assertEquals("blah", ((ITypedef) bindings[0]).getName());
+
 		// C
 		node = getGCCCompletionNode(code);
 		names = node.getNames();
-		assert(names.length > 0);
+		assert (names.length > 0);
 		bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
-		assertEquals("blah", ((ITypedef)bindings[0]).getName());
+		assertEquals("blah", ((ITypedef) bindings[0]).getName());
 	}
-	
+
 	public void testBug181624() throws Exception {
-		String code = 
-			"void foo() {" +
-			"  switch (";
-		
+		String code = "void foo() {" + "  switch (";
+
 		// C++
 		IASTCompletionNode node = getGPPCompletionNode(code);
 		assertNotNull(node);
-		
+
 		// C
 		node = getGCCCompletionNode(code);
 		assertNotNull(node);
-		
-		code = 
-			"void foo() {" +
-			"  while (";
-		
+
+		code = "void foo() {" + "  while (";
+
 		// C++
 		node = getGPPCompletionNode(code);
 		assertNotNull(node);
-		
+
 		// C
 		node = getGCCCompletionNode(code);
 		assertNotNull(node);
 	}
-	
+
 	//	template <typename T> class CT {};
 	//	template <typename T> class B: public A<T> {
 	//	public: 
@@ -140,19 +130,19 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//	   b.
 	public void testBug267911() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"B", "doit"};
+		String[] expected = { "B", "doit" };
 		checkCompletion(code, true, expected);
 	}
-	
+
 	//	typedef struct MyType {
 	//		int aField;
 	//	} MyType;
 	//  M
 	public void testBug279931() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"MyType", "MyType"};
+		String[] expected = { "MyType", "MyType" };
 		checkCompletion(code, true, expected);
-		expected= new String[] {"MyType"};
+		expected = new String[] { "MyType" };
 		checkCompletion(code, false, expected);
 	}
 
@@ -162,18 +152,18 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//  struct M
 	public void testBug279931a() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"MyType"};
+		String[] expected = { "MyType" };
 		checkCompletion(code, true, expected);
 		checkCompletion(code, false, expected);
 	}
-	
+
 	// template <t
 	public void testBug280934() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {};
+		String[] expected = {};
 		checkCompletion(code, true, expected);
 	}
-	
+
 	//	struct s1 {
 	//		struct {
 	//			int a1;
@@ -190,12 +180,12 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//		s.
 	public void testBug284245() throws Exception {
 		String code = getAboveComment();
-		String[] expectedCpp= {"a1", "a2", "b", "s1", "u1", "u2"};
-		String[] expectedC= {"a1", "a2", "b", "u1", "u2"};
+		String[] expectedCpp = { "a1", "a2", "b", "s1", "u1", "u2" };
+		String[] expectedC = { "a1", "a2", "b", "u1", "u2" };
 		checkCompletion(code, true, expectedCpp);
 		checkCompletion(code, false, expectedC);
 	}
-	
+
 	//	struct A{
 	//		virtual void test() {}
 	//	};
@@ -205,16 +195,16 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//			A::t
 	public void testQualifiedMemberAccess_Bug300139() throws Exception {
 		String code = getAboveComment();
-		String[] expectedCpp= {"test"};
+		String[] expectedCpp = { "test" };
 		checkCompletion(code, true, expectedCpp);
 	}
-	
+
 	//	typedef int MyType;
 	//	void func(){
 	//	    static_cast<My
 	public void testCastExpression_Bug301933() throws Exception {
 		String code = getAboveComment();
-		String[] expectedCpp= {"MyType"};
+		String[] expectedCpp = { "MyType" };
 		checkCompletion(code, true, expectedCpp);
 	}
 
@@ -223,11 +213,11 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//     v1= 0 ? v
 	public void testConditionalOperator_Bug308611() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"v1", "v2"};
+		String[] expected = { "v1", "v2" };
 		checkCompletion(code, true, expected);
 		checkCompletion(code, false, expected);
 	}
-	
+
 	//	struct B {
 	//		int m;
 	//	};
@@ -236,7 +226,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//		new (b->
 	public void testNewExpressions_Bug313982a() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"B", "m"};
+		String[] expected = { "B", "m" };
 		checkCompletion(code, true, expected);
 	}
 
@@ -248,7 +238,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//		new (b->m) B
 	public void testNewExpressions_Bug313982b() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"B"};
+		String[] expected = { "B" };
 		checkCompletion(code, true, expected);
 	}
 
@@ -260,26 +250,26 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//		new (b->m) (B
 	public void testNewExpressions_Bug313982c() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"B"};
+		String[] expected = { "B" };
 		checkCompletion(code, true, expected);
 	}
-	
+
 	//	typedef int tint;
 	//	void f(x) ti
 	public void testIncompleteKnrFunction_Bug324384() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"tint"};
+		String[] expected = { "tint" };
 		checkCompletion(code, false, expected);
 	}
-	
+
 	//	void f(x) int y(ti
 	public void testIncompleteKnrFunction_Bug324384b() throws Exception {
 		// Content assist won't work here, just verify that we don't run out of memory
 		String code = getAboveComment();
-		String[] expected= {};
+		String[] expected = {};
 		checkCompletion(code, false, expected);
 	}
-	
+
 	//	struct A {
 	//		A(int, char, int){}
 	//	};
@@ -287,10 +277,10 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//		B() : A
 	public void testCompletionInCtorOfMemberInitializer_327064() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"A"};
+		String[] expected = { "A" };
 		checkNonPrefixCompletion(code, true, expected);
 	}
-	
+
 	//	struct A {
 	//		A(int, char, int){}
 	//	};
@@ -300,7 +290,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//  B::B() : A
 	public void testCompletionInCtorOfMemberInitializer_351009() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"A"};
+		String[] expected = { "A" };
 		checkNonPrefixCompletion(code, true, expected);
 	}
 
@@ -309,16 +299,16 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//    S b
 	public void testCompletionInCtorOfVariable_223660() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"b"};
+		String[] expected = { "b" };
 		checkNonPrefixCompletion(code, true, expected);
 	}
-	
+
 	// typedef int FooBar;
 	// typedef int Foo_Bar;
 	// FB
 	public void testCamelCaseCompletion_CScope() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"FooBar", "Foo_Bar"};
+		String[] expected = { "FooBar", "Foo_Bar" };
 		checkCompletion(code, false, expected);
 	}
 
@@ -327,17 +317,17 @@ public class BasicCompletionTest extends CompletionTestBase {
 	// FB
 	public void testCamelCaseCompletion_CPPScope() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"FooBar", "Foo_Bar"};
+		String[] expected = { "FooBar", "Foo_Bar" };
 		checkCompletion(code, true, expected);
 	}
-	
+
 	// class FooBar {
 	//   FooBar();
 	// }
 	// FooBar::FB
 	public void testCamelCaseCompletion_CPPASTQualifiedName_CPPClassScope() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"FooBar", "FooBar"};
+		String[] expected = { "FooBar", "FooBar" };
 		checkCompletion(code, true, expected);
 	}
 
@@ -350,35 +340,35 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//	  s.
 	public void testCamelCaseCompletion_CVisitor() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"fooBar", "foo_bar"};
+		String[] expected = { "fooBar", "foo_bar" };
 		checkCompletion(code, false, expected);
 	}
-	
+
 	//	void someFunction() {
 	//	    int abc[5];
 	//	    sizeof(ab
 	public void testCompletionInSizeof340664() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"abc"};
+		String[] expected = { "abc" };
 		checkCompletion(code, false, expected);
 		checkCompletion(code, true, expected);
 	}
-	
+
 	//	typedef int abc;
 	//	struct X {
 	//	  X(ab
 	public void testCompletionInParamlistOfCtor_338949() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"abc"};
+		String[] expected = { "abc" };
 		checkCompletion(code, false, expected);
 		checkCompletion(code, true, expected);
 	}
-	
+
 	// struct foo { int axx;};
 	// struct foo bar = {.a
 	public void testCompletionInDesignatedInitializor_353281a() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"axx"};
+		String[] expected = { "axx" };
 		checkCompletion(code, false, expected);
 	}
 
@@ -388,7 +378,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//		struct foo bar = {.a
 	public void testCompletionInDesignatedInitializor_353281b() throws Exception {
 		String code = getAboveComment();
-		String[] expected= {"axx"};
+		String[] expected = { "axx" };
 		checkCompletion(code, false, expected);
 	}
 }

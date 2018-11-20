@@ -31,10 +31,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		implements ICPPASTNamedTypeSpecifier, ICPPASTCompletionContext {
-    private boolean typename;
-    private IASTName name;
+	private boolean typename;
+	private IASTName name;
 
-    public CPPASTNamedTypeSpecifier() {
+	public CPPASTNamedTypeSpecifier() {
 	}
 
 	public CPPASTNamedTypeSpecifier(IASTName name) {
@@ -48,66 +48,65 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public CPPASTNamedTypeSpecifier copy(CopyStyle style) {
-		CPPASTNamedTypeSpecifier copy =
-				new CPPASTNamedTypeSpecifier(name == null ? null : name.copy(style));
+		CPPASTNamedTypeSpecifier copy = new CPPASTNamedTypeSpecifier(name == null ? null : name.copy(style));
 		copy.typename = typename;
 		return super.copy(copy, style);
 	}
 
 	@Override
 	public boolean isTypename() {
-        return typename;
-    }
+		return typename;
+	}
 
-    @Override
+	@Override
 	public void setIsTypename(boolean value) {
-        assertNotFrozen();
-        typename = value;
-    }
+		assertNotFrozen();
+		typename = value;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT:
-	            	return false;
-	            case ASTVisitor.PROCESS_SKIP:
-	            	return true;
-	            default:
-	            	break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (name != null && !name.accept(action))
-        	return false;
+		if (name != null && !name.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT:
-	            	return false;
-	            case ASTVisitor.PROCESS_SKIP:
-	            	return true;
-	            default:
-	            	break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -123,11 +122,8 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		int j = 0;
 		for (int i = 0; i < bindings.length; i++) {
 			IBinding binding = bindings[i];
-			if (binding instanceof ICPPClassType
-					|| binding instanceof IEnumeration
-					|| binding instanceof ICPPNamespace
-					|| binding instanceof ITypedef
-					|| binding instanceof ICPPAliasTemplate
+			if (binding instanceof ICPPClassType || binding instanceof IEnumeration || binding instanceof ICPPNamespace
+					|| binding instanceof ITypedef || binding instanceof ICPPAliasTemplate
 					|| binding instanceof ICPPTemplateTypeParameter) {
 				if (i != j)
 					bindings[j] = binding;

@@ -36,14 +36,14 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * include was not resolved.
 	 */
 	public String getPath();
-	
+
 	/**
 	 * Returns the name of the file as specified in the directive. Does not include quotes or
 	 * angle brackets.
 	 * @since 4.0
 	 */
 	public IASTName getName();
-	
+
 	/**
 	 * Returns whether this is a system include (one specified with angle brackets).
 	 * @since 4.0
@@ -62,7 +62,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @since 4.0
 	 */
 	public boolean isResolved();
-	
+
 	/**
 	 * Returns whether the inclusion was resolved using a heuristics.
 	 * @since 5.1
@@ -88,7 +88,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @since 5.4
 	 */
 	public long getIncludedFileSize();
-	
+
 	/**
 	 * Returns a hash-code for the contents of the file included, or <code>0</code>
 	 * if the content has not been parsed.
@@ -101,7 +101,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @return time before reading started in milliseconds since epoch
 	 * @since 5.4
 	 */
-	public long getIncludedFileReadTime(); 
+	public long getIncludedFileReadTime();
 
 	/**
 	 * Returns <code>true</code> if I/O errors were encountered while reading the included file.
@@ -123,7 +123,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @since 5.4
 	 */
 	public boolean createsAST();
-	
+
 	/**
 	 * Returns the file from the index that this include statement has pulled in, or {@code null}
 	 * if the include creates AST or is unresolved or skipped.

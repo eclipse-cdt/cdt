@@ -68,71 +68,65 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public class MITargetDownloadInfo extends MIInfo {
 
-    private String fAddress = ""; //$NON-NLS-1$
-    private long fLoadSize = 0;
-    private long fTransferRate = 0;
-    private long fWriteRate = 0;
-    
-    public MITargetDownloadInfo( MIOutput record ) {
-        super( record );
-        parse();
-    }
+	private String fAddress = ""; //$NON-NLS-1$
+	private long fLoadSize = 0;
+	private long fTransferRate = 0;
+	private long fWriteRate = 0;
 
-    public String getAddress() {
-        return fAddress;
-    }
-    
-    public long getLoadSize() {
-        return fLoadSize;
-    }
-    
-    public long getTransferRate() {
-        return fTransferRate;
-    }
-    
-    public long getWriteRate() {
-        return fWriteRate;
-    }
-    
-    private void parse() {
-        if ( isDone() ) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if ( rr != null ) {
-                MIResult[] results = rr.getMIResults();
-                for( int i = 0; i < results.length; i++ ) {
-                    String var = results[i].getVariable();
-                    MIValue value = results[i].getMIValue();
-                    String str = ""; //$NON-NLS-1$
-                    if ( value != null && value instanceof MIConst ) {
-                        str = ((MIConst)value).getCString().trim();
-                    }
-                    if ( var.equals( "address" ) ) { //$NON-NLS-1$
-                        fAddress = str;
-                    }
-                    else if ( var.equals( "load-size" ) ) { //$NON-NLS-1$
-                        try {
-                            fLoadSize = Long.parseLong( str );
-                        }
-                        catch( NumberFormatException e ) {
-                        }
-                    }
-                    else if ( var.equals( "transfer-rate" ) ) { //$NON-NLS-1$
-                        try {
-                            fTransferRate = Long.parseLong( str );
-                        }
-                        catch( NumberFormatException e ) {
-                        }
-                    }
-                    else if ( var.equals( "write-rate" ) ) { //$NON-NLS-1$
-                        try {
-                            fWriteRate = Long.parseLong( str );
-                        }
-                        catch( NumberFormatException e ) {
-                        }
-                    }
-                }
-            }
-        }
-    }
+	public MITargetDownloadInfo(MIOutput record) {
+		super(record);
+		parse();
+	}
+
+	public String getAddress() {
+		return fAddress;
+	}
+
+	public long getLoadSize() {
+		return fLoadSize;
+	}
+
+	public long getTransferRate() {
+		return fTransferRate;
+	}
+
+	public long getWriteRate() {
+		return fWriteRate;
+	}
+
+	private void parse() {
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					MIValue value = results[i].getMIValue();
+					String str = ""; //$NON-NLS-1$
+					if (value != null && value instanceof MIConst) {
+						str = ((MIConst) value).getCString().trim();
+					}
+					if (var.equals("address")) { //$NON-NLS-1$
+						fAddress = str;
+					} else if (var.equals("load-size")) { //$NON-NLS-1$
+						try {
+							fLoadSize = Long.parseLong(str);
+						} catch (NumberFormatException e) {
+						}
+					} else if (var.equals("transfer-rate")) { //$NON-NLS-1$
+						try {
+							fTransferRate = Long.parseLong(str);
+						} catch (NumberFormatException e) {
+						}
+					} else if (var.equals("write-rate")) { //$NON-NLS-1$
+						try {
+							fWriteRate = Long.parseLong(str);
+						} catch (NumberFormatException e) {
+						}
+					}
+				}
+			}
+		}
+	}
 }

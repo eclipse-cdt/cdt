@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.core.runtime.CoreException;
 
 class SignatureBuilder implements ITypeMarshalBuffer {
-	private static final short NULL_TYPE       = 0x0000;
+	private static final short NULL_TYPE = 0x0000;
 	private static final short UNSTORABLE_TYPE = 0x001D;
 
 	private final StringBuilder fBuffer;
@@ -37,7 +37,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 	 * Constructor for input buffer.
 	 */
 	public SignatureBuilder() {
-		fBuffer= new StringBuilder();
+		fBuffer = new StringBuilder();
 	}
 
 	@Override
@@ -84,7 +84,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 			// a need to write it to the index, but it can appear in a signature
 			// during partial ordering of function templates.
 			appendSeparator();
-			fBuffer.append("Unique(@");  //$NON-NLS-1$
+			fBuffer.append("Unique(@"); //$NON-NLS-1$
 			fBuffer.append(Integer.toHexString(System.identityHashCode(type)));
 			fBuffer.append(')');
 		} else {

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
-
 /**
  * A DSF-instrumented alternative to the Runnable interface.    
  * <p>

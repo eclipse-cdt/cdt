@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
-public class RemoveUnusedDeclarationsRefactoringRunner extends RefactoringRunner  {
+public class RemoveUnusedDeclarationsRefactoringRunner extends RefactoringRunner {
 
 	public RemoveUnusedDeclarationsRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {
@@ -31,8 +31,8 @@ public class RemoveUnusedDeclarationsRefactoringRunner extends RefactoringRunner
 
 	@Override
 	public void run() {
-		RemoveUnusedDeclarationsRefactoring refactoring =
-				new RemoveUnusedDeclarationsRefactoring(element, selection, project);
+		RemoveUnusedDeclarationsRefactoring refactoring = new RemoveUnusedDeclarationsRefactoring(element, selection,
+				project);
 		RemoveUnusedDeclarationsWizard wizard = new RemoveUnusedDeclarationsWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_NOTHING);
 	}

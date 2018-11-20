@@ -52,17 +52,17 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		this(site.getPage(), site.getSelectionProvider());
 	}
 
-	public ShowInCViewAction(ITextEditor editor) {	
+	public ShowInCViewAction(ITextEditor editor) {
 		this(editor.getEditorSite().getWorkbenchWindow().getActivePage(), editor.getSelectionProvider());
 		fEditor = editor;
 	}
 
 	public ShowInCViewAction(IWorkbenchPage page, ISelectionProvider viewer) {
-		super(viewer, CEditorMessages.ShowInCView_label); 
-		setToolTipText(CEditorMessages.ShowInCView_tooltip); 
-		setDescription(CEditorMessages.ShowInCView_description); 
+		super(viewer, CEditorMessages.ShowInCView_label);
+		setToolTipText(CEditorMessages.ShowInCView_tooltip);
+		setDescription(CEditorMessages.ShowInCView_description);
 		this.page = page;
-		setDescription(CEditorMessages.ShowInCView_tooltip); 
+		setDescription(CEditorMessages.ShowInCView_tooltip);
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
 	}
 
@@ -72,7 +72,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		if (selection instanceof ITextSelection) {
 			run(fEditor);
 		} else if (selection instanceof IStructuredSelection) {
-			run((IStructuredSelection)selection);
+			run((IStructuredSelection) selection);
 		}
 
 	}
@@ -91,7 +91,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 			if (part instanceof ISetSelectionTarget) {
 				((ISetSelectionTarget) part).selectReveal(selection);
 			}
-		} catch(PartInitException ex) {
+		} catch (PartInitException ex) {
 		}
 	}
 
@@ -117,4 +117,3 @@ public class ShowInCViewAction extends SelectionProviderAction {
 	}
 
 }
-

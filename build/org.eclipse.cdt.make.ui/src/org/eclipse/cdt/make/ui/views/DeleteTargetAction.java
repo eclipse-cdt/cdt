@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
-
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -65,11 +64,12 @@ public class DeleteTargetAction extends SelectionListenerAction {
 			title = MakeUIPlugin.getResourceString("DeleteTargetAction.title.confirmDeletion"); //$NON-NLS-1$
 			IMakeTarget target = (IMakeTarget) targets.get(0);
 			msg = MessageFormat.format(MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmDeleteion"), //$NON-NLS-1$
-				new Object[] { target.getName()});
+					new Object[] { target.getName() });
 		} else {
 			title = MakeUIPlugin.getResourceString("DeleteTargetAction.title.confirmMultipleDeletion"); //$NON-NLS-1$
-			msg = MessageFormat.format(MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmMultipleDeletion"), //$NON-NLS-1$
-				new Object[] { Integer.valueOf(targets.size())});
+			msg = MessageFormat.format(
+					MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmMultipleDeletion"), //$NON-NLS-1$
+					new Object[] { Integer.valueOf(targets.size()) });
 		}
 		return MessageDialog.openQuestion(shell, title, msg);
 	}
@@ -88,19 +88,20 @@ public class DeleteTargetAction extends SelectionListenerAction {
 					String lastTargetName = null;
 					IContainer container = ((IMakeTarget) target).getContainer();
 					try {
-						lastTargetName = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-								TargetBuild.LAST_TARGET));
+						lastTargetName = (String) container.getSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET));
 					} catch (CoreException e) {
 					}
 					if (lastTargetName != null && lastTargetName.equals(((IMakeTarget) target).getName())) {
 						try {
-							container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-									TargetBuild.LAST_TARGET), null);
+							container.setSessionProperty(
+									new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
+									null);
 						} catch (CoreException e) {
 						}
 						try {
-							container.getProject().setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-									TargetBuild.LAST_TARGET_CONTAINER), null);
+							container.getProject().setSessionProperty(new QualifiedName(
+									MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET_CONTAINER), null);
 						} catch (CoreException e) {
 						}
 					}
@@ -108,7 +109,7 @@ public class DeleteTargetAction extends SelectionListenerAction {
 			}
 		} catch (CoreException e) {
 			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("DeleteTargetAction.exception.removeError"), //$NON-NLS-1$
-				MakeUIPlugin.getResourceString("DeleteTargetAction.exception.errorDeletingBuildTarget"), e);  //$NON-NLS-1$
+					MakeUIPlugin.getResourceString("DeleteTargetAction.exception.errorDeletingBuildTarget"), e); //$NON-NLS-1$
 		}
 	}
 
@@ -124,11 +125,11 @@ public class DeleteTargetAction extends SelectionListenerAction {
 	private boolean canDelete() {
 		List<?> elements = getSelectedElements();
 		for (Object element : elements) {
-			if (! (element instanceof IMakeTarget)) {
+			if (!(element instanceof IMakeTarget)) {
 				return false;
 			}
 		}
-		return elements.size()>0;
+		return elements.size() > 0;
 	}
 
 }

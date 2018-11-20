@@ -79,16 +79,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil.Pair;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalUnary extends CPPDependentEvaluation {
-	private static final ICPPEvaluation ZERO_EVAL = new EvalFixed(CPPSemantics.INT_TYPE, PRVALUE, IntegralValue.create(0));
+	private static final ICPPEvaluation ZERO_EVAL = new EvalFixed(CPPSemantics.INT_TYPE, PRVALUE,
+			IntegralValue.create(0));
 
 	private final int fOperator;
 	private final ICPPEvaluation fArgument;
 	private final IBinding fAddressOfQualifiedNameBinding;
-	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
+	private ICPPFunction fOverload = CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 	private boolean fCheckedIsConstantExpression;
 	private boolean fIsConstantExpression;
-
 
 	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding,
 			IASTNode pointOfDefinition) {
@@ -98,9 +98,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding,
 			IBinding templateDefinition) {
 		super(templateDefinition);
-		fOperator= operator;
-		fArgument= operand;
-		fAddressOfQualifiedNameBinding= addressOfQualifiedNameBinding;
+		fOperator = operator;
+		fArgument = operand;
+		fAddressOfQualifiedNameBinding = addressOfQualifiedNameBinding;
 	}
 
 	public int getOperator() {
@@ -170,8 +170,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return fArgument.isConstantExpression()
-			&& isNullOrConstexprFunc(getOverload());
+		return fArgument.isConstantExpression() && isNullOrConstexprFunc(getOverload());
 	}
 
 	@Override
@@ -180,19 +179,18 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalUnary o = (EvalUnary) other;
-		return fOperator == o.fOperator
-			&& fArgument.isEquivalentTo(o.fArgument);
+		return fOperator == o.fOperator && fArgument.isEquivalentTo(o.fArgument);
 	}
-	
+
 	public ICPPFunction getOverload() {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fOverload= computeOverload();
+			fOverload = computeOverload();
 		}
 		return fOverload;
 	}
 
 	private ICPPFunction computeOverload() {
-    	OverloadableOperator op = OverloadableOperator.fromUnaryExpression(fOperator);
+		OverloadableOperator op = OverloadableOperator.fromUnaryExpression(fOperator);
 		if (op == null)
 			return null;
 
@@ -200,30 +198,30 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return null;
 
 		if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
-			ICPPMember member= (ICPPMember) fAddressOfQualifiedNameBinding;
+			ICPPMember member = (ICPPMember) fAddressOfQualifiedNameBinding;
 			if (!member.isStatic())
 				return null;
 		}
 
-    	IType type = fArgument.getType();
+		IType type = fArgument.getType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!CPPSemantics.isUserDefined(type))
 			return null;
 
 		ICPPEvaluation[] args;
-	    if (fOperator == op_postFixDecr || fOperator == op_postFixIncr) {
-	    	args = new ICPPEvaluation[] { fArgument, ZERO_EVAL };
-	    } else {
-	    	args = new ICPPEvaluation[] { fArgument };
-	    }
-    	return CPPSemantics.findOverloadedOperator(getTemplateDefinitionScope(), args, type,
-    			op, LookupMode.LIMITED_GLOBALS);
+		if (fOperator == op_postFixDecr || fOperator == op_postFixIncr) {
+			args = new ICPPEvaluation[] { fArgument, ZERO_EVAL };
+		} else {
+			args = new ICPPEvaluation[] { fArgument };
+		}
+		return CPPSemantics.findOverloadedOperator(getTemplateDefinitionScope(), args, type, op,
+				LookupMode.LIMITED_GLOBALS);
 	}
 
 	@Override
 	public IType getType() {
 		if (fType == null)
-			fType= computeType();
+			fType = computeType();
 		return fType;
 	}
 
@@ -235,7 +233,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
-    	switch (fOperator) {
+		switch (fOperator) {
 		case op_sizeof:
 		case op_sizeofParameterPack:
 			return CPPVisitor.get_SIZE_T();
@@ -245,11 +243,11 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return CPPSemantics.VOID_TYPE;
 		case op_amper:
 			if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
-				ICPPMember member= (ICPPMember) fAddressOfQualifiedNameBinding;
+				ICPPMember member = (ICPPMember) fAddressOfQualifiedNameBinding;
 				if (!member.isStatic()) {
 					try {
-						return new CPPPointerToMemberType(member.getType(), member.getClassOwner(),
-								false, false, false);
+						return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false,
+								false);
 					} catch (DOMException e) {
 						return e.getProblem();
 					}
@@ -257,14 +255,14 @@ public class EvalUnary extends CPPDependentEvaluation {
 			}
 			return new CPPPointerType(fArgument.getType());
 		case op_star:
-			IType type= fArgument.getType();
+			IType type = fArgument.getType();
 			type = prvalueTypeWithResolvedTypedefs(type);
-	    	if (type instanceof IPointerType) {
-	    		return glvalueType(((IPointerType) type).getType());
+			if (type instanceof IPointerType) {
+				return glvalueType(((IPointerType) type).getType());
 			}
-	    	if (type instanceof ISemanticProblem) {
-	    		return type;
-	    	}
+			if (type instanceof ISemanticProblem) {
+				return type;
+			}
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		case op_noexcept:
 		case op_not:
@@ -282,7 +280,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	private IType promoteType(IType type, boolean allowPointer) {
-    	final IType t1 = prvalueType(type);
+		final IType t1 = prvalueType(type);
 		final IType t2 = SemanticUtil.getNestedType(t1, TDEF);
 		if (allowPointer) {
 			if (t2 instanceof CPPClosureType) {
@@ -295,7 +293,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 				return t1;
 			}
 		}
-		final IType t3= CPPArithmeticConversion.promoteCppType(t2);
+		final IType t3 = CPPArithmeticConversion.promoteCppType(t2);
 		if (t3 == null && !(t2 instanceof IBasicType))
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		return (t3 == null || t3 == t2) ? t1 : t3;
@@ -320,31 +318,29 @@ public class EvalUnary extends CPPDependentEvaluation {
 				if (!overload.isConstexpr())
 					return IntegralValue.ERROR;
 				ICPPEvaluation eval = new EvalBinding(overload, null, (IBinding) null);
-				arg = new EvalFunctionCall(new ICPPEvaluation[] {eval, arg}, null, (IBinding) null);
+				arg = new EvalFunctionCall(new ICPPEvaluation[] { eval, arg }, null, (IBinding) null);
 				return arg.getValue();
 			}
 		}
 
 		switch (fOperator) {
-			case op_sizeof: {
-				SizeAndAlignment info =
-						SizeofCalculator.getSizeAndAlignment(fArgument.getType());
-				return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.size);
-			}
-			case op_alignOf: {
-				SizeAndAlignment info =
-						SizeofCalculator.getSizeAndAlignment(fArgument.getType());
-				return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.alignment);
-			}
-			case op_noexcept:
-				return IntegralValue.UNKNOWN;  // TODO(sprigogin): Implement
-			case op_sizeofParameterPack:
-				IValue opVal = fArgument.getValue();
-				return IntegralValue.create(opVal.numberOfSubValues());
-			case op_typeid:
-				return IntegralValue.UNKNOWN;  // TODO(sprigogin): Implement
-			case op_throw:
-				return IntegralValue.UNKNOWN;  // TODO(sprigogin): Implement
+		case op_sizeof: {
+			SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getType());
+			return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.size);
+		}
+		case op_alignOf: {
+			SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getType());
+			return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.alignment);
+		}
+		case op_noexcept:
+			return IntegralValue.UNKNOWN; // TODO(sprigogin): Implement
+		case op_sizeofParameterPack:
+			IValue opVal = fArgument.getValue();
+			return IntegralValue.create(opVal.numberOfSubValues());
+		case op_typeid:
+			return IntegralValue.UNKNOWN; // TODO(sprigogin): Implement
+		case op_throw:
+			return IntegralValue.UNKNOWN; // TODO(sprigogin): Implement
 		}
 
 		IValue val = arg.getValue();
@@ -357,19 +353,19 @@ public class EvalUnary extends CPPDependentEvaluation {
 	@Override
 	public ValueCategory getValueCategory() {
 		ICPPFunction overload = getOverload();
-    	if (overload != null)
-    		return valueCategoryFromFunctionCall(overload);
+		if (overload != null)
+			return valueCategoryFromFunctionCall(overload);
 
-    	switch (fOperator) {
+		switch (fOperator) {
 		case op_typeid:
-    	case op_star:
-    	case op_prefixDecr:
-    	case op_prefixIncr:
+		case op_star:
+		case op_prefixDecr:
+		case op_prefixIncr:
 			return LVALUE;
-    	default:
+		default:
 			return PRVALUE;
-    	}
-    }
+		}
+	}
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
@@ -380,12 +376,11 @@ public class EvalUnary extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
-			throws CoreException {
-		int op= buffer.getByte();
-		ICPPEvaluation arg= buffer.unmarshalEvaluation();
-		IBinding binding= buffer.unmarshalBinding();
-		IBinding templateDefinition= buffer.unmarshalBinding();
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		int op = buffer.getByte();
+		ICPPEvaluation arg = buffer.unmarshalEvaluation();
+		IBinding binding = buffer.unmarshalBinding();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalUnary(op, arg, binding, templateDefinition);
 	}
 
@@ -395,7 +390,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 		IBinding binding = fAddressOfQualifiedNameBinding;
 		if (binding instanceof ICPPUnknownBinding) {
 			try {
-				binding= CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, context);
+				binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, context);
 			} catch (DOMException e) {
 			}
 		}
@@ -411,13 +406,13 @@ public class EvalUnary extends CPPDependentEvaluation {
 	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, ICPPEvaluation arg) {
 		IBinding templateDefinition = getTemplateDefinition();
 		if (overload instanceof ICPPMethod) {
-			EvalMemberAccess opAccess = new EvalMemberAccess(arg.getType(), ValueCategory.LVALUE, overload, 
-					arg, false, templateDefinition);
-			ICPPEvaluation[] args = new ICPPEvaluation[]{opAccess};
+			EvalMemberAccess opAccess = new EvalMemberAccess(arg.getType(), ValueCategory.LVALUE, overload, arg, false,
+					templateDefinition);
+			ICPPEvaluation[] args = new ICPPEvaluation[] { opAccess };
 			return new EvalFunctionCall(args, arg, templateDefinition);
 		} else {
 			EvalBinding op = new EvalBinding(overload, overload.getType(), templateDefinition);
-			ICPPEvaluation[] args = new ICPPEvaluation[]{op, arg};
+			ICPPEvaluation[] args = new ICPPEvaluation[] { op, arg };
 			return new EvalFunctionCall(args, null, templateDefinition);
 		}
 	}
@@ -439,7 +434,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 		final ICPPEvaluation updateable = vp.getFirst();
 		final ICPPEvaluation fixed = vp.getSecond();
 
-		ICPPEvaluation evalUnary = fixed == fArgument || fixed == EvalFixed.INCOMPLETE ? this : new EvalUnary(fOperator, fixed, fAddressOfQualifiedNameBinding, getTemplateDefinition());
+		ICPPEvaluation evalUnary = fixed == fArgument || fixed == EvalFixed.INCOMPLETE ? this
+				: new EvalUnary(fOperator, fixed, fAddressOfQualifiedNameBinding, getTemplateDefinition());
 		if (fOperator == op_star) {
 			if (fixed instanceof EvalPointer) {
 				EvalPointer evalPointer = (EvalPointer) fixed;
@@ -470,7 +466,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 				applyPointerArithmetics(evalPointer);
 				return evalPointer;
 			} else {
-				EvalFixed newValue = new EvalFixed(evalUnary.getType(), evalUnary.getValueCategory(), evalUnary.getValue());
+				EvalFixed newValue = new EvalFixed(evalUnary.getType(), evalUnary.getValueCategory(),
+						evalUnary.getValue());
 				if (updateable instanceof EvalReference) {
 					EvalReference evalRef = (EvalReference) updateable;
 					evalRef.update(newValue);

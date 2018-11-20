@@ -57,9 +57,9 @@ public class ParameterEditDialog extends StatusDialog {
 	public ParameterEditDialog(Shell parentShell, NameInformation parameter, boolean canEditType,
 			boolean canEditDefault, boolean canChangeReturn) {
 		super(parentShell);
-		fParameter= parameter;
-		fEditType= canEditType;
-		fEditDefault= canEditDefault;
+		fParameter = parameter;
+		fEditType = canEditType;
+		fEditDefault = canEditDefault;
 		fEditReturn = canChangeReturn;
 	}
 
@@ -71,72 +71,68 @@ public class ParameterEditDialog extends StatusDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite result= (Composite) super.createDialogArea(parent);
-		GridLayout layout= (GridLayout) result.getLayout();
-		layout.numColumns= 2;
+		Composite result = (Composite) super.createDialogArea(parent);
+		GridLayout layout = (GridLayout) result.getLayout();
+		layout.numColumns = 2;
 		Label label;
 		GridData gd;
 
-		label= new Label(result, SWT.NONE);
+		label = new Label(result, SWT.NONE);
 		String newName = fParameter.getNewName();
 		if (newName.isEmpty()) {
 			label.setText(Messages.ParameterEditDialog_message_new);
 		} else {
-			label.setText(NLS.bind(Messages.ParameterEditDialog_message,
-					BasicElementLabels.getCElementName(newName)));
+			label.setText(NLS.bind(Messages.ParameterEditDialog_message, BasicElementLabels.getCElementName(newName)));
 		}
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
 		if (fEditType) {
-			label= new Label(result, SWT.NONE);
+			label = new Label(result, SWT.NONE);
 			label.setText(Messages.ParameterEditDialog_type);
-			fType= new Text(result, SWT.BORDER);
-			gd= new GridData(GridData.FILL_HORIZONTAL);
+			fType = new Text(result, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 			fType.setLayoutData(gd);
 			fType.setText(fParameter.getTypeName());
-			fType.addModifyListener(
-				new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						validate((Text) e.widget);
-					}
-				});
-			TextFieldNavigationHandler.install(fType);
-		}
-
-		label= new Label(result, SWT.NONE);
-		fName= new Text(result, SWT.BORDER);
-		initializeDialogUnits(fName);
-		label.setText(Messages.ParameterEditDialog_name);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= convertWidthInCharsToPixels(45);
-		fName.setLayoutData(gd);
-		fName.setText(newName);
-		fName.addModifyListener(
-			new ModifyListener() {
+			fType.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					validate((Text) e.widget);
 				}
 			});
+			TextFieldNavigationHandler.install(fType);
+		}
+
+		label = new Label(result, SWT.NONE);
+		fName = new Text(result, SWT.BORDER);
+		initializeDialogUnits(fName);
+		label.setText(Messages.ParameterEditDialog_name);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = convertWidthInCharsToPixels(45);
+		fName.setLayoutData(gd);
+		fName.setText(newName);
+		fName.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate((Text) e.widget);
+			}
+		});
 		TextFieldNavigationHandler.install(fName);
 
 		if (fEditDefault && fParameter.isAdded()) {
-			label= new Label(result, SWT.NONE);
+			label = new Label(result, SWT.NONE);
 			label.setText(Messages.ParameterEditDialog_default_value);
-			fDefaultValue= new Text(result, SWT.BORDER);
-			gd= new GridData(GridData.FILL_HORIZONTAL);
+			fDefaultValue = new Text(result, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 			fDefaultValue.setLayoutData(gd);
 			fDefaultValue.setText(fParameter.getDefaultValue());
-			fDefaultValue.addModifyListener(
-				new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						validate((Text) e.widget);
-					}
-				});
+			fDefaultValue.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					validate((Text) e.widget);
+				}
+			});
 			TextFieldNavigationHandler.install(fDefaultValue);
 		}
 		if (fEditReturn) {
@@ -165,22 +161,22 @@ public class ParameterEditDialog extends StatusDialog {
 	}
 
 	private void validate(Text first) {
-		IStatus[] result= new IStatus[3];
+		IStatus[] result = new IStatus[3];
 		if (first == fType) {
-			result[0]= validateType();
-			result[1]= validateName();
-			result[2]= validateDefaultValue();
+			result[0] = validateType();
+			result[1] = validateName();
+			result[2] = validateDefaultValue();
 		} else if (first == fName) {
-			result[0]= validateName();
-			result[1]= validateType();
-			result[2]= validateDefaultValue();
+			result[0] = validateName();
+			result[1] = validateType();
+			result[2] = validateDefaultValue();
 		} else {
-			result[0]= validateDefaultValue();
-			result[1]= validateName();
-			result[2]= validateType();
+			result[0] = validateDefaultValue();
+			result[1] = validateName();
+			result[2] = validateType();
 		}
-		for (int i= 0; i < result.length; i++) {
-			IStatus status= result[i];
+		for (int i = 0; i < result.length; i++) {
+			IStatus status = result[i];
 			if (status != null && !status.isOK()) {
 				updateStatus(status);
 				return;
@@ -197,10 +193,10 @@ public class ParameterEditDialog extends StatusDialog {
 	private IStatus validateName() {
 		if (fName == null)
 			return null;
-		String name= fName.getText();
+		String name = fName.getText();
 		if (name.isEmpty())
 			return createErrorStatus(Messages.ParameterEditDialog_name_error);
-		IStatus status= CConventions.validateFieldName(name);
+		IStatus status = CConventions.validateFieldName(name);
 		if (status.matches(IStatus.ERROR))
 			return status;
 		return Status.OK_STATUS;
@@ -209,7 +205,7 @@ public class ParameterEditDialog extends StatusDialog {
 	private IStatus validateDefaultValue() {
 		if (fDefaultValue == null)
 			return null;
-		String defaultValue= fDefaultValue.getText();
+		String defaultValue = fDefaultValue.getText();
 		if (defaultValue.isEmpty())
 			return createErrorStatus(Messages.ParameterEditDialog_default_value_error);
 		// TODO(sprigogin): Implement real default value validation.

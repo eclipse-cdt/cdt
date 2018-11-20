@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.cdt.ui.templateengine.SimpleElementException;
 
-
 /**
  *
  * call setgetUIElementTreeRootNull(), before createUIElementTree(...).

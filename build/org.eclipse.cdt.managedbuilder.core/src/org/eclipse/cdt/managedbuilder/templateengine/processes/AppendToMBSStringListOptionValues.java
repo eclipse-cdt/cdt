@@ -36,7 +36,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * This class Appends contents to Managed Build System StringList Option Values.
  *
@@ -49,7 +48,8 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 	 * This method Appends contents to Managed Build System StringList Option Values.
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -70,7 +70,8 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 			try {
 				modified |= setOptionValue(projectHandle, id, values, path);
 			} catch (BuildException e) {
-				throw new ProcessFailureException(Messages.getString("AppendToMBSStringListOptionValues.0") + e.getMessage(), e); //$NON-NLS-1$
+				throw new ProcessFailureException(
+						Messages.getString("AppendToMBSStringListOptionValues.0") + e.getMessage(), e); //$NON-NLS-1$
 			}
 		}
 		if (modified) {
@@ -84,8 +85,10 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 		}
 	}
 
-	private boolean setOptionValue(IProject projectHandle, String id, String[] value, String path) throws BuildException, ProcessFailureException {
-		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
+	private boolean setOptionValue(IProject projectHandle, String id, String[] value, String path)
+			throws BuildException, ProcessFailureException {
+		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject()
+				.getConfigurations();
 
 		boolean resource = !(path == null || path.isEmpty() || path.equals("/")); //$NON-NLS-1$
 		boolean modified = false;
@@ -97,7 +100,8 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 				if (resourceConfig == null) {
 					IFile file = projectHandle.getFile(path);
 					if (file == null) {
-						throw new ProcessFailureException(Messages.getString("AppendToMBSStringListOptionValues.3") + path); //$NON-NLS-1$
+						throw new ProcessFailureException(
+								Messages.getString("AppendToMBSStringListOptionValues.3") + path); //$NON-NLS-1$
 					}
 					resourceConfig = config.createResourceConfiguration(file);
 				}
@@ -119,12 +123,13 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 		return modified;
 	}
 
-	private boolean setOptionForResourceConfig(String id, String[] value, IResourceConfiguration resourceConfig, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private boolean setOptionForResourceConfig(String id, String[] value, IResourceConfiguration resourceConfig,
+			IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
 			if (option.getBaseId().toLowerCase().matches(lowerId)) {
-				switch(option.getValueType()) {
+				switch (option.getValueType()) {
 				case IOption.STRING_LIST:
 				case IOption.INCLUDE_PATH:
 				case IOption.PREPROCESSOR_SYMBOLS:
@@ -135,8 +140,8 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 				case IOption.LIBRARY_FILES:
 				case IOption.MACRO_FILES:
 					@SuppressWarnings("unchecked")
-					List<String> list= (List<String>) option.getValue();
-					String[] newValue= concat(list.toArray(new String[list.size()]), value);
+					List<String> list = (List<String>) option.getValue();
+					String[] newValue = concat(list.toArray(new String[list.size()]), value);
 					ManagedBuildManager.setOption(resourceConfig, optionHolder, option, newValue);
 					modified = true;
 				}
@@ -145,12 +150,13 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 		return modified;
 	}
 
-	private boolean setOptionForConfig(String id, String[] value, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private boolean setOptionForConfig(String id, String[] value, IConfiguration config, IOption[] options,
+			IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
 			if (option.getBaseId().toLowerCase().matches(lowerId)) {
-				switch(option.getValueType()) {
+				switch (option.getValueType()) {
 				case IOption.STRING_LIST:
 				case IOption.INCLUDE_PATH:
 				case IOption.PREPROCESSOR_SYMBOLS:
@@ -161,8 +167,8 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 				case IOption.LIBRARY_FILES:
 				case IOption.MACRO_FILES:
 					@SuppressWarnings("unchecked")
-					List<String> list= (List<String>) option.getValue();
-					String[] newValue= concat(list.toArray(new String[list.size()]), value);
+					List<String> list = (List<String>) option.getValue();
+					String[] newValue = concat(list.toArray(new String[list.size()]), value);
 					ManagedBuildManager.setOption(config, optionHolder, option, newValue);
 					modified = true;
 				}

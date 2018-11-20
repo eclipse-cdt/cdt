@@ -29,22 +29,18 @@ public interface ITestItem {
 	 * is necessary)
 	 */
 	public enum Status {
-		NotRun,
-		Skipped,
-		Passed,
-		Failed,
-		Aborted;
+		NotRun, Skipped, Passed, Failed, Aborted;
 
 		public boolean isError() {
 			return (this == Failed) || (this == Aborted);
 		}
 	}
-	
+
 	/**
 	 * @return name of the test item.
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns status of the test item.
 	 * For test case it is its own status.
@@ -70,7 +66,7 @@ public interface ITestItem {
 	 * @return parent or null
 	 */
 	public ITestSuite getParent();
-	
+
 	/**
 	 * Returns <code>true</code> if test item has children.
 	 * Always returns <code>false</code> for test cases.
@@ -87,7 +83,7 @@ public interface ITestItem {
 	 * @return array of test item children
 	 */
 	public ITestItem[] getChildren();
-	
+
 	/**
 	 * Visitor pattern support for the tests hierarchy.
 	 * 

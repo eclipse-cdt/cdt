@@ -32,8 +32,7 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	final IBuildConsoleStreamDecorator fStream;
 	private BuildConsolePartitioner fPartitioner;
 
-	public BuildOutputStream(BuildConsolePartitioner partitioner,
-			IBuildConsoleStreamDecorator stream) {
+	public BuildOutputStream(BuildConsolePartitioner partitioner, IBuildConsoleStreamDecorator stream) {
 		fPartitioner = partitioner;
 		if (fPartitioner.getProject() == null)
 			// Note: The global console log stream should have been
@@ -68,5 +67,5 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	public synchronized void write(String msg) throws IOException {
 		fPartitioner.appendToDocument(msg, fStream, null);
 	}
-	
+
 }

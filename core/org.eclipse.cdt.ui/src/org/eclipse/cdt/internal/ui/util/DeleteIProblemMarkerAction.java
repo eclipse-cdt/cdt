@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
  */
 public class DeleteIProblemMarkerAction extends ActionDelegate implements IObjectActionDelegate {
 
-    private IStructuredSelection  selection;
+	private IStructuredSelection selection;
 
 	/**
 	 * @see ActionDelegate#run(IAction)
@@ -51,7 +51,7 @@ public class DeleteIProblemMarkerAction extends ActionDelegate implements IObjec
 				List<IMarker> listMarkers = new ArrayList<IMarker>();
 				Iterator<?> iterator = list.iterator();
 				while (iterator.hasNext()) {
-					IMarker marker = (IMarker)iterator.next();
+					IMarker marker = (IMarker) iterator.next();
 					if (marker.isSubtypeOf(ICModelMarker.INDEXER_MARKER)) {
 						listMarkers.add(marker);
 					}
@@ -86,9 +86,9 @@ public class DeleteIProblemMarkerAction extends ActionDelegate implements IObjec
 				try {
 					IMarker marker = (IMarker) object;
 					if (marker.isSubtypeOf(ICModelMarker.INDEXER_MARKER)) {
-							enable = true;
+						enable = true;
 					}
-					this.selection = (IStructuredSelection)selection;
+					this.selection = (IStructuredSelection) selection;
 					action.setEnabled(enable);
 				} catch (CoreException e) {
 				}

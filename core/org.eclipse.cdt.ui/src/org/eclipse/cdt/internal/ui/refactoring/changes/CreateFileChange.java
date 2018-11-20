@@ -75,10 +75,10 @@ public class CreateFileChange extends ResourceChange {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		RefactoringStatus result= new RefactoringStatus();
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		RefactoringStatus result = new RefactoringStatus();
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 
-		URI location= file.getLocationURI();
+		URI location = file.getLocationURI();
 		if (location == null) {
 			result.addFatalError(NLS.bind(Messages.CreateFileChange_unknown_location, file.getFullPath().toString()));
 			return result;
@@ -93,7 +93,7 @@ public class CreateFileChange extends ResourceChange {
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		InputStream is = new ByteArrayInputStream(source.getBytes());
 		file.create(is, false, new SubProgressMonitor(pm, 1));
 		if (encoding != null) {

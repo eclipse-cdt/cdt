@@ -27,23 +27,23 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 public class CHelpTestInfoProvider implements ICHelpProvider {
 	private static int fNumProviders = 0;
 	private static final String PROVIDER_ID_PREFIX = "TestInfoProvider_";
-	
+
 	final private String fProviderID;
 	private boolean fIsInitialized;
-	
+
 	private ICHelpBook fCHelpBooks[];
-	
+
 	/**
 	 * Flag indicating whether this help provider should provide help info.
 	 * Should be set to <code>true</code> during tests only.
 	 */
-	public static boolean fgEnabled= false;
+	public static boolean fgEnabled = false;
 
 	public CHelpTestInfoProvider() {
 		fProviderID = PROVIDER_ID_PREFIX + fNumProviders++;
 		fCHelpBooks = CHelpProviderTester.getDefault().generateCHelpBooks(fProviderID);
 	}
-	
+
 	public static int getNumProviders() {
 		return fNumProviders;
 	}
@@ -59,7 +59,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 		if (!fgEnabled) {
 			return new ICHelpBook[0];
 		}
-		Assert.assertTrue("getCHelpBooks is called before completion contributor gets initialized",fIsInitialized);
+		Assert.assertTrue("getCHelpBooks is called before completion contributor gets initialized", fIsInitialized);
 		return fCHelpBooks;
 	}
 
@@ -68,20 +68,20 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 		if (!fgEnabled) {
 			return null;
 		}
-		Assert.assertTrue("getFunctionInfo is called before completion contributor gets initialized",fIsInitialized);
+		Assert.assertTrue("getFunctionInfo is called before completion contributor gets initialized", fIsInitialized);
 		return CHelpProviderTester.getDefault().generateFunctionInfo(helpBooks, name, fProviderID);
 	}
 
 	@Override
-	public IFunctionSummary[] getMatchingFunctions(
-			ICHelpInvocationContext context, ICHelpBook[] helpBooks,
+	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
 		if (!fgEnabled) {
 			return new IFunctionSummary[0];
 		}
-		Assert.assertTrue("getMatchingFunctions is called before completion contributor gets initialized", fIsInitialized);
-        //return null; // TODO returning null until someone puts in a preference to control it.
-        return CHelpProviderTester.getDefault().generateMatchingFunctions(helpBooks, prefix, fProviderID);
+		Assert.assertTrue("getMatchingFunctions is called before completion contributor gets initialized",
+				fIsInitialized);
+		//return null; // TODO returning null until someone puts in a preference to control it.
+		return CHelpProviderTester.getDefault().generateMatchingFunctions(helpBooks, prefix, fProviderID);
 	}
 
 	@Override

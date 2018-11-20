@@ -226,7 +226,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		StringBuilder macroName = new StringBuilder();
 		for (int i = 0; i < len; i++) {
 			char c = line.charAt(i);
-			switch(c) {
+			switch (c) {
 			case '$':
 				// '$$' --> '$'
 				if (foundDollar) {

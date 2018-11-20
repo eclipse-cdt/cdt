@@ -14,7 +14,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -54,7 +53,7 @@ public class CHelpProviderManager {
 
 	//private static Map fProjectHelpSettings = null;
 	private static CHelpSettings fDefaultHelpSettings = null;
-	
+
 	private static File fSettingsFile = null;
 	static private CHelpProviderManager fInstance = null;
 
@@ -63,91 +62,91 @@ public class CHelpProviderManager {
 
 	private CHelpProviderManager() {
 	}
-	
-	private static File getSettingsFile(){
-		if(fSettingsFile == null){
+
+	private static File getSettingsFile() {
+		if (fSettingsFile == null) {
 			fSettingsFile = CUIPlugin.getDefault().getStateLocation().append(C_HELP_SETTINGS_FILE_NAME).toFile();
 		}
 		return fSettingsFile;
 	}
-	
-//	private static Map getSettingsMap(){
-//		if(fProjectHelpSettings == null)
-//			fProjectHelpSettings = new HashMap();
-//		return fProjectHelpSettings;
-//	}
-	
-	private static CHelpSettings getDefaultHelpSettings(){
-		if(fDefaultHelpSettings == null){
+
+	//	private static Map getSettingsMap(){
+	//		if(fProjectHelpSettings == null)
+	//			fProjectHelpSettings = new HashMap();
+	//		return fProjectHelpSettings;
+	//	}
+
+	private static CHelpSettings getDefaultHelpSettings() {
+		if (fDefaultHelpSettings == null) {
 			fDefaultHelpSettings = new CHelpSettings(null);
 		}
 		return fDefaultHelpSettings;
 	}
 
-	private static CHelpSettings getPersistedHelpSettings(IProject project){
-/* uncomment to use Map
-		Map settingsMap = getSettingsMap();
-		CHelpSettings settings = (CHelpSettings)settingsMap.get(project.getName());
-		if(settings == null){
-			settings = createHelpSettings(project);
-			settingsMap.put(project.getName(),settings);
-		}
-		return settings;
-*/
+	private static CHelpSettings getPersistedHelpSettings(IProject project) {
+		/* uncomment to use Map
+				Map settingsMap = getSettingsMap();
+				CHelpSettings settings = (CHelpSettings)settingsMap.get(project.getName());
+				if(settings == null){
+					settings = createHelpSettings(project);
+					settingsMap.put(project.getName(),settings);
+				}
+				return settings;
+		*/
 		return createHelpSettings(project);
 	}
-	
-	private static CHelpSettings createHelpSettings(IProject project){
-//		String projectName = project.getName();
+
+	private static CHelpSettings createHelpSettings(IProject project) {
+		//		String projectName = project.getName();
 		File file = getSettingsFile();
 		CHelpSettings settings = null;
 		Element rootElement = null;
 
-		if(file.isFile()){
-			try{
+		if (file.isFile()) {
+			try {
 				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document doc = builder.parse(file);
 				NodeList nodes = doc.getElementsByTagName(ELEMENT_ROOT);
-				
+
 				if (nodes.getLength() > 0)
-					rootElement = (Element)nodes.item(0);
-				
-			}catch(ParserConfigurationException e){
-			}catch(SAXException e){
-			}catch(IOException e){
+					rootElement = (Element) nodes.item(0);
+
+			} catch (ParserConfigurationException e) {
+			} catch (SAXException e) {
+			} catch (IOException e) {
 			}
 		}
 
-		settings = new CHelpSettings(project,rootElement);
+		settings = new CHelpSettings(project, rootElement);
 		return settings;
 	}
-	
-	private static CHelpSettings getHelpSettings(IProject project){
-		if(project == null)
+
+	private static CHelpSettings getHelpSettings(IProject project) {
+		if (project == null)
 			return getDefaultHelpSettings();
 
 		CHelpSettings settings = null;
-		if(fCurrentProject != null && fCurrentSettings != null && project == fCurrentProject)
+		if (fCurrentProject != null && fCurrentSettings != null && project == fCurrentProject)
 			settings = fCurrentSettings;
-		else{
+		else {
 			fCurrentProject = project;
 			fCurrentSettings = getPersistedHelpSettings(project);
 			settings = fCurrentSettings;
 		}
 		return settings;
 	}
-	
-	private static CHelpSettings getHelpSettings(ICHelpInvocationContext context){
+
+	private static CHelpSettings getHelpSettings(ICHelpInvocationContext context) {
 		IProject project = getProjectFromContext(context);
-		
+
 		return getHelpSettings(project);
 	}
-	
-	private static IProject getProjectFromContext(ICHelpInvocationContext context){
+
+	private static IProject getProjectFromContext(ICHelpInvocationContext context) {
 		IProject project = context.getProject();
-		if(project == null){
+		if (project == null) {
 			ITranslationUnit unit = context.getTranslationUnit();
-			if(unit != null)
+			if (unit != null)
 				project = unit.getCProject().getProject();
 		}
 		return project;
@@ -162,57 +161,56 @@ public class CHelpProviderManager {
 
 	public IFunctionSummary getFunctionInfo(ICHelpInvocationContext context, String name) {
 		CHelpSettings settings = getHelpSettings(context);
-	
-		return settings.getFunctionInfo(context,name);
+
+		return settings.getFunctionInfo(context, name);
 	}
 
 	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, String frag) {
 		CHelpSettings settings = getHelpSettings(context);
-		
-		return settings.getMatchingFunctions(context,frag);
+
+		return settings.getMatchingFunctions(context, frag);
 	}
 
-	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, String name){
+	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, String name) {
 		CHelpSettings settings = getHelpSettings(context);
-		
-		return settings.getHelpResources(context,name);
+
+		return settings.getHelpResources(context, name);
 	}
-	
-	public CHelpBookDescriptor[] getCHelpBookDescriptors(ICHelpInvocationContext context){
+
+	public CHelpBookDescriptor[] getCHelpBookDescriptors(ICHelpInvocationContext context) {
 		return getHelpSettings(context).getCHelpBookDescriptors();
 	}
-	
-	public void serialize(ICHelpInvocationContext context){
+
+	public void serialize(ICHelpInvocationContext context) {
 		CHelpSettings settings = getHelpSettings(context);
 
 		File file = getSettingsFile();
 
-		try{
+		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc;
 			Element rootElement = null;
 
-			if(file.exists()){
+			if (file.exists()) {
 				doc = builder.parse(file);
 				NodeList nodes = doc.getElementsByTagName(ELEMENT_ROOT);
-				
+
 				if (nodes.getLength() > 0)
-					rootElement = (Element)nodes.item(0);
-			}
-			else{
+					rootElement = (Element) nodes.item(0);
+			} else {
 				doc = builder.newDocument();
 			}
 
-			if(rootElement == null){
+			if (rootElement == null) {
 				rootElement = doc.createElement(ELEMENT_ROOT);
 				doc.appendChild(rootElement);
 			}
 
-			settings.serialize(doc,rootElement);
+			settings.serialize(doc, rootElement);
 
 			FileWriter writer = new FileWriter(file);
 
-			Transformer transformer=TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -222,11 +220,11 @@ public class CHelpProviderManager {
 			transformer.transform(source, result);
 
 			writer.close();
-		}catch(ParserConfigurationException e){
-		}catch(SAXException e){
-		}catch(TransformerConfigurationException e){
-		}catch(TransformerException e){
-		}catch(IOException e){
+		} catch (ParserConfigurationException e) {
+		} catch (SAXException e) {
+		} catch (TransformerConfigurationException e) {
+		} catch (TransformerException e) {
+		} catch (IOException e) {
 		}
 	}
 }

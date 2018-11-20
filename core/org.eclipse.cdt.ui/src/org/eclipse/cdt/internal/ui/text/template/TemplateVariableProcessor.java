@@ -28,11 +28,9 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
-
-
 public class TemplateVariableProcessor implements IContentAssistProcessor {
 
-	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator= new Comparator<TemplateVariableProposal>() {
+	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator = new Comparator<TemplateVariableProposal>() {
 		@Override
 		public int compare(TemplateVariableProposal arg0, TemplateVariableProposal arg1) {
 			return arg0.getDisplayString().compareTo(arg1.getDisplayString());
@@ -44,7 +42,6 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 		}
 	};
 
-
 	/** the context type */
 	private TemplateContextType fContextType;
 
@@ -54,7 +51,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	 * @param contextType the context type 
 	 */
 	public void setContextType(TemplateContextType contextType) {
-		fContextType= contextType;
+		fContextType = contextType;
 	}
 
 	/**
@@ -70,42 +67,42 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	@Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,	int documentOffset) {
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 
 		if (fContextType == null)
 			return null;
 
-		List<TemplateVariableProposal> proposals= new ArrayList<TemplateVariableProposal>();
+		List<TemplateVariableProposal> proposals = new ArrayList<TemplateVariableProposal>();
 
-		String text= viewer.getDocument().get();
-		int start= getStart(text, documentOffset);
-		int end= documentOffset;
+		String text = viewer.getDocument().get();
+		int start = getStart(text, documentOffset);
+		int end = documentOffset;
 
-		String string= text.substring(start, end);
-		int colon= string.indexOf(':');
-		boolean includeBrace= true;
-		int offset= start;
-		String prefix= string;
+		String string = text.substring(start, end);
+		int colon = string.indexOf(':');
+		boolean includeBrace = true;
+		int offset = start;
+		String prefix = string;
 		if (colon != -1) {
-			includeBrace= false;
-			offset= start + colon + 1;
-			prefix= string.substring(colon + 1);
+			includeBrace = false;
+			offset = start + colon + 1;
+			prefix = string.substring(colon + 1);
 		} else {
-			int escape= string.indexOf("${"); //$NON-NLS-1$
+			int escape = string.indexOf("${"); //$NON-NLS-1$
 			if (escape != -1) {
-				offset= start + escape + 2;
-				includeBrace= false;
-				prefix= string.substring(escape + 2);
+				offset = start + escape + 2;
+				includeBrace = false;
+				prefix = string.substring(escape + 2);
 			}
 		}
 		if (prefix.equals("$")) //$NON-NLS-1$
-			prefix= ""; //$NON-NLS-1$
+			prefix = ""; //$NON-NLS-1$
 
-		int length= end - offset;
+		int length = end - offset;
 
 		final Iterator<TemplateVariableResolver> resolvers = fContextType.resolvers();
 		while (resolvers.hasNext()) {
-			TemplateVariableResolver variable= resolvers.next();
+			TemplateVariableResolver variable = resolvers.next();
 
 			if (variable.getType().startsWith(prefix))
 				proposals.add(new TemplateVariableProposal(variable, offset, length, viewer, includeBrace));
@@ -117,14 +114,14 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	/* Guesses the start position of the completion */
 	private int getStart(String string, int end) {
-		int start= end;
+		int start = end;
 
 		if (start >= 1 && string.charAt(start - 1) == '$')
 			return start - 1;
 
 		while ((start != 0) && Character.isUnicodeIdentifierPart(string.charAt(start - 1)))
 			start--;
-		
+
 		if (start >= 1 && string.charAt(start - 1) == ':') {
 			start--;
 			while ((start != 0) && Character.isUnicodeIdentifierPart(string.charAt(start - 1)))
@@ -150,7 +147,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	 */
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		return new char[] {'$'};
+		return new char[] { '$' };
 	}
 
 	/*
@@ -178,4 +175,3 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	}
 
 }
-

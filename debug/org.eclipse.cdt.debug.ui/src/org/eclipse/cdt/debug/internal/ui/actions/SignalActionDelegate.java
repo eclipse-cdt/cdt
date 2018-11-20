@@ -40,7 +40,7 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	@Override
-	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	/*
@@ -49,28 +49,27 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-		if ( getSignal() != null ) {
-			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "SignalActionDelegate.0" ), null ); //$NON-NLS-1$
-			BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+	public void run(IAction action) {
+		if (getSignal() != null) {
+			final MultiStatus ms = new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED,
+					ActionMessages.getString("SignalActionDelegate.0"), null); //$NON-NLS-1$
+			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 
 				@Override
 				public void run() {
 					try {
-						doAction( getSignal() );
-					}
-					catch( DebugException e ) {
-						ms.merge( e.getStatus() );
+						doAction(getSignal());
+					} catch (DebugException e) {
+						ms.merge(e.getStatus());
 					}
 				}
-			} );
-			if ( !ms.isOK() ) {
+			});
+			if (!ms.isOK()) {
 				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-				if ( window != null ) {
-					CDebugUIPlugin.errorDialog( ActionMessages.getString( "SignalActionDelegate.1" ), ms ); //$NON-NLS-1$
-				}
-				else {
-					CDebugUIPlugin.log( ms );
+				if (window != null) {
+					CDebugUIPlugin.errorDialog(ActionMessages.getString("SignalActionDelegate.1"), ms); //$NON-NLS-1$
+				} else {
+					CDebugUIPlugin.log(ms);
 				}
 			}
 		}
@@ -82,31 +81,31 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	@Override
-	public void selectionChanged( IAction action, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICSignal ) {
-				boolean enabled = enablesFor( (ICSignal)element );
-				action.setEnabled( enabled );
-				if ( enabled ) {
-					setSignal( (ICSignal)element );
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof ICSignal) {
+				boolean enabled = enablesFor((ICSignal) element);
+				action.setEnabled(enabled);
+				if (enabled) {
+					setSignal((ICSignal) element);
 					return;
 				}
 			}
 		}
-		action.setEnabled( false );
-		setSignal( null );
+		action.setEnabled(false);
+		setSignal(null);
 	}
 
-	protected void doAction( ICSignal signal ) throws DebugException {
+	protected void doAction(ICSignal signal) throws DebugException {
 		signal.signal();
 	}
 
-	private boolean enablesFor( ICSignal signal ) {
+	private boolean enablesFor(ICSignal signal) {
 		return (signal != null && signal.getDebugTarget().isSuspended());
 	}
 
-	private void setSignal( ICSignal signal ) {
+	private void setSignal(ICSignal signal) {
 		fSignal = signal;
 	}
 

@@ -40,15 +40,14 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	// toggle for preference changes
 	private static boolean preferencesChanged = true;
 	// LLVM environment variable data structure
-	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables =
-		new HashMap<>(6);
+	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables = new HashMap<>(6);
 	// Environment variables for HashMap usage
-	private static final String ENV_VAR_NAME_LLVM_BIN 		= "LLVM_BIN_PATH"; //$NON-NLS-1$
-	private static final String ENV_VAR_NAME_LLVMINTERP 	= "LLVMINTERP"; //$NON-NLS-1$
-	private static final String ENV_VAR_NAME_PATH 			= "PATH"; //$NON-NLS-1$
-	private static final String ENV_VAR_NAME_INCLUDE_PATH 	= "INCLUDE_PATH"; //$NON-NLS-1$
-	private static final String ENV_VAR_NAME_LIBRARY_PATH 	= "LLVM_LIB_SEARCH_PATH"; //$NON-NLS-1$
-	private static final String ENV_VAR_NAME_LIBRARIES 		= "LIBRARIES"; //$NON-NLS-1$
+	private static final String ENV_VAR_NAME_LLVM_BIN = "LLVM_BIN_PATH"; //$NON-NLS-1$
+	private static final String ENV_VAR_NAME_LLVMINTERP = "LLVMINTERP"; //$NON-NLS-1$
+	private static final String ENV_VAR_NAME_PATH = "PATH"; //$NON-NLS-1$
+	private static final String ENV_VAR_NAME_INCLUDE_PATH = "INCLUDE_PATH"; //$NON-NLS-1$
+	private static final String ENV_VAR_NAME_LIBRARY_PATH = "LLVM_LIB_SEARCH_PATH"; //$NON-NLS-1$
+	private static final String ENV_VAR_NAME_LIBRARIES = "LIBRARIES"; //$NON-NLS-1$
 
 	/**
 	 * Initializes llvm environment variable paths from the system environment variables.
@@ -59,27 +58,22 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		// set LLVM bin path environment variable
 		setLlvmEnvironmentVariableReplace(ENV_VAR_NAME_LLVM_BIN, binPath);
 		// if bin path exists
-		if (binPath != null && binPath.length()!=0) {
+		if (binPath != null && binPath.length() != 0) {
 			String pathStr = binPath;
 			// if OS is Windows (Windows specific settings)
 			if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					// try to find mingw or cygwin path from PATH environment variable
-					IBuildEnvironmentVariable envPath =
-							llvmEnvironmentVariables.get(ENV_VAR_NAME_PATH);
-					IBuildEnvironmentVariable mingwPath=null, cygwinPath=null;
+					IBuildEnvironmentVariable envPath = llvmEnvironmentVariables.get(ENV_VAR_NAME_PATH);
+					IBuildEnvironmentVariable mingwPath = null, cygwinPath = null;
 					// if path is empty
 					if (envPath == null) {
 						// try to find mingw path from MingwEnvironmentVariableSupplier
-						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables =
-							new MingwEnvironmentVariableSupplier();
-						mingwPath = mingwEnvironmentVariables.getVariable(
-								ENV_VAR_NAME_PATH, null, null);
+						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = new MingwEnvironmentVariableSupplier();
+						mingwPath = mingwEnvironmentVariables.getVariable(ENV_VAR_NAME_PATH, null, null);
 						// try to find cygwin path from GnuCygwinConfigurationEnvironmentSupplier
-						IConfigurationEnvironmentVariableSupplier cygwinEnvironmentVariables =
-							new GnuCygwinConfigurationEnvironmentSupplier();
-						cygwinPath = cygwinEnvironmentVariables.getVariable(
-								ENV_VAR_NAME_PATH, null, null);
+						IConfigurationEnvironmentVariableSupplier cygwinEnvironmentVariables = new GnuCygwinConfigurationEnvironmentSupplier();
+						cygwinPath = cygwinEnvironmentVariables.getVariable(ENV_VAR_NAME_PATH, null, null);
 
 					}
 					// if mingw found
@@ -225,14 +219,13 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 				// remove white spaces from preference location
 				preferenceLocation = preferenceLocation.trim();
 				// if preference location is not empty
-				if (preferenceLocation.length()!=0) {
+				if (preferenceLocation.length() != 0) {
 					// get path for LLVM executable
 					resultPath = getDirIfLlvmFound(preferenceLocation, null);
 					// if LLVM executable path doesn't exist
 					if (null == resultPath) {
 						// If no luck check next with sub directory name appended
-						resultPath = getDirIfLlvmFound(preferenceLocation,
-								subDirName);
+						resultPath = getDirIfLlvmFound(preferenceLocation, subDirName);
 					}
 				}
 			}
@@ -291,7 +284,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			String llvm_executable = "llvm-ar"; //$NON-NLS-1$
 			File arFileFullPath = null;
 			// If OS is Windows -> add .exe to the executable name.
-			if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {  //$NON-NLS-1$//$NON-NLS-2$
+			if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) { //$NON-NLS-1$//$NON-NLS-2$
 				llvm_executable = llvm_executable + ".exe"; //$NON-NLS-1$
 			}
 			// Form full executable path
@@ -372,8 +365,8 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	private static void setLlvmEnvironmentVariable(String name, String path) {
 		// append a new path in front of the the old path in HashMap that contains
 		// the specific LLVM environment variable
-		llvmEnvironmentVariables.put(name, new LlvmBuildEnvironmentVariable(
-				name, path, IBuildEnvironmentVariable.ENVVAR_APPEND));
+		llvmEnvironmentVariables.put(name,
+				new LlvmBuildEnvironmentVariable(name, path, IBuildEnvironmentVariable.ENVVAR_APPEND));
 	}
 
 	/**
@@ -384,8 +377,8 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	 */
 	public static void setLlvmEnvironmentVariableReplace(String name, String path) {
 		// replace the old path in HashMap that contains the specific LLVM environment variable
-		llvmEnvironmentVariables.put(name, new LlvmBuildEnvironmentVariable(
-				name, path, IBuildEnvironmentVariable.ENVVAR_REPLACE));
+		llvmEnvironmentVariables.put(name,
+				new LlvmBuildEnvironmentVariable(name, path, IBuildEnvironmentVariable.ENVVAR_REPLACE));
 	}
 
 	/**
@@ -399,7 +392,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		String newPath = null;
 		boolean ok = false;
 		// if oldPath exists
-		if (oldPath!=null) {
+		if (oldPath != null) {
 			//if the oldPath isn't empty
 			if (!oldPath.trim().isEmpty()) {
 				StringBuilder sB = new StringBuilder();
@@ -415,7 +408,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			}
 		}
 		if (!ok) {
-			newPath=path;
+			newPath = path;
 		}
 		// Set new path to the HashMap that contains the specific LLVM environment variable
 		// if newPath exists.
@@ -423,8 +416,8 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			// if the newPath isn't empty
 			if (!newPath.trim().isEmpty()) {
 				// add new values to the LLVM environment variable
-				llvmEnvironmentVariables.put(name, new LlvmBuildEnvironmentVariable(name, newPath,
-						IBuildEnvironmentVariable.ENVVAR_APPEND));
+				llvmEnvironmentVariables.put(name,
+						new LlvmBuildEnvironmentVariable(name, newPath, IBuildEnvironmentVariable.ENVVAR_APPEND));
 			}
 		}
 	}

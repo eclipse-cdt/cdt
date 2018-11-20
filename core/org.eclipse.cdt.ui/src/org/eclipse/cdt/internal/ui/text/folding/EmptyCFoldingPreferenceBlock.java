@@ -35,24 +35,24 @@ public class EmptyCFoldingPreferenceBlock implements ICFoldingPreferenceBlock {
 	 */
 	@Override
 	public Control createControl(Composite composite) {
-		Composite inner= new Composite(composite, SWT.NONE);
+		Composite inner = new Composite(composite, SWT.NONE);
 		inner.setLayout(new GridLayout(3, false));
 
-		Label label= new Label(inner, SWT.CENTER);
-		GridData gd= new GridData(GridData.FILL_BOTH);
-		gd.widthHint= 30;
-		label.setLayoutData(gd);
-		
-		label= new Label(inner, SWT.CENTER);
-		label.setText(FoldingMessages.EmptyCFoldingPreferenceBlock_emptyCaption); 
-		gd= new GridData(GridData.CENTER);
+		Label label = new Label(inner, SWT.CENTER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 30;
 		label.setLayoutData(gd);
 
-		label= new Label(inner, SWT.CENTER);
-		gd= new GridData(GridData.FILL_BOTH);
-		gd.widthHint= 30;
+		label = new Label(inner, SWT.CENTER);
+		label.setText(FoldingMessages.EmptyCFoldingPreferenceBlock_emptyCaption);
+		gd = new GridData(GridData.CENTER);
 		label.setLayoutData(gd);
-		
+
+		label = new Label(inner, SWT.CENTER);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 30;
+		label.setLayoutData(gd);
+
 		return inner;
 	}
 
@@ -83,6 +83,5 @@ public class EmptyCFoldingPreferenceBlock implements ICFoldingPreferenceBlock {
 	@Override
 	public void dispose() {
 	}
-
 
 }

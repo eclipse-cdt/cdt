@@ -16,6 +16,5 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 /**
  * Interface for templates from the AST.
  */
-public interface ICPPInternalTemplate
-		extends ICPPTemplateParameterOwner, ICPPInternalBinding, ICPPInstanceCache {
+public interface ICPPInternalTemplate extends ICPPTemplateParameterOwner, ICPPInternalBinding, ICPPInstanceCache {
 }

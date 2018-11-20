@@ -23,11 +23,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 /**
  * Initializer with equals sign (copy initialization)
  */
-public abstract class ASTEqualsInitializer extends ASTNode
-		implements IASTEqualsInitializer, IASTAmbiguityParent {
-    private IASTInitializerClause fArgument;
+public abstract class ASTEqualsInitializer extends ASTNode implements IASTEqualsInitializer, IASTAmbiguityParent {
+	private IASTInitializerClause fArgument;
 
-    public ASTEqualsInitializer() {
+	public ASTEqualsInitializer() {
 	}
 
 	public ASTEqualsInitializer(IASTInitializerClause arg) {
@@ -36,27 +35,30 @@ public abstract class ASTEqualsInitializer extends ASTNode
 
 	@Override
 	public IASTInitializerClause getInitializerClause() {
-        return fArgument;
-    }
+		return fArgument;
+	}
 
-    @Override
+	@Override
 	public void setInitializerClause(IASTInitializerClause clause) {
-        assertNotFrozen();
-        fArgument = clause;
-        if (clause != null) {
-        	clause.setParent(this);
-        	clause.setPropertyInParent(INITIALIZER);
+		assertNotFrozen();
+		fArgument = clause;
+		if (clause != null) {
+			clause.setParent(this);
+			clause.setPropertyInParent(INITIALIZER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitInitializers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitInitializers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (fArgument != null && !fArgument.accept(action))
@@ -65,8 +67,8 @@ public abstract class ASTEqualsInitializer extends ASTNode
 		if (action.shouldVisitInitializers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {

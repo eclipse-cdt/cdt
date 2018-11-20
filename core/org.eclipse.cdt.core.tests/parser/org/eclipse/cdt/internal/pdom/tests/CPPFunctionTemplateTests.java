@@ -27,11 +27,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 
 public class CPPFunctionTemplateTests extends PDOMInlineCodeTestBase {
-	
+
 	public static Test suite() {
 		return suite(CPPFunctionTemplateTests.class);
 	}
-	
+
 	/*************************************************************************/
 
 	//	template<typename X>
@@ -55,21 +55,21 @@ public class CPPFunctionTemplateTests extends PDOMInlineCodeTestBase {
 	//	}
 	public void testSimpleInstantiation() throws Exception {
 		setUpSections(1);
-		IBinding[] bs= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL_DECLARED, npm());
+		IBinding[] bs = pdom.findBindings(new char[][] { "foo".toCharArray() }, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(2, bs.length);
 		assertInstance(bs[0], ICPPFunctionTemplate.class);
 		assertInstance(bs[1], ICPPFunctionTemplate.class);
-		
-		boolean b= ((ICPPFunctionTemplate)bs[0]).getTemplateParameters().length==1;
-		ICPPFunctionTemplate fooX= (ICPPFunctionTemplate) bs[b ? 0 : 1];
-		ICPPFunctionTemplate fooAB= (ICPPFunctionTemplate) bs[b ? 1 : 0];
-		
-		List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) fooX).getAllInstances());
+
+		boolean b = ((ICPPFunctionTemplate) bs[0]).getTemplateParameters().length == 1;
+		ICPPFunctionTemplate fooX = (ICPPFunctionTemplate) bs[b ? 0 : 1];
+		ICPPFunctionTemplate fooAB = (ICPPFunctionTemplate) bs[b ? 1 : 0];
+
+		List<ICPPTemplateInstance> instances = Arrays.asList(((ICPPInstanceCache) fooX).getAllInstances());
 		assertEquals(3, instances.size());
 		for (ICPPTemplateInstance inst : instances) {
 			assertEquals(1, pdom.findNames(inst, IIndexFragment.FIND_REFERENCES).length);
 		}
-		instances= Arrays.asList(((ICPPInstanceCache) fooAB).getAllInstances());
+		instances = Arrays.asList(((ICPPInstanceCache) fooAB).getAllInstances());
 		assertEquals(6, instances.size());
 		for (ICPPTemplateInstance inst : instances) {
 			assertEquals(1, pdom.findNames(inst, IIndexFragment.FIND_REFERENCES).length);

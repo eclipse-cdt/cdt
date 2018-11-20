@@ -50,15 +50,16 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
-	public ASTRewriteCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance, Image image) {
+	public ASTRewriteCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance,
+			Image image) {
 		super(name, tu, relevance, image);
-		fRewrite= rewrite;
+		fRewrite = rewrite;
 	}
 
 	@Override
 	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
 		super.addEdits(document, editRoot);
-		ASTRewrite rewrite= getRewrite();
+		ASTRewrite rewrite = getRewrite();
 		if (rewrite != null) {
 			try {
 				Change change = rewrite.rewriteAST();
@@ -93,7 +94,7 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 	 */
 	protected ASTRewrite getRewrite() throws CoreException {
 		if (fRewrite == null) {
-			IStatus status= CUIStatus.createError(IStatus.ERROR, "Rewriter not initialized", null); //$NON-NLS-1$
+			IStatus status = CUIStatus.createError(IStatus.ERROR, "Rewriter not initialized", null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return fRewrite;

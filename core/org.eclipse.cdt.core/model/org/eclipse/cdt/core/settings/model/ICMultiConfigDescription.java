@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-public interface ICMultiConfigDescription extends ICConfigurationDescription,  ICMultiItemsHolder {
+public interface ICMultiConfigDescription extends ICConfigurationDescription, ICMultiItemsHolder {
 	String[][] getErrorParserIDs();
+
 	void setErrorParserIDs(String[] s);
 }

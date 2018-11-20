@@ -38,10 +38,8 @@ public class RenameParticipantHelper {
 	public static Change postprocessParticipantChange(Change change, RefactoringParticipant participant) {
 		if (change == null)
 			return null;
-		CompositeChange compositeChange = change instanceof CompositeChange ?
-				(CompositeChange) change : null;
-		Change[] changes = compositeChange != null ?
-				compositeChange.getChildren() : new Change[] { change };
+		CompositeChange compositeChange = change instanceof CompositeChange ? (CompositeChange) change : null;
+		Change[] changes = compositeChange != null ? compositeChange.getChildren() : new Change[] { change };
 		for (Change ch : changes) {
 			if (ch instanceof TextChange) {
 				TextChange textChange = (TextChange) ch;
@@ -74,5 +72,6 @@ public class RenameParticipantHelper {
 		}
 	}
 
-	private RenameParticipantHelper() {}
+	private RenameParticipantHelper() {
+	}
 }

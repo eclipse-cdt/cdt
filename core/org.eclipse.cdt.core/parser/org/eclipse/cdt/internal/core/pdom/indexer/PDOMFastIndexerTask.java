@@ -23,8 +23,8 @@ import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
  */
 class PDOMFastIndexerTask extends PDOMIndexerTask {
 
-	public PDOMFastIndexerTask(PDOMFastIndexer indexer, ITranslationUnit[] added, 
-			ITranslationUnit[] changed, ITranslationUnit[] removed) {
+	public PDOMFastIndexerTask(PDOMFastIndexer indexer, ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
 		super(added, changed, removed, indexer, true);
 	}
 

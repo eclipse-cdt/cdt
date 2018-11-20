@@ -36,22 +36,21 @@ import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
-public class IndexerPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage, ICOptionContainer {
+public class IndexerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ICOptionContainer {
 	// bug 217860, allow to hide build configuration
 	private static final String SHOW_BUILD_SPECIFIC_CONFIG = "show.build.specific.indexer.config"; //$NON-NLS-1$
 
 	private final IndexerBlock fOptionBlock;
 	private final CacheSizeBlock fCacheBlock;
 	private final IndexerStrategyBlock fStrategyBlock;
-	
-	public IndexerPreferencePage(){
+
+	public IndexerPreferencePage() {
 		fOptionBlock = new IndexerBlock();
 		fOptionBlock.setContainer(this);
-		fStrategyBlock= new IndexerStrategyBlock(this);
-		fCacheBlock= new CacheSizeBlock(this);
+		fStrategyBlock = new IndexerStrategyBlock(this);
+		fCacheBlock = new CacheSizeBlock(this);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -62,14 +61,14 @@ public class IndexerPreferencePage extends PreferencePage implements
 	protected Control createContents(Composite parent) {
 		GridLayout gl;
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(gl= new GridLayout());
+		composite.setLayout(gl = new GridLayout());
 		composite.setLayoutData(new GridData());
-		gl.verticalSpacing= 0;
-	
+		gl.verticalSpacing = 0;
+
 		fOptionBlock.createControl(composite);
 		fStrategyBlock.createControl(composite);
 		fCacheBlock.createControl(composite);
-		
+
 		return composite;
 	}
 
@@ -82,16 +81,13 @@ public class IndexerPreferencePage extends PreferencePage implements
 		if (!fOptionBlock.isValid()) {
 			setErrorMessage(fOptionBlock.getErrorMessage());
 			setValid(false);
-		}
-		else if (!fStrategyBlock.isValid()) {
+		} else if (!fStrategyBlock.isValid()) {
 			setErrorMessage(fStrategyBlock.getErrorMessage());
 			setValid(false);
-		}
-		else if (!fCacheBlock.isValid()) {
+		} else if (!fCacheBlock.isValid()) {
 			setErrorMessage(fCacheBlock.getErrorMessage());
 			setValid(false);
-		}
-		else {
+		} else {
 			setErrorMessage(null);
 			setValid(true);
 		}
@@ -114,7 +110,8 @@ public class IndexerPreferencePage extends PreferencePage implements
 			fOptionBlock.performApply(new NullProgressMonitor());
 			fStrategyBlock.performApply(new NullProgressMonitor());
 			fCacheBlock.performApply(new NullProgressMonitor());
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 		return true;
 	}
 
@@ -131,9 +128,9 @@ public class IndexerPreferencePage extends PreferencePage implements
 	 * @since 5.0
 	 */
 	public static boolean showBuildConfiguration() {
-		IWorkbenchActivitySupport activitySupport= PlatformUI.getWorkbench().getActivitySupport();
-		IIdentifier identifier= activitySupport.getActivityManager().getIdentifier(
-				CUIPlugin.getPluginId() + '/' + SHOW_BUILD_SPECIFIC_CONFIG);
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+		IIdentifier identifier = activitySupport.getActivityManager()
+				.getIdentifier(CUIPlugin.getPluginId() + '/' + SHOW_BUILD_SPECIFIC_CONFIG);
 		return identifier.isEnabled();
 	}
 }

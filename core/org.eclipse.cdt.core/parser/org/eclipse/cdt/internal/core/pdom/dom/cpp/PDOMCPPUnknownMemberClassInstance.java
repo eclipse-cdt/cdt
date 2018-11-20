@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -30,9 +30,10 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPUnknownMemberClassInstance extends CPPUnknownClassInstance implements IIndexFragmentBinding {
 	private final IIndexFragment fFragment;
 
-	public PDOMCPPUnknownMemberClassInstance(IIndexFragment frag, IType owner, char[] name, ICPPTemplateArgument[] arguments) {
+	public PDOMCPPUnknownMemberClassInstance(IIndexFragment frag, IType owner, char[] name,
+			ICPPTemplateArgument[] arguments) {
 		super(owner, name, arguments);
-		fFragment= frag;
+		fFragment = frag;
 	}
 
 	@Override
@@ -69,12 +70,12 @@ public class PDOMCPPUnknownMemberClassInstance extends CPPUnknownClassInstance i
 	public long getBindingID() {
 		return 0;
 	}
-	
+
 	@Override
 	public IIndexFragmentBinding getOwner() {
 		return (IIndexFragmentBinding) super.getOwner();
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {
@@ -83,7 +84,7 @@ public class PDOMCPPUnknownMemberClassInstance extends CPPUnknownClassInstance i
 			return null;
 		}
 	}
-	
+
 	@Override
 	protected CPPUnknownTypeScope createScope() {
 		return new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));

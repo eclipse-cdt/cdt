@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -42,13 +42,13 @@ public interface IValue {
 	 * @since 6.2
 	 */
 	Number numberValue();
-	
+
 	/**
 	 * If this value consists of sub-values, returns the number of these sub-values. Otherwise returns 1.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	int numberOfSubValues();
-	
+
 	/**
 	 * If this value consists of sub-values, returns the sub-value at the given index.
 	 * Otherwise, returns this value (represented as an ICPPEvaluation) if the index 0 is passed.
@@ -56,7 +56,7 @@ public interface IValue {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	ICPPEvaluation getSubValue(int index);
-	
+
 	/**
 	 * If this value consists of sub-values, returns an array containing all of them.
 	 * Otherwise, returns an array containing 1 element representing this value.
@@ -64,7 +64,7 @@ public interface IValue {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	ICPPEvaluation[] getAllSubValues();
-	
+
 	/**
 	 * Returns the evaluation object if this value cannot be represented as a single numerical value, or
 	 * {@code null} otherwise. This can happen if the value is dependent, or it's a composite value.
@@ -105,19 +105,19 @@ public interface IValue {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void setSubValue(int position, ICPPEvaluation newValue);
-	
+
 	/**
 	 * Make a deep copy of this value.
 	 * @since 6.2
 	 */
 	IValue clone();
-	
+
 	/**
 	 * Serialize this value to the given type marshal buffer.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void marshal(ITypeMarshalBuffer buffer) throws CoreException;
-	
+
 	/**
 	 * Returns true if this value is equivalent to 'other' for declaration matching purposes.
 	 * @noreference This method is not intended to be referenced by clients.

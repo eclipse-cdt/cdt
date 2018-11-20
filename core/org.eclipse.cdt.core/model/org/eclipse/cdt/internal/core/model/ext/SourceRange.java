@@ -20,8 +20,8 @@ public class SourceRange implements ISourceRange {
 	private int fLength;
 
 	public SourceRange(int offset, int length) {
-		fOffset= offset;
-		fLength= length;
+		fOffset = offset;
+		fLength = length;
 	}
 
 	@Override

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -31,7 +31,7 @@ public class ASTLiteralNode implements IASTNode {
 	private final String fCode;
 
 	public ASTLiteralNode(String code) {
-		fCode= code;
+		fCode = code;
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class ASTLiteralNode implements IASTNode {
 	public IASTNode getParent() {
 		return null;
 	}
-	
+
 	@Override
 	public IASTNode[] getChildren() {
 		return IASTNode.EMPTY_NODE_ARRAY;
@@ -114,12 +114,12 @@ public class ASTLiteralNode implements IASTNode {
 	public IToken getTrailingSyntax() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public boolean isFrozen() {
 		return false;
 	}
-	
+
 	@Override
 	public IASTNode copy() {
 		throw new UnsupportedOperationException();

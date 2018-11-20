@@ -45,7 +45,7 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 	private String fSubActionContent = ""; //$NON-NLS-1$
 	// The number of steps this while-stepping command will occur
 	private int fStepCount = 1;
-	
+
 	@Override
 	public String getDefaultName() {
 		return MessagesForTracepointActions.TracepointActions_Untitled_WhileStepping;
@@ -54,7 +54,7 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 	public String getSubActionsNames() {
 		return fSubActionNames;
 	}
-	
+
 	public void setSubActionsNames(String str) {
 		fSubActionNames = str;
 	}
@@ -62,13 +62,13 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 	public String getSubActionsContent() {
 		return fSubActionContent;
 	}
-	
+
 	// Take all the sub action names, and find their corresponding action,
 	// then build the content string
 	public void setSubActionsContent(String subActionNames) {
 		String[] names = subActionNames.split(","); //$NON-NLS-1$
 		fSubActionContent = ""; //$NON-NLS-1$
-		
+
 		for (String name : names) {
 			ITracepointAction action = TracepointActionManager.getInstance().findAction(name.trim());
 			if (action != null) {
@@ -76,8 +76,8 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 			}
 		}
 		// Remove last comma
-		if (fSubActionContent.length() >0) {
-			fSubActionContent = fSubActionContent.substring(0, fSubActionContent.length()-1);
+		if (fSubActionContent.length() > 0) {
+			fSubActionContent = fSubActionContent.substring(0, fSubActionContent.length() - 1);
 		}
 	}
 
@@ -157,7 +157,7 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 			GdbPlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return getSummary();

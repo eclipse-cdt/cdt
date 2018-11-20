@@ -40,16 +40,15 @@ public class GDBJtagDeviceContributionFactory {
 		contributions = new ArrayList<GDBJtagDeviceContribution>();
 		loadSubtypeContributions();
 	}
-	
+
 	public GDBJtagDeviceContribution[] getGDBJtagDeviceContribution() {
-		return contributions.toArray(
-				new GDBJtagDeviceContribution[contributions.size()]);
+		return contributions.toArray(new GDBJtagDeviceContribution[contributions.size()]);
 	}
 
 	private void loadSubtypeContributions() {
 
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
-				Activator.getUniqueIdentifier(), EXTENSION_POINT_NAME);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(Activator.getUniqueIdentifier(),
+				EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		IConfigurationElement[] elements = ep.getConfigurationElements();
@@ -59,8 +58,9 @@ public class GDBJtagDeviceContributionFactory {
 				String id = getRequired(configurationElement, "id"); //$NON-NLS-1$
 				String name = getRequired(configurationElement, "name"); //$NON-NLS-1$
 				String className = getRequired(configurationElement, "class"); //$NON-NLS-1$
-				String connection = getOptional(configurationElement, "default_connection", IGDBJtagConstants.DEFAULT_CONNECTION); //$NON-NLS-1$ 
-	            GDBJtagDeviceContribution adapter = new GDBJtagDeviceContribution();
+				String connection = getOptional(configurationElement, "default_connection", //$NON-NLS-1$
+						IGDBJtagConstants.DEFAULT_CONNECTION);
+				GDBJtagDeviceContribution adapter = new GDBJtagDeviceContribution();
 				adapter.setDeviceId(id);
 				adapter.setDeviceName(name);
 				adapter.setDeviceClassName(className);
@@ -86,10 +86,10 @@ public class GDBJtagDeviceContributionFactory {
 	private static String getRequired(IConfigurationElement configurationElement, String name) {
 		String elementValue = configurationElement.getAttribute(name);
 		if (elementValue == null)
-			Activator.log(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
-					DebugPlugin.INTERNAL_ERROR, "Extension "
-							+ configurationElement.getDeclaringExtension().getUniqueIdentifier()
-							+ " missing required attribute: " + name, null));
+			Activator.log(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR,
+					"Extension " + configurationElement.getDeclaringExtension().getUniqueIdentifier()
+							+ " missing required attribute: " + name,
+					null));
 		return elementValue;
 	}
 

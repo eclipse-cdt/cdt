@@ -45,61 +45,62 @@ public class CHExtensionTest extends CallHierarchyBaseTest {
 		return new TestSuite(CHExtensionTest.class);
 	}
 
-//  {CallHierarchy_main.c}
-//	extern void function_c(void);
-//	extern void function_dsl(void);
-//
-//	void main(void)
-//	{
-//	    function_c();
-//	    function_dsl();
-//	}
+	//  {CallHierarchy_main.c}
+	//	extern void function_c(void);
+	//	extern void function_dsl(void);
+	//
+	//	void main(void)
+	//	{
+	//	    function_c();
+	//	    function_dsl();
+	//	}
 
-//	{CallHierarchy_test.c}
-//	void function_c(void)
-//	{
-//	    printf("Hello, world!\n");
-//	}
+	//	{CallHierarchy_test.c}
+	//	void function_c(void)
+	//	{
+	//	    printf("Hello, world!\n");
+	//	}
 
-//	{CallHierarchy_test.java}
-//	/** Suppose this code is written in a different custom programming language, any DSL, e.g. Java*/
-//	class CallHierarchy_test {
-//		public static void function_dsl() {
-//			System.out.println("Hello, world!");
-//		}
-//	}
+	//	{CallHierarchy_test.java}
+	//	/** Suppose this code is written in a different custom programming language, any DSL, e.g. Java*/
+	//	class CallHierarchy_test {
+	//		public static void function_dsl() {
+	//			System.out.println("Hello, world!");
+	//		}
+	//	}
 	public void testCallHierarchy() throws Exception {
 
 		assertNotNull(Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.cdt.ui.CCallHierarchy"));
 
-		ImageDescriptor imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(CUIPlugin.PLUGIN_ID, CHLabelProvider.ICON_PATH);
+		ImageDescriptor imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(CUIPlugin.PLUGIN_ID,
+				CHLabelProvider.ICON_PATH);
 		assertNotNull(imageDesc);
 		Image image = imageDesc.createImage(); //$NON-NLS-1$
 		assertNotNull(image);
 
 		String content = readTaggedComment(FILE_NAME_DSL);
 		assertNotNull(content);
-		IFile file= createFile(getProject(), FILE_NAME_DSL, content);
+		IFile file = createFile(getProject(), FILE_NAME_DSL, content);
 
 		content = readTaggedComment(FILE_NAME_C);
 		assertNotNull(content);
-		file= createFile(getProject(), FILE_NAME_C, content);
+		file = createFile(getProject(), FILE_NAME_C, content);
 		waitUntilFileIsIndexed(fIndex, file);
 
 		content = readTaggedComment(FILE_NAME_MAIN_C);
 		assertNotNull(content);
-		file= createFile(getProject(), FILE_NAME_MAIN_C, content);
+		file = createFile(getProject(), FILE_NAME_MAIN_C, content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
-		String functionName ="function_c";
+		String functionName = "function_c";
 		editor.selectAndReveal(content.indexOf(functionName), functionName.length());
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "function_c() : void");
-		checkTreeNode(tree, 0, 0 ,"main() : void");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
-		functionName ="function_dsl";
+		functionName = "function_dsl";
 		editor.selectAndReveal(content.indexOf(functionName), functionName.length());
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();

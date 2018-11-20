@@ -19,27 +19,26 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 
-
 /**
  * @see PDAStackCommand
  */
 @Immutable
 public class PDAStackCommandResult extends PDACommandResult {
-    
-    /**
-     * Array of frames return by the stack commands.  The frames are ordered 
-     * with the highest-level frame first.
-     */
-    final public PDAFrame[] fFrames;
-    
-    PDAStackCommandResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "#");
-        List<PDAFrame> framesList = new ArrayList<PDAFrame>();
-        
-        while (st.hasMoreTokens()) {
-            framesList.add(new PDAFrame(st.nextToken()));
-        }
-        fFrames = framesList.toArray(new PDAFrame[framesList.size()]);
-    }
+
+	/**
+	 * Array of frames return by the stack commands.  The frames are ordered 
+	 * with the highest-level frame first.
+	 */
+	final public PDAFrame[] fFrames;
+
+	PDAStackCommandResult(String response) {
+		super(response);
+		StringTokenizer st = new StringTokenizer(response, "#");
+		List<PDAFrame> framesList = new ArrayList<PDAFrame>();
+
+		while (st.hasMoreTokens()) {
+			framesList.add(new PDAFrame(st.nextToken()));
+		}
+		fFrames = framesList.toArray(new PDAFrame[framesList.size()]);
+	}
 }

@@ -16,7 +16,6 @@ package org.eclipse.cdt.utils.debug.stabs;
 
 import org.eclipse.cdt.core.CCorePlugin;
 
-
 /**
  * Format: string_field = name ':' symbol-descriptor type-information
  */
@@ -67,22 +66,22 @@ public class StringField {
 		/* FIXME: Sometimes the special C++ names start with '.'. */
 		if (name.length() > 1 && name.charAt(0) == '$') {
 			switch (name.charAt(1)) {
-			case 't' :
+			case 't':
 				name = "this"; //$NON-NLS-1$
 				break;
-			case 'v' :
+			case 'v':
 				/* Was: name = "vptr"; */
 				break;
-			case 'e' :
+			case 'e':
 				name = "eh_throw"; //$NON-NLS-1$
 				break;
-			case '_' :
+			case '_':
 				/* This was an anonymous type that was never fixed up. */
 				break;
-			case 'X' :
+			case 'X':
 				/* SunPRO (3.0 at least) static variable encoding. */
 				break;
-			default :
+			default:
 				name = CCorePlugin.getResourceString("Util.unknownName"); //$NON-NLS-1$
 				break;
 			}

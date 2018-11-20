@@ -38,7 +38,6 @@ public class Messages extends NLS {
 	public static String MesonPropertyPage_FailedToStartMesonGui_Title;
 	public static String MesonPropertyPage_LaunchMesonGui;
 
-
 	public static String NewMesonProjectWizard_Description;
 	public static String NewMesonProjectWizard_PageTitle;
 	public static String NewMesonProjectWizard_WindowTitle;
@@ -50,7 +49,6 @@ public class Messages extends NLS {
 	public static String NewMesonToolChainFilePage_Title;
 	public static String NewMesonToolChainFilePage_Toolchain;
 
-	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages("org.eclipse.cdt.internal.meson.ui.messages", Messages.class); //$NON-NLS-1$
@@ -59,4 +57,3 @@ public class Messages extends NLS {
 	private Messages() {
 	}
 }
-

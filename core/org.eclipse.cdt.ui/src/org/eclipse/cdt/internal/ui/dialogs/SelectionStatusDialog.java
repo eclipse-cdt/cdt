@@ -33,14 +33,14 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * The status message must be passed over as StatusInfo object and can be
  * an error, warning or ok. The OK button is enabled / disabled depending
  * on the status.
- */ 
+ */
 public abstract class SelectionStatusDialog extends SelectionDialog {
 	private MessageLine fStatusLine;
 	private IStatus fLastStatus;
 	private Image fImage;
 	private boolean fInitialSelectionSet;
 	private boolean fStatusLineAboveButtons;
-	
+
 	public SelectionStatusDialog(Shell parent) {
 		super(parent);
 	}
@@ -59,18 +59,19 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 
 	@Override
 	protected Control createButtonBar(Composite parent) {
-		Composite composite= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
 		if (fStatusLineAboveButtons) {
-			layout.verticalSpacing= 0;
+			layout.verticalSpacing = 0;
 		} else {
-			layout.numColumns= 2;
+			layout.numColumns = 2;
 		}
-		layout.marginHeight= 0; layout.marginWidth= 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		fStatusLine= new MessageLine(composite);
+
+		fStatusLine = new MessageLine(composite);
 		fStatusLine.setAlignment(SWT.LEFT);
 		fStatusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fStatusLine.setMessage(""); //$NON-NLS-1$
@@ -94,10 +95,10 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * @return the first element of the initial selection.
 	 */
 	protected Object getPrimaryInitialSelection() {
-		List<?> result= getInitialElementSelections();
+		List<?> result = getInitialElementSelections();
 		if (result == null || result.size() == 0)
 			return null;
-		return result.get(0);	
+		return result.get(0);
 	}
 
 	/**
@@ -108,10 +109,10 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 *     returned.
 	 */
 	public Object getPrimaryResult() {
-		Object[] result= getResult();
+		Object[] result = getResult();
 		if (result == null || result.length == 0)
 			return null;
-		return result[0];	
+		return result[0];
 	}
 
 	@Override
@@ -126,14 +127,14 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * @param image the dialog's image
 	 */
 	public void setImage(Image image) {
-		fImage= image;
+		fImage = image;
 	}
 
 	protected void setInitialSelection(int position, Object element) {
 		@SuppressWarnings("unchecked")
-		List<Object> l= getInitialElementSelections();
+		List<Object> l = getInitialElementSelections();
 		l.set(position, element);
-		fInitialSelectionSet= true;
+		fInitialSelectionSet = true;
 	}
 
 	/**
@@ -154,15 +155,15 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	@Override
 	public void setInitialSelections(Object[] selectedElements) {
 		super.setInitialSelections(selectedElements);
-		fInitialSelectionSet= true;
+		fInitialSelectionSet = true;
 	}
 
 	/**
 	 * Sets a result element at the given position.
 	 */
 	protected void setResult(int position, Object element) {
-		Object[] result= getResult();
-		result[position]= element;
+		Object[] result = getResult();
+		result[position] = element;
 		setResult(Arrays.asList(result));
 	}
 
@@ -174,7 +175,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * 	   {@code false} to the right
 	 */
 	public void setStatusLineAboveButtons(boolean aboveButtons) {
-		fStatusLineAboveButtons= aboveButtons;
+		fStatusLineAboveButtons = aboveButtons;
 	}
 
 	/**
@@ -182,7 +183,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * may override this method to update additional buttons.
 	 */
 	protected void updateButtonsEnableState(IStatus status) {
-		Button okButton= getOkButton();
+		Button okButton = getOkButton();
 		if (okButton != null && !okButton.isDisposed())
 			okButton.setEnabled(!status.matches(IStatus.ERROR));
 	}
@@ -192,10 +193,10 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * this method before the dialog has been opened.
 	 */
 	protected void updateStatus(IStatus status) {
-		fLastStatus= status;
+		fLastStatus = status;
 		if (fStatusLine != null && !fStatusLine.isDisposed()) {
-		    updateButtonsEnableState(status);
-		    StatusTool.applyToStatusLine(fStatusLine, status);			
+			updateButtonsEnableState(status);
+			StatusTool.applyToStatusLine(fStatusLine, status);
 		}
 	}
 }

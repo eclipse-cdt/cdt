@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class ColorManager implements ISharedTextColors {
-	public static final String MAKE_COMMENT_COLOR ="org.eclipse.cdt.make.ui.editor.comment"; //$NON-NLS-1$
+	public static final String MAKE_COMMENT_COLOR = "org.eclipse.cdt.make.ui.editor.comment"; //$NON-NLS-1$
 	public static final String MAKE_KEYWORD_COLOR = "org.eclipse.cdt.make.ui.editor.keyword"; //$NON-NLS-1$
 	public static final String MAKE_FUNCTION_COLOR = "org.eclipse.cdt.make.ui.editor.function"; //$NON-NLS-1$
 	public static final String MAKE_MACRO_REF_COLOR = "org.eclipse.cdt.make.ui.editor.macro_ref"; //$NON-NLS-1$
@@ -34,7 +34,7 @@ public class ColorManager implements ISharedTextColors {
 	public static final RGB MAKE_COMMENT_RGB = new RGB(63, 127, 95);
 	public static final RGB MAKE_KEYWORD_RGB = new RGB(127, 0, 85);
 	public static final RGB MAKE_FUNCTION_RGB = new RGB(208, 15, 63);
-	public static final RGB MAKE_MACRO_DEF_RGB = new RGB(78,118,214);
+	public static final RGB MAKE_MACRO_DEF_RGB = new RGB(78, 118, 214);
 	public static final RGB MAKE_MACRO_REF_RGB = new RGB(0, 0, 192);
 	public static final RGB MAKE_DEFAULT_RGB = new RGB(0, 0, 0);
 	public static final RGB MAKE_MATCHING_BRACKETS_RGB = new RGB(170, 170, 170);
@@ -46,7 +46,7 @@ public class ColorManager implements ISharedTextColors {
 
 	public static ColorManager getDefault() {
 		if (fgColorManager == null) {
-			fgColorManager= new ColorManager();
+			fgColorManager = new ColorManager();
 		}
 		return fgColorManager;
 	}

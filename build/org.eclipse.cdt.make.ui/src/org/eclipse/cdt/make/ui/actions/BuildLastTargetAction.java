@@ -38,7 +38,7 @@ import org.eclipse.jface.window.Window;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildLastTargetAction extends AbstractTargetAction {
-	
+
 	@Override
 	public void run(IAction action) {
 		IContainer container = getSelectedContainer();
@@ -47,18 +47,17 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 			if (MakePreferencePage.useProjectLastMakeTarget()) {
 				try {
 					name = (String) container.getProject().getSessionProperty(
-							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-									TargetBuild.LAST_TARGET_CONTAINER));
+							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET_CONTAINER));
 					if (name != null) {
 						IContainer lastTargetContainer;
 						if (name.length() == 0)
 							lastTargetContainer = container.getProject();
 						else
 							lastTargetContainer = container.getProject().getFolder(new Path(name));
-						if ( lastTargetContainer.exists() )
+						if (lastTargetContainer.exists())
 							container = lastTargetContainer;
-						name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-								TargetBuild.LAST_TARGET));
+						name = (String) container.getSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET));
 					}
 				} catch (CoreException e) {
 				}
@@ -67,8 +66,8 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 					container = container.getProject();
 				}
 				try {
-					name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-							TargetBuild.LAST_TARGET));
+					name = (String) container.getSessionProperty(
+							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET));
 				} catch (CoreException e) {
 				}
 			}
@@ -80,25 +79,24 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 						TargetBuild.buildTargets(getShell(), new IMakeTarget[] { target });
 						showDialog = false;
 						IPath path = container.getProjectRelativePath();
-						container.getProject().setSessionProperty(
-								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-										TargetBuild.LAST_TARGET_CONTAINER), path.toString());
-					} 
-				} 
-				
+						container.getProject().setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET_CONTAINER), path.toString());
+					}
+				}
+
 				// no last target found, let the user decide
 				if (showDialog) {
 					boolean recursive = MakePreferencePage.useProjectLastMakeTarget();
-					BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container, recursive );
+					BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container, recursive);
 					if (dialog.open() == Window.OK) {
 						IMakeTarget target = dialog.getTarget();
 						if (target != null) {
-							container.setSessionProperty(new QualifiedName(
-									MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
+							container.setSessionProperty(
+									new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
 									target.getName());
 							IPath path = target.getContainer().getProjectRelativePath();
-							container.getProject().setSessionProperty(
-									new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+							container.getProject()
+									.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
 											TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 						}
 					}

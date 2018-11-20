@@ -43,12 +43,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public class GDBTraceControl_HEAD extends GDBTraceControl_7_4 {
 	public GDBTraceControl_HEAD(DsfSession session, ILaunchConfiguration lc) {
 		super(session, lc);
-		
+
 		validateGdbVersion(session);
 	}
-	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_4_VERSION; }
-	
+
+	protected String getMinGDBVersionSupported() {
+		return GdbDebugServicesFactory.GDB_7_4_VERSION;
+	}
+
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);
 	}
